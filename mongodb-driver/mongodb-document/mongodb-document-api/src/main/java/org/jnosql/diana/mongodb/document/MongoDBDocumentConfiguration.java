@@ -24,9 +24,6 @@ import com.mongodb.ServerAddress;
 import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.connection.ClusterSettings;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
-import org.jnosql.diana.api.document.DocumentConfiguration;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -35,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.jnosql.diana.api.document.DocumentConfiguration;
 
 
 public class MongoDBDocumentConfiguration implements DocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
