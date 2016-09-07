@@ -25,15 +25,21 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 
 public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<HazelCastKeyValueEntityManagerFactory> {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
+
+    private static final Logger LOGGER = Logger.getLogger(HazelCastKeyValueConfiguration.class.getName());
+    private static final Map<String, String> DEFAULT_CONFIGURATION = Collections.singletonMap("hazelcast-instanceName", "hazelcast");
+
 
     public HazelCastKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
 
@@ -56,7 +62,8 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
                     .collect(Collectors.toMap(Object::toString, s -> properties.get(s).toString()));
             return getManagerFactory(collect);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.info("File does not find creating a instance with default value");
+            return getManagerFactory(DEFAULT_CONFIGURATION);
         }
     }
 }
