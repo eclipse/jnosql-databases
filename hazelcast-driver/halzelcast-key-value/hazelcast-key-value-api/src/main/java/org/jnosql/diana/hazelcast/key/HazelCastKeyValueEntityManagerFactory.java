@@ -21,13 +21,11 @@ package org.jnosql.diana.hazelcast.key;
 
 
 import com.hazelcast.core.HazelcastInstance;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import org.jnosql.diana.api.key.BucketManagerFactory;
 
 public class HazelCastKeyValueEntityManagerFactory implements BucketManagerFactory<HazelCastKeyValueEntityManager> {
 

@@ -31,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class KeyValueConfigurationTest {
 
-    private KeyValueConfiguration configuration;
+    private HazelCastKeyValueConfiguration configuration;
 
     @Before
     public void setUp() {
