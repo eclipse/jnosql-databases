@@ -31,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class RedisConfigurationTest {
 
-    private KeyValueConfiguration configuration;
+    private RedisConfiguration configuration;
 
     @Before
     public void setUp() {

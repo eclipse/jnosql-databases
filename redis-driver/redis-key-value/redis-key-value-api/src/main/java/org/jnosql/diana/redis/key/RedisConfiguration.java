@@ -20,16 +20,14 @@
 package org.jnosql.diana.redis.key;
 
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import org.jnosql.diana.api.key.KeyValueConfiguration;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyValueEntityManagerFactory> {
 
