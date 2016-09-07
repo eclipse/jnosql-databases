@@ -51,6 +51,5 @@
     </build>
     <modules>
         <module>cassandra-column-api</module>
-        <module>cassandra-column-tck</module>
     </modules>
 </project>
