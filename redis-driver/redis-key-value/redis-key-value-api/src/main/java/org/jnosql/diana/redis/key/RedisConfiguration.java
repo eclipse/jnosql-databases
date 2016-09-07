@@ -22,8 +22,10 @@ package org.jnosql.diana.redis.key;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import redis.clients.jedis.JedisPool;
@@ -32,6 +34,8 @@ import redis.clients.jedis.JedisPoolConfig;
 public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyValueEntityManagerFactory> {
 
     private static final String REDIS_FILE_CONFIGURATION = "diana-redis.properties";
+
+    private static final Logger LOGGER = Logger.getLogger(RedisConfiguration.class.getName());
 
     public RedisKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
         JedisPoolConfig poolConfig = getJedisPoolConfig(configurations);
@@ -72,7 +76,8 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
                     .collect(Collectors.toMap(Object::toString, s -> properties.get(s).toString()));
             return getManagerFactory(collect);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.info("File does not found using default configuration");
+            return getManagerFactory(Collections.emptyMap());
         }
     }
 }
