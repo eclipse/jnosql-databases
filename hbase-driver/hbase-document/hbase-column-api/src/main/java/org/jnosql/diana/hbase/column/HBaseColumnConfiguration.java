@@ -19,15 +19,12 @@
 package org.jnosql.diana.hbase.column;
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.jnosql.diana.api.column.ColumnConfiguration;
-import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
