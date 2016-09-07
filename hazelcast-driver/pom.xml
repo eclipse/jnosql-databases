@@ -28,7 +28,7 @@
     <name>HazelCast driver parent to JNOSQL diana Project</name>
     <parent>
         <groupId>org.jnosql.diana</groupId>
-        <artifactId>diana-parent</artifactId>
+        <artifactId>diana-driver</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <properties>
