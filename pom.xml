@@ -25,7 +25,7 @@
     <artifactId>diana-driver</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>JNOSQL Diana</name>
+    <name>JNOSQL Diana Driver</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
