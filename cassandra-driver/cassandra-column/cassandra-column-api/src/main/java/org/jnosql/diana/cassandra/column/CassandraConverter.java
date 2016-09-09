@@ -43,7 +43,7 @@ final class CassandraConverter {
         String columnFamily = "";
         for (ColumnDefinitions.Definition definition : row.getColumnDefinitions().asList()) {
             DataType type = definition.getType();
-            columnFamily = definition.getKeyspace();
+            columnFamily = definition.getTable();
             Value value = Value.of(CassandraConverter.get(definition, row));
             Column column = Column.of(definition.getName(), value);
             columns.add(column);
