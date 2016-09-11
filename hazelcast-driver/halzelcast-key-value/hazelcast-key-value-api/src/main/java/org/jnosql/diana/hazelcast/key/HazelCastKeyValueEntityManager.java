@@ -20,16 +20,15 @@
 package org.jnosql.diana.hazelcast.key;
 
 import com.hazelcast.core.IMap;
-import org.jnosql.diana.api.TTL;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValue;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.jnosql.diana.api.TTL;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
 
 
 public class HazelCastKeyValueEntityManager implements BucketManager {
@@ -46,23 +45,23 @@ public class HazelCastKeyValueEntityManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValue<K> keyValue) throws NullPointerException {
-        map.put(keyValue.getKey(), keyValue.getValue().get());
+    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
+        map.put(entity.getKey(), entity.getValue().get());
     }
 
     @Override
-    public <K> void put(KeyValue<K> keyValue, TTL ttl) {
-        map.put(keyValue.getKey(), keyValue.getValue().get(), ttl.toMillis(), TimeUnit.MILLISECONDS);
+    public <K> void put(KeyValueEntity<K> entity, TTL ttl) {
+        map.put(entity.getKey(), entity.getValue().get(), ttl.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValue<K>> keyValues) throws NullPointerException {
-        StreamSupport.stream(keyValues.spliterator(), false).forEach(this::put);
+    public <K> void put(Iterable<KeyValueEntity<K>> entities) throws NullPointerException {
+        StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValue<K>> keyValues, TTL ttl) throws NullPointerException, UnsupportedOperationException {
-        StreamSupport.stream(keyValues.spliterator(), false).forEach(kv -> this.put(kv, ttl));
+    public <K> void put(Iterable<KeyValueEntity<K>> entities, TTL ttl) throws NullPointerException, UnsupportedOperationException {
+        StreamSupport.stream(entities.spliterator(), false).forEach(kv -> this.put(kv, ttl));
     }
 
     @Override
