@@ -21,16 +21,15 @@ package org.jnosql.diana.redis.key;
 
 
 import com.google.gson.Gson;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.jnosql.diana.api.TTL;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValue;
+import org.jnosql.diana.api.key.KeyValueEntity;
 import redis.clients.jedis.Jedis;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
@@ -58,26 +57,26 @@ public class RedisKeyValueEntityManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValue<K> keyValue) throws NullPointerException {
-        put(keyValue.getKey(), keyValue.getValue().get());
+    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
+        put(entity.getKey(), entity.getValue().get());
     }
 
     @Override
-    public <K> void put(KeyValue<K> keyValue, TTL ttl) throws NullPointerException, UnsupportedOperationException {
-        put(keyValue);
-        String valideKey = createKeyWithNameSpace(keyValue.getKey().toString(), nameSpace);
+    public <K> void put(KeyValueEntity<K> entity, TTL ttl) throws NullPointerException, UnsupportedOperationException {
+        put(entity);
+        String valideKey = createKeyWithNameSpace(entity.getKey().toString(), nameSpace);
         jedis.expire(valideKey, (int) ttl.toSeconds());
     }
 
     @Override
-    public <K> void put(Iterable<KeyValue<K>> keyValues) throws NullPointerException {
-        StreamSupport.stream(keyValues.spliterator(), false).forEach(this::put);
+    public <K> void put(Iterable<KeyValueEntity<K>> entities) throws NullPointerException {
+        StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValue<K>> keyValues, TTL ttl) throws NullPointerException, UnsupportedOperationException {
-        StreamSupport.stream(keyValues.spliterator(), false).forEach(this::put);
-        StreamSupport.stream(keyValues.spliterator(), false).map(KeyValue::getKey)
+    public <K> void put(Iterable<KeyValueEntity<K>> entities, TTL ttl) throws NullPointerException, UnsupportedOperationException {
+        StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
+        StreamSupport.stream(entities.spliterator(), false).map(KeyValueEntity::getKey)
                 .map(k -> createKeyWithNameSpace(k.toString(), nameSpace))
                 .forEach(k -> jedis.expire(k, (int) ttl.toSeconds()));
     }

@@ -20,17 +20,16 @@
 package org.jnosql.diana.redis.key;
 
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValue;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.api.key.KeyValueEntity;
+import org.junit.Before;
+import org.junit.Test;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -47,10 +46,10 @@ public class RedisKeyValueEntityManagerTest {
     private BucketManagerFactory keyValueEntityManagerFactory;
 
     private User userOtavio = new User("otavio");
-    private KeyValue keyValueOtavio = KeyValue.of("otavio", Value.of(userOtavio));
+    private KeyValueEntity keyValueOtavio = KeyValueEntity.of("otavio", Value.of(userOtavio));
 
     private User userSoro = new User("soro");
-    private KeyValue keyValueSoro = KeyValue.of("soro", Value.of(userSoro));
+    private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
 
     @Before
     public void init() {
@@ -92,7 +91,7 @@ public class RedisKeyValueEntityManagerTest {
     @Test
     public void shouldMultiGet() {
         User user = new User("otavio");
-        KeyValue keyValue = KeyValue.of("otavio", Value.of(user));
+        KeyValueEntity keyValue = KeyValueEntity.of("otavio", Value.of(user));
         keyValueEntityManager.put(keyValue);
         assertNotNull(keyValueEntityManager.get("otavio"));
 
