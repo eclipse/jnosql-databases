@@ -19,17 +19,6 @@
 package org.jnosql.diana.hbase.column;
 
 
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.client.*;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.TTL;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.WriterField;
-import org.jnosql.diana.api.column.*;
-import org.jnosql.diana.api.writer.WriterFieldDecorator;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +27,26 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.TTL;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.ValueWriter;
+import org.jnosql.diana.api.column.Column;
+import org.jnosql.diana.api.column.ColumnCondition;
+import org.jnosql.diana.api.column.ColumnFamilyEntity;
+import org.jnosql.diana.api.column.ColumnFamilyManager;
+import org.jnosql.diana.api.column.ColumnQuery;
+import org.jnosql.diana.api.column.PreparedStatement;
+import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.api.Condition.EQUALS;
@@ -48,7 +57,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     private final Connection connection;
     private final Table table;
-    private final WriterField writerField = WriterFieldDecorator.getInstance();
+    private final ValueWriter writerField = ValueWriterDecorator.getInstance();
 
 
     HBaseColumnFamilyManager(Connection connection, Table table) {

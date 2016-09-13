@@ -32,13 +32,13 @@ import org.bson.conversions.Bson;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.TTL;
 import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.WriterField;
+import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.DocumentCollectionEntity;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.PreparedStatement;
-import org.jnosql.diana.api.writer.WriterFieldDecorator;
+import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -49,7 +49,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     private final com.mongodb.async.client.MongoDatabase asyncMongoDatabase;
 
-    private final WriterField writerField = WriterFieldDecorator.getInstance();
+    private final ValueWriter writerField = ValueWriterDecorator.getInstance();
 
 
     MongoDBDocumentCollectionManager(MongoDatabase mongoDatabase,
