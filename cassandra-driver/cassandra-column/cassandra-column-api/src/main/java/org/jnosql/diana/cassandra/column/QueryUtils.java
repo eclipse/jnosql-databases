@@ -27,16 +27,18 @@ import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.Ordering;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.StreamSupport;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.Sort;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
 import org.jnosql.diana.api.column.ColumnFamilyEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
-
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.StreamSupport;
+import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.asc;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.desc;
@@ -44,6 +46,8 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
 import static org.jnosql.diana.api.Sort.SortType.ASC;
 
 final class QueryUtils {
+
+    private static final ValueWriter VALUE_WRITER = ValueWriterDecorator.getInstance();
 
     private static final Function<Sort, Ordering> SORT_ORDERING_FUNCTION = sort -> {
         if (ASC.equals(sort.getType())) {
@@ -59,8 +63,17 @@ final class QueryUtils {
 
     public static Insert insert(ColumnFamilyEntity entity, String keyspace) {
         Insert insert = insertInto(keyspace, entity.getName());
-        entity.getColumns().forEach(d -> insert.value(d.getName(), d.getValue().get()));
+        entity.getColumns().forEach(d -> insert.value(d.getName(), convert(d.getValue())));
         return insert;
+    }
+
+
+    private static Object convert(Value value) {
+        Object val = value.get();
+        if (VALUE_WRITER.isCompatible(val.getClass())) {
+            return VALUE_WRITER.write(val);
+        }
+        return val;
     }
 
     public static BuiltStatement add(ColumnQuery query, String keySpace) {

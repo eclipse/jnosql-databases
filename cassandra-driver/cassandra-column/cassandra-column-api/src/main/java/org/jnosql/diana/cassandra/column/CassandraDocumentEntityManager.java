@@ -27,18 +27,17 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.TTL;
 import org.jnosql.diana.api.column.ColumnFamilyEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.PreparedStatement;
-
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class CassandraDocumentEntityManager implements ColumnFamilyManager {
 
