@@ -19,9 +19,7 @@
 
 package org.jnosql.diana.mongodb.document;
 
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getConfiguration;
 import static org.hamcrest.Matchers.contains;
+import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getConfiguration;
 import static org.junit.Assert.*;
 
 
@@ -47,24 +45,24 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldSave() {
-        DocumentCollectionEntity entity = getEntity();
-        DocumentCollectionEntity documentEntity = entityManager.save(entity);
+        DocumentEntity entity = getEntity();
+        DocumentEntity documentEntity = entityManager.save(entity);
         assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
     }
 
     @Test
     public void shouldUpdateSave() {
-        DocumentCollectionEntity entity = getEntity();
-        DocumentCollectionEntity documentEntity = entityManager.save(entity);
+        DocumentEntity entity = getEntity();
+        DocumentEntity documentEntity = entityManager.save(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
-        DocumentCollectionEntity updated = entityManager.update(entity);
+        DocumentEntity updated = entityManager.update(entity);
         assertEquals(newField, updated.find("newField").get());
     }
 
     @Test
     public void shouldRemoveEntity() {
-        DocumentCollectionEntity documentEntity = entityManager.save(getEntity());
+        DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.addCondition(DocumentCondition.eq(id.get()));
@@ -74,26 +72,26 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocument() {
-        DocumentCollectionEntity entity = entityManager.save(getEntity());
+        DocumentEntity entity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("_id");
         query.addCondition(DocumentCondition.eq(id.get()));
-        List<DocumentCollectionEntity> entities = entityManager.find(query);
+        List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
 
     @Test
     public void shouldSaveAsync() {
-        DocumentCollectionEntity entity = getEntity();
+        DocumentEntity entity = getEntity();
         entityManager.saveAsync(entity);
 
     }
 
     @Test
     public void shouldUpdateAsync() {
-        DocumentCollectionEntity entity = getEntity();
-        DocumentCollectionEntity documentEntity = entityManager.save(entity);
+        DocumentEntity entity = getEntity();
+        DocumentEntity documentEntity = entityManager.save(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         entityManager.updateAsync(entity);
@@ -101,7 +99,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldRemoveEntityAsync() {
-        DocumentCollectionEntity documentEntity = entityManager.save(getEntity());
+        DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.addCondition(DocumentCondition.eq(id.get()));
@@ -111,13 +109,13 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldSaveSubDocument() {
-        DocumentCollectionEntity entity = getEntity();
+        DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentCollectionEntity entitySaved = entityManager.save(entity);
+        DocumentEntity entitySaved = entityManager.save(entity);
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.addCondition(DocumentCondition.eq(id));
-        DocumentCollectionEntity entityFound = entityManager.find(query).get(0);
+        DocumentEntity entityFound = entityManager.find(query).get(0);
         Map<String, String> result = entityFound.find("phones").get().getValue().cast();
         String key = result.keySet().stream().findFirst().get();
         String value = result.get(key);
@@ -125,8 +123,8 @@ public class MongoDBDocumentCollectionManagerTest {
         assertEquals("1231231", value);
     }
 
-    private DocumentCollectionEntity getEntity() {
-        DocumentCollectionEntity entity = DocumentCollectionEntity.of(COLLECTION_NAME);
+    private DocumentEntity getEntity() {
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");

@@ -19,6 +19,17 @@
 package org.jnosql.diana.hbase.column;
 
 
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
+import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.TTL;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.ValueWriter;
+import org.jnosql.diana.api.column.*;
+import org.jnosql.diana.api.writer.ValueWriterDecorator;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,26 +38,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.TTL;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
-import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnFamilyEntity;
-import org.jnosql.diana.api.column.ColumnFamilyManager;
-import org.jnosql.diana.api.column.ColumnQuery;
-import org.jnosql.diana.api.column.PreparedStatement;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.api.Condition.EQUALS;
@@ -66,7 +57,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public ColumnFamilyEntity save(ColumnFamilyEntity entity) {
+    public ColumnEntity save(ColumnEntity entity) {
         String family = entity.getName();
         List<Column> columns = entity.getColumns();
         if (columns.isEmpty()) {
@@ -88,43 +79,43 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public ColumnFamilyEntity save(ColumnFamilyEntity entity, TTL ttl) throws NullPointerException {
+    public ColumnEntity save(ColumnEntity entity, TTL ttl) throws NullPointerException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
 
     @Override
-    public void saveAsync(ColumnFamilyEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(ColumnEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
     @Override
-    public void saveAsync(ColumnFamilyEntity entity, TTL ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(ColumnEntity entity, TTL ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
     @Override
-    public void saveAsync(ColumnFamilyEntity entity, Consumer<ColumnFamilyEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(ColumnEntity entity, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
     @Override
-    public void saveAsync(ColumnFamilyEntity entity, TTL ttl, Consumer<ColumnFamilyEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(ColumnEntity entity, TTL ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
     @Override
-    public ColumnFamilyEntity update(ColumnFamilyEntity entity) {
+    public ColumnEntity update(ColumnEntity entity) {
         return save(entity);
     }
 
     @Override
-    public void updateAsync(ColumnFamilyEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void updateAsync(ColumnEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to update async");
     }
 
     @Override
-    public void updateAsync(ColumnFamilyEntity entity, Consumer<ColumnFamilyEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void updateAsync(ColumnEntity entity, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to update async");
     }
 
@@ -157,7 +148,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public List<ColumnFamilyEntity> find(ColumnQuery query) {
+    public List<ColumnEntity> find(ColumnQuery query) {
 
         List<ColumnCondition> conditions = query.getConditions();
         if (isQuerySupported(conditions)) {
@@ -169,17 +160,17 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public void findAsync(ColumnQuery query, Consumer<List<ColumnFamilyEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void findAsync(ColumnQuery query, Consumer<List<ColumnEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to find async");
     }
 
     @Override
-    public List<ColumnFamilyEntity> nativeQuery(String query) throws UnsupportedOperationException {
+    public List<ColumnEntity> nativeQuery(String query) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to run nativeQuery");
     }
 
     @Override
-    public void nativeQueryAsync(String query, Consumer<List<ColumnFamilyEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void nativeQueryAsync(String query, Consumer<List<ColumnEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to run nativeQuery Async");
     }
 

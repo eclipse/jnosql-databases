@@ -1,8 +1,6 @@
 package org.jnosql.diana.hbase.column;
 
-import org.hamcrest.Matchers;
 import org.jnosql.diana.api.column.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,13 +30,13 @@ public class HBaseColumnFamilyManagerTest {
 
     @Test
     public void shouldSave() {
-        ColumnFamilyEntity entity = createEntity();
+        ColumnEntity entity = createEntity();
         columnFamilyManager.save(entity);
     }
 
     @Test(expected = DianaHBaseException.class)
     public void shouldReturnErrorWhenKeyIsNotDefined() {
-        ColumnFamilyEntity entity = ColumnFamilyEntity.of(FAMILY);
+        ColumnEntity entity = ColumnEntity.of(FAMILY);
         entity.add(Column.of("id", "otaviojava"));
         entity.add(Column.of("age", 26));
         entity.add(Column.of("country", "Brazil"));
@@ -50,10 +48,10 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.save(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
-        List<ColumnFamilyEntity> columnFamilyEntities = columnFamilyManager.find(query);
+        List<ColumnEntity> columnFamilyEntities = columnFamilyManager.find(query);
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
-        ColumnFamilyEntity entity = columnFamilyEntities.get(0);
+        ColumnEntity entity = columnFamilyEntities.get(0);
         assertEquals(FAMILY, entity.getName());
         assertThat(entity.getColumns(), containsInAnyOrder(Column.of("", "otaviojava"), Column.of("age", "26"), Column.of("country", "Brazil")));
     }
@@ -66,7 +64,7 @@ public class HBaseColumnFamilyManagerTest {
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
         query.addCondition(ColumnCondition.eq(Column.of("", "poliana")));
-        List<ColumnFamilyEntity> entities = columnFamilyManager.find(query);
+        List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(entities.size()));
 
     }
@@ -77,7 +75,7 @@ public class HBaseColumnFamilyManagerTest {
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
         columnFamilyManager.delete(query);
-        List<ColumnFamilyEntity> entities = columnFamilyManager.find(query);
+        List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
     }
 
@@ -89,20 +87,20 @@ public class HBaseColumnFamilyManagerTest {
         query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
         query.addCondition(ColumnCondition.eq(Column.of("", "poliana")));
         columnFamilyManager.delete(query);
-        List<ColumnFamilyEntity> entities = columnFamilyManager.find(query);
+        List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
     }
 
-    private ColumnFamilyEntity createEntity() {
-        ColumnFamilyEntity entity = ColumnFamilyEntity.of(FAMILY);
+    private ColumnEntity createEntity() {
+        ColumnEntity entity = ColumnEntity.of(FAMILY);
         entity.add(Column.of("", "otaviojava"));
         entity.add(Column.of("age", 26));
         entity.add(Column.of("country", "Brazil"));
         return entity;
     }
 
-    private ColumnFamilyEntity createEntity2() {
-        ColumnFamilyEntity entity = ColumnFamilyEntity.of(FAMILY);
+    private ColumnEntity createEntity2() {
+        ColumnEntity entity = ColumnEntity.of(FAMILY);
         entity.add(Column.of("", "poliana"));
         entity.add(Column.of("age", 24));
         entity.add(Column.of("country", "Brazil"));

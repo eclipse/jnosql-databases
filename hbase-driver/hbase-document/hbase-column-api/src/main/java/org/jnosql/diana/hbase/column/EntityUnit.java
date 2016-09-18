@@ -22,7 +22,7 @@ package org.jnosql.diana.hbase.column;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
 import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnFamilyEntity;
+import org.jnosql.diana.api.column.ColumnEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +59,8 @@ class EntityUnit {
         return !columns.isEmpty();
     }
 
-    public ColumnFamilyEntity toEntity() {
-        ColumnFamilyEntity entity = ColumnFamilyEntity.of(columnFamily);
+    public ColumnEntity toEntity() {
+        ColumnEntity entity = ColumnEntity.of(columnFamily);
         entity.addAll(columns);
         entity.add(getKey(rowKey));
         return entity;
