@@ -25,7 +25,7 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnFamilyEntity;
+import org.jnosql.diana.api.column.ColumnEntity;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -38,7 +38,7 @@ final class CassandraConverter {
     private CassandraConverter() {
     }
 
-    public static ColumnFamilyEntity toDocumentEntity(Row row) {
+    public static ColumnEntity toDocumentEntity(Row row) {
         List<Column> columns = new ArrayList<>();
         String columnFamily = "";
         for (ColumnDefinitions.Definition definition : row.getColumnDefinitions().asList()) {
@@ -48,7 +48,7 @@ final class CassandraConverter {
             Column column = Column.of(definition.getName(), value);
             columns.add(column);
         }
-        return ColumnFamilyEntity.of(columnFamily, columns);
+        return ColumnEntity.of(columnFamily, columns);
     }
 
     public static Object get(ColumnDefinitions.Definition definition, Row row) {

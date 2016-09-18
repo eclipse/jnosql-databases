@@ -20,29 +20,22 @@
 package org.jnosql.diana.cassandra.column;
 
 
-import com.datastax.driver.core.querybuilder.BuiltStatement;
-import com.datastax.driver.core.querybuilder.Clause;
-import com.datastax.driver.core.querybuilder.Delete;
-import com.datastax.driver.core.querybuilder.Insert;
-import com.datastax.driver.core.querybuilder.Ordering;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.StreamSupport;
+import com.datastax.driver.core.querybuilder.*;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnFamilyEntity;
+import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
-import static com.datastax.driver.core.querybuilder.QueryBuilder.asc;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.desc;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.StreamSupport;
+
+import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
 import static org.jnosql.diana.api.Sort.SortType.ASC;
 
 final class QueryUtils {
@@ -61,7 +54,7 @@ final class QueryUtils {
     }
 
 
-    public static Insert insert(ColumnFamilyEntity entity, String keyspace) {
+    public static Insert insert(ColumnEntity entity, String keyspace) {
         Insert insert = insertInto(keyspace, entity.getName());
         entity.getColumns().forEach(d -> insert.value(d.getName(), convert(d.getValue())));
         return insert;

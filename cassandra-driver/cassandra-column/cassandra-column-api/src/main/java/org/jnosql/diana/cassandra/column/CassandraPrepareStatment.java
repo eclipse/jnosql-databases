@@ -24,7 +24,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.column.ColumnFamilyEntity;
+import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.PreparedStatement;
 
 import java.util.List;
@@ -49,7 +49,7 @@ class CassandraPrepareStatment implements PreparedStatement {
     }
 
     @Override
-    public List<ColumnFamilyEntity> executeQuery() {
+    public List<ColumnEntity> executeQuery() {
         loadBoundStatment();
         ResultSet resultSet = session.execute(boundStatement);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
@@ -59,7 +59,7 @@ class CassandraPrepareStatment implements PreparedStatement {
 
 
     @Override
-    public void executeQueryAsync(Consumer<List<ColumnFamilyEntity>> consumer) throws ExecuteAsyncQueryException {
+    public void executeQueryAsync(Consumer<List<ColumnEntity>> consumer) throws ExecuteAsyncQueryException {
         loadBoundStatment();
         ResultSetFuture resultSet = session.executeAsync(boundStatement);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);

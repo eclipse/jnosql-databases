@@ -23,7 +23,7 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.column.ColumnFamilyEntity;
+import org.jnosql.diana.api.column.ColumnEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -34,10 +34,10 @@ class CassandraReturnQueryAsync implements Runnable {
 
     private final ResultSetFuture resultSet;
 
-    private final Consumer<List<ColumnFamilyEntity>> consumer;
+    private final Consumer<List<ColumnEntity>> consumer;
 
 
-    CassandraReturnQueryAsync(ResultSetFuture resultSet, Consumer<List<ColumnFamilyEntity>> consumer) {
+    CassandraReturnQueryAsync(ResultSetFuture resultSet, Consumer<List<ColumnEntity>> consumer) {
         this.resultSet = resultSet;
         this.consumer = consumer;
     }
@@ -46,7 +46,7 @@ class CassandraReturnQueryAsync implements Runnable {
     public void run() {
         try {
             ResultSet resultSet = this.resultSet.get();
-            List<ColumnFamilyEntity> entities = resultSet.all().stream()
+            List<ColumnEntity> entities = resultSet.all().stream()
                     .map(row -> CassandraConverter.toDocumentEntity(row)).collect(Collectors.toList());
             consumer.accept(entities);
         } catch (InterruptedException | ExecutionException e) {
