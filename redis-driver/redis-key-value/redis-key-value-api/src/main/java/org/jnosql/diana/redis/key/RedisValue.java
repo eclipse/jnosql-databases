@@ -22,15 +22,11 @@ package org.jnosql.diana.redis.key;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.jnosql.diana.api.TypeSupplier;
 import org.jnosql.diana.api.Value;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 final class RedisValue implements Value {
 
@@ -52,10 +48,6 @@ final class RedisValue implements Value {
         return json;
     }
 
-    @Override
-    public <T> T cast() throws ClassCastException {
-        return (T) json;
-    }
 
     @Override
     public <T> T get(Class<T> clazz) throws NullPointerException, UnsupportedOperationException {
@@ -63,21 +55,8 @@ final class RedisValue implements Value {
     }
 
     @Override
-    public <T> List<T> getList(Class<T> clazz) throws NullPointerException, UnsupportedOperationException {
-        Type type = new TypeToken<ArrayList<T>>() { }.getType();
-        return gson.fromJson(json, type);
-    }
-
-    @Override
-    public <T> Set<T> getSet(Class<T> clazz) throws NullPointerException, UnsupportedOperationException {
-        Type type = new TypeToken<HashSet<T>>() { }.getType();
-        return gson.fromJson(json, type);
-    }
-
-    @Override
-    public <K, V> Map<K, V> getMap(Class<K> keyClass, Class<V> valueClass) throws NullPointerException,
-            UnsupportedOperationException {
-        Type type = new TypeToken<Map<K, V>>() { }.getType();
+    public <T> T get(TypeSupplier<T> typeSupplier) throws NullPointerException, UnsupportedOperationException {
+        Type type = new TypeToken<T>() { }.getType();
         return gson.fromJson(json, type);
     }
 
