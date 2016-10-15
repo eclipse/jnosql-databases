@@ -28,12 +28,15 @@ import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.TTL;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
-import org.jnosql.diana.api.document.*;
+import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -78,12 +81,12 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     }
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, TTL ttl) {
+    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("MongoDB does not support save with TTL");
     }
 
     @Override
-    public void saveAsync(DocumentEntity entity, TTL ttl) {
+    public void saveAsync(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("MongoDB does not support saveAsync with TTL");
     }
 
@@ -94,7 +97,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     }
 
     @Override
-    public void saveAsync(DocumentEntity entity, TTL ttl, Consumer<DocumentEntity> callBack) {
+    public void saveAsync(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) {
         throw new UnsupportedOperationException("MongoDB does not support saveAsync with TTL");
     }
 
@@ -171,22 +174,6 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     public void findAsync(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-    }
-
-    @Override
-    public List<DocumentEntity> nativeQuery(String query) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to native query yet");
-    }
-
-    @Override
-    public void nativeQueryAsync(String query, Consumer<List<DocumentEntity>> callBack)
-            throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to native query yet");
-    }
-
-    @Override
-    public PreparedStatement nativeQueryPrepare(String query) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to native query yet");
     }
 
     @Override

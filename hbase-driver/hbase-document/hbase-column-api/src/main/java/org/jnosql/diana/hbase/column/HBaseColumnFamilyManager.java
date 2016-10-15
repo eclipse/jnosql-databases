@@ -21,16 +21,25 @@ package org.jnosql.diana.hbase.column;
 
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.TTL;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
-import org.jnosql.diana.api.column.*;
+import org.jnosql.diana.api.column.Column;
+import org.jnosql.diana.api.column.ColumnCondition;
+import org.jnosql.diana.api.column.ColumnEntity;
+import org.jnosql.diana.api.column.ColumnFamilyManager;
+import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +88,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity, TTL ttl) throws NullPointerException {
+    public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
@@ -90,7 +99,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public void saveAsync(ColumnEntity entity, TTL ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(ColumnEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
@@ -100,7 +109,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public void saveAsync(ColumnEntity entity, TTL ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(ColumnEntity entity, Duration ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
@@ -164,20 +173,6 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         throw new UnsupportedOperationException("There is not support to find async");
     }
 
-    @Override
-    public List<ColumnEntity> nativeQuery(String query) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to run nativeQuery");
-    }
-
-    @Override
-    public void nativeQueryAsync(String query, Consumer<List<ColumnEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to run nativeQuery Async");
-    }
-
-    @Override
-    public PreparedStatement nativeQueryPrepare(String query) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to PreparedStatement");
-    }
 
     @Override
     public void close() {
