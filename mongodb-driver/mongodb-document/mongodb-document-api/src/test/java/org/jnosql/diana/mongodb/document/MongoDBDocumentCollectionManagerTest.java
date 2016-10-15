@@ -116,7 +116,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.addCondition(DocumentCondition.eq(id));
         DocumentEntity entityFound = entityManager.find(query).get(0);
-        Map<String, String> result = entityFound.find("phones").get().getValue().cast();
+        Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
         String key = result.keySet().stream().findFirst().get();
         String value = result.get(key);
         assertEquals("mobile", key);

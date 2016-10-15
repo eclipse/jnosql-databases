@@ -53,16 +53,18 @@ final class DocumentQueryConversor {
             case LIKE:
                 return Filters.regex(document.getName(), value.toString());
             case AND:
-                List<Document> andList = condition.getDocument().getValue().get(new TypeReference<List<Document>>(){});
+                List<Document> andList = condition.getDocument().getValue().get(new TypeReference<List<Document>>() {
+                });
                 return Filters.and(andList.stream()
                         .map(d -> new BasicDBObject(d.getName(), d.getValue().get())).toArray(BasicDBObject[]::new));
             case OR:
-                List<Document> orList = condition.getDocument().getValue().get(new TypeReference<List<Document>>(){});
+                List<Document> orList = condition.getDocument().getValue().get(new TypeReference<List<Document>>() {
+                });
                 return Filters.or(orList.stream()
                         .map(d -> new BasicDBObject(d.getName(), d.getValue().get())).toArray(BasicDBObject[]::new));
             default:
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
-                        + " is not supported from mongoDB diana driver" );
+                        + " is not supported from mongoDB diana driver");
         }
     }
 }
