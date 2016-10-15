@@ -20,6 +20,9 @@
 package org.jnosql.diana.hazelcast.key;
 
 import com.hazelcast.core.IMap;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -27,10 +30,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.jnosql.diana.api.TTL;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
 
 
 public class HazelCastKeyValueEntityManager implements BucketManager {
