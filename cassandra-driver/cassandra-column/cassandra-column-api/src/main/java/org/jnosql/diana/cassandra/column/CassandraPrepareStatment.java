@@ -25,14 +25,13 @@ import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.PreparedStatement;
 
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-class CassandraPrepareStatment implements PreparedStatement {
+public class CassandraPrepareStatment {
 
     private final com.datastax.driver.core.PreparedStatement prepare;
 
@@ -48,7 +47,6 @@ class CassandraPrepareStatment implements PreparedStatement {
         this.session = session;
     }
 
-    @Override
     public List<ColumnEntity> executeQuery() {
         loadBoundStatment();
         ResultSet resultSet = session.execute(boundStatement);
@@ -58,7 +56,6 @@ class CassandraPrepareStatment implements PreparedStatement {
 
 
 
-    @Override
     public void executeQueryAsync(Consumer<List<ColumnEntity>> consumer) throws ExecuteAsyncQueryException {
         loadBoundStatment();
         ResultSetFuture resultSet = session.executeAsync(boundStatement);
@@ -66,8 +63,7 @@ class CassandraPrepareStatment implements PreparedStatement {
         resultSet.addListener(executeAsync, executor);
     }
 
-    @Override
-    public PreparedStatement bind(Object... values) {
+    public CassandraPrepareStatment bind(Object... values) {
         boundStatement = prepare.bind(values);
         return this;
     }
@@ -78,7 +74,6 @@ class CassandraPrepareStatment implements PreparedStatement {
         }
     }
 
-    @Override
     public void close()  {
 
     }
