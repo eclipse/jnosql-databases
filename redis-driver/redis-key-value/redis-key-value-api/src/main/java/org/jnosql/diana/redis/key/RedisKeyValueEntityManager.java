@@ -21,17 +21,16 @@ package org.jnosql.diana.redis.key;
 
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
+import redis.clients.jedis.Jedis;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-import org.apache.commons.lang3.StringUtils;
-import org.jnosql.diana.api.TTL;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
-import redis.clients.jedis.Jedis;
 
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
