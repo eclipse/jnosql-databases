@@ -20,6 +20,8 @@
 package org.jnosql.diana.hazelcast.key;
 
 import com.hazelcast.core.IMap;
+
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +52,7 @@ public class HazelCastKeyValueEntityManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, TTL ttl) {
+    public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
         map.put(entity.getKey(), entity.getValue().get(), ttl.toMillis(), TimeUnit.MILLISECONDS);
     }
 
@@ -60,7 +62,7 @@ public class HazelCastKeyValueEntityManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, TTL ttl) throws NullPointerException, UnsupportedOperationException {
+    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         StreamSupport.stream(entities.spliterator(), false).forEach(kv -> this.put(kv, ttl));
     }
 
