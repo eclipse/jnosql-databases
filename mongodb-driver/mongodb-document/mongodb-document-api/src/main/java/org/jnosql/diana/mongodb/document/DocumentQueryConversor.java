@@ -22,9 +22,10 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
+import org.bson.conversions.Bson;
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.bson.conversions.Bson;
 
 import java.util.List;
 
@@ -52,11 +53,11 @@ final class DocumentQueryConversor {
             case LIKE:
                 return Filters.regex(document.getName(), value.toString());
             case AND:
-                List<Document> andList = condition.getDocument().getValue().getList(Document.class);
+                List<Document> andList = condition.getDocument().getValue().get(new TypeReference<List<Document>>(){});
                 return Filters.and(andList.stream()
                         .map(d -> new BasicDBObject(d.getName(), d.getValue().get())).toArray(BasicDBObject[]::new));
             case OR:
-                List<Document> orList = condition.getDocument().getValue().getList(Document.class);
+                List<Document> orList = condition.getDocument().getValue().get(new TypeReference<List<Document>>(){});
                 return Filters.or(orList.stream()
                         .map(d -> new BasicDBObject(d.getName(), d.getValue().get())).toArray(BasicDBObject[]::new));
             default:
