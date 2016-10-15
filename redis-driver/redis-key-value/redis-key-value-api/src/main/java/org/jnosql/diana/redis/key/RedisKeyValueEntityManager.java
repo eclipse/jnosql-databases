@@ -21,6 +21,8 @@ package org.jnosql.diana.redis.key;
 
 
 import com.google.gson.Gson;
+
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -62,10 +64,10 @@ public class RedisKeyValueEntityManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, TTL ttl) throws NullPointerException, UnsupportedOperationException {
+    public <K> void put(KeyValueEntity<K> entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         put(entity);
         String valideKey = createKeyWithNameSpace(entity.getKey().toString(), nameSpace);
-        jedis.expire(valideKey, (int) ttl.toSeconds());
+        jedis.expire(valideKey, (int) ttl.getSeconds());
     }
 
     @Override
@@ -74,11 +76,11 @@ public class RedisKeyValueEntityManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, TTL ttl) throws NullPointerException, UnsupportedOperationException {
+    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
         StreamSupport.stream(entities.spliterator(), false).map(KeyValueEntity::getKey)
                 .map(k -> createKeyWithNameSpace(k.toString(), nameSpace))
-                .forEach(k -> jedis.expire(k, (int) ttl.toSeconds()));
+                .forEach(k -> jedis.expire(k, (int) ttl.getSeconds()));
     }
 
     @Override
