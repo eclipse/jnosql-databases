@@ -30,8 +30,8 @@
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
-        <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
+        <maven.compiler.targetLevel>1.8</maven.compiler.targetLevel>
+        <maven.compiler.sourceLevel>1.8</maven.compiler.sourceLevel>
     </properties>
     <dependencies>
     </dependencies>
