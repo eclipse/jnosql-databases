@@ -10,6 +10,7 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.query.Namespace;
+import com.google.gson.Gson;
 
 public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<RiakKeyValueEntityManager> {
 
@@ -18,10 +19,11 @@ public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<Ri
 	@Override
 	public RiakKeyValueEntityManager getBucketManager(String bucketName) throws UnsupportedOperationException {
 		
+		cluster.start();
 		RiakClient riakClient = new RiakClient(cluster);
 		Namespace quotesBucket = new Namespace(bucketName);
 
-		return new RiakKeyValueEntityManager(riakClient, quotesBucket);
+		return new RiakKeyValueEntityManager(riakClient, new Gson(),quotesBucket);
 	}
 
 	@Override
@@ -51,8 +53,7 @@ public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<Ri
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		
+		cluster.shutdown();
 	}
 
 }
