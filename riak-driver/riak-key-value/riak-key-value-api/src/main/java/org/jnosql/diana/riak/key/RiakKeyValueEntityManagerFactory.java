@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 
 public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<RiakKeyValueEntityManager> {
 
-	RiakCluster cluster;
+	private RiakCluster cluster;
 	
 	@Override
 	public RiakKeyValueEntityManager getBucketManager(String bucketName) throws UnsupportedOperationException {
