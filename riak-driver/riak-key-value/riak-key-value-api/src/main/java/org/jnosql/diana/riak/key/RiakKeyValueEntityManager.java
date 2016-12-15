@@ -1,9 +1,13 @@
 package org.jnosql.diana.riak.key;
 
 
-import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.riak.key.RiakUtils.createDeleteValue;
+import static org.jnosql.diana.riak.key.RiakUtils.createFetchValue;
+import static org.jnosql.diana.riak.key.RiakUtils.createStoreValue;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
@@ -17,8 +21,8 @@ import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
+import com.basho.riak.client.api.commands.kv.FetchValue.Response;
 import com.basho.riak.client.api.commands.kv.StoreValue;
-import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 import com.google.gson.Gson;
 
@@ -32,7 +36,6 @@ public class RiakKeyValueEntityManager implements BucketManager {
 	private final Namespace nameSpace;
 	
 	public RiakKeyValueEntityManager(RiakClient client, Gson gson, Namespace nameSpace) {
-		super();
 		this.client = client;
 		this.gson = gson;
 		this.nameSpace = nameSpace;
@@ -55,7 +58,8 @@ public class RiakKeyValueEntityManager implements BucketManager {
 		K key = entity.getKey();
 		Value value = entity.getValue();
 
-		StoreValue storeValue = RiakUtils.createStoreValue(key,value,nameSpace,ttl);
+		StoreValue storeValue = createStoreValue(key,value,nameSpace,ttl);
+		
 		try {
 			client.execute(storeValue);
 		} catch (ExecutionException e) {
@@ -80,23 +84,24 @@ public class RiakKeyValueEntityManager implements BucketManager {
 	@Override
 	public <K> Optional<Value> get(K key) throws NullPointerException {
 		
-		//terminar
-		//if(StringUtils.isNoneBlank(valueFetch))
+		if(StringUtils.isBlank(key.toString())){
+			throw new DianaRiakException("The Key is irregular",new IllegalStateException());
+		}
+
+		FetchValue fetchValue = createFetchValue(nameSpace, key);
 		
-		Location location = RiakUtils.createLocation(nameSpace, key);
-        FetchValue fv = new FetchValue.Builder(location).build();
 		try {
-			FetchValue.Response response = client.execute(fv);
+			FetchValue.Response response = client.execute(fetchValue);
 			String valueFetch = response.getValue(String.class);
 			if(StringUtils.isNoneBlank(valueFetch))
 				 return Optional.of(RiakValue.of(gson,valueFetch));
 	    
 		} catch (UnresolvedConflictException e) {
-			e.printStackTrace();
+			throw new DianaRiakException(e.getMessage(),e);
 		} catch (ExecutionException e) {
-			e.printStackTrace();
+			throw new DianaRiakException(e.getMessage(),e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			throw new DianaRiakException(e.getMessage(),e);
 		}
 	     
 		return Optional.empty();
@@ -105,7 +110,8 @@ public class RiakKeyValueEntityManager implements BucketManager {
 	@Override
 	public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
 		
-		StreamSupport.stream(keys.spliterator(),false)
+	/* Stream Version , is so ugly , but i waiting feedback for implemententions
+	return	StreamSupport.stream(keys.spliterator(),false)
 			.map(k -> RiakUtils.createLocation(nameSpace,k))
 			.map(l -> new FetchValue.Builder(l).build())
 			.map(f -> {
@@ -113,34 +119,57 @@ public class RiakKeyValueEntityManager implements BucketManager {
 				try {
 					return client.execute(f);
 				} catch (ExecutionException e) {
-					e.printStackTrace();
+					throw new DianaRiakException(e.getMessage(),e.getCause());
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					throw new DianaRiakException(e.getMessage(),e);
 				}
-				return null;
 			})
+			.filter(Response::hasValues)
 			.map(r -> {
+				
 				try {
 					return r.getValue(String.class);
 				} catch (UnresolvedConflictException e) {
-					e.printStackTrace();
+					throw new DianaRiakException(e.getMessage(),e);
 				}
-				return null;
+				
 			})
 			.filter(StringUtils::isNotBlank).map(v -> RiakValue.of(gson, v))
-			.collect(toList());
+			.collect(toList());*/
+	
+		List<Value> values = new ArrayList<>();
+	
+		for(K key : keys){
 			
-		
-		return null;
+			FetchValue fetchValue = createFetchValue(nameSpace, key);
+
+			try {
+
+				Response response = client.execute(fetchValue);
+				
+				if(response.hasValues()){
+					
+					String value = response.getValue(String.class);
+					if(StringUtils.isNoneBlank(value)){
+						values.add(RiakValue.of(gson,value));
+					}
+				}
+			} catch (ExecutionException e) {
+				throw new DianaRiakException(e.getMessage(),e);
+			} catch (InterruptedException e) {
+				throw new DianaRiakException(e.getMessage(),e);
+			}
+		}
+		return values;
 	}
 
 	@Override
 	public <K> void remove(K key) throws NullPointerException {
 
-		Location location = RiakUtils.createLocation(nameSpace, key.toString());
-		DeleteValue dv = new DeleteValue.Builder(location).build();
+		DeleteValue deleteValue = createDeleteValue(nameSpace,key);
+		
 		try {
-			client.execute(dv);
+			client.execute(deleteValue);
 		} catch (ExecutionException e) {
 			throw new DianaRiakException(e.getMessage(),e);
 		} catch (InterruptedException e) {
