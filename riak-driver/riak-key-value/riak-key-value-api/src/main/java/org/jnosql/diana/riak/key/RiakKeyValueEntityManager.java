@@ -4,10 +4,9 @@ package org.jnosql.diana.riak.key;
 import static org.jnosql.diana.riak.key.RiakUtils.createDeleteValue;
 import static org.jnosql.diana.riak.key.RiakUtils.createFetchValue;
 import static org.jnosql.diana.riak.key.RiakUtils.createStoreValue;
+import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
@@ -62,9 +61,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
 		
 		try {
 			client.execute(storeValue);
-		} catch (ExecutionException e) {
-			throw new DianaRiakException(e.getMessage(),e);
-		} catch (InterruptedException e) {
+		} catch (ExecutionException | InterruptedException e) {
 			throw new DianaRiakException(e.getMessage(),e);
 		}
 	}
@@ -89,79 +86,49 @@ public class RiakKeyValueEntityManager implements BucketManager {
 		}
 
 		FetchValue fetchValue = createFetchValue(nameSpace, key);
-		
 		try {
+			
 			FetchValue.Response response = client.execute(fetchValue);
+			
 			String valueFetch = response.getValue(String.class);
 			if(StringUtils.isNoneBlank(valueFetch))
-				 return Optional.of(RiakValue.of(gson,valueFetch));
-	    
-		} catch (UnresolvedConflictException e) {
-			throw new DianaRiakException(e.getMessage(),e);
-		} catch (ExecutionException e) {
-			throw new DianaRiakException(e.getMessage(),e);
-		} catch (InterruptedException e) {
+				return Optional.of(RiakValue.of(gson,valueFetch));
+			
+		} catch (ExecutionException | InterruptedException e) {
 			throw new DianaRiakException(e.getMessage(),e);
 		}
-	     
 		return Optional.empty();
 	}
 
 	@Override
 	public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
 		
-	/* Stream Version , is so ugly , but i waiting feedback for implemententions
-	return	StreamSupport.stream(keys.spliterator(),false)
-			.map(k -> RiakUtils.createLocation(nameSpace,k))
-			.map(l -> new FetchValue.Builder(l).build())
-			.map(f -> {
-				
-				try {
-					return client.execute(f);
-				} catch (ExecutionException e) {
-					throw new DianaRiakException(e.getMessage(),e.getCause());
-				} catch (InterruptedException e) {
-					throw new DianaRiakException(e.getMessage(),e);
-				}
-			})
-			.filter(Response::hasValues)
-			.map(r -> {
-				
-				try {
-					return r.getValue(String.class);
-				} catch (UnresolvedConflictException e) {
-					throw new DianaRiakException(e.getMessage(),e);
-				}
-				
-			})
-			.filter(StringUtils::isNotBlank).map(v -> RiakValue.of(gson, v))
-			.collect(toList());*/
-	
-		List<Value> values = new ArrayList<>();
-	
-		for(K key : keys){
-			
-			FetchValue fetchValue = createFetchValue(nameSpace, key);
-
-			try {
-
-				Response response = client.execute(fetchValue);
-				
-				if(response.hasValues()){
-					
-					String value = response.getValue(String.class);
-					if(StringUtils.isNoneBlank(value)){
-						values.add(RiakValue.of(gson,value));
+		return	StreamSupport.stream(keys.spliterator(),false)
+				.map(k -> RiakUtils.createLocation(nameSpace,k))
+				.map(l -> new FetchValue.Builder(l).build())
+				.map(f -> 		
+					{
+						try {
+							return client.execute(f);
+						} catch (ExecutionException | InterruptedException e) {
+							throw new DianaRiakException(e.getMessage(),e);
+						}
 					}
-				}
-			} catch (ExecutionException e) {
-				throw new DianaRiakException(e.getMessage(),e);
-			} catch (InterruptedException e) {
-				throw new DianaRiakException(e.getMessage(),e);
-			}
-		}
-		return values;
+				)
+				.filter(Response::hasValues)
+				.map(r -> {
+					
+					try {
+						return r.getValue(String.class);
+					} catch (UnresolvedConflictException e) {
+						throw new DianaRiakException(e.getMessage(),e);
+					}
+					
+				})
+				.filter(StringUtils::isNotBlank).map(v -> RiakValue.of(gson, v))
+				.collect(toList());
 	}
+	
 
 	@Override
 	public <K> void remove(K key) throws NullPointerException {
@@ -170,9 +137,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
 		
 		try {
 			client.execute(deleteValue);
-		} catch (ExecutionException e) {
-			throw new DianaRiakException(e.getMessage(),e);
-		} catch (InterruptedException e) {
+		} catch (ExecutionException | InterruptedException e) {
 			throw new DianaRiakException(e.getMessage(),e);
 		}
 	}
