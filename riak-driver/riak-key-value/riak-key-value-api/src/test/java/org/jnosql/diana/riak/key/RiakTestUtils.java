@@ -22,7 +22,7 @@ package org.jnosql.diana.riak.key;
 import com.basho.riak.client.core.RiakNode;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
-public final class RialTestUtils {
+public final class RiakTestUtils {
 
 
     public static BucketManagerFactory get() {

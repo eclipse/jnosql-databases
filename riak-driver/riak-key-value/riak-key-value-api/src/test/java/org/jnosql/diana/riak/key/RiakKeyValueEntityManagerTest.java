@@ -30,7 +30,7 @@ public class RiakKeyValueEntityManagerTest {
 
     @Before
     public void init() {
-        keyValueEntityManagerFactory = RialTestUtils.get();
+        keyValueEntityManagerFactory = RiakTestUtils.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
     }
 
