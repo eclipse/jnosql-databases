@@ -34,13 +34,17 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     private RiakCluster cluster;
 
     private static final RiakNode DEFAULT_NODE = new RiakNode.Builder()
-            .withRemoteAddress("127.0.0.1")
-            .withRemotePort(10017).build();
+            .withRemoteAddress("127.0.0.1").build();
 
 
     public void add(RiakNode node) {
         Objects.requireNonNull(node, "Node is required");
         this.nodes.add(node);
+    }
+
+    public void add(String address) {
+        Objects.requireNonNull(address, "Address is required");
+        this.nodes.add(new RiakNode.Builder().withRemoteAddress(address).build());
     }
 
     @Override

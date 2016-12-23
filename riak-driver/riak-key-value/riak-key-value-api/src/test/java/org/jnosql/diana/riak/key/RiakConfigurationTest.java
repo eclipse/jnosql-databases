@@ -18,7 +18,7 @@ public class RiakConfigurationTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldReturnErroWhenNodeIsNull() {
-        configuration.add(null);
+        configuration.add((String) null);
     }
 
     @Test

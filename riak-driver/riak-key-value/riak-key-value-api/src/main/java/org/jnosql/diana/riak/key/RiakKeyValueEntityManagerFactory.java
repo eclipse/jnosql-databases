@@ -32,50 +32,51 @@ import com.google.gson.Gson;
 
 public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<RiakKeyValueEntityManager> {
 
-	private final RiakCluster cluster;
+    private static final Gson GSON = new Gson();
+    private final RiakCluster cluster;
 
-	RiakKeyValueEntityManagerFactory(RiakCluster cluster) {
-		this.cluster = cluster;
-	}
+    RiakKeyValueEntityManagerFactory(RiakCluster cluster) {
+        this.cluster = cluster;
+    }
 
-	@Override
-	public RiakKeyValueEntityManager getBucketManager(String bucketName) throws UnsupportedOperationException {
-		
-		cluster.start();
-		RiakClient riakClient = new RiakClient(cluster);
-		Namespace quotesBucket = new Namespace(bucketName);
+    @Override
+    public RiakKeyValueEntityManager getBucketManager(String bucketName) throws UnsupportedOperationException {
 
-		return new RiakKeyValueEntityManager(riakClient, new Gson(),quotesBucket);
-	}
+        cluster.start();
+        RiakClient riakClient = new RiakClient(cluster);
+        Namespace quotesBucket = new Namespace(bucketName);
 
-	@Override
-	public <T> List<T> getList(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        return new RiakKeyValueEntityManager(riakClient, GSON, quotesBucket);
+    }
 
-	@Override
-	public <T> Set<T> getSet(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T> List<T> getList(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T> Set<T> getSet(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue)
-			throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		cluster.shutdown();
-	}
+    @Override
+    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue)
+            throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void close() {
+        cluster.shutdown();
+    }
 
 }
