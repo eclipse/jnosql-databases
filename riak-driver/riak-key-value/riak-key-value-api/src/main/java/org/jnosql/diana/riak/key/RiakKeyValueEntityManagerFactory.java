@@ -51,27 +51,23 @@ public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<Ri
 
     @Override
     public <T> List<T> getList(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+      throw new UnsupportedOperationException("The riak does not support getList method");
     }
 
     @Override
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("The riak does not support getSet method");
     }
 
     @Override
     public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("The riak does not support getQueue method");
     }
 
     @Override
     public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue)
             throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("The riak does not support getMap method");
     }
 
     @Override
