@@ -19,5 +19,37 @@
 
 package org.jnosql.diana.arangodb.document;
 
-public class MongoDBDocumentConfiguration {
+import com.arangodb.ArangoDB;
+import org.jnosql.diana.api.document.DocumentConfiguration;
+
+public class ArangoDBDocumentConfiguration implements DocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
+
+    private ArangoDB.Builder builder = new ArangoDB.Builder();
+
+
+    public void host(String host) {
+        builder.host(host);
+    }
+
+    public void port(int port) {
+        builder.port(port);
+    }
+
+    public void timeout(int timeout) {
+        builder.timeout(timeout);
+    }
+
+    public void user(String user) {
+        builder.user(user);
+    }
+
+    public void password(String password) {
+        builder.password(password);
+    }
+
+
+    @Override
+    public ArangoDBDocumentCollectionManagerFactory getManagerFactory() {
+        return new ArangoDBDocumentCollectionManagerFactory(builder.build());
+    }
 }

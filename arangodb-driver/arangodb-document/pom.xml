@@ -33,13 +33,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
+	<arango.driver>4.1.4</arango.driver>
     </properties>
     <dependencies>
 	<dependency>
 	    <groupId>com.arangodb</groupId>
 	    <artifactId>arangodb-java-driver</artifactId>
-	    <version>4.1.4</version>
+	    <version>${arango.driver}</version>
 	</dependency>
+	<dependency>
+	    <groupId>com.arangodb</groupId>
+	    <artifactId>arangodb-java-driver-async</artifactId>
+	    <version>${arango.driver}</version>
+	</dependency>
+
     </dependencies>
     <build>
         <plugins>
