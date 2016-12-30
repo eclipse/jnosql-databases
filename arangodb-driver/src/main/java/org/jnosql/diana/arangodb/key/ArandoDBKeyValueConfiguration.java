@@ -19,7 +19,6 @@
 package org.jnosql.diana.arangodb.key;
 
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
@@ -28,6 +27,6 @@ public class ArandoDBKeyValueConfiguration extends ArangoDBConfiguration
 
     @Override
     public ArangoDBKeyValueEntityManagerFactory getManagerFactory() {
-        return new ArangoDBKeyValueEntityManagerFactory(builder.build(), builderAsync.build());
+        return new ArangoDBKeyValueEntityManagerFactory(builder.build());
     }
 }

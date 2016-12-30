@@ -19,7 +19,6 @@
 package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.arangodb.util.ArangoDBUtil;
 
@@ -31,19 +30,22 @@ import java.util.Set;
 public class ArangoDBKeyValueEntityManagerFactory implements BucketManagerFactory<ArangoDBValueEntityManager> {
 
 
+    private static final String DEFAULT_NAMESPACE = "diana";
 
     private final ArangoDB arangoDB;
-    private final ArangoDBAsync arangoDBAsync;
 
-    ArangoDBKeyValueEntityManagerFactory(ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
+    ArangoDBKeyValueEntityManagerFactory(ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
-        this.arangoDBAsync = arangoDBAsync;
     }
 
     @Override
     public ArangoDBValueEntityManager getBucketManager(String bucketName) throws UnsupportedOperationException {
-        ArangoDBUtil.checkDatabase(bucketName, arangoDB);
-        return new ArangoDBValueEntityManager(arangoDB, arangoDBAsync);
+        return getBucketManager(bucketName, DEFAULT_NAMESPACE);
+    }
+
+    public ArangoDBValueEntityManager getBucketManager(String bucketName, String namespace) {
+        ArangoDBUtil.checkCollection(bucketName, arangoDB, namespace);
+        return new ArangoDBValueEntityManager(arangoDB, bucketName, namespace);
     }
 
     @Override
@@ -69,7 +71,6 @@ public class ArangoDBKeyValueEntityManagerFactory implements BucketManagerFactor
     @Override
     public void close() {
         arangoDB.shutdown();
-        arangoDBAsync.shutdown();
     }
 
 
