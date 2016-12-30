@@ -21,11 +21,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jnosql.diana.mongodb.driver</groupId>
+    <groupId>mongodb-driver</groupId>
     <artifactId>mongodb-driver-parent</artifactId>
-    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>MongoDB driver parent to JNOSQL diana Project</name>
+    <name>MongoDB driver JNOSQL diana Project</name>
     <parent>
         <groupId>org.jnosql.diana</groupId>
         <artifactId>diana-driver</artifactId>
@@ -35,6 +34,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
+	<monbodb.driver>3.3.0</monbodb.driver>
     </properties>
     <dependencies>
         <dependency>
@@ -47,6 +47,16 @@
             <groupId>org.jnosql.diana</groupId>
             <artifactId>diana-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${monbodb.driver}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-async</artifactId>
+            <version>${monbodb.driver}</version>
         </dependency>
     </dependencies>
     <build>
@@ -86,7 +96,4 @@
             </plugin>
         </plugins>
     </build>
-    <modules>
-        <module>mongodb-document</module>
-    </modules>
 </project>
