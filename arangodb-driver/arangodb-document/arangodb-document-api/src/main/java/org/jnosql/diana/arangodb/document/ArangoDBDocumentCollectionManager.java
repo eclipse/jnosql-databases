@@ -2,19 +2,27 @@ package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
+import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.singletonList;
 
 
 public class ArangoDBDocumentCollectionManager implements DocumentCollectionManager {
@@ -41,7 +49,6 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         arangoDB.db(database).collection(collectionName).insertDocument(baseDocument);
         return entity;
     }
-
 
 
     @Override
@@ -77,6 +84,19 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public void delete(DocumentQuery query) {
+        String collection = query.getCollection();
+        if (query.getConditions().isEmpty()) {
+            return;
+        }
+        DocumentCondition documentCondition = query.getConditions().get(0);
+        Value value = documentCondition.getDocument().getValue();
+        if (Condition.IN.equals(documentCondition.getCondition())) {
+            List<String> keys = value.get(new TypeReference<List<String>>() {});
+            arangoDB.db(database).collection(collection).deleteDocuments(keys);
+        } else if (Condition.IN.equals(documentCondition.getCondition())) {
+            String key = value.get(String.class);
+            arangoDB.db(database).collection(collection).deleteDocument(key);
+        }
 
     }
 
@@ -92,7 +112,20 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
-        return null;
+
+        if (query.getConditions().isEmpty()) {
+            return Collections.emptyList();
+        }
+        DocumentCondition documentCondition = query.getConditions().get(0);
+        String key = documentCondition.getDocument().getValue().get(String.class);
+        String collection = query.getCollection();
+        BaseDocument document = arangoDB.db(database).collection(collection).getDocument(key, BaseDocument.class);
+        Map<String, Object> properties = document.getProperties();
+        List<Document> documents = properties.keySet().stream()
+                .map(k -> Document.of(k, properties.get(k)))
+                .collect(Collectors.toList());
+        documents.add(Document.of(KEY_NAME, document.getKey()));
+        return singletonList(DocumentEntity.of(collection, documents));
     }
 
     @Override
@@ -118,7 +151,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
         baseDocument.setKey(entity.getDocuments().stream()
                 .filter(FIND_KEY_DOCUMENT).findFirst()
-                .map(Document::getName)
+                .map(d -> d.getValue().get(String.class))
                 .orElseThrow(() -> new ArangoDBException("The entity must have a entity key")));
         entity.getDocuments().stream()
                 .filter(FIND_KEY_DOCUMENT.negate())
@@ -129,7 +162,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public DocumentEntity save(DocumentEntity entity, Duration ttl) {
-       throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
+        throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
 
     @Override
