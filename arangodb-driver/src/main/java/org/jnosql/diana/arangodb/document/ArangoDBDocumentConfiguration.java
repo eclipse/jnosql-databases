@@ -20,36 +20,44 @@
 package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBAsync;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 
 public class ArangoDBDocumentConfiguration implements DocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
 
     private ArangoDB.Builder builder = new ArangoDB.Builder();
 
+    private ArangoDBAsync.Builder builderAsync = new ArangoDBAsync.Builder();
+
 
     public void host(String host) {
         builder.host(host);
+        builderAsync.host(host);
     }
 
     public void port(int port) {
         builder.port(port);
+        builderAsync.port(port);
     }
 
     public void timeout(int timeout) {
         builder.timeout(timeout);
+        builderAsync.timeout(timeout);
     }
 
     public void user(String user) {
         builder.user(user);
+        builderAsync.user(user);
     }
 
     public void password(String password) {
         builder.password(password);
+        builderAsync.password(password);
     }
 
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory getManagerFactory() {
-        return new ArangoDBDocumentCollectionManagerFactory(builder.build());
+        return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
     }
 }
