@@ -16,20 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jnosql.diana.arangodb.key;
 
-package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
-import org.jnosql.diana.api.document.DocumentConfiguration;
-import org.jnosql.diana.arangodb.ArangoDBConfiguration;
+import org.jnosql.diana.api.key.BucketManager;
 
-public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements DocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
+public class ArangoDBValueEntityManager implements BucketManager {
 
 
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory getManagerFactory() {
-        return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
+    private final ArangoDB arangoDB;
+    private final ArangoDBAsync arangoDBAsync;
+
+    ArangoDBValueEntityManager(ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
+        this.arangoDB = arangoDB;
+        this.arangoDBAsync = arangoDBAsync;
     }
 }

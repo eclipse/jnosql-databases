@@ -16,20 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jnosql.diana.arangodb;
 
-package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
-import org.jnosql.diana.api.document.DocumentConfiguration;
-import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
-public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements DocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
+public abstract class ArangoDBConfiguration {
 
 
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory getManagerFactory() {
-        return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
+    protected ArangoDB.Builder builder = new ArangoDB.Builder();
+
+    protected ArangoDBAsync.Builder builderAsync = new ArangoDBAsync.Builder();
+
+
+    public void host(String host) {
+        builder.host(host);
+        builderAsync.host(host);
+    }
+
+    public void port(int port) {
+        builder.port(port);
+        builderAsync.port(port);
+    }
+
+    public void timeout(int timeout) {
+        builder.timeout(timeout);
+        builderAsync.timeout(timeout);
+    }
+
+    public void user(String user) {
+        builder.user(user);
+        builderAsync.user(user);
+    }
+
+    public void password(String password) {
+        builder.password(password);
+        builderAsync.password(password);
     }
 }
