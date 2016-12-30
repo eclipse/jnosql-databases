@@ -23,6 +23,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +46,10 @@ public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollect
     public ArangoDBDocumentCollectionManager getDocumentEntityManager(String database) {
         Objects.requireNonNull(database, "database is required");
         try {
-            arangoDB.createDatabase(database);
+            Collection<String> databases = arangoDB.getDatabases();
+            if (!databases.contains(database)) {
+                arangoDB.createDatabase(database);
+            }
         } catch (ArangoDBException e) {
             LOGGER.log(Level.WARNING, "Failed to create database: " + database, e);
         }
