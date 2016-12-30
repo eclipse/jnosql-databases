@@ -46,7 +46,7 @@
         <module>hazelcast-driver</module>
         <module>hbase-driver</module>
         <module>mongodb-driver</module>
-	<module>arangodb-driver</module>
+        <module>arangodb-driver</module>
         <module>redis-driver</module>
         <module>riak-driver</module>
     </modules>
