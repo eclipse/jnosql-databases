@@ -21,11 +21,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jnosql.diana.arangodb.driver</groupId>
-    <artifactId>arangodb-driver-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>arangodb-driver</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Arangodb driver parent to JNOSQL diana Project</name>
+    <name>Arangodb driver JNOSQL diana Project</name>
     <parent>
         <groupId>org.jnosql.diana</groupId>
         <artifactId>diana-driver</artifactId>
@@ -35,6 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
+	<arango.driver>4.1.4</arango.driver>
     </properties>
     <dependencies>
         <dependency>
@@ -48,6 +47,16 @@
             <artifactId>diana-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+	<dependency>
+	    <groupId>com.arangodb</groupId>
+	    <artifactId>arangodb-java-driver</artifactId>
+	    <version>${arango.driver}</version>
+	</dependency>
+	<dependency>
+	    <groupId>com.arangodb</groupId>
+	    <artifactId>arangodb-java-driver-async</artifactId>
+	    <version>${arango.driver}</version>
+	</dependency>
     </dependencies>
     <build>
         <plugins>
@@ -86,7 +95,4 @@
             </plugin>
         </plugins>
     </build>
-    <modules>
-        <module>arangodb-document</module>
-    </modules>
 </project>
