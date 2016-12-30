@@ -21,8 +21,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>hbase-driver</groupId>
-    <artifactId>hbase-driver-parent</artifactId>
+    <artifactId>hbase-driver</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Hbase driver parent to Apache diana Project</name>
     <parent>
@@ -47,11 +46,11 @@
             <artifactId>diana-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-	<dependency>
-	    <groupId>org.apache.hbase</groupId>
-	    <artifactId>hbase-client</artifactId>
-	    <version>1.2.2</version>
-	</dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>1.2.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
