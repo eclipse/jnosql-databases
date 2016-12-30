@@ -21,9 +21,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jnosql.diana.cassandra.driver</groupId>
+    <groupId>cassandra-driver</groupId>
     <artifactId>cassandra-driver-parent</artifactId>
-    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>Cassandra driver parent to Apache diana Project</name>
     <parent>
@@ -47,6 +46,11 @@
             <groupId>org.jnosql.diana</groupId>
             <artifactId>diana-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+       <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>3.0.3</version>
         </dependency>
     </dependencies>
     <build>
@@ -86,7 +90,4 @@
             </plugin>
         </plugins>
     </build>
-    <modules>
-        <module>cassandra-column</module>
-    </modules>
 </project>
