@@ -51,7 +51,7 @@ public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<Ri
 
     @Override
     public <T> List<T> getList(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
-      throw new UnsupportedOperationException("The riak does not support getList method");
+        throw new UnsupportedOperationException("The riak does not support getList method");
     }
 
     @Override

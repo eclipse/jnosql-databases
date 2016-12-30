@@ -28,7 +28,10 @@ import com.basho.riak.client.api.commands.kv.StoreValue.Builder;
 import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 
-public class RiakUtils {
+public final class RiakUtils {
+
+    private RiakUtils() {
+    }
 
     public static <K, V> StoreValue createStoreValue(K key, V value, Namespace namespace, Duration ttl) {
 
@@ -65,4 +68,6 @@ public class RiakUtils {
         Location location = createLocation(namespace, key);
         return new DeleteValue.Builder(location).build();
     }
+
+
 }

@@ -18,25 +18,23 @@
  */
 package org.jnosql.diana.riak.key;
 
-import java.lang.reflect.Type;
-import java.util.Objects;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.jnosql.diana.api.TypeSupplier;
 import org.jnosql.diana.api.Value;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.util.Objects;
 
-final public class RiakValue implements Value {
+public final class RiakValue implements Value {
 
-	private final Gson gson;
-	
-	private final String json;
-	
-	public RiakValue(Gson gson, String json) {
-		this.gson = gson;
-		this.json = json;
-	}
+    private final Gson gson;
+
+    private final String json;
+
+    RiakValue(Gson gson, String json) {
+        this.gson = gson;
+        this.json = json;
+    }
 
     public static Value of(Gson gson, String json) {
         return new RiakValue(gson, json);
@@ -55,8 +53,8 @@ final public class RiakValue implements Value {
 
     @Override
     public <T> T get(TypeSupplier<T> typeSupplier) throws NullPointerException, UnsupportedOperationException {
-        Type type = new TypeToken<T>() { }.getType();
-        return gson.fromJson(json, type);
+        return gson.fromJson(json, new TypeToken<T>() {
+        }.getType());
     }
 
     @Override

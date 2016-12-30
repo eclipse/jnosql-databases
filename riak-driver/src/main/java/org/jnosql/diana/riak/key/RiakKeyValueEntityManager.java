@@ -52,7 +52,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
 
     private final Namespace nameSpace;
 
-    public RiakKeyValueEntityManager(RiakClient client, Gson gson, Namespace nameSpace) {
+    RiakKeyValueEntityManager(RiakClient client, Gson gson, Namespace nameSpace) {
         this.client = client;
         this.gson = gson;
         this.nameSpace = nameSpace;
@@ -109,8 +109,9 @@ public class RiakKeyValueEntityManager implements BucketManager {
             FetchValue.Response response = client.execute(fetchValue);
 
             String valueFetch = response.getValue(String.class);
-            if (StringUtils.isNoneBlank(valueFetch))
+            if (StringUtils.isNoneBlank(valueFetch)) {
                 return Optional.of(RiakValue.of(gson, valueFetch));
+            }
 
         } catch (ExecutionException | InterruptedException e) {
             throw new DianaRiakException(e.getMessage(), e);

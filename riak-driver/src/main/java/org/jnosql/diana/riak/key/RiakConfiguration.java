@@ -29,13 +29,12 @@ import java.util.Objects;
 
 public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEntityManagerFactory> {
 
-    private final List<RiakNode> nodes = new ArrayList<>();
-
-    private RiakCluster cluster;
-
     private static final RiakNode DEFAULT_NODE = new RiakNode.Builder()
             .withRemoteAddress("127.0.0.1").build();
 
+    private final List<RiakNode> nodes = new ArrayList<>();
+
+    private RiakCluster cluster;
 
     public void add(RiakNode node) {
         Objects.requireNonNull(node, "Node is required");

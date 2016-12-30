@@ -76,7 +76,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
 
     @Override
-    public void saveAsync(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException
+            , UnsupportedOperationException {
 
     }
 
@@ -96,7 +97,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void updateAsync(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void updateAsync(DocumentEntity entity, Consumer<DocumentEntity> callBack)
+            throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
     }
 
@@ -109,7 +111,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         DocumentCondition documentCondition = query.getConditions().get(0);
         Value value = documentCondition.getDocument().getValue();
         if (Condition.IN.equals(documentCondition.getCondition())) {
-            List<String> keys = value.get(new TypeReference<List<String>>() {});
+            List<String> keys = value.get(new TypeReference<List<String>>() {
+            });
             arangoDB.db(database).collection(collection).deleteDocuments(keys);
         } else if (Condition.IN.equals(documentCondition.getCondition())) {
             String key = value.get(String.class);
@@ -124,7 +127,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void deleteAsync(DocumentQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void deleteAsync(DocumentQuery query, Consumer<Void> callBack)
+            throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
     }
 
@@ -147,7 +151,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void findAsync(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void findAsync(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
+            throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
     }
 
@@ -184,12 +189,14 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void saveAsync(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(DocumentEntity entity, Duration ttl)
+            throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
 
     @Override
-    public void saveAsync(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void saveAsync(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack)
+            throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
 }
