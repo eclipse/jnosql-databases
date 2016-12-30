@@ -47,11 +47,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
+import static java.util.Collections.synchronizedList;
 
 
 public class ArangoDBDocumentCollectionManager implements DocumentCollectionManager {
@@ -187,8 +189,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         if (checkCondition(query)) {
-           callBack.accept(Collections.emptyList());
-           return;
+            callBack.accept(Collections.emptyList());
+            return;
         }
         DocumentCondition condition = query.getConditions().get(0);
         Value value = condition.getDocument().getValue();
@@ -198,20 +200,32 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
             CompletableFuture<BaseDocument> future = arangoDBAsync.db(database).collection(collection)
                     .getDocument(key, BaseDocument.class);
 
-            future.thenAccept(d -> {
+            future.thenAccept(d -> callBack.accept(singletonList(toEntity(collection, d))));
 
-            });
             return;
         }
         if (Condition.IN.equals(condition.getCondition())) {
-            List<BaseDocument> baseDocuments = new ArrayList<>();
             List<String> keys = value.get(new TypeReference<List<String>>() {
             });
+            List<DocumentEntity> entities = synchronizedList(new ArrayList<>());
 
-             keys.stream().map(k -> toEntity(collection, k))
-                    .collect(Collectors.toList());
+            if (keys.isEmpty()) {
+                callBack.accept(Collections.emptyList());
+                return;
+            }
+
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            for (String key : keys) {
+                CompletableFuture<BaseDocument> future = arangoDBAsync.db(database).collection(collection)
+                        .getDocument(key, BaseDocument.class);
+                futures.add(future.thenAcceptAsync(d -> entities.add(toEntity(collection, d))));
+            }
+            CompletableFuture.allOf(futures.toArray(
+                    new CompletableFuture[futures.size()]))
+                    .thenAcceptAsync(v -> callBack.accept(entities));
 
         }
+
         callBack.accept(Collections.emptyList());
 
     }
@@ -286,6 +300,10 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     private DocumentEntity toEntity(String collection, String key) {
         BaseDocument document = arangoDB.db(database).collection(collection).getDocument(key, BaseDocument.class);
+        return toEntity(collection, document);
+    }
+
+    private DocumentEntity toEntity(String collection, BaseDocument document) {
         Map<String, Object> properties = document.getProperties();
         List<Document> documents = properties.keySet().stream()
                 .map(k -> Document.of(k, properties.get(k)))
