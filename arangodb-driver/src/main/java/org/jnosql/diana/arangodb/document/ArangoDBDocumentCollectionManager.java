@@ -40,14 +40,13 @@ import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -59,7 +58,7 @@ import static java.util.Collections.synchronizedList;
 public class ArangoDBDocumentCollectionManager implements DocumentCollectionManager {
 
 
-    private static final String KEY_NAME = "";
+    public static final String KEY_NAME = "";
     private static final Predicate<Document> FIND_KEY_DOCUMENT = d -> KEY_NAME.equals(d.getName());
 
     private final String database;
@@ -103,14 +102,16 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public void delete(DocumentQuery query) {
         String collection = query.getCollection();
-        if (checkCondition(query)) return;
+        if (checkCondition(query)) {
+            return;
+        }
         DocumentCondition condition = query.getConditions().get(0);
         Value value = condition.getDocument().getValue();
         if (Condition.IN.equals(condition.getCondition())) {
             List<String> keys = value.get(new TypeReference<List<String>>() {
             });
             arangoDB.db(database).collection(collection).deleteDocuments(keys);
-        } else if (Condition.IN.equals(condition.getCondition())) {
+        } else if (Condition.EQUALS.equals(condition.getCondition())) {
             String key = value.get(String.class);
             arangoDB.db(database).collection(collection).deleteDocument(key);
         }
@@ -166,7 +167,9 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         String collection = query.getCollection();
-        if (checkCondition(query)) return;
+        if (checkCondition(query)) {
+            return;
+        }
         DocumentCondition condition = query.getConditions().get(0);
         Value value = condition.getDocument().getValue();
         if (Condition.IN.equals(condition.getCondition())) {
@@ -242,16 +245,16 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         if (Condition.EQUALS.equals(condition.getCondition())) {
             String key = value.get(String.class);
             DocumentEntity entity = toEntity(collection, key);
+            if (Objects.isNull(entity)) {
+                return Collections.emptyList();
+            }
             return singletonList(entity);
         }
         if (Condition.IN.equals(condition.getCondition())) {
-            List<BaseDocument> baseDocuments = new ArrayList<>();
             List<String> keys = value.get(new TypeReference<List<String>>() {
             });
-
             return keys.stream().map(k -> toEntity(collection, k))
                     .collect(Collectors.toList());
-
         }
         return Collections.emptyList();
     }
@@ -300,6 +303,9 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     private DocumentEntity toEntity(String collection, String key) {
         BaseDocument document = arangoDB.db(database).collection(collection).getDocument(key, BaseDocument.class);
+        if (Objects.isNull(document)) {
+            return null;
+        }
         return toEntity(collection, document);
     }
 
