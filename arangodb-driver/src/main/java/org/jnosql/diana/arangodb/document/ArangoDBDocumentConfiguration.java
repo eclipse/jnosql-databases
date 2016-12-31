@@ -19,8 +19,6 @@
 
 package org.jnosql.diana.arangodb.document;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
