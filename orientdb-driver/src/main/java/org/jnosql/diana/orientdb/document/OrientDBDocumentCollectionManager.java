@@ -20,6 +20,8 @@ package org.jnosql.diana.orientdb.document;
 
 
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -27,6 +29,8 @@ import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class OrientDBDocumentCollectionManager implements DocumentCollectionManager {
@@ -39,7 +43,13 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
-        return null;
+        Objects.toString(entity, "Entity is required");
+        ODocument document = new ODocument(entity.getName());
+        Map<String, Object> entityValues = entity.toMap();
+        entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
+        ODatabaseDocumentTx tx = pool.acquire();
+        tx.save(document);
+        return entity;
     }
 
     @Override
@@ -49,12 +59,12 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public DocumentEntity save(DocumentEntity entity, Duration ttl) {
-        return null;
+        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
     }
 
     @Override
     public void saveAsync(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-
+        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
     }
 
     @Override
@@ -64,7 +74,7 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public void saveAsync(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-
+        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
     }
 
     @Override
@@ -109,6 +119,6 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public void close() {
-
+        pool.close();
     }
 }
