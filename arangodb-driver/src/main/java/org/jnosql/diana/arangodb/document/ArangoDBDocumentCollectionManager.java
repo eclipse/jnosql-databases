@@ -45,10 +45,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
@@ -58,9 +58,9 @@ import static java.util.Collections.synchronizedList;
 public class ArangoDBDocumentCollectionManager implements DocumentCollectionManager {
 
 
-    public static final String KEY_NAME = "";
-    private static final Predicate<Document> FIND_KEY_DOCUMENT = d -> KEY_NAME.equals(d.getName());
-
+    public static final String KEY = "_key";
+    public static final String ID = "_id";
+    public static final String REV = "_rev";
     private final String database;
 
     private final ArangoDB arangoDB;
@@ -86,7 +86,17 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         String collectionName = entity.getName();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
-        arangoDB.db(database).collection(collectionName).insertDocument(baseDocument);
+        DocumentCreateEntity<BaseDocument> arandoDocument = arangoDB.db(database).collection(collectionName).insertDocument(baseDocument);
+        if(!entity.find(KEY).isPresent()) {
+            entity.add(Document.of(KEY, arandoDocument.getKey()));
+        }
+        if(!entity.find(ID).isPresent()) {
+            entity.add(Document.of(ID, arandoDocument.getId()));
+        }
+        if(!entity.find(REV).isPresent()) {
+            entity.add(Document.of(REV, arandoDocument.getRev()));
+        }
+
         return entity;
     }
 
@@ -274,17 +284,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     private BaseDocument getBaseDocument(DocumentEntity entity) {
-        BaseDocument baseDocument = new BaseDocument();
-
-        baseDocument.setKey(entity.getDocuments().stream()
-                .filter(FIND_KEY_DOCUMENT).findFirst()
-                .map(d -> d.getValue().get(String.class))
-                .orElseThrow(() -> new ArangoDBException("The entity must have a entity key")));
-        entity.getDocuments().stream()
-                .filter(FIND_KEY_DOCUMENT.negate())
-                .forEach(d -> baseDocument.addAttribute(d.getName(),
-                        convert(d.getValue())));
-        return baseDocument;
+        return  new BaseDocument(entity.toMap());
     }
 
     private void checkCollection(String collectionName) {
@@ -314,7 +314,9 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         List<Document> documents = properties.keySet().stream()
                 .map(k -> Document.of(k, properties.get(k)))
                 .collect(Collectors.toList());
-        documents.add(Document.of(KEY_NAME, document.getKey()));
+        documents.add(Document.of(KEY, document.getKey()));
+        documents.add(Document.of(ID, document.getId()));
+        documents.add(Document.of(REV, document.getRevision()));
         return DocumentEntity.of(collection, documents);
     }
 

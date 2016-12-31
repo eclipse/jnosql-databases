@@ -94,7 +94,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
     @Override
     public <K> void remove(Iterable<K> keys) throws NullPointerException {
         Objects.requireNonNull(keys, "Keys is required");
-        
+
                 arangoDB.db(bucketName).collection(namespace)
                 .deleteDocuments(stream(keys.spliterator(), false)
                 .map(Object::toString).collect(toList()));

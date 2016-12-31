@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import static org.jnosql.diana.arangodb.document.ArangoDBDocumentCollectionManager.KEY_NAME;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -47,6 +46,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     public static final String COLLECTION_NAME = "person";
     private DocumentCollectionManager entityManager;
     private Random random;
+    private String KEY_NAME = "_key";
 
     @Before
     public void setUp() {
@@ -76,7 +76,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = documentEntity.find(KEY_NAME);
+        Optional<Document> id = documentEntity.find("_key");
         query.addCondition(DocumentCondition.eq(id.get()));
         entityManager.delete(query);
         assertTrue(entityManager.find(query).isEmpty());
