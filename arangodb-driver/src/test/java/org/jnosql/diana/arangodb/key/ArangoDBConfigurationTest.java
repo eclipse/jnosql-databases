@@ -18,33 +18,26 @@
  */
 package org.jnosql.diana.arangodb.key;
 
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.junit.Before;
+import org.junit.Test;
 
-import com.arangodb.entity.DocumentField;
-import org.jnosql.diana.api.Value;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.Serializable;
 
-class ArangoDBEntity implements Serializable {
+public class ArangoDBConfigurationTest {
 
-    @DocumentField(DocumentField.Type.KEY)
-    protected String key;
+    private ArandoDBKeyValueConfiguration configuration;
 
-    protected Object value;
-
-    ArangoDBEntity(String key, Object value) {
-        this.key = key;
-        this.value = value;
+    @Before
+    public void setUp() {
+        configuration = new ArandoDBKeyValueConfiguration();
     }
 
-    public String getKey() {
-        return key;
-    }
 
-    public Object getValue() {
-        return value;
-    }
-
-    public Value toValue() {
-        return Value.of(value);
+    @Test
+    public void shouldCreateKeyValueFactoryFromFile() {
+        BucketManagerFactory managerFactory = configuration.getManagerFactory();
+        assertNotNull(managerFactory);
     }
 }

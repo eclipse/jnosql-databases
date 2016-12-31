@@ -20,6 +20,8 @@ package org.jnosql.diana.arangodb.key;
 
 
 import com.arangodb.ArangoDB;
+import com.arangodb.entity.BaseDocument;
+import com.google.gson.Gson;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
@@ -27,6 +29,7 @@ import org.jnosql.diana.api.key.KeyValueEntity;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -35,23 +38,35 @@ import static java.util.stream.StreamSupport.stream;
 public class ArangoDBValueEntityManager implements BucketManager {
 
 
+    private static final String VALUE = "_value";
+    private static final Function<BaseDocument, String> TO_JSON = e -> e.getAttribute(VALUE).toString();
+
     private final ArangoDB arangoDB;
 
     private final String bucketName;
     private final String namespace;
+    private final Gson gson;
 
-    ArangoDBValueEntityManager(ArangoDB arangoDB, String bucketName, String namespace) {
+
+    ArangoDBValueEntityManager(ArangoDB arangoDB, String bucketName, String namespace, Gson gson) {
         this.arangoDB = arangoDB;
         this.bucketName = bucketName;
         this.namespace = namespace;
+        this.gson = gson;
     }
 
     @Override
     public <K, V> void put(K key, V value) throws NullPointerException {
         Objects.requireNonNull(key, "Key is required");
         Objects.requireNonNull(value, "value is required");
+        BaseDocument baseDocument = new BaseDocument();
+        baseDocument.setKey(key.toString());
+        baseDocument.addAttribute(VALUE, gson.toJson(value));
+        if (arangoDB.db(bucketName).collection(namespace).documentExists(key.toString())) {
+            arangoDB.db(bucketName).collection(namespace).deleteDocument(key.toString());
+        }
         arangoDB.db(bucketName).collection(namespace)
-                .insertDocument(new ArangoDBEntity(key.toString(), value));
+                .insertDocument(baseDocument);
     }
 
     @Override
@@ -69,10 +84,12 @@ public class ArangoDBValueEntityManager implements BucketManager {
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
         Objects.requireNonNull(key, "Key is required");
-        ArangoDBEntity entity = arangoDB.db(bucketName).collection(namespace)
-                .getDocument(key.toString(), ArangoDBEntity.class);
+        BaseDocument entity = arangoDB.db(bucketName).collection(namespace)
+                .getDocument(key.toString(), BaseDocument.class);
 
-        return ofNullable(entity).map(ArangoDBEntity::toValue);
+        return ofNullable(entity)
+                .map(TO_JSON)
+                .map(j -> ArangoDBValue.of(gson, j));
 
     }
 
@@ -80,9 +97,11 @@ public class ArangoDBValueEntityManager implements BucketManager {
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
         return stream(keys.spliterator(), false)
                 .map(Object::toString)
-                .map(k -> arangoDB.db(bucketName).collection(namespace).getDocument(k, ArangoDBEntity.class))
+                .map(k -> arangoDB.db(bucketName).collection(namespace)
+                        .getDocument(k, BaseDocument.class))
                 .filter(Objects::nonNull)
-                .map(ArangoDBEntity::toValue)
+                .map(TO_JSON)
+                .map(j -> ArangoDBValue.of(gson, j))
                 .collect(toList());
     }
 

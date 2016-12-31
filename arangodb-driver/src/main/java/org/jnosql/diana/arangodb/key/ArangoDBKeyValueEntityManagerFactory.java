@@ -19,6 +19,7 @@
 package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
+import com.google.gson.Gson;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.arangodb.util.ArangoDBUtil;
 
@@ -29,6 +30,7 @@ import java.util.Set;
 
 public class ArangoDBKeyValueEntityManagerFactory implements BucketManagerFactory<ArangoDBValueEntityManager> {
 
+    private static final Gson GSON = new Gson();
 
     private static final String DEFAULT_NAMESPACE = "diana";
 
@@ -45,7 +47,7 @@ public class ArangoDBKeyValueEntityManagerFactory implements BucketManagerFactor
 
     public ArangoDBValueEntityManager getBucketManager(String bucketName, String namespace) {
         ArangoDBUtil.checkCollection(bucketName, arangoDB, namespace);
-        return new ArangoDBValueEntityManager(arangoDB, bucketName, namespace);
+        return new ArangoDBValueEntityManager(arangoDB, bucketName, namespace, GSON);
     }
 
     @Override
