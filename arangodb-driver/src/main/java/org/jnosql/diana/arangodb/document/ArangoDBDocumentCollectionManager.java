@@ -21,7 +21,6 @@ package org.jnosql.diana.arangodb.document;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentDeleteEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
@@ -37,16 +36,14 @@ import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
+import org.jnosql.diana.arangodb.util.ArangoDBUtil;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -67,17 +64,12 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     private final ArangoDBAsync arangoDBAsync;
 
-    private final Set<String> collections = new HashSet<>();
-
     private final ValueWriter writerField = ValueWriterDecorator.getInstance();
 
     ArangoDBDocumentCollectionManager(String database, ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
         this.database = database;
         this.arangoDB = arangoDB;
         this.arangoDBAsync = arangoDBAsync;
-        arangoDB.db(database).getCollections().stream()
-                .map(CollectionEntity::getName)
-                .forEach(collections::add);
     }
 
 
@@ -87,13 +79,13 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
         DocumentCreateEntity<BaseDocument> arandoDocument = arangoDB.db(database).collection(collectionName).insertDocument(baseDocument);
-        if(!entity.find(KEY).isPresent()) {
+        if (!entity.find(KEY).isPresent()) {
             entity.add(Document.of(KEY, arandoDocument.getKey()));
         }
-        if(!entity.find(ID).isPresent()) {
+        if (!entity.find(ID).isPresent()) {
             entity.add(Document.of(ID, arandoDocument.getId()));
         }
-        if(!entity.find(REV).isPresent()) {
+        if (!entity.find(REV).isPresent()) {
             entity.add(Document.of(REV, arandoDocument.getRev()));
         }
 
@@ -284,14 +276,11 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     private BaseDocument getBaseDocument(DocumentEntity entity) {
-        return  new BaseDocument(entity.toMap());
+        return new BaseDocument(entity.toMap());
     }
 
     private void checkCollection(String collectionName) {
-        if (!collections.contains(collectionName)) {
-            arangoDB.db(database).createCollection(collectionName);
-            collections.add(collectionName);
-        }
+        ArangoDBUtil.checkCollection(database, arangoDB, collectionName);
     }
 
     private boolean checkCondition(DocumentQuery query) {
