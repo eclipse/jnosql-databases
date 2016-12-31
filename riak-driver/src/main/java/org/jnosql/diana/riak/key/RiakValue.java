@@ -25,7 +25,7 @@ import org.jnosql.diana.api.Value;
 
 import java.util.Objects;
 
-public final class RiakValue implements Value {
+final class RiakValue implements Value {
 
     private final Gson gson;
 
