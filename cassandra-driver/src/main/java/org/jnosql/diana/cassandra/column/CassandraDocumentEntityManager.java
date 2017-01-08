@@ -205,13 +205,13 @@ public class CassandraDocumentEntityManager implements ColumnFamilyManager {
         resultSet.addListener(executeAsync, executor);
     }
 
-    public List<ColumnEntity> nativeQuery(String query) {
+    public List<ColumnEntity> cql(String query) {
         ResultSet resultSet = session.execute(query);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
                 .collect(Collectors.toList());
     }
 
-    public void nativeQueryAsync(String query, Consumer<List<ColumnEntity>> consumer)
+    public void cql(String query, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException {
         ResultSetFuture resultSet = session.executeAsync(query);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
