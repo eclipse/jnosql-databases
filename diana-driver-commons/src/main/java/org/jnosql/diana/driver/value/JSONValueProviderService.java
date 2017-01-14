@@ -24,10 +24,10 @@ import java.util.ServiceLoader;
 
 public final class JSONValueProviderService {
 
+    private static final JSONValueProvider PROVIDER;
+
     private JSONValueProviderService() {
     }
-
-    private static final JSONValueProvider PROVIDER;
 
     static {
         JSONValueProvider aux = null;
