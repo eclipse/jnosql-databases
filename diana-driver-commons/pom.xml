@@ -45,6 +45,7 @@
             <groupId>org.jnosql.diana</groupId>
             <artifactId>diana-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
