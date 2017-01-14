@@ -20,8 +20,6 @@
 package org.jnosql.diana.driver.value;
 
 
-import org.jnosql.diana.api.ValueReader;
-
 import java.util.Objects;
 import java.util.ServiceLoader;
 
