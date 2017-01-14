@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.arangodb.key;
+package org.jnosql.diana.driver;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,19 +25,25 @@ import org.jnosql.diana.api.Value;
 
 import java.util.Objects;
 
-final class ArangoDBValue implements Value {
+/**
+ * A {@link Value} implementation that storage all the information as a {@link String} JSON.
+ * This implementation uses {@link Gson} as converter
+ */
+public final class JSONValue implements Value {
+
+    private static Gson GSON = new Gson();
 
     private final Gson gson;
 
     private final String json;
 
-    private ArangoDBValue(Gson gson, String json) {
+    private JSONValue(Gson gson, String json) {
         this.gson = gson;
         this.json = json;
     }
 
-    public static Value of(Gson gson, String json) {
-        return new ArangoDBValue(gson, json);
+    public static Value of(String json) {
+        return new JSONValue(GSON, json);
     }
 
     @Override
@@ -65,7 +71,7 @@ final class ArangoDBValue implements Value {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ArangoDBValue that = (ArangoDBValue) o;
+        JSONValue that = (JSONValue) o;
         return Objects.equals(json, that.json);
     }
 
@@ -76,7 +82,7 @@ final class ArangoDBValue implements Value {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ArangoDBValue{");
+        final StringBuilder sb = new StringBuilder("JSONValue{");
         sb.append("gson=").append(gson);
         sb.append(", json='").append(json).append('\'');
         sb.append('}');

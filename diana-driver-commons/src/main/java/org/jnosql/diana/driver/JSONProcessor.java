@@ -16,18 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.jnosql.diana.arangodb.document;
-
-import org.jnosql.diana.api.document.DocumentConfiguration;
-import org.jnosql.diana.arangodb.ArangoDBConfiguration;
-
-public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements DocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
+package org.jnosql.diana.driver;
 
 
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory getManagerFactory() {
-        return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
-    }
+public interface JSONProcessor {
 }
