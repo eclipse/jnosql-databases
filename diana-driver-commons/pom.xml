@@ -52,12 +52,6 @@
             <version>2.7</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>johnzon-mapper</artifactId>
-            <version>0.9.5</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
