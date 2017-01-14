@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.driver;
+package org.jnosql.diana.driver.value;
 
 
 public interface JSONProcessor {
