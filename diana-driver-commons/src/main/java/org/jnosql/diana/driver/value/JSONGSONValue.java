@@ -29,7 +29,7 @@ import java.util.Objects;
  * A {@link Value} implementation that storage all the information as a {@link String} JSON.
  * This implementation uses {@link Gson} as converter
  */
-public final class JSONGSONValue implements Value {
+final class JSONGSONValue implements Value {
 
     private static final Gson GSON = new Gson();
 
@@ -43,7 +43,13 @@ public final class JSONGSONValue implements Value {
     }
 
     public static Value of(String json) {
+        Objects.requireNonNull(json, "json is required");
         return new JSONGSONValue(GSON, json);
+    }
+
+    public static Value of(Object value) {
+        Objects.requireNonNull(value, "value is required");
+        return of(GSON.toJson(value));
     }
 
     @Override
