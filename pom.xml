@@ -42,6 +42,7 @@
     </properties>
 
     <modules>
+	<module>diana-commons</module>
         <module>cassandra-driver</module>
         <module>hazelcast-driver</module>
         <module>hbase-driver</module>
