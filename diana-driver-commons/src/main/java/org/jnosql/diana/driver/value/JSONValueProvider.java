@@ -24,7 +24,7 @@ import org.jnosql.diana.api.Value;
 /**
  * The provider to create Value storage as JSON objetc
  */
-public interface JSONProcessorProvider {
+public interface JSONValueProvider {
 
     /**
      * Creates a {@link Value} that storage a json text
