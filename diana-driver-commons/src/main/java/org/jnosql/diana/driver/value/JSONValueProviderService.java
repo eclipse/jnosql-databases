@@ -20,8 +20,36 @@
 package org.jnosql.diana.driver.value;
 
 
+import org.jnosql.diana.api.ValueReader;
+
+import java.util.Objects;
+import java.util.ServiceLoader;
+
 public final class JSONValueProviderService {
 
     private JSONValueProviderService() {
+    }
+
+    private static final JSONValueProvider PROVIDER;
+
+    static {
+        JSONValueProvider aux = null;
+        for (JSONValueProvider jsonValueProvider : ServiceLoader.load(JSONValueProvider.class)) {
+            if (Objects.nonNull(jsonValueProvider)) {
+                aux = jsonValueProvider;
+            }
+        }
+
+        if (Objects.isNull(aux)) {
+            PROVIDER = new JSONGSONValueProvider();
+        } else {
+            PROVIDER = aux;
+        }
+
+    }
+
+
+    public static JSONValueProvider getProvider() {
+        return new JSONGSONValueProvider();
     }
 }
