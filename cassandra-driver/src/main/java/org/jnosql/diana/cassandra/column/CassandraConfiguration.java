@@ -21,6 +21,7 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.Cluster;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -30,7 +31,9 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+
 import org.jnosql.diana.api.column.ColumnConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
 
 public class CassandraConfiguration implements ColumnConfiguration<CassandraDocumentEntityManagerFactory> {
 
@@ -38,31 +41,23 @@ public class CassandraConfiguration implements ColumnConfiguration<CassandraDocu
 
     public CassandraDocumentEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
         Objects.requireNonNull(configurations);
-        List<String> nodes = configurations.keySet().stream().filter(s -> s.startsWith("cassandra-hoster"))
-                .map(configurations::get).collect(Collectors.toList());
-        Cluster.Builder builder = Cluster.builder();
-        nodes.forEach(builder::addContactPoint);
-        List<String> queries = configurations.keySet().stream().filter(s -> s.startsWith("cassandra-initial-query"))
-                .sorted().map(configurations::get).collect(Collectors.toList());
-        String numThreadsServer = Integer.toString(Runtime.getRuntime().availableProcessors());
-        String numTreads = configurations.getOrDefault("cassandra-threads-number", numThreadsServer);
-        ExecutorService executorService = Executors.newFixedThreadPool(Integer.valueOf(numTreads));
-        return new CassandraDocumentEntityManagerFactory(builder.build(), queries, executorService);
+        CassandraProperties properties = CassandraProperties.of(configurations);
+        ExecutorService executorService = properties.createExecutorService();
+        return new CassandraDocumentEntityManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
+    }
+
+    public CassandraDocumentEntityManagerFactory getEntityManagerFactory(Cluster cluster) {
+        Objects.requireNonNull(cluster, "Cluster is required");
+        
+        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
+        CassandraProperties properties = CassandraProperties.of(configuration);
+        ExecutorService executorService = properties.createExecutorService();
+        return new CassandraDocumentEntityManagerFactory(cluster, properties.getQueries(), executorService);
     }
 
     @Override
     public CassandraDocumentEntityManagerFactory getManagerFactory() {
-
-        try {
-            Properties properties = new Properties();
-            InputStream stream = CassandraConfiguration.class.getClassLoader()
-                    .getResourceAsStream(CASSANDRA_FILE_CONFIGURATION);
-            properties.load(stream);
-            Map<String, String> collect = properties.keySet().stream().collect(Collectors
-                    .toMap(Object::toString, s -> properties.get(s).toString()));
-            return getManagerFactory(collect);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
+        return getManagerFactory(configuration);
     }
 }
