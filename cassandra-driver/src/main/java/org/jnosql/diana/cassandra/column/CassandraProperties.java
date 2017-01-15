@@ -50,7 +50,7 @@ class CassandraProperties {
 
     private Optional<String> name = Optional.empty();
 
-    private OptionalInt maxSchemaAgreementWaitSeconds = Optional.empty();
+    private OptionalInt maxSchemaAgreementWaitSeconds = OptionalInt.empty();
 
     private OptionalInt port = OptionalInt.empty();
 

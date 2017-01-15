@@ -48,7 +48,7 @@ public class CassandraConfiguration implements ColumnConfiguration<CassandraDocu
 
     public CassandraDocumentEntityManagerFactory getEntityManagerFactory(Cluster cluster) {
         Objects.requireNonNull(cluster, "Cluster is required");
-        
+
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         CassandraProperties properties = CassandraProperties.of(configuration);
         ExecutorService executorService = properties.createExecutorService();
