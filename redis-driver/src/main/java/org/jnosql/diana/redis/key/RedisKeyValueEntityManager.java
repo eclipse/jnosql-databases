@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
-import org.jnosql.diana.driver.value.JSONGSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProvider;
 import redis.clients.jedis.Jedis;
 
 import java.time.Duration;
@@ -38,11 +38,11 @@ import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
 public class RedisKeyValueEntityManager implements BucketManager {
 
     private final String nameSpace;
-    private final JSONGSONValueProvider provider;
+    private final JSONValueProvider provider;
 
     private final Jedis jedis;
 
-    RedisKeyValueEntityManager(String nameSpace, JSONGSONValueProvider provider, Jedis jedis) {
+    RedisKeyValueEntityManager(String nameSpace, JSONValueProvider provider, Jedis jedis) {
         this.nameSpace = nameSpace;
         this.provider = provider;
         this.jedis = jedis;
