@@ -20,11 +20,11 @@
 package org.jnosql.diana.redis.key;
 
 
-import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.value.JSONValueProvider;
 import redis.clients.jedis.Jedis;
 
 import java.time.Duration;
@@ -38,14 +38,13 @@ import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
 public class RedisKeyValueEntityManager implements BucketManager {
 
     private final String nameSpace;
-
-    private final Gson gson;
+    private final JSONValueProvider provider;
 
     private final Jedis jedis;
 
-    RedisKeyValueEntityManager(String nameSpace, Gson gson, Jedis jedis) {
+    RedisKeyValueEntityManager(String nameSpace, JSONValueProvider provider, Jedis jedis) {
         this.nameSpace = nameSpace;
-        this.gson = gson;
+        this.provider = provider;
         this.jedis = jedis;
     }
 
@@ -54,7 +53,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
         Objects.requireNonNull(value, "Value is required");
         Objects.requireNonNull(key, "key is required");
         String valideKey = createKeyWithNameSpace(key.toString(), nameSpace);
-        jedis.set(valideKey, gson.toJson(value));
+        jedis.set(valideKey, provider.toJson(value));
     }
 
     @Override
@@ -86,7 +85,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
     public <K> Optional<Value> get(K key) throws NullPointerException {
         String value = jedis.get(createKeyWithNameSpace(key.toString(), nameSpace));
         if (StringUtils.isNotBlank(value)) {
-            return Optional.of(RedisValue.of(gson, value));
+            return Optional.of(provider.of(value));
         }
         return Optional.empty();
     }
@@ -95,7 +94,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
         return StreamSupport.stream(keys.spliterator(), false)
                 .map(k -> jedis.get(createKeyWithNameSpace(k.toString(), nameSpace)))
-                .filter(StringUtils::isNotBlank).map(v -> RedisValue.of(gson, v)).collect(toList());
+                .filter(StringUtils::isNotBlank).map(v -> provider.of(v)).collect(toList());
     }
 
     @Override

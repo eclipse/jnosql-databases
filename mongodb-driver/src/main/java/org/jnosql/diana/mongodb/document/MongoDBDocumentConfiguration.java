@@ -24,15 +24,13 @@ import com.mongodb.ServerAddress;
 import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.connection.ClusterSettings;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
+import org.jnosql.diana.api.document.DocumentConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.jnosql.diana.api.document.DocumentConfiguration;
 
 
 public class MongoDBDocumentConfiguration implements DocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
@@ -64,18 +62,9 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
 
     @Override
     public MongoDBDocumentCollectionManagerFactory getManagerFactory() {
-        try {
-            Properties properties = new Properties();
-            InputStream stream = MongoDBDocumentConfiguration.class.getClassLoader()
-                    .getResourceAsStream(FILE_CONFIGURATION);
-            properties.load(stream);
-            Map<String, String> collect = properties.keySet().stream()
-                    .collect(Collectors.toMap(Object::toString, s -> properties.get(s).toString()));
-            return getManagerFactory(collect);
-        } catch (IOException e) {
-            LOGGER.warning("The file " + FILE_CONFIGURATION + " was not found using default configuration");
-            return getManagerFactory(Collections.emptyMap());
-        }
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
+        return getManagerFactory(configuration);
+
     }
 
     private class HostPortConfiguration {

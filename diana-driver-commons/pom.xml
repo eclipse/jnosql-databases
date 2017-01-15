@@ -21,9 +21,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cassandra-driver</artifactId>
+    <artifactId>diana-driver-commons</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Cassandra driver to Diana Project</name>
+    <name>Diana driver commons</name>
     <parent>
         <groupId>org.jnosql.diana</groupId>
         <artifactId>diana-driver</artifactId>
@@ -45,16 +45,13 @@
             <groupId>org.jnosql.diana</groupId>
             <artifactId>diana-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jnosql.diana</groupId>
-            <artifactId>diana-driver-commons</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-core</artifactId>
-            <version>3.0.3</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.7</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
