@@ -29,10 +29,12 @@ import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.query.Namespace;
 import com.google.gson.Gson;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<RiakKeyValueEntityManager> {
 
-    private static final Gson GSON = new Gson();
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
     private final RiakCluster cluster;
 
     RiakKeyValueEntityManagerFactory(RiakCluster cluster) {
@@ -46,7 +48,7 @@ public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<Ri
         RiakClient riakClient = new RiakClient(cluster);
         Namespace quotesBucket = new Namespace(bucketName);
 
-        return new RiakKeyValueEntityManager(riakClient, GSON, quotesBucket);
+        return new RiakKeyValueEntityManager(riakClient, PROVDER, quotesBucket);
     }
 
     @Override
