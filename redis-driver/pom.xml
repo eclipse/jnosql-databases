@@ -56,6 +56,11 @@
             <artifactId>gson</artifactId>
             <version>2.7</version>
         </dependency>
+        <dependency>
+            <groupId>org.jnosql.diana</groupId>
+            <artifactId>diana-driver-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -28,9 +28,10 @@ public interface JSONValueProvider {
 
     /**
      * Creates a {@link Value} that storage a json text
+     *
      * @param json a json text
      * @return the {@link Value} instance
-     * @throws NullPointerException when the json is null
+     * @throws NullPointerException          when the json is null
      * @throws UnsupportedOperationException when this method is not supported
      */
     Value of(String json) throws NullPointerException, UnsupportedOperationException;
@@ -38,11 +39,34 @@ public interface JSONValueProvider {
 
     /**
      * Creates a {@link Value} that storage a json byte array
+     *
      * @param json a json byte array
      * @return the {@link Value} instance
-     * @throws NullPointerException when the json is null
+     * @throws NullPointerException          when the json is null
      * @throws UnsupportedOperationException when this method is not supported
      */
-    Value of(byte[] json)throws NullPointerException, UnsupportedOperationException;
+    Value of(byte[] json) throws NullPointerException, UnsupportedOperationException;
+
+
+    /**
+     * converts an object to json text
+     *
+     * @param object a object instance
+     * @return the json
+     * @throws NullPointerException          when the json is null
+     * @throws UnsupportedOperationException when this method is not supported
+     */
+    String toJSon(Object object) throws NullPointerException, UnsupportedOperationException;
+
+
+    /**
+     * converts an object to byte array
+     *
+     * @param object a object instance
+     * @return the json
+     * @throws NullPointerException          when the json is null
+     * @throws UnsupportedOperationException when this method is not supported
+     */
+    byte[] toJsonArray(Object object) throws NullPointerException, UnsupportedOperationException;
 
 }

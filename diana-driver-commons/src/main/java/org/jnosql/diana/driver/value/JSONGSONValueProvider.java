@@ -40,4 +40,14 @@ public class JSONGSONValueProvider implements JSONValueProvider {
         Objects.requireNonNull(json, "Json is required");
         return JSONGSONValue.of(String.valueOf(json));
     }
+
+    @Override
+    public String toJSon(Object object) throws NullPointerException, UnsupportedOperationException {
+        return JSONGSONValue.GSON.toJson(Objects.requireNonNull(object, "object is required"));
+    }
+
+    @Override
+    public byte[] toJsonArray(Object object) throws NullPointerException, UnsupportedOperationException {
+        return toJSon(object).getBytes();
+    }
 }

@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 final class JSONGSONValue implements Value {
 
-    private static final Gson GSON = new Gson();
+    static final Gson GSON = new Gson();
 
     private final Gson gson;
 
