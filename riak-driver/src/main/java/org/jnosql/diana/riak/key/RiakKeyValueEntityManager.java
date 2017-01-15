@@ -19,21 +19,6 @@
 package org.jnosql.diana.riak.key;
 
 
-import static org.jnosql.diana.riak.key.RiakUtils.createDeleteValue;
-import static org.jnosql.diana.riak.key.RiakUtils.createFetchValue;
-import static org.jnosql.diana.riak.key.RiakUtils.createStoreValue;
-import static java.util.stream.Collectors.toList;
-
-import java.time.Duration;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.StreamSupport;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
-
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.kv.DeleteValue;
@@ -41,20 +26,34 @@ import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.FetchValue.Response;
 import com.basho.riak.client.api.commands.kv.StoreValue;
 import com.basho.riak.client.core.query.Namespace;
-import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+
+import java.time.Duration;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.riak.key.RiakUtils.createDeleteValue;
+import static org.jnosql.diana.riak.key.RiakUtils.createFetchValue;
+import static org.jnosql.diana.riak.key.RiakUtils.createStoreValue;
 
 public class RiakKeyValueEntityManager implements BucketManager {
 
 
     private final RiakClient client;
+    private final JSONValueProvider provider;
 
-    private final Gson gson;
 
     private final Namespace nameSpace;
 
-    RiakKeyValueEntityManager(RiakClient client, Gson gson, Namespace nameSpace) {
+    RiakKeyValueEntityManager(RiakClient client, JSONValueProvider provider, Namespace nameSpace) {
         this.client = client;
-        this.gson = gson;
+        this.provider = provider;
         this.nameSpace = nameSpace;
     }
 
@@ -110,7 +109,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
 
             String valueFetch = response.getValue(String.class);
             if (StringUtils.isNoneBlank(valueFetch)) {
-                return Optional.of(RiakValue.of(gson, valueFetch));
+                return Optional.of(provider.of(valueFetch));
             }
 
         } catch (ExecutionException | InterruptedException e) {
@@ -144,7 +143,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
                     }
 
                 })
-                .filter(StringUtils::isNotBlank).map(v -> RiakValue.of(gson, v))
+                .filter(StringUtils::isNotBlank).map(v -> provider.of(v))
                 .collect(toList());
     }
 
