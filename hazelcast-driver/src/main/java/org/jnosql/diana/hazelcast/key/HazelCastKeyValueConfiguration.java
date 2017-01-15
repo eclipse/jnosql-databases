@@ -23,21 +23,20 @@ package org.jnosql.diana.hazelcast.key;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import java.io.IOException;
-import java.io.InputStream;
+import org.jnosql.diana.api.key.KeyValueConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
 
 public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<HazelCastKeyValueEntityManagerFactory> {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
 
-    private static final Logger LOGGER = Logger.getLogger(HazelCastKeyValueConfiguration.class.getName());
     private static final Map<String, String> DEFAULT_CONFIGURATION = Collections.singletonMap("hazelcast-instanceName", "hazelcast");
 
 
@@ -45,25 +44,21 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
 
         List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("hazelcast-hoster-"))
                 .collect(Collectors.toList());
-
         Config config = new Config(configurations.getOrDefault("hazelcast-instanceName", "hazelcast-instanceName"));
+
+        HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
+        return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);
+    }
+
+    public HazelCastKeyValueEntityManagerFactory getManagerFactory(Config config) {
+        Objects.requireNonNull(config, "config is required");
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
         return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);
     }
 
     @Override
     public HazelCastKeyValueEntityManagerFactory getManagerFactory() {
-        try {
-            Properties properties = new Properties();
-            InputStream stream = HazelCastKeyValueConfiguration.class.getClassLoader()
-                    .getResourceAsStream(HAZELCAST_FILE_CONFIGURATION);
-            properties.load(stream);
-            Map<String, String> collect = properties.keySet().stream()
-                    .collect(Collectors.toMap(Object::toString, s -> properties.get(s).toString()));
-            return getManagerFactory(collect);
-        } catch (IOException e) {
-            LOGGER.info("File does not find creating a instance with default value");
-            return getManagerFactory(DEFAULT_CONFIGURATION);
-        }
+        Map<String, String> configuration = ConfigurationReader.from(HAZELCAST_FILE_CONFIGURATION);
+            return getManagerFactory(configuration);
     }
 }
