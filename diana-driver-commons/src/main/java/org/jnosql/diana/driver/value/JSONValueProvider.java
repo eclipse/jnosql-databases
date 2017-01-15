@@ -56,7 +56,7 @@ public interface JSONValueProvider {
      * @throws NullPointerException          when the json is null
      * @throws UnsupportedOperationException when this method is not supported
      */
-    String toJSon(Object object) throws NullPointerException, UnsupportedOperationException;
+    String toJson(Object object) throws NullPointerException, UnsupportedOperationException;
 
 
     /**

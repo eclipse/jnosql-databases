@@ -42,12 +42,12 @@ public class JSONGSONValueProvider implements JSONValueProvider {
     }
 
     @Override
-    public String toJSon(Object object) throws NullPointerException, UnsupportedOperationException {
+    public String toJson(Object object) throws NullPointerException, UnsupportedOperationException {
         return JSONGSONValue.GSON.toJson(Objects.requireNonNull(object, "object is required"));
     }
 
     @Override
     public byte[] toJsonArray(Object object) throws NullPointerException, UnsupportedOperationException {
-        return toJSon(object).getBytes();
+        return toJson(object).getBytes();
     }
 }
