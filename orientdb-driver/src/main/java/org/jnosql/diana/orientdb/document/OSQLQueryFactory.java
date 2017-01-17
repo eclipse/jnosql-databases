@@ -29,6 +29,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -51,38 +52,35 @@ final class OSQLQueryFactory {
         }, query.getParams());
     }
 
-    public static OSQLAsynchQuery<ODocument> toAsync(DocumentQuery documentQuery, Consumer<Void> callBack) {
+    public static QueryResult toAsync(DocumentQuery documentQuery, Consumer<Void> callBack) {
         Query query = getQuery(documentQuery);
-        return new OSQLAsynchQuery<ODocument>(query.getQuery(), new OCommandResultListener() {
+        return new QueryResult(new OSQLAsynchQuery<ODocument>(query.getQuery(), new OCommandResultListener() {
+            List<ODocument> documents = new ArrayList<>();
             @Override
             public boolean result(Object iRecord) {
-                return false;
+                ODocument document = (ODocument) iRecord;
+                documents.add(document);
+                return true;
             }
 
             @Override
             public void end() {
                 callBack.accept(null);
+                documents.forEach(ODocument::delete);
             }
 
             @Override
             public Object getResult() {
                 return null;
             }
-        });
+        }), query.getParams());
     }
+
 
     private static Query getQuery(DocumentQuery documentQuery) {
-        return getQuery(documentQuery, false);
-    }
-
-    private static Query getQuery(DocumentQuery documentQuery, boolean isDelete) {
         StringBuilder query = new StringBuilder();
         List<Object> params = new java.util.ArrayList<>();
-        if (isDelete) {
-            query.append("DELETE FROM ");
-        } else {
-            query.append("SELECT FROM ");
-        }
+        query.append("SELECT FROM ");
         query.append(documentQuery.getCollection()).append(" WHERE ");
         int counter = 0;
         for (DocumentCondition documentCondition : documentQuery.getConditions()) {

@@ -103,12 +103,14 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntityAsync() {
+    public void shouldRemoveEntityAsync() throws InterruptedException {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = documentEntity.find("_id");
+        Optional<Document> id = documentEntity.find("name");
         query.addCondition(DocumentCondition.eq(id.get()));
         entityManager.deleteAsync(query);
+        Thread.sleep(1_000L);
+        assertTrue(entityManager.find(query).isEmpty());
 
     }
 
@@ -117,7 +119,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.save(entity);
-        Document id = entitySaved.find("_id").get();
+        Document id = entitySaved.find("name").get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.addCondition(DocumentCondition.eq(id));
         DocumentEntity entityFound = entityManager.find(query).get(0);

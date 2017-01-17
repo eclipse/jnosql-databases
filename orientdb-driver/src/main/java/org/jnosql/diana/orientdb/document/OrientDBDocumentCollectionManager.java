@@ -100,10 +100,10 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public void saveAsync(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.toString(entity, "Entity is required");
+        ODatabaseDocumentTx tx = pool.acquire();
         ODocument document = new ODocument(entity.getName());
         Map<String, Object> entityValues = entity.toMap();
         entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-        ODatabaseDocumentTx tx = pool.acquire();
         ORecordCallback<Integer> oridentDBCallBack = (a, b) -> callBack.accept(entity);
         tx.save(document, null, ASYNCHRONOUS, false, oridentDBCallBack, oridentDBCallBack);
     }
@@ -146,7 +146,8 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public void deleteAsync(DocumentQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         ODatabaseDocumentTx tx = pool.acquire();
-        tx.command(OSQLQueryFactory.toAsync(query, callBack));
+        OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.toAsync(query, callBack);
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
