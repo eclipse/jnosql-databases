@@ -20,7 +20,6 @@
 package org.jnosql.diana.orientdb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
-import org.jnosql.diana.api.document.DocumentConfiguration;
 
 
 public final class DocumentConfigurationUtils {

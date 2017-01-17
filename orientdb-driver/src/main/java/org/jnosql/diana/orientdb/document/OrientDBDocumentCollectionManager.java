@@ -21,8 +21,11 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.storage.ORecordCallback;
+import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
@@ -31,6 +34,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +42,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
+import static java.util.Collections.singletonMap;
 
 public class OrientDBDocumentCollectionManager implements DocumentCollectionManager {
 
@@ -52,14 +57,30 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
         Objects.toString(entity, "Entity is required");
-        ODocument document = new ODocument(entity.getName());
-        Map<String, Object> entityValues = entity.toMap();
-        entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
         ODatabaseDocumentTx tx = pool.acquire();
-        tx.save(document);
+        ODocument document = new ODocument(entity.getName());
+
+        Map<String, Object> entityValues = toMap(entity);
+        entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
+        ORecord save = tx.save(document);
         return entity;
     }
 
+    private Map<String, Object> toMap(DocumentEntity entity) {
+        Map<String, Object> entityValues = new HashedMap();
+        for (Document document : entity.getDocuments()) {
+            Object valueAsObject = document.get();
+            if (Document.class.isInstance(valueAsObject)) {
+                Document subDocument = Document.class.cast(valueAsObject);
+                entityValues.put(document.getName(), singletonMap(subDocument.getName(), subDocument.get()));
+            } else {
+                entityValues.put(document.getName(), document.get());
+            }
+
+        }
+
+        return entityValues;
+    }
 
     @Override
     public DocumentEntity save(DocumentEntity entity, Duration ttl) {
@@ -110,8 +131,9 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public void delete(DocumentQuery query) {
         ODatabaseDocumentTx tx = pool.acquire();
-        List<ODocument> result = tx.query(OSQLQueryFactory.to(query));
-        result.forEach(d -> tx.delete(d));
+        OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
+        List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+        result.forEach(tx::delete);
 
     }
 
@@ -130,12 +152,13 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
         ODatabaseDocumentTx tx = pool.acquire();
-        List<ODocument> result = tx.query(OSQLQueryFactory.to(query));
+        OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
+        List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
         List<DocumentEntity> entities = new ArrayList<>();
         for (ODocument document : result) {
             DocumentEntity entity = DocumentEntity.of(query.getCollection());
             Stream.of(document.fieldNames())
-                    .map(f -> Document.of(f, document.field(f)))
+                    .map(f -> Document.of(f, (Object) document.field(f)))
                     .forEach(entity::add);
             entities.add(entity);
         }
