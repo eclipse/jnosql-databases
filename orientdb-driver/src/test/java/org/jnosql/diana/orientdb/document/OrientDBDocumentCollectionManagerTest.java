@@ -44,6 +44,11 @@ public class OrientDBDocumentCollectionManagerTest {
     @Before
     public void setUp() {
         entityManager = getConfiguration().getDocumentEntityManager("database");
+        DocumentEntity documentEntity = getEntity();
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> id = documentEntity.find("name");
+        query.addCondition(DocumentCondition.eq(id.get()));
+        entityManager.delete(query);
     }
 
     @Test
