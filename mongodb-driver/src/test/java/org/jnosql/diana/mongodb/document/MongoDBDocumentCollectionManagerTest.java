@@ -65,7 +65,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         entityManager.delete(query);
         assertTrue(entityManager.find(query).isEmpty());
     }
@@ -75,7 +75,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentEntity entity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("_id");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -102,7 +102,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         entityManager.deleteAsync(query);
 
     }
@@ -114,7 +114,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.save(entity);
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.addCondition(DocumentCondition.eq(id));
+        query.condition(DocumentCondition.eq(id));
         DocumentEntity entityFound = entityManager.find(query).get(0);
         Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
         String key = result.keySet().stream().findFirst().get();

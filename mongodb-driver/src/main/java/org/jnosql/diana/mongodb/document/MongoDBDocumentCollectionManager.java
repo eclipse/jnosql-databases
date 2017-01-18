@@ -136,9 +136,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     public void delete(DocumentQuery query) {
         String collectionName = query.getCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        List<Bson> collect = query.getConditions().stream().map(DocumentQueryConversor::convert).collect(toList());
-        DeleteResult deleteResult = collection.deleteMany(Filters.and(collect));
-        System.out.println(deleteResult);
+        Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition());
+        DeleteResult deleteResult = collection.deleteMany(mongoDBQuery);
     }
 
     @Override
@@ -159,13 +158,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     public List<DocumentEntity> find(DocumentQuery query) {
         String collectionName = query.getCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        List<Bson> collect = query.getConditions().stream().map(DocumentQueryConversor::convert).collect(toList());
-        if (collect.isEmpty()) {
-            return stream(collection.find().spliterator(), false).map(Documents::of)
-                    .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
-        }
-        FindIterable<Document> documents = collection.find(Filters.and(collect));
-        return stream(documents.spliterator(), false).map(Documents::of)
+        Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition());
+        return stream(collection.find(mongoDBQuery).spliterator(), false).map(Documents::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
 
     }
@@ -223,8 +217,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         String collectionName = query.getCollection();
         com.mongodb.async.client.MongoCollection<Document> asyncCollection =
                 asyncMongoDatabase.getCollection(collectionName);
-        List<Bson> collect = query.getConditions().stream().map(DocumentQueryConversor::convert).collect(toList());
-        asyncCollection.deleteMany(Filters.and(collect), callBack);
+        Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition());
+        asyncCollection.deleteMany(mongoDBQuery, callBack);
     }
 
 }
