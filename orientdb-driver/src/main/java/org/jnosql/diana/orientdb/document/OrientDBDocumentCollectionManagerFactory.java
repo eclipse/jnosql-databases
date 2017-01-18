@@ -21,14 +21,17 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.client.remote.OServerAdmin;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<OrientDBDocumentCollectionManager> {
 
     private static final String DATABASE_TYPE = "document";
+    private static final String STORAGE_TYPE = "plocal";
 
     private final String host;
     private final String user;
@@ -39,7 +42,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
         this.host = host;
         this.user = user;
         this.password = password;
-        this.storageType = storageType;
+        this.storageType = ofNullable(storageType).orElse(STORAGE_TYPE);
     }
 
     @Override
@@ -51,7 +54,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
             if (!serverAdmin.existsDatabase(database, storageType)) {
                 serverAdmin.createDatabase(database, DATABASE_TYPE, storageType);
             }
-            OPartitionedDatabasePool pool = new OPartitionedDatabasePool(host + '/' + database, user, password);
+            OPartitionedDatabasePool pool = new OPartitionedDatabasePool("remote:" + host + '/' + database, user, password);
             return new OrientDBDocumentCollectionManager(pool);
         } catch (IOException e) {
             throw new OrientDBException("Error when getDocumentEntityManager", e);

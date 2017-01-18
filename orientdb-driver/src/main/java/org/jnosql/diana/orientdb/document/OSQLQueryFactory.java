@@ -23,10 +23,14 @@ import com.orientechnologies.orient.core.command.OCommandResultListener;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 final class OSQLQueryFactory {
@@ -34,49 +38,130 @@ final class OSQLQueryFactory {
     private OSQLQueryFactory() {
     }
 
-    public static OSQLQuery<ODocument> to(DocumentQuery documentQuery) {
-        String query = getQuery(documentQuery);
-        return new OSQLQuery<ODocument>(query) {
-        };
+    public static QueryResult to(DocumentQuery documentQuery) {
+        Query query = getQuery(documentQuery);
+
+        return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
+        }, query.getParams());
     }
 
-    public static OSQLAsynchQuery<ODocument> toAsync(DocumentQuery documentQuery, Consumer<Void> callBack) {
-        String query = getQuery(documentQuery);
-        return new OSQLAsynchQuery<ODocument>(query, new OCommandResultListener() {
+    public static QueryResult toDelete(DocumentQuery documentQuery) {
+        Query query = getQuery(documentQuery);
+
+        return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
+        }, query.getParams());
+    }
+
+    public static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
+        Query query = getQuery(documentQuery);
+        return new QueryResult(new OSQLAsynchQuery<ODocument>(query.getQuery(), new OCommandResultListener() {
+            List<ODocument> documents = new ArrayList<>();
             @Override
             public boolean result(Object iRecord) {
-                return false;
+                ODocument document = (ODocument) iRecord;
+                documents.add(document);
+                return true;
             }
 
             @Override
             public void end() {
-                callBack.accept(null);
+                callBack.accept(documents);
             }
 
             @Override
             public Object getResult() {
                 return null;
             }
-        });
+        }), query.getParams());
     }
 
-    private static String getQuery(DocumentQuery documentQuery) {
+
+    private static Query getQuery(DocumentQuery documentQuery) {
         StringBuilder query = new StringBuilder();
-        query.append("SELECT FROM ").append(documentQuery.getCollection()).append(" WHERE ");
+        List<Object> params = new java.util.ArrayList<>();
+        query.append("SELECT FROM ");
+        query.append(documentQuery.getCollection()).append(" WHERE ");
         int counter = 0;
         for (DocumentCondition documentCondition : documentQuery.getConditions()) {
             Document document = documentCondition.getDocument();
+            Condition condition = documentCondition.getCondition();
             if (counter > 0) {
                 query.append(" AND ");
             }
-
             query.append(document.getName())
                     .append(' ')
-                    .append(document.getValue().get(String.class));
+                    .append(toCondition(condition))
+                    .append(' ')
+                    .append('?');
             counter++;
+            params.add(document.get());
         }
-        return query.toString();
+        return new Query(query.toString(), params);
     }
 
 
+    private static String toCondition(Condition condition) {
+        switch (condition) {
+            case AND:
+                return "AND";
+            case EQUALS:
+                return "=";
+            case GREATER_EQUALS_THAN:
+                return ">=";
+            case GREATER_THAN:
+                return ">";
+            case IN:
+                return "IN";
+            case LESSER_EQUALS_THAN:
+                return "<=";
+            case LESSER_THAN:
+                return "<";
+            case LIKE:
+                return "LIKE";
+            case NOT:
+                return "NOT";
+            case OR:
+                return "OR";
+            default:
+                throw new IllegalArgumentException("Orient DB has not support to the condition " + condition);
+
+        }
+    }
+
+    static class Query {
+        private final String query;
+        private final List<Object> params;
+
+        public Query(String query, List<Object> params) {
+            this.query = query;
+            this.params = params;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public List<Object> getParams() {
+            return params;
+        }
+    }
+
+    static class QueryResult {
+
+        private final OSQLQuery<ODocument> query;
+        private final List<Object> params;
+
+        public QueryResult(OSQLQuery<ODocument> query, List<Object> params) {
+            this.query = query;
+            this.params = params;
+        }
+
+        public OSQLQuery<ODocument> getQuery() {
+            return query;
+        }
+
+        public Object getParams() {
+            return params.toArray(new Object[params.size()]);
+        }
+    }
 }
