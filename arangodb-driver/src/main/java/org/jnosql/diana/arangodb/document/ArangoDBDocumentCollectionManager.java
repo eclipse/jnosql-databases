@@ -107,7 +107,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         if (checkCondition(query)) {
             return;
         }
-        DocumentCondition condition = query.getConditions().get(0);
+        DocumentCondition condition = query.getCondition();
         Value value = condition.getDocument().getValue();
         if (Condition.IN.equals(condition.getCondition())) {
             List<String> keys = value.get(new TypeReference<List<String>>() {
@@ -172,7 +172,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         if (checkCondition(query)) {
             return;
         }
-        DocumentCondition condition = query.getConditions().get(0);
+        DocumentCondition condition = query.getCondition();
         Value value = condition.getDocument().getValue();
         if (Condition.IN.equals(condition.getCondition())) {
             List<String> keys = value.get(new TypeReference<List<String>>() {
@@ -197,7 +197,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
             callBack.accept(Collections.emptyList());
             return;
         }
-        DocumentCondition condition = query.getConditions().get(0);
+        DocumentCondition condition = query.getCondition();
         Value value = condition.getDocument().getValue();
         String collection = query.getCollection();
         if (Condition.EQUALS.equals(condition.getCondition())) {
@@ -241,7 +241,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         if (checkCondition(query)) {
             return Collections.emptyList();
         }
-        DocumentCondition condition = query.getConditions().get(0);
+        DocumentCondition condition = query.getCondition();
         Value value = condition.getDocument().getValue();
         String collection = query.getCollection();
         if (Condition.EQUALS.equals(condition.getCondition())) {
@@ -284,7 +284,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     private boolean checkCondition(DocumentQuery query) {
-        if (query.getConditions().isEmpty()) {
+        if (Objects.isNull(query.getCondition())) {
             return true;
         }
         return false;
