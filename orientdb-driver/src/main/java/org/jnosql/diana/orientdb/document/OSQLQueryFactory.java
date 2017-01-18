@@ -39,24 +39,24 @@ final class OSQLQueryFactory {
     private OSQLQueryFactory() {
     }
 
-    public static QueryResult to(DocumentQuery documentQuery) {
+    static QueryResult to(DocumentQuery documentQuery) {
         Query query = getQuery(documentQuery);
 
         return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
         }, query.getParams());
     }
 
-    public static QueryResult toDelete(DocumentQuery documentQuery) {
+    static QueryResult toDelete(DocumentQuery documentQuery) {
         Query query = getQuery(documentQuery);
 
         return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
         }, query.getParams());
     }
 
-    public static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
+    static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
         Query query = getQuery(documentQuery);
         return new QueryResult(new OSQLAsynchQuery<ODocument>(query.getQuery(), new OCommandResultListener() {
-            List<ODocument> documents = new ArrayList<>();
+            private List<ODocument> documents = new ArrayList<>();
 
             @Override
             public boolean result(Object iRecord) {
@@ -150,16 +150,16 @@ final class OSQLQueryFactory {
         private final String query;
         private final List<Object> params;
 
-        public Query(String query, List<Object> params) {
+        Query(String query, List<Object> params) {
             this.query = query;
             this.params = params;
         }
 
-        public String getQuery() {
+        String getQuery() {
             return query;
         }
 
-        public List<Object> getParams() {
+        List<Object> getParams() {
             return params;
         }
     }
@@ -169,16 +169,16 @@ final class OSQLQueryFactory {
         private final OSQLQuery<ODocument> query;
         private final List<Object> params;
 
-        public QueryResult(OSQLQuery<ODocument> query, List<Object> params) {
+        QueryResult(OSQLQuery<ODocument> query, List<Object> params) {
             this.query = query;
             this.params = params;
         }
 
-        public OSQLQuery<ODocument> getQuery() {
+        OSQLQuery<ODocument> getQuery() {
             return query;
         }
 
-        public Object getParams() {
+        Object getParams() {
             return params.toArray(new Object[params.size()]);
         }
     }

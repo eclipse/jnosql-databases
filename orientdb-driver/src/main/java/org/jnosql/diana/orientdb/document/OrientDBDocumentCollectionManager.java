@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
 import static java.util.Collections.singletonMap;

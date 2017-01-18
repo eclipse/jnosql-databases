@@ -29,6 +29,9 @@ import java.util.stream.Stream;
 
 final class OrientDBConverter {
 
+    private OrientDBConverter() {
+    }
+
     static List<DocumentEntity> convert(List<ODocument> result) {
         List<DocumentEntity> entities = new ArrayList<>();
         for (ODocument document : result) {

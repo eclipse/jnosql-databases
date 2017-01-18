@@ -24,7 +24,6 @@ import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
