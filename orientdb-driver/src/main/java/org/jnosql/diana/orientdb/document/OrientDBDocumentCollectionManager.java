@@ -23,7 +23,6 @@ import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.storage.ORecordCallback;
 import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
@@ -33,16 +32,16 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
 import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.orientdb.document.OSQLQueryFactory.toAsync;
 
 public class OrientDBDocumentCollectionManager implements DocumentCollectionManager {
 
@@ -146,7 +145,10 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public void deleteAsync(DocumentQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.toAsync(query, callBack);
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
+            l.forEach(d -> d.delete());
+            callBack.accept(null);
+        });
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
@@ -155,20 +157,18 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
         ODatabaseDocumentTx tx = pool.acquire();
         OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
         List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-        List<DocumentEntity> entities = new ArrayList<>();
-        for (ODocument document : result) {
-            DocumentEntity entity = DocumentEntity.of(query.getCollection());
-            Stream.of(document.fieldNames())
-                    .map(f -> Document.of(f, (Object) document.field(f)))
-                    .forEach(entity::add);
-            entities.add(entity);
-        }
-        return entities;
+        return OrientDBConverter.convert(result);
     }
+
 
     @Override
     public void findAsync(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-
+        ODatabaseDocumentTx tx = pool.acquire();
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
+            callBack.accept(l.stream()
+                    .map(OrientDBConverter::convert)
+                    .collect(toList()));
+        });
     }
 
     @Override

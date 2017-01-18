@@ -52,7 +52,7 @@ final class OSQLQueryFactory {
         }, query.getParams());
     }
 
-    public static QueryResult toAsync(DocumentQuery documentQuery, Consumer<Void> callBack) {
+    public static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
         Query query = getQuery(documentQuery);
         return new QueryResult(new OSQLAsynchQuery<ODocument>(query.getQuery(), new OCommandResultListener() {
             List<ODocument> documents = new ArrayList<>();
@@ -65,8 +65,7 @@ final class OSQLQueryFactory {
 
             @Override
             public void end() {
-                callBack.accept(null);
-                documents.forEach(ODocument::delete);
+                callBack.accept(documents);
             }
 
             @Override
