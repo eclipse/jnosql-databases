@@ -47,7 +47,7 @@ public class CassandraDocumentEntityManagerFactoryTest {
 
     @Test
     public void shouldReturnEntityManager() throws Exception {
-        ColumnFamilyManager columnEntityManager = subject.getColumnEntityManager(Constants.KEY_SPACE);
+        ColumnFamilyManager columnEntityManager = subject.getColumnEntityManager(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 

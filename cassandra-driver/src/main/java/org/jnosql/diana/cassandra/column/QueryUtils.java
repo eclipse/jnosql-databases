@@ -23,6 +23,7 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.querybuilder.*;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.Sort;
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.column.Column;
@@ -31,7 +32,9 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -71,8 +74,8 @@ final class QueryUtils {
 
     public static BuiltStatement add(ColumnQuery query, String keySpace) {
         String columnFamily = query.getColumnFamily();
-        List<ColumnCondition> conditions = query.getConditions();
-        if (conditions.isEmpty()) {
+
+        if (Objects.isNull(query.getCondition())) {
             return QueryBuilder.select().all().from(keySpace, columnFamily);
         }
         Select.Where where = QueryBuilder.select().all().from(keySpace, columnFamily).where();
@@ -82,42 +85,56 @@ final class QueryUtils {
         if (!query.getSorts().isEmpty()) {
             where.orderBy(query.getSorts().stream().map(SORT_ORDERING_FUNCTION).toArray(Ordering[]::new));
         }
-        conditions.stream().map(condition -> add(condition)).forEach(where::and);
+        List<Clause> clauses = new ArrayList<>();
+        createClause(query.getCondition(), clauses);
+        clauses.forEach(where::and);
         return where;
     }
 
     public static BuiltStatement delete(ColumnQuery query, String keySpace) {
         String columnFamily = query.getColumnFamily();
-        List<ColumnCondition> conditions = query.getConditions();
 
-        if (conditions.isEmpty()) {
+        if (Objects.isNull(query.getCondition())) {
             return QueryBuilder.delete().all().from(keySpace, query.getColumnFamily());
         }
         Delete.Where where = QueryBuilder.delete().all().from(keySpace, query.getColumnFamily()).where();
-        conditions.stream().map(condition -> add(condition)).forEach(where::and);
+        List<Clause> clauses = new ArrayList<>();
+        createClause(query.getCondition(), clauses);
+        clauses.forEach(where::and);
         return where;
     }
 
-    private static Clause add(ColumnCondition columnCondition) {
+    private static void createClause(ColumnCondition columnCondition, List<Clause> clauses) {
         Column column = columnCondition.getColumn();
         Condition condition = columnCondition.getCondition();
         Object value = column.getValue().get();
         switch (condition) {
             case EQUALS:
-                return QueryBuilder.eq(column.getName(), value);
+                clauses.add(QueryBuilder.eq(column.getName(), value));
+                return;
             case GREATER_THAN:
-                return QueryBuilder.gt(column.getName(), value);
+                clauses.add(QueryBuilder.gt(column.getName(), value));
+                return;
             case GREATER_EQUALS_THAN:
-                return QueryBuilder.gte(column.getName(), value);
+                clauses.add(QueryBuilder.gte(column.getName(), value));
+                return;
             case LESSER_THAN:
-                return QueryBuilder.lt(column.getName(), value);
+                clauses.add(QueryBuilder.lt(column.getName(), value));
+                return;
             case LESSER_EQUALS_THAN:
-                return QueryBuilder.lte(column.getName(), value);
+                clauses.add(QueryBuilder.lte(column.getName(), value));
+                return;
             case IN:
-                return QueryBuilder.in(column.getName(), getIinValue(value));
+                clauses.add(QueryBuilder.in(column.getName(), getIinValue(value)));
+                return;
             case LIKE:
-                return QueryBuilder.like(column.getName(), value);
+                clauses.add(QueryBuilder.like(column.getName(), value));
+                return;
             case AND:
+                for (ColumnCondition cc : column.get(new TypeReference<List<ColumnCondition>>() {
+                })) {
+                    createClause(cc, clauses);
+                }
             case OR:
             default:
                 throw new UnsupportedOperationException("The columnCondition " + condition +
