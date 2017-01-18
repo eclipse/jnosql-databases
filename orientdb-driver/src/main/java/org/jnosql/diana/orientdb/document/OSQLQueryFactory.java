@@ -25,6 +25,7 @@ import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.jnosql.diana.api.Condition;
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -56,6 +57,7 @@ final class OSQLQueryFactory {
         Query query = getQuery(documentQuery);
         return new QueryResult(new OSQLAsynchQuery<ODocument>(query.getQuery(), new OCommandResultListener() {
             List<ODocument> documents = new ArrayList<>();
+
             @Override
             public boolean result(Object iRecord) {
                 ODocument document = (ODocument) iRecord;
@@ -83,22 +85,40 @@ final class OSQLQueryFactory {
         query.append(documentQuery.getCollection()).append(" WHERE ");
         int counter = 0;
         for (DocumentCondition documentCondition : documentQuery.getConditions()) {
-            Document document = documentCondition.getDocument();
-            Condition condition = documentCondition.getCondition();
-            if (counter > 0) {
-                query.append(" AND ");
-            }
-            query.append(document.getName())
-                    .append(' ')
-                    .append(toCondition(condition))
-                    .append(' ')
-                    .append('?');
-            counter++;
-            params.add(document.get());
+            counter = addCondition(documentCondition, counter, query, params);
         }
         return new Query(query.toString(), params);
     }
 
+    private static int addCondition(DocumentCondition documentCondition, int counter, StringBuilder query, List<Object> params) {
+        return addCondition(documentCondition, counter, query, params, "AND");
+    }
+
+    private static int addCondition(DocumentCondition documentCondition, int counter, StringBuilder query, List<Object> params, String connector) {
+        Document document = documentCondition.getDocument();
+        Condition condition = documentCondition.getCondition();
+        int aux = counter;
+        if (Condition.AND.equals(condition) || Condition.OR.equals(condition) || Condition.NOT.equals(condition)) {
+            List<DocumentCondition> documentConditions = document.get(new TypeReference<List<DocumentCondition>>() {
+            });
+
+            for (DocumentCondition dc : documentConditions) {
+                aux = addCondition(dc, aux, query, params, toCondition(condition));
+            }
+            return aux;
+
+        }
+        if (counter > 0) {
+            query.append(' ').append(connector).append(' ');
+        }
+        query.append(document.getName())
+                .append(' ')
+                .append(toCondition(condition))
+                .append(' ')
+                .append('?');
+        params.add(document.get());
+        return aux + 1;
+    }
 
     private static String toCondition(Condition condition) {
         switch (condition) {

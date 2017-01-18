@@ -24,6 +24,7 @@ import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,9 +93,16 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldSaveAsync() {
+    public void shouldSaveAsync() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entityManager.saveAsync(entity);
+
+        Thread.sleep(1_000L);
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> id = entity.find("name");
+        query.addCondition(DocumentCondition.eq(id.get()));
+        List<DocumentEntity> entities = entityManager.find(query);
+        assertFalse(entities.isEmpty());
 
     }
 
@@ -133,6 +141,40 @@ public class OrientDBDocumentCollectionManagerTest {
         String value = result.get(key);
         assertEquals("mobile", key);
         assertEquals("1231231", value);
+    }
+
+    @Test
+    public void shouldQueryAnd() {
+        DocumentEntity entity = getEntity();
+        entity.add(Document.of("age", 24));
+        entityManager.save(entity);
+
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+
+        query.addCondition(DocumentCondition.eq(Document.of("name", "Poliana"))
+                .and(DocumentCondition.gte(Document.of("age", 10))));
+
+        assertFalse(entityManager.find(query).isEmpty());
+
+        entityManager.delete(query);
+        assertTrue(entityManager.find(query).isEmpty());
+    }
+
+    @Test
+    public void shouldQueryOr() {
+        DocumentEntity entity = getEntity();
+        entity.add(Document.of("age", 24));
+        entityManager.save(entity);
+
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+
+        query.addCondition(DocumentCondition.eq(Document.of("name", "Poliana"))
+                .or(DocumentCondition.gte(Document.of("age", 100))));
+
+        assertFalse(entityManager.find(query).isEmpty());
+
+        entityManager.delete(query);
+        assertTrue(entityManager.find(query).isEmpty());
     }
 
     private DocumentEntity getEntity() {
