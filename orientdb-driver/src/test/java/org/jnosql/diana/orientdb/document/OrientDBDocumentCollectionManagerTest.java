@@ -48,7 +48,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity documentEntity = getEntity();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         entityManager.delete(query);
     }
 
@@ -76,7 +76,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         entityManager.delete(query);
         assertTrue(entityManager.find(query).isEmpty());
     }
@@ -86,7 +86,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity entity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("name");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -100,7 +100,7 @@ public class OrientDBDocumentCollectionManagerTest {
         Thread.sleep(1_000L);
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("name");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
 
@@ -120,7 +120,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.addCondition(DocumentCondition.eq(id.get()));
+        query.condition(DocumentCondition.eq(id.get()));
         entityManager.deleteAsync(query);
         Thread.sleep(1_000L);
         assertTrue(entityManager.find(query).isEmpty());
@@ -134,7 +134,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.save(entity);
         Document id = entitySaved.find("name").get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.addCondition(DocumentCondition.eq(id));
+        query.condition(DocumentCondition.eq(id));
         DocumentEntity entityFound = entityManager.find(query).get(0);
         Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
         String key = result.keySet().stream().findFirst().get();
@@ -151,7 +151,7 @@ public class OrientDBDocumentCollectionManagerTest {
 
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
 
-        query.addCondition(DocumentCondition.eq(Document.of("name", "Poliana"))
+        query.condition(DocumentCondition.eq(Document.of("name", "Poliana"))
                 .and(DocumentCondition.gte(Document.of("age", 10))));
 
         assertFalse(entityManager.find(query).isEmpty());
@@ -168,7 +168,7 @@ public class OrientDBDocumentCollectionManagerTest {
 
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
 
-        query.addCondition(DocumentCondition.eq(Document.of("name", "Poliana"))
+        query.condition(DocumentCondition.eq(Document.of("name", "Poliana"))
                 .or(DocumentCondition.gte(Document.of("age", 100))));
 
         assertFalse(entityManager.find(query).isEmpty());

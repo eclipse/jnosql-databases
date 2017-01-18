@@ -84,9 +84,7 @@ final class OSQLQueryFactory {
         query.append("SELECT FROM ");
         query.append(documentQuery.getCollection()).append(" WHERE ");
         int counter = 0;
-        for (DocumentCondition documentCondition : documentQuery.getConditions()) {
-            counter = addCondition(documentCondition, counter, query, params);
-        }
+        counter = addCondition(documentQuery.getCondition(), counter, query, params);
         return new Query(query.toString(), params);
     }
 
