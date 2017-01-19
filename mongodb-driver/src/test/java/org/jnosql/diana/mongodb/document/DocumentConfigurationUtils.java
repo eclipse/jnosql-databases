@@ -27,9 +27,9 @@ public final class DocumentConfigurationUtils {
 
     private DocumentConfigurationUtils() {}
 
-    public static DocumentCollectionManagerFactory getConfiguration() {
+    public static DocumentCollectionManagerFactory get() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.getManagerFactory();
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
         return managerFactory;
     }
 }

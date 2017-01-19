@@ -16,10 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jnosql.diana.mongodb.document;
 
-import org.jnosql.diana.api.document.*;
+import org.jnosql.diana.api.document.Document;
+import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,12 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.contains;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
-import static org.junit.Assert.*;
 
 
-public class MongoDBDocumentCollectionManagerTest {
+public class MongoDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
     private DocumentCollectionManager entityManager;
@@ -43,59 +45,31 @@ public class MongoDBDocumentCollectionManagerTest {
         entityManager = get().get("database");
     }
 
+
     @Test
-    public void shouldSave() {
+    public void shouldSaveAsync() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.save(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
+        entityManager.save(entity);
+
     }
 
     @Test
-    public void shouldUpdateSave() {
+    public void shouldUpdateAsync() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.save(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
-        DocumentEntity updated = entityManager.update(entity);
-        assertEquals(newField, updated.find("newField").get());
+        entityManager.update(entity);
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    public void shouldRemoveEntityAsync() {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
         entityManager.delete(query);
-        assertTrue(entityManager.find(query).isEmpty());
-    }
 
-    @Test
-    public void shouldFindDocument() {
-        DocumentEntity entity = entityManager.save(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = entity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
-        List<DocumentEntity> entities = entityManager.find(query);
-        assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
-    }
-
-
-    @Test
-    public void shouldSaveSubDocument() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentEntity entitySaved = entityManager.save(entity);
-        Document id = entitySaved.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
-        DocumentEntity entityFound = entityManager.find(query).get(0);
-        Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
-        String key = result.keySet().stream().findFirst().get();
-        String value = result.get(key);
-        assertEquals("mobile", key);
-        assertEquals("1231231", value);
     }
 
     private DocumentEntity getEntity() {

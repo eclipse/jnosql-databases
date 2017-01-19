@@ -44,7 +44,7 @@ public class MongoDBDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.getManagerFactory();
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }
 }

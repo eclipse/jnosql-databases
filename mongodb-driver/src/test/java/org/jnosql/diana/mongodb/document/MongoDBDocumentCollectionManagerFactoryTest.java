@@ -21,6 +21,7 @@ package org.jnosql.diana.mongodb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,16 +30,23 @@ import static org.junit.Assert.assertNotNull;
 
 public class MongoDBDocumentCollectionManagerFactoryTest {
 
-    private DocumentCollectionManagerFactory managerFactory;
+    private MongoDBDocumentConfiguration configuration;
 
     @Before
     public void setUp() {
-        managerFactory = DocumentConfigurationUtils.getConfiguration();
+        configuration = new MongoDBDocumentConfiguration();
+
     }
 
     @Test
     public void shouldCreateEntityManager() {
-        DocumentCollectionManager database = managerFactory.getDocumentEntityManager("database");
-        assertNotNull(database);
+        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
+        assertNotNull(mongoDBFactory.get("database"));
+    }
+
+    @Test
+    public void shouldCreateEntityManagerAsync() {
+        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
+        assertNotNull(mongoDBFactory.getAsync("database"));
     }
 }

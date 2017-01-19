@@ -19,43 +19,30 @@
 
 package org.jnosql.diana.mongodb.document;
 
-import com.mongodb.async.SingleResultCallback;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
 public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
 
     private final MongoDatabase mongoDatabase;
 
-    private final com.mongodb.async.client.MongoDatabase asyncMongoDatabase;
 
-    private final ValueWriter writerField = ValueWriterDecorator.getInstance();
-
-
-    MongoDBDocumentCollectionManager(MongoDatabase mongoDatabase,
-                                     com.mongodb.async.client.MongoDatabase asyncMongoDatabase) {
+    MongoDBDocumentCollectionManager(MongoDatabase mongoDatabase) {
         this.mongoDatabase = mongoDatabase;
-        this.asyncMongoDatabase = asyncMongoDatabase;
     }
 
 
@@ -75,30 +62,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
 
     @Override
-    public void saveAsync(DocumentEntity entity) {
-        saveAsync(entity, (aVoid, throwable) -> {
-        });
-    }
-
-    @Override
     public DocumentEntity save(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("MongoDB does not support save with TTL");
-    }
-
-    @Override
-    public void saveAsync(DocumentEntity entity, Duration ttl) {
-        throw new UnsupportedOperationException("MongoDB does not support saveAsync with TTL");
-    }
-
-    @Override
-    public void saveAsync(DocumentEntity entity, Consumer<DocumentEntity> callBack)
-            throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        saveAsync(entity, (aVoid, throwable) -> callBack.accept(entity));
-    }
-
-    @Override
-    public void saveAsync(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) {
-        throw new UnsupportedOperationException("MongoDB does not support saveAsync with TTL");
     }
 
 
@@ -116,21 +81,6 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         return entity;
     }
 
-    @Override
-    public void updateAsync(DocumentEntity entity)
-            throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        updateAsync(entity, (d, throwable) -> {
-        });
-    }
-
-    @Override
-    public void updateAsync(DocumentEntity entity, Consumer<DocumentEntity> callBack)
-            throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        updateAsync(entity, (d, throwable) -> {
-            callBack.accept(DocumentEntity.of(entity.getName(), Documents.of(d)));
-        });
-    }
-
 
     @Override
     public void delete(DocumentQuery query) {
@@ -138,19 +88,6 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition());
         DeleteResult deleteResult = collection.deleteMany(mongoDBQuery);
-    }
-
-    @Override
-    public void deleteAsync(DocumentQuery query) {
-        deleteAsync(query, (deleteResult, throwable) -> {
-        });
-    }
-
-    @Override
-    public void deleteAsync(DocumentQuery query, Consumer<Void> callBack)
-            throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        deleteAsync(query, (deleteResult, throwable) -> callBack.accept(null));
-
     }
 
 
@@ -164,61 +101,11 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     }
 
-    @Override
-    public void findAsync(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
-            throws ExecuteAsyncQueryException, UnsupportedOperationException {
-
-    }
 
     @Override
     public void close() {
 
     }
 
-    private Document getDocument(DocumentEntity entity) {
-        Document document = new Document();
-        entity.getDocuments().stream().forEach(d -> document.append(d.getName(), convert(d.getValue())));
-        return document;
-    }
-
-    private Object convert(Value value) {
-        Object val = value.get();
-        if (val instanceof org.jnosql.diana.api.document.Document) {
-            org.jnosql.diana.api.document.Document subDocument = (org.jnosql.diana.api.document.Document) val;
-            Object converted = convert(subDocument.getValue());
-            return new Document(subDocument.getName(), converted);
-        }
-        if (writerField.isCompatible(val.getClass())) {
-            return writerField.write(val);
-        }
-        return val;
-    }
-
-    private void saveAsync(DocumentEntity entity, SingleResultCallback<Void> callBack) {
-        String collectionName = entity.getName();
-        com.mongodb.async.client.MongoCollection<Document> collectionAsync =
-                asyncMongoDatabase.getCollection(collectionName);
-        Document document = getDocument(entity);
-        collectionAsync.insertOne(document, callBack);
-    }
-
-    private void updateAsync(DocumentEntity entity, SingleResultCallback<Document> callBack) {
-        String collectionName = entity.getName();
-        com.mongodb.async.client.MongoCollection<Document> asyncCollection =
-                asyncMongoDatabase.getCollection(collectionName);
-        Document id = entity.find("_id").map(d -> new Document(d.getName(), d.getValue().get()))
-                .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
-                        "the field `id` is required"));
-
-        asyncCollection.findOneAndReplace(id, getDocument(entity), callBack);
-    }
-
-    private void deleteAsync(DocumentQuery query, SingleResultCallback<DeleteResult> callBack) {
-        String collectionName = query.getCollection();
-        com.mongodb.async.client.MongoCollection<Document> asyncCollection =
-                asyncMongoDatabase.getCollection(collectionName);
-        Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition());
-        asyncCollection.deleteMany(mongoDBQuery, callBack);
-    }
 
 }

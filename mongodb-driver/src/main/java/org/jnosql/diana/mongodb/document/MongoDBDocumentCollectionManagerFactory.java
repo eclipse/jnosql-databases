@@ -20,9 +20,11 @@
 package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
+import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
-public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager> {
+public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager>,
+        DocumentCollectionManagerAsyncFactory<MongoDBDocumentCollectionManagerAsync> {
 
     private final MongoClient mongoClient;
     private final com.mongodb.async.client.MongoClient asyncMongoDatabase;
@@ -34,9 +36,13 @@ public class MongoDBDocumentCollectionManagerFactory implements DocumentCollecti
     }
 
     @Override
-    public MongoDBDocumentCollectionManager getDocumentEntityManager(String database) {
-        return new MongoDBDocumentCollectionManager(mongoClient.getDatabase(database),
-                asyncMongoDatabase.getDatabase(database));
+    public MongoDBDocumentCollectionManager get(String database) {
+        return new MongoDBDocumentCollectionManager(mongoClient.getDatabase(database));
+    }
+
+    @Override
+    public MongoDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        return new MongoDBDocumentCollectionManagerAsync(asyncMongoDatabase.getDatabase(database));
     }
 
     @Override

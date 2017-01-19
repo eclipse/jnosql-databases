@@ -24,20 +24,17 @@ import com.mongodb.ServerAddress;
 import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.connection.ClusterSettings;
-import org.jnosql.diana.api.document.DocumentConfiguration;
+import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
-public class MongoDBDocumentConfiguration implements DocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
+public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-mongodb.properties";
-
-    private static final Logger LOGGER = Logger.getLogger(MongoDBDocumentConfiguration.class.getName());
 
     private static final int DEFAULT_PORT = 27017;
 
@@ -61,10 +58,15 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
 
 
     @Override
-    public MongoDBDocumentCollectionManagerFactory getManagerFactory() {
+    public MongoDBDocumentCollectionManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
         return getManagerFactory(configuration);
 
+    }
+
+    @Override
+    public MongoDBDocumentCollectionManagerFactory getAsync() {
+        return get();
     }
 
     private class HostPortConfiguration {
