@@ -48,8 +48,8 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
     @Before
     public void setUp() {
         random = new Random();
-        entityManagerAsync = getConfiguration().getDocumentEntityManagerAsync("database");
-        entityManager = getConfiguration().getDocumentEntityManager("database");
+        entityManagerAsync = getConfiguration().getAsync("database");
+        entityManager = getConfiguration().get("database");
     }
 
 

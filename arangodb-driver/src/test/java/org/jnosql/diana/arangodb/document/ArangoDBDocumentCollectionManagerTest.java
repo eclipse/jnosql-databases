@@ -51,7 +51,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Before
     public void setUp() {
         random = new Random();
-        entityManager = getConfiguration().getDocumentEntityManager("database");
+        entityManager = getConfiguration().get("database");
     }
 
     @Test

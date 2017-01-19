@@ -20,6 +20,7 @@
 package org.jnosql.diana.arangodb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +39,13 @@ public class ArangoDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        DocumentCollectionManager database = managerFactory.getDocumentEntityManager("database");
+        DocumentCollectionManager database = managerFactory.get("database");
+        assertNotNull(database);
+    }
+
+    @Test
+    public void shouldCreateEntityManagerAsync() {
+        DocumentCollectionManagerAsync database = managerFactory.getAsync("database");
         assertNotNull(database);
     }
 }
