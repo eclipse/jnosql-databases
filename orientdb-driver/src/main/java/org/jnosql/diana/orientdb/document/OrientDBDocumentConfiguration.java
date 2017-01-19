@@ -19,9 +19,9 @@
 package org.jnosql.diana.orientdb.document;
 
 
-import org.jnosql.diana.api.document.DocumentConfiguration;
+import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 
-public class OrientDBDocumentConfiguration implements DocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
+public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
 
     private String host;
 
@@ -48,7 +48,12 @@ public class OrientDBDocumentConfiguration implements DocumentConfiguration<Orie
     }
 
     @Override
-    public OrientDBDocumentCollectionManagerFactory getManagerFactory() {
+    public OrientDBDocumentCollectionManagerFactory get() {
+        return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
+    }
+
+    @Override
+    public OrientDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
         return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
     }
 }

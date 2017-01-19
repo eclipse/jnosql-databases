@@ -31,12 +31,12 @@ public class OrientDBDocumentCollectionManagerFactoryTest {
 
     @Before
     public void setUp() {
-        managerFactory = DocumentConfigurationUtils.getConfiguration();
+        managerFactory = DocumentConfigurationUtils.get();
     }
 
     @Test
     public void shouldCreateEntityManager() {
-        DocumentCollectionManager database = managerFactory.getDocumentEntityManager("database");
+        DocumentCollectionManager database = managerFactory.get("database");
         assertNotNull(database);
     }
 }

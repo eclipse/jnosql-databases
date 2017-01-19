@@ -39,7 +39,7 @@ public class OrientDBDocumentConfigurationTest {
         configuration.setHost("172.17.0.2");
         configuration.setUser("root");
         configuration.setPassword("rootpwd");
-        DocumentCollectionManagerFactory managerFactory = configuration.getManagerFactory();
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }
 }

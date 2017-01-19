@@ -21,13 +21,15 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.client.remote.OServerAdmin;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
+import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 import java.io.IOException;
 
 import static java.util.Optional.ofNullable;
 
-public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<OrientDBDocumentCollectionManager> {
+public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<OrientDBDocumentCollectionManager>,
+        DocumentCollectionManagerAsyncFactory<OrientDBDocumentCollectionManagerAsync> {
 
     private static final String DATABASE_TYPE = "document";
     private static final String STORAGE_TYPE = "plocal";
@@ -45,7 +47,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
     }
 
     @Override
-    public OrientDBDocumentCollectionManager getDocumentEntityManager(String database) {
+    public OrientDBDocumentCollectionManager get(String database) {
         try {
             OServerAdmin serverAdmin = new OServerAdmin(host)
                     .connect(user, password);
@@ -55,6 +57,22 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
             }
             OPartitionedDatabasePool pool = new OPartitionedDatabasePool("remote:" + host + '/' + database, user, password);
             return new OrientDBDocumentCollectionManager(pool);
+        } catch (IOException e) {
+            throw new OrientDBException("Error when getDocumentEntityManager", e);
+        }
+    }
+
+    @Override
+    public OrientDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        try {
+            OServerAdmin serverAdmin = new OServerAdmin(host)
+                    .connect(user, password);
+
+            if (!serverAdmin.existsDatabase(database, storageType)) {
+                serverAdmin.createDatabase(database, DATABASE_TYPE, storageType);
+            }
+            OPartitionedDatabasePool pool = new OPartitionedDatabasePool("remote:" + host + '/' + database, user, password);
+            return new OrientDBDocumentCollectionManagerAsync(pool);
         } catch (IOException e) {
             throw new OrientDBException("Error when getDocumentEntityManager", e);
         }
