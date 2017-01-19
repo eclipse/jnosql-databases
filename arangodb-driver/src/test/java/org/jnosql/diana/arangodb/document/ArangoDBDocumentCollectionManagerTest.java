@@ -77,7 +77,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_key");
-        query.condition(DocumentCondition.eq(id.get()));
+        query.and(DocumentCondition.eq(id.get()));
         entityManager.delete(query);
         assertTrue(entityManager.find(query).isEmpty());
     }
@@ -87,7 +87,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentEntity entity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find(KEY_NAME);
-        query.condition(DocumentCondition.eq(id.get()));
+        query.and(DocumentCondition.eq(id.get()));
         List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
         DocumentEntity documentEntity = entities.get(0);

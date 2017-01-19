@@ -74,7 +74,7 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find(KEY_NAME);
-        query.condition(DocumentCondition.eq(id.get()));
+        query.and(DocumentCondition.eq(id.get()));
         entityManagerAsync.delete(query);
     }
 
