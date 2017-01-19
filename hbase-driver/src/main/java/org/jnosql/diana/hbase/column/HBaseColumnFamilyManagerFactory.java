@@ -31,9 +31,11 @@ import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
+import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 
-public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFactory<HBaseColumnFamilyManager> {
+public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFactory<HBaseColumnFamilyManager,
+        ColumnFamilyManagerAsync> {
 
     private final Configuration configuration;
 
@@ -45,7 +47,7 @@ public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFacto
     }
 
     @Override
-    public HBaseColumnFamilyManager getColumnEntityManager(String database) {
+    public HBaseColumnFamilyManager get(String database) {
         try {
             Connection connection = ConnectionFactory.createConnection(configuration);
             Admin admin = connection.getAdmin();
@@ -60,6 +62,11 @@ public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFacto
         } catch (IOException e) {
             throw new DianaHBaseException("A error happened when try to create ColumnFamilyManager", e);
         }
+    }
+
+    @Override
+    public ColumnFamilyManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        throw new UnsupportedOperationException("There is not support on async");
     }
 
     private void existTable(Admin admin, TableName tableName) throws IOException {

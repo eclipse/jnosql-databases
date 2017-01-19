@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class ArangoDBDocumentCollectionManagerFactoryTest {
 
-    private DocumentCollectionManagerFactory managerFactory;
+    private ArangoDBDocumentCollectionManagerFactory managerFactory;
 
     @Before
     public void setUp() {
