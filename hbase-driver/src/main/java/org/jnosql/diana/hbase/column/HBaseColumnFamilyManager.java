@@ -28,7 +28,8 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.Condition;
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.column.Column;
@@ -44,12 +45,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.api.Condition.EQUALS;
 
 public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
@@ -94,49 +93,18 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public void saveAsync(ColumnEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to save async");
-    }
-
-    @Override
-    public void saveAsync(ColumnEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to save async");
-    }
-
-    @Override
-    public void saveAsync(ColumnEntity entity, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to save async");
-    }
-
-    @Override
-    public void saveAsync(ColumnEntity entity, Duration ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to save async");
-    }
-
-    @Override
-    public ColumnEntity update(ColumnEntity entity) {
-        return save(entity);
-    }
-
-    @Override
-    public void updateAsync(ColumnEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to update async");
-    }
-
-    @Override
-    public void updateAsync(ColumnEntity entity, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to update async");
-    }
-
-    @Override
     public void delete(ColumnQuery query) {
 
-        List<ColumnCondition> conditions = query.getConditions();
-        if (isQuerySupported(conditions)) {
+        ColumnCondition condition = query.getCondition();
+        if (isQuerySupported(condition)) {
+            List<String> values = new ArrayList<>();
 
-            List<Delete> deletes = conditions.stream().map(c -> c.getColumn().getValue()).
-                    map(this::valueToString)
-                    .map(String::getBytes).map(Delete::new).collect(toList());
+            convert(condition, values);
+            List<Delete> deletes = values
+                    .stream()
+                    .map(String::getBytes)
+                    .map(Delete::new)
+                    .collect(toList());
             try {
                 table.delete(deletes);
             } catch (IOException e) {
@@ -146,31 +114,17 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     }
 
-    @Override
-    public void deleteAsync(ColumnQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to find async");
-    }
-
-    @Override
-    public void deleteAsync(ColumnQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to delete async");
-    }
 
     @Override
     public List<ColumnEntity> find(ColumnQuery query) {
 
-        List<ColumnCondition> conditions = query.getConditions();
-        if (isQuerySupported(conditions)) {
-            return Stream.of(findById(conditions)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
+        ColumnCondition condition = query.getCondition();
+        if (isQuerySupported(condition)) {
+            return Stream.of(findById(condition)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
         }
 
         throw new UnsupportedOperationException("There is not support to find more than one key");
 
-    }
-
-    @Override
-    public void findAsync(ColumnQuery query, Consumer<List<ColumnEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is not support to find async");
     }
 
 
@@ -193,9 +147,13 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         }
     }
 
-    private Result[] findById(List<ColumnCondition> conditions) {
-        List<Get> gets = conditions.stream().map(c -> c.getColumn().getValue()).map(this::valueToString)
-                .map(String::getBytes).map(Get::new).collect(toList());
+    private Result[] findById(ColumnCondition condition) {
+        List<String> values = new ArrayList<>();
+        convert(condition, values);
+
+        List<Get> gets = values.stream()
+                .map(String::getBytes)
+                .map(Get::new).collect(toList());
         try {
             return table.get(gets);
         } catch (IOException e) {
@@ -217,8 +175,35 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
 
-    private boolean isQuerySupported(List<ColumnCondition> conditions) {
-        return conditions.stream().allMatch(columnCondition -> columnCondition.getCondition().equals(EQUALS));
+    private void convert(ColumnCondition columnCondition, List<String> values) {
+        Condition condition = columnCondition.getCondition();
+
+        if (Condition.AND.equals(condition)) {
+            columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
+            }).forEach(c -> convert(c, values));
+        }
+        if (Condition.IN.equals(condition)) {
+            values.addAll(columnCondition.getColumn().get(new TypeReference<List<String>>() {
+            }));
+        } else if (Condition.EQUALS.equals(condition)) {
+            values.add(valueToString(columnCondition.getColumn().getValue()));
+        }
+
+
+    }
+
+    private boolean isQuerySupported(ColumnCondition columnCondition) {
+
+        Condition c = columnCondition.getCondition();
+        if (Condition.AND.equals(c)) {
+            List<ColumnCondition> columnConditions = columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
+            });
+            for (ColumnCondition cc : columnConditions) {
+                isQuerySupported(cc);
+            }
+
+        }
+        return Condition.EQUALS.equals(c) || Condition.IN.equals(c);
     }
 
     @Override

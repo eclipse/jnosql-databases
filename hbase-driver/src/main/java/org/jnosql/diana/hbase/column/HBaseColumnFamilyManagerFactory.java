@@ -19,10 +19,6 @@
 package org.jnosql.diana.hbase.column;
 
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
@@ -31,11 +27,14 @@ import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
-import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 
-public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFactory<HBaseColumnFamilyManager,
-        ColumnFamilyManagerAsync> {
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFactory<HBaseColumnFamilyManager> {
 
     private final Configuration configuration;
 
@@ -64,10 +63,6 @@ public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFacto
         }
     }
 
-    @Override
-    public ColumnFamilyManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        throw new UnsupportedOperationException("There is not support on async");
-    }
 
     private void existTable(Admin admin, TableName tableName) throws IOException {
         HTableDescriptor tableDescriptor = admin.getTableDescriptor(tableName);
@@ -79,7 +74,7 @@ public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFacto
 
     private void createTable(Admin admin, TableName tableName) throws IOException {
         HTableDescriptor desc = new HTableDescriptor(tableName);
-        families.forEach(HColumnDescriptor::new);
+        families.stream().map(HColumnDescriptor::new).forEach(desc::addFamily);
         admin.createTable(desc);
     }
 

@@ -24,7 +24,7 @@ public class HBaseColumnFamilyManagerTest {
         HBaseColumnConfiguration configuration = new HBaseColumnConfiguration();
         configuration.add(FAMILY);
         managerFactory = configuration.getManagerFactory();
-        columnFamilyManager = managerFactory.getColumnEntityManager(DATA_BASE);
+        columnFamilyManager = managerFactory.get(DATA_BASE);
     }
 
 
@@ -47,7 +47,7 @@ public class HBaseColumnFamilyManagerTest {
     public void shouldFind() {
         columnFamilyManager.save(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
         List<ColumnEntity> columnFamilyEntities = columnFamilyManager.find(query);
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
@@ -62,8 +62,8 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.save(createEntity2());
 
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
-        query.addCondition(ColumnCondition.eq(Column.of("", "poliana")));
+        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of("", "poliana")));
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(entities.size()));
 
@@ -73,7 +73,7 @@ public class HBaseColumnFamilyManagerTest {
     public void shouldDeleteEntity() {
         columnFamilyManager.save(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
         columnFamilyManager.delete(query);
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
@@ -84,8 +84,8 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.save(createEntity());
         columnFamilyManager.save(createEntity2());
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.addCondition(ColumnCondition.eq(Column.of("", "otaviojava")));
-        query.addCondition(ColumnCondition.eq(Column.of("", "poliana")));
+        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of("", "poliana")));
         columnFamilyManager.delete(query);
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
