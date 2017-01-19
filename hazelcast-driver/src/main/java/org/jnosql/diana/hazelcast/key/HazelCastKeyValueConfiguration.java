@@ -26,18 +26,14 @@ import com.hazelcast.core.HazelcastInstance;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<HazelCastKeyValueEntityManagerFactory> {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
-
-    private static final Map<String, String> DEFAULT_CONFIGURATION = Collections.singletonMap("hazelcast-instanceName", "hazelcast");
 
 
     public HazelCastKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
@@ -59,6 +55,6 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
     @Override
     public HazelCastKeyValueEntityManagerFactory getManagerFactory() {
         Map<String, String> configuration = ConfigurationReader.from(HAZELCAST_FILE_CONFIGURATION);
-            return getManagerFactory(configuration);
+        return getManagerFactory(configuration);
     }
 }
