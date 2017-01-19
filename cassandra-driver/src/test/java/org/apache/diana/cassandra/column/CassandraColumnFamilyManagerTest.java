@@ -55,7 +55,7 @@ public class CassandraColumnFamilyManagerTest {
     @Before
     public void setUp() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory();
+        CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.get(KEY_SPACE);
     }
 

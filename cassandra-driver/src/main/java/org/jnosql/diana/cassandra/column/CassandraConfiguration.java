@@ -21,14 +21,14 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.Cluster;
-import org.jnosql.diana.api.column.ColumnConfiguration;
+import org.jnosql.diana.api.column.UnaryColumnConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
-public class CassandraConfiguration implements ColumnConfiguration<CassandraDocumentEntityManagerFactory> {
+public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraDocumentEntityManagerFactory> {
 
     private static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 
@@ -49,7 +49,13 @@ public class CassandraConfiguration implements ColumnConfiguration<CassandraDocu
     }
 
     @Override
-    public CassandraDocumentEntityManagerFactory getManagerFactory() {
+    public CassandraDocumentEntityManagerFactory get() {
+        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
+        return getManagerFactory(configuration);
+    }
+
+    @Override
+    public CassandraDocumentEntityManagerFactory getAsync() {
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         return getManagerFactory(configuration);
     }

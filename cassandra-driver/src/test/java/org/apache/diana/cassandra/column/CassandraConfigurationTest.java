@@ -42,7 +42,7 @@ public class CassandraConfigurationTest {
     @Test
     public void shoudlCreateDocumentEntityManagerFactoryFromFile() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory();
+        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
         assertNotNull(entityManagerFactory);
     }
 
