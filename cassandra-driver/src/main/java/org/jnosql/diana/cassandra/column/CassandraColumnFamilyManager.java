@@ -39,7 +39,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class CassandraDocumentEntityManager implements ColumnFamilyManager {
+public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
 
     private final Session session;
@@ -48,7 +48,7 @@ public class CassandraDocumentEntityManager implements ColumnFamilyManager {
 
     private final String keyspace;
 
-    CassandraDocumentEntityManager(Session session, Executor executor, String keyspace) {
+    CassandraColumnFamilyManager(Session session, Executor executor, String keyspace) {
         this.session = session;
         this.executor = executor;
         this.keyspace = keyspace;
@@ -142,7 +142,7 @@ public class CassandraDocumentEntityManager implements ColumnFamilyManager {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CassandraDocumentEntityManager{");
+        final StringBuilder sb = new StringBuilder("CassandraColumnFamilyManager{");
         sb.append("session=").append(session);
         sb.append('}');
         return sb.toString();

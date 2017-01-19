@@ -35,10 +35,10 @@ import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
 
 
-public class CassandraDocumentEntityManagerAsyncTest {
+public class CassandraColumnFamilyManagerAsyncTest {
 
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
-    private CassandraDocumentEntityManagerAsync columnEntityManager;
+    private CassandraColumnFamilyManagerAsync columnEntityManager;
 
     @Before
     public void setUp() {

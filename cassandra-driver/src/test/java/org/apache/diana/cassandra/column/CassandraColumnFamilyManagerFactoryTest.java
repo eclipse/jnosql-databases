@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
-public class CassandraDocumentEntityManagerFactoryTest {
+public class CassandraColumnFamilyManagerFactoryTest {
 
     private ColumnFamilyManagerFactory subject;
 

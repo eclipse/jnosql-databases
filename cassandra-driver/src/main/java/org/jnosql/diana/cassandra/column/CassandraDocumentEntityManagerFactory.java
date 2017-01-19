@@ -27,8 +27,8 @@ import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManagerFactory<CassandraDocumentEntityManager,
-        CassandraDocumentEntityManagerAsync> {
+public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManagerFactory<CassandraColumnFamilyManager,
+        CassandraColumnFamilyManagerAsync> {
 
     private final Cluster cluster;
 
@@ -47,13 +47,13 @@ public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManage
     }
 
     @Override
-    public CassandraDocumentEntityManager get(String database) {
-        return new CassandraDocumentEntityManager(cluster.connect(database), executor, database);
+    public CassandraColumnFamilyManager get(String database) {
+        return new CassandraColumnFamilyManager(cluster.connect(database), executor, database);
     }
 
     @Override
-    public CassandraDocumentEntityManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new CassandraDocumentEntityManagerAsync(cluster.connect(database), executor, database);
+    public CassandraColumnFamilyManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        return new CassandraColumnFamilyManagerAsync(cluster.connect(database), executor, database);
     }
 
     @Override

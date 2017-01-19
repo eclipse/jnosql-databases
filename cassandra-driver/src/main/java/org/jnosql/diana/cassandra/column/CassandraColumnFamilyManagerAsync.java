@@ -36,7 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-public class CassandraDocumentEntityManagerAsync implements ColumnFamilyManagerAsync {
+public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsync {
 
     private final Session session;
 
@@ -44,7 +44,7 @@ public class CassandraDocumentEntityManagerAsync implements ColumnFamilyManagerA
 
     private final String keyspace;
 
-    CassandraDocumentEntityManagerAsync(Session session, Executor executor, String keyspace) {
+    CassandraColumnFamilyManagerAsync(Session session, Executor executor, String keyspace) {
         this.session = session;
         this.executor = executor;
         this.keyspace = keyspace;

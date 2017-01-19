@@ -47,10 +47,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 
-public class CassandraDocumentEntityManagerTest {
+public class CassandraColumnFamilyManagerTest {
 
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
-    private CassandraDocumentEntityManager columnEntityManager;
+    private CassandraColumnFamilyManager columnEntityManager;
 
     @Before
     public void setUp() {
@@ -62,8 +62,8 @@ public class CassandraDocumentEntityManagerTest {
     @Test
     public void shouldClose() throws Exception {
         columnEntityManager.close();
-        CassandraDocumentEntityManager cassandraDocumentEntityManager = CassandraDocumentEntityManager.class.cast(columnEntityManager);
-        Session session = cassandraDocumentEntityManager.getSession();
+        CassandraColumnFamilyManager cassandraColumnFamilyManager = CassandraColumnFamilyManager.class.cast(columnEntityManager);
+        Session session = cassandraColumnFamilyManager.getSession();
         assertTrue(session.isClosed());
     }
 
