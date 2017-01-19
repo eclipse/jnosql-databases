@@ -21,6 +21,7 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
+import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +49,12 @@ public class CassandraDocumentEntityManagerFactoryTest {
     @Test
     public void shouldReturnEntityManager() throws Exception {
         ColumnFamilyManager columnEntityManager = subject.getColumnEntityManager(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
+        assertNotNull(columnEntityManager);
+    }
+
+    @Test
+    public void shouldReturnEntityManagerAsync() throws Exception {
+        ColumnFamilyManagerAsync columnEntityManager = subject.getColumnEntityMangerAsync(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 

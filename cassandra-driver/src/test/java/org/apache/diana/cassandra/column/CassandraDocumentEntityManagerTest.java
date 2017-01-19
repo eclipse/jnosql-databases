@@ -75,13 +75,7 @@ public class CassandraDocumentEntityManagerTest {
         columnEntityManager.save(columnEntity);
     }
 
-    @Test
-    public void shouldInsertJustKeyAsync() {
-        Column key = Columns.of("id", 10L);
-        ColumnEntity columnEntity = ColumnEntity.of(COLUMN_FAMILY);
-        columnEntity.add(key);
-        columnEntityManager.saveAsync(columnEntity);
-    }
+
 
     @Test
     public void shouldInsertColumns() {
@@ -95,24 +89,13 @@ public class CassandraDocumentEntityManagerTest {
         columnEntityManager.save(columnEntity, CONSISTENCY_LEVEL);
     }
 
-    @Test
-    public void shouldInsertColumnsAsync() {
-        ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.saveAsync(columnEntity);
-    }
-
-    @Test
-    public void shouldInsertColumnsAsyncWithConsistenceLevel() {
-        ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.saveAsync(columnEntity, CONSISTENCY_LEVEL);
-    }
 
 
     @Test
     public void shouldFindById() {
 
         columnEntityManager.save(getColumnFamily());
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).addCondition(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
         List<ColumnEntity> columnEntity = columnEntityManager.find(query);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
@@ -125,7 +108,7 @@ public class CassandraDocumentEntityManagerTest {
     public void shouldFindByIdWithConsistenceLevel() {
 
         columnEntityManager.save(getColumnFamily());
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).addCondition(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
         List<ColumnEntity> columnEntity = columnEntityManager.find(query, CONSISTENCY_LEVEL);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
@@ -159,7 +142,7 @@ public class CassandraDocumentEntityManagerTest {
     public void shouldDeleteColumnFamily() {
         columnEntityManager.save(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).addCondition(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
         columnEntityManager.delete(query);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
@@ -169,7 +152,7 @@ public class CassandraDocumentEntityManagerTest {
     public void shouldDeleteColumnFamilyWithConsistencyLevel() {
         columnEntityManager.save(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).addCondition(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
         columnEntityManager.delete(query, CONSISTENCY_LEVEL);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
@@ -179,7 +162,7 @@ public class CassandraDocumentEntityManagerTest {
     public void shouldLimitResult() {
         getEntities().forEach(columnEntityManager::save);
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY);
-        query.addCondition(ColumnCondition.in(Column.of("id", asList(1L, 2L, 3L))));
+        query.and(ColumnCondition.in(Column.of("id", asList(1L, 2L, 3L))));
         query.setLimit(2L);
         List<ColumnEntity> columnFamilyEntities = columnEntityManager.find(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(columnFamilyEntities.size()));

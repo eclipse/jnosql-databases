@@ -135,6 +135,7 @@ final class QueryUtils {
                 })) {
                     createClause(cc, clauses);
                 }
+                return;
             case OR:
             default:
                 throw new UnsupportedOperationException("The columnCondition " + condition +

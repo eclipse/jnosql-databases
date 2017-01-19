@@ -22,11 +22,13 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import java.util.List;
-import java.util.concurrent.Executor;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 
-public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManagerFactory<CassandraDocumentEntityManager> {
+import java.util.List;
+import java.util.concurrent.Executor;
+
+public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManagerFactory<CassandraDocumentEntityManager,
+        CassandraDocumentEntityManagerAsync> {
 
     private final Cluster cluster;
 
@@ -47,6 +49,11 @@ public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManage
     @Override
     public CassandraDocumentEntityManager getColumnEntityManager(String database) {
         return new CassandraDocumentEntityManager(cluster.connect(database), executor, database);
+    }
+
+    @Override
+    public CassandraDocumentEntityManagerAsync getColumnEntityMangerAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        return new CassandraDocumentEntityManagerAsync(cluster.connect(database), executor, database);
     }
 
     @Override
