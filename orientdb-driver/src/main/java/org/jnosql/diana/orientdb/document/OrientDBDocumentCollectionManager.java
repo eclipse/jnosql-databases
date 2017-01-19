@@ -104,6 +104,13 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
         return OrientDBConverter.convert(result);
     }
 
+    public List<DocumentEntity> find(String query, Object... params) throws NullPointerException {
+        Objects.requireNonNull(query, "query is required");
+        ODatabaseDocumentTx tx = pool.acquire();
+        List<ODocument> result = tx.command(OSQLQueryFactory.parse(query)).execute(params);
+        return OrientDBConverter.convert(result);
+    }
+
 
     @Override
     public void close() {

@@ -110,6 +110,17 @@ public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectio
                     .map(OrientDBConverter::convert)
                     .collect(toList()));
         });
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+    }
+
+    public void find(String query, Consumer<List<DocumentEntity>> callBack, Object... params) {
+        ODatabaseDocumentTx tx = pool.acquire();
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
+            callBack.accept(l.stream()
+                    .map(OrientDBConverter::convert)
+                    .collect(toList()));
+        }, params);
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override

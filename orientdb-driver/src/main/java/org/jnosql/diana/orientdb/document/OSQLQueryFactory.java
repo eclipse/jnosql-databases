@@ -31,8 +31,11 @@ import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static java.util.Arrays.asList;
 
 final class OSQLQueryFactory {
 
@@ -44,6 +47,11 @@ final class OSQLQueryFactory {
 
         return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
         }, query.getParams());
+    }
+
+    static OSQLSynchQuery<ODocument> parse(String query) {
+        return new OSQLSynchQuery<ODocument>(query) {
+        };
     }
 
     static QueryResult toDelete(DocumentQuery documentQuery) {
@@ -75,6 +83,29 @@ final class OSQLQueryFactory {
                 return null;
             }
         }), query.getParams());
+    }
+
+    static QueryResult toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {
+        return new QueryResult(new OSQLAsynchQuery<ODocument>(query, new OCommandResultListener() {
+            private List<ODocument> documents = new ArrayList<>();
+
+            @Override
+            public boolean result(Object iRecord) {
+                ODocument document = (ODocument) iRecord;
+                documents.add(document);
+                return true;
+            }
+
+            @Override
+            public void end() {
+                callBack.accept(documents);
+            }
+
+            @Override
+            public Object getResult() {
+                return null;
+            }
+        }), asList(params));
     }
 
 
