@@ -19,7 +19,6 @@
 package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import org.jnosql.diana.api.Condition;
@@ -53,14 +52,11 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     private final ArangoDB arangoDB;
 
-    private final ArangoDBAsync arangoDBAsync;
-
     private final ValueWriter writerField = ValueWriterDecorator.getInstance();
 
-    ArangoDBDocumentCollectionManager(String database, ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
+    ArangoDBDocumentCollectionManager(String database, ArangoDB arangoDB) {
         this.database = database;
         this.arangoDB = arangoDB;
-        this.arangoDBAsync = arangoDBAsync;
     }
 
 

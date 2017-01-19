@@ -51,14 +51,13 @@ import static org.jnosql.diana.arangodb.document.ArangoDBUtil.toEntity;
 public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
 
-
     private final ArangoDB arangoDB;
 
     private final ArangoDBAsync arangoDBAsync;
 
     private final String database;
 
-    public ArangoDBDocumentCollectionManagerAsync(ArangoDB arangoDB, ArangoDBAsync arangoDBAsync, String database) {
+    public ArangoDBDocumentCollectionManagerAsync(String database, ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
         this.arangoDB = arangoDB;
         this.arangoDBAsync = arangoDBAsync;
         this.database = database;
@@ -66,7 +65,8 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
 
     @Override
     public void save(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, v -> {});
+        save(entity, v -> {
+        });
     }
 
     @Override
@@ -196,7 +196,6 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
     private void checkCollection(String collectionName) {
         ArangoDBUtil.checkCollection(database, arangoDB, collectionName);
     }
-
 
 
 }

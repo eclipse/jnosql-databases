@@ -38,12 +38,12 @@ public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollect
     @Override
     public ArangoDBDocumentCollectionManager getDocumentEntityManager(String database) {
         ArangoDBUtil.checkDatabase(database, arangoDB);
-        return new ArangoDBDocumentCollectionManager(database, arangoDB, arangoDBAsync);
+        return new ArangoDBDocumentCollectionManager(database, arangoDB);
     }
 
     @Override
     public ArangoDBDocumentCollectionManagerAsync getDocumentEntityManagerAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return null;
+        return new ArangoDBDocumentCollectionManagerAsync(database, arangoDB, arangoDBAsync);
     }
 
     @Override

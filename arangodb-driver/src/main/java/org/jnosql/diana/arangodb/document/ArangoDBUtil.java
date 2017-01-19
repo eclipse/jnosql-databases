@@ -46,7 +46,7 @@ public final class ArangoDBUtil {
     public static final String ID = "_id";
     public static final String REV = "_rev";
 
-    private final static ValueWriter WRITER = ValueWriterDecorator.getInstance();
+    private static final ValueWriter WRITER = ValueWriterDecorator.getInstance();
 
 
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
@@ -55,7 +55,7 @@ public final class ArangoDBUtil {
     }
 
 
-    public static void checkDatabase(String database, ArangoDB arangoDB) {
+    static void checkDatabase(String database, ArangoDB arangoDB) {
         Objects.requireNonNull(database, "database is required");
         try {
             Collection<String> databases = arangoDB.getDatabases();
@@ -86,7 +86,7 @@ public final class ArangoDBUtil {
         return false;
     }
 
-    public static DocumentEntity toEntity(String collection, BaseDocument document) {
+    static DocumentEntity toEntity(String collection, BaseDocument document) {
         Map<String, Object> properties = document.getProperties();
         List<Document> documents = properties.keySet().stream()
                 .map(k -> Document.of(k, properties.get(k)))
@@ -97,12 +97,12 @@ public final class ArangoDBUtil {
         return DocumentEntity.of(collection, documents);
     }
 
-    public static BaseDocument getBaseDocument(DocumentEntity entity) {
+    static BaseDocument getBaseDocument(DocumentEntity entity) {
         Map<String, Object> map = new HashMap<>();
         for (Document document : entity.getDocuments()) {
-            map.put(document.getName(), document.getValue());
+            map.put(document.getName(), convert(document.getValue()));
         }
-        return new BaseDocument(entity.toMap());
+        return new BaseDocument(map);
     }
 
     private static Object convert(Value value) {

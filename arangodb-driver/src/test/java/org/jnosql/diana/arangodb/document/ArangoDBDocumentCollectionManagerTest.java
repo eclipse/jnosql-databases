@@ -105,7 +105,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.save(entity);
         Document id = entitySaved.find(KEY_NAME).get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.condition(DocumentCondition.eq(id));
+        query.and(DocumentCondition.eq(id));
         DocumentEntity entityFound = entityManager.find(query).get(0);
         Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
         String key = result.keySet().stream().findFirst().get();
