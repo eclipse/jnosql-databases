@@ -48,13 +48,13 @@ public class CassandraDocumentEntityManagerFactoryTest {
 
     @Test
     public void shouldReturnEntityManager() throws Exception {
-        ColumnFamilyManager columnEntityManager = subject.getColumnEntityManager(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
+        ColumnFamilyManager columnEntityManager = subject.get(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 
     @Test
     public void shouldReturnEntityManagerAsync() throws Exception {
-        ColumnFamilyManagerAsync columnEntityManager = subject.getColumnEntityMangerAsync(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
+        ColumnFamilyManagerAsync columnEntityManager = subject.getAsync(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 

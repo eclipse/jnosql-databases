@@ -56,7 +56,7 @@ public class CassandraDocumentEntityManagerTest {
     public void setUp() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory();
-        columnEntityManager = entityManagerFactory.getColumnEntityManager(KEY_SPACE);
+        columnEntityManager = entityManagerFactory.get(KEY_SPACE);
     }
 
     @Test

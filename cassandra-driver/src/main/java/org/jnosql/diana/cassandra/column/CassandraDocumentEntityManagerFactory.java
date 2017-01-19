@@ -47,12 +47,12 @@ public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManage
     }
 
     @Override
-    public CassandraDocumentEntityManager getColumnEntityManager(String database) {
+    public CassandraDocumentEntityManager get(String database) {
         return new CassandraDocumentEntityManager(cluster.connect(database), executor, database);
     }
 
     @Override
-    public CassandraDocumentEntityManagerAsync getColumnEntityMangerAsync(String database) throws UnsupportedOperationException, NullPointerException {
+    public CassandraDocumentEntityManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
         return new CassandraDocumentEntityManagerAsync(cluster.connect(database), executor, database);
     }
 

@@ -44,7 +44,7 @@ public class CassandraDocumentEntityManagerAsyncTest {
     public void setUp() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory();
-        columnEntityManager = entityManagerFactory.getColumnEntityMangerAsync(KEY_SPACE);
+        columnEntityManager = entityManagerFactory.getAsync(KEY_SPACE);
     }
 
     @Test
