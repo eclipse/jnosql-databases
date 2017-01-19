@@ -49,6 +49,9 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.api.Condition.AND;
+import static org.jnosql.diana.api.Condition.EQUALS;
+import static org.jnosql.diana.api.Condition.IN;
 
 public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
@@ -96,20 +99,19 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     public void delete(ColumnQuery query) {
 
         ColumnCondition condition = query.getCondition();
-        if (isQuerySupported(condition)) {
-            List<String> values = new ArrayList<>();
+        checkedCondition(condition);
+        List<String> values = new ArrayList<>();
 
-            convert(condition, values);
-            List<Delete> deletes = values
-                    .stream()
-                    .map(String::getBytes)
-                    .map(Delete::new)
-                    .collect(toList());
-            try {
-                table.delete(deletes);
-            } catch (IOException e) {
-                throw new DianaHBaseException("An error when try to delete columns", e);
-            }
+        convert(condition, values);
+        List<Delete> deletes = values
+                .stream()
+                .map(String::getBytes)
+                .map(Delete::new)
+                .collect(toList());
+        try {
+            table.delete(deletes);
+        } catch (IOException e) {
+            throw new DianaHBaseException("An error when try to delete columns", e);
         }
 
     }
@@ -119,12 +121,8 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     public List<ColumnEntity> find(ColumnQuery query) {
 
         ColumnCondition condition = query.getCondition();
-        if (isQuerySupported(condition)) {
-            return Stream.of(findById(condition)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
-        }
-
-        throw new UnsupportedOperationException("There is not support to find more than one key");
-
+        checkedCondition(condition);
+        return Stream.of(findById(condition)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
     }
 
 
@@ -178,32 +176,34 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     private void convert(ColumnCondition columnCondition, List<String> values) {
         Condition condition = columnCondition.getCondition();
 
-        if (Condition.AND.equals(condition)) {
+        if (AND.equals(condition)) {
             columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
             }).forEach(c -> convert(c, values));
-        }
-        if (Condition.IN.equals(condition)) {
+        } else if (IN.equals(condition)) {
             values.addAll(columnCondition.getColumn().get(new TypeReference<List<String>>() {
             }));
-        } else if (Condition.EQUALS.equals(condition)) {
+        } else if (EQUALS.equals(condition)) {
             values.add(valueToString(columnCondition.getColumn().getValue()));
         }
 
 
     }
 
-    private boolean isQuerySupported(ColumnCondition columnCondition) {
+    private void checkedCondition(ColumnCondition columnCondition) {
 
-        Condition c = columnCondition.getCondition();
-        if (Condition.AND.equals(c)) {
+        Condition condition = columnCondition.getCondition();
+        if (AND.equals(condition)) {
             List<ColumnCondition> columnConditions = columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
             });
             for (ColumnCondition cc : columnConditions) {
-                isQuerySupported(cc);
+                checkedCondition(cc);
             }
+            return;
 
         }
-        return Condition.EQUALS.equals(c) || Condition.IN.equals(c);
+        if (!EQUALS.equals(condition) && !IN.equals(condition)) {
+            throw new UnsupportedOperationException("Hbase does not support the following condition: %s just AND, EQUAL and IN ");
+        }
     }
 
     @Override
