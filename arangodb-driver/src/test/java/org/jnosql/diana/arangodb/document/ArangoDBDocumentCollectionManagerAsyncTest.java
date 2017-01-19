@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jnosql.diana.arangodb.document;
 
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -28,7 +28,6 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +35,12 @@ import java.util.Optional;
 import java.util.Random;
 
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 
-public class ArangoDBDocumentCollectionManagerTest {
+public class ArangoDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
+    private DocumentCollectionManagerAsync entityManagerAsync;
     private DocumentCollectionManager entityManager;
     private Random random;
     private String KEY_NAME = "_key";
@@ -51,68 +48,36 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Before
     public void setUp() {
         random = new Random();
+        entityManagerAsync = getConfiguration().getDocumentEntityManagerAsync("database");
         entityManager = getConfiguration().getDocumentEntityManager("database");
     }
 
-    @Test
-    public void shouldSave() {
-        DocumentEntity entity = getEntity();
 
-        DocumentEntity documentEntity = entityManager.save(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals(KEY_NAME)));
+    @Test
+    public void shouldSaveAsync() {
+        DocumentEntity entity = getEntity();
+        entityManagerAsync.save(entity);
+
     }
 
     @Test
-    public void shouldUpdateSave() {
+    public void shouldUpdateAsync() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.save(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
-        DocumentEntity updated = entityManager.update(entity);
-        assertEquals(newField, updated.find("newField").get());
+        entityManagerAsync.update(entity);
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    public void shouldRemoveEntityAsync() {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = documentEntity.find("_key");
+        Optional<Document> id = documentEntity.find(KEY_NAME);
         query.condition(DocumentCondition.eq(id.get()));
-        entityManager.delete(query);
-        assertTrue(entityManager.find(query).isEmpty());
+        entityManagerAsync.delete(query);
     }
 
-    @Test
-    public void shouldFindDocument() {
-        DocumentEntity entity = entityManager.save(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = entity.find(KEY_NAME);
-        query.condition(DocumentCondition.eq(id.get()));
-        List<DocumentEntity> entities = entityManager.find(query);
-        assertFalse(entities.isEmpty());
-        DocumentEntity documentEntity = entities.get(0);
-        assertEquals(entity.find(KEY_NAME).get().getValue().get(String.class), documentEntity.find(KEY_NAME).get()
-                .getValue().get(String.class));
-        assertEquals(entity.find("name").get(), documentEntity.find("name").get());
-        assertEquals(entity.find("city").get(), documentEntity.find("city").get());
-    }
-
-
-    @Test
-    public void shouldSaveSubDocument() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Collections.singletonMap("mobile","1231231")));
-        DocumentEntity entitySaved = entityManager.save(entity);
-        Document id = entitySaved.find(KEY_NAME).get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.condition(DocumentCondition.eq(id));
-        DocumentEntity entityFound = entityManager.find(query).get(0);
-        Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
-        String key = result.keySet().stream().findFirst().get();
-        String value = result.get(key);
-        assertEquals("mobile", key);
-        assertEquals("1231231", value);
-    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
@@ -124,5 +89,4 @@ public class ArangoDBDocumentCollectionManagerTest {
         documents.forEach(entity::add);
         return entity;
     }
-
 }

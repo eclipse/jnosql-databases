@@ -22,9 +22,8 @@ package org.jnosql.diana.arangodb.document;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
-import org.jnosql.diana.arangodb.util.ArangoDBUtil;
 
-public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<ArangoDBDocumentCollectionManager> {
+public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<ArangoDBDocumentCollectionManager, ArangoDBDocumentCollectionManagerAsync> {
 
 
     private final ArangoDB arangoDB;
@@ -40,6 +39,11 @@ public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollect
     public ArangoDBDocumentCollectionManager getDocumentEntityManager(String database) {
         ArangoDBUtil.checkDatabase(database, arangoDB);
         return new ArangoDBDocumentCollectionManager(database, arangoDB, arangoDBAsync);
+    }
+
+    @Override
+    public ArangoDBDocumentCollectionManagerAsync getDocumentEntityManagerAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        return null;
     }
 
     @Override

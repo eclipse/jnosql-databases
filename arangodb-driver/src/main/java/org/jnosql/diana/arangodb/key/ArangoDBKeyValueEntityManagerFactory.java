@@ -21,7 +21,7 @@ package org.jnosql.diana.arangodb.key;
 import com.arangodb.ArangoDB;
 import com.google.gson.Gson;
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.arangodb.util.ArangoDBUtil;
+import org.jnosql.diana.arangodb.document.ArangoDBUtil;
 
 import java.util.List;
 import java.util.Map;
