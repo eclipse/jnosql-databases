@@ -19,15 +19,20 @@
 
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.document.DocumentConfiguration;
+import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements DocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
+        implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
 
 
     @Override
-    public ArangoDBDocumentCollectionManagerFactory getManagerFactory() {
+    public ArangoDBDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
+        return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
+    }
+
+    @Override
+    public ArangoDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
         return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
     }
 }

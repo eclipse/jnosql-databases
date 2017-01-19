@@ -29,6 +29,6 @@ public final class DocumentConfigurationUtils {
     public static ArangoDBDocumentCollectionManagerFactory getConfiguration() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.host("172.17.0.2");
-        return configuration.getManagerFactory();
+        return configuration.get();
     }
 }
