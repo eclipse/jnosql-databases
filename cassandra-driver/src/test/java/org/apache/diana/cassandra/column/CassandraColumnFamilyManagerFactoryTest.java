@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 
 public class CassandraColumnFamilyManagerFactoryTest {
 
-    private ColumnFamilyManagerFactory subject;
+    private CassandraDocumentEntityManagerFactory subject;
 
     @Before
     public void setUp() {
