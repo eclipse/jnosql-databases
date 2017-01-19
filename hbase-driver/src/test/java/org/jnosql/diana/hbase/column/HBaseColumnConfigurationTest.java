@@ -12,13 +12,13 @@ public class HBaseColumnConfigurationTest {
     @Test
     public void shouldCreatesColumnFamilyManagerFactory() {
         ColumnConfiguration configuration = new HBaseColumnConfiguration();
-        assertNotNull(configuration.getManagerFactory());
+        assertNotNull(configuration.get());
     }
 
     @Test
     public void shouldCreatesColumnFamilyManagerFactoryFromConfiguration() {
         ColumnConfiguration configuration = new HBaseColumnConfiguration();
-        assertNotNull(configuration.getManagerFactory());
+        assertNotNull(configuration.get());
     }
 
     @Test(expected = NullPointerException.class)

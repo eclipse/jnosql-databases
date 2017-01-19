@@ -14,7 +14,7 @@ public class HBaseColumnFamilyManagerFactoryTest {
 
     @Test
     public void shouldCreateColumnFamilyManager() {
-        ColumnFamilyManagerFactory managerFactory = configuration.getManagerFactory();
+        ColumnFamilyManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }
 

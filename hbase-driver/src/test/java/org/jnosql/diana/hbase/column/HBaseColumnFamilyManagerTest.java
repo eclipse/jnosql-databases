@@ -23,7 +23,7 @@ public class HBaseColumnFamilyManagerTest {
     public void setUp() {
         HBaseColumnConfiguration configuration = new HBaseColumnConfiguration();
         configuration.add(FAMILY);
-        managerFactory = configuration.getManagerFactory();
+        managerFactory = configuration.get();
         columnFamilyManager = managerFactory.get(DATA_BASE);
     }
 
