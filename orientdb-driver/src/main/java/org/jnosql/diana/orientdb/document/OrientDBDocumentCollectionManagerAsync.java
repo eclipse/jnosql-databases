@@ -132,6 +132,7 @@ public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectio
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
+
     @Override
     public void close() {
         pool.close();

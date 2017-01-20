@@ -37,10 +37,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Collections.singletonMap;
+import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 
 public class OrientDBDocumentCollectionManager implements DocumentCollectionManager {
-
 
 
     private static final Consumer<DocumentEntity> NOOPS = d -> {
@@ -54,17 +54,71 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
         Objects.toString(entity, "Entity is required");
-        ODatabaseDocumentTx tx = pool.acquire();
-        ODocument document = new ODocument(entity.getName());
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+            ODocument document = new ODocument(entity.getName());
 
-        Map<String, Object> entityValues = toMap(entity);
-        entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-        ODocument save = tx.save(document);
-        ORecordId ridField = save.field("@rid");
-        if (Objects.nonNull(ridField)) {
-            entity.add(Document.of(RID_FIELD, ridField.toString()));
+            Map<String, Object> entityValues = toMap(entity);
+            entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
+            ODocument save = tx.save(document);
+            ORecordId ridField = save.field("@rid");
+            if (Objects.nonNull(ridField)) {
+                entity.add(Document.of(RID_FIELD, ridField.toString()));
+            }
+            return entity;
         }
-        return entity;
+    }
+
+
+    @Override
+    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
+        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
+    }
+
+
+    @Override
+    public DocumentEntity update(DocumentEntity entity) {
+        return save(entity);
+    }
+
+    @Override
+    public void delete(DocumentQuery query) {
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+            OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
+            List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+            result.forEach(tx::delete);
+        }
+
+    }
+
+
+    @Override
+    public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+            OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
+            List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+            return OrientDBConverter.convert(result);
+        }
+    }
+
+    public List<DocumentEntity> find(String query, Object... params) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+            List<ODocument> result = tx.command(OSQLQueryFactory.parse(query)).execute(params);
+            return OrientDBConverter.convert(result);
+        }
+
+    }
+
+    public void live(DocumentQuery query, Consumer<DocumentEntity> callBack) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callback is required");
+        ODatabaseDocumentTx tx = pool.acquire();
+        OSQLQueryFactory.QueryResult queryResult = OSQLQueryFactory.toLive(query, callBack);
+    }
+
+    @Override
+    public void close() {
+        pool.close();
     }
 
     private Map<String, Object> toMap(DocumentEntity entity) {
@@ -81,47 +135,5 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
         }
 
         return entityValues;
-    }
-
-    @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
-        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
-    }
-
-
-    @Override
-    public DocumentEntity update(DocumentEntity entity) {
-        return save(entity);
-    }
-
-    @Override
-    public void delete(DocumentQuery query) {
-        ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
-        List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-        result.forEach(tx::delete);
-
-    }
-
-
-    @Override
-    public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
-        ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
-        List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-        return OrientDBConverter.convert(result);
-    }
-
-    public List<DocumentEntity> find(String query, Object... params) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
-        ODatabaseDocumentTx tx = pool.acquire();
-        List<ODocument> result = tx.command(OSQLQueryFactory.parse(query)).execute(params);
-        return OrientDBConverter.convert(result);
-    }
-
-
-    @Override
-    public void close() {
-        pool.close();
     }
 }

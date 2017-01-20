@@ -21,6 +21,7 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.core.command.OCommandResultListener;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
@@ -28,6 +29,7 @@ import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ import java.util.function.Consumer;
 import static java.util.Arrays.asList;
 
 final class OSQLQueryFactory {
+
+    public static final String LIVE = "live ";
 
     private OSQLQueryFactory() {
     }
@@ -83,6 +87,13 @@ final class OSQLQueryFactory {
                 return null;
             }
         }), query.getParams());
+    }
+
+    static QueryResult toLive(DocumentQuery documentQuery, Consumer<DocumentEntity> callBack) {
+        Query query = getQuery(documentQuery);
+        OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(LIVE + query.getQuery(), new LiveQueryLIstener(callBack));
+        return new QueryResult(liveQuery, query.getParams());
+
     }
 
     static QueryResult toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {
