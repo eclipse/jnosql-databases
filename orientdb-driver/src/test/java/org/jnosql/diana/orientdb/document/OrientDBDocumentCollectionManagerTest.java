@@ -34,6 +34,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.contains;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.get;
+import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 import static org.junit.Assert.*;
 
 
@@ -57,7 +58,8 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.save(entity);
         assertNotNull(documentEntity);
-        assertEquals(entity, documentEntity);
+        Optional<Document> document = documentEntity.find(RID_FIELD);
+        assertTrue(document.isPresent());
 
     }
 

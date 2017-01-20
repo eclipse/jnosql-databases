@@ -21,6 +21,7 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.commons.collections.map.HashedMap;
@@ -36,8 +37,11 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Collections.singletonMap;
+import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 
 public class OrientDBDocumentCollectionManager implements DocumentCollectionManager {
+
+
 
     private static final Consumer<DocumentEntity> NOOPS = d -> {
     };
@@ -55,7 +59,11 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
         Map<String, Object> entityValues = toMap(entity);
         entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-        ORecord save = tx.save(document);
+        ODocument save = tx.save(document);
+        ORecordId ridField = save.field("@rid");
+        if (Objects.nonNull(ridField)) {
+            entity.add(Document.of(RID_FIELD, ridField.toString()));
+        }
         return entity;
     }
 
