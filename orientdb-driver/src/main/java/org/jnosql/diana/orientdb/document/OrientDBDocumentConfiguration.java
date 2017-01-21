@@ -28,7 +28,11 @@ import java.util.logging.Logger;
 
 /**
  * The orientDB implementation of {@link UnaryDocumentConfiguration} that returns
- * {@link OrientDBDocumentCollectionManagerFactory}
+ * {@link OrientDBDocumentCollectionManagerFactory}. It tries to read diana-arangodb.properties file.
+ * <p>mongodb-server-host: the host</p>
+ * <p>mongodb-server-user: the user</p>
+ * <p>mongodb-server-password: the password</p>
+ * <p>mongodb-server-storageType: the storage type</p>
  */
 public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
 
