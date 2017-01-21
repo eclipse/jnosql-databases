@@ -19,6 +19,9 @@
 package org.jnosql.diana.arangodb.document;
 
 
+/**
+ * The exception to ArangoDB
+ */
 public class ArangoDBException extends RuntimeException {
     public ArangoDBException(String message) {
         super(message);

@@ -22,6 +22,9 @@ package org.jnosql.diana.arangodb.key;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
+/**
+ * The ArangoDB implementation to {@link KeyValueConfiguration}
+ */
 public class ArandoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBKeyValueEntityManagerFactory> {
 

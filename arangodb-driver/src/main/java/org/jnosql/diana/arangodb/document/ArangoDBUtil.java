@@ -40,6 +40,9 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * The utilitarian class to ArangoDB
+ */
 public final class ArangoDBUtil {
 
     public static final String KEY = "_key";

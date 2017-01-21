@@ -48,6 +48,9 @@ import static org.jnosql.diana.arangodb.document.ArangoDBUtil.checkCondition;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.toEntity;
 
+/**
+ * The ArandoDB implementation of {@link DocumentCollectionManagerAsync}. It has not support to TTL methods
+ */
 public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
 
@@ -57,7 +60,7 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
 
     private final String database;
 
-    public ArangoDBDocumentCollectionManagerAsync(String database, ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
+    ArangoDBDocumentCollectionManagerAsync(String database, ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
         this.arangoDB = arangoDB;
         this.arangoDBAsync = arangoDBAsync;
         this.database = database;
