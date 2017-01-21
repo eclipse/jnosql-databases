@@ -26,6 +26,10 @@ import org.jnosql.diana.driver.ConfigurationReaderException;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * The orientDB implementation of {@link UnaryDocumentConfiguration} that returns
+ * {@link OrientDBDocumentCollectionManagerFactory}
+ */
 public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-arangodb.properties";

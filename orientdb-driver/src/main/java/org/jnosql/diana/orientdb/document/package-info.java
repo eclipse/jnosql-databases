@@ -16,15 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.orientdb.document;
-
-
 /**
- * The OrientDB exception
+ * The OrientDB implementation to document
  */
-public class OrientDBException extends RuntimeException {
-    OrientDBException(String var1, Throwable var2) {
-        super(var1, var2);
-    }
-
-}
+package org.jnosql.diana.orientdb.document;

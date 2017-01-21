@@ -28,6 +28,9 @@ import java.io.IOException;
 
 import static java.util.Optional.ofNullable;
 
+/**
+ * The OrientDB implementation of {@link DocumentCollectionManagerFactory}
+ */
 public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<OrientDBDocumentCollectionManager>,
         DocumentCollectionManagerAsyncFactory<OrientDBDocumentCollectionManagerAsync> {
 

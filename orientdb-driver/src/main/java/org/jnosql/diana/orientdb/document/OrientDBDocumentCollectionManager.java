@@ -41,6 +41,15 @@ import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 
+/**
+ * The orientdb implementation to {@link DocumentCollectionManager}, this implementation
+ * does not support TTL.
+ * <p>{@link OrientDBDocumentCollectionManager#save(DocumentEntity, Duration)}</p>
+ * Also this implementation has support SQL query and also live query.
+ * <p>{@link OrientDBDocumentCollectionManager#find(String, Object...)}</p>
+ * <p>{@link OrientDBDocumentCollectionManager#live(DocumentQuery, Consumer)}</p>
+ * <p>{@link OrientDBDocumentCollectionManager#live(String, Consumer, Object...)}</p>
+ */
 public class OrientDBDocumentCollectionManager implements DocumentCollectionManager {
 
 
@@ -118,6 +127,12 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
     }
 
+    /**
+     * Execute live query
+     * @param query the query
+     * @param callBack when a new callback is coming
+     * @throws NullPointerException when both query and callBack are null
+     */
     public void live(DocumentQuery query, Consumer<DocumentEntity> callBack) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callback is required");
@@ -127,6 +142,13 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
         }
     }
 
+    /**
+     * Execute live query
+     * @param query the string query, you must add "live"
+     * @param callBack when a new entity is coming
+     * @param params the params
+     * @throws NullPointerException when both query, callBack are null
+     */
     public void live(String query, Consumer<DocumentEntity> callBack, Object... params) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callback is required");

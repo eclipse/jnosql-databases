@@ -40,6 +40,13 @@ import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.orientdb.document.OSQLQueryFactory.toAsync;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 
+/**
+ * The OrientDB implementation to {@link DocumentCollectionManagerAsync} this method does not support TTL method:
+ * <p> {@link OrientDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration)}</p>
+ * <p>{@link OrientDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration, Consumer)}</p>
+ * Also has supports to query:
+ * <p>{@link OrientDBDocumentCollectionManagerAsync#find(String, Consumer, Object...)}</p>
+ */
 public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
     private static final Consumer<DocumentEntity> NOOPS = d -> {
