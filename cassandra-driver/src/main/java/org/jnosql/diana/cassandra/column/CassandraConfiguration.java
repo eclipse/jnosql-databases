@@ -28,6 +28,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
+/**
+ * The Cassandra implementation to {@link UnaryColumnConfiguration} that returns
+ * {@link CassandraDocumentEntityManagerFactory}
+ * This configuration reads "diana-cassandra.properties" files and has the following configuration:
+ * <p>cassandra-host-: The Cassandra host as prefix, you can set how much you want just setting the number order,
+ * eg: cassandra-host-1 = host, cassandra-host-2 = host2</p>
+ * <p>cassandra-query-: The Cassandra query to run when an instance is started, you can set how much you want just
+ * setting the order number, eg: cassandra-query-1=cql, cassandra-query-2=cql2... </p>
+ * <p>cassandra-threads-number: The number of executor to run on Async process, if it isn't defined that will use the number of processor</p>
+ * <p>cassandra-ssl: Define ssl, the default value is false</p>
+ * <p>cassandra-metrics: enable metrics, the default value is true</p>
+ * <p>cassandra-jmx: enable JMX, the default value is true</p>
+ */
 public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraDocumentEntityManagerFactory> {
 
     private static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";

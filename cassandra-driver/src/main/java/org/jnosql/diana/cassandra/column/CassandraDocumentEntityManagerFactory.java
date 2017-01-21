@@ -28,6 +28,9 @@ import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+/**
+ * The Cassandra implementation to {@link ColumnFamilyManagerFactory}
+ */
 public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManagerFactory<CassandraColumnFamilyManager>
         , ColumnFamilyManagerAsyncFactory<CassandraColumnFamilyManagerAsync> {
 

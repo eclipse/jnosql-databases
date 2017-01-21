@@ -22,12 +22,10 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -36,9 +34,16 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * The Cassandra implementation of {@link ColumnFamilyManager}, that supports all methods and also supports
+ * CQL and ConsistencyLevel.
+ * <p>{@link CassandraColumnFamilyManager#find(ColumnQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnFamilyManager#cql(String)}</p>
+ * <p>{@link CassandraColumnFamilyManager#nativeQueryPrepare(String)}</p>
+ * <p>{@link CassandraColumnFamilyManager#delete(ColumnQuery, ConsistencyLevel)}</p>
+ */
 public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
 
@@ -61,6 +66,14 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
         return entity;
     }
 
+    /**
+     * Saves a ColumnEntity with a defined ConsistencyLevel
+     *
+     * @param entity the entity
+     * @param level  the {@link ConsistencyLevel}
+     * @return the entity saved
+     * @throws NullPointerException when both entity or level are null
+     */
     public ColumnEntity save(ColumnEntity entity, ConsistencyLevel level) throws NullPointerException {
         Insert insert = QueryUtils.insert(entity, keyspace);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
@@ -91,7 +104,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
         session.execute(delete);
     }
 
-    public void delete(ColumnQuery query, ConsistencyLevel level) {
+    public void delete(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         delete.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         session.execute(delete);
@@ -117,13 +130,6 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
         ResultSet resultSet = session.execute(query);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
                 .collect(Collectors.toList());
-    }
-
-    public void cql(String query, Consumer<List<ColumnEntity>> consumer)
-            throws ExecuteAsyncQueryException {
-        ResultSetFuture resultSet = session.executeAsync(query);
-        CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
-        resultSet.addListener(executeAsync, executor);
     }
 
     public CassandraPrepareStatment nativeQueryPrepare(String query) {

@@ -34,8 +34,8 @@ import static java.lang.Boolean.FALSE;
 class CassandraProperties {
 
     private static final String DEFAULT_THREADS_NUMBER = Integer.toString(Runtime.getRuntime().availableProcessors());
-    private static final String CASSANDRA_HOSTER = "cassandra-hoster";
-    private static final String CASSANDRA_QUERY = "cassandra-initial-query";
+    private static final String CASSANDRA_HOSTER = "cassandra-host";
+    private static final String CASSANDRA_QUERY = "cassandra-query";
     private static final String CASSANDRA_THREADS_NUMBER = "cassandra-threads-number";
     private static final String CASSANDRA_SSL = "cassandra-ssl";
     private static final String CASSANDRA_METRICS = "cassandra-metrics";
