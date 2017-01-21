@@ -18,6 +18,6 @@
  */
 
 /**
- * The Cassandra implementation to column
+ * The Cassandra implementation to column.
  */
 package org.jnosql.diana.cassandra.column;
