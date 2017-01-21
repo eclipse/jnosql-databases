@@ -111,9 +111,19 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     public void live(DocumentQuery query, Consumer<DocumentEntity> callBack) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callback is required");
-        ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult queryResult = OSQLQueryFactory.toLive(query, callBack);
-        tx.command(queryResult.getQuery()).execute(queryResult.getParams());
+        try (ODatabaseDocumentTx tx = pool.acquire();) {
+            OSQLQueryFactory.QueryResult queryResult = OSQLQueryFactory.toLive(query, callBack);
+            tx.command(queryResult.getQuery()).execute(queryResult.getParams());
+        }
+    }
+
+    public void live(String query, Consumer<DocumentEntity> callBack, Object... params) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callback is required");
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+
+        }
+
     }
 
     @Override

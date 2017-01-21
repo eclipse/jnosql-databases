@@ -58,6 +58,10 @@ final class OSQLQueryFactory {
         };
     }
 
+    static OLiveQuery<ODocument> parseOlive(String query, Consumer<DocumentEntity> callBack) {
+        return new OLiveQuery<>(query, new LiveQueryLIstener(callBack));
+    }
+
     static QueryResult toDelete(DocumentQuery documentQuery) {
         Query query = getQuery(documentQuery);
 
