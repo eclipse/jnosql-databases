@@ -53,6 +53,11 @@ import static org.jnosql.diana.api.Condition.AND;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
 
+/**
+ * The Hbase implementation to {@link ColumnFamilyManager}.
+ * It does not support TTL methods
+ * <p>{@link HBaseColumnFamilyManager#save(ColumnEntity, Duration)}</p>
+ */
 public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     private static final String KEY_REQUIRED_ERROR = "\"To save an entity is necessary to have an row, a Column that has a blank name. Documents.of(\\\"\\\", keyValue);\"";

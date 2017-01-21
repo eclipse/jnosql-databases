@@ -30,7 +30,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Configuration to HBase
+ * Configuration to HBase that returns {@link HBaseColumnFamilyManagerFactory}
  */
 public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumnFamilyManagerFactory> {
 
@@ -68,6 +68,10 @@ public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumn
         this.families.addAll(families);
     }
 
+    /**
+     * Adds a new family
+     * @param family the family
+     */
     public void add(String family) {
         this.families.add(requireNonNull(family, "family is required"));
     }

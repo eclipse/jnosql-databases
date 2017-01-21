@@ -16,19 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.hbase.column;
-
 
 /**
- * The Hbase exception to diana implementation
+ * This package has all the hbase implementation to column
  */
-public class DianaHBaseException extends RuntimeException {
-
-    DianaHBaseException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    DianaHBaseException(String message) {
-        super(message);
-    }
-}
+package org.jnosql.diana.hbase.column;
