@@ -22,15 +22,25 @@ package org.jnosql.diana.riak.key;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
+import org.jnosql.diana.driver.ConfigurationReaderException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
- * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakKeyValueEntityManagerFactory}
+ * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakKeyValueEntityManagerFactory}.
+ * It tries to read diana-riak.properties file.
+ * <p>riak-server-host-: The prefix to host. eg: riak-server-host-1= host1</p>
  */
 public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEntityManagerFactory> {
+
+    private static Logger LOGGER = Logger.getLogger(RiakConfiguration.class.getName());
+
+    private static final String FILE_CONFIGURATION = "diana-riak.properties";
 
     private static final RiakNode DEFAULT_NODE = new RiakNode.Builder()
             .withRemoteAddress("127.0.0.1").build();
@@ -38,6 +48,15 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     private final List<RiakNode> nodes = new ArrayList<>();
 
     private RiakCluster cluster;
+
+    public RiakConfiguration() {
+        try {
+            Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
+        } catch (ConfigurationReaderException ex) {
+            LOGGER.fine("Configuration file to arandodb does not found");
+        }
+    }
+
 
     /**
      * Adds new Riak node
