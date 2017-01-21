@@ -38,6 +38,7 @@ import java.util.logging.Logger;
  */
 public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEntityManagerFactory> {
 
+    private static final String SERVER_PREFIX = "riak-server-host-";
     private static Logger LOGGER = Logger.getLogger(RiakConfiguration.class.getName());
 
     private static final String FILE_CONFIGURATION = "diana-riak.properties";
@@ -52,6 +53,11 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     public RiakConfiguration() {
         try {
             Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
+            properties.keySet().stream()
+                    .filter(k -> k.startsWith(SERVER_PREFIX))
+                    .sorted().map(properties::get)
+            .forEach(this::add);
+
         } catch (ConfigurationReaderException ex) {
             LOGGER.fine("Configuration file to arandodb does not found");
         }
