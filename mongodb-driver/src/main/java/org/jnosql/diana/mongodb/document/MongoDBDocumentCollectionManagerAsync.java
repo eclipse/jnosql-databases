@@ -36,6 +36,11 @@ import java.util.function.Consumer;
 
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
+/**
+ * The mongodb implementation of {@link DocumentCollectionManagerAsync} whose does not support the TTL methods:
+ * <p>{@link MongoDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration)}</p>
+ * <p>{@link MongoDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration, Consumer)}</p>
+ */
 public class MongoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
     private final MongoDatabase asyncMongoDatabase;

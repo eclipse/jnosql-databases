@@ -23,6 +23,9 @@ import com.mongodb.MongoClient;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
+/**
+ * The mongodb implementation to {@link DocumentCollectionManagerFactory}
+ */
 public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager>,
         DocumentCollectionManagerAsyncFactory<MongoDBDocumentCollectionManagerAsync> {
 

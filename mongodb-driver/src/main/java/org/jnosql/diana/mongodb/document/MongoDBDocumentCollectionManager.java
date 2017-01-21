@@ -36,6 +36,10 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
+/**
+ * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
+ * <p>{@link MongoDBDocumentCollectionManager#save(DocumentEntity, Duration)}</p>
+ */
 public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
 
     private final MongoDatabase mongoDatabase;

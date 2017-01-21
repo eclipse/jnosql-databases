@@ -32,13 +32,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
+/**
+ * The MongoDB implementation to {@link UnaryDocumentConfiguration} that returns  {@link MongoDBDocumentCollectionManagerFactory}.
+ * It tries to read the diana-mongodb.properties file whose has the following properties
+ * <p>mongodb-server-host-: as prefix to add host client, eg: mongodb-server-host-1=host1, mongodb-server-host-2= host2</p>
+ */
 public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-mongodb.properties";
 
     private static final int DEFAULT_PORT = 27017;
 
-
+    /**
+     * Creates a {@link MongoDBDocumentCollectionManagerFactory} from map configurations
+     * @param configurations the configurations map
+     * @return a MongoDBDocumentCollectionManagerFactory instance
+     */
     public MongoDBDocumentCollectionManagerFactory getManagerFactory(Map<String, String> configurations) {
         List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith("mongodb-server-host-"))
                 .map(configurations::get).map(HostPortConfiguration::new)
