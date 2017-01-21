@@ -16,19 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.riak.key;
-
 
 /**
- * The riak exception to Diana project
+ * Redis is a software project that implements data structure servers. It is open-source, networked, in-memory,
+ * and stores keys with optional durability.
  */
-public class DianaRiakException extends RuntimeException {
-
-    DianaRiakException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    DianaRiakException(String message) {
-        super(message);
-    }
-}
+package org.jnosql.diana.redis;

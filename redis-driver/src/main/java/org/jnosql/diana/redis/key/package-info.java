@@ -16,19 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.riak.key;
-
 
 /**
- * The riak exception to Diana project
+ * The redis package that has key-value implementation
  */
-public class DianaRiakException extends RuntimeException {
-
-    DianaRiakException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    DianaRiakException(String message) {
-        super(message);
-    }
-}
+package org.jnosql.diana.redis.key;
