@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakKeyValueEntityManagerFactory}
+ */
 public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEntityManagerFactory> {
 
     private static final RiakNode DEFAULT_NODE = new RiakNode.Builder()
@@ -36,12 +39,24 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
 
     private RiakCluster cluster;
 
-    public void add(RiakNode node) {
+    /**
+     * Adds new Riak node
+     *
+     * @param node the node
+     * @throws NullPointerException when node is null
+     */
+    public void add(RiakNode node) throws NullPointerException {
         Objects.requireNonNull(node, "Node is required");
         this.nodes.add(node);
     }
 
-    public void add(String address) {
+    /**
+     * Adds a new address on riak
+     *
+     * @param address the address to be added
+     * @throws NullPointerException when address is null
+     */
+    public void add(String address) throws NullPointerException {
         Objects.requireNonNull(address, "Address is required");
         this.nodes.add(new RiakNode.Builder().withRemoteAddress(address).build());
     }

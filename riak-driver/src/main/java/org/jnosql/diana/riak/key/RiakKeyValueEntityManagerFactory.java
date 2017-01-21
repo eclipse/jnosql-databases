@@ -30,6 +30,15 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+/**
+ * The riak implementation to {@link BucketManagerFactory} that returns {@link RiakKeyValueEntityManager}
+ * This implementation just has support to {@link RiakKeyValueEntityManagerFactory#getBucketManager(String)}
+ * So, these metdhos will returns {@link UnsupportedOperationException}
+ * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
+ * <p>{@link BucketManagerFactory#getSet(String, Class)}</p>
+ * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
+ * <p>{@link BucketManagerFactory#getMap(String, Class, Class)}</p>
+ */
 public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<RiakKeyValueEntityManager> {
 
     private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
