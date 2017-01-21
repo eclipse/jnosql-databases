@@ -20,7 +20,6 @@
 package org.jnosql.diana.orientdb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 
 public final class DocumentConfigurationUtils {
@@ -28,7 +27,7 @@ public final class DocumentConfigurationUtils {
     private DocumentConfigurationUtils() {
     }
 
-    public static DocumentCollectionManagerFactory get() {
+    public static OrientDBDocumentCollectionManagerFactory get() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
         configuration.setHost("172.17.0.2");
         configuration.setUser("root");
@@ -36,7 +35,7 @@ public final class DocumentConfigurationUtils {
         return configuration.get();
     }
 
-    public static DocumentCollectionManagerAsyncFactory getAsync() {
+    public static OrientDBDocumentCollectionManagerFactory getAsync() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
         configuration.setHost("172.17.0.2");
         configuration.setUser("root");

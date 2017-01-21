@@ -22,7 +22,6 @@ package org.jnosql.diana.orientdb.document;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.document.Document;
@@ -114,6 +113,7 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
         requireNonNull(callBack, "callback is required");
         ODatabaseDocumentTx tx = pool.acquire();
         OSQLQueryFactory.QueryResult queryResult = OSQLQueryFactory.toLive(query, callBack);
+        tx.command(queryResult.getQuery()).execute(queryResult.getParams());
     }
 
     @Override

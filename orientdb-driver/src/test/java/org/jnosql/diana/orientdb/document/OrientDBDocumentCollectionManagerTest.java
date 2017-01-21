@@ -27,10 +27,12 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static org.hamcrest.Matchers.contains;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.get;
@@ -41,7 +43,8 @@ import static org.junit.Assert.*;
 public class OrientDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private DocumentCollectionManager entityManager;
+
+    private OrientDBDocumentCollectionManager entityManager;
 
     @Before
     public void setUp() {
@@ -143,6 +146,21 @@ public class OrientDBDocumentCollectionManagerTest {
 
         entityManager.delete(query);
         assertTrue(entityManager.find(query).isEmpty());
+    }
+
+    @Test
+    public void shouldLive() throws InterruptedException {
+        List<DocumentEntity> entities = new ArrayList<>();
+        Consumer<DocumentEntity> callback = entities::add;
+
+        DocumentEntity entity = entityManager.save(getEntity());
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> id = entity.find("name");
+        query.and(DocumentCondition.eq(id.get()));
+        entityManager.live(query, callback);
+        entityManager.save(getEntity());
+        Thread.sleep(3_000L);
+        assertFalse(entities.isEmpty());
     }
 
     private DocumentEntity getEntity() {

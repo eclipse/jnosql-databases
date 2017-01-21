@@ -27,11 +27,9 @@ class LiveQueryLIstener implements OLiveResultListener {
 
     @Override
     public void onError(int iLiveToken) {
-
     }
 
     @Override
     public void onUnsubscribe(int iLiveToken) {
-
     }
 }
