@@ -34,11 +34,18 @@ public class OrientDBDocumentConfigurationTest {
 
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
+    public void shouldCreateDocumentCollectionManagerFactory() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
         configuration.setHost("172.17.0.2");
         configuration.setUser("root");
         configuration.setPassword("rootpwd");
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldCreateByConfigurationFile() {
+        OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }

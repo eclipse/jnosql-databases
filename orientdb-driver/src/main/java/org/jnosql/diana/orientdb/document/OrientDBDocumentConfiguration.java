@@ -20,8 +20,17 @@ package org.jnosql.diana.orientdb.document;
 
 
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
+import org.jnosql.diana.driver.ConfigurationReaderException;
+
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
+
+    private static final String FILE_CONFIGURATION = "diana-arangodb.properties";
+
+    private static Logger LOGGER = Logger.getLogger(OrientDBDocumentConfiguration.class.getName());
 
     private String host;
 
@@ -30,6 +39,18 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
     private String password;
 
     private String storageType;
+
+    public OrientDBDocumentConfiguration() {
+        try {
+            Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
+            this.host = properties.get("mongodb-server-host");
+            this.user = properties.get("mongodb-server-user");
+            this.password = properties.get("mongodb-server-password");
+            this.storageType = properties.get("mongodb-server-storageType");
+        } catch (ConfigurationReaderException ex) {
+            LOGGER.fine("Configuration file to arandodb does not found");
+        }
+    }
 
     public void setHost(String host) {
         this.host = host;
