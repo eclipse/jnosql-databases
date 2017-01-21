@@ -19,6 +19,7 @@
 package org.jnosql.diana.orientdb.document;
 
 
+import com.orientechnologies.common.concur.ONeedRetryException;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.id.ORecordId;
@@ -59,11 +60,19 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
             Map<String, Object> entityValues = toMap(entity);
             entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-            ODocument save = tx.save(document);
-            ORecordId ridField = save.field("@rid");
-            if (Objects.nonNull(ridField)) {
-                entity.add(Document.of(RID_FIELD, ridField.toString()));
+            ODocument save = null;
+            try {
+                save = tx.save(document);
+            } catch (ONeedRetryException e) {
+                save = tx.reload(document);
             }
+            if (Objects.nonNull(save)) {
+                ORecordId ridField = save.field("@rid");
+                if (Objects.nonNull(ridField)) {
+                    entity.add(Document.of(RID_FIELD, ridField.toString()));
+                }
+            }
+
             return entity;
         }
     }
