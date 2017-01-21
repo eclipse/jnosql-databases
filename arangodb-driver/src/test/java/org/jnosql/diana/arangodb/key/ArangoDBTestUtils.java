@@ -25,7 +25,7 @@ public final class ArangoDBTestUtils {
 
 
     public static BucketManagerFactory get() {
-        ArandoDBKeyValueConfiguration configuration = new ArandoDBKeyValueConfiguration();
+        ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
         configuration.host("172.17.0.2");
         return configuration.getManagerFactory();
     }

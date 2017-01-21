@@ -27,11 +27,11 @@ import static org.junit.Assert.assertNotNull;
 
 public class ArangoDBConfigurationTest {
 
-    private ArandoDBKeyValueConfiguration configuration;
+    private ArangoDBKeyValueConfiguration configuration;
 
     @Before
     public void setUp() {
-        configuration = new ArandoDBKeyValueConfiguration();
+        configuration = new ArangoDBKeyValueConfiguration();
     }
 
 

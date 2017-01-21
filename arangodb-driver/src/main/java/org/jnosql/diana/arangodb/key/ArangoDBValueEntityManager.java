@@ -35,6 +35,11 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
+/**
+ * The ArangoDB implementation to {@link BucketManager} it does not support TTL methods:
+ * <p>{@link BucketManager#put(Iterable, Duration)}</p>
+ * <p>{@link BucketManager#put(Iterable, Duration)}</p>
+ */
 public class ArangoDBValueEntityManager implements BucketManager {
 
 

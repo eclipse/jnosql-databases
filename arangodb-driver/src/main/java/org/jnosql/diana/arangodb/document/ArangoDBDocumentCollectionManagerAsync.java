@@ -49,7 +49,9 @@ import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.toEntity;
 
 /**
- * The ArandoDB implementation of {@link DocumentCollectionManagerAsync}. It has not support to TTL methods
+ * The ArandoDB implementation of {@link DocumentCollectionManagerAsync}. It does not support to TTL methods:
+ * <p>{@link DocumentCollectionManagerAsync#save(DocumentEntity, Duration)}</p>
+ * <p>{@link DocumentCollectionManagerAsync#save(DocumentEntity, Duration, Consumer)}</p>
  */
 public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 

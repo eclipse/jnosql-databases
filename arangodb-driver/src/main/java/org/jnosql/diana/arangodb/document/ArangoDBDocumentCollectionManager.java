@@ -42,7 +42,8 @@ import static java.util.Collections.singletonList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 
 /**
- * The ArangoDB implementation of {@link DocumentCollectionManager} it has not support to TTL methods
+ * The ArangoDB implementation of {@link DocumentCollectionManager} it does not support to TTL methods:
+ * <p>{@link DocumentCollectionManager#save(DocumentEntity)}</p>
  */
 public class ArangoDBDocumentCollectionManager implements DocumentCollectionManager {
 

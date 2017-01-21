@@ -28,6 +28,14 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+/**
+ * The ArangoDB implementation to {@link BucketManagerFactory}
+ * it does not support:
+ * <p>{@link BucketManagerFactory#getMap(String, Class, Class)}</p>
+ * <p>{@link BucketManagerFactory#getSet(String, Class)}</p>
+ * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
+ * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
+ */
 public class ArangoDBKeyValueEntityManagerFactory implements BucketManagerFactory<ArangoDBValueEntityManager> {
 
     private static final Gson GSON = new Gson();
