@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEntityManagerFactory> {
 
     private static final String SERVER_PREFIX = "riak-server-host-";
-    private static Logger LOGGER = Logger.getLogger(RiakConfiguration.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RiakConfiguration.class.getName());
 
     private static final String FILE_CONFIGURATION = "diana-riak.properties";
 

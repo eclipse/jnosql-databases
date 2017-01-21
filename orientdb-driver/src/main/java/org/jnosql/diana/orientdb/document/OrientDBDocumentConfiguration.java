@@ -38,7 +38,7 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
 
     private static final String FILE_CONFIGURATION = "diana-arangodb.properties";
 
-    private static Logger LOGGER = Logger.getLogger(OrientDBDocumentConfiguration.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentConfiguration.class.getName());
 
     private String host;
 
