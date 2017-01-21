@@ -31,12 +31,26 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * The hazelcast implementation of {@link KeyValueConfiguration} that returns
+ * {@link HazelCastKeyValueEntityManagerFactory}. It tries to read the diana-hazelcast.properties file
+ * that has the properties:
+ * <p>hazelcast-instanceName: the instance name</p>
+ * <p>hazelcast-host-: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
+ *
+ */
 public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<HazelCastKeyValueEntityManagerFactory> {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
 
 
-    public HazelCastKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
+    /**
+     * Creates a {@link HazelCastKeyValueEntityManagerFactory} from configuration map
+     * @param configurations the configuration map
+     * @return the HazelCastKeyValueEntityManagerFactory instance
+     * @throws NullPointerException when configurations is null
+     */
+    public HazelCastKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) throws NullPointerException {
 
         List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("hazelcast-hoster-"))
                 .collect(Collectors.toList());
@@ -46,7 +60,13 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
         return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);
     }
 
-    public HazelCastKeyValueEntityManagerFactory getManagerFactory(Config config) {
+    /**
+     * Creates a {@link HazelCastKeyValueEntityManagerFactory} from hazelcast config
+     * @param config the {@link Config}
+     * @return the HazelCastKeyValueEntityManagerFactory instance
+     * @throws NullPointerException when config is null
+     */
+    public HazelCastKeyValueEntityManagerFactory getManagerFactory(Config config)throws NullPointerException {
         Objects.requireNonNull(config, "config is required");
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
         return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);

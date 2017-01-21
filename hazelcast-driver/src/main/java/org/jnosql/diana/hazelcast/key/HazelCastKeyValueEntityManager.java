@@ -31,7 +31,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-
+/**
+ * The hazelcast implementation of {@link BucketManager}
+ */
 public class HazelCastKeyValueEntityManager implements BucketManager {
 
     private final IMap map;

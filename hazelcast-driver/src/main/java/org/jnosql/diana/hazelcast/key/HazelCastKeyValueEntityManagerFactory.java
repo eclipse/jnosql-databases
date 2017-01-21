@@ -27,6 +27,9 @@ import java.util.Queue;
 import java.util.Set;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
+/**
+ * The hazelcast implementation of {@link BucketManagerFactory}
+ */
 public class HazelCastKeyValueEntityManagerFactory implements BucketManagerFactory<HazelCastKeyValueEntityManager> {
 
     private final HazelcastInstance hazelcastInstance;
