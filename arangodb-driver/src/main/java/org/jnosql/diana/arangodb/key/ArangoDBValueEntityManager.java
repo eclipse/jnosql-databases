@@ -25,6 +25,8 @@ import com.google.gson.Gson;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -45,6 +47,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
 
     private static final String VALUE = "_value";
     private static final Function<BaseDocument, String> TO_JSON = e -> e.getAttribute(VALUE).toString();
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
 
     private final ArangoDB arangoDB;
 
@@ -94,7 +97,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
 
         return ofNullable(entity)
                 .map(TO_JSON)
-                .map(j -> ArangoDBValue.of(gson, j));
+                .map(j -> PROVDER.of(j));
 
     }
 
@@ -106,7 +109,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
                         .getDocument(k, BaseDocument.class))
                 .filter(Objects::nonNull)
                 .map(TO_JSON)
-                .map(j -> ArangoDBValue.of(gson, j))
+                .map(j -> PROVDER.of(j))
                 .collect(toList());
     }
 
