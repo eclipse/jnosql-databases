@@ -31,12 +31,31 @@ import org.jnosql.diana.api.key.KeyValueConfiguration;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+/**
+ * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisKeyValueEntityManagerFactory}.
+ * It tries to read diana-redis.properties file.
+ * <p>redis-master-host: the host client </p>
+ * <p>redis-master-port: the port, the default value 6379</p>
+ * <p>redis-timeout: the redis timeout, the default value 2000 on milis</p>
+ * <p>redis-password: the password</p>
+ * <p>redis-database: the redis database number, the default value is 0</p>
+ * <p>redis-clientName: the redis client name</p>
+ * <p>redis-configuration-max-total: The max number of thread to {@link JedisPoolConfig}, the default value 1000 </p>
+ * <p>redis-configuration-max-idle: The max idle {@link JedisPoolConfig}, the default value 10 </p>
+ * <p>redis-configuration-min-idle: The min idle {@link JedisPoolConfig}, the default value 1 </p>
+ * <p>redis-configuration-max--wait-millis: The max wait on millis on {@link JedisPoolConfig}, the default value 3000 </p>
+ */
 public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyValueEntityManagerFactory> {
 
     private static final String REDIS_FILE_CONFIGURATION = "diana-redis.properties";
 
     private static final Logger LOGGER = Logger.getLogger(RedisConfiguration.class.getName());
 
+    /**
+     * Creates a {@link RedisConfiguration} from map configuration
+     * @param configurations the map configuration
+     * @return the RedisConfiguration instance
+     */
     public RedisKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
         JedisPoolConfig poolConfig = getJedisPoolConfig(configurations);
         JedisPool jedisPool = getJedisPool(configurations, poolConfig);
@@ -45,7 +64,7 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
     }
 
     private JedisPool getJedisPool(Map<String, String> configurations, JedisPoolConfig poolConfig) {
-        String localhost = configurations.getOrDefault("redis-master-hoster", "localhost");
+        String localhost = configurations.getOrDefault("redis-master-host", "localhost");
         Integer port = Integer.valueOf(configurations.getOrDefault("redis-master-port", "6379"));
         Integer timeout = Integer.valueOf(configurations.getOrDefault("redis-timeout", "2000"));
         String password = configurations.getOrDefault("redis-password", null);

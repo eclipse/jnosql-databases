@@ -19,6 +19,9 @@
 
 package org.jnosql.diana.redis.key;
 
+/**
+ * An exception when has irregular key value problem
+ */
 public class IrregularKeyValue extends RuntimeException {
 
     private static final long serialVersionUID = 6161854579438859925L;

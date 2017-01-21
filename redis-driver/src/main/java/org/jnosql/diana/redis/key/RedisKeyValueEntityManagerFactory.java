@@ -30,6 +30,9 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
+/**
+ * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisKeyValueEntityManager}
+ */
 public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<RedisKeyValueEntityManager> {
 
     private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
