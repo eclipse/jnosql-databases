@@ -19,9 +19,6 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.CouchbaseCluster;
-import com.couchbase.client.java.cluster.BucketSettings;
-import com.couchbase.client.java.cluster.ClusterManager;
-import com.couchbase.client.java.cluster.DefaultBucketSettings;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
