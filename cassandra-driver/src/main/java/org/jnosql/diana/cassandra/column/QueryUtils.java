@@ -24,13 +24,11 @@ import com.datastax.driver.core.querybuilder.*;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
+import org.jnosql.diana.driver.value.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +41,6 @@ import static org.jnosql.diana.api.Sort.SortType.ASC;
 
 final class QueryUtils {
 
-    private static final ValueWriter VALUE_WRITER = ValueWriterDecorator.getInstance();
 
     private static final Function<Sort, Ordering> SORT_ORDERING_FUNCTION = sort -> {
         if (ASC.equals(sort.getType())) {
@@ -59,18 +56,10 @@ final class QueryUtils {
 
     public static Insert insert(ColumnEntity entity, String keyspace) {
         Insert insert = insertInto(keyspace, entity.getName());
-        entity.getColumns().forEach(d -> insert.value(d.getName(), convert(d.getValue())));
+        entity.getColumns().forEach(d -> insert.value(d.getName(), ValueUtil.convert(d.getValue())));
         return insert;
     }
 
-
-    private static Object convert(Value value) {
-        Object val = value.get();
-        if (VALUE_WRITER.isCompatible(val.getClass())) {
-            return VALUE_WRITER.write(val);
-        }
-        return val;
-    }
 
     public static BuiltStatement add(ColumnQuery query, String keySpace) {
         String columnFamily = query.getColumnFamily();

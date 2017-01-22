@@ -126,4 +126,13 @@ public class CouchbaseBucketManager implements BucketManager {
     public void close() {
         bucket.close();
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CouchbaseBucketManager{");
+        sb.append("bucket=").append(bucket);
+        sb.append(", bucketName='").append(bucketName).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
