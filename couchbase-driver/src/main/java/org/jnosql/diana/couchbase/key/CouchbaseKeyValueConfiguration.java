@@ -22,11 +22,8 @@ package org.jnosql.diana.couchbase.key;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.jnosql.diana.driver.ConfigurationReader;
+import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -36,53 +33,9 @@ import java.util.Objects;
  * <p>couchbase-user: the user</p>
  * <p>couchbase-password: the password</p>
  */
-public class CouchbaseKeyValueConfiguration implements KeyValueConfiguration<CouchbaseBucketManagerFactory> {
+public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
+        implements KeyValueConfiguration<CouchbaseBucketManagerFactory> {
 
-    private static final String CASSANDRA_FILE_CONFIGURATION = "diana-couchbase.properties";
-
-    private final List<String> nodes = new ArrayList<>();
-
-    private String user;
-
-    private String password;
-
-    public CouchbaseKeyValueConfiguration() {
-        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
-        configuration.keySet()
-                .stream()
-                .filter(k -> k.equals("couchbase-host-"))
-                .sorted()
-                .map(configuration::get)
-                .forEach(this::add);
-        this.user = configuration.get("couchbase-user");
-        this.password = configuration.get("couchbase-password");
-    }
-
-    /**
-     * Adds a new node to cluster
-     *
-     * @param node the new node
-     * @throws NullPointerException when the cluster is null
-     */
-    public void add(String node) throws NullPointerException {
-        nodes.add(Objects.requireNonNull(node, "node is required"));
-    }
-
-    /**
-     * set the user
-     * @param user the user
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    /**
-     * set the password
-     * @param password the password
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     /**
      * Creates a {@link CouchbaseBucketManagerFactory} from {@link CouchbaseEnvironment}

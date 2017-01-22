@@ -37,7 +37,7 @@ public class MongoDBDocumentConfigurationTest {
         Map<String, String> map  = new HashMap<>();
         map.put("mongodb-server-host-1", "172.17.0.2:27017");
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.getManagerFactory(map);
+        DocumentCollectionManagerFactory managerFactory = configuration.get(map);
         assertNotNull(managerFactory);
     }
 

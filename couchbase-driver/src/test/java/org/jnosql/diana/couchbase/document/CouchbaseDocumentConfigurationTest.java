@@ -16,34 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jnosql.diana.couchbase.document;
 
-package org.jnosql.diana.mongodb.document;
-
-import org.junit.Before;
+import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
 
-public class MongoDBDocumentCollectionManagerFactoryTest {
+public class CouchbaseDocumentConfigurationTest {
 
-    private MongoDBDocumentConfiguration configuration;
+    @Test
+    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
 
-    @Before
-    public void setUp() {
-        configuration = new MongoDBDocumentConfiguration();
-
+        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        assertNotNull(managerFactory);
     }
 
     @Test
-    public void shouldCreateEntityManager() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
-        assertNotNull(mongoDBFactory.get("database"));
-    }
-
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
-        assertNotNull(mongoDBFactory.getAsync("database"));
+    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
+        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        assertNotNull(managerFactory);
     }
 }

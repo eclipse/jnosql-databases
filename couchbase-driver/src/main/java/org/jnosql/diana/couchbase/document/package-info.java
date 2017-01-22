@@ -17,33 +17,7 @@
  * under the License.
  */
 
-package org.jnosql.diana.mongodb.document;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-
-
-public class MongoDBDocumentCollectionManagerFactoryTest {
-
-    private MongoDBDocumentConfiguration configuration;
-
-    @Before
-    public void setUp() {
-        configuration = new MongoDBDocumentConfiguration();
-
-    }
-
-    @Test
-    public void shouldCreateEntityManager() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
-        assertNotNull(mongoDBFactory.get("database"));
-    }
-
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
-        assertNotNull(mongoDBFactory.getAsync("database"));
-    }
-}
+/**
+ * This package has the Couchbase document implementation
+ */
+package org.jnosql.diana.couchbase.document;

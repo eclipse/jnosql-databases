@@ -16,34 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.jnosql.diana.mongodb.document;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
+package org.jnosql.diana.couchbase.document;
 
 
-public class MongoDBDocumentCollectionManagerFactoryTest {
+/**
+ * An exception when {@link CouchbaseDocumentCollectionManager} tries to both update and insert, but it does not found
+ * The column with the name "_id".
+ */
+public class CouchbaseNoKeyFoundException extends RuntimeException {
 
-    private MongoDBDocumentConfiguration configuration;
-
-    @Before
-    public void setUp() {
-        configuration = new MongoDBDocumentConfiguration();
-
-    }
-
-    @Test
-    public void shouldCreateEntityManager() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
-        assertNotNull(mongoDBFactory.get("database"));
-    }
-
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
-        assertNotNull(mongoDBFactory.getAsync("database"));
+    CouchbaseNoKeyFoundException(String message) {
+        super("The entity was not found at: " + message);
     }
 }

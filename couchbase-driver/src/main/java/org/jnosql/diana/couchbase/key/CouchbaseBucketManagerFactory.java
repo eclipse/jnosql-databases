@@ -39,6 +39,7 @@ import java.util.Set;
 public class CouchbaseBucketManagerFactory implements BucketManagerFactory<CouchbaseBucketManager> {
 
     private static final String DEFAULT_BUCKET = "default";
+
     private final CouchbaseCluster couchbaseCluster;
 
     private final String user;

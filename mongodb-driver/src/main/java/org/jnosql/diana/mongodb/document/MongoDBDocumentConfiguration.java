@@ -48,7 +48,7 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
      * @param configurations the configurations map
      * @return a MongoDBDocumentCollectionManagerFactory instance
      */
-    public MongoDBDocumentCollectionManagerFactory getManagerFactory(Map<String, String> configurations) {
+    public MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) {
         List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith("mongodb-server-host-"))
                 .map(configurations::get).map(HostPortConfiguration::new)
                 .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
@@ -69,7 +69,7 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
     @Override
     public MongoDBDocumentCollectionManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        return getManagerFactory(configuration);
+        return get(configuration);
 
     }
 
