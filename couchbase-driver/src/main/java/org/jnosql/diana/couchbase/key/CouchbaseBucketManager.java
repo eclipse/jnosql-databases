@@ -25,6 +25,8 @@ import com.couchbase.client.java.document.json.JsonObject;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -42,6 +44,8 @@ public class CouchbaseBucketManager implements BucketManager {
 
     private static final String VALUE_FIELD = "value";
 
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+
     private final Bucket bucket;
 
     private final String bucketName;
@@ -56,7 +60,7 @@ public class CouchbaseBucketManager implements BucketManager {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
         JsonObject jsonObject = JsonObject.create()
-                .put("value", value);
+                .put("value", PROVDER.toJson(value));
 
         bucket.upsert(JsonDocument.create(key.toString(), jsonObject));
     }
@@ -98,7 +102,7 @@ public class CouchbaseBucketManager implements BucketManager {
             return Optional.empty();
         }
         Object value = jsonDocument.content().get(VALUE_FIELD);
-        return Optional.of(Value.of(value));
+        return Optional.of(PROVDER.of(value.toString()));
     }
 
     @Override
