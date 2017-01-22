@@ -33,6 +33,7 @@ import java.util.Optional;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.jnosql.diana.driver.value.ValueUtil.convert;
 
 /**
  * The couchbase implementation to {@link BucketManager}
@@ -63,7 +64,7 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
         Objects.requireNonNull(entity, "entity is required");
-        put(entity.getKey(), entity.getValue().get());
+        put(entity.getKey(), convert(entity.getValue()));
     }
 
     @Override
