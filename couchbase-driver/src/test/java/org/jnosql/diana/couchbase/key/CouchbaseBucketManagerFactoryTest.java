@@ -16,19 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jnosql.diana.couchbase.key;
 
-package org.jnosql.diana.hazelcast.key.util;
+import org.jnosql.diana.api.key.BucketManager;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.jnosql.diana.hazelcast.key.HazelCastKeyValueConfiguration;
+import static org.junit.Assert.*;
 
 
-public class KeyValueEntityManagerFactoryUtils {
+public class CouchbaseBucketManagerFactoryTest {
 
-    public static BucketManagerFactory get() {
-        KeyValueConfiguration configuration = new HazelCastKeyValueConfiguration();
-        BucketManagerFactory managerFactory = configuration.get();
-        return managerFactory;
+    private CouchbaseBucketManagerFactory factory;
+
+    @Before
+    public void init() {
+        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        factory = configuration.get();
+    }
+
+    @Test
+    public void shouldReturnManager() {
+        BucketManager database = factory.getBucketManager("database");
+        Assert.assertNotNull(database);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnError() {
+        factory.getBucketManager(null);
     }
 }

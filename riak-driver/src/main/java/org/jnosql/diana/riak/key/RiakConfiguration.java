@@ -23,7 +23,6 @@ import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
-import org.jnosql.diana.driver.ConfigurationReaderException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,16 +50,12 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     private RiakCluster cluster;
 
     public RiakConfiguration() {
-        try {
-            Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
-            properties.keySet().stream()
-                    .filter(k -> k.startsWith(SERVER_PREFIX))
-                    .sorted().map(properties::get)
-            .forEach(this::add);
+        Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
+        properties.keySet().stream()
+                .filter(k -> k.startsWith(SERVER_PREFIX))
+                .sorted().map(properties::get)
+                .forEach(this::add);
 
-        } catch (ConfigurationReaderException ex) {
-            LOGGER.fine("Configuration file to arandodb does not found");
-        }
     }
 
 
@@ -87,7 +82,7 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     }
 
     @Override
-    public RiakKeyValueEntityManagerFactory getManagerFactory() {
+    public RiakKeyValueEntityManagerFactory get() {
 
         if (nodes.isEmpty()) {
             nodes.add(DEFAULT_NODE);

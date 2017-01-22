@@ -20,7 +20,6 @@
 package org.jnosql.diana.hazelcast.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,13 +40,13 @@ public class KeyValueConfigurationTest {
     @Test
     public void shouldCreateKeyValueFactory() {
         Map<String, String> map = new HashMap<>();
-        BucketManagerFactory managerFactory = configuration.getManagerFactory(map);
+        BucketManagerFactory managerFactory = configuration.get(map);
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.getManagerFactory();
+        BucketManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }
 

@@ -48,7 +48,7 @@ public class RedisConfigurationTest {
 
     @Test
     public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.getManagerFactory();
+        BucketManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }
 

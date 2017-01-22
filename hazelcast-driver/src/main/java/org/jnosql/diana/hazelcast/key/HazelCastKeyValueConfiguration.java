@@ -50,7 +50,7 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
      * @return the HazelCastKeyValueEntityManagerFactory instance
      * @throws NullPointerException when configurations is null
      */
-    public HazelCastKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) throws NullPointerException {
+    public HazelCastKeyValueEntityManagerFactory get(Map<String, String> configurations) throws NullPointerException {
 
         List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("hazelcast-hoster-"))
                 .collect(Collectors.toList());
@@ -66,15 +66,15 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
      * @return the HazelCastKeyValueEntityManagerFactory instance
      * @throws NullPointerException when config is null
      */
-    public HazelCastKeyValueEntityManagerFactory getManagerFactory(Config config)throws NullPointerException {
+    public HazelCastKeyValueEntityManagerFactory get(Config config)throws NullPointerException {
         Objects.requireNonNull(config, "config is required");
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
         return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);
     }
 
     @Override
-    public HazelCastKeyValueEntityManagerFactory getManagerFactory() {
+    public HazelCastKeyValueEntityManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(HAZELCAST_FILE_CONFIGURATION);
-        return getManagerFactory(configuration);
+        return get(configuration);
     }
 }

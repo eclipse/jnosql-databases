@@ -16,19 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.jnosql.diana.hazelcast.key.util;
-
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.jnosql.diana.hazelcast.key.HazelCastKeyValueConfiguration;
+package org.jnosql.diana.driver.value;
 
 
-public class KeyValueEntityManagerFactoryUtils {
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.ValueWriter;
+import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
-    public static BucketManagerFactory get() {
-        KeyValueConfiguration configuration = new HazelCastKeyValueConfiguration();
-        BucketManagerFactory managerFactory = configuration.get();
-        return managerFactory;
+public final class ValueUtil {
+
+    private static final ValueWriter VALUE_WRITER = ValueWriterDecorator.getInstance();
+
+    private ValueUtil() {
+    }
+
+    public static Object convert(Value value) {
+        Object val = value.get();
+        if (VALUE_WRITER.isCompatible(val.getClass())) {
+            return VALUE_WRITER.write(val);
+        }
+        return val;
     }
 }

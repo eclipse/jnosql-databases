@@ -21,17 +21,21 @@ package org.jnosql.diana.driver;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class ConfigurationReader {
 
+    private static final Logger LOGGER = Logger.getLogger(ConfigurationReader.class.getName());
+
     private ConfigurationReader() {
     }
 
-    public static Map<String, String> from(String resource) throws NullPointerException, ConfigurationReaderException {
+    public static Map<String, String> from(String resource) throws NullPointerException {
         Objects.requireNonNull(resource, "Resource is required");
 
         try {
@@ -42,7 +46,8 @@ public final class ConfigurationReader {
             return properties.keySet().stream().collect(Collectors
                     .toMap(Object::toString, s -> properties.get(s).toString()));
         } catch (IOException e) {
-            throw new ConfigurationReaderException("There is a error when try to read the resource: " + resource,e);
+            LOGGER.fine("The file was not found: " + resource);
+            return Collections.emptyMap();
         }
     }
 }
