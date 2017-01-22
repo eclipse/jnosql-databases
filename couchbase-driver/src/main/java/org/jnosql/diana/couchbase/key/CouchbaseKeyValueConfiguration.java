@@ -61,7 +61,7 @@ public class CouchbaseKeyValueConfiguration implements KeyValueConfiguration<Cou
 
     @Override
     public CouchbaseBucketManagerFactory getManagerFactory() {
-        CouchbaseCluster.create(nodes);
+        CouchbaseCluster couchbaseCluster = CouchbaseCluster.create(nodes);
         return null;
     }
 }
