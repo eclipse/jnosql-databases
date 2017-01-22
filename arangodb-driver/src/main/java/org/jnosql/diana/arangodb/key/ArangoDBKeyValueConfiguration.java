@@ -29,7 +29,7 @@ public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBKeyValueEntityManagerFactory> {
 
     @Override
-    public ArangoDBKeyValueEntityManagerFactory getManagerFactory() {
+    public ArangoDBKeyValueEntityManagerFactory get() {
         return new ArangoDBKeyValueEntityManagerFactory(builder.build());
     }
 }

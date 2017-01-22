@@ -41,7 +41,7 @@ public class RedisKeyValueEntityManagerFactoryTest {
     @Before
     public void setUp() {
         KeyValueConfiguration configuration = new RedisConfiguration();
-        managerFactory = configuration.getManagerFactory();
+        managerFactory = configuration.get();
     }
 
     @Test

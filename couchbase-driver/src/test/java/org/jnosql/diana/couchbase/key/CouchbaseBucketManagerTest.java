@@ -51,7 +51,7 @@ public class CouchbaseBucketManagerTest {
     @Before
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
-        keyValueEntityManagerFactory = configuration.getManagerFactory();
+        keyValueEntityManagerFactory = configuration.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
     }
 

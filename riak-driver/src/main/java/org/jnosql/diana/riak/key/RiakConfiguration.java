@@ -82,7 +82,7 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     }
 
     @Override
-    public RiakKeyValueEntityManagerFactory getManagerFactory() {
+    public RiakKeyValueEntityManagerFactory get() {
 
         if (nodes.isEmpty()) {
             nodes.add(DEFAULT_NODE);

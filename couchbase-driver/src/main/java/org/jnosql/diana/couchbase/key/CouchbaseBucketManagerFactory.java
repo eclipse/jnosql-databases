@@ -19,7 +19,6 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.CouchbaseCluster;
-import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
 import java.util.List;
@@ -37,8 +36,9 @@ import java.util.Set;
  * <p>{@link CouchbaseBucketManagerFactory#getSet(String, Class)}</p>
  * <p>{@link CouchbaseBucketManagerFactory#getList(String, Class)}</p>
  */
-public class CouchbaseBucketManagerFactory implements BucketManagerFactory {
+public class CouchbaseBucketManagerFactory implements BucketManagerFactory<CouchbaseBucketManager> {
 
+    private static final String DEFAULT_BUCKET = "default";
     private final CouchbaseCluster couchbaseCluster;
 
     private final String user;
@@ -53,7 +53,7 @@ public class CouchbaseBucketManagerFactory implements BucketManagerFactory {
 
 
     @Override
-    public BucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
+    public CouchbaseBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
         Objects.requireNonNull(bucketName, "bucket is required");
 
   /*      ClusterManager clusterManager = couchbaseCluster.clusterManager(user, password);
@@ -62,7 +62,7 @@ public class CouchbaseBucketManagerFactory implements BucketManagerFactory {
             BucketSettings settings = DefaultBucketSettings.builder().name(bucketName);
             clusterManager.insertBucket(settings);
         }*/
-        if ("default".equals(bucketName)) {
+        if (DEFAULT_BUCKET.equals(bucketName)) {
             return new CouchbaseBucketManager(couchbaseCluster.openBucket(bucketName), bucketName);
         }
         return new CouchbaseBucketManager(couchbaseCluster.openBucket(bucketName, password), bucketName);

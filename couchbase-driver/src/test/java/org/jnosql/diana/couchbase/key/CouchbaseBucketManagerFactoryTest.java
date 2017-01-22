@@ -33,7 +33,7 @@ public class CouchbaseBucketManagerFactoryTest {
     @Before
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
-        factory = configuration.getManagerFactory();
+        factory = configuration.get();
     }
 
     @Test

@@ -85,7 +85,7 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
 
 
     @Override
-    public RedisKeyValueEntityManagerFactory getManagerFactory() {
+    public RedisKeyValueEntityManagerFactory get() {
         try {
             Properties properties = new Properties();
             InputStream stream = RedisConfiguration.class.getClassLoader()

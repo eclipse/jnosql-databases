@@ -28,7 +28,7 @@ public class KeyValueEntityManagerFactoryUtils {
 
     public static BucketManagerFactory get() {
         KeyValueConfiguration configuration = new HazelCastKeyValueConfiguration();
-        BucketManagerFactory managerFactory = configuration.getManagerFactory();
+        BucketManagerFactory managerFactory = configuration.get();
         return managerFactory;
     }
 }

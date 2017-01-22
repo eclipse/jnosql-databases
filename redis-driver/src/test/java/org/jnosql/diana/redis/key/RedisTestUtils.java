@@ -27,7 +27,7 @@ public class RedisTestUtils {
 
     public static BucketManagerFactory get() {
         KeyValueConfiguration configuration = new RedisConfiguration();
-        BucketManagerFactory managerFactory = configuration.getManagerFactory();
+        BucketManagerFactory managerFactory = configuration.get();
         return managerFactory;
     }
 }

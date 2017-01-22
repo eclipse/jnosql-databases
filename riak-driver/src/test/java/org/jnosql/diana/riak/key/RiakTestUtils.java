@@ -30,6 +30,6 @@ public final class RiakTestUtils {
         RiakNode node = new RiakNode.Builder()
                 .withRemoteAddress("172.17.0.2").build();
         riakConfiguration.add(node);
-        return riakConfiguration.getManagerFactory();
+        return riakConfiguration.get();
     }
 }
