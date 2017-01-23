@@ -94,7 +94,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         query.and(DocumentCondition.eq(name.get()));
         List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
-        entity.remove("_id");
         assertThat(entities, contains(entity));
     }
 
@@ -106,7 +105,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         query.and(DocumentCondition.eq(id.get()));
         List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
-        entity.remove("_id");
         assertThat(entities, contains(entity));
     }
 

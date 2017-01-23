@@ -31,25 +31,26 @@ import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.jnosql.diana.driver.value.ValueUtil;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
+import static org.jnosql.diana.couchbase.document.EntityConverter.convert;
+import static org.jnosql.diana.couchbase.document.EntityConverter.getPrefix;
 
 /**
  * The couchbase implementation of {@link DocumentCollectionManager}
  */
 public class CouchbaseDocumentCollectionManager implements DocumentCollectionManager {
 
-    static final String ID_FIELD = "_id";
     private final Bucket bucket;
     private final String database;
 
@@ -63,8 +64,12 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
         JsonObject jsonObject = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
-        String prefix = database + ':' + id.get(String.class);
+
+        String prefix = getPrefix(id, entity.getName());
+        jsonObject.put(ID_FIELD, prefix);
         bucket.upsert(JsonDocument.create(prefix, jsonObject));
+        entity.remove(ID_FIELD);
+        entity.add(Document.of(ID_FIELD, prefix));
         return entity;
     }
 
@@ -74,8 +79,8 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        String prefix = database + ':' + id.get(String.class);
-        Objects.requireNonNull(ttl, "ttl is required");
+        String prefix = getPrefix(id, entity.getName());
+        requireNonNull(ttl, "ttl is required");
         bucket.upsert(JsonDocument.create(prefix, jsonObject), ttl.toMillis(), MILLISECONDS);
         return entity;
     }
@@ -95,7 +100,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
         if (!delete.getIds().isEmpty()) {
             delete.getIds()
                     .stream()
-                    .map(s -> database + ':' + s)
+                    .map(s -> getPrefix(query.getCollection(), s))
                     .forEach(bucket::remove);
         }
 
@@ -109,52 +114,28 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
         if (nonNull(select.getStatement())) {
             ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(select.getStatement(), select.getParams());
             N1qlQueryResult result = bucket.query(n1qlQuery);
-            result.allRows().stream()
-                    .map(N1qlQueryRow::value)
-                    .map(JsonObject::toMap)
-                    .map(m -> (Map<String, Object>) m.get(database))
-                    .filter(Objects::nonNull)
-                    .map(Documents::of)
-                    .map(ds -> DocumentEntity.of(query.getCollection(), ds))
-                    .forEach(entities::add);
+            entities.addAll(convert(result, database));
         }
         if (!select.getIds().isEmpty()) {
-            select.getIds()
-                    .stream()
-                    .map(s -> database + ':' + s)
-                    .map(bucket::get)
-                    .filter(Objects::nonNull)
-                    .map(JsonDocument::content)
-                    .map(JsonObject::toMap)
-                    .map(Documents::of)
-                    .map(ds -> DocumentEntity.of(query.getCollection(), ds))
-                    .forEach(entities::add);
+            entities.addAll(convert(select.getIds(), query.getCollection(), bucket));
         }
 
         return entities;
     }
 
+
+
+    public List<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException {
+        requireNonNull(n1qlQuery, "n1qlQuery is required");
+        requireNonNull(params, "params is required");
+        N1qlQueryResult result = bucket.query(N1qlQuery.parameterized(n1qlQuery, params));
+        return null;
+
+    }
+
     @Override
     public void close() {
         bucket.close();
-    }
-
-    private JsonObject convert(DocumentEntity entity) {
-        Objects.requireNonNull(entity, "entity is required");
-
-        JsonObject jsonObject = JsonObject.create();
-        entity.getDocuments().stream()
-                .filter(d -> !d.getName().equals(ID_FIELD))
-                .forEach(d -> {
-                    Object value = ValueUtil.convert(d.getValue());
-                    if (Document.class.isInstance(value)) {
-                        Document document = Document.class.cast(value);
-                        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
-                    } else {
-                        jsonObject.put(d.getName(), value);
-                    }
-                });
-        return jsonObject;
     }
 
 }

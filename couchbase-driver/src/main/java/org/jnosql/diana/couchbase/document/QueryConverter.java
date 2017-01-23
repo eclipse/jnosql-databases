@@ -41,7 +41,7 @@ import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Objects.nonNull;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
-import static org.jnosql.diana.couchbase.document.CouchbaseDocumentCollectionManager.ID_FIELD;
+import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 
 final class QueryConverter {
 
