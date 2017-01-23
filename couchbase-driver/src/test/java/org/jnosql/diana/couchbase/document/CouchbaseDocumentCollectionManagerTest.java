@@ -53,7 +53,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     public void shouldSave() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.save(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
+        assertEquals(entity, documentEntity);
     }
 
     @Test
@@ -67,23 +67,46 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    public void shouldRemoveEntityByName() {
         DocumentEntity documentEntity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = documentEntity.find("name");
+        Optional<Document> name = documentEntity.find("name");
+        query.and(DocumentCondition.eq(name.get()));
+        entityManager.delete(query);
+        assertTrue(entityManager.find(query).isEmpty());
+    }
+
+    @Test
+    public void shouldRemoveEntityById() {
+        DocumentEntity documentEntity = entityManager.save(getEntity());
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> id = documentEntity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
         entityManager.delete(query);
         assertTrue(entityManager.find(query).isEmpty());
     }
 
     @Test
-    public void shouldFindDocument() {
+    public void shouldFindDocumentByName() {
+        DocumentEntity entity = entityManager.save(getEntity());
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> name = entity.find("name");
+        query.and(DocumentCondition.eq(name.get()));
+        List<DocumentEntity> entities = entityManager.find(query);
+        assertFalse(entities.isEmpty());
+        entity.remove("_id");
+        assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldFindDocumentById() {
         DocumentEntity entity = entityManager.save(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
         List<DocumentEntity> entities = entityManager.find(query);
         assertFalse(entities.isEmpty());
+        entity.remove("_id");
         assertThat(entities, contains(entity));
     }
 

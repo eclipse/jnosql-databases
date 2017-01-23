@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 
@@ -48,7 +49,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class CouchbaseDocumentCollectionManager implements DocumentCollectionManager {
 
-    public static final String ID_FIELD = "_id";
+    static final String ID_FIELD = "_id";
     private final Bucket bucket;
     private final String database;
 
@@ -86,25 +87,50 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
 
     @Override
     public void delete(DocumentQuery query) {
-        QueryConverter.QueryConverterResult convert = QueryConverter.delete(query, database);
-        ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(convert.getStatement(), convert.getParams());
-        N1qlQueryResult result = bucket.query(n1qlQuery);
+        QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
+        if (nonNull(delete.getStatement())) {
+            ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
+            N1qlQueryResult result = bucket.query(n1qlQuery);
+        }
+        if (!delete.getIds().isEmpty()) {
+            delete.getIds()
+                    .stream()
+                    .map(s -> database + ':' + s)
+                    .forEach(bucket::remove);
+        }
+
     }
 
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
 
         QueryConverter.QueryConverterResult select = QueryConverter.select(query, database);
-        ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(select.getStatement(), select.getParams());
-        N1qlQueryResult result = bucket.query(n1qlQuery);
-        return result.allRows().stream()
-                .map(N1qlQueryRow::value)
-                .map(JsonObject::toMap)
-                .map(m -> (Map<String, Object>) m.get(database))
-                .filter(Objects::nonNull)
-                .map(Documents::of)
-                .map(ds -> DocumentEntity.of(query.getCollection(), ds))
-                .collect(toList());
+        List<DocumentEntity> entities = new ArrayList<>();
+        if (nonNull(select.getStatement())) {
+            ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(select.getStatement(), select.getParams());
+            N1qlQueryResult result = bucket.query(n1qlQuery);
+            result.allRows().stream()
+                    .map(N1qlQueryRow::value)
+                    .map(JsonObject::toMap)
+                    .map(m -> (Map<String, Object>) m.get(database))
+                    .filter(Objects::nonNull)
+                    .map(Documents::of)
+                    .map(ds -> DocumentEntity.of(query.getCollection(), ds))
+                    .forEach(entities::add);
+        }
+        if (!select.getIds().isEmpty()) {
+            select.getIds()
+                    .stream()
+                    .map(s -> database + ':' + s)
+                    .map(bucket::get)
+                    .map(JsonDocument::content)
+                    .map(JsonObject::toMap)
+                    .map(Documents::of)
+                    .map(ds -> DocumentEntity.of(query.getCollection(), ds))
+                    .forEach(entities::add);
+        }
+
+        return entities;
     }
 
     @Override
