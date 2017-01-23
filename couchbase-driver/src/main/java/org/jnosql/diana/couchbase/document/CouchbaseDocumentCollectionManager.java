@@ -25,6 +25,7 @@ import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.ParameterizedN1qlQuery;
+import com.couchbase.client.java.query.Statement;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -122,13 +123,60 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
     }
 
 
-
+    /**
+     * Executes the n1qlquery with params and then result que result
+     *
+     * @param n1qlQuery the query
+     * @param params    the params
+     * @return the query result
+     * @throws NullPointerException when either n1qlQuery or params are null
+     */
     public List<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
         requireNonNull(params, "params is required");
         N1qlQueryResult result = bucket.query(N1qlQuery.parameterized(n1qlQuery, params));
-        return null;
+        return convert(result, database);
+    }
 
+    /**
+     * Executes the n1qlquery  with params and then result que result
+     *
+     * @param n1qlQuery the query
+     * @param params    the params
+     * @return the query result
+     * @throws NullPointerException when either n1qlQuery or params are null
+     */
+    public List<DocumentEntity> n1qlQuery(Statement n1qlQuery, JsonObject params) throws NullPointerException {
+        requireNonNull(n1qlQuery, "n1qlQuery is required");
+        requireNonNull(params, "params is required");
+        N1qlQueryResult result = bucket.query(N1qlQuery.parameterized(n1qlQuery, params));
+        return convert(result, database);
+    }
+
+    /**
+     * Executes the n1qlquery  plain query and then result que result
+     *
+     * @param n1qlQuery the query
+     * @return the query result
+     * @throws NullPointerException when either n1qlQuery or params are null
+     */
+    public List<DocumentEntity> n1qlQuery(String n1qlQuery) throws NullPointerException {
+        requireNonNull(n1qlQuery, "n1qlQuery is required");
+        N1qlQueryResult result = bucket.query(N1qlQuery.simple(n1qlQuery));
+        return convert(result, database);
+    }
+
+    /**
+     * Executes the n1qlquery  plain query and then result que result
+     *
+     * @param n1qlQuery the query
+     * @return the query result
+     * @throws NullPointerException when either n1qlQuery or params are null
+     */
+    public List<DocumentEntity> n1qlQuery(Statement n1qlQuery) throws NullPointerException {
+        requireNonNull(n1qlQuery, "n1qlQuery is required");
+        N1qlQueryResult result = bucket.query(N1qlQuery.simple(n1qlQuery));
+        return convert(result, database);
     }
 
     @Override

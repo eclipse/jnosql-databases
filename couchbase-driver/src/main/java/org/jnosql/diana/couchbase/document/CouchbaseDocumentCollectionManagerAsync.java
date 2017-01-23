@@ -19,6 +19,10 @@
 package org.jnosql.diana.couchbase.document;
 
 
+import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.query.N1qlQuery;
+import com.couchbase.client.java.query.N1qlQueryResult;
+import com.couchbase.client.java.query.Statement;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -31,6 +35,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
+import static org.jnosql.diana.couchbase.document.EntityConverter.convert;
+import static rx.Observable.just;
 
 public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
@@ -39,6 +45,7 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
     private static final Action1<Throwable> ERROR_SAVE = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase save method");
     private static final Action1<Throwable> ERROR_FIND = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase find method");
     private static final Action1<Throwable> ERROR_DELETE = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase delete method");
+    private static final Action1<Throwable> ERROR_N1QLQUERY = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase n1qlQuery method");
 
     private final CouchbaseDocumentCollectionManager manager;
 
@@ -60,7 +67,7 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
     @Override
     public void save(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(callBack, "callBack is required");
-        Observable.just(entity)
+        just(entity)
                 .map(manager::save)
                 .subscribe(callBack::accept, ERROR_SAVE);
     }
@@ -68,7 +75,7 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
     @Override
     public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(callBack, "callBack is required");
-        Observable.just(entity)
+        just(entity)
                 .map(e -> manager.save(e, ttl))
                 .subscribe(callBack::accept, ERROR_SAVE);
     }
@@ -93,7 +100,7 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
     public void delete(DocumentQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
-        Observable.just(query).map(q -> {
+        just(query).map(q -> {
             manager.delete(q);
             return true;
         }).subscribe(a -> callBack.accept(null), ERROR_DELETE);
@@ -101,7 +108,64 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
 
     @Override
     public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Observable.just(query).map(manager::find).subscribe(callBack::accept, ERROR_FIND);
+        just(query).map(manager::find).subscribe(callBack::accept, ERROR_FIND);
+    }
+
+
+    /**
+     * Executes the n1qlquery with params and then result que result
+     *
+     * @param n1qlQuery the query
+     * @param params    the params
+     * @param callback  the callback
+     * @throws NullPointerException       when either n1qlQuery or params are null
+     * @throws ExecuteAsyncQueryException an async error
+     */
+    public void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+        requireNonNull(callback, "callback is required");
+        just(n1qlQuery).map(n -> manager.n1qlQuery(n, params))
+                .subscribe(callback::accept, ERROR_N1QLQUERY);
+    }
+
+    /**
+     * Executes the n1qlquery  with params and then result que result
+     *
+     * @param n1qlQuery the query
+     * @param params    the params
+     * @param callback  the callback
+     * @throws NullPointerException       when either n1qlQuery or params are null
+     * @throws ExecuteAsyncQueryException an async error
+     */
+    public void n1qlQuery(Statement n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+        requireNonNull(callback, "callback is required");
+        just(n1qlQuery).map(n -> manager.n1qlQuery(n, params))
+                .subscribe(callback::accept, ERROR_N1QLQUERY);
+    }
+
+    /**
+     * Executes the n1qlquery  plain query and then result que result
+     *
+     * @param n1qlQuery the query
+     * @param callback  the callback
+     * @throws NullPointerException       when either n1qlQuery or params are null
+     * @throws ExecuteAsyncQueryException an async error
+     */
+    public void n1qlQuery(String n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+        requireNonNull(callback, "callback is required");
+        just(n1qlQuery).map(manager::n1qlQuery).subscribe(callback::accept, ERROR_N1QLQUERY);
+    }
+
+    /**
+     * Executes the n1qlquery  plain query and then result que result
+     *
+     * @param n1qlQuery the query
+     * @param callback  the callback
+     * @throws NullPointerException       when either n1qlQuery or params are null
+     * @throws ExecuteAsyncQueryException an async error
+     */
+    public void n1qlQuery(Statement n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+        requireNonNull(callback, "callback is required");
+        just(n1qlQuery).map(manager::n1qlQuery).subscribe(callback::accept, ERROR_N1QLQUERY);
     }
 
     @Override
