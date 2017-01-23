@@ -24,22 +24,31 @@ import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.query.dsl.path.MutateLimitPath;
+import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.couchbase.client.java.query.dsl.Expression.i;
 import static com.couchbase.client.java.query.dsl.Expression.x;
 
 final class QueryConverter {
 
+    private static final Set<Condition> NOT_APPENDABLE = EnumSet.of(Condition.IN, Condition.AND, Condition.OR);
+
+    private static final char PARAM_PREFIX = '$';
 
     static QueryConverterResult select(DocumentQuery query, String bucket) {
         JsonObject params = JsonObject.create();
         String[] documents = query.getDocuments().stream().toArray(size -> new String[size]);
+        if (documents.length == 0) {
+            documents = new String[]{"*"};
+        }
         Statement statement = Select.select(documents).from(i(bucket))
                 .where(getCondition(query.getCondition(), params));
         return new QueryConverterResult(params, statement);
@@ -54,28 +63,26 @@ final class QueryConverter {
 
     private static Expression getCondition(DocumentCondition condition, JsonObject params) {
         Document document = condition.getDocument();
+
+        if (!NOT_APPENDABLE.contains(condition.getCondition())) {
+            params.put(document.getName(), document.get());
+        }
+
         switch (condition.getCondition()) {
             case EQUALS:
-                params.put(document.getName(), document.get());
-                return x(document.getName()).eq(x('$' + document.getName()));
+                return x(document.getName()).eq(x(PARAM_PREFIX + document.getName()));
             case LESSER_THAN:
-                params.put(document.getName(), document.get());
-                return x(document.getName()).lt(x('$' + document.getName()));
+                return x(document.getName()).lt(x(PARAM_PREFIX + document.getName()));
             case LESSER_EQUALS_THAN:
-                params.put(document.getName(), document.get());
-                return x(document.getName()).lte(x('$' + document.getName()));
+                return x(document.getName()).lte(x(PARAM_PREFIX + document.getName()));
             case GREATER_THAN:
-                params.put(document.getName(), document.get());
-                return x(document.getName()).gt(x('$' + document.getName()));
+                return x(document.getName()).gt(x(PARAM_PREFIX + document.getName()));
             case GREATER_EQUALS_THAN:
-                params.put(document.getName(), document.get());
-                return x(document.getName()).gte(x('$' + document.getName()));
+                return x(document.getName()).gte(x(PARAM_PREFIX + document.getName()));
             case LIKE:
-                params.put(document.getName(), document.get());
-                return x(document.getName()).like(x('$' + document.getName()));
+                return x(document.getName()).like(x(PARAM_PREFIX + document.getName()));
             case IN:
-                params.put(document.getName(), document.get());
-                return x(document.getName()).like(x('$' + document.getName()));
+                return x(document.getName()).like(x(PARAM_PREFIX + document.getName()));
             case AND:
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                 })

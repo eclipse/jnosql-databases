@@ -30,10 +30,12 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.driver.value.ValueUtil;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,7 +60,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
     @Override
     public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
         JsonObject jsonObject = convert(entity);
-        Document id = entity.find("_id")
+        Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
         String prefix = database + ':' + id.get(String.class);
         bucket.upsert(JsonDocument.create(prefix, jsonObject));
@@ -68,7 +70,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
     @Override
     public DocumentEntity save(DocumentEntity entity, Duration ttl) {
         JsonObject jsonObject = convert(entity);
-        Document id = entity.find("_id")
+        Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
         String prefix = database + ':' + id.get(String.class);
@@ -91,24 +93,18 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
 
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+
         QueryConverter.QueryConverterResult select = QueryConverter.select(query, database);
         ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(select.getStatement(), select.getParams());
         N1qlQueryResult result = bucket.query(n1qlQuery);
         return result.allRows().stream()
                 .map(N1qlQueryRow::value)
                 .map(JsonObject::toMap)
-                .map(this::to)
+                .map(m -> (Map<String, Object>) m.get(database))
+                .filter(Objects::nonNull)
+                .map(Documents::of)
                 .map(ds -> DocumentEntity.of(query.getCollection(), ds))
                 .collect(toList());
-    }
-
-    private List<Document> to(Map<String, Object> map) {
-        List<Document> documents = new ArrayList<>();
-        for (String key : map.keySet()) {
-            Object value = map.get(key);
-            documents.add(Document.of(key, map.get(key)));
-        }
-        return documents;
     }
 
     @Override
@@ -121,9 +117,15 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
 
         JsonObject jsonObject = JsonObject.create();
         entity.getDocuments().stream()
+                .filter(d -> !d.getName().equals(ID_FIELD))
                 .forEach(d -> {
                     Object value = ValueUtil.convert(d.getValue());
-                    jsonObject.put(d.getName(), value);
+                    if (Document.class.isInstance(value)) {
+                        Document document = Document.class.cast(value);
+                        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+                    } else {
+                        jsonObject.put(d.getName(), value);
+                    }
                 });
         return jsonObject;
     }
