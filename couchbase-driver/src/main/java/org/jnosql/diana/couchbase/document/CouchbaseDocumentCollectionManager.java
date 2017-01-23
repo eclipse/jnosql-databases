@@ -24,24 +24,20 @@ import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.N1qlQueryRow;
 import com.couchbase.client.java.query.ParameterizedN1qlQuery;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.convert;
 import static org.jnosql.diana.couchbase.document.EntityConverter.getPrefix;
@@ -61,6 +57,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
 
     @Override
     public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
+        Objects.requireNonNull(entity, "entity is required");
         JsonObject jsonObject = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
@@ -75,12 +72,13 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
 
     @Override
     public DocumentEntity save(DocumentEntity entity, Duration ttl) {
+        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
         JsonObject jsonObject = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
         String prefix = getPrefix(id, entity.getName());
-        requireNonNull(ttl, "ttl is required");
         bucket.upsert(JsonDocument.create(prefix, jsonObject), ttl.toMillis(), MILLISECONDS);
         return entity;
     }

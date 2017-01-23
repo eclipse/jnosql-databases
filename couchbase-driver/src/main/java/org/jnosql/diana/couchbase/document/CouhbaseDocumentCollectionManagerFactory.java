@@ -45,7 +45,7 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
 
     @Override
     public CouchbaseDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new CouchbaseDocumentCollectionManagerAsync();
+        return new CouchbaseDocumentCollectionManagerAsync(get(database));
     }
 
     @Override
