@@ -44,6 +44,9 @@ final class EntityConverter {
     static final String SPLIT_KEY = ":";
     static final char SPLIT_KEY_CHAR = ':';
 
+    private EntityConverter() {
+    }
+
     static List<DocumentEntity> convert(List<String> ids, String collection, Bucket bucket) {
         return ids
                 .stream()

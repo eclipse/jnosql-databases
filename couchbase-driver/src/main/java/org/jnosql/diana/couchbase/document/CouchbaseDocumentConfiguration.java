@@ -22,7 +22,6 @@ package org.jnosql.diana.couchbase.document;
 import com.couchbase.client.java.CouchbaseCluster;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
-import org.jnosql.diana.couchbase.key.CouchbaseBucketManagerFactory;
 
 /**
  * The couchbase implementation of {@link UnaryDocumentConfiguration} that returns

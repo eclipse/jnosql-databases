@@ -50,6 +50,9 @@ final class QueryConverter {
     private static final char PARAM_PREFIX = '$';
     private static final String[] ALL_SELECT = {"*"};
 
+    private QueryConverter() {
+    }
+
     static QueryConverterResult select(DocumentQuery query, String bucket) {
         JsonObject params = JsonObject.create();
         List<String> ids = new ArrayList<>();
