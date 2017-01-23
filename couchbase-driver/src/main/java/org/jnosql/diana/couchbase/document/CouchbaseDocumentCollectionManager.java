@@ -123,6 +123,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
                     .stream()
                     .map(s -> database + ':' + s)
                     .map(bucket::get)
+                    .filter(Objects::nonNull)
                     .map(JsonDocument::content)
                     .map(JsonObject::toMap)
                     .map(Documents::of)
