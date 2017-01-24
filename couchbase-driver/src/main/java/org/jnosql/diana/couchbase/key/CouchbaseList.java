@@ -21,10 +21,6 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
-import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
-import com.couchbase.client.java.document.JsonArrayDocument;
-import com.couchbase.client.java.document.json.JsonArray;
-import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import org.jnosql.diana.driver.value.JSONValueProvider;
 import org.jnosql.diana.driver.value.JSONValueProviderService;
 
@@ -34,7 +30,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 

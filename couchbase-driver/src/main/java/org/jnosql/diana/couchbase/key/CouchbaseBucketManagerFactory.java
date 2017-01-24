@@ -66,7 +66,7 @@ public class CouchbaseBucketManagerFactory implements BucketManagerFactory<Couch
         Objects.requireNonNull(bucketName, "bucketName is required");
         Objects.requireNonNull(valueValue, "valueValue is required");
         Objects.requireNonNull(keyValue, "keyValue is required");
-        return new CouchbaseMap<>(getBucket(bucketName), bucketName, valueValue);
+        return new CouchbaseMap<>(getBucket(bucketName), bucketName, keyValue, valueValue);
     }
 
     @Override
