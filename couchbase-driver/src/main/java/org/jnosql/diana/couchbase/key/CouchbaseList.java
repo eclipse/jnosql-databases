@@ -20,6 +20,7 @@ package org.jnosql.diana.couchbase.key;
 
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.error.DocumentDoesNotExistException;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -51,13 +52,18 @@ public class CouchbaseList<T> implements List<T> {
 
     CouchbaseList(Bucket bucket, String bucketName, Class<T> clazz) {
         this.bucket = bucket;
-        this.bucketName = bucketName;
+        this.bucketName = bucketName + ":list";
         this.clazz = clazz;
     }
 
     @Override
     public int size() {
-        return bucket.listSize(bucketName);
+        try {
+            return bucket.listSize(bucketName);
+        } catch (DocumentDoesNotExistException e) {
+            return 0;
+        }
+
     }
 
     @Override
@@ -67,7 +73,9 @@ public class CouchbaseList<T> implements List<T> {
 
     @Override
     public boolean add(T t) {
-        return false;
+        Objects.requireNonNull(t, "object is required");
+        bucket.listAppend(bucketName, t);
+        return true;
     }
 
     @Override

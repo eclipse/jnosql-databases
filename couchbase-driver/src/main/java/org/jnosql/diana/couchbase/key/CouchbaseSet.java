@@ -22,7 +22,6 @@ import com.couchbase.client.java.Bucket;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
