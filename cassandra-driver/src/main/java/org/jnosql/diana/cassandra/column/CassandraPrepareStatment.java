@@ -31,6 +31,9 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * The Diana wrapper to {@link com.datastax.driver.core.PreparedStatement}
+ */
 public class CassandraPrepareStatment {
 
     private final com.datastax.driver.core.PreparedStatement prepare;
@@ -55,14 +58,26 @@ public class CassandraPrepareStatment {
     }
 
 
-
-    public void executeQueryAsync(Consumer<List<ColumnEntity>> consumer) throws ExecuteAsyncQueryException {
+    /**
+     * Executes and call the callback with the result
+     *
+     * @param consumer the callback
+     * @throws ExecuteAsyncQueryException
+     * @throws NullPointerException       when consumer is null
+     */
+    public void executeQueryAsync(Consumer<List<ColumnEntity>> consumer) throws ExecuteAsyncQueryException, NullPointerException {
         loadBoundStatment();
         ResultSetFuture resultSet = session.executeAsync(boundStatement);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
         resultSet.addListener(executeAsync, executor);
     }
 
+    /**
+     * Bind
+     *
+     * @param values the values
+     * @return this instance
+     */
     public CassandraPrepareStatment bind(Object... values) {
         boundStatement = prepare.bind(values);
         return this;
@@ -74,7 +89,7 @@ public class CassandraPrepareStatment {
         }
     }
 
-    public void close()  {
+    public void close() {
 
     }
 
