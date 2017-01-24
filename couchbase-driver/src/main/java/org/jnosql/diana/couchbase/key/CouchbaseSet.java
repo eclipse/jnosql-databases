@@ -30,20 +30,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * The couchbase implementation to {@link Set}
- * that avoid null items, so if any null object will launch {@link NullPointerException}
- * This implementation support these methods:
- * <p>{@link Set#isEmpty()}</p>
- * <p>{@link Set#size()}</p>
- * <p>{@link Set#add(Object)}</p>
- * <p>{@link Set#addAll(Collection)}</p>
- * <p>{@link Set#clear()}</p>
- * <p>{@link Set#remove(Object)}</p>
- * <p>{@link Set#contains(Object)}</p>
- * <p>{@link Set#containsAll(Collection)}</p>
- *
+ * that avoid null items, so if any null object will launch {@link NullPointerException}.
+ * This class is a wrapper to {@link CouchbaseArraySet}. Once they only can save primitive type,
+ * objects are converted to Json {@link String} using {@link JSONValueProvider#toJson(Object)}
  * @param <T> the object to be stored.
  */
 public class CouchbaseSet<T> implements Set<T> {
@@ -52,91 +46,92 @@ public class CouchbaseSet<T> implements Set<T> {
 
     private final String bucketName;
     private final Class<T> clazz;
-    private final CouchbaseArraySet<String> couchbaseArraySet;
+    private final CouchbaseArraySet<String> arraySet;
 
     CouchbaseSet(Bucket bucket, String bucketName, Class<T> clazz) {
         this.bucketName = bucketName + ":set";
         this.clazz = clazz;
-        this.couchbaseArraySet = new CouchbaseArraySet(this.bucketName, bucket);
+        this.arraySet = new CouchbaseArraySet(this.bucketName, bucket);
     }
 
     @Override
     public int size() {
-        return couchbaseArraySet.size();
+        return arraySet.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return couchbaseArraySet.isEmpty();
+        return arraySet.isEmpty();
     }
 
     @Override
     public boolean add(T t) {
-        Objects.requireNonNull(t, "object is required");
-        return couchbaseArraySet.add(PROVDER.toJson(t));
+        requireNonNull(t, "object is required");
+        return arraySet.add(PROVDER.toJson(t));
     }
 
     @Override
     public boolean remove(Object o) {
-        Objects.requireNonNull(o, "object is required");
-        return couchbaseArraySet.remove(PROVDER.toJson(o));
+        requireNonNull(o, "object is required");
+        return arraySet.remove(PROVDER.toJson(o));
     }
 
     @Override
     public boolean contains(Object o) {
-        Objects.requireNonNull(o, "object is required");
-        return couchbaseArraySet.contains(PROVDER.toJson(o));
+        requireNonNull(o, "object is required");
+        return arraySet.contains(PROVDER.toJson(o));
     }
 
     @Override
     public boolean addAll(Collection<? extends T> collection) {
-        Objects.requireNonNull(collection, "collection is required");
+        requireNonNull(collection, "collection is required");
         collection.forEach(this::add);
         return true;
     }
 
     @Override
     public void clear() {
-        couchbaseArraySet.clear();
+        arraySet.clear();
     }
 
     @Override
     public boolean containsAll(Collection<?> collection) {
-        Objects.requireNonNull(collection, "collection is required");
+        requireNonNull(collection, "collection is required");
         return collection.stream().allMatch(this::contains);
     }
 
     @Override
     public Iterator<T> iterator() {
-        return StreamSupport.stream(couchbaseArraySet.spliterator(), false)
+        return StreamSupport.stream(arraySet.spliterator(), false)
                 .map(s -> PROVDER.of(s).get(clazz))
                 .collect(Collectors.toList()).iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return StreamSupport.stream(couchbaseArraySet.spliterator(), false)
+        return StreamSupport.stream(arraySet.spliterator(), false)
                 .map(s -> PROVDER.of(s).get(clazz))
                 .toArray(size -> new Object[size]);
     }
 
     @Override
     public <T1> T1[] toArray(T1[] t1s) {
-        return StreamSupport.stream(couchbaseArraySet.spliterator(), false)
+        requireNonNull(t1s, "arrys is required");
+        return StreamSupport.stream(arraySet.spliterator(), false)
                 .map(s -> PROVDER.of(s).get(clazz))
                 .toArray(size -> t1s);
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
-        Objects.requireNonNull(collection, "collection is required");
-        return couchbaseArraySet.retainAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
+        requireNonNull(collection, "collection is required");
+        return arraySet.retainAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        Objects.requireNonNull(collection, "collection is required");
-        return couchbaseArraySet.removeAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
+        requireNonNull(collection, "collection is required");
+        return arraySet.removeAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
     }
 
 
