@@ -66,72 +66,10 @@ public class CouchbaseListTest {
     }
 
     @Test
-    public void shouldSetList() {
-
-        fruits.add(banana);
-        fruits.add(0, orange);
-        assertTrue(fruits.size() == 2);
-
-        assertEquals(fruits.get(0).getName(), "orange");
-        assertEquals(fruits.get(1).getName(), "banana");
-
-        fruits.set(0, waterMelon);
-        assertEquals(fruits.get(0).getName(), "waterMelon");
-        assertEquals(fruits.get(1).getName(), "banana");
-
-    }
-
-    @Test
     public void shouldRemoveList() {
         fruits.add(banana);
     }
 
-    @Test
-    public void shouldReturnIndexOf() {
-
-        fruits.add(new ProductCart("orange", BigDecimal.ONE));
-        fruits.add(banana);
-        fruits.add(new ProductCart("watermellon", BigDecimal.ONE));
-        fruits.add(banana);
-        assertTrue(fruits.indexOf(banana) == 1);
-        assertTrue(fruits.lastIndexOf(banana) == 3);
-
-        assertTrue(fruits.contains(banana));
-        assertTrue(fruits.indexOf(melon) == -1);
-        assertTrue(fruits.lastIndexOf(melon) == -1);
-    }
-
-    @Test
-    public void shouldReturnContains() {
-
-        fruits.add(orange);
-        fruits.add(banana);
-        fruits.add(waterMelon);
-        assertTrue(fruits.contains(banana));
-        assertFalse(fruits.contains(melon));
-        assertTrue(fruits.containsAll(Arrays.asList(banana, orange)));
-        assertFalse(fruits.containsAll(Arrays.asList(banana, melon)));
-
-    }
-
-    @SuppressWarnings("unused")
-    @Test
-    public void shouldIterate() {
-        fruits.add(melon);
-        fruits.add(banana);
-        int count = 0;
-        for (ProductCart fruiCart : fruits) {
-            count++;
-        }
-        assertTrue(count == 2);
-        fruits.remove(0);
-        fruits.remove(0);
-        count = 0;
-        for (ProductCart fruiCart : fruits) {
-            count++;
-        }
-        assertTrue(count == 0);
-    }
 
     @After
     public void end() {

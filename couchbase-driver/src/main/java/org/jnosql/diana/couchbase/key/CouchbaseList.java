@@ -20,7 +20,11 @@ package org.jnosql.diana.couchbase.key;
 
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.JsonArrayDocument;
+import com.couchbase.client.java.document.json.JsonArray;
 import com.couchbase.client.java.error.DocumentDoesNotExistException;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -45,6 +49,8 @@ import java.util.Objects;
  */
 public class CouchbaseList<T> implements List<T> {
 
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+
     private final Bucket bucket;
 
     private final String bucketName;
@@ -54,6 +60,9 @@ public class CouchbaseList<T> implements List<T> {
         this.bucket = bucket;
         this.bucketName = bucketName + ":list";
         this.clazz = clazz;
+        if (!bucket.exists(this.bucketName)) {
+            bucket.insert(JsonArrayDocument.create(this.bucketName, JsonArray.create()));
+        }
     }
 
     @Override
@@ -74,7 +83,7 @@ public class CouchbaseList<T> implements List<T> {
     @Override
     public boolean add(T t) {
         Objects.requireNonNull(t, "object is required");
-        bucket.listAppend(bucketName, t);
+        bucket.listAppend(bucketName, PROVDER.toJson(t));
         return true;
     }
 
@@ -94,13 +103,14 @@ public class CouchbaseList<T> implements List<T> {
 
     @Override
     public T get(int i) {
-        return bucket.listGet(bucketName, i, clazz);
+        String json = bucket.listGet(bucketName, i, String.class);
+        return PROVDER.of(json).get(clazz);
     }
 
     @Override
     public T set(int i, T t) {
         Objects.requireNonNull(t, "object is required");
-        bucket.listSet(bucketName, i, t);
+        bucket.listSet(bucketName, i, PROVDER.toJson(t));
         return t;
     }
 

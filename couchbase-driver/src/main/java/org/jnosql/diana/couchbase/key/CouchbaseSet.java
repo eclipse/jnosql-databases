@@ -19,6 +19,8 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.JsonArrayDocument;
+import com.couchbase.client.java.document.json.JsonArray;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -49,8 +51,11 @@ public class CouchbaseSet<T> implements Set<T> {
 
     CouchbaseSet(Bucket bucket, String bucketName, Class<T> clazz) {
         this.bucket = bucket;
-        this.bucketName = bucketName;
+        this.bucketName = bucketName+ ":set";
         this.clazz = clazz;
+        if (!bucket.exists(this.bucketName)) {
+            bucket.insert(JsonArrayDocument.create(this.bucketName, JsonArray.create()));
+        }
     }
 
     @Override
