@@ -19,6 +19,7 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
+import org.jnosql.diana.api.Value;
 
 import java.util.Collection;
 import java.util.Map;
@@ -26,14 +27,14 @@ import java.util.Objects;
 import java.util.Set;
 
 
-class CouchbaseMap<T> implements Map<String, T> {
+class CouchbaseMap<K, V> implements Map<K, V> {
 
     private final Bucket bucket;
 
     private final String bucketName;
-    private final Class<T> clazz;
+    private final Class<V> clazz;
 
-    CouchbaseMap(Bucket bucket, String bucketName, Class<T> clazz) {
+    CouchbaseMap(Bucket bucket, String bucketName, Class<V> clazz) {
         this.bucket = bucket;
         this.bucketName = bucketName;
         this.clazz = clazz;
@@ -50,30 +51,30 @@ class CouchbaseMap<T> implements Map<String, T> {
     }
 
     @Override
-    public T get(Object key) {
+    public V get(Object key) {
         Objects.requireNonNull(key, "key is required");
         return bucket.mapGet(bucketName, key.toString(), clazz);
     }
 
     @Override
-    public T put(String key, T value) {
+    public V put(K key, V value) {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
-        bucket.mapAdd(bucketName, key, value);
+        bucket.mapAdd(bucketName, Value.of(key).get(String.class), value);
         return value;
     }
 
     @Override
-    public T remove(Object key) {
+    public V remove(Object key) {
         Objects.requireNonNull(key, "key is required");
-        bucket.mapRemove(bucketName, key.toString());
+        bucket.mapRemove(bucketName, Value.of(key).get(String.class));
         return null;
     }
 
     @Override
-    public void putAll(Map<? extends String, ? extends T> map) {
+    public void putAll(Map<? extends K, ? extends V> map) {
         Objects.requireNonNull(map, "map is required");
-        for (String key : map.keySet()) {
+        for (K key : map.keySet()) {
             put(key, map.get(key));
         }
     }
@@ -94,17 +95,17 @@ class CouchbaseMap<T> implements Map<String, T> {
     }
 
     @Override
-    public Set<String> keySet() {
+    public Set<K> keySet() {
         throw new UnsupportedOperationException("Couchbase does not support keySet() method");
     }
 
     @Override
-    public Collection<T> values() {
+    public Collection<V> values() {
         throw new UnsupportedOperationException("Couchbase does not support values() method");
     }
 
     @Override
-    public Set<Entry<String, T>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException("Couchbase does not support entrySet() method");
     }
 }

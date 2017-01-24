@@ -18,6 +18,7 @@
  */
 package org.jnosql.diana.couchbase.key;
 
+import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
@@ -29,12 +30,10 @@ import java.util.Set;
 
 /**
  * The couchbase implementation of {@link BucketManagerFactory}. That has support to
- * {@link BucketManagerFactory#getBucketManager(String)}.
- * So, these methods will return an {@link UnsupportedOperationException}:
- * <p>{@link CouchbaseBucketManagerFactory#getMap(String, Class, Class)}</p>
- * <p>{@link CouchbaseBucketManagerFactory#getQueue(String, Class)}</p>
- * <p>{@link CouchbaseBucketManagerFactory#getSet(String, Class)}</p>
- * <p>{@link CouchbaseBucketManagerFactory#getList(String, Class)}</p>
+ * {@link BucketManagerFactory#getBucketManager(String)} and also the structure {@link Map}, {@link Set},
+ * {@link Queue}, {@link List}
+ *
+ *
  */
 public class CouchbaseBucketManagerFactory implements BucketManagerFactory<CouchbaseBucketManager> {
 
@@ -56,37 +55,53 @@ public class CouchbaseBucketManagerFactory implements BucketManagerFactory<Couch
     @Override
     public CouchbaseBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
         Objects.requireNonNull(bucketName, "bucket is required");
+        return new CouchbaseBucketManager(getBucket(bucketName), bucketName);
+    }
 
-  /*      ClusterManager clusterManager = couchbaseCluster.clusterManager(user, password);
+    @Override
+    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) throws
+            UnsupportedOperationException {
+        Objects.requireNonNull(bucketName, "bucketName is required");
+        Objects.requireNonNull(valueValue, "valueValue is required");
+        Objects.requireNonNull(keyValue, "keyValue is required");
+        return new CouchbaseMap<>(getBucket(bucketName), bucketName, valueValue);
+    }
+
+    @Override
+    public Queue getQueue(String bucketName, Class clazz) throws UnsupportedOperationException {
+        Objects.requireNonNull(bucketName, "bucketName is required");
+        Objects.requireNonNull(clazz, "valueValue is required");
+        return new CouchbaseQueue<>(getBucket(bucketName), bucketName, clazz);
+    }
+
+    @Override
+    public Set getSet(String bucketName, Class clazz) throws UnsupportedOperationException {
+        Objects.requireNonNull(bucketName, "bucketName is required");
+        Objects.requireNonNull(clazz, "valueValue is required");
+        return new CouchbaseSet<>(getBucket(bucketName), bucketName, clazz);
+    }
+
+    @Override
+    public List getList(String bucketName, Class clazz) throws UnsupportedOperationException {
+        Objects.requireNonNull(bucketName, "bucketName is required");
+        Objects.requireNonNull(clazz, "valueValue is required");
+        return new CouchbaseList<>(getBucket(bucketName), bucketName, clazz);
+    }
+
+    private Bucket getBucket(String bucketName) {
+        Objects.requireNonNull(bucketName, "bucket is required");
+
+        /*
+        ClusterManager clusterManager = couchbaseCluster.clusterManager(user, password);
 
         if(!clusterManager.hasBucket(bucketName)){
             BucketSettings settings = DefaultBucketSettings.builder().name(bucketName);
             clusterManager.insertBucket(settings);
         }*/
         if (DEFAULT_BUCKET.equals(bucketName)) {
-            return new CouchbaseBucketManager(couchbaseCluster.openBucket(bucketName), bucketName);
+            return couchbaseCluster.openBucket(bucketName);
         }
-        return new CouchbaseBucketManager(couchbaseCluster.openBucket(bucketName, password), bucketName);
-    }
-
-    @Override
-    public Map getMap(String bucketName, Class keyValue, Class valueValue) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Couchbase does not support getMap method");
-    }
-
-    @Override
-    public Queue getQueue(String bucketName, Class clazz) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Couchbase does not support getQueue method");
-    }
-
-    @Override
-    public Set getSet(String bucketName, Class clazz) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Couchbase does not support getSet method");
-    }
-
-    @Override
-    public List getList(String bucketName, Class clazz) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Couchbase does not support getList method");
+        return couchbaseCluster.openBucket(bucketName, password);
     }
 
     @Override

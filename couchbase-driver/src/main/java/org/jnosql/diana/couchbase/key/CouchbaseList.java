@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 
-class CouchbaseList<T> implements List<T> {
+public class CouchbaseList<T> implements List<T> {
 
     private final Bucket bucket;
 

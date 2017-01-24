@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
-class CouchbaseSet<T> implements Set<T> {
+public class CouchbaseSet<T> implements Set<T> {
 
     private final Bucket bucket;
 

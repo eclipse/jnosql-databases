@@ -26,7 +26,7 @@ import java.util.Queue;
 
 import static java.util.Objects.requireNonNull;
 
-class CouchbaseQueue<T> implements Queue<T> {
+public class CouchbaseQueue<T> implements Queue<T> {
 
     private final Bucket bucket;
 
