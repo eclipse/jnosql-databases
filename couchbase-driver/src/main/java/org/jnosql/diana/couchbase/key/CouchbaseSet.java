@@ -25,7 +25,6 @@ import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
