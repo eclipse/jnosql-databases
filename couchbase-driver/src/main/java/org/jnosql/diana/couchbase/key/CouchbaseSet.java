@@ -19,13 +19,16 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.JsonArrayDocument;
-import com.couchbase.client.java.document.json.JsonArray;
+import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 /**
@@ -40,51 +43,49 @@ import java.util.Set;
  * <p>{@link Set#remove(Object)}</p>
  * <p>{@link Set#contains(Object)}</p>
  * <p>{@link Set#containsAll(Collection)}</p>
+ *
  * @param <T> the object to be stored.
  */
 public class CouchbaseSet<T> implements Set<T> {
 
-    private final Bucket bucket;
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
 
     private final String bucketName;
     private final Class<T> clazz;
+    private final CouchbaseArraySet<String> couchbaseArraySet;
 
     CouchbaseSet(Bucket bucket, String bucketName, Class<T> clazz) {
-        this.bucket = bucket;
-        this.bucketName = bucketName+ ":set";
+        this.bucketName = bucketName + ":set";
         this.clazz = clazz;
-        if (!bucket.exists(this.bucketName)) {
-            bucket.insert(JsonArrayDocument.create(this.bucketName, JsonArray.create()));
-        }
+        this.couchbaseArraySet = new CouchbaseArraySet(this.bucketName, bucket);
     }
 
     @Override
     public int size() {
-        return bucket.setSize(bucketName);
+        return couchbaseArraySet.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return size() == 0;
+        return couchbaseArraySet.isEmpty();
     }
 
     @Override
     public boolean add(T t) {
         Objects.requireNonNull(t, "object is required");
-        bucket.setAdd(bucketName, t);
-        return true;
+        return couchbaseArraySet.add(PROVDER.toJson(t));
     }
 
     @Override
     public boolean remove(Object o) {
         Objects.requireNonNull(o, "object is required");
-        return bucket.setRemove(bucketName, o) != null;
+        return couchbaseArraySet.remove(PROVDER.toJson(o));
     }
 
     @Override
     public boolean contains(Object o) {
         Objects.requireNonNull(o, "object is required");
-        return bucket.setContains(bucketName, o);
+        return couchbaseArraySet.contains(PROVDER.toJson(o));
     }
 
     @Override
@@ -96,7 +97,7 @@ public class CouchbaseSet<T> implements Set<T> {
 
     @Override
     public void clear() {
-        bucket.remove(bucketName);
+        couchbaseArraySet.clear();
     }
 
     @Override
@@ -107,27 +108,35 @@ public class CouchbaseSet<T> implements Set<T> {
 
     @Override
     public Iterator<T> iterator() {
-        throw new UnsupportedOperationException("Couchbase does not support the iterator() method");
+        return StreamSupport.stream(couchbaseArraySet.spliterator(), false)
+                .map(s -> PROVDER.of(s).get(clazz))
+                .collect(Collectors.toList()).iterator();
     }
 
     @Override
     public Object[] toArray() {
-        throw new UnsupportedOperationException("Couchbase does not support the toArray() method");
+        return StreamSupport.stream(couchbaseArraySet.spliterator(), false)
+                .map(s -> PROVDER.of(s).get(clazz))
+                .toArray(size -> new Object[size]);
     }
 
     @Override
     public <T1> T1[] toArray(T1[] t1s) {
-        throw new UnsupportedOperationException("Couchbase does not support the toArray(T1[] t1s method");
+        return StreamSupport.stream(couchbaseArraySet.spliterator(), false)
+                .map(s -> PROVDER.of(s).get(clazz))
+                .toArray(size -> t1s);
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
-        throw new UnsupportedOperationException("Couchbase does not support the retainAll(Collection<?> collection) method");
+        Objects.requireNonNull(collection, "collection is required");
+        return couchbaseArraySet.retainAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        throw new UnsupportedOperationException("Couchbase does not support the removeAll(Collection<?> collection) method");
+        Objects.requireNonNull(collection, "collection is required");
+        return couchbaseArraySet.removeAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
     }
 
 
