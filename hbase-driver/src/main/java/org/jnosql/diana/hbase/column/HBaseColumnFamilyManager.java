@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -74,6 +75,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public ColumnEntity save(ColumnEntity entity) {
+        Objects.requireNonNull(entity, "entity is required");
         String family = entity.getName();
         List<Column> columns = entity.getColumns();
         if (columns.isEmpty()) {
@@ -95,6 +97,11 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
+    public ColumnEntity update(ColumnEntity entity) throws NullPointerException {
+        return save(entity);
+    }
+
+    @Override
     public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
@@ -102,7 +109,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public void delete(ColumnQuery query) {
-
+        Objects.requireNonNull(query, "query is required");
         ColumnCondition condition = query.getCondition();
         checkedCondition(condition);
         List<String> values = new ArrayList<>();
@@ -124,7 +131,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public List<ColumnEntity> find(ColumnQuery query) {
-
+        Objects.requireNonNull(query, "query is required");
         ColumnCondition condition = query.getCondition();
         checkedCondition(condition);
         return Stream.of(findById(condition)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
