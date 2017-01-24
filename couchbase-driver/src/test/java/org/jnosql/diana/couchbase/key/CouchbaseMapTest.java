@@ -27,6 +27,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -35,12 +36,12 @@ public class CouchbaseMapTest {
 
     private User mammals = new User("lion");
     private User fishes = new User("redfish");
-    private User amphibians = new User("crododile");
 
     @Before
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         entityManagerFactory = configuration.get();
+        entityManagerFactory.getMap("default", String.class, User.class).clear();
     }
 
     @Test
@@ -48,7 +49,7 @@ public class CouchbaseMapTest {
         Map<String, User> vertebrates = entityManagerFactory.getMap("default", String.class, User.class);
         assertTrue(vertebrates.isEmpty());
 
-        assertNotNull(vertebrates.put("mammals", mammals));
+        assertNull(vertebrates.put("mammals", mammals));
         User species = vertebrates.get("mammals");
         assertNotNull(species);
         assertEquals(species.getNickName(), mammals.getNickName());
