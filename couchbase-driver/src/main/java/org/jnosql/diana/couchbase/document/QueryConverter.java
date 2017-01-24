@@ -151,21 +151,21 @@ final class QueryConverter {
 
         private final List<String> ids;
 
-        public QueryConverterResult(JsonObject params, Statement statement, List<String> ids) {
+        QueryConverterResult(JsonObject params, Statement statement, List<String> ids) {
             this.params = params;
             this.statement = statement;
             this.ids = ids;
         }
 
-        public JsonObject getParams() {
+        JsonObject getParams() {
             return params;
         }
 
-        public Statement getStatement() {
+        Statement getStatement() {
             return statement;
         }
 
-        public List<String> getIds() {
+        List<String> getIds() {
             return ids;
         }
     }
