@@ -19,10 +19,15 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Queue;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,29 +43,32 @@ import static java.util.Objects.requireNonNull;
  * <p>{@link Queue#offer(Object)}</p>
  * <p>{@link Queue#remove()}</p>
  * <p>{@link Queue#poll()}</p>
+ *
  * @param <T> the object to be stored.
  */
 public class CouchbaseQueue<T> implements Queue<T> {
 
-    private final Bucket bucket;
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+
 
     private final String bucketName;
     private final Class<T> clazz;
+    private final com.couchbase.client.java.datastructures.collections.CouchbaseQueue<String> queue;
 
     CouchbaseQueue(Bucket bucket, String bucketName, Class<T> clazz) {
-        this.bucket = bucket;
-        this.bucketName = bucketName;
+        this.bucketName = bucketName + ":queue";
         this.clazz = clazz;
+        queue = new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(this.bucketName, bucket);
     }
 
     @Override
     public int size() {
-        return bucket.queueSize(bucketName);
+        return queue.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return size() == 0;
+        return queue.isEmpty();
     }
 
 
@@ -78,13 +86,13 @@ public class CouchbaseQueue<T> implements Queue<T> {
 
     @Override
     public void clear() {
-        bucket.remove(bucketName);
+        queue.clear();
     }
 
     @Override
     public boolean offer(T t) {
         requireNonNull(t, "object is required");
-        return bucket.queuePush(bucketName, t);
+        return queue.offer(PROVDER.toJson(t));
     }
 
     @Override
@@ -94,60 +102,81 @@ public class CouchbaseQueue<T> implements Queue<T> {
 
     @Override
     public T poll() {
-        return bucket.queuePop(bucketName, clazz);
+        String json = queue.poll();
+        return getT(json);
     }
 
 
     @Override
     public T peek() {
-        throw new UnsupportedOperationException("Couchbase does not support peek() method");
+        String json = queue.peek();
+        return getT(json);
     }
 
 
     @Override
     public T element() {
-        throw new UnsupportedOperationException("Couchbase does not support element() method");
+        String json = queue.element();
+        return getT(json);
+    }
+
+    private T getT(String json) {
+        if (Objects.nonNull(json)) {
+            return PROVDER.of(json).get(clazz);
+        }
+        return null;
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        throw new UnsupportedOperationException("Couchbase does not support removeAll(Collection<?> collection) method ");
+        requireNonNull(collection, "collection is required");
+        return queue.removeAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
     }
 
     @Override
     public boolean remove(Object o) {
-        throw new UnsupportedOperationException("Couchbase does not support remove(Object o) method ");
+        Objects.requireNonNull(o, "object is required");
+        return queue.remove(PROVDER.toJson(o));
     }
 
     @Override
     public boolean contains(Object o) {
-        throw new UnsupportedOperationException("Couchbase does not support contains(Object o) method");
+        Objects.requireNonNull(o, "object is required");
+        return queue.contains(PROVDER.toJson(o));
     }
 
     @Override
     public Iterator<T> iterator() {
-        throw new UnsupportedOperationException("Couchbase does not support iterator() method");
+        return StreamSupport.stream(queue.spliterator(), false)
+                .map(s -> PROVDER.of(s).get(clazz))
+                .collect(Collectors.toList()).iterator();
     }
 
     @Override
     public Object[] toArray() {
-        throw new UnsupportedOperationException("Couchbase does not support toArray() method");
+        return StreamSupport.stream(queue.spliterator(), false)
+                .map(s -> PROVDER.of(s).get(clazz))
+                .toArray(size -> new Object[size]);
     }
 
     @Override
     public <T1> T1[] toArray(T1[] t1s) {
-        throw new UnsupportedOperationException("Couchbase does not support toArray(T1[] t1s) method");
+        requireNonNull(t1s, "arrys is required");
+        return StreamSupport.stream(queue.spliterator(), false)
+                .map(s -> PROVDER.of(s).get(clazz))
+                .toArray(size -> t1s);
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
-        throw new UnsupportedOperationException("Couchbase does not support retainAll(Collection<?> collection) method");
+        requireNonNull(collection, "collection is required");
+        return queue.retainAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
     }
 
     @Override
     public boolean containsAll(Collection<?> collection) {
-        throw new UnsupportedOperationException("Couchbase does not support containsAll(Collection<?> collection) method");
+        requireNonNull(collection, "collection is required");
+        return queue.containsAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
     }
-
 
 }

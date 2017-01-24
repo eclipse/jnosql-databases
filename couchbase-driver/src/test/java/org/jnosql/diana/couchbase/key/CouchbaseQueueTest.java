@@ -66,12 +66,7 @@ public class CouchbaseQueueTest {
         User otavio2 = users.remove();
         assertEquals(otavio.getNickName(), otavio2.getNickName());
         boolean happendException = false;
-        try {
-            users.remove();
-        } catch (NoSuchElementException e) {
-            happendException = true;
-        }
-        assertTrue(happendException);
+        assertNull(users.remove());
     }
 
     @Test
