@@ -31,9 +31,11 @@ import java.util.Set;
 /**
  * The couchbase implementation of {@link BucketManagerFactory}. That has support to
  * {@link BucketManagerFactory#getBucketManager(String)} and also the structure {@link Map}, {@link Set},
- * {@link Queue}, {@link List}
- *
- *
+ * {@link Queue}, {@link List}. Each structure has this specific implementation.
+ * <p>{@link CouchbaseList}</p>
+ * <p>{@link CouchbaseSet}</p>
+ * <p>{@link CouchbaseQueue}</p>
+ * <p>{@link CouchbaseMap}</p>
  */
 public class CouchbaseBucketManagerFactory implements BucketManagerFactory<CouchbaseBucketManager> {
 

@@ -26,6 +26,20 @@ import java.util.Queue;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * The couchbase implementation to {@link Queue}
+ * that avoid null items, so if any null object will launch {@link NullPointerException}.
+ * This implementation support these methods:
+ * <p>{@link Queue#size()}</p>
+ * <p>{@link Queue#isEmpty()}</p>
+ * <p>{@link Queue#add(Object)}</p>
+ * <p>{@link Queue#addAll(Collection)}</p>
+ * <p>{@link Queue#clear()}</p>
+ * <p>{@link Queue#offer(Object)}</p>
+ * <p>{@link Queue#remove()}</p>
+ * <p>{@link Queue#poll()}</p>
+ * @param <T> the object to be stored.
+ */
 public class CouchbaseQueue<T> implements Queue<T> {
 
     private final Bucket bucket;

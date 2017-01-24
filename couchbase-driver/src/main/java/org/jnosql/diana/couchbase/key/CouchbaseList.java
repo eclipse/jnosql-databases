@@ -27,6 +27,21 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 
+/**
+ * The couchbase implementation to {@link List}
+ * that avoid null items, so if any null object will launch {@link NullPointerException}
+ * This implementation support these methods:
+ * <p>{@link List#isEmpty()}</p>
+ * <p>{@link List#size()}</p>
+ * <p>{@link List#add(Object)}</p>
+ * <p>{@link List#addAll(Collection)}</p>
+ * <p>{@link List#clear()}</p>
+ * <p>{@link List#get(int)}</p>
+ * <p>{@link List#set(int, Object)}</p>
+ * <p>{@link List#remove(int)}</p>
+ *
+ * @param <T> the object to be stored.
+ */
 public class CouchbaseList<T> implements List<T> {
 
     private final Bucket bucket;

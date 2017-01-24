@@ -22,9 +22,25 @@ import com.couchbase.client.java.Bucket;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+
+/**
+ * The couchbase implementation to {@link Set}
+ * that avoid null items, so if any null object will launch {@link NullPointerException}
+ * This implementation support these methods:
+ * <p>{@link Set#isEmpty()}</p>
+ * <p>{@link Set#size()}</p>
+ * <p>{@link Set#add(Object)}</p>
+ * <p>{@link Set#addAll(Collection)}</p>
+ * <p>{@link Set#clear()}</p>
+ * <p>{@link Set#remove(Object)}</p>
+ * <p>{@link Set#contains(Object)}</p>
+ * <p>{@link Set#containsAll(Collection)}</p>
+ * @param <T> the object to be stored.
+ */
 public class CouchbaseSet<T> implements Set<T> {
 
     private final Bucket bucket;
