@@ -23,7 +23,7 @@ import org.jnosql.diana.api.column.Column;
 
 final class HBaseUtils {
 
-    static final String KEY_COLUMN = "";
+    static final String KEY_COLUMN = "_id";
 
     private HBaseUtils() {
     }
