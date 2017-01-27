@@ -52,6 +52,7 @@
         <module>riak-driver</module>
 	<module>orientdb-driver</module>
 	<module>couchbase-driver</module>
+	<module>elasticsearch-driver</module>
     </modules>
 
     <dependencies>
