@@ -23,8 +23,10 @@ import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
 /**
- * The implementation of {@link UnaryDocumentConfiguration}.
- * It trys to read the configuration properties from arangodb.properties file.
+ * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
+ * It tries to read the configuration properties from arangodb.properties file.
+ * @see ArangoDBConfiguration
+ *
  */
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
