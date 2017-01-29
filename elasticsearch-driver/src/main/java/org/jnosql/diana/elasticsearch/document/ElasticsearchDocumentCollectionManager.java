@@ -112,7 +112,6 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     private Map<String, Object> getMap(DocumentEntity entity) {
         Map<String, Object> jsonObject = new java.util.HashMap<>();
 
-
         entity.getDocuments().stream()
                 .filter(d -> !d.getName().equals(ID_FIELD))
                 .forEach(d -> {
