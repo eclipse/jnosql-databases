@@ -19,36 +19,52 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.client.Client;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 public class ElasticsearchDocumentCollectionManager implements DocumentCollectionManager {
+
+    private final Client client;
+
+    ElasticsearchDocumentCollectionManager(Client client) {
+        this.client = client;
+    }
+
     @Override
     public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
+        requireNonNull(entity, "entity is required");
         return null;
     }
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
+    public DocumentEntity save(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
         return null;
     }
 
     @Override
     public DocumentEntity update(DocumentEntity entity) throws NullPointerException {
+        requireNonNull(entity, "entity is required");
         return null;
     }
 
     @Override
     public void delete(DocumentQuery query) throws NullPointerException {
-
+        requireNonNull(query, "query is required");
     }
 
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+        requireNonNull(query, "query is required");
         return null;
     }
 

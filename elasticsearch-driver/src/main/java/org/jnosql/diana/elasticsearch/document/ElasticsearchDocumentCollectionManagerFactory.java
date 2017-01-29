@@ -23,10 +23,22 @@ import org.elasticsearch.client.Client;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+
+import static java.nio.file.Files.readAllBytes;
+
 
 /**
  * The elasticsearch implementation to {@link DocumentCollectionManagerFactory} that returns:
- * {@link ElasticsearchDocumentCollectionManager} and {@link ElasticsearchDocumentCollectionManagerAsync}
+ * {@link ElasticsearchDocumentCollectionManager} and {@link ElasticsearchDocumentCollectionManagerAsync}.
+ * If the database does not exist, it tries to read a json mapping from the database name.
+ * Eg: {@link ElasticsearchDocumentCollectionManagerFactory#get(String)} with database, if does not exist it tries to
+ * read a "/database.json" file. The file must have the mapping to elasticsearch.
  */
 public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<ElasticsearchDocumentCollectionManager>,
         DocumentCollectionManagerAsyncFactory<ElasticsearchDocumentCollectionManagerAsync> {
@@ -45,11 +57,35 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
 
     @Override
     public ElasticsearchDocumentCollectionManager get(String database) throws UnsupportedOperationException, NullPointerException {
-        return null;
+        Objects.requireNonNull(database, "database is required");
+
+        boolean exists = isExists(database);
+        if (!exists) {
+            URL url = ElasticsearchDocumentCollectionManagerFactory.class.getResource('/' + database + ".json");
+            byte[] bytes = getBytes(url);
+            client.admin().indices().prepareCreate(database).setSource(bytes).get();
+        }
+        return new ElasticsearchDocumentCollectionManager(client);
+    }
+
+    private byte[] getBytes(URL url) {
+        try {
+            return readAllBytes(Paths.get(url.toURI()));
+        } catch (IOException | URISyntaxException e) {
+            throw new ElasticsearchException("An error when read the database mapping", e);
+        }
+    }
+
+    private boolean isExists(String database) {
+        try {
+            return client.admin().indices().prepareExists(database).execute().get().isExists();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new ElasticsearchException("And error on admin access to verify if the database exists", e);
+        }
     }
 
     @Override
     public void close() {
-
+        client.close();
     }
 }
