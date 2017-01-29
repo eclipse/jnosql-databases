@@ -20,41 +20,77 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
+import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
+import org.jnosql.diana.driver.value.ValueUtil;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static java.util.Objects.requireNonNull;
+import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 
 public class ElasticsearchDocumentCollectionManager implements DocumentCollectionManager {
 
-    private final Client client;
+    static final String ID_FIELD = "_id";
 
-    ElasticsearchDocumentCollectionManager(Client client) {
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+
+    private final Client client;
+    private final String database;
+
+    ElasticsearchDocumentCollectionManager(Client client, String database) {
         this.client = client;
+        this.database = database;
     }
 
     @Override
     public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        return null;
+        Document id = entity.find(ID_FIELD)
+                .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
+        Map<String, Object> jsonObject = getMap(entity);
+        byte[] bytes = PROVDER.toJsonArray(jsonObject);
+        try {
+            client.prepareIndex(database, entity.getName(), id.get(String.class)).setSource(bytes).execute().get();
+            return entity;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new ElasticsearchException("An error to try to save/update entity on elasticsearch", e);
+        }
+
     }
+
 
     @Override
     public DocumentEntity save(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        return null;
+        Document id = entity.find(ID_FIELD)
+                .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
+        Map<String, Object> jsonObject = getMap(entity);
+        byte[] bytes = PROVDER.toJsonArray(jsonObject);
+        try {
+            client.prepareIndex(database, entity.getName(), id.get(String.class))
+                    .setSource(bytes)
+                    .setTTL(timeValueMillis(ttl.toMillis()))
+                    .execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new ElasticsearchException("An error to try to save with TTL entity on elasticsearch", e);
+        }
+        return entity;
     }
 
     @Override
     public DocumentEntity update(DocumentEntity entity) throws NullPointerException {
-        requireNonNull(entity, "entity is required");
-        return null;
+        return save(entity);
     }
 
     @Override
@@ -71,5 +107,23 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     @Override
     public void close() {
 
+    }
+
+    private Map<String, Object> getMap(DocumentEntity entity) {
+        Map<String, Object> jsonObject = new java.util.HashMap<>();
+
+
+        entity.getDocuments().stream()
+                .filter(d -> !d.getName().equals(ID_FIELD))
+                .forEach(d -> {
+                    Object value = ValueUtil.convert(d.getValue());
+                    if (Document.class.isInstance(value)) {
+                        Document document = Document.class.cast(value);
+                        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+                    } else {
+                        jsonObject.put(d.getName(), value);
+                    }
+                });
+        return jsonObject;
     }
 }
