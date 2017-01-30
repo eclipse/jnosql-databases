@@ -25,6 +25,7 @@ import org.jnosql.diana.api.document.Documents;
 
 import java.util.Map;
 
+import static java.util.Objects.isNull;
 import static org.jnosql.diana.elasticsearch.document.ElasticsearchDocumentCollectionManager.ID_FIELD;
 
 class ElasticsearchEntry {
@@ -41,6 +42,13 @@ class ElasticsearchEntry {
         this.map = map;
     }
 
+    boolean isEmpty() {
+        return isNull(id) || isNull(collection) || isNull(map);
+    }
+
+    boolean isNotEmpty() {
+        return !isEmpty();
+    }
 
     DocumentEntity toEntity() {
         Document id = Document.of(ID_FIELD, this.id);

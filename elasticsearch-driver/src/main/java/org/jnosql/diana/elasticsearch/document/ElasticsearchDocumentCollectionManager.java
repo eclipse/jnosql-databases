@@ -52,11 +52,11 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
     private final Client client;
 
-    private final String database;
+    private final String index;
 
-    ElasticsearchDocumentCollectionManager(Client client, String database) {
+    ElasticsearchDocumentCollectionManager(Client client, String index) {
         this.client = client;
-        this.database = database;
+        this.index = index;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
         Map<String, Object> jsonObject = getMap(entity);
         byte[] bytes = PROVDER.toJsonArray(jsonObject);
         try {
-            client.prepareIndex(database, entity.getName(), id.get(String.class)).setSource(bytes).execute().get();
+            client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).execute().get();
             return entity;
         } catch (InterruptedException | ExecutionException e) {
             throw new ElasticsearchException("An error to try to save/update entity on elasticsearch", e);
@@ -85,7 +85,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
         Map<String, Object> jsonObject = getMap(entity);
         byte[] bytes = PROVDER.toJsonArray(jsonObject);
         try {
-            client.prepareIndex(database, entity.getName(), id.get(String.class))
+            client.prepareIndex(index, entity.getName(), id.get(String.class))
                     .setSource(bytes)
                     .setTTL(timeValueMillis(ttl.toMillis()))
                     .execute().get();
@@ -103,6 +103,17 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     @Override
     public void delete(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
+        List<DocumentEntity> entities = find(query);
+
+        entities.stream()
+                .map(entity -> entity.find(ID_FIELD).get().get(String.class))
+                .forEach(id -> {
+                    try {
+                        client.prepareDelete(index, query.getCollection(), id).execute().get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
+                    }
+                });
 
     }
 
@@ -117,22 +128,24 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
             if (!select.getIds().isEmpty()) {
                 MultiGetResponse multiGetItemResponses = client
-                        .prepareMultiGet().add(database, query.getCollection(), select.getIds())
+                        .prepareMultiGet().add(index, query.getCollection(), select.getIds())
                         .execute().get();
 
                 Stream.of(multiGetItemResponses.getResponses())
                         .map(MultiGetItemResponse::getResponse)
                         .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.getSourceAsMap()))
+                        .filter(ElasticsearchEntry::isNotEmpty)
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);
             }
             if (nonNull(select.getStatement())) {
-                SearchResponse searchResponse = client.prepareSearch(database)
+                SearchResponse searchResponse = client.prepareSearch(index)
                         .setTypes(query.getCollection())
                         .setQuery(select.getStatement())
                         .execute().get();
                 stream(searchResponse.getHits().spliterator(), false)
                         .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.sourceAsMap()))
+                        .filter(ElasticsearchEntry::isNotEmpty)
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);
             }
