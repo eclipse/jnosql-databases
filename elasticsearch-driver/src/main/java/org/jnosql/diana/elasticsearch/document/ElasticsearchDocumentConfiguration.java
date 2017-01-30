@@ -19,9 +19,7 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
@@ -32,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
@@ -50,7 +47,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
     private static final String DEFAULT_CLUSTER_NAME = "elasticsearch";
     private static final String HOST_PREFIX = "elasticsearch-host-";
     private static final int DEFAULT_PORT = 9300;
-    public static final String SETTINGS_PREFIX = "elasticsearch-settings-";
+    private static final String SETTINGS_PREFIX = "elasticsearch-settings-";
 
     private String clusterName;
 
@@ -59,7 +56,9 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
     private Map<String, String> settings = new HashMap<>();
 
     public ElasticsearchDocumentConfiguration() {
+
         Map<String, String> configurations = ConfigurationReader.from(FILE_CONFIGURATION);
+
         if (configurations.isEmpty()) {
             return;
         }
@@ -75,8 +74,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .keySet()
                 .stream()
                 .filter(k -> k.startsWith(SETTINGS_PREFIX))
-                .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""),
-                        k -> configurations.get(k))));
+                .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""), k -> configurations.get(k))));
     }
 
 
@@ -126,6 +124,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
 
     /**
      * Returns an {@link ElasticsearchDocumentCollectionManagerFactory} instance from {@link Settings}
+     *
      * @param settings the settins
      * @return the ElasticsearchDocumentCollectionManagerFactory instance
      * @throws NullPointerException when settins is null
@@ -133,7 +132,6 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
     public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         return getFactory(requireNonNull(settings, "settings is required"));
     }
-
 
 
     private ElasticsearchDocumentCollectionManagerFactory getFactory(Settings settings) {

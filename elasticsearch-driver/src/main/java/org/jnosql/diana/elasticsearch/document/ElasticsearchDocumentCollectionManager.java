@@ -19,9 +19,6 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.action.get.MultiGetItemResponse;
-import org.elasticsearch.action.get.MultiGetResponse;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
@@ -31,15 +28,11 @@ import org.jnosql.diana.driver.value.JSONValueProvider;
 import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Stream;
 
-import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.StreamSupport.stream;
 import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;

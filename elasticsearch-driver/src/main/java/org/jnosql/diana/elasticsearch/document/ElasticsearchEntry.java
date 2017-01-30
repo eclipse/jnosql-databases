@@ -26,7 +26,7 @@ import org.jnosql.diana.api.document.Documents;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
-import static org.jnosql.diana.elasticsearch.document.ElasticsearchDocumentCollectionManager.ID_FIELD;
+import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
 class ElasticsearchEntry {
 

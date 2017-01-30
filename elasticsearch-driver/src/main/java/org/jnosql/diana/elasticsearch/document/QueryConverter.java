@@ -19,7 +19,6 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
@@ -40,13 +39,13 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
-import static org.jnosql.diana.elasticsearch.document.ElasticsearchDocumentCollectionManager.ID_FIELD;
+import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
 final class QueryConverter {
 
-    private static final Set<Condition> NOT_APPENDABLE = EnumSet.of(IN, Condition.AND, Condition.OR);
-
     static final String[] ALL_SELECT = new String[0];
+
+    private static final Set<Condition> NOT_APPENDABLE = EnumSet.of(IN, Condition.AND, Condition.OR);
 
     private QueryConverter() {
     }
