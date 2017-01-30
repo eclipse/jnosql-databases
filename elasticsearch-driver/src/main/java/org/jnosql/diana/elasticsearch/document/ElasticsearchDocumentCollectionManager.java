@@ -29,11 +29,9 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.driver.value.JSONValueProvider;
 import org.jnosql.diana.driver.value.JSONValueProviderService;
-import org.jnosql.diana.driver.value.ValueUtil;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -43,10 +41,11 @@ import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
 import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
+import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
+import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
 
 public class ElasticsearchDocumentCollectionManager implements DocumentCollectionManager {
 
-    static final String ID_FIELD = "_id";
 
     private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
 
@@ -67,7 +66,8 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
         Map<String, Object> jsonObject = getMap(entity);
         byte[] bytes = PROVDER.toJsonArray(jsonObject);
         try {
-            client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).execute().get();
+            client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes)
+                    .execute().get();
             return entity;
         } catch (InterruptedException | ExecutionException e) {
             throw new ElasticsearchException("An error to try to save/update entity on elasticsearch", e);
@@ -120,41 +120,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        QueryConverter.QueryConverterResult select = QueryConverter.select(query);
-
-
-        try {
-            List<DocumentEntity> entities = new ArrayList<>();
-
-            if (!select.getIds().isEmpty()) {
-                MultiGetResponse multiGetItemResponses = client
-                        .prepareMultiGet().add(index, query.getCollection(), select.getIds())
-                        .execute().get();
-
-                Stream.of(multiGetItemResponses.getResponses())
-                        .map(MultiGetItemResponse::getResponse)
-                        .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.getSourceAsMap()))
-                        .filter(ElasticsearchEntry::isNotEmpty)
-                        .map(ElasticsearchEntry::toEntity)
-                        .forEach(entities::add);
-            }
-            if (nonNull(select.getStatement())) {
-                SearchResponse searchResponse = client.prepareSearch(index)
-                        .setTypes(query.getCollection())
-                        .setQuery(select.getStatement())
-                        .execute().get();
-                stream(searchResponse.getHits().spliterator(), false)
-                        .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.sourceAsMap()))
-                        .filter(ElasticsearchEntry::isNotEmpty)
-                        .map(ElasticsearchEntry::toEntity)
-                        .forEach(entities::add);
-            }
-
-
-            return entities;
-        } catch (InterruptedException | ExecutionException e) {
-            throw new ElasticsearchException("An error to execute a query on elasticsearch", e);
-        }
+        return EntityConverter.query(query, client, index);
     }
 
     @Override
@@ -162,20 +128,4 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
     }
 
-    private Map<String, Object> getMap(DocumentEntity entity) {
-        Map<String, Object> jsonObject = new java.util.HashMap<>();
-
-        entity.getDocuments().stream()
-                .filter(d -> !d.getName().equals(ID_FIELD))
-                .forEach(d -> {
-                    Object value = ValueUtil.convert(d.getValue());
-                    if (Document.class.isInstance(value)) {
-                        Document document = Document.class.cast(value);
-                        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
-                    } else {
-                        jsonObject.put(d.getName(), value);
-                    }
-                });
-        return jsonObject;
-    }
 }
