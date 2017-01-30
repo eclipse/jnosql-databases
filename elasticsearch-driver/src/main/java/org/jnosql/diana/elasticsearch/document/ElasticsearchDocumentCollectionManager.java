@@ -27,7 +27,6 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.driver.value.JSONValueProvider;
 import org.jnosql.diana.driver.value.JSONValueProviderService;
 import org.jnosql.diana.driver.value.ValueUtil;

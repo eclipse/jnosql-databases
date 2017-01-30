@@ -52,19 +52,16 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
 
     @Override
     public ElasticsearchDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return null;
+        initDatabase(database);
+        return new ElasticsearchDocumentCollectionManagerAsync(client, database);
     }
+
 
     @Override
     public ElasticsearchDocumentCollectionManager get(String database) throws UnsupportedOperationException, NullPointerException {
         Objects.requireNonNull(database, "database is required");
 
-        boolean exists = isExists(database);
-        if (!exists) {
-            URL url = ElasticsearchDocumentCollectionManagerFactory.class.getResource('/' + database + ".json");
-            byte[] bytes = getBytes(url);
-            client.admin().indices().prepareCreate(database).setSource(bytes).get();
-        }
+        initDatabase(database);
         return new ElasticsearchDocumentCollectionManager(client, database);
     }
 
@@ -73,6 +70,15 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
             return readAllBytes(Paths.get(url.toURI()));
         } catch (IOException | URISyntaxException e) {
             throw new ElasticsearchException("An error when read the database mapping", e);
+        }
+    }
+
+    private void initDatabase(String database) {
+        boolean exists = isExists(database);
+        if (!exists) {
+            URL url = ElasticsearchDocumentCollectionManagerFactory.class.getResource('/' + database + ".json");
+            byte[] bytes = getBytes(url);
+            client.admin().indices().prepareCreate(database).setSource(bytes).get();
         }
     }
 
