@@ -19,23 +19,30 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.driver.value.JSONValueProvider;
 import org.jnosql.diana.driver.value.JSONValueProviderService;
 import org.jnosql.diana.driver.value.ValueUtil;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.StreamSupport.stream;
 import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 
 public class ElasticsearchDocumentCollectionManager implements DocumentCollectionManager {
@@ -45,6 +52,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
 
     private final Client client;
+
     private final String database;
 
     ElasticsearchDocumentCollectionManager(Client client, String database) {
@@ -96,12 +104,45 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     @Override
     public void delete(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
+
     }
 
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        return null;
+        QueryConverter.QueryConverterResult select = QueryConverter.select(query);
+
+
+        try {
+            List<DocumentEntity> entities = new ArrayList<>();
+
+            if (!select.getIds().isEmpty()) {
+                MultiGetResponse multiGetItemResponses = client
+                        .prepareMultiGet().add(database, query.getCollection(), select.getIds())
+                        .execute().get();
+
+                Stream.of(multiGetItemResponses.getResponses())
+                        .map(MultiGetItemResponse::getResponse)
+                        .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.getSourceAsMap()))
+                        .map(ElasticsearchEntry::toEntity)
+                        .forEach(entities::add);
+            }
+            if (nonNull(select.getStatement())) {
+                SearchResponse searchResponse = client.prepareSearch(database)
+                        .setTypes(query.getCollection())
+                        .setQuery(select.getStatement())
+                        .execute().get();
+                stream(searchResponse.getHits().spliterator(), false)
+                        .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.sourceAsMap()))
+                        .map(ElasticsearchEntry::toEntity)
+                        .forEach(entities::add);
+            }
+
+
+            return entities;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new ElasticsearchException("An error to execute a query on elasticsearch", e);
+        }
     }
 
     @Override

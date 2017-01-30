@@ -65,7 +65,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
             byte[] bytes = getBytes(url);
             client.admin().indices().prepareCreate(database).setSource(bytes).get();
         }
-        return new ElasticsearchDocumentCollectionManager(client);
+        return new ElasticsearchDocumentCollectionManager(client, database);
     }
 
     private byte[] getBytes(URL url) {
