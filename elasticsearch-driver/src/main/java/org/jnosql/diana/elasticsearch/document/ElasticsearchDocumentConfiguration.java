@@ -67,7 +67,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         configurations.keySet().stream()
                 .filter(k -> k.startsWith(HOST_PREFIX))
                 .sorted()
-                .map(h -> ElastissearchAdress.of(h, DEFAULT_PORT))
+                .map(h -> ElastissearchAdress.of(configurations.get(h), DEFAULT_PORT))
                 .map(ElastissearchAdress::toTransportAddress)
                 .forEach(hosts::add);
 
