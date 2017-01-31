@@ -16,22 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.hbase.column;
 
-
-import org.jnosql.diana.api.column.Column;
-
-final class HBaseUtils {
-
-    static final String KEY_COLUMN = "_id";
-
-    private HBaseUtils() {
-    }
-
-
-    static Column getKey(Object value) {
-        return Column.of(KEY_COLUMN, value);
-    }
-
-
-}
+/**
+ *  <p>Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable full-text search
+ *  engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java and is released
+ *  as open source under the terms of the Apache License. Elasticsearch is the most popular enterprise search engine
+ *  followed by Apache Solr, also based on Lucene.</p>
+ *  <p>It is developed alongside a data collection and log parsing engine called Logstash,
+ *  and an analytics and visualization platform called Kibana. The three products are designed to be used as an integrated
+ *  solution, referred to as the "ELK stack".</p>
+ */
+package org.jnosql.diana.elasticsearch;

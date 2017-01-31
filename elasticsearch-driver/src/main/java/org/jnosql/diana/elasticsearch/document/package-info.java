@@ -16,22 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.hbase.column;
 
-
-import org.jnosql.diana.api.column.Column;
-
-final class HBaseUtils {
-
-    static final String KEY_COLUMN = "_id";
-
-    private HBaseUtils() {
-    }
-
-
-    static Column getKey(Object value) {
-        return Column.of(KEY_COLUMN, value);
-    }
-
-
-}
+/**
+ * This package has the Elasticsearch document implementation
+ */
+package org.jnosql.diana.elasticsearch.document;

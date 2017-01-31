@@ -1,0 +1,37 @@
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+      },
+      "analyzer": {
+        "whitespace_analyzer": {
+          "type": "custom",
+          "tokenizer": "whitespace",
+          "filter": [
+            "standard",
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "lowercase_analyzer": {
+          "tokenizer": "keyword",
+          "type": "custom"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "person": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "city": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}

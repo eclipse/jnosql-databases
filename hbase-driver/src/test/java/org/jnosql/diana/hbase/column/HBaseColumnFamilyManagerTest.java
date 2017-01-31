@@ -14,6 +14,7 @@ public class HBaseColumnFamilyManagerTest {
 
     private static final String DATA_BASE = "database";
     public static final String FAMILY = "person";
+    public static final String ID_FIELD = HBaseUtils.KEY_COLUMN;
 
     private ColumnFamilyManagerFactory managerFactory;
 
@@ -47,13 +48,13 @@ public class HBaseColumnFamilyManagerTest {
     public void shouldFind() {
         columnFamilyManager.save(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
         List<ColumnEntity> columnFamilyEntities = columnFamilyManager.find(query);
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
         assertEquals(FAMILY, entity.getName());
-        assertThat(entity.getColumns(), containsInAnyOrder(Column.of("", "otaviojava"), Column.of("age", "26"), Column.of("country", "Brazil")));
+        assertThat(entity.getColumns(), containsInAnyOrder(Column.of(ID_FIELD, "otaviojava"), Column.of("age", "26"), Column.of("country", "Brazil")));
     }
 
     @Test
@@ -62,8 +63,8 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.save(createEntity2());
 
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
-        query.and(ColumnCondition.eq(Column.of("", "poliana")));
+        query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of(ID_FIELD, "poliana")));
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(entities.size()));
 
@@ -73,7 +74,7 @@ public class HBaseColumnFamilyManagerTest {
     public void shouldDeleteEntity() {
         columnFamilyManager.save(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
         columnFamilyManager.delete(query);
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
@@ -84,8 +85,8 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.save(createEntity());
         columnFamilyManager.save(createEntity2());
         ColumnQuery query = ColumnQuery.of(FAMILY);
-        query.and(ColumnCondition.eq(Column.of("", "otaviojava")));
-        query.and(ColumnCondition.eq(Column.of("", "poliana")));
+        query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
+        query.and(ColumnCondition.eq(Column.of(ID_FIELD, "poliana")));
         columnFamilyManager.delete(query);
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
@@ -93,7 +94,7 @@ public class HBaseColumnFamilyManagerTest {
 
     private ColumnEntity createEntity() {
         ColumnEntity entity = ColumnEntity.of(FAMILY);
-        entity.add(Column.of("", "otaviojava"));
+        entity.add(Column.of(ID_FIELD, "otaviojava"));
         entity.add(Column.of("age", 26));
         entity.add(Column.of("country", "Brazil"));
         return entity;
@@ -101,7 +102,7 @@ public class HBaseColumnFamilyManagerTest {
 
     private ColumnEntity createEntity2() {
         ColumnEntity entity = ColumnEntity.of(FAMILY);
-        entity.add(Column.of("", "poliana"));
+        entity.add(Column.of(ID_FIELD, "poliana"));
         entity.add(Column.of("age", 24));
         entity.add(Column.of("country", "Brazil"));
         return entity;

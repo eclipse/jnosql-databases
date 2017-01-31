@@ -16,22 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.hbase.column;
+package org.jnosql.diana.elasticsearch.document;
 
 
-import org.jnosql.diana.api.column.Column;
+/**
+ * Error on elasticsearch document implementation
+ */
+public class ElasticsearchException extends RuntimeException {
 
-final class HBaseUtils {
-
-    static final String KEY_COLUMN = "_id";
-
-    private HBaseUtils() {
+    ElasticsearchException(String message, Throwable throwable) {
+        super(message, throwable);
     }
-
-
-    static Column getKey(Object value) {
-        return Column.of(KEY_COLUMN, value);
-    }
-
-
 }

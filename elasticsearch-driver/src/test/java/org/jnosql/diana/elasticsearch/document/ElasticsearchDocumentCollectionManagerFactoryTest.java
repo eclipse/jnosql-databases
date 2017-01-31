@@ -16,22 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.hbase.column;
+package org.jnosql.diana.elasticsearch.document;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 
-import org.jnosql.diana.api.column.Column;
+public class ElasticsearchDocumentCollectionManagerFactoryTest {
 
-final class HBaseUtils {
+    private ElasticsearchDocumentConfiguration configuration;
 
-    static final String KEY_COLUMN = "_id";
+    @Before
+    public void setUp() {
+        configuration = new ElasticsearchDocumentConfiguration();
 
-    private HBaseUtils() {
     }
 
-
-    static Column getKey(Object value) {
-        return Column.of(KEY_COLUMN, value);
+    @Test
+    public void shouldCreateEntityManager() {
+        ElasticsearchDocumentCollectionManagerFactory factory = configuration.get();
+        assertNotNull(factory.get("database"));
     }
 
-
+    @Test
+    public void shouldCreateEntityManagerAsync() {
+        ElasticsearchDocumentCollectionManagerFactory factory = configuration.getAsync();
+        assertNotNull(factory.getAsync("database"));
+    }
 }

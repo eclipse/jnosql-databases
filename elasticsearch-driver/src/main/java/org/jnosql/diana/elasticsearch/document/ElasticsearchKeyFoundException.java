@@ -16,22 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jnosql.diana.hbase.column;
+package org.jnosql.diana.elasticsearch.document;
 
+/**
+ * An exception when {@link ElasticsearchDocumentCollectionManager} tries to both update and insert, but it does not found
+ * The column with the name "_id".
+ */
+public class ElasticsearchKeyFoundException extends RuntimeException {
 
-import org.jnosql.diana.api.column.Column;
-
-final class HBaseUtils {
-
-    static final String KEY_COLUMN = "_id";
-
-    private HBaseUtils() {
+    ElasticsearchKeyFoundException(String message) {
+        super("The entity was not found at: " + message);
     }
-
-
-    static Column getKey(Object value) {
-        return Column.of(KEY_COLUMN, value);
-    }
-
-
 }
