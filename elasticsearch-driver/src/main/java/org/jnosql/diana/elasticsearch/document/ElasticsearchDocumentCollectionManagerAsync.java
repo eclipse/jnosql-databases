@@ -22,7 +22,6 @@ package org.jnosql.diana.elasticsearch.document;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
@@ -36,13 +35,9 @@ import org.jnosql.diana.driver.value.JSONValueProviderService;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.StreamSupport.stream;
 import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
@@ -157,35 +152,18 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
      * Find entities from {@link QueryBuilder}
      *
      * @param query    the query
-     * @param type     the type
+     * @param types    the type
      * @param callBack the callback
-     * @return the objects from query
      * @throws NullPointerException when query is null
      */
-    public void find(QueryBuilder query, String type, Consumer<List<DocumentEntity>> callBack) throws NullPointerException, ExecuteAsyncQueryException {
-        Objects.requireNonNull(query, "query is required");
+    public void find(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws NullPointerException, ExecuteAsyncQueryException {
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
 
         client.prepareSearch(index)
-                .setTypes(type)
+                .setTypes(types)
                 .setQuery(query)
-                .execute().addListener(new ActionListener<SearchResponse>() {
-            @Override
-            public void onResponse(SearchResponse searchResponse) {
-                List<DocumentEntity> entities = stream(searchResponse.getHits().spliterator(), false)
-                        .map(h -> new ElasticsearchEntry(h.getId(), type, h.sourceAsMap()))
-                        .filter(ElasticsearchEntry::isNotEmpty)
-                        .map(ElasticsearchEntry::toEntity)
-                        .collect(Collectors.toList());
-                callBack.accept(entities);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                throw new ExecuteAsyncQueryException("An erro to execute a query from QueryBuilder on Elasticsearch", e);
-            }
-        });
-
-
+                .execute().addListener(new FindQueryBuilderListener(callBack));
     }
 
     @Override
