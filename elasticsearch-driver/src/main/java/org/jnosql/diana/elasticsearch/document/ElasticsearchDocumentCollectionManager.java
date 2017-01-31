@@ -19,7 +19,9 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -30,9 +32,12 @@ import org.jnosql.diana.driver.value.JSONValueProviderService;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.StreamSupport.stream;
 import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
@@ -110,10 +115,40 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
     }
 
+
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         return EntityConverter.query(query, client, index);
+    }
+
+    /**
+     * Find entities from {@link QueryBuilder}
+     *
+     * @param query the query
+     * @param type  the type
+     * @return the objects from query
+     * @throws NullPointerException when query is null
+     */
+    public List<DocumentEntity> find(QueryBuilder query, String type) throws NullPointerException {
+        Objects.requireNonNull(query, "query is required");
+
+        SearchResponse searchResponse = null;
+        try {
+            searchResponse = client.prepareSearch(index)
+                    .setTypes(type)
+                    .setQuery(query)
+                    .execute().get();
+
+            return stream(searchResponse.getHits().spliterator(), false)
+                    .map(h -> new ElasticsearchEntry(h.getId(), type, h.sourceAsMap()))
+                    .filter(ElasticsearchEntry::isNotEmpty)
+                    .map(ElasticsearchEntry::toEntity)
+                    .collect(Collectors.toList());
+        } catch (InterruptedException | ExecutionException e) {
+        }
+
+
     }
 
     @Override
