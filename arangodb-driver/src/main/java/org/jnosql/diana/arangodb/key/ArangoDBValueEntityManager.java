@@ -21,7 +21,6 @@ package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
-import com.google.gson.Gson;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
@@ -53,14 +52,12 @@ public class ArangoDBValueEntityManager implements BucketManager {
 
     private final String bucketName;
     private final String namespace;
-    private final Gson gson;
 
 
-    ArangoDBValueEntityManager(ArangoDB arangoDB, String bucketName, String namespace, Gson gson) {
+    ArangoDBValueEntityManager(ArangoDB arangoDB, String bucketName, String namespace) {
         this.arangoDB = arangoDB;
         this.bucketName = bucketName;
         this.namespace = namespace;
-        this.gson = gson;
     }
 
     @Override
@@ -69,7 +66,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
         Objects.requireNonNull(value, "value is required");
         BaseDocument baseDocument = new BaseDocument();
         baseDocument.setKey(key.toString());
-        baseDocument.addAttribute(VALUE, gson.toJson(value));
+        baseDocument.addAttribute(VALUE, PROVDER.toJson(value));
         if (arangoDB.db(bucketName).collection(namespace).documentExists(key.toString())) {
             arangoDB.db(bucketName).collection(namespace).deleteDocument(key.toString());
         }
