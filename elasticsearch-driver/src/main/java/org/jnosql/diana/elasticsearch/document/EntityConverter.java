@@ -79,7 +79,7 @@ final class EntityConverter {
 
                 Stream.of(multiGetItemResponses.getResponses())
                         .map(MultiGetItemResponse::getResponse)
-                        .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.getSourceAsMap()))
+                        .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
                         .filter(ElasticsearchEntry::isNotEmpty)
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);
@@ -90,7 +90,7 @@ final class EntityConverter {
                         .setQuery(select.getStatement())
                         .execute().get();
                 stream(searchResponse.getHits().spliterator(), false)
-                        .map(h -> new ElasticsearchEntry(h.getId(), query.getCollection(), h.sourceAsMap()))
+                        .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
                         .filter(ElasticsearchEntry::isNotEmpty)
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);

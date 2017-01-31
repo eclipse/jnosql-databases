@@ -126,22 +126,22 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
      * Find entities from {@link QueryBuilder}
      *
      * @param query the query
-     * @param type  the type
+     * @param types  the types
      * @return the objects from query
      * @throws NullPointerException when query is null
      */
-    public List<DocumentEntity> find(QueryBuilder query, String type) throws NullPointerException {
+    public List<DocumentEntity> find(QueryBuilder query, String... types) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
         SearchResponse searchResponse = null;
         try {
             searchResponse = client.prepareSearch(index)
-                    .setTypes(type)
+                    .setTypes(types)
                     .setQuery(query)
                     .execute().get();
 
             return stream(searchResponse.getHits().spliterator(), false)
-                    .map(h -> new ElasticsearchEntry(h.getId(), type, h.sourceAsMap()))
+                    .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
                     .filter(ElasticsearchEntry::isNotEmpty)
                     .map(ElasticsearchEntry::toEntity)
                     .collect(Collectors.toList());
