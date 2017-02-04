@@ -26,6 +26,7 @@ import com.orientechnologies.orient.core.storage.ORecordCallback;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
@@ -103,15 +104,16 @@ public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectio
     }
 
     @Override
-    public void delete(DocumentQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void delete(DocumentDeleteCondition query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         delete(query, v -> {
         });
     }
 
     @Override
-    public void delete(DocumentQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void delete(DocumentDeleteCondition query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(DocumentQuery.of(query.getCollection())
+                .and(query.getCondition()), l -> {
             l.forEach(d -> d.delete());
             callBack.accept(null);
         });

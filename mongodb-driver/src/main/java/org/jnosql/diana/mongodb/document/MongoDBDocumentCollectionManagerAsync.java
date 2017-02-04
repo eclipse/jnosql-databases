@@ -26,6 +26,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -87,13 +88,13 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     @Override
-    public void delete(DocumentQuery query) {
+    public void delete(DocumentDeleteCondition query) {
         delete(query, (deleteResult, throwable) -> {
         });
     }
 
     @Override
-    public void delete(DocumentQuery query, Consumer<Void> callBack)
+    public void delete(DocumentDeleteCondition query, Consumer<Void> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
         delete(query, (deleteResult, throwable) -> callBack.accept(null));
 
@@ -124,7 +125,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         asyncCollection.findOneAndReplace(id, getDocument(entity), callBack);
     }
 
-    private void delete(DocumentQuery query, SingleResultCallback<DeleteResult> callBack) {
+    private void delete(DocumentDeleteCondition query, SingleResultCallback<DeleteResult> callBack) {
         String collectionName = query.getCollection();
         com.mongodb.async.client.MongoCollection<Document> asyncCollection =
                 asyncMongoDatabase.getCollection(collectionName);

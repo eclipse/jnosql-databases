@@ -28,6 +28,7 @@ import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
@@ -99,9 +100,13 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void delete(DocumentQuery query) {
+    public void delete(DocumentDeleteCondition query) {
+        Objects.requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
-            OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
+            OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory
+                    .to(DocumentQuery.of(query.getCollection())
+                    .and(query.getCondition()));
+
             List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
             result.forEach(tx::delete);
         }

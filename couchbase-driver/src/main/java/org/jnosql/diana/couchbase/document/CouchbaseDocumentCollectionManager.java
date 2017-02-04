@@ -28,6 +28,7 @@ import com.couchbase.client.java.query.ParameterizedN1qlQuery;
 import com.couchbase.client.java.query.Statement;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
@@ -90,7 +91,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
     }
 
     @Override
-    public void delete(DocumentQuery query) {
+    public void delete(DocumentDeleteCondition query) {
         QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
         if (nonNull(delete.getStatement())) {
             ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());

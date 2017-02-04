@@ -34,6 +34,7 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
+import org.jnosql.diana.api.column.ColumnDeleteCondition;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -108,7 +109,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public void delete(ColumnQuery query) {
+    public void delete(ColumnDeleteCondition query) {
         Objects.requireNonNull(query, "query is required");
         ColumnCondition condition = query.getCondition();
         checkedCondition(condition);

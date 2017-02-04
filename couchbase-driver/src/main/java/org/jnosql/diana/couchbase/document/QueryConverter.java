@@ -28,6 +28,7 @@ import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ final class QueryConverter {
         return new QueryConverterResult(params, statement, ids);
     }
 
-    static QueryConverterResult delete(DocumentQuery query, String bucket) {
+    static QueryConverterResult delete(DocumentDeleteCondition query, String bucket) {
         JsonObject params = JsonObject.create();
         List<String> ids = new ArrayList<>();
         Expression condition = getCondition(query.getCondition(), params, ids);

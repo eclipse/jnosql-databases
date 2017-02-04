@@ -24,6 +24,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.driver.value.JSONValueProvider;
@@ -99,9 +100,9 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     }
 
     @Override
-    public void delete(DocumentQuery query) throws NullPointerException {
+    public void delete(DocumentDeleteCondition query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        List<DocumentEntity> entities = find(query);
+        List<DocumentEntity> entities = find(DocumentQuery.of(query.getCollection()).and(query.getCondition()));
 
         entities.stream()
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))

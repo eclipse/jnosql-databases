@@ -25,6 +25,7 @@ import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -87,7 +88,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
 
     @Override
-    public void delete(DocumentQuery query) {
+    public void delete(DocumentDeleteCondition query) {
         String collectionName = query.getCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition());
