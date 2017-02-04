@@ -66,7 +66,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(query);
+        entityManager.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
         assertTrue(entityManager.find(query).isEmpty());
     }
 

@@ -1,6 +1,7 @@
 package org.jnosql.diana.hbase.column;
 
 import org.jnosql.diana.api.column.*;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,7 +76,7 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.save(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
-        columnFamilyManager.delete(query);
+        columnFamilyManager.delete(ColumnDeleteCondition.of(query.getColumnFamily(), query.getCondition()));
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
     }
@@ -87,7 +88,7 @@ public class HBaseColumnFamilyManagerTest {
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "poliana")));
-        columnFamilyManager.delete(query);
+        columnFamilyManager.delete(ColumnDeleteCondition.of(query.getColumnFamily(), query.getCondition()));
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
     }

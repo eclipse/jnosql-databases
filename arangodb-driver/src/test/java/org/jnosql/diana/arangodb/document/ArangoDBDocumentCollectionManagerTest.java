@@ -22,6 +22,7 @@ package org.jnosql.diana.arangodb.document;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -78,7 +79,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_key");
         query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(query);
+        entityManager.delete(DocumentDeleteCondition.of(COLLECTION_NAME, DocumentCondition.eq(id.get())));
         assertTrue(entityManager.find(query).isEmpty());
     }
 

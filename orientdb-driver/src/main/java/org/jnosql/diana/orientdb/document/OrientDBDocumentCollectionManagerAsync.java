@@ -114,9 +114,9 @@ public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectio
         ODatabaseDocumentTx tx = pool.acquire();
         OSQLQueryFactory.QueryResult orientQuery = toAsync(DocumentQuery.of(query.getCollection())
                 .and(query.getCondition()), l -> {
-            l.forEach(d -> d.delete());
-            callBack.accept(null);
-        });
+                l.forEach(d -> d.delete());
+                callBack.accept(null);
+            });
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 

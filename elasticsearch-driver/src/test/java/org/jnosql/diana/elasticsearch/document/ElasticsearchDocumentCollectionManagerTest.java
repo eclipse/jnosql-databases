@@ -22,6 +22,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -76,7 +77,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = documentEntity.find("name");
         query.and(DocumentCondition.eq(name.get()));
-        entityManager.delete(query);
+        entityManager.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
         List<DocumentEntity> entities = entityManager.find(query);
         System.out.println(entities);
         assertTrue(entities.isEmpty());
@@ -88,7 +89,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(query);
+        entityManager.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
         assertTrue(entityManager.find(query).isEmpty());
     }
 
