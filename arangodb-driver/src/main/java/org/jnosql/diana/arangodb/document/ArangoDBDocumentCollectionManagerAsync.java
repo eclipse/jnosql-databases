@@ -32,6 +32,7 @@ import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
@@ -39,6 +40,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -116,17 +118,20 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
 
 
     @Override
-    public void delete(DocumentQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void delete(DocumentDeleteCondition query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         delete(query, v -> {
         });
     }
 
     @Override
-    public void delete(DocumentQuery query, Consumer<Void> callBack)
+    public void delete(DocumentDeleteCondition query, Consumer<Void> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(callBack, "callBack is required");
+
         String collection = query.getCollection();
-        if (checkCondition(query)) {
+        if (checkCondition(query.getCondition())) {
             return;
         }
         DocumentCondition condition = query.getCondition();
@@ -150,7 +155,9 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
     public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        if (checkCondition(query)) {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(callBack, "callBack is required");
+        if (checkCondition(query.getCondition())) {
             callBack.accept(Collections.emptyList());
             return;
         }

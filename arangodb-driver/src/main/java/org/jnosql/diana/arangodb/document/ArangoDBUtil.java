@@ -25,6 +25,7 @@ import com.arangodb.entity.CollectionEntity;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
+import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
@@ -82,8 +83,8 @@ public final class ArangoDBUtil {
     }
 
 
-    public static boolean checkCondition(DocumentQuery query) {
-        if (Objects.isNull(query.getCondition())) {
+    public static boolean checkCondition(DocumentCondition query) {
+        if (Objects.isNull(query)) {
             return true;
         }
         return false;

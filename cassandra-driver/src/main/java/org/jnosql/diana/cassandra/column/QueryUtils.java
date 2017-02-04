@@ -26,6 +26,7 @@ import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
+import org.jnosql.diana.api.column.ColumnDeleteCondition;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.driver.value.ValueUtil;
@@ -80,7 +81,7 @@ final class QueryUtils {
         return where;
     }
 
-    public static BuiltStatement delete(ColumnQuery query, String keySpace) {
+    public static BuiltStatement delete(ColumnDeleteCondition query, String keySpace) {
         String columnFamily = query.getColumnFamily();
 
         if (Objects.isNull(query.getCondition())) {

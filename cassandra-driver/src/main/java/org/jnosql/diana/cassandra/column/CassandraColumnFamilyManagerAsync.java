@@ -26,6 +26,7 @@ import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.column.ColumnDeleteCondition;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -128,7 +129,8 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     }
 
     @Override
-    public void delete(ColumnQuery query) {
+    public void delete(ColumnDeleteCondition query) {
+        Objects.requireNonNull(query, "query is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         session.executeAsync(delete);
     }
@@ -140,7 +142,9 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @param level {@link ConsistencyLevel}
      * @throws NullPointerException when both query or level are null
      */
-    public void delete(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
+    public void delete(ColumnDeleteCondition query, ConsistencyLevel level) throws NullPointerException {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(level, "level is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         delete.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         session.executeAsync(delete);
@@ -153,7 +157,11 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @param consumer the callback
      * @param level    {@link ConsistencyLevel}
      */
-    public void delete(ColumnQuery query, ConsistencyLevel level, Consumer<Void> consumer) {
+    public void delete(ColumnDeleteCondition query, ConsistencyLevel level, Consumer<Void> consumer) {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(level, "level is required");
+        Objects.requireNonNull(consumer, "consumer is required");
+
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         delete.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         ResultSetFuture resultSetFuture = session.executeAsync(delete);
@@ -161,7 +169,8 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     }
 
     @Override
-    public void delete(ColumnQuery query, Consumer<Void> consumer) {
+    public void delete(ColumnDeleteCondition query, Consumer<Void> consumer) {
+        Objects.requireNonNull(query, "query is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         ResultSetFuture resultSetFuture = session.executeAsync(delete);
         resultSetFuture.addListener(() -> consumer.accept(null), executor);
@@ -170,6 +179,10 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     @Override
     public void find(ColumnQuery query, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
+
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(consumer, "consumer is required");
+
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSetFuture resultSet = session.executeAsync(select);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);

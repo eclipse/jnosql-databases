@@ -28,6 +28,7 @@ import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentDeleteCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
@@ -92,9 +93,10 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void delete(DocumentQuery query) {
+    public void delete(DocumentDeleteCondition query) {
+        Objects.requireNonNull(query, "query is required");
         String collection = query.getCollection();
-        if (checkCondition(query)) {
+        if (checkCondition(query.getCondition())) {
             return;
         }
         DocumentCondition condition = query.getCondition();
@@ -113,8 +115,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
     @Override
     public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
-
-        if (checkCondition(query)) {
+        Objects.requireNonNull(query, "query is required");
+        if (checkCondition(query.getCondition())) {
             return Collections.emptyList();
         }
         DocumentCondition condition = query.getCondition();
@@ -148,8 +150,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         ArangoDBUtil.checkCollection(database, arangoDB, collectionName);
     }
 
-    private boolean checkCondition(DocumentQuery query) {
-        if (Objects.isNull(query.getCondition())) {
+    private boolean checkCondition(DocumentCondition query) {
+        if (Objects.isNull(query)) {
             return true;
         }
         return false;

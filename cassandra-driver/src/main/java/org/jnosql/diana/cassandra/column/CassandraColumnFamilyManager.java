@@ -26,6 +26,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import org.jnosql.diana.api.column.ColumnDeleteCondition;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
  * <p>{@link CassandraColumnFamilyManager#find(ColumnQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnFamilyManager#cql(String)}</p>
  * <p>{@link CassandraColumnFamilyManager#nativeQueryPrepare(String)}</p>
- * <p>{@link CassandraColumnFamilyManager#delete(ColumnQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnFamilyManager#delete(ColumnDeleteCondition, ConsistencyLevel)}</p>
  */
 public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
@@ -120,7 +121,8 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public void delete(ColumnQuery query) {
+    public void delete(ColumnDeleteCondition query) {
+        Objects.requireNonNull(query, "query is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         session.execute(delete);
     }
@@ -132,7 +134,9 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
      * @param level the level
      * @throws NullPointerException when either query or level are null
      */
-    public void delete(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
+    public void delete(ColumnDeleteCondition query, ConsistencyLevel level) throws NullPointerException {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(level, "level is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         delete.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         session.execute(delete);
@@ -140,6 +144,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public List<ColumnEntity> find(ColumnQuery query) {
+        Objects.requireNonNull(query, "query is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSet resultSet = session.execute(select);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
@@ -147,6 +152,8 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
     }
 
     public List<ColumnEntity> find(ColumnQuery query, ConsistencyLevel level) {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(level, "level is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
         select.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         ResultSet resultSet = session.execute(select);
