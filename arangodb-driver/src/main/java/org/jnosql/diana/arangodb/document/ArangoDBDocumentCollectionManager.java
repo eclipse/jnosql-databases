@@ -28,7 +28,7 @@ import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
@@ -37,6 +37,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
@@ -93,13 +94,14 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void delete(DocumentDeleteCondition query) {
+    public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
         String collection = query.getCollection();
         if (checkCondition(query.getCondition())) {
             return;
         }
-        DocumentCondition condition = query.getCondition();
+        DocumentCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         Value value = condition.getDocument().getValue();
         if (Condition.IN.equals(condition.getCondition())) {
             List<String> keys = value.get(new TypeReference<List<String>>() {
@@ -119,7 +121,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         if (checkCondition(query.getCondition())) {
             return Collections.emptyList();
         }
-        DocumentCondition condition = query.getCondition();
+        DocumentCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         Value value = condition.getDocument().getValue();
         String collection = query.getCollection();
         if (Condition.EQUALS.equals(condition.getCondition())) {
@@ -150,11 +153,8 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         ArangoDBUtil.checkCollection(database, arangoDB, collectionName);
     }
 
-    private boolean checkCondition(DocumentCondition query) {
-        if (Objects.isNull(query)) {
-            return true;
-        }
-        return false;
+    private boolean checkCondition(Optional<DocumentCondition> query) {
+        return query.isPresent();
     }
 
     private DocumentEntity toEntity(String collection, String key) {

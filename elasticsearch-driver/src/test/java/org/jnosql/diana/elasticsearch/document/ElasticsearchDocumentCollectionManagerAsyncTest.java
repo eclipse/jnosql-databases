@@ -22,7 +22,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class ElasticsearchDocumentCollectionManagerAsyncTest {
@@ -54,7 +55,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
         query.and(DocumentCondition.eq(id.get()));
-        entityManagerAsync.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
+        entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
     }
 
 
@@ -87,7 +88,8 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
         query.and(DocumentCondition.eq(id.get()));
-        entityManagerAsync.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
+        entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+
         Thread.sleep(1_000L);
         assertTrue(entityManager.find(query).isEmpty());
 

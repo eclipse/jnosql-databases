@@ -22,7 +22,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -36,7 +36,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 public class ElasticsearchDocumentCollectionManagerTest {
@@ -77,7 +80,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = documentEntity.find("name");
         query.and(DocumentCondition.eq(name.get()));
-        entityManager.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
+        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
         List<DocumentEntity> entities = entityManager.find(query);
         System.out.println(entities);
         assertTrue(entities.isEmpty());
@@ -89,7 +92,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
+        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
         assertTrue(entityManager.find(query).isEmpty());
     }
 

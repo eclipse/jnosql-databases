@@ -26,7 +26,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import org.jnosql.diana.api.column.ColumnDeleteCondition;
+import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * <p>{@link CassandraColumnFamilyManager#find(ColumnQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnFamilyManager#cql(String)}</p>
  * <p>{@link CassandraColumnFamilyManager#nativeQueryPrepare(String)}</p>
- * <p>{@link CassandraColumnFamilyManager#delete(ColumnDeleteCondition, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnFamilyManager#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
  */
 public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
@@ -121,7 +121,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public void delete(ColumnDeleteCondition query) {
+    public void delete(ColumnDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         session.execute(delete);
@@ -134,7 +134,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
      * @param level the level
      * @throws NullPointerException when either query or level are null
      */
-    public void delete(ColumnDeleteCondition query, ConsistencyLevel level) throws NullPointerException {
+    public void delete(ColumnDeleteQuery query, ConsistencyLevel level) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(level, "level is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);

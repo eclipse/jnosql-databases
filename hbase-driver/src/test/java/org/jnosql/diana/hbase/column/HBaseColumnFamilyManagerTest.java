@@ -1,14 +1,23 @@
 package org.jnosql.diana.hbase.column;
 
-import org.jnosql.diana.api.column.*;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.column.Column;
+import org.jnosql.diana.api.column.ColumnCondition;
+import org.jnosql.diana.api.column.ColumnDeleteQuery;
+import org.jnosql.diana.api.column.ColumnEntity;
+import org.jnosql.diana.api.column.ColumnFamilyManager;
+import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
+import org.jnosql.diana.api.column.ColumnQuery;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 public class HBaseColumnFamilyManagerTest {
@@ -76,7 +85,7 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.save(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
-        columnFamilyManager.delete(ColumnDeleteCondition.of(query.getColumnFamily(), query.getCondition()));
+        columnFamilyManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()));
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
     }
@@ -88,7 +97,7 @@ public class HBaseColumnFamilyManagerTest {
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "poliana")));
-        columnFamilyManager.delete(ColumnDeleteCondition.of(query.getColumnFamily(), query.getCondition()));
+        columnFamilyManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()));
         List<ColumnEntity> entities = columnFamilyManager.find(query);
         assertTrue(entities.isEmpty());
     }

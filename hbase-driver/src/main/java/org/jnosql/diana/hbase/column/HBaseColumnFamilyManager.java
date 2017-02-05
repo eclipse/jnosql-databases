@@ -34,7 +34,7 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnDeleteCondition;
+import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -109,9 +109,10 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public void delete(ColumnDeleteCondition query) {
+    public void delete(ColumnDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
-        ColumnCondition condition = query.getCondition();
+        ColumnCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         checkedCondition(condition);
         List<String> values = new ArrayList<>();
 
@@ -133,7 +134,8 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     @Override
     public List<ColumnEntity> find(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
-        ColumnCondition condition = query.getCondition();
+        ColumnCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         checkedCondition(condition);
         return Stream.of(findById(condition)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
     }

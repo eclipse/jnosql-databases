@@ -20,13 +20,19 @@
 package org.jnosql.diana.cassandra.column;
 
 
-import com.datastax.driver.core.querybuilder.*;
+import com.datastax.driver.core.querybuilder.BuiltStatement;
+import com.datastax.driver.core.querybuilder.Clause;
+import com.datastax.driver.core.querybuilder.Delete;
+import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.Ordering;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnDeleteCondition;
+import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.driver.value.ValueUtil;
@@ -34,10 +40,13 @@ import org.jnosql.diana.driver.value.ValueUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
-import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.asc;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.desc;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
 import static org.jnosql.diana.api.Sort.SortType.ASC;
 
 final class QueryUtils {
@@ -81,7 +90,7 @@ final class QueryUtils {
         return where;
     }
 
-    public static BuiltStatement delete(ColumnDeleteCondition query, String keySpace) {
+    public static BuiltStatement delete(ColumnDeleteQuery query, String keySpace) {
         String columnFamily = query.getColumnFamily();
 
         if (Objects.isNull(query.getCondition())) {
@@ -94,7 +103,11 @@ final class QueryUtils {
         return where;
     }
 
-    private static void createClause(ColumnCondition columnCondition, List<Clause> clauses) {
+    private static void createClause(Optional<ColumnCondition> columnConditionOptional, List<Clause> clauses) {
+        if (!columnConditionOptional.isPresent()) {
+            return;
+        }
+        ColumnCondition columnCondition = columnConditionOptional.get();
         Column column = columnCondition.getColumn();
         Condition condition = columnCondition.getCondition();
         Object value = column.getValue().get();
@@ -123,7 +136,7 @@ final class QueryUtils {
             case AND:
                 for (ColumnCondition cc : column.get(new TypeReference<List<ColumnCondition>>() {
                 })) {
-                    createClause(cc, clauses);
+                    createClause(Optional.of(cc), clauses);
                 }
                 return;
             case OR:

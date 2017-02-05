@@ -27,7 +27,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.driver.value.JSONValueProvider;
@@ -109,19 +109,20 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
     }
 
     @Override
-    public void delete(DocumentDeleteCondition query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void delete(DocumentDeleteQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         delete(query, d -> {
         });
 
     }
 
     @Override
-    public void delete(DocumentDeleteCondition query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
         List<DocumentEntity> entities = EntityConverter.query(DocumentQuery.of(query.getCollection())
-                .and(query.getCondition()), client, index);
+                .and(query.getCondition()
+                        .orElseThrow(()-> new IllegalArgumentException("condition is required"))), client, index);
 
         BulkRequestBuilder bulkRequest = client.prepareBulk();
         entities.stream()

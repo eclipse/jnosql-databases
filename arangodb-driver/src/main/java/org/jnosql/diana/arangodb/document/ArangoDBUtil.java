@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -82,11 +83,8 @@ public final class ArangoDBUtil {
     }
 
 
-    public static boolean checkCondition(DocumentCondition query) {
-        if (Objects.isNull(query)) {
-            return true;
-        }
-        return false;
+    public static boolean checkCondition(Optional<DocumentCondition> query) {
+        return query.isPresent();
     }
 
     static DocumentEntity toEntity(String collection, BaseDocument document) {

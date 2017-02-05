@@ -28,7 +28,7 @@ import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.ArrayList;
@@ -61,7 +61,8 @@ final class QueryConverter {
         if (documents.length == 0) {
             documents = ALL_SELECT;
         }
-        Expression condition = getCondition(query.getCondition(), params, ids);
+        Expression condition = getCondition(query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condigtion is required")), params, ids);
         Statement statement = null;
         if (nonNull(condition)) {
             statement = Select.select(documents).from(i(bucket))
@@ -71,10 +72,11 @@ final class QueryConverter {
         return new QueryConverterResult(params, statement, ids);
     }
 
-    static QueryConverterResult delete(DocumentDeleteCondition query, String bucket) {
+    static QueryConverterResult delete(DocumentDeleteQuery query, String bucket) {
         JsonObject params = JsonObject.create();
         List<String> ids = new ArrayList<>();
-        Expression condition = getCondition(query.getCondition(), params, ids);
+        Expression condition = getCondition(query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condigtion is required")), params, ids);
         MutateLimitPath statement = null;
         if (nonNull(condition)) {
             statement = Delete.deleteFrom(bucket).where(condition);

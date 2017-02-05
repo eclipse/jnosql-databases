@@ -24,7 +24,7 @@ import com.datastax.driver.core.Session;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnDeleteCondition;
+import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
@@ -144,7 +144,7 @@ public class CassandraColumnFamilyManagerTest {
         columnEntityManager.save(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
-        columnEntityManager.delete(ColumnDeleteCondition.of(query.getColumnFamily(), query.getCondition()));
+        columnEntityManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()));
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
     }
@@ -154,7 +154,7 @@ public class CassandraColumnFamilyManagerTest {
         columnEntityManager.save(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
-        columnEntityManager.delete(ColumnDeleteCondition.of(query.getColumnFamily(), query.getCondition()), CONSISTENCY_LEVEL);
+        columnEntityManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()), CONSISTENCY_LEVEL);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
     }

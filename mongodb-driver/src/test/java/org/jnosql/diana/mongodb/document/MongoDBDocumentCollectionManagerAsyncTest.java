@@ -18,11 +18,10 @@
  */
 package org.jnosql.diana.mongodb.document;
 
-import org.jnosql.diana.api.column.ColumnDeleteCondition;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -70,7 +69,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
+        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
 
     }
 

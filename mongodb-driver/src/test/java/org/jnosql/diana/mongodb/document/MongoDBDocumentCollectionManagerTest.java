@@ -19,7 +19,13 @@
 
 package org.jnosql.diana.mongodb.document;
 
-import org.jnosql.diana.api.document.*;
+import org.jnosql.diana.api.document.Document;
+import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
+import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +36,10 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.contains;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 public class MongoDBDocumentCollectionManagerTest {
@@ -66,7 +75,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
         query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteCondition.of(query.getCollection(), query.getCondition()));
+        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
         assertTrue(entityManager.find(query).isEmpty());
     }
 

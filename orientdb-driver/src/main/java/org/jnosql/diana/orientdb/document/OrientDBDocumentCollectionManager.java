@@ -28,7 +28,7 @@ import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
@@ -100,12 +100,13 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public void delete(DocumentDeleteCondition query) {
+    public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory
                     .to(DocumentQuery.of(query.getCollection())
-                    .and(query.getCondition()));
+                            .and(query.getCondition()
+                                    .orElseThrow(() -> new IllegalArgumentException("Condition is required"))));
 
             List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
             result.forEach(tx::delete);
@@ -134,7 +135,8 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
     /**
      * Execute live query
-     * @param query the query
+     *
+     * @param query    the query
      * @param callBack when a new callback is coming
      * @throws NullPointerException when both query and callBack are null
      */
@@ -149,9 +151,10 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
     /**
      * Execute live query
-     * @param query the string query, you must add "live"
+     *
+     * @param query    the string query, you must add "live"
      * @param callBack when a new entity is coming
-     * @param params the params
+     * @param params   the params
      * @throws NullPointerException when both query, callBack are null
      */
     public void live(String query, Consumer<DocumentEntity> callBack, Object... params) throws NullPointerException {

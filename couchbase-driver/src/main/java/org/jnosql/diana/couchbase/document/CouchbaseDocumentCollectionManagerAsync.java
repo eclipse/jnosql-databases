@@ -23,7 +23,7 @@ import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.Statement;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import rx.functions.Action1;
@@ -88,13 +88,13 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
     }
 
     @Override
-    public void delete(DocumentDeleteCondition query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void delete(DocumentDeleteQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         delete(query, v -> {
         });
     }
 
     @Override
-    public void delete(DocumentDeleteCondition query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         just(query).map(q -> {

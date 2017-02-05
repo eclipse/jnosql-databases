@@ -56,7 +56,8 @@ final class QueryConverter {
         if (documents.length == 0) {
             documents = ALL_SELECT;
         }
-        QueryBuilder condition = getCondition(query.getCondition(), ids);
+        QueryBuilder condition = getCondition(query.getCondition().orElseThrow(() ->
+                new IllegalArgumentException("Condition is required")), ids);
         return new QueryConverterResult(condition, ids);
     }
 

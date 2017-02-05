@@ -32,7 +32,7 @@ import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
@@ -118,13 +118,13 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
 
 
     @Override
-    public void delete(DocumentDeleteCondition query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void delete(DocumentDeleteQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         delete(query, v -> {
         });
     }
 
     @Override
-    public void delete(DocumentDeleteCondition query, Consumer<Void> callBack)
+    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         Objects.requireNonNull(query, "query is required");
@@ -134,7 +134,8 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
         if (checkCondition(query.getCondition())) {
             return;
         }
-        DocumentCondition condition = query.getCondition();
+        DocumentCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         Value value = condition.getDocument().getValue();
         if (Condition.IN.equals(condition.getCondition())) {
             List<String> keys = value.get(new TypeReference<List<String>>() {
@@ -161,7 +162,8 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
             callBack.accept(Collections.emptyList());
             return;
         }
-        DocumentCondition condition = query.getCondition();
+        DocumentCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         Value value = condition.getDocument().getValue();
         String collection = query.getCollection();
         if (Condition.EQUALS.equals(condition.getCondition())) {
