@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * that avoid null items, so if any null object will launch {@link NullPointerException}.
  * This class is a wrapper to {@link com.couchbase.client.java.datastructures.collections.CouchbaseMap}. Once they only can save primitive type,
  * objects are converted to Json {@link String} using {@link JSONValueProvider#toJson(Object)} to value and on the key
- * will be used {@link Object::toString}
+ * will be used a string representation of the object, Object.toString()
  *
  * @param <V> the object to be stored as value.
  * @param <K> the object to be stored as key.
