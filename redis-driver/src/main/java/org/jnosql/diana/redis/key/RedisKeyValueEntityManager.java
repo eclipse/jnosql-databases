@@ -21,7 +21,6 @@
 package org.jnosql.diana.redis.key;
 
 
-import org.apache.commons.lang3.StringUtils;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
@@ -88,7 +87,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
         String value = jedis.get(createKeyWithNameSpace(key.toString(), nameSpace));
-        if (StringUtils.isNotBlank(value)) {
+        if (value != null && !value.isEmpty()) {
             return Optional.of(provider.of(value));
         }
         return Optional.empty();
@@ -98,7 +97,8 @@ public class RedisKeyValueEntityManager implements BucketManager {
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
         return StreamSupport.stream(keys.spliterator(), false)
                 .map(k -> jedis.get(createKeyWithNameSpace(k.toString(), nameSpace)))
-                .filter(StringUtils::isNotBlank).map(v -> provider.of(v)).collect(toList());
+                .filter(value -> value != null && !value.isEmpty())
+                .map(v -> provider.of(v)).collect(toList());
     }
 
     @Override

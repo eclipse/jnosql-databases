@@ -21,7 +21,6 @@
 package org.jnosql.diana.redis.key;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
 
 import java.util.Collection;
@@ -82,7 +81,7 @@ public class RedisMap<K, V> implements Map<K, V> {
     public V get(Object key) {
         requireNonNull(key, "Key is required");
         String value = jedis.hget(nameSpace, gson.toJson(key));
-        if (StringUtils.isNoneBlank(value)) {
+        if (value != null && !value.isEmpty()) {
             return gson.fromJson(value, valueClass);
         }
         return null;

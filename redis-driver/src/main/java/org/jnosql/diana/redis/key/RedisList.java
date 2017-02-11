@@ -20,7 +20,6 @@
 
 package org.jnosql.diana.redis.key;
 
-import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
 
@@ -108,7 +107,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
     public void add(int index, T element) {
         Objects.requireNonNull(element);
         String previewValue = jedis.lindex(keyWithNameSpace, index);
-        if (StringUtils.isNotBlank(previewValue)) {
+        if (previewValue != null && !previewValue.isEmpty()) {
             jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, gson.toJson(element));
         } else {
             add(element);

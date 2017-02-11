@@ -21,7 +21,6 @@
 package org.jnosql.diana.redis.key;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
@@ -137,7 +136,7 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected T remove(int index) {
         String value = jedis.lindex(keyWithNameSpace, (long) index);
-        if (StringUtils.isNotBlank(value)) {
+        if (value != null && !value.isEmpty()) {
             jedis.lrem(keyWithNameSpace, 1, value);
             return gson.fromJson(value, clazz);
         }
@@ -172,7 +171,7 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected T get(int index) {
         String value = jedis.lindex(keyWithNameSpace, index);
-        if (StringUtils.isBlank(value)) {
+        if (value == null || value.isEmpty()) {
             return null;
         }
         return gson.fromJson(value, clazz);

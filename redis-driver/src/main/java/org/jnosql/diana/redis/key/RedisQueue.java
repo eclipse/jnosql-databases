@@ -20,7 +20,6 @@
 
 package org.jnosql.diana.redis.key;
 
-import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
 
 import java.util.NoSuchElementException;
@@ -62,7 +61,7 @@ class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
     @Override
     public T poll() {
         String value = jedis.lpop(keyWithNameSpace);
-        if (StringUtils.isNoneBlank(value)) {
+        if (value != null && !value.isEmpty()) {
             return gson.fromJson(value, clazz);
         }
         return null;
