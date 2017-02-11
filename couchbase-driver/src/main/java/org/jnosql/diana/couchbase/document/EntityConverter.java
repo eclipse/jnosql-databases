@@ -21,6 +21,7 @@ package org.jnosql.diana.couchbase.document;
 
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.json.JsonArray;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
@@ -104,6 +105,10 @@ final class EntityConverter {
                     if (Document.class.isInstance(value)) {
                         Document document = Document.class.cast(value);
                         jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+                    } else if (Iterable.class.isInstance(value)) {
+                        JsonArray jsonArray = JsonArray.create();
+                        Iterable.class.cast(value).forEach(jsonArray::add);
+                        jsonObject.put(d.getName(), jsonArray);
                     } else {
                         jsonObject.put(d.getName(), value);
                     }
