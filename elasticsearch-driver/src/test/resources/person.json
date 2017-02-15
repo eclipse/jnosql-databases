@@ -21,13 +21,25 @@
     }
   },
   "mappings": {
-    "person": {
+    "account": {
       "properties": {
+        "username": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
         "name": {
           "type": "string",
           "index": "not_analyzed"
         },
-        "city": {
+        "email": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "description": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "created": {
           "type": "string",
           "index": "not_analyzed"
         }

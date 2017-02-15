@@ -44,6 +44,8 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
  */
 public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
 
+    private static final String ID_FIELD = "_id";
+
     private final MongoDatabase mongoDatabase;
 
 
@@ -59,9 +61,9 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         Document document = getDocument(entity);
         collection.insertOne(document);
         boolean hasNotId = entity.getDocuments().stream()
-                .map(document1 -> document1.getName()).noneMatch(k -> k.equals("_id"));
+                .map(document1 -> document1.getName()).noneMatch(k -> k.equals(ID_FIELD));
         if (hasNotId) {
-            entity.add(Documents.of("_id", document.get("_id")));
+            entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
         }
         return entity;
     }
@@ -78,11 +80,11 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         DocumentEntity copy = entity.copy();
         String collectionName = entity.getName();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        Document id = copy.find("_id")
+        Document id = copy.find(ID_FIELD)
                 .map(d -> new Document(d.getName(), d.getValue().get()))
                 .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
                         "the field `id` is required"));
-        copy.remove("_id");
+        copy.remove(ID_FIELD);
         collection.findOneAndReplace(id, getDocument(entity));
         return entity;
     }

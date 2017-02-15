@@ -45,6 +45,8 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
  */
 public class MongoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
+    private static final String ID_FIELD = "_id";
+    
     private final MongoDatabase asyncMongoDatabase;
 
     MongoDBDocumentCollectionManagerAsync(MongoDatabase asyncMongoDatabase) {
@@ -119,7 +121,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         String collectionName = entity.getName();
         com.mongodb.async.client.MongoCollection<Document> asyncCollection =
                 asyncMongoDatabase.getCollection(collectionName);
-        Document id = entity.find("_id").map(d -> new Document(d.getName(), d.getValue().get()))
+        Document id = entity.find(ID_FIELD).map(d -> new Document(d.getName(), d.getValue().get()))
                 .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
                         "the field `id` is required"));
 
