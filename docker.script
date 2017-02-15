@@ -1,0 +1,2 @@
+docker run -e ARANGO_NO_AUTH=1 -d --name arangodb-instance -p 8529:8529 -d arangodb/arangodb
+docker run --name cassandra-instance -d cassandra:tag

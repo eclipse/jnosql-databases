@@ -41,7 +41,7 @@ public class CassandraColumnFamilyManagerFactoryTest {
     @Before
     public void setUp() {
         Map<String, String> configurations = new HashMap<>();
-        configurations.put("cassandra-hoster-1", "172.17.0.2");
+        configurations.put("cassandra-hoster-1", "localhost");
         configurations.put("cassandra-initial-query-1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         subject = cassandraConfiguration.getManagerFactory(configurations);

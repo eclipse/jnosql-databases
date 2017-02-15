@@ -34,7 +34,7 @@ public class CassandraConfigurationTest {
     @Test
     public void shoudlCreateDocumentEntityManagerFactory() {
         Map<String, String> configurations = new HashMap<>();
-        configurations.put("cassandra-hoster-1", "172.17.0.2");
+        configurations.put("cassandra-hoster-1", "localhost");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory(configurations);
         assertNotNull(entityManagerFactory);
