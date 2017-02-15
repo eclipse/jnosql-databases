@@ -43,9 +43,15 @@ public final class ConfigurationReader {
             Properties properties = new Properties();
             InputStream stream = ConfigurationReader.class.getClassLoader()
                     .getResourceAsStream(resource);
-            properties.load(stream);
-            return properties.keySet().stream().collect(Collectors
-                    .toMap(Object::toString, s -> properties.get(s).toString()));
+            if (Objects.nonNull(stream)) {
+                properties.load(stream);
+                return properties.keySet().stream().collect(Collectors
+                        .toMap(Object::toString, s -> properties.get(s).toString()));
+            } else {
+                LOGGER.info("The file " + resource + " as resource, returning an empty configuration");
+                return Collections.emptyMap();
+            }
+
         } catch (IOException e) {
             LOGGER.fine("The file was not found: " + resource);
             return Collections.emptyMap();
