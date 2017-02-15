@@ -21,11 +21,7 @@
 package org.jnosql.diana.arangodb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
-import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -36,7 +32,7 @@ public class ArangoDBDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentCollectionManagerFactory() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
-        configuration.host("172.17.0.2");
+        configuration.setHost("172.17.0.2");
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }

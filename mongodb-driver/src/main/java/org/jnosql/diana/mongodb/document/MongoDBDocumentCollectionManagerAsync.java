@@ -46,7 +46,7 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 public class MongoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
     private static final String ID_FIELD = "_id";
-    
+
     private final MongoDatabase asyncMongoDatabase;
 
     MongoDBDocumentCollectionManagerAsync(MongoDatabase asyncMongoDatabase) {

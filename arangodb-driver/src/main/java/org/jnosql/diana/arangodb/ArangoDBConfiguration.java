@@ -39,52 +39,52 @@ public abstract class ArangoDBConfiguration {
 
 
     /**
-     * set the host
+     * set the setHost
      *
-     * @param host the host
+     * @param host the setHost
      */
-    public void host(String host) {
+    public void setHost(String host) {
         builder.host(host);
         builderAsync.host(host);
     }
 
     /**
-     * set the port
+     * set the setPort
      *
-     * @param port the port
+     * @param port the setPort
      */
-    public void port(int port) {
+    public void setPort(int port) {
         builder.port(port);
         builderAsync.port(port);
     }
 
 
     /**
-     * set the timeout
+     * set the setTimeout
      *
-     * @param timeout the timeout
+     * @param timeout the setTimeout
      */
-    public void timeout(int timeout) {
+    public void setTimeout(int timeout) {
         builder.timeout(timeout);
         builderAsync.timeout(timeout);
     }
 
     /**
-     * set the user
+     * set the setUser
      *
-     * @param user the user
+     * @param user the setUser
      */
-    public void user(String user) {
+    public void setUser(String user) {
         builder.user(user);
         builderAsync.user(user);
     }
 
     /**
-     * set the password
+     * set the setPassword
      *
-     * @param password the password
+     * @param password the setPassword
      */
-    public void password(String password) {
+    public void setPassword(String password) {
         builder.password(password);
         builderAsync.password(password);
     }
@@ -94,7 +94,7 @@ public abstract class ArangoDBConfiguration {
      *
      * @param value the ssl
      */
-    public void useSSL(boolean value) {
+    public void setUseSSL(boolean value) {
         builder.useSsl(value);
         builderAsync.useSsl(value);
     }
@@ -104,7 +104,7 @@ public abstract class ArangoDBConfiguration {
      *
      * @param chuckSize the cucksize
      */
-    public void chuckSize(int chuckSize) {
+    public void setChuckSize(int chuckSize) {
         builder.chunksize(chuckSize);
         builderAsync.chunksize(chuckSize);
     }

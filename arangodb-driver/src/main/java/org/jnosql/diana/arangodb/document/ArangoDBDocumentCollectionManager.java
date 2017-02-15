@@ -155,7 +155,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     private boolean checkCondition(Optional<DocumentCondition> query) {
-        return query.isPresent();
+        return !query.isPresent();
     }
 
     private DocumentEntity toEntity(String collection, String key) {
