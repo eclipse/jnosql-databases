@@ -39,7 +39,7 @@ public class CouchbaseBucketManagerFactoryTest {
 
     @Test
     public void shouldReturnManager() {
-        BucketManager database = factory.getBucketManager("database");
+        BucketManager database = factory.getBucketManager("default");
         Assert.assertNotNull(database);
     }
 

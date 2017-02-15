@@ -27,6 +27,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,6 +47,11 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     private DocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
+
+    @AfterClass
+    public static void afterClass() throws InterruptedException {
+        Thread.sleep(1_000L);
+    }
 
     @Before
     public void setUp() {

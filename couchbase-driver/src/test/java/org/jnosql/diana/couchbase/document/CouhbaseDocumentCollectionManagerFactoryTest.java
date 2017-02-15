@@ -38,12 +38,12 @@ public class CouhbaseDocumentCollectionManagerFactoryTest {
     @Test
     public void shouldCreateEntityManager() {
         CouhbaseDocumentCollectionManagerFactory factory = configuration.get();
-        assertNotNull(factory.get("database"));
+        assertNotNull(factory.get("default"));
     }
 
     @Test
     public void shouldCreateEntityManagerAsync() {
         CouhbaseDocumentCollectionManagerFactory factory = configuration.getAsync();
-        assertNotNull(factory.getAsync("database"));
+        assertNotNull(factory.getAsync("default"));
     }
 }
