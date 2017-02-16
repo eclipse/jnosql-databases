@@ -4,4 +4,5 @@ docker run -d --name couchbase-instance -p 8091-8094:8091-8094 -p 11210:11210 co
 docker run --name elasticsearch-instance -p 9300:9300 -p 9200:9200 -d elasticsearch
 docker run --name mongo-instance -p 27017:27017 -d mongo
 docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb
+docker run --name redis-instance -p 6379:6379 -d redis
 
