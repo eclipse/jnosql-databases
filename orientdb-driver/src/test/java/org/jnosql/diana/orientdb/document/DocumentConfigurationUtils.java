@@ -30,7 +30,7 @@ public final class DocumentConfigurationUtils {
 
     public static OrientDBDocumentCollectionManagerFactory get() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
-        configuration.setHost("172.17.0.2");
+        configuration.setHost("localhost");
         configuration.setUser("root");
         configuration.setPassword("rootpwd");
         return configuration.get();
@@ -38,7 +38,7 @@ public final class DocumentConfigurationUtils {
 
     public static OrientDBDocumentCollectionManagerFactory getAsync() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
-        configuration.setHost("172.17.0.2");
+        configuration.setHost("localhost");
         configuration.setUser("root");
         configuration.setPassword("rootpwd");
         return configuration.getAsync();

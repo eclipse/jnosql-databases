@@ -47,6 +47,7 @@ import static org.junit.Assert.assertTrue;
 
 public class OrientDBDocumentCollectionManagerTest {
 
+
     public static final String COLLECTION_NAME = "person";
 
     private OrientDBDocumentCollectionManager entityManager;
@@ -58,7 +59,12 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
         query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        try {
+            entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        } catch (Exception e) {
+
+        }
+
     }
 
     @Test
