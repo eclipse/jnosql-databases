@@ -29,7 +29,7 @@ public final class RiakTestUtils {
     public static BucketManagerFactory get() {
         RiakConfiguration riakConfiguration = new RiakConfiguration();
         RiakNode node = new RiakNode.Builder()
-                .withRemoteAddress("172.17.0.2").build();
+                .withRemoteAddress("localhost").build();
         riakConfiguration.add(node);
         return riakConfiguration.get();
     }

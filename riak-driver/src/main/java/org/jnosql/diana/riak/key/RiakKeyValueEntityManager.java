@@ -27,13 +27,13 @@ import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.FetchValue.Response;
 import com.basho.riak.client.api.commands.kv.StoreValue;
 import com.basho.riak.client.core.query.Namespace;
-import org.apache.commons.lang3.StringUtils;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.driver.value.JSONValueProvider;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
@@ -98,8 +98,8 @@ public class RiakKeyValueEntityManager implements BucketManager {
 
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
-
-        if (StringUtils.isBlank(key.toString())) {
+        Objects.requireNonNull(key, "key is required");
+        if (key.toString().isEmpty()) {
             throw new DianaRiakException("The Key is irregular", new IllegalStateException());
         }
 
@@ -109,7 +109,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
             FetchValue.Response response = client.execute(fetchValue);
 
             String valueFetch = response.getValue(String.class);
-            if (StringUtils.isNoneBlank(valueFetch)) {
+            if (Objects.nonNull(valueFetch) && !valueFetch.isEmpty()) {
                 return Optional.of(provider.of(valueFetch));
             }
 
@@ -144,7 +144,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
                     }
 
                 })
-                .filter(StringUtils::isNotBlank).map(v -> provider.of(v))
+                .filter(s -> Objects.nonNull(s) && !s.isEmpty()).map(v -> provider.of(v))
                 .collect(toList());
     }
 
