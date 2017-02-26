@@ -28,7 +28,10 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.hadoop.hbase.CellUtil.*;
+import static org.apache.hadoop.hbase.CellUtil.cloneFamily;
+import static org.apache.hadoop.hbase.CellUtil.cloneQualifier;
+import static org.apache.hadoop.hbase.CellUtil.cloneRow;
+import static org.apache.hadoop.hbase.CellUtil.cloneValue;
 import static org.jnosql.diana.hbase.column.HBaseUtils.getKey;
 
 class EntityUnit {

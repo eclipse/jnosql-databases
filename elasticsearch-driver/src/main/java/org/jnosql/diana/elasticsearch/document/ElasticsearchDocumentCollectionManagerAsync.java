@@ -85,7 +85,8 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException,
+            UnsupportedOperationException, NullPointerException {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
         requireNonNull(callBack, "callBack is required");
