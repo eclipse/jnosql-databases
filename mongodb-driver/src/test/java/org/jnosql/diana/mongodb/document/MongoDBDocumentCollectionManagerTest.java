@@ -20,6 +20,7 @@
 
 package org.jnosql.diana.mongodb.document;
 
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -101,7 +102,8 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(id));
         DocumentEntity entityFound = entityManager.find(query).get(0);
-        Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
+        Document subDocument = entityFound.find("phones").get();
+        Map<String, String> result =  subDocument.get(new TypeReference<Map<String, String>>() {});
         String key = result.keySet().stream().findFirst().get();
         String value = result.get(key);
         assertEquals("mobile", key);
