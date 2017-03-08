@@ -23,6 +23,7 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
@@ -216,8 +217,29 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @throws ExecuteAsyncQueryException a thread exception
      */
     public void cql(String query, Consumer<List<ColumnEntity>> consumer)
-            throws ExecuteAsyncQueryException {
+            throws ExecuteAsyncQueryException, NullPointerException {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(consumer, "consumer is required");
         ResultSetFuture resultSet = session.executeAsync(query);
+        CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
+        resultSet.addListener(executeAsync, executor);
+    }
+
+    /**
+     * Executes statement
+     *
+     * @param statement    the query
+     * @param consumer the callback
+     * @throws ExecuteAsyncQueryException a thread exception
+     * @throws NullPointerException when either statment and callback is null
+     */
+    public void cql(Statement statement, Consumer<List<ColumnEntity>> consumer)
+            throws ExecuteAsyncQueryException, NullPointerException {
+
+        Objects.requireNonNull(statement, "statement is required");
+        Objects.requireNonNull(consumer, "consumer is required");
+
+        ResultSetFuture resultSet = session.executeAsync(statement);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
         resultSet.addListener(executeAsync, executor);
     }

@@ -24,6 +24,7 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
@@ -166,12 +167,25 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
      * Executes CQL
      *
      * @param query the Cassndra query language
-     * @return tje result of this query
+     * @return the result of this query
      * @throws NullPointerException when query is null
      */
     public List<ColumnEntity> cql(String query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         ResultSet resultSet = session.execute(query);
+        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Executes a statement
+     * @param statement the statement
+     * @return the result of this query
+     * @throws NullPointerException when statement is null
+     */
+    public List<ColumnEntity> execute(Statement statement) throws NullPointerException {
+        Objects.requireNonNull(statement, "statement is required");
+        ResultSet resultSet = session.execute(statement);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
                 .collect(Collectors.toList());
     }
