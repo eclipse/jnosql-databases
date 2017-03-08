@@ -76,7 +76,6 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
     }
 
 
-
     @Override
     public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
         Objects.requireNonNull(entity, "entity is required");
@@ -120,7 +119,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
         session.execute(insert);
         return entity;
     }
-    
+
 
     /**
      * Saves an entity using {@link ConsistencyLevel}
@@ -164,8 +163,9 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
      * @param query the query
      * @param level the consistency level
      * @return the query using a consistency level
+     * @throws NullPointerException when either query or level are null
      */
-    public List<ColumnEntity> find(ColumnQuery query, ConsistencyLevel level) {
+    public List<ColumnEntity> find(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(level, "level is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
