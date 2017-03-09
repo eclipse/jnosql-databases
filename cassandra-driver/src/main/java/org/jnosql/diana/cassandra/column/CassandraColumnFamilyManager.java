@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * The Cassandra implementation of {@link ColumnFamilyManager}, that supports all methods and also supports
@@ -140,7 +142,41 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
         session.execute(insert);
         return entity;
     }
+    //
 
+    /**
+     * Saves a ColumnEntity with a defined ConsistencyLevel
+     *
+     * @param entities the entities
+     * @param level    the {@link ConsistencyLevel}
+     * @return the entities saved
+     * @throws NullPointerException when both entity or level are null
+     */
+    public Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, ConsistencyLevel level) throws NullPointerException {
+        Objects.requireNonNull(entities, "entity is required");
+
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> this.save(e, level))
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * Saves an entity using {@link ConsistencyLevel}
+     *
+     * @param entities the entities
+     * @param ttl      the ttl
+     * @param level    the level
+     * @return the entities saved
+     * @throws NullPointerException when either entity or ttl or level are null
+     */
+    public Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) throws NullPointerException {
+        Objects.requireNonNull(entities, "entity is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> this.save(e, ttl, level))
+                .collect(Collectors.toList());
+    }
+    //
 
     /**
      * Deletes an information using {@link ConsistencyLevel}
