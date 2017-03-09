@@ -313,6 +313,19 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
         resultSet.addListener(executeAsync, executor);
     }
 
+    /**
+     * Executes an query and uses as {@link CassandraPrepareStatment}
+     *
+     * @param query the query
+     * @return the CassandraPrepareStatment instance
+     * @throws NullPointerException when query is null
+     */
+    public CassandraPrepareStatment nativeQueryPrepare(String query) throws NullPointerException {
+        Objects.requireNonNull(query, "query is required");
+        com.datastax.driver.core.PreparedStatement prepare = session.prepare(query);
+        return new CassandraPrepareStatment(prepare, executor, session);
+    }
+
     @Override
     public void close() {
         session.close();
