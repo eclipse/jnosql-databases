@@ -75,7 +75,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @param entity the entity
      * @param level  {@link ConsistencyLevel}
      */
-    public void save(ColumnEntity entity, ConsistencyLevel level) {
+    public void save(ColumnEntity entity, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException{
         Insert insert = QueryUtils.insert(entity, keyspace);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         session.executeAsync(insert);
@@ -88,7 +88,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @param entity   the entity
      * @param level    {@link ConsistencyLevel}
      */
-    public void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) {
+    public void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException{
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(callBack, "consumer is required");
 
