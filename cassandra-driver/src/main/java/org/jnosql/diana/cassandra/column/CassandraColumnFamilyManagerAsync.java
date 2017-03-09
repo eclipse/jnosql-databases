@@ -200,7 +200,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @throws ExecuteAsyncQueryException a thread exception
      * @throws NullPointerException       when any arguments are null
      */
-    public void findAsync(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer)
+    public void find(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException {
         BuiltStatement select = QueryUtils.add(query, keyspace);
         select.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
