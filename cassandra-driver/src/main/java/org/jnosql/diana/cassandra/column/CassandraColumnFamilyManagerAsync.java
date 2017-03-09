@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
 
 /**
  * The implementation of {@link ColumnFamilyManagerAsync} whose implements all methods and also has support to CQL and
@@ -65,6 +66,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
 
     @Override
     public void save(ColumnEntity entity) {
+        Objects.requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace);
         session.executeAsync(insert);
     }
@@ -75,10 +77,22 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @param entity the entity
      * @param level  {@link ConsistencyLevel}
      */
-    public void save(ColumnEntity entity, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException{
+    public void save(ColumnEntity entity, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        Objects.requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         session.executeAsync(insert);
+    }
+
+    /**
+     * Save the entity with ConsistencyLevel
+     *
+     * @param entities the entities
+     * @param level    {@link ConsistencyLevel}
+     */
+    public void save(Iterable<ColumnEntity> entities, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        Objects.requireNonNull(entities, "entities is required");
+        StreamSupport.stream(entities.spliterator(), false).forEach(e -> this.save(e, level));
     }
 
     /**
@@ -88,7 +102,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @param entity   the entity
      * @param level    {@link ConsistencyLevel}
      */
-    public void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException{
+    public void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(callBack, "consumer is required");
 
@@ -100,6 +114,8 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
 
     @Override
     public void save(ColumnEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        Objects.requireNonNull(entity, "entity is required");
+        Objects.requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.executeAsync(insert);
@@ -115,6 +131,8 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @throws UnsupportedOperationException
      */
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        Objects.requireNonNull(entity, "entity is required");
+        Objects.requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
@@ -132,12 +150,27 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @throws UnsupportedOperationException
      */
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(callBack, "consumer is required");
         Insert insert = QueryUtils.insert(entity, keyspace);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> callBack.accept(entity), executor);
+    }
+
+    /**
+     * Saves the entity with ConsistencyLevel
+     *
+     * @param entities the entities
+     * @param ttl      the ttl
+     * @param level    {@link ConsistencyLevel}
+     * @throws ExecuteAsyncQueryException
+     * @throws UnsupportedOperationException
+     */
+    public void save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        Objects.requireNonNull(entities, "entities is required");
+        StreamSupport.stream(entities.spliterator(), false).forEach(e -> this.save(e, ttl, level));
     }
 
     @Override
