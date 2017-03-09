@@ -47,7 +47,7 @@ import java.util.function.Consumer;
  * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel, Consumer)}</p>
  * <p>{@link CassandraColumnFamilyManagerAsync#cql(String, Consumer)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#findAsync(ColumnQuery, ConsistencyLevel, Consumer)}</p>
+ * <p>{@link CassandraColumnFamilyManagerAsync#find(ColumnQuery, ConsistencyLevel, Consumer)}</p>
  */
 public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsync {
 
@@ -233,7 +233,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @throws ExecuteAsyncQueryException a thread exception
      * @throws NullPointerException when either statment and callback is null
      */
-    public void cql(Statement statement, Consumer<List<ColumnEntity>> consumer)
+    public void execute(Statement statement, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException {
 
         Objects.requireNonNull(statement, "statement is required");
