@@ -36,6 +36,7 @@ class CassandraProperties {
 
     private static final String DEFAULT_THREADS_NUMBER = Integer.toString(Runtime.getRuntime().availableProcessors());
     private static final String CASSANDRA_HOSTER = "cassandra-host";
+    private static final String CASSANDRA_PORT = "cassandra-port";
     private static final String CASSANDRA_QUERY = "cassandra-query";
     private static final String CASSANDRA_THREADS_NUMBER = "cassandra-threads-number";
     private static final String CASSANDRA_SSL = "cassandra-ssl";
@@ -106,6 +107,8 @@ class CassandraProperties {
 
         configurations.keySet().stream().filter(s -> s.startsWith(CASSANDRA_QUERY))
                 .sorted().map(configurations::get).forEach(cp::addQuery);
+
+        cp.port = OptionalInt.of(Integer.valueOf(configurations.getOrDefault(CASSANDRA_PORT, "9042")));
         cp.numTreads = configurations.getOrDefault(CASSANDRA_THREADS_NUMBER, DEFAULT_THREADS_NUMBER);
         cp.withSSL = Boolean.valueOf(configurations.getOrDefault(CASSANDRA_SSL, FALSE.toString()));
         cp.withoutMetrics = Boolean.valueOf(configurations.getOrDefault(CASSANDRA_METRICS, FALSE.toString()));

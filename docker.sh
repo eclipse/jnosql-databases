@@ -1,5 +1,4 @@
 docker run -e ARANGO_NO_AUTH=1 -d --name arangodb-instance -p 8529:8529 -d arangodb/arangodb
-docker run --name cassandra-instance -p 9042:9042 -d cassandra
 docker run -d --name couchbase-instance -p 8091-8094:8091-8094 -p 11210:11210 couchbase
 docker run --name elasticsearch-instance -p 9300:9300 -p 9200:9200 -d elasticsearch
 docker run --name mongo-instance -p 27017:27017 -d mongo
