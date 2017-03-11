@@ -78,8 +78,10 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
         boolean exists = isExists(database);
         if (!exists) {
             URL url = ElasticsearchDocumentCollectionManagerFactory.class.getResource('/' + database + ".json");
-            byte[] bytes = getBytes(url);
-            client.admin().indices().prepareCreate(database).setSource(bytes).get();
+            if (Objects.nonNull(url)) {
+                byte[] bytes = getBytes(url);
+                client.admin().indices().prepareCreate(database).setSource(bytes).get();
+            }
         }
     }
 
