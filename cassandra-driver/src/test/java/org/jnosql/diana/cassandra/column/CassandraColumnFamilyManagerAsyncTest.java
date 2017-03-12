@@ -20,12 +20,16 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import org.apache.thrift.transport.TTransportException;
+import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.Columns;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +46,8 @@ public class CassandraColumnFamilyManagerAsyncTest {
     private CassandraColumnFamilyManagerAsync columnEntityManager;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException, IOException, TTransportException {
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.getAsync(KEY_SPACE);
@@ -77,5 +82,10 @@ public class CassandraColumnFamilyManagerAsyncTest {
         ColumnEntity columnFamily = ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         columns.forEach(columnFamily::add);
         return columnFamily;
+    }
+
+    @After
+    public void end(){
+        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 }

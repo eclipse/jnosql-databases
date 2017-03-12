@@ -22,6 +22,8 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Session;
+import org.apache.thrift.transport.TTransportException;
+import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
@@ -29,10 +31,12 @@ import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +59,8 @@ public class CassandraColumnFamilyManagerTest {
     private CassandraColumnFamilyManager columnEntityManager;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException, IOException, TTransportException {
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.get(KEY_SPACE);
@@ -196,4 +201,8 @@ public class CassandraColumnFamilyManagerTest {
         return columnFamily;
     }
 
+    @After
+    public void end(){
+        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+    }
 }
