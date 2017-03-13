@@ -31,8 +31,6 @@ import static org.junit.Assert.assertNotNull;
 
 
 public class MongoDBDocumentConfigurationTest {
-
-
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
         Map<String, String> map  = new HashMap<>();

@@ -26,9 +26,11 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +42,12 @@ import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
 public class MongoDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
-    private DocumentCollectionManager entityManager;
 
-    @Before
-    public void setUp() {
+    private static DocumentCollectionManager entityManager;
+
+    @BeforeClass
+    public static void setUp() throws IOException {
+        MongoDbHelper.startMongoDb();
         entityManager = get().get("database");
     }
 
@@ -84,4 +88,8 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         return entity;
     }
 
+    @AfterClass
+    public static void end() {
+        MongoDbHelper.stopMongoDb();
+    }
 }
