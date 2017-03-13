@@ -125,6 +125,14 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
         }
     }
 
+    /**
+     * Find using query
+     *
+     * @param query  the query
+     * @param params the params
+     * @return the query result
+     * @throws NullPointerException when either query or params are null
+     */
     public List<DocumentEntity> find(String query, Object... params) throws NullPointerException {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
