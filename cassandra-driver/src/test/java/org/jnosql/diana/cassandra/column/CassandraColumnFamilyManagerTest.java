@@ -21,6 +21,7 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.Session;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
@@ -35,15 +36,18 @@ import org.jnosql.diana.api.column.Columns;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -62,7 +66,7 @@ public class CassandraColumnFamilyManagerTest {
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnFamilyManager columnEntityManager;
 
-      @Before
+    @Before
     public void setUp() throws InterruptedException, IOException, TTransportException {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
@@ -88,7 +92,6 @@ public class CassandraColumnFamilyManagerTest {
     }
 
 
-
     @Test
     public void shouldInsertColumns() {
         ColumnEntity columnEntity = getColumnFamily();
@@ -100,7 +103,6 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity columnEntity = getColumnFamily();
         columnEntityManager.save(columnEntity, CONSISTENCY_LEVEL);
     }
-
 
 
     @Test
@@ -199,7 +201,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldSupportUDT() {
         ColumnEntity entity = ColumnEntity.of("users");
         entity.add(Column.of("nickname", "ada"));
-        List<Column> columns =new ArrayList<>();
+        List<Column> columns = new ArrayList<>();
         columns.add(Column.of("firstname", "Ada"));
         columns.add(Column.of("lastname", "Lovelace"));
         UDT udt = UDT.builder().withName("name")
@@ -222,7 +224,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldSupportAnUDTElement() {
         ColumnEntity entity = ColumnEntity.of("users");
         entity.add(Column.of("nickname", "Ioda"));
-        List<Column> columns =new ArrayList<>();
+        List<Column> columns = new ArrayList<>();
         columns.add(Column.of("firstname", "Ioda"));
         UDT udt = UDT.builder().withName("name")
                 .withTypeName("fullname")
@@ -240,6 +242,24 @@ public class CassandraColumnFamilyManagerTest {
     }
 
 
+    @Test
+    public void shouldSupportDate() {
+        ColumnEntity entity = ColumnEntity.of("history");
+        entity.add(Column.of("name", "World war II"));
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        Date dateEnd = Date.from(java.time.LocalDate.of(1945, Month.SEPTEMBER, 2).atStartOfDay(defaultZoneId).toInstant());
+        Calendar dataStart = Calendar.getInstance();
+        entity.add(Column.of("dataStart", LocalDate.fromYearMonthDay(1939,9, 1)));
+        entity.add(Column.of("dateEnd", dateEnd));
+        columnEntityManager.save(entity);
+        ColumnQuery query = ColumnQuery.of("history");
+        query.and(ColumnCondition.eq(Column.of("name", "World war II")));
+        ColumnEntity entity1 = columnEntityManager.singleResult(query).get();
+        Assert.assertNotNull(entity1);
+
+    }
+
+
     private ColumnEntity getColumnFamily() {
         Map<String, Object> fields = new HashMap<>();
         fields.put("name", "Cassandra");
@@ -252,9 +272,8 @@ public class CassandraColumnFamilyManagerTest {
     }
 
 
-
     @After
-    public void end(){
+    public void end() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 }
