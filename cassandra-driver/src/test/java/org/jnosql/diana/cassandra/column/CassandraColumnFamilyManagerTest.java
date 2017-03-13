@@ -34,9 +34,11 @@ import org.jnosql.diana.api.column.Columns;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,13 +60,14 @@ public class CassandraColumnFamilyManagerTest {
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnFamilyManager columnEntityManager;
 
-    @Before
+      @Before
     public void setUp() throws InterruptedException, IOException, TTransportException {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.get(KEY_SPACE);
     }
+
 
     @Test
     public void shouldClose() throws Exception {
@@ -190,6 +193,22 @@ public class CassandraColumnFamilyManagerTest {
         return asList(entity, entity1, entity2);
     }
 
+    @Test
+    public void shouldUserUDT() {
+        ColumnEntity entity = ColumnEntity.of("users");
+        entity.add(Column.of("nickname", "ada"));
+        List<Column> columns =new ArrayList<>();
+        columns.add(Column.of("firstname", "Ada"));
+        columns.add(Column.of("lastname", "Lovelace"));
+        UDT udt = new UDT("name", "fullname",columns );
+        entity.add(udt);
+        columnEntityManager.save(entity);
+        ColumnQuery query = ColumnQuery.of("users");
+        List<ColumnEntity> entities = columnEntityManager.find(query);
+        System.out.println(entities);
+    }
+
+
     private ColumnEntity getColumnFamily() {
         Map<String, Object> fields = new HashMap<>();
         fields.put("name", "Cassandra");
@@ -200,6 +219,8 @@ public class CassandraColumnFamilyManagerTest {
         columns.forEach(columnFamily::add);
         return columnFamily;
     }
+
+
 
     @After
     public void end(){

@@ -67,7 +67,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     @Override
     public void save(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         session.executeAsync(insert);
     }
 
@@ -79,7 +79,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      */
     public void save(ColumnEntity entity, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.requireNonNull(entity, "entity is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         session.executeAsync(insert);
     }
@@ -106,7 +106,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(callBack, "consumer is required");
 
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> callBack.accept(entity), executor);
@@ -116,7 +116,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     public void save(ColumnEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.executeAsync(insert);
     }
@@ -133,7 +133,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.executeAsync(insert);
@@ -152,7 +152,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(callBack, "consumer is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
@@ -175,14 +175,14 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
 
     @Override
     public void save(ColumnEntity entity, Consumer<ColumnEntity> consumer) {
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> consumer.accept(entity), executor);
     }
 
     @Override
     public void save(ColumnEntity entity, Duration ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> callBack.accept(entity), executor);

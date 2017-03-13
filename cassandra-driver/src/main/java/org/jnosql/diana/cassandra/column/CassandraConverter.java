@@ -21,12 +21,18 @@
 package org.jnosql.diana.cassandra.column;
 
 
+import com.datastax.driver.core.CodecRegistry;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.TypeCodec;
+import com.datastax.driver.core.UDTValue;
+import com.datastax.driver.core.UserType;
+import com.google.common.reflect.TypeToken;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnEntity;
+import org.jnosql.diana.api.document.Document;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -35,6 +41,8 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 final class CassandraConverter {
+
+    private static CodecRegistry CODE_REGISTRY = CodecRegistry.DEFAULT_INSTANCE;
 
     private CassandraConverter() {
     }
@@ -53,75 +61,41 @@ final class CassandraConverter {
     }
 
     public static Object get(ColumnDefinitions.Definition definition, Row row) {
+
         String name = definition.getName();
-        Class classType = get(definition.getType().getName());
-        if (classType == List.class) {
-            DataType dataType = definition.getType().getTypeArguments().get(0);
-            return row.getList(name, get(dataType.getName()));
-        }
-
-        if (classType == Set.class) {
-            DataType dataType = definition.getType().getTypeArguments().get(0);
-            return row.getSet(name, get(dataType.getName()));
-        }
-
-        if (classType == Map.class) {
-            DataType keyType = definition.getType().getTypeArguments().get(0);
-            DataType valueType = definition.getType().getTypeArguments().get(1);
-            return row.getMap(name, get(keyType.getName()), get(valueType.getName()));
-        }
-        return row.get(name, classType);
-
-    }
-
-    private static Class get(DataType.Name name) {
-        switch (name) {
-            case ASCII:
-            case TEXT:
-            case VARCHAR:
-                return String.class;
-            case BIGINT:
-            case COUNTER:
-                return Long.class;
-            case INT:
-            case SMALLINT:
-            case TINYINT:
-                return Integer.class;
-            case BLOB:
-                return ByteBuffer.class;
-            case BOOLEAN:
-                return Boolean.class;
-            case DECIMAL:
-                return BigDecimal.class;
-            case VARINT:
-                return BigInteger.class;
-            case DOUBLE:
-                return Double.class;
-            case FLOAT:
-                return Float.class;
-            case INET:
-                return InetAddress.class;
-
-            case UUID:
-            case TIMEUUID:
-                return UUID.class;
+        switch (definition.getType().getName()) {
             case LIST:
-                return List.class;
+                DataType typeList = definition.getType().getTypeArguments().get(0);
+                TypeToken<Object> javaTypeList = CODE_REGISTRY.codecFor(typeList).getJavaType();
+                return row.getList(name, javaTypeList);
             case SET:
-                return Set.class;
+                DataType typeSet = definition.getType().getTypeArguments().get(0);
+                TypeToken<Object> javaTypeSet = CODE_REGISTRY.codecFor(typeSet).getJavaType();
+                return row.getList(name, javaTypeSet);
             case MAP:
-                return Map.class;
-            case TIMESTAMP:
-            case DATE:
-            case TIME:
-                return Date.class;
-
-            case TUPLE:
-            case CUSTOM:
+                DataType typeKey = definition.getType().getTypeArguments().get(0);
+                DataType typeValue = definition.getType().getTypeArguments().get(1);
+                TypeToken<Object> javaTypeKey = CODE_REGISTRY.codecFor(typeKey).getJavaType();
+                TypeToken<Object> javaTypeValue = CODE_REGISTRY.codecFor(typeValue).getJavaType();
+                return row.getMap(name, javaTypeKey, javaTypeValue);
             case UDT:
-            default:
-                throw new IllegalArgumentException("The type is not supported " + name);
-
+                UDTValue udtValue = row.getUDTValue(name);
+                UserType type = udtValue.getType();
+                List<Column> columns = new ArrayList<>();
+                for (String fieldName : type.getFieldNames()) {
+                    DataType fieldType = type.getFieldType(fieldName);
+                    Object elementValue = udtValue.get(fieldName, CODE_REGISTRY.codecFor(fieldType));
+                    if (elementValue != null) {
+                        columns.add(Column.of(fieldName, elementValue));
+                    }
+                }
+                return new UDT(name, type.getTypeName(), columns);
         }
+
+        TypeCodec<Object> objectTypeCodec = CODE_REGISTRY.codecFor(definition.getType());
+        return row.get(name, objectTypeCodec);
+
     }
+
+
 }

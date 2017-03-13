@@ -66,7 +66,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
     @Override
     public ColumnEntity save(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         session.execute(insert);
         return entity;
     }
@@ -81,7 +81,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
     public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.execute(insert);
         return entity;
@@ -115,7 +115,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
      */
     public ColumnEntity save(ColumnEntity entity, ConsistencyLevel level) throws NullPointerException {
         Objects.requireNonNull(entity, "entity is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         session.execute(insert);
         return entity;
@@ -135,7 +135,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
         Objects.requireNonNull(level, "level is required");
-        Insert insert = QueryUtils.insert(entity, keyspace);
+        Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.execute(insert);

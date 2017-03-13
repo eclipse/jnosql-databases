@@ -21,6 +21,11 @@
 package org.jnosql.diana.cassandra.column;
 
 
+import com.datastax.driver.core.CodecRegistry;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.TypeCodec;
+import com.datastax.driver.core.UDTValue;
+import com.datastax.driver.core.UserType;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Delete;
@@ -42,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -65,10 +71,27 @@ final class QueryUtils {
     }
 
 
-    public static Insert insert(ColumnEntity entity, String keyspace) {
+    public static Insert insert(ColumnEntity entity, String keyspace, Session session) {
         Insert insert = insertInto(keyspace, entity.getName());
-        entity.getColumns().forEach(d -> insert.value(d.getName(), ValueUtil.convert(d.getValue())));
+        entity.getColumns().stream().filter(d -> !UDT.class.isInstance(d))
+                .forEach(d -> insert.value(d.getName(), ValueUtil.convert(d.getValue())));
+        Consumer<? super UDT> ss;
+        entity.getColumns().stream()
+                .filter(d -> UDT.class.isInstance(d))
+                .map(d -> UDT.class.cast(d))
+                .forEach(udt -> insertUDT(udt, keyspace, session, insert));
         return insert;
+    }
+
+    private static void  insertUDT(UDT udt, String keyspace, Session session, Insert insert) {
+        UserType userType = session.getCluster().getMetadata().getKeyspace(keyspace).getUserType(udt.getUserType());
+        UDTValue udtValue = userType.newValue();
+        for (Column column : udt.getColumns()) {
+            Object convert = ValueUtil.convert(column.getValue());
+            TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(convert);
+            udtValue.set(column.getName(), convert, objectTypeCodec);
+        }
+        insert.value(udt.getName(), udtValue);
     }
 
 
