@@ -28,9 +28,11 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +50,11 @@ import static org.junit.Assert.assertTrue;
 public class MongoDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private DocumentCollectionManager entityManager;
+    private static DocumentCollectionManager entityManager;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() throws IOException {
+        MongoDbHelper.startMongoDb();
         entityManager = get().get("database");
     }
 
@@ -121,6 +124,10 @@ public class MongoDBDocumentCollectionManagerTest {
         return entity;
     }
 
+    @AfterClass
+    public static void end(){
+        MongoDbHelper.stopMongoDb();
+    }
 
     public void init() {
         DocumentEntity oReilly = DocumentEntity.of("oReilly");

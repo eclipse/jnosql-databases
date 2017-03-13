@@ -20,20 +20,23 @@
 
 package org.jnosql.diana.mongodb.document;
 
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertNotNull;
 
 
 public class MongoDBDocumentCollectionManagerFactoryTest {
 
-    private MongoDBDocumentConfiguration configuration;
+    private static MongoDBDocumentConfiguration configuration;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() throws IOException {
         configuration = new MongoDBDocumentConfiguration();
-
+        MongoDbHelper.startMongoDb();
     }
 
     @Test
@@ -46,5 +49,10 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
     public void shouldCreateEntityManagerAsync() {
         MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
         assertNotNull(mongoDBFactory.getAsync("database"));
+    }
+
+    @AfterClass
+    public static void end(){
+        MongoDbHelper.stopMongoDb();
     }
 }
