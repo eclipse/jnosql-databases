@@ -32,17 +32,13 @@ import com.google.common.reflect.TypeToken;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.document.Document;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 final class CassandraConverter {
 
-    private static CodecRegistry CODE_REGISTRY = CodecRegistry.DEFAULT_INSTANCE;
+    private static final CodecRegistry CODE_REGISTRY = CodecRegistry.DEFAULT_INSTANCE;
 
     private CassandraConverter() {
     }
@@ -53,9 +49,15 @@ final class CassandraConverter {
         for (ColumnDefinitions.Definition definition : row.getColumnDefinitions().asList()) {
             DataType type = definition.getType();
             columnFamily = definition.getTable();
-            Value value = Value.of(CassandraConverter.get(definition, row));
-            Column column = Column.of(definition.getName(), value);
-            columns.add(column);
+            Object result = CassandraConverter.get(definition, row);
+            if (DataType.Name.UDT.equals(definition.getType().getName())) {
+                columns.add(Column.class.cast(result));
+            } else {
+                Value value = Value.of(result);
+                Column column = Column.of(definition.getName(), value);
+                columns.add(column);
+            }
+
         }
         return ColumnEntity.of(columnFamily, columns);
     }
@@ -89,11 +91,12 @@ final class CassandraConverter {
                         columns.add(Column.of(fieldName, elementValue));
                     }
                 }
-                return new UDT(name, type.getTypeName(), columns);
+                return UDT.builder().withName(name).withTypeName(type.getTypeName()).addAll(columns).build();
+            default:
+                TypeCodec<Object> objectTypeCodec = CODE_REGISTRY.codecFor(definition.getType());
+                return row.get(name, objectTypeCodec);
         }
 
-        TypeCodec<Object> objectTypeCodec = CODE_REGISTRY.codecFor(definition.getType());
-        return row.get(name, objectTypeCodec);
 
     }
 

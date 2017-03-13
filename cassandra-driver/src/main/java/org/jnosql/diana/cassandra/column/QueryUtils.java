@@ -26,6 +26,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
+import com.datastax.driver.core.exceptions.CodecNotFoundException;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Delete;
@@ -47,7 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -73,17 +73,20 @@ final class QueryUtils {
 
     public static Insert insert(ColumnEntity entity, String keyspace, Session session) {
         Insert insert = insertInto(keyspace, entity.getName());
-        entity.getColumns().stream().filter(d -> !UDT.class.isInstance(d))
-                .forEach(d -> insert.value(d.getName(), ValueUtil.convert(d.getValue())));
-        Consumer<? super UDT> ss;
+
+
         entity.getColumns().stream()
-                .filter(d -> UDT.class.isInstance(d))
-                .map(d -> UDT.class.cast(d))
-                .forEach(udt -> insertUDT(udt, keyspace, session, insert));
+                .forEach(c -> {
+                    if (UDT.class.isInstance(c)) {
+                        insertUDT(UDT.class.cast(c), keyspace, session, insert);
+                    } else {
+                        insertSingleField(c, insert);
+                    }
+                });
         return insert;
     }
 
-    private static void  insertUDT(UDT udt, String keyspace, Session session, Insert insert) {
+    private static void insertUDT(UDT udt, String keyspace, Session session, Insert insert) {
         UserType userType = session.getCluster().getMetadata().getKeyspace(keyspace).getUserType(udt.getUserType());
         UDTValue udtValue = userType.newValue();
         for (Column column : udt.getColumns()) {
@@ -92,6 +95,18 @@ final class QueryUtils {
             udtValue.set(column.getName(), convert, objectTypeCodec);
         }
         insert.value(udt.getName(), udtValue);
+    }
+
+    private static void insertSingleField(Column column, Insert insert) {
+        Object value = column.get();
+        try {
+            CodecRegistry.DEFAULT_INSTANCE.codecFor(value);
+            insert.value(column.getName(), value);
+        } catch (CodecNotFoundException exp) {
+            insert.value(column.getName(), ValueUtil.convert(column.getValue()));
+        }
+
+
     }
 
 

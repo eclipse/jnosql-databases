@@ -1,90 +1,55 @@
+/*
+ * Copyright 2017 Otavio Santana and others
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jnosql.diana.cassandra.column;
 
 
-import org.jnosql.diana.api.TypeSupplier;
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-public class UDT implements Column {
+/**
+ * A Cassandra user data type, this interface does not support both Value alias method:
+ * get(class) and get(TypeSupplier);
+ */
+public interface UDT extends Column {
 
-    private final String name;
+    /**
+     * The UDT name
+     *
+     * @return the UDT name
+     */
+    String getUserType();
 
-    private final String userType;
+    /**
+     * The columns at this UDT
+     *
+     * @return the fields at UDT
+     */
+    List<Column> getColumns();
 
-    private final List<Column> columns;
-
-    public UDT(String name, String userType, List<Column> columns) {
-        this.name = name;
-        this.userType = userType;
-        this.columns = columns;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Value getValue() {
-        return Value.of(columns);
-    }
-
-    @Override
-    public <T> T get(Class<T> clazz) throws NullPointerException, UnsupportedOperationException {
-        if (Iterable.class.isAssignableFrom(clazz)) {
-            return (T) columns;
-        }
-        throw new IllegalArgumentException("This method just returns a list of document");
-    }
-
-    @Override
-    public <T> T get(TypeSupplier<T> typeSupplier) throws NullPointerException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("This method is not supported");
-    }
-
-    @Override
-    public Object get() {
-        return columns;
-    }
-
-    public List<Column> getColumns() {
-        return Collections.unmodifiableList(columns);
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof UDT)) {
-            return false;
-        }
-        UDT udt = (UDT) o;
-        return Objects.equals(name, udt.name) &&
-                Objects.equals(userType, udt.userType) &&
-                Objects.equals(columns, udt.columns);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, userType, columns);
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("UDT{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", userType='").append(userType).append('\'');
-        sb.append(", columns=").append(columns);
-        sb.append('}');
-        return sb.toString();
+    /**
+     * Returns a UDT builder
+     *
+     * @return the {@link UDTBuilder} instance
+     */
+    static UDTBuilder builder() {
+        return new UDTBuilder();
     }
 }

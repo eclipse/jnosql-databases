@@ -24,6 +24,7 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Session;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.hamcrest.Matchers;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -194,18 +196,47 @@ public class CassandraColumnFamilyManagerTest {
     }
 
     @Test
-    public void shouldUserUDT() {
+    public void shouldSupportUDT() {
         ColumnEntity entity = ColumnEntity.of("users");
         entity.add(Column.of("nickname", "ada"));
         List<Column> columns =new ArrayList<>();
         columns.add(Column.of("firstname", "Ada"));
         columns.add(Column.of("lastname", "Lovelace"));
-        UDT udt = new UDT("name", "fullname",columns );
+        UDT udt = UDT.builder().withName("name")
+                .withTypeName("fullname")
+                .addAll(columns).build();
         entity.add(udt);
         columnEntityManager.save(entity);
         ColumnQuery query = ColumnQuery.of("users");
-        List<ColumnEntity> entities = columnEntityManager.find(query);
-        System.out.println(entities);
+        ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
+        Column column = columnEntity.find("name").get();
+        udt = UDT.class.cast(column);
+        List<Column> udtColumns = udt.getColumns();
+        Assert.assertEquals("name", udt.getName());
+        Assert.assertEquals("fullname", udt.getUserType());
+        assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ada"),
+                Column.of("lastname", "Lovelace")));
+    }
+
+    @Test
+    public void shouldSupportAnUDTElement() {
+        ColumnEntity entity = ColumnEntity.of("users");
+        entity.add(Column.of("nickname", "Ioda"));
+        List<Column> columns =new ArrayList<>();
+        columns.add(Column.of("firstname", "Ioda"));
+        UDT udt = UDT.builder().withName("name")
+                .withTypeName("fullname")
+                .addAll(columns).build();
+        entity.add(udt);
+        columnEntityManager.save(entity);
+        ColumnQuery query = ColumnQuery.of("users");
+        ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
+        Column column = columnEntity.find("name").get();
+        udt = UDT.class.cast(column);
+        List<Column> udtColumns = udt.getColumns();
+        Assert.assertEquals("name", udt.getName());
+        Assert.assertEquals("fullname", udt.getUserType());
+        assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ioda")));
     }
 
 
