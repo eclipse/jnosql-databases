@@ -32,7 +32,7 @@
     <groupId>org.jnosql.diana</groupId>
     <artifactId>diana-driver</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>JNOSQL Diana Driver</name>
 
     <properties>
