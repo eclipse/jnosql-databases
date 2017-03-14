@@ -26,13 +26,13 @@
     <parent>
         <groupId>org.jnosql</groupId>
         <artifactId>jnosql-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <groupId>org.jnosql.diana</groupId>
     <artifactId>diana-driver</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>JNOSQL Diana Driver</name>
 
     <properties>
@@ -71,4 +71,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-jnosql-maven</id>
+            <name>jnosql-maven</name>
+            <url>https://api.bintray.com/maven/jnosql/maven/org.jnosql.diana:diana-driver/;publish=1</url>
+        </repository>
+    </distributionManagement>
+
+
 </project>
