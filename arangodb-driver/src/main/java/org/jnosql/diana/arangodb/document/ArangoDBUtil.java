@@ -30,7 +30,9 @@ import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +41,11 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * The utilitarian class to ArangoDB
@@ -91,7 +96,7 @@ public final class ArangoDBUtil {
     static DocumentEntity toEntity(String collection, BaseDocument document) {
         Map<String, Object> properties = document.getProperties();
         List<Document> documents = properties.keySet().stream()
-                .map(k -> Document.of(k, properties.get(k)))
+                .map(k -> toDocument(k, properties))
                 .collect(Collectors.toList());
         documents.add(Document.of(KEY, document.getKey()));
         documents.add(Document.of(ID, document.getId()));
@@ -107,10 +112,40 @@ public final class ArangoDBUtil {
         return new BaseDocument(map);
     }
 
+    private static Document toDocument(String key, Map<String, Object> properties) {
+        Object value = properties.get(key);
+        if (Map.class.isInstance(value)) {
+            Map map = Map.class.cast(value);
+            return Document.of(key, map.keySet()
+                    .stream().map(k -> toDocument(k.toString(), map))
+                    .collect(Collectors.toList()));
+        }
+        if (isADocumentList(value)) {
+            List<Document> documents = new ArrayList<>();
+            for (Object object : Iterable.class.cast(value)) {
+                documents.add(Document.of(Map.class.cast(object).get("name").toString(),
+                        Map.class.cast(Map.class.cast(object).get("value")).get("value")));
+            }
+            return Document.of(key, documents);
+
+        }
+        return Document.of(key, value);
+    }
+
+    private static boolean isADocumentList(Object value) {
+        return Iterable.class.isInstance(value) &&
+                stream(Iterable.class.cast(value).spliterator(), false)
+                        .allMatch(d -> Map.class.isInstance(d));
+    }
+
     private static Object convert(Value value) {
         Object val = value.get();
         if (WRITER.isCompatible(val.getClass())) {
             return WRITER.write(val);
+        }
+        if (Document.class.isInstance(val)) {
+            Document document = Document.class.cast(val);
+            return singletonMap(document.getName(), convert(document.getValue()));
         }
         return val;
     }
