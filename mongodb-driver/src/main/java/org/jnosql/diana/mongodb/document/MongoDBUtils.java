@@ -25,6 +25,9 @@ import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 final class MongoDBUtils {
     private static final ValueWriter WRITER = ValueWriterDecorator.getInstance();
 
@@ -44,9 +47,23 @@ final class MongoDBUtils {
             Object converted = convert(subDocument.getValue());
             return new Document(subDocument.getName(), converted);
         }
+        if (isSudDocument(val)) {
+            return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+                    .map(d -> {
+                        org.jnosql.diana.api.document.Document dianaDocument = org.jnosql.diana.api.document.Document.class.cast(d);
+                        Document document = new Document();
+                        document.append(dianaDocument.getName(), dianaDocument.get());
+                        return document;
+                    }).collect(Collectors.toList());
+        }
         if (WRITER.isCompatible(val.getClass())) {
             return WRITER.write(val);
         }
         return val;
+    }
+
+    private static boolean isSudDocument(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
     }
 }
