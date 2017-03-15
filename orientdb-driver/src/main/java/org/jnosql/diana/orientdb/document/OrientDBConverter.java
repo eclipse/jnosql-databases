@@ -27,7 +27,6 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
