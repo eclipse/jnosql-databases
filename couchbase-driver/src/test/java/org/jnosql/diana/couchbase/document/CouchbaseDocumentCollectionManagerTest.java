@@ -19,6 +19,7 @@
  */
 package org.jnosql.diana.couchbase.document;
 
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
@@ -30,6 +31,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,12 +125,27 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(id));
         DocumentEntity entityFound = entityManager.find(query).get(0);
-        Map<String, String> result = (Map<String, String>) entityFound.find("phones").get().getValue().get();
-        String key = result.keySet().stream().findFirst().get();
-        String value = result.get(key);
-        assertEquals("mobile", key);
-        assertEquals("1231231", value);
+        Document subDocument = entityFound.find("phones").get();
+        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        });
+        assertThat(documents, contains(Document.of("mobile", "1231231")));
     }
+
+    @Test
+    public void shouldSaveSubDocument2() {
+        DocumentEntity entity = getEntity();
+        entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
+        DocumentEntity entitySaved = entityManager.save(entity);
+        Document id = entitySaved.find("_id").get();
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        query.and(DocumentCondition.eq(id));
+        DocumentEntity entityFound = entityManager.find(query).get(0);
+        Document subDocument = entityFound.find("phones").get();
+        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        });
+        assertThat(documents, contains(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+    }
+
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

@@ -30,15 +30,18 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.driver.value.ValueUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
 final class EntityConverter {
 
@@ -56,7 +59,7 @@ final class EntityConverter {
                 .map(bucket::get)
                 .filter(Objects::nonNull)
                 .map(j -> {
-                    List<Document> documents = Documents.of(j.content().toMap());
+                    List<Document> documents = toDocuments(j.content().toMap());
                     Document id = Document.of(ID_FIELD, j.id());
                     DocumentEntity entity = DocumentEntity.of(j.id().split(SPLIT_KEY)[0], documents);
                     entity.remove(ID_FIELD);
@@ -69,6 +72,31 @@ final class EntityConverter {
     static String getPrefix(Document document, String collection) {
         String id = document.get(String.class);
         return getPrefix(collection, id);
+    }
+
+    private static List<Document> toDocuments(Map<String, Object> map) {
+        List<Document> documents = new ArrayList<>();
+        for (String key : map.keySet()) {
+            Object value = map.get(key);
+            if (Map.class.isInstance(value)) {
+                documents.add(Document.of(key, toDocuments(Map.class.cast(value))));
+            } else if (isADocumentIterable(value)) {
+                List<Document> subDocuments = new ArrayList<>();
+                for (Object object : Iterable.class.cast(value)) {
+                    subDocuments.addAll(toDocuments(Map.class.cast(object)));
+                }
+                documents.add(Document.of(key, subDocuments));
+            } else {
+                documents.add(Document.of(key, value));
+            }
+        }
+        return documents;
+    }
+
+    private static boolean isADocumentIterable(Object value) {
+        return Iterable.class.isInstance(value) &&
+                stream(Iterable.class.cast(value).spliterator(), false)
+                        .allMatch(d -> Map.class.isInstance(d));
     }
 
     static String getPrefix(String collection, String id) {
@@ -107,7 +135,14 @@ final class EntityConverter {
                         jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
                     } else if (Iterable.class.isInstance(value)) {
                         JsonArray jsonArray = JsonArray.create();
-                        Iterable.class.cast(value).forEach(jsonArray::add);
+                        Iterable.class.cast(value).forEach(o -> {
+                            if (Document.class.isInstance(o)) {
+                                Document document = Document.class.cast(o);
+                                jsonArray.add(Collections.singletonMap(document.getName(), document.get()));
+                            } else {
+                                jsonArray.add(value);
+                            }
+                        });
                         jsonObject.put(d.getName(), jsonArray);
                     } else {
                         jsonObject.put(d.getName(), value);
