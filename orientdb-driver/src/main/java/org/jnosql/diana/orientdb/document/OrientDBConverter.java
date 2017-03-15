@@ -26,7 +26,11 @@ import org.jnosql.diana.api.document.DocumentEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 final class OrientDBConverter {
 
@@ -48,9 +52,19 @@ final class OrientDBConverter {
     static DocumentEntity convert(ODocument document) {
         DocumentEntity entity = DocumentEntity.of(document.getClassName());
         Stream.of(document.fieldNames())
-                .map(f -> Document.of(f, (Object) document.field(f)))
+                .map(f -> Document.of(f,  convert((Object) document.field(f))))
                 .forEach(entity::add);
         entity.add(Document.of(RID_FIELD, document.field(RID_FIELD).toString()));
         return entity;
+    }
+
+    private static Object convert(Object object) {
+        if(Map.class.isInstance(object)) {
+            Map map = Map.class.cast(object);
+            return map.keySet().stream()
+                    .map(k -> Document.of(k.toString(), map.get(k)))
+                    .collect(toList());
+        }
+        return object;
     }
 }
