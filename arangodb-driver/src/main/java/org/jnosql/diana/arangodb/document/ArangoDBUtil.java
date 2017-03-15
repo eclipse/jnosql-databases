@@ -32,7 +32,6 @@ import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
@@ -120,7 +118,7 @@ public final class ArangoDBUtil {
                     .stream().map(k -> toDocument(k.toString(), map))
                     .collect(Collectors.toList()));
         }
-        if (isADocumentList(value)) {
+        if (isADocumentIterable(value)) {
             List<Document> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
                 documents.add(Document.of(Map.class.cast(object).get("name").toString(),
@@ -132,7 +130,7 @@ public final class ArangoDBUtil {
         return Document.of(key, value);
     }
 
-    private static boolean isADocumentList(Object value) {
+    private static boolean isADocumentIterable(Object value) {
         return Iterable.class.isInstance(value) &&
                 stream(Iterable.class.cast(value).spliterator(), false)
                         .allMatch(d -> Map.class.isInstance(d));
