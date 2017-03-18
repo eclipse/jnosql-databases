@@ -15,14 +15,7 @@
  *
  *
  */
-
 /**
- * Redis is a software project that implements data structure servers. It is open-source, networked, in-memory,
- * and stores keys with optional durability.
+ * The riak key-value implementation
  */
-
-/**
- * Redis is an open-source software project (sponsored by Redis Labs) that implements data structure servers.
- * It is networked, in-memory, and stores keys with optional durability.
- */
-package org.jnosql.diana.redis;
+package org.jnosql.diana.riak.key;

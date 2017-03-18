@@ -19,4 +19,8 @@
 /**
  * The redis package that has key-value implementation
  */
+
+/**
+ * The Redis key-value implementation
+ */
 package org.jnosql.diana.redis.key;

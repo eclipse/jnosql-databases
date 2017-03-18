@@ -15,14 +15,11 @@
  *
  *
  */
-
 /**
- * Redis is a software project that implements data structure servers. It is open-source, networked, in-memory,
- * and stores keys with optional durability.
+ * Riak is a distributed NoSQL key-value data store that offers high availability,
+ * fault tolerance, operational simplicity, and scalability. In addition to the open-source version,
+ * it comes in a supported enterprise version and a cloud storage version. Riak implements the principles
+ * from Amazon's Dynamo paper with heavy influence from the CAP Theorem. Written in Erlang, Riak has fault
+ * tolerance data replication and automatic data distribution across the cluster for performance and resilience.
  */
-
-/**
- * Redis is an open-source software project (sponsored by Redis Labs) that implements data structure servers.
- * It is networked, in-memory, and stores keys with optional durability.
- */
-package org.jnosql.diana.redis;
+package org.jnosql.diana.riak;
