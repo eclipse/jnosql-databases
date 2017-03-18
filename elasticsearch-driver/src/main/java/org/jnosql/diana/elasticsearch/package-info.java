@@ -25,4 +25,12 @@
  *  and an analytics and visualization platform called Kibana. The three products are designed to be used as an integrated
  *  solution, referred to as the "ELK stack".</p>
  */
+
+/**
+ * Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable
+ * full-text search engine with an HTTP web interface and schema-free JSON documents.
+ * Elasticsearch is developed in Java and is released as open source under the terms of the Apache License. Official
+ * clients are available in Java, .NET (C#), Python, Groovy and many other languages. Elasticsearch is the most popular
+ * enterprise search engine followed by Apache Solr, also based on Lucene.
+ */
 package org.jnosql.diana.elasticsearch;
