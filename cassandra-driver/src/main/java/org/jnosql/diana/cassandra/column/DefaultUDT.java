@@ -60,7 +60,9 @@ class DefaultUDT implements UDT {
 
     @Override
     public <T> T get(TypeSupplier<T> typeSupplier) throws NullPointerException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("This method is not supported");
+        Objects.requireNonNull(typeSupplier, "typeSupplier is required");
+        return Value.of(columns).get(typeSupplier);
+
     }
 
     @Override
