@@ -17,6 +17,7 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
+import org.elasticsearch.node.NodeValidationException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
@@ -25,9 +26,12 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +47,11 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
     private DocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
+
+    @BeforeClass
+    public static void startServer() throws NodeValidationException {
+        ElasticSearchHelper.startServer();
+    }
 
     @Before
     public void setUp() {
@@ -103,5 +112,10 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
+    }
+
+    @AfterClass
+    public static void stopServer() throws NodeValidationException, IOException {
+        ElasticSearchHelper.stopServer();
     }
 }
