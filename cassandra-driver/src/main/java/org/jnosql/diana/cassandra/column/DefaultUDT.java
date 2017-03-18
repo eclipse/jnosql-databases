@@ -55,7 +55,8 @@ class DefaultUDT implements UDT {
 
     @Override
     public <T> T get(Class<T> clazz) throws NullPointerException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("This method is not supported, use getColumns instead");
+        Objects.requireNonNull(clazz, "clazz is required");
+        return Value.of(columns).get(clazz);
     }
 
     @Override
