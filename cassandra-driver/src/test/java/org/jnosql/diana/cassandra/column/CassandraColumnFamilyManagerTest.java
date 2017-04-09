@@ -175,7 +175,7 @@ public class CassandraColumnFamilyManagerTest {
         getEntities().forEach(columnEntityManager::save);
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY);
         query.and(ColumnCondition.in(Column.of("id", asList(1L, 2L, 3L))));
-        query.setLimit(2L);
+        query.withMaxResults(2L);
         List<ColumnEntity> columnFamilyEntities = columnEntityManager.find(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(columnFamilyEntities.size()));
     }

@@ -115,8 +115,8 @@ final class QueryUtils {
             return QueryBuilder.select().all().from(keySpace, columnFamily);
         }
         Select.Where where = QueryBuilder.select().all().from(keySpace, columnFamily).where();
-        if (query.getLimit() > 0) {
-            where.limit((int) query.getLimit());
+        if (query.getMaxResults() > 0) {
+            where.limit((int) query.getMaxResults());
         }
         if (!query.getSorts().isEmpty()) {
             where.orderBy(query.getSorts().stream().map(SORT_ORDERING_FUNCTION).toArray(Ordering[]::new));
