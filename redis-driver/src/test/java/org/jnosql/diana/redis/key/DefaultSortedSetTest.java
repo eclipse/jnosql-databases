@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.time.Duration;
 
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +34,8 @@ import static org.junit.Assert.assertTrue;
 public class DefaultSortedSetTest {
 
     private static final String BRAZIL = "Brazil";
+    private static final String USA = "USA";
+    private static final String ENGLAND = "England";
 
     private RedisKeyValueEntityManagerFactory keyValueEntityManagerFactory;
     private SortedSet sortedSet;
@@ -42,6 +45,8 @@ public class DefaultSortedSetTest {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         sortedSet = keyValueEntityManagerFactory.getSortedSet("world-cup-2018");
         sortedSet.remove(BRAZIL);
+        sortedSet.remove(USA);
+        sortedSet.remove(ENGLAND);
     }
 
     @Test
@@ -90,10 +95,43 @@ public class DefaultSortedSetTest {
     @Test
     public void shouldRange() {
         sortedSet.add(BRAZIL, 1);
-        sortedSet.add("USA", 2);
-        sortedSet.add("England", 3);
+        sortedSet.add(USA, 2);
+        sortedSet.add(ENGLAND, 3);
 
-        assertThat(sortedSet.range(2, 3), Matchers.contains(new DefaultRanking("USA", 2)));
+        assertThat(sortedSet.range(2, 3), contains(Ranking.of(ENGLAND, 3.0)));
+    }
+
+    @Test
+    public void shoulgetRanges() {
+        Ranking brazil = Ranking.of(BRAZIL, 1.0);
+        Ranking usa = Ranking.of(USA, 2.0);
+        Ranking england = Ranking.of(ENGLAND, 3.0);
+        sortedSet.add(brazil);
+        sortedSet.add(usa);
+        sortedSet.add(england);
+
+        assertThat(sortedSet.getRanking(), contains(brazil, usa, england));
+    }
+
+    @Test
+    public void shouldRevRange() {
+        sortedSet.add(BRAZIL, 1);
+        sortedSet.add(USA, 2);
+        sortedSet.add(ENGLAND, 3);
+
+        assertThat(sortedSet.revRange(2, 3), contains(Ranking.of(BRAZIL, 1.0)));
+    }
+
+    @Test
+    public void shoulgetRevRanges() {
+        Ranking brazil = Ranking.of(BRAZIL, 1.0);
+        Ranking usa = Ranking.of(USA, 2.0);
+        Ranking england = Ranking.of(ENGLAND, 3.0);
+        sortedSet.add(brazil);
+        sortedSet.add(usa);
+        sortedSet.add(england);
+
+        assertThat(sortedSet.getRevRanking(), contains(england, usa, brazil));
     }
 
 }

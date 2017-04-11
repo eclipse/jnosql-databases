@@ -53,6 +53,12 @@ class DefaultSortedSet implements SortedSet {
     }
 
     @Override
+    public void add(Ranking ranking) throws NullPointerException {
+        Objects.requireNonNull(ranking, "ranking is required");
+        jedis.zadd(key, ranking.getPoints().doubleValue(), ranking.getMember());
+    }
+
+    @Override
     public Number increment(String member, Number value) throws NullPointerException {
         Objects.requireNonNull(member, "member is required");
         Objects.requireNonNull(value, "value is required");

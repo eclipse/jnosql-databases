@@ -38,6 +38,16 @@ public interface SortedSet {
      */
     void add(String member, Number value) throws NullPointerException;
 
+
+    /**
+     * Adds all the specified members with the specified scores to the sorted set stored at key.
+     * Creates a score.
+     *
+     * @param ranking the element
+     * @throws NullPointerException when ranking is null
+     */
+    void add(Ranking ranking) throws NullPointerException;
+
     /**
      * Increments the score of member in the sorted set stored at member by increment.
      *
@@ -93,9 +103,10 @@ public interface SortedSet {
      * Returns the specified range of elements in the sorted set stored at key.
      * The elements are considered to be ordered from the lowest to the highest score.
      * Lexicographical order is used for elements with equal score.
-     *Both start and stop are zero-based indexes
+     * Both start and stop are zero-based indexes
+     *
      * @param start the index to start
-     * @param end     the index to end
+     * @param end   the index to end
      * @return the Ranking
      */
     List<Ranking> range(long start, long end);
@@ -104,9 +115,10 @@ public interface SortedSet {
      * Returns the specified range of elements in the sorted set
      * stored at key. The elements are considered to be ordered from the
      * highest to the lowest score. Descending lexicographical order is used for elements with equal score.
-     *Both start and stop are zero-based indexes
+     * Both start and stop are zero-based indexes
+     *
      * @param start the index to start
-     * @param end     the index to end
+     * @param end   the index to end
      * @return the Ranking
      */
     List<Ranking> revRange(long start, long end);
