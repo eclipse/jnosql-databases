@@ -129,10 +129,26 @@ class DefaultSortedSet implements SortedSet {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DefaultSortedSet)) {
+            return false;
+        }
+        DefaultSortedSet that = (DefaultSortedSet) o;
+        return Objects.equals(key, that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(key);
+    }
+
+    @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("DefaultSortedSet{");
+        final StringBuilder sb = new StringBuilder("SortedSet{");
         sb.append("key='").append(key).append('\'');
-        sb.append(", jedis=").append(jedis);
         sb.append('}');
         return sb.toString();
     }
