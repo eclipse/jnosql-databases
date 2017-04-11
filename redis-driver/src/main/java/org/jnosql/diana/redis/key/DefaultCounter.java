@@ -22,12 +22,16 @@ import redis.clients.jedis.Jedis;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 
 /**
  * The default {@link Counter}
  */
 class DefaultCounter implements Counter {
+
+    private static final Predicate<String> IS_EMPTY = String::isEmpty;
+    private static final Predicate<String> IS_NOT_EMPTY = IS_EMPTY.negate();
 
     private final String key;
 
@@ -42,7 +46,7 @@ class DefaultCounter implements Counter {
     @Override
     public Number get() {
         return Optional.ofNullable(jedis.get(key))
-                .filter(String::isEmpty)
+                .filter(IS_NOT_EMPTY)
                 .map(Double::valueOf)
                 .orElse(0D);
     }
