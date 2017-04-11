@@ -24,9 +24,9 @@ import org.jnosql.diana.api.key.KeyValueConfiguration;
 
 public class RedisTestUtils {
 
-    public static BucketManagerFactory get() {
-        KeyValueConfiguration configuration = new RedisConfiguration();
-        BucketManagerFactory managerFactory = configuration.get();
+    public static RedisKeyValueEntityManagerFactory get() {
+        RedisConfiguration configuration = new RedisConfiguration();
+        RedisKeyValueEntityManagerFactory managerFactory = configuration.get();
         return managerFactory;
     }
 }

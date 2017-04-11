@@ -85,9 +85,9 @@ public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<R
      * @return the SortedSet from key
      * @throws NullPointerException when key is null
      */
-    SortedSet create(String key) throws NullPointerException {
+    SortedSet getSortedSet(String key) throws NullPointerException {
         Objects.requireNonNull(key, "key is required");
-        return null;
+        return new DefaultSortedSet(jedisPool.getResource(), key);
     }
 
 

@@ -91,17 +91,39 @@ public interface SortedSet {
 
     /**
      * Returns the specified range of elements in the sorted set stored at key.
-     *
-     * @param start the start
-     * @param end     the end
+     * The elements are considered to be ordered from the lowest to the highest score.
+     * Lexicographical order is used for elements with equal score.
+     *Both start and stop are zero-based indexes
+     * @param start the index to start
+     * @param end     the index to end
      * @return the Ranking
      */
     List<Ranking> range(long start, long end);
 
     /**
-     * Returns all elements
+     * Returns the specified range of elements in the sorted set
+     * stored at key. The elements are considered to be ordered from the
+     * highest to the lowest score. Descending lexicographical order is used for elements with equal score.
+     *Both start and stop are zero-based indexes
+     * @param start the index to start
+     * @param end     the index to end
+     * @return the Ranking
+     */
+    List<Ranking> revRange(long start, long end);
+
+    /**
+     * Returns all elements using {@link SortedSet#range(long, long)}
      *
      * @return the rankings
+     * @see SortedSet#range(long, long)
      */
     List<Ranking> getRanking();
+
+    /**
+     * Returns all elements using {@link SortedSet#revRange(long, long)}
+     *
+     * @return the rankings
+     * @see SortedSet#revRange(long, long)
+     */
+    List<Ranking> getRevRanking();
 }
