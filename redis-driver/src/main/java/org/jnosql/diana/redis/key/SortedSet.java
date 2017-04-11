@@ -25,19 +25,18 @@ import java.util.List;
  * Sorted sets are a data type which is similar to a mix between a Set and a Hash.
  * Like sets, sorted sets are composed of unique, non-repeating string elements,
  * so in some sense a sorted set is a set as well.
- *
- * @param <T> the number
  */
-public interface SortedSet<T extends Number> {
+public interface SortedSet {
 
     /**
-     * Creates a score
+     * Adds all the specified members with the specified scores to the sorted set stored at key.
+     * Creates a score.
      *
      * @param member the name
      * @param value  the value
      * @throws NullPointerException when either member or value are null
      */
-    void initialPoint(String member, T value) throws NullPointerException;
+    void add(String member, Number value) throws NullPointerException;
 
     /**
      * Increments the score of member in the sorted set stored at member by increment.
@@ -47,7 +46,7 @@ public interface SortedSet<T extends Number> {
      * @return the new score member
      * @throws NullPointerException when either member or value are null
      */
-    T increment(String member, T value) throws NullPointerException;
+    Number increment(String member, Number value) throws NullPointerException;
 
     /**
      * Increments the score of member in the sorted set stored at member by increment.
@@ -57,7 +56,7 @@ public interface SortedSet<T extends Number> {
      * @return the new score member
      * @throws NullPointerException when either member or value are null
      */
-    T decrement(String member, T value) throws NullPointerException;
+    Number decrement(String member, Number value) throws NullPointerException;
 
     /**
      * Removes a member
@@ -100,12 +99,12 @@ public interface SortedSet<T extends Number> {
      * @param end     the end
      * @return the Ranking
      */
-    List<Ranking<T>> range(long initial, long end);
+    List<Ranking> range(long initial, long end);
 
     /**
-     * Returns
+     * Returns all elements
      *
      * @return
      */
-    List<Ranking<T>> getRanking();
+    List<Ranking> getRanking();
 }

@@ -18,8 +18,6 @@
 package org.jnosql.diana.redis.key;
 
 
-import java.time.Duration;
-
 /**
  * Sorted sets are a data type which is similar to a mix between a Set and a Hash.
  * Like sets, sorted sets are composed of unique, non-repeating string elements,
@@ -38,28 +36,4 @@ public interface SortedSetFactory<T extends Number> {
      */
     SortedSet<T> create(String key) throws NullPointerException;
 
-    /**
-     * Delete the key
-     *
-     * @param key the key
-     * @throws NullPointerException when key is null
-     */
-    void delete(String key) throws NullPointerException;
-
-    /**
-     * Defines a ttl to key
-     *
-     * @param key the key
-     * @param ttl the ttl
-     * @throws NullPointerException when either key and ttl are null
-     */
-    void expire(String key, Duration ttl) throws NullPointerException;
-
-    /**
-     * Removes the ttl
-     *
-     * @param key the key
-     * @throws NullPointerException when key is null
-     */
-    void persist(String key) throws NullPointerException;
 }

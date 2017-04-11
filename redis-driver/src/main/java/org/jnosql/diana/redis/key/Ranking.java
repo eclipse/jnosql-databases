@@ -17,9 +17,18 @@
  */
 package org.jnosql.diana.redis.key;
 
-public interface Ranking<T extends Number> {
+/**
+ * An {@link SortedSet} element
+ */
+public interface Ranking {
 
-    T getPoints();
+    /**
+     * @return the point
+     */
+    Number getPoints();
 
-    String getName();
+    /**
+     * @return the member name
+     */
+    String getMember();
 }

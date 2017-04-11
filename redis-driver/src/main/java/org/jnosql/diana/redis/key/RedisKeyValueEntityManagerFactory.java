@@ -78,6 +78,19 @@ public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<R
         return new RedisMap<>(jedisPool.getResource(), keyValue, valueValue, bucketName);
     }
 
+    /**
+     * Creates a {@link SortedSet} from key
+     *
+     * @param key the key
+     * @return the SortedSet from key
+     * @throws NullPointerException when key is null
+     */
+    SortedSet create(String key) throws NullPointerException {
+        Objects.requireNonNull(key, "key is required");
+        return null;
+    }
+
+
     @Override
     public void close() {
         jedisPool.close();
