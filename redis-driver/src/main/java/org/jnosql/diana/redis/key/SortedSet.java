@@ -68,9 +68,8 @@ public interface SortedSet {
 
     /**
      * @return the number of members on this
-     * @throws NullPointerException
      */
-    int size() throws NullPointerException;
+    int size();
 
     /**
      * Delete this SortedSet
@@ -87,24 +86,22 @@ public interface SortedSet {
 
     /**
      * Removes the ttl
-     *
-     * @throws NullPointerException when key is null
      */
     void persist();
 
     /**
      * Returns the specified range of elements in the sorted set stored at key.
      *
-     * @param initial the initial
+     * @param start the start
      * @param end     the end
      * @return the Ranking
      */
-    List<Ranking> range(long initial, long end);
+    List<Ranking> range(long start, long end);
 
     /**
      * Returns all elements
      *
-     * @return
+     * @return the rankings
      */
     List<Ranking> getRanking();
 }
