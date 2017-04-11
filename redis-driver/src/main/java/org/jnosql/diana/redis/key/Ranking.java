@@ -31,4 +31,16 @@ public interface Ranking {
      * @return the member name
      */
     String getMember();
+
+    /**
+     * Returns a {@link Ranking} instance
+     *
+     * @param member the member name
+     * @param points the point value
+     * @return the instance
+     * @throws NullPointerException when either member and points are null
+     */
+    static Ranking of(String member, Number points) throws NullPointerException {
+        return new DefaultRanking(member, points);
+    }
 }

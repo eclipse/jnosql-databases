@@ -20,13 +20,12 @@ package org.jnosql.diana.redis.key;
 
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Tuple;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * The default {@link SortedSet} implementation
@@ -34,6 +33,7 @@ import java.util.Set;
 class DefaultSortedSet implements SortedSet {
 
 
+    private static final int LAST_ELEMENT = -1;
     private String key;
 
     private Jedis jedis;
@@ -95,17 +95,26 @@ class DefaultSortedSet implements SortedSet {
 
     @Override
     public List<Ranking> range(long start, long end) {
-        List<Ranking> rankings = new ArrayList<>();
-        Set<Tuple> scores = jedis.zrevrangeWithScores(key, start, end);
-        for (Tuple tuple : scores) {
-            rankings.add(new DefaultRanking(tuple.getElement(), tuple.getScore()));
-        }
-        return rankings;
+        return jedis.zrangeWithScores(key, start, end).stream()
+                .map(t -> new DefaultRanking(t.getElement(), t.getScore()))
+                .collect(toList());
+    }
+
+    @Override
+    public List<Ranking> revRange(long start, long end) {
+        return jedis.zrevrangeWithScores(key, start, end).stream()
+                .map(t -> new DefaultRanking(t.getElement(), t.getScore()))
+                .collect(toList());
     }
 
     @Override
     public List<Ranking> getRanking() {
-        return range(0, size() - 1);
+        return range(0, LAST_ELEMENT);
+    }
+
+    @Override
+    public List<Ranking> getRevRanking() {
+        return revRange(0, LAST_ELEMENT);
     }
 
     @Override

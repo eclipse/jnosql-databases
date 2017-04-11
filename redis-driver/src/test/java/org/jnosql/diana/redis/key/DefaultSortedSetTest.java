@@ -18,6 +18,7 @@
 
 package org.jnosql.diana.redis.key;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import java.time.Duration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 
@@ -83,6 +85,15 @@ public class DefaultSortedSetTest {
         sortedSet.persist();
         Thread.sleep(2_000L);
         assertTrue(sortedSet.size() == 1);
+    }
+
+    @Test
+    public void shouldRange() {
+        sortedSet.add(BRAZIL, 1);
+        sortedSet.add("USA", 2);
+        sortedSet.add("England", 3);
+
+        assertThat(sortedSet.range(2, 3), Matchers.contains(new DefaultRanking("USA", 2)));
     }
 
 }
