@@ -82,6 +82,11 @@ public interface SortedSet {
     int size();
 
     /**
+     * @return Returns true if this SortedSet contains no elements.
+     */
+    boolean isEmpty();
+
+    /**
      * Delete this SortedSet
      */
     void delete();

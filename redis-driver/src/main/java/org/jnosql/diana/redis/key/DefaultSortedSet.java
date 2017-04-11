@@ -83,6 +83,11 @@ class DefaultSortedSet implements SortedSet {
     }
 
     @Override
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    @Override
     public void delete() {
         jedis.del(key);
     }

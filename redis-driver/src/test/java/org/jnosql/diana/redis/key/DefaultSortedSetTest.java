@@ -27,6 +27,7 @@ import java.time.Duration;
 
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -52,6 +53,34 @@ public class DefaultSortedSetTest {
     @Test
     public void shouldAdd() {
         sortedSet.add(BRAZIL, 10);
+    }
+
+    @Test
+    public void shouldSize() {
+        assertTrue(sortedSet.isEmpty());
+        sortedSet.add(BRAZIL, 10);
+        assertEquals(Integer.valueOf(sortedSet.size()), Integer.valueOf(1));
+    }
+
+    @Test
+    public void shouldCheckIfEmpty() {
+
+        assertTrue(sortedSet.isEmpty());
+        sortedSet.add(BRAZIL, 1);
+        sortedSet.add(USA, 2);
+        sortedSet.add(ENGLAND, 3);
+        assertFalse(sortedSet.isEmpty());
+
+    }
+
+    @Test
+    public void souldDelete() {
+        sortedSet.add(BRAZIL, 1);
+        sortedSet.add(USA, 2);
+        sortedSet.add(ENGLAND, 3);
+        assertFalse(sortedSet.isEmpty());
+        sortedSet.delete();
+        assertTrue(sortedSet.isEmpty());
     }
 
     @Test
