@@ -7,7 +7,7 @@
   </local-check-config>
   <fileset name="java-sources-verify-style" enabled="true" check-config-name="maven-checkstyle-plugin verify-style" local="true">
     <file-match-pattern match-pattern="^src/main/java/.*\.java" include-pattern="true"/>
-    <file-match-pattern match-pattern="^src/main/resources/.*\.properties" include-pattern="true"/>
-    <file-match-pattern match-pattern="^src/test/resources/.*\.properties" include-pattern="true"/>
+    <file-match-pattern match-pattern="^src/main/resources.*\.properties" include-pattern="true"/>
+    <file-match-pattern match-pattern="^src/test/resources.*\.properties" include-pattern="true"/>
   </fileset>
 </fileset-config>
