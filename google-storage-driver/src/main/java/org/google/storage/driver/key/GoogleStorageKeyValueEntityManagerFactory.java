@@ -29,16 +29,6 @@ import org.jnosql.diana.driver.value.JSONValueProviderService;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-/**
- * The riak implementation to {@link BucketManagerFactory} that returns {@link RiakKeyValueEntityManager}
- * This implementation just has support to {@link RiakKeyValueEntityManagerFactory#getBucketManager(String)}
- * So, these metdhos will returns {@link UnsupportedOperationException}
- * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
- * <p>{@link BucketManagerFactory#getSet(String, Class)}</p>
- * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
- * <p>{@link BucketManagerFactory#getMap(String, Class, Class)}</p>
- */
-
 public class GoogleStorageKeyValueEntityManagerFactory implements BucketManagerFactory<GoogleStorageKeyValueEntityManager> {
 
 	private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
@@ -52,7 +42,7 @@ public class GoogleStorageKeyValueEntityManagerFactory implements BucketManagerF
 	public GoogleStorageKeyValueEntityManager getBucketManager(String bucketName)
 			throws UnsupportedOperationException, NullPointerException {
 		
-		return new GoogleStorageKeyValueEntityManager(storage, bucketName);
+		return new GoogleStorageKeyValueEntityManager(storage, bucketName,PROVDER);
 	}
 
 	@Override
@@ -85,8 +75,6 @@ public class GoogleStorageKeyValueEntityManagerFactory implements BucketManagerF
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
