@@ -27,7 +27,6 @@ import org.jnosql.diana.driver.value.JSONValueProvider;
 import org.jnosql.diana.driver.value.JSONValueProviderService;
 
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 
 public class GoogleStorageKeyValueEntityManagerFactory implements BucketManagerFactory<GoogleStorageKeyValueEntityManager> {
 
