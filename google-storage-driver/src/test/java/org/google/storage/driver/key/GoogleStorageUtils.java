@@ -12,18 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 package org.google.storage.driver.key;
 
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.api.key.KeyValueConfiguration;
 
-/**
- * The google storage exception to Diana project
- */
-public class GoogleStorageException extends RuntimeException {
+public final class GoogleStorageUtils {
 
-    GoogleStorageException(String message, Throwable cause) {
-        super(message, cause);
+    public static BucketManagerFactory get() {
+        KeyValueConfiguration riakConfiguration = new GoogleStorageKeyValueConfiguration();
+        return riakConfiguration.get();
     }
-
 
 }

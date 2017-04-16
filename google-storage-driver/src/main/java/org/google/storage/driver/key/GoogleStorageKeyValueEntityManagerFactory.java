@@ -17,63 +17,61 @@
  */
 package org.google.storage.driver.key;
 
+import com.google.cloud.storage.Storage;
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
-
-import com.google.cloud.storage.Storage;
-
+/**
+ * The google stroage implementation of {@link BucketManagerFactory}
+ */
 public class GoogleStorageKeyValueEntityManagerFactory implements BucketManagerFactory<GoogleStorageKeyValueEntityManager> {
 
-	private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
-	private final Storage storage;
-	
-	public GoogleStorageKeyValueEntityManagerFactory(Storage storage) {
-		this.storage = storage;
-	}
+    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private final Storage storage;
 
-	@Override
-	public GoogleStorageKeyValueEntityManager getBucketManager(String bucketName)
-			throws UnsupportedOperationException, NullPointerException {
-		
-		return new GoogleStorageKeyValueEntityManager(storage, bucketName,PROVDER);
-	}
+    GoogleStorageKeyValueEntityManagerFactory(Storage storage) {
+        this.storage = storage;
+    }
 
-	@Override
-	public <T> List<T> getList(String bucketName, Class<T> clazz)
-			throws UnsupportedOperationException, NullPointerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public GoogleStorageKeyValueEntityManager getBucketManager(String bucketName)
+            throws UnsupportedOperationException, NullPointerException {
 
-	@Override
-	public <T> Set<T> getSet(String bucketName, Class<T> clazz)
-			throws UnsupportedOperationException, NullPointerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        return new GoogleStorageKeyValueEntityManager(storage, bucketName, PROVDER);
+    }
 
-	@Override
-	public <T> Queue<T> getQueue(String bucketName, Class<T> clazz)
-			throws UnsupportedOperationException, NullPointerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T> List<T> getList(String bucketName, Class<T> clazz)
+            throws UnsupportedOperationException, NullPointerException {
+        throw new UnsupportedOperationException("Google does not support List structure");
+    }
 
-	@Override
-	public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue)
-			throws UnsupportedOperationException, NullPointerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T> Set<T> getSet(String bucketName, Class<T> clazz)
+            throws UnsupportedOperationException, NullPointerException {
+        throw new UnsupportedOperationException("Google does not support List structure");
+    }
 
-	@Override
-	public void close() {
-	}
+    @Override
+    public <T> Queue<T> getQueue(String bucketName, Class<T> clazz)
+            throws UnsupportedOperationException, NullPointerException {
+        throw new UnsupportedOperationException("Google does not support List structure");
+    }
+
+    @Override
+    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue)
+            throws UnsupportedOperationException, NullPointerException {
+        throw new UnsupportedOperationException("Google does not support List structure");
+    }
+
+    @Override
+    public void close() {
+    }
 
 }

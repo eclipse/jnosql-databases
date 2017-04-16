@@ -12,18 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 package org.google.storage.driver.key;
 
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import org.jnosql.diana.api.key.KeyValueConfiguration;
+
 
 /**
- * The google storage exception to Diana project
+ * The Google storage key value configuration
  */
-public class GoogleStorageException extends RuntimeException {
+public class GoogleStorageKeyValueConfiguration implements KeyValueConfiguration<GoogleStorageKeyValueEntityManagerFactory> {
 
-    GoogleStorageException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public GoogleStorageKeyValueEntityManagerFactory get() {
+        Storage service = StorageOptions.getDefaultInstance().getService();
+        return new GoogleStorageKeyValueEntityManagerFactory(service);
     }
-
-
 }
