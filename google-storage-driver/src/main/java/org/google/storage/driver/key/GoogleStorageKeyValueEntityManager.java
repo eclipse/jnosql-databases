@@ -57,7 +57,7 @@ public class GoogleStorageKeyValueEntityManager implements BucketManager {
         Objects.requireNonNull(value, "Value is required");
         Objects.requireNonNull(key, "key is required");
 
-        try (InputStream inputStream = new ByteArrayInputStream(value.toString().getBytes(StandardCharsets.UTF_8))) {
+        try (InputStream inputStream = new ByteArrayInputStream(provider.toJson(value).getBytes(StandardCharsets.UTF_8))) {
             BlobId blobId = BlobId.of(bucket, key.toString());
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/json").build();
             storage.create(blobInfo, inputStream);
