@@ -50,7 +50,6 @@
 	<module>orientdb-driver</module>
 	<module>couchbase-driver</module>
 	<module>elasticsearch-driver</module>
-	<module>google-storage-driver</module>
     </modules>
 
     <dependencies>
