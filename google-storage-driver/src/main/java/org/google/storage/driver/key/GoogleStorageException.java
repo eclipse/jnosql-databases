@@ -12,8 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *
  */
 package org.google.storage.driver.key;
 
@@ -23,12 +21,9 @@ package org.google.storage.driver.key;
  */
 public class GoogleStorageException extends RuntimeException {
 	
-	GoogleStorageException(String message, Throwable cause) {
+	public GoogleStorageException(String message, Throwable cause) {
         super(message, cause);
     }
 
-	GoogleStorageException(String message) {
-        super(message);
-    }
 
 }
