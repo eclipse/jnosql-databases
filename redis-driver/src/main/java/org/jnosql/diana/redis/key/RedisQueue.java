@@ -24,10 +24,12 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Queue;
 
+import org.jnosql.diana.driver.value.JSONValueProvider;
+
 class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
 
-    RedisQueue(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
-        super(jedis, clazz, keyWithNameSpace);
+    RedisQueue(Jedis jedis, Class<T> clazz, String keyWithNameSpace,JSONValueProvider provider) {
+        super(jedis, clazz, keyWithNameSpace,provider);
     }
 
     @Override
@@ -38,7 +40,7 @@ class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
     @Override
     public boolean add(T e) {
         Objects.requireNonNull(e);
-        jedis.rpush(keyWithNameSpace, gson.toJson(e));
+        jedis.rpush(keyWithNameSpace, provider.toJson(e));
         return true;
     }
 
@@ -60,7 +62,7 @@ class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
     public T poll() {
         String value = jedis.lpop(keyWithNameSpace);
         if (value != null && !value.isEmpty()) {
-            return gson.fromJson(value, clazz);
+            return provider.of(value).get(clazz);
         }
         return null;
     }
@@ -80,7 +82,7 @@ class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
         if (index == 0) {
             return null;
         }
-        return gson.fromJson(jedis.lindex(keyWithNameSpace, (long) index - 1), clazz);
+        return provider.of(jedis.lindex(keyWithNameSpace, (long) index - 1)).get(clazz);
     }
 
 }

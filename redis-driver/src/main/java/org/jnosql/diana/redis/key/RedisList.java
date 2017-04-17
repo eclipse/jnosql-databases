@@ -28,11 +28,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 
+import org.jnosql.diana.driver.value.JSONValueProvider;
+
 class RedisList<T> extends RedisCollection<T> implements List<T> {
 
 
-    RedisList(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
-        super(jedis, clazz, keyWithNameSpace);
+    RedisList(Jedis jedis, Class<T> clazz, String keyWithNameSpace, JSONValueProvider provider) {
+        super(jedis, clazz, keyWithNameSpace,provider);
     }
 
     @Override
@@ -66,11 +68,11 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         Objects.requireNonNull(e);
         int index = size();
         if (index == 0) {
-            jedis.lpush(keyWithNameSpace, gson.toJson(e));
+            jedis.lpush(keyWithNameSpace, provider.toJson(e));
         } else {
             String previewValue = jedis.lindex(keyWithNameSpace, index - 1);
             jedis.linsert(keyWithNameSpace, LIST_POSITION.AFTER, previewValue,
-                    gson.toJson(e));
+                    provider.toJson(e));
         }
         return true;
     }
@@ -97,7 +99,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
     @Override
     public T set(int index, T element) {
         Objects.requireNonNull(element);
-        jedis.lset(keyWithNameSpace, index, gson.toJson(element));
+        jedis.lset(keyWithNameSpace, index, provider.toJson(element));
         return element;
     }
 
@@ -106,7 +108,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         Objects.requireNonNull(element);
         String previewValue = jedis.lindex(keyWithNameSpace, index);
         if (previewValue != null && !previewValue.isEmpty()) {
-            jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, gson.toJson(element));
+            jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, provider.toJson(element));
         } else {
             add(element);
         }
@@ -126,7 +128,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
     @Override
     public int lastIndexOf(Object o) {
         Objects.requireNonNull(o);
-        String value = gson.toJson(o);
+        String value = provider.toJson(o);
         for (int index = size(); index > 0; --index) {
             String findedValue = jedis.lindex(keyWithNameSpace, (long) index);
             if (value.equals(findedValue)) {
@@ -141,7 +143,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         List<T> subList = new ArrayList<>();
         List<String> elements = jedis.lrange(keyWithNameSpace, fromIndex, toIndex);
         for (String element : elements) {
-            subList.add(gson.fromJson(element, clazz));
+            subList.add(provider.of(element).get(clazz));
         }
         return subList;
     }
