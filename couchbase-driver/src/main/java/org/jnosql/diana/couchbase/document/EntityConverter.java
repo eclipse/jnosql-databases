@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -125,27 +126,31 @@ final class EntityConverter {
         JsonObject jsonObject = JsonObject.create();
         entity.getDocuments().stream()
                 .filter(d -> !d.getName().equals(ID_FIELD))
-                .forEach(d -> {
-                    Object value = ValueUtil.convert(d.getValue());
-                    if (Document.class.isInstance(value)) {
-                        Document document = Document.class.cast(value);
-                        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
-                    } else if (Iterable.class.isInstance(value)) {
-                        JsonArray jsonArray = JsonArray.create();
-                        Iterable.class.cast(value).forEach(o -> {
-                            if (Document.class.isInstance(o)) {
-                                Document document = Document.class.cast(o);
-                                jsonArray.add(Collections.singletonMap(document.getName(), document.get()));
-                            } else {
-                                jsonArray.add(value);
-                            }
-                        });
-                        jsonObject.put(d.getName(), jsonArray);
+                .forEach(toJsonObject(jsonObject));
+        return jsonObject;
+    }
+
+    private static Consumer<Document> toJsonObject(JsonObject jsonObject) {
+        return d -> {
+            Object value = ValueUtil.convert(d.getValue());
+            if (Document.class.isInstance(value)) {
+                Document document = Document.class.cast(value);
+                jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+            } else if (Iterable.class.isInstance(value)) {
+                JsonArray jsonArray = JsonArray.create();
+                Iterable.class.cast(value).forEach(o -> {
+                    if (Document.class.isInstance(o)) {
+                        Document document = Document.class.cast(o);
+                        jsonArray.add(Collections.singletonMap(document.getName(), document.get()));
                     } else {
-                        jsonObject.put(d.getName(), value);
+                        jsonArray.add(o);
                     }
                 });
-        return jsonObject;
+                jsonObject.put(d.getName(), jsonArray);
+            } else {
+                jsonObject.put(d.getName(), value);
+            }
+        };
     }
 
 }

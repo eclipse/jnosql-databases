@@ -31,9 +31,11 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
@@ -142,6 +144,17 @@ public class CouchbaseDocumentCollectionManagerTest {
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
         assertThat(documents, contains(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+    }
+
+    @Test
+    public void shouldSaveSetDocument() {
+        Set<String> set = new HashSet<>();
+        set.add("Acarajé");
+        set.add("Munguzá");
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        entity.add(Document.of("_id", "id"));
+        entity.add(Document.of("foods", set));
+        entityManager.save(entity);
     }
 
 
