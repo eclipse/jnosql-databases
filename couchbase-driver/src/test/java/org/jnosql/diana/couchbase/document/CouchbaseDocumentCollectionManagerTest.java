@@ -155,6 +155,14 @@ public class CouchbaseDocumentCollectionManagerTest {
         entity.add(Document.of("_id", "id"));
         entity.add(Document.of("foods", set));
         entityManager.save(entity);
+        Document id = entity.find("_id").get();
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        query.and(DocumentCondition.eq(id));
+        DocumentEntity entityFound = entityManager.find(query).get(0);
+        Optional<Document> foods = entityFound.find("foods");
+        Set<String> setFoods = foods.get().get(new TypeReference<Set<String>>() {
+        });
+        assertEquals(set, setFoods);
     }
 
 
