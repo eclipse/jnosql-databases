@@ -42,7 +42,7 @@ public abstract class CouchbaseConfiguration {
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         configuration.keySet()
                 .stream()
-                .filter(k -> k.equals("couchbase-host-"))
+                .filter(k -> k.startsWith("couchbase-host-"))
                 .sorted()
                 .map(configuration::get)
                 .forEach(this::add);
