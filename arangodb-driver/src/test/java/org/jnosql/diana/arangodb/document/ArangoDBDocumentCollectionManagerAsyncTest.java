@@ -71,7 +71,7 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldRemoveEntityAsync() {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
+        DocumentEntity documentEntity = entityManager.insert    (getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find(KEY_NAME);
         query.and(DocumentCondition.eq(id.get()));
