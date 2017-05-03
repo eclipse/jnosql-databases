@@ -58,18 +58,18 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
     }
 
     @Override
-    public void save(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
-        save(entity, NOOP);
+    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+        insert(entity, NOOP);
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
-        save(entity, ttl, e -> {
+    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+        insert(entity, ttl, e -> {
         });
     }
 
     @Override
-    public void save(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
         requireNonNull(entity, "entity is required");
         requireNonNull(callBack, "callBack is required");
         Document id = entity.find(ID_FIELD)
@@ -83,7 +83,7 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException,
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException,
             UnsupportedOperationException, NullPointerException {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
@@ -100,12 +100,12 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
 
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
-        save(entity);
+        insert(entity);
     }
 
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
-        save(entity, callBack);
+        insert(entity, callBack);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
     }
 
     @Override
-    public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         EntityConverter.queryAsync(query, client, index, callBack);
