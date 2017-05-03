@@ -56,14 +56,14 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldSaveAsync() {
         DocumentEntity entity = getEntity();
-        entityManagerAsync.save(entity);
+        entityManagerAsync.insert(entity);
 
     }
 
     @Test
     public void shouldUpdateAsync() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.save(entity);
+        DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         entityManagerAsync.update(entity);
@@ -71,7 +71,7 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldRemoveEntityAsync() {
-        DocumentEntity documentEntity = entityManager.save(getEntity());
+        DocumentEntity documentEntity = entityManager.insert(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find(KEY_NAME);
         query.and(DocumentCondition.eq(id.get()));
