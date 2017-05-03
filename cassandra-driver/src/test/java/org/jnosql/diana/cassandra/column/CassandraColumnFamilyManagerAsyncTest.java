@@ -56,13 +56,13 @@ public class CassandraColumnFamilyManagerAsyncTest {
         Column key = Columns.of("id", 10L);
         ColumnEntity columnEntity = ColumnEntity.of(COLUMN_FAMILY);
         columnEntity.add(key);
-        columnEntityManager.save(columnEntity);
+        columnEntityManager.insert(columnEntity);
     }
 
     @Test
     public void shouldInsertColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.save(columnEntity);
+        columnEntityManager.insert(columnEntity);
     }
 
     @Test

@@ -86,14 +86,14 @@ public class CassandraColumnFamilyManagerTest {
         Column key = Columns.of("id", 10L);
         ColumnEntity columnEntity = ColumnEntity.of(COLUMN_FAMILY);
         columnEntity.add(key);
-        columnEntityManager.save(columnEntity);
+        columnEntityManager.insert(columnEntity);
     }
 
 
     @Test
     public void shouldInsertColumns() {
         ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.save(columnEntity);
+        columnEntityManager.insert(columnEntity);
     }
 
     @Test
@@ -106,9 +106,9 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldFindById() {
 
-        columnEntityManager.save(getColumnFamily());
+        columnEntityManager.insert(getColumnFamily());
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
-        List<ColumnEntity> columnEntity = columnEntityManager.find(query);
+        List<ColumnEntity> columnEntity = columnEntityManager.query(query);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
@@ -119,9 +119,9 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldFindByIdWithConsistenceLevel() {
 
-        columnEntityManager.save(getColumnFamily());
+        columnEntityManager.insert(getColumnFamily());
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
-        List<ColumnEntity> columnEntity = columnEntityManager.find(query, CONSISTENCY_LEVEL);
+        List<ColumnEntity> columnEntity = columnEntityManager.select(query, CONSISTENCY_LEVEL);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
@@ -131,7 +131,7 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldRunNativeQuery() {
-        columnEntityManager.save(getColumnFamily());
+        columnEntityManager.insert(getColumnFamily());
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         assertFalse(entities.isEmpty());
         List<Column> columns = entities.get(0).getColumns();
@@ -141,7 +141,7 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldPrepareStatment() {
-        columnEntityManager.save(getColumnFamily());
+        columnEntityManager.insert(getColumnFamily());
         CassandraPrepareStatment preparedStatement = columnEntityManager.nativeQueryPrepare("select * from newKeySpace.newColumnFamily where id=?");
         preparedStatement.bind(10L);
         List<ColumnEntity> entities = preparedStatement.executeQuery();
@@ -152,7 +152,7 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldDeleteColumnFamily() {
-        columnEntityManager.save(getColumnFamily());
+        columnEntityManager.insert(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
         columnEntityManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()));
@@ -162,7 +162,7 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldDeleteColumnFamilyWithConsistencyLevel() {
-        columnEntityManager.save(getColumnFamily());
+        columnEntityManager.insert(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
         columnEntityManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()), CONSISTENCY_LEVEL);
@@ -172,11 +172,11 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldLimitResult() {
-        getEntities().forEach(columnEntityManager::save);
+        getEntities().forEach(columnEntityManager::insert);
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY);
         query.and(ColumnCondition.in(Column.of("id", asList(1L, 2L, 3L))));
         query.withMaxResults(2L);
-        List<ColumnEntity> columnFamilyEntities = columnEntityManager.find(query);
+        List<ColumnEntity> columnFamilyEntities = columnEntityManager.query(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(columnFamilyEntities.size()));
     }
 
@@ -206,7 +206,7 @@ public class CassandraColumnFamilyManagerTest {
                 .withTypeName("fullname")
                 .addAll(columns).build();
         entity.add(udt);
-        columnEntityManager.save(entity);
+        columnEntityManager.insert(entity);
         ColumnQuery query = ColumnQuery.of("users");
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
         Column column = columnEntity.find("name").get();
@@ -228,7 +228,7 @@ public class CassandraColumnFamilyManagerTest {
                 .withTypeName("fullname")
                 .addAll(columns).build();
         entity.add(udt);
-        columnEntityManager.save(entity);
+        columnEntityManager.insert(entity);
         ColumnQuery query = ColumnQuery.of("users");
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
         Column column = columnEntity.find("name").get();
@@ -249,7 +249,7 @@ public class CassandraColumnFamilyManagerTest {
         Calendar dataStart = Calendar.getInstance();
         entity.add(Column.of("dataStart", LocalDate.fromYearMonthDay(1939,9, 1)));
         entity.add(Column.of("dateEnd", dateEnd));
-        columnEntityManager.save(entity);
+        columnEntityManager.insert(entity);
         ColumnQuery query = ColumnQuery.of("history");
         query.and(ColumnCondition.eq(Column.of("name", "World war II")));
         ColumnEntity entity1 = columnEntityManager.singleResult(query).get();

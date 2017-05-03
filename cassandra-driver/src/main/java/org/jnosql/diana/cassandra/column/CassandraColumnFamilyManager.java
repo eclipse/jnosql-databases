@@ -41,7 +41,7 @@ import java.util.stream.StreamSupport;
 /**
  * The Cassandra implementation of {@link ColumnFamilyManager}, that supports all methods and also supports
  * CQL and ConsistencyLevel.
- * <p>{@link CassandraColumnFamilyManager#find(ColumnQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnFamilyManager#select(ColumnQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnFamilyManager#cql(String)}</p>
  * <p>{@link CassandraColumnFamilyManager#nativeQueryPrepare(String)}</p>
  * <p>{@link CassandraColumnFamilyManager#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
@@ -62,7 +62,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity) {
+    public ColumnEntity insert(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         session.execute(insert);
@@ -71,12 +71,12 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public ColumnEntity update(ColumnEntity entity) throws NullPointerException {
-        return save(entity);
+        return insert(entity);
     }
 
 
     @Override
-    public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
+    public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
@@ -95,7 +95,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public List<ColumnEntity> find(ColumnQuery query) {
+    public List<ColumnEntity> query(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSet resultSet = session.execute(select);
@@ -198,7 +198,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
      * @return the query using a consistency level
      * @throws NullPointerException when either query or level are null
      */
-    public List<ColumnEntity> find(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
+    public List<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(level, "level is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
