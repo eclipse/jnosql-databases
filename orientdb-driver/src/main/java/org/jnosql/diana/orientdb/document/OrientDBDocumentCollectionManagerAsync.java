@@ -60,17 +60,17 @@ public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectio
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is support to ttl on OrientDB");
     }
 
     @Override
-    public void save(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, NOOPS);
+    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        insert(entity, NOOPS);
     }
 
     @Override
-    public void save(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.toString(entity, "Entity is required");
         ODatabaseDocumentTx tx = pool.acquire();
         ODocument document = new ODocument(entity.getName());
@@ -88,18 +88,18 @@ public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectio
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is support to ttl on OrientDB");
     }
 
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity);
+        insert(entity);
     }
 
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, callBack);
+        insert(entity, callBack);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectio
     }
 
     @Override
-    public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         ODatabaseDocumentTx tx = pool.acquire();
         OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
             callBack.accept(l.stream()

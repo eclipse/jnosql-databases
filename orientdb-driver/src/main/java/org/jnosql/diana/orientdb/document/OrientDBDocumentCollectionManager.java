@@ -64,7 +64,7 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
     }
 
     @Override
-    public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         Objects.toString(entity, "Entity is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             ODocument document = new ODocument(entity.getName());
@@ -90,14 +90,14 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("There is support to ttl on OrientDB");
     }
 
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        return save(entity);
+        return insert(entity);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
 
 
     @Override
-    public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
             List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
@@ -133,7 +133,7 @@ public class OrientDBDocumentCollectionManager implements DocumentCollectionMana
      * @return the query result
      * @throws NullPointerException when either query or params are null
      */
-    public List<DocumentEntity> find(String query, Object... params) throws NullPointerException {
+    public List<DocumentEntity> select(String query, Object... params) throws NullPointerException {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             List<ODocument> result = tx.command(OSQLQueryFactory.parse(query)).execute(params);
