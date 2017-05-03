@@ -58,7 +58,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
 
     @Override
-    public DocumentEntity save(DocumentEntity entity) {
+    public DocumentEntity insert(DocumentEntity entity) {
         String collectionName = entity.getName();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document document = getDocument(entity);
@@ -73,7 +73,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("MongoDB does not support save with TTL");
     }
 
@@ -104,7 +104,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
 
     @Override
-    public List<DocumentEntity> find(DocumentQuery query) {
+    public List<DocumentEntity> select(DocumentQuery query) {
         String collectionName = query.getCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()

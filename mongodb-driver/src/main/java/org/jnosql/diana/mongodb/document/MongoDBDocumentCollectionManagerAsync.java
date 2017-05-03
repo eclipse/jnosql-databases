@@ -38,8 +38,8 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
 /**
  * The mongodb implementation of {@link DocumentCollectionManagerAsync} whose does not support the TTL methods:
- * <p>{@link MongoDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration)}</p>
- * <p>{@link MongoDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration, Consumer)}</p>
+ * <p>{@link MongoDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration)}</p>
+ * <p>{@link MongoDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration, Consumer)}</p>
  */
 public class MongoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
@@ -52,24 +52,24 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     @Override
-    public void save(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, v -> {
+    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        insert(entity, v -> {
         });
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl) {
+    public void insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("MongoDB does not support saveAsync with TTL");
     }
 
     @Override
-    public void save(DocumentEntity entity, Consumer<DocumentEntity> callBack)
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
         save(entity, (aVoid, throwable) -> callBack.accept(entity));
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) {
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) {
         throw new UnsupportedOperationException("MongoDB does not support saveAsync with TTL");
     }
 
@@ -102,7 +102,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     @Override
-    public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
     }
