@@ -46,7 +46,7 @@ import java.util.stream.StreamSupport;
  * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel, Consumer)}</p>
  * <p>{@link CassandraColumnFamilyManagerAsync#cql(String, Consumer)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#find(ColumnQuery, ConsistencyLevel, Consumer)}</p>
+ * <p>{@link CassandraColumnFamilyManagerAsync#select(ColumnQuery, ConsistencyLevel, Consumer)}</p>
  */
 public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsync {
 

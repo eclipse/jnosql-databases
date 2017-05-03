@@ -95,7 +95,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public List<ColumnEntity> query(ColumnQuery query) {
+    public List<ColumnEntity> select(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSet resultSet = session.execute(select);

@@ -51,8 +51,8 @@ import static org.jnosql.diana.arangodb.document.ArangoDBUtil.toEntity;
 
 /**
  * The ArandoDB implementation of {@link DocumentCollectionManagerAsync}. It does not support to TTL methods:
- * <p>{@link DocumentCollectionManagerAsync#save(DocumentEntity, Duration)}</p>
- * <p>{@link DocumentCollectionManagerAsync#save(DocumentEntity, Duration, Consumer)}</p>
+ * <p>{@link DocumentCollectionManagerAsync#insert(DocumentEntity, Duration)}</p>
+ * <p>{@link DocumentCollectionManagerAsync#insert(DocumentEntity, Duration, Consumer)}</p>
  */
 public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
@@ -70,19 +70,19 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
     }
 
     @Override
-    public void save(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, v -> {
+    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        insert(entity, v -> {
         });
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
 
 
     @Override
-    public void save(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException
             , UnsupportedOperationException {
 
         String collectionName = entity.getName();
@@ -94,7 +94,7 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
 
@@ -152,7 +152,7 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
     }
 
     @Override
-    public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         Objects.requireNonNull(query, "query is required");

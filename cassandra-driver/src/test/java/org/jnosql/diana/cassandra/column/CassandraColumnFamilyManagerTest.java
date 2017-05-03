@@ -108,7 +108,7 @@ public class CassandraColumnFamilyManagerTest {
 
         columnEntityManager.insert(getColumnFamily());
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
-        List<ColumnEntity> columnEntity = columnEntityManager.query(query);
+        List<ColumnEntity> columnEntity = columnEntityManager.select(query);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
@@ -176,7 +176,7 @@ public class CassandraColumnFamilyManagerTest {
         ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY);
         query.and(ColumnCondition.in(Column.of("id", asList(1L, 2L, 3L))));
         query.withMaxResults(2L);
-        List<ColumnEntity> columnFamilyEntities = columnEntityManager.query(query);
+        List<ColumnEntity> columnFamilyEntities = columnEntityManager.select(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(columnFamilyEntities.size()));
     }
 
