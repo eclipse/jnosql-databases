@@ -44,7 +44,7 @@ import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 
 /**
  * The ArangoDB implementation of {@link DocumentCollectionManager} it does not support to TTL methods:
- * <p>{@link DocumentCollectionManager#save(DocumentEntity)}</p>
+ * <p>{@link DocumentCollectionManager#insert(DocumentEntity)}</p>
  */
 public class ArangoDBDocumentCollectionManager implements DocumentCollectionManager {
 
@@ -65,7 +65,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
 
     @Override
-    public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         String collectionName = entity.getName();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
@@ -115,7 +115,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
 
     @Override
-    public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         if (checkCondition(query.getCondition())) {
             return Collections.emptyList();
@@ -166,7 +166,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
 
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
 

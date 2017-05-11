@@ -57,7 +57,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
     }
 
     @Override
-    public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         Objects.requireNonNull(entity, "entity is required");
         JsonObject jsonObject = convert(entity);
         Document id = entity.find(ID_FIELD)
@@ -72,7 +72,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
     }
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) {
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         Objects.requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
         JsonObject jsonObject = convert(entity);
@@ -86,7 +86,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        return save(entity);
+        return insert(entity);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class CouchbaseDocumentCollectionManager implements DocumentCollectionMan
     }
 
     @Override
-    public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
 
         QueryConverter.QueryConverterResult select = QueryConverter.select(query, database);
         List<DocumentEntity> entities = new ArrayList<>();

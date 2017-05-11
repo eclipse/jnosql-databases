@@ -57,7 +57,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     }
 
     @Override
-    public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
@@ -75,7 +75,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
         Document id = entity.find(ID_FIELD)
@@ -95,13 +95,13 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
     @Override
     public DocumentEntity update(DocumentEntity entity) throws NullPointerException {
-        return save(entity);
+        return insert(entity);
     }
 
     @Override
     public void delete(DocumentDeleteQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        List<DocumentEntity> entities = find(DocumentQuery.of(query.getCollection())
+        List<DocumentEntity> entities = select(DocumentQuery.of(query.getCollection())
                 .and(query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"))));
 
         entities.stream()
@@ -118,7 +118,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
 
     @Override
-    public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         return EntityConverter.query(query, client, index);
     }
@@ -131,7 +131,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
      * @return the objects from query
      * @throws NullPointerException when query is null
      */
-    public List<DocumentEntity> find(QueryBuilder query, String... types) throws NullPointerException {
+    public List<DocumentEntity> select(QueryBuilder query, String... types) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
         SearchResponse searchResponse = null;

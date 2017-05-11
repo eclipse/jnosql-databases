@@ -62,14 +62,14 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void shouldSave() {
         DocumentEntity entity = getEntity();
 
-        DocumentEntity documentEntity = entityManager.save(entity);
+        DocumentEntity documentEntity = entityManager.insert(entity);
         assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals(KEY_NAME)));
     }
 
     @Test
     public void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.save(entity);
+        DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         DocumentEntity updated = entityManager.update(entity);
@@ -78,21 +78,21 @@ public class ArangoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldRemoveEntity() {
-        DocumentEntity documentEntity = entityManager.save(getEntity());
+        DocumentEntity documentEntity = entityManager.insert(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_key");
         query.and(DocumentCondition.eq(id.get()));
         entityManager.delete(DocumentDeleteQuery.of(COLLECTION_NAME, DocumentCondition.eq(id.get())));
-        assertTrue(entityManager.find(query).isEmpty());
+        assertTrue(entityManager.select(query).isEmpty());
     }
 
     @Test
     public void shouldFindDocument() {
-        DocumentEntity entity = entityManager.save(getEntity());
+        DocumentEntity entity = entityManager.insert(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find(KEY_NAME);
         query.and(DocumentCondition.eq(id.get()));
-        List<DocumentEntity> entities = entityManager.find(query);
+        List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         DocumentEntity documentEntity = entities.get(0);
         assertEquals(entity.find(KEY_NAME).get().getValue().get(String.class), documentEntity.find(KEY_NAME).get()
@@ -106,11 +106,11 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentEntity entitySaved = entityManager.save(entity);
+        DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find(KEY_NAME).get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(id));
-        DocumentEntity entityFound = entityManager.find(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -121,11 +121,11 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
-        DocumentEntity entitySaved = entityManager.save(entity);
+        DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find(KEY_NAME).get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(id));
-        DocumentEntity entityFound = entityManager.find(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });

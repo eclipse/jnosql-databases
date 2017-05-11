@@ -51,39 +51,39 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
 
 
     @Override
-    public void save(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, NOOP);
+    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        insert(entity, NOOP);
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, ttl, NOOP);
+    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        insert(entity, ttl, NOOP);
     }
 
     @Override
-    public void save(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(callBack, "callBack is required");
         just(entity)
-                .map(manager::save)
+                .map(manager::insert)
                 .subscribe(callBack::accept, ERROR_SAVE);
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(callBack, "callBack is required");
         just(entity)
-                .map(e -> manager.save(e, ttl))
+                .map(e -> manager.insert(e, ttl))
                 .subscribe(callBack::accept, ERROR_SAVE);
     }
 
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity);
+        insert(entity);
     }
 
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, callBack);
+        insert(entity, callBack);
     }
 
     @Override
@@ -103,8 +103,8 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
     }
 
     @Override
-    public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        just(query).map(manager::find).subscribe(callBack::accept, ERROR_FIND);
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        just(query).map(manager::select).subscribe(callBack::accept, ERROR_FIND);
     }
 
 

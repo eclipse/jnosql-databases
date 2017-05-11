@@ -74,7 +74,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity) {
+    public ColumnEntity insert(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         String family = entity.getName();
         List<Column> columns = entity.getColumns();
@@ -98,11 +98,11 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public ColumnEntity update(ColumnEntity entity) throws NullPointerException {
-        return save(entity);
+        return insert(entity);
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
+    public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
@@ -131,7 +131,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public List<ColumnEntity> find(ColumnQuery query) {
+    public List<ColumnEntity> select(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
         ColumnCondition condition = query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
