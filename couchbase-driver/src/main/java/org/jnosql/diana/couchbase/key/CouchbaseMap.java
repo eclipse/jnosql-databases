@@ -16,22 +16,24 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import org.jnosql.diana.api.Value;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 
 /**
  * The couchbase implementation to {@link Map}
  * that avoid null items, so if any null object will launch {@link NullPointerException}.
  * This class is a wrapper to {@link com.couchbase.client.java.datastructures.collections.CouchbaseMap}. Once they only can save primitive type,
- * objects are converted to Json {@link String} using {@link JSONValueProvider#toJson(Object)} to value and on the key
+ * objects are converted to Json {@link String} using {@link Jsonb#toJson(Object)} to value and on the key
  * will be used a string representation of the object, Object.toString()
  *
  * @param <V> the object to be stored as value.
@@ -39,7 +41,7 @@ import java.util.stream.Collectors;
  */
 public class CouchbaseMap<K, V> implements Map<K, V> {
 
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private static final Jsonb JSONB = JsonbBuilder.create();
 
 
     private final String bucketName;
@@ -69,7 +71,7 @@ public class CouchbaseMap<K, V> implements Map<K, V> {
         Objects.requireNonNull(key, "key is required");
         String json = map.get(key.toString());
         if (Objects.nonNull(json)) {
-            return PROVDER.of(json).get(valueClass);
+            return JSONB.fromJson(json, valueClass);
         }
         return null;
     }
@@ -78,9 +80,9 @@ public class CouchbaseMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
-        String json = map.put(key.toString(), PROVDER.toJson(value));
+        String json = map.put(key.toString(), JSONB.toJson(value));
         if (Objects.nonNull(json)) {
-            return PROVDER.of(json).get(valueClass);
+            return JSONB.fromJson(json, valueClass);
         }
         return null;
     }
@@ -90,7 +92,7 @@ public class CouchbaseMap<K, V> implements Map<K, V> {
         Objects.requireNonNull(key, "key is required");
         String json = map.remove(key.toString());
         if (Objects.nonNull(json)) {
-            return PROVDER.of(json).get(valueClass);
+            return JSONB.fromJson(json, valueClass);
         }
         return null;
     }
@@ -117,17 +119,21 @@ public class CouchbaseMap<K, V> implements Map<K, V> {
     @Override
     public boolean containsValue(Object value) {
         Objects.requireNonNull(value, "key is required");
-        return map.containsValue(PROVDER.toJson(value));
+        return map.containsValue(JSONB.toJson(value));
     }
 
     @Override
     public Set<K> keySet() {
-        return map.keySet().stream().map(Value::of).map(v -> v.get(keyClass)).collect(Collectors.toSet());
+        return map.keySet().stream()
+                .map(Value::of).map(v -> v.get(keyClass))
+                .collect(toSet());
     }
 
     @Override
     public Collection<V> values() {
-        return map.values().stream().map(PROVDER::of).map(v -> v.get(valueClass)).collect(Collectors.toList());
+        return map.values().stream()
+                .map(s -> JSONB.fromJson(s, valueClass))
+                .collect(toList());
     }
 
     @Override
@@ -137,7 +143,7 @@ public class CouchbaseMap<K, V> implements Map<K, V> {
         for (Entry<String, String> entry : map.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            copy.put(Value.of(key).get(keyClass), PROVDER.of(value).get(valueClass));
+            copy.put(JSONB.fromJson(key, keyClass), JSONB.fromJson(value, valueClass));
         }
         return copy.entrySet();
     }
