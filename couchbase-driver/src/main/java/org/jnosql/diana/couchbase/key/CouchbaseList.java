@@ -18,15 +18,12 @@ package org.jnosql.diana.couchbase.key;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Spliterator;
-import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
@@ -37,21 +34,18 @@ import static java.util.stream.Collectors.toList;
  * The couchbase implementation to {@link List}
  * that avoid null items, so if any null object will launch {@link NullPointerException}
  * This class is a wrapper to {@link CouchbaseArrayList}. Once they only can save primitive type,
- * objects are converted to Json {@link String} using {@link Jsonb#toJson(Object)}
+ * objects are converted to Json {@link String} using {@link javax.json.bind.Jsonb#toJson(Object)}
  *
  * @param <T> the object to be stored.
  */
-public class CouchbaseList<T> implements List<T> {
-
-    private static final Jsonb JSONB = JsonbBuilder.create();
+public class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
 
     private final String bucketName;
-    private final Class<T> clazz;
     private final CouchbaseArrayList<String> arrayList;
 
     CouchbaseList(Bucket bucket, String bucketName, Class<T> clazz) {
+        super(clazz);
         this.bucketName = bucketName + ":list";
-        this.clazz = clazz;
         this.arrayList = new CouchbaseArrayList(this.bucketName, bucket);
     }
 
@@ -170,10 +164,6 @@ public class CouchbaseList<T> implements List<T> {
                 false).map(fromJSON())
                 .collect(toList())
                 .listIterator();
-    }
-
-    private Function<String, T> fromJSON() {
-        return s -> JSONB.fromJson(s, clazz);
     }
 
     @Override

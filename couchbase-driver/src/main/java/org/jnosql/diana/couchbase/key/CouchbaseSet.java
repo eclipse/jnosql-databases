@@ -17,12 +17,9 @@ package org.jnosql.diana.couchbase.key;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -33,20 +30,19 @@ import static java.util.Objects.requireNonNull;
  * The couchbase implementation to {@link Set}
  * that avoid null items, so if any null object will launch {@link NullPointerException}.
  * This class is a wrapper to {@link CouchbaseArraySet}. Once they only can save primitive type,
- * objects are converted to Json {@link String} using {@link Jsonb#toJson(Object)}
+ * objects are converted to Json {@link String} using {@link javax.json.bind.Jsonb#toJson(Object)}
  * @param <T> the object to be stored.
  */
-public class CouchbaseSet<T> implements Set<T> {
+public class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
 
-    private static final Jsonb JSONB = JsonbBuilder.create();
+
 
     private final String bucketName;
-    private final Class<T> clazz;
     private final CouchbaseArraySet<String> arraySet;
 
     CouchbaseSet(Bucket bucket, String bucketName, Class<T> clazz) {
+        super(clazz);
         this.bucketName = bucketName + ":set";
-        this.clazz = clazz;
         this.arraySet = new CouchbaseArraySet(this.bucketName, bucket);
     }
 
@@ -118,9 +114,6 @@ public class CouchbaseSet<T> implements Set<T> {
                 .toArray(size -> t1s);
     }
 
-    private Function<String, T> fromJSON() {
-        return s ->JSONB.fromJson(s, clazz);
-    }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
