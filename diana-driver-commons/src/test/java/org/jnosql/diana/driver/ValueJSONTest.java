@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.driver.value;
+package org.jnosql.diana.driver;
 
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
@@ -28,31 +28,29 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-
-public class JSONGSONValueTest {
+public class ValueJSONTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldReturnErrorWhenElementIsNull() {
-        JSONGSONValue.of(null);
+        ValueJSON.of(null);
     }
-
 
     @Test
     public void shouldConvertType() {
         AtomicInteger number = new AtomicInteger(5_000);
-        Value value = JSONGSONValue.of(number);
+        Value value = ValueJSON.of(number);
         assertEquals(Integer.valueOf(5_000), value.get(Integer.class));
         assertEquals("5000", value.get(String.class));
     }
 
-
     @Test
     public void shouldConvertMapIgnoringKeyValue() {
         Map<Integer, List<String>> map = Collections.singletonMap(10, Arrays.asList("1", "2", "3"));
-        Value value = JSONGSONValue.of(map);
+        Value value = ValueJSON.of(map);
         Map<String, List<String>> result = value.get(new TypeReference<Map<String, List<String>>>(){});
         List<String> valueResult = result.get("10");
         assertThat(result.keySet(), containsInAnyOrder("10"));
         assertThat(valueResult, containsInAnyOrder("1", "2", "3"));
     }
+
 }

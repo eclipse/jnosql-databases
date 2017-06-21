@@ -20,9 +20,10 @@ import com.arangodb.entity.BaseDocument;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
+import org.jnosql.diana.driver.ValueJSON;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
 
     private static final String VALUE = "_value";
     private static final Function<BaseDocument, String> TO_JSON = e -> e.getAttribute(VALUE).toString();
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private static final Jsonb JSONB = JsonbBuilder.create();
 
     private final ArangoDB arangoDB;
 
@@ -62,7 +63,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
         Objects.requireNonNull(value, "value is required");
         BaseDocument baseDocument = new BaseDocument();
         baseDocument.setKey(key.toString());
-        baseDocument.addAttribute(VALUE, PROVDER.toJson(value));
+        baseDocument.addAttribute(VALUE, JSONB.toJson(value));
         if (arangoDB.db(bucketName).collection(namespace).documentExists(key.toString())) {
             arangoDB.db(bucketName).collection(namespace).deleteDocument(key.toString());
         }
@@ -90,7 +91,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
 
         return ofNullable(entity)
                 .map(TO_JSON)
-                .map(j -> PROVDER.of(j));
+                .map(j -> ValueJSON.of(j));
 
     }
 
@@ -102,7 +103,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
                         .getDocument(k, BaseDocument.class))
                 .filter(Objects::nonNull)
                 .map(TO_JSON)
-                .map(j -> PROVDER.of(j))
+                .map(j -> ValueJSON.of(j))
                 .collect(toList());
     }
 

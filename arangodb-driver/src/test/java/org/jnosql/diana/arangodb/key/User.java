@@ -19,11 +19,18 @@ import java.util.Objects;
 
 public class User implements Serializable {
 
-    private final String nickName;
+    private String nickName;
 
     public User(String nickName) {
         this.nickName = nickName;
 
+    }
+
+    public User() {
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getNickName() {
