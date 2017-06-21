@@ -42,7 +42,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
 
     private static final String VALUE = "_value";
     private static final Function<BaseDocument, String> TO_JSON = e -> e.getAttribute(VALUE).toString();
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private static final Jsonb PROVDER = JsonbBuilder
 
     private final ArangoDB arangoDB;
 
