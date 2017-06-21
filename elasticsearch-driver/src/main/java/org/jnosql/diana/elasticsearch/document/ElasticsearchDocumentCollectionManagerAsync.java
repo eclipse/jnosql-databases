@@ -26,14 +26,15 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
@@ -41,7 +42,8 @@ import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
 
 public class ElasticsearchDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    protected static final Jsonb JSONB = JsonbBuilder.create();
+
     private static final Consumer<DocumentEntity> NOOP = e -> {
     };
 
@@ -72,7 +74,7 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = PROVDER.toJsonArray(jsonObject);
+        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
         client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).execute()
                 .addListener(new SaveActionListener(callBack, entity));
 
@@ -88,7 +90,7 @@ public class ElasticsearchDocumentCollectionManagerAsync implements DocumentColl
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = PROVDER.toJsonArray(jsonObject);
+        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
         client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).
                 setTTL(timeValueMillis(ttl.toMillis())).execute()
                 .addListener(new SaveActionListener(callBack, entity));
