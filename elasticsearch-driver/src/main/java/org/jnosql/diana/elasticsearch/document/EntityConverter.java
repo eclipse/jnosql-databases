@@ -25,13 +25,15 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
 import static java.util.stream.StreamSupport.stream;
 
@@ -45,20 +47,34 @@ final class EntityConverter {
 
 
     static Map<String, Object> getMap(DocumentEntity entity) {
-        Map<String, Object> jsonObject = new java.util.HashMap<>();
+        Map<String, Object> jsonObject = new HashMap<>();
 
         entity.getDocuments().stream()
                 .filter(d -> !d.getName().equals(ID_FIELD))
-                .forEach(d -> {
-                    Object value = ValueUtil.convert(d.getValue());
-                    if (Document.class.isInstance(value)) {
-                        Document document = Document.class.cast(value);
-                        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
-                    } else {
-                        jsonObject.put(d.getName(), value);
-                    }
-                });
+                .forEach(feedJSON(jsonObject));
         return jsonObject;
+    }
+
+    private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
+        return d -> {
+            Object value = ValueUtil.convert(d.getValue());
+            if (value instanceof Document) {
+                Document subDocument = Document.class.cast(value);
+                jsonObject.put(d.getName(), singletonMap(subDocument.getName(), subDocument.get()));
+            } else if (isSudDocument(value)) {
+                Map<String, Object> subDocument = new HashMap<>();
+                StreamSupport.stream(Iterable.class.cast(value).spliterator(),
+                        false).forEach(feedJSON(subDocument));
+                jsonObject.put(d.getName(), subDocument);
+            } else {
+                jsonObject.put(d.getName(), value);
+            }
+        };
+    }
+
+    private static boolean isSudDocument(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
     }
 
     static List<DocumentEntity> query(DocumentQuery query, Client client, String index) {

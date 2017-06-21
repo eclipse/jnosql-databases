@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -144,7 +145,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
     }
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
