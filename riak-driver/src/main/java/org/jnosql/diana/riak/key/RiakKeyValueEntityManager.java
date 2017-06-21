@@ -25,8 +25,9 @@ import com.basho.riak.client.core.query.Namespace;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
-import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.ValueJSON;
 
+import javax.json.bind.Jsonb;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,14 +43,14 @@ public class RiakKeyValueEntityManager implements BucketManager {
 
 
     private final RiakClient client;
-    private final JSONValueProvider provider;
+    private final Jsonb provider;
 
 
     private final Namespace nameSpace;
 
-    RiakKeyValueEntityManager(RiakClient client, JSONValueProvider provider, Namespace nameSpace) {
+    RiakKeyValueEntityManager(RiakClient client, Jsonb jsonb, Namespace nameSpace) {
         this.client = client;
-        this.provider = provider;
+        this.provider = jsonb;
         this.nameSpace = nameSpace;
     }
 
@@ -105,7 +106,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
 
             String valueFetch = response.getValue(String.class);
             if (Objects.nonNull(valueFetch) && !valueFetch.isEmpty()) {
-                return Optional.of(provider.of(valueFetch));
+                return Optional.of(ValueJSON.of(valueFetch));
             }
 
         } catch (ExecutionException | InterruptedException e) {
@@ -139,7 +140,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
                     }
 
                 })
-                .filter(s -> Objects.nonNull(s) && !s.isEmpty()).map(v -> provider.of(v))
+                .filter(s -> Objects.nonNull(s) && !s.isEmpty()).map(ValueJSON::of)
                 .collect(toList());
     }
 
