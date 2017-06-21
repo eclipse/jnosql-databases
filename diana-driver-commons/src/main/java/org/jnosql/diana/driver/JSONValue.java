@@ -1,0 +1,67 @@
+/*
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
+ *
+ *   You may elect to redistribute this code under either of these licenses.
+ *
+ *   Contributors:
+ *
+ *   Otavio Santana
+ */
+package org.jnosql.diana.driver;
+
+import org.jnosql.diana.api.TypeSupplier;
+import org.jnosql.diana.api.Value;
+
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import java.util.Objects;
+
+
+/**
+ * A {@link Value} implementation that storage all the information as a {@link String} JSON.
+ */
+public class JSONValue implements Value {
+
+    private static final Jsonb JSONB = JsonbBuilder.create();
+
+    private final String json;
+
+    JSONValue(String json) {
+        this.json = json;
+    }
+
+
+    @Override
+    public Object get() {
+        return json;
+    }
+
+    @Override
+    public <T> T get(Class<T> clazz) throws NullPointerException, UnsupportedOperationException {
+        Objects.requireNonNull(clazz, "clazz is required");
+        return JSONB.fromJson(json, clazz);
+    }
+
+    @Override
+    public <T> T get(TypeSupplier<T> typeSupplier) throws NullPointerException, UnsupportedOperationException {
+        Objects.requireNonNull(typeSupplier, "typeSupplier is required");
+        return JSONB.fromJson(json, typeSupplier.get());
+    }
+
+    /**
+     * Returns a new instance of {@link Value}
+     *
+     * @param json the value
+     * @return the new Value instance
+     * @throws NullPointerException when json is null
+     */
+    public static Value of(String json) throws NullPointerException {
+        Objects.requireNonNull(json, "json is required");
+        return new JSONValue(json);
+    }
+}
