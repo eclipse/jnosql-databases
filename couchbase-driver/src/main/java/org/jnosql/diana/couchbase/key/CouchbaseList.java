@@ -17,32 +17,33 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Spliterator;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The couchbase implementation to {@link List}
  * that avoid null items, so if any null object will launch {@link NullPointerException}
  * This class is a wrapper to {@link CouchbaseArrayList}. Once they only can save primitive type,
- * objects are converted to Json {@link String} using {@link JSONValueProvider#toJson(Object)}
+ * objects are converted to Json {@link String} using {@link Jsonb#toJson(Object)}
  *
  * @param <T> the object to be stored.
  */
 public class CouchbaseList<T> implements List<T> {
 
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private static final Jsonb JSONB = JsonbBuilder.create();
 
     private final String bucketName;
     private final Class<T> clazz;
@@ -65,11 +66,10 @@ public class CouchbaseList<T> implements List<T> {
     }
 
 
-
     @Override
     public boolean add(T t) {
         requireNonNull(t, "object is required");
-        return arrayList.add(PROVDER.toJson(t));
+        return arrayList.add(JSONB.toJson(t));
     }
 
     @Override
@@ -88,15 +88,15 @@ public class CouchbaseList<T> implements List<T> {
 
     @Override
     public T get(int i) {
-        return PROVDER.of(arrayList.get(i)).get(clazz);
+        return JSONB.fromJson(arrayList.get(i), clazz);
     }
 
     @Override
     public T set(int i, T t) {
         requireNonNull(t, "object is required");
-        String json = arrayList.set(i, PROVDER.toJson(t));
+        String json = arrayList.set(i, JSONB.toJson(t));
         if (Objects.nonNull(json)) {
-            return PROVDER.of(json).get(clazz);
+            return JSONB.fromJson(json, clazz);
         }
         return null;
     }
@@ -106,7 +106,7 @@ public class CouchbaseList<T> implements List<T> {
     public T remove(int i) {
         String json = arrayList.remove(i);
         if (Objects.nonNull(json)) {
-            return PROVDER.of(json).get(clazz);
+            return JSONB.fromJson(json, clazz);
         }
         return null;
     }
@@ -115,14 +115,14 @@ public class CouchbaseList<T> implements List<T> {
     @Override
     public Iterator<T> iterator() {
         return StreamSupport.stream(arrayList.spliterator(), false)
-                .map(s -> PROVDER.of(s).get(clazz))
-                .collect(Collectors.toList()).iterator();
+                .map(fromJSON())
+                .collect(toList()).iterator();
     }
 
     @Override
     public Object[] toArray() {
         return StreamSupport.stream(arrayList.spliterator(), false)
-                .map(s -> PROVDER.of(s).get(clazz))
+                .map(fromJSON())
                 .toArray(size -> new Object[size]);
     }
 
@@ -130,84 +130,88 @@ public class CouchbaseList<T> implements List<T> {
     public <T1> T1[] toArray(T1[] t1s) {
         requireNonNull(t1s, "arrys is required");
         return StreamSupport.stream(arrayList.spliterator(), false)
-                .map(s -> PROVDER.of(s).get(clazz))
+                .map(fromJSON())
                 .toArray(size -> t1s);
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return arrayList.retainAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
+        return arrayList.retainAll(collection.stream().map(JSONB::toJson).collect(toList()));
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return arrayList.removeAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
+        return arrayList.removeAll(collection.stream().map(JSONB::toJson).collect(toList()));
     }
 
     @Override
     public void add(int i, T t) {
         requireNonNull(t, "object is required");
-        arrayList.add(i, PROVDER.toJson(t));
+        arrayList.add(i, JSONB.toJson(t));
     }
 
     @Override
     public int indexOf(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.indexOf(PROVDER.toJson(o));
+        return arrayList.indexOf(JSONB.toJson(o));
     }
 
     @Override
     public int lastIndexOf(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.lastIndexOf(PROVDER.toJson(o));
+        return arrayList.lastIndexOf(JSONB.toJson(o));
     }
 
     @Override
     public ListIterator<T> listIterator() {
         return StreamSupport.stream(spliteratorUnknownSize(arrayList.listIterator(), Spliterator.ORDERED),
-                false).map(PROVDER::of)
-                .map(v -> v.get(clazz))
-                .collect(Collectors.toList())
+                false).map(fromJSON())
+                .collect(toList())
                 .listIterator();
+    }
+
+    private Function<String, T> fromJSON() {
+        return s -> JSONB.fromJson(s, clazz);
     }
 
     @Override
     public ListIterator<T> listIterator(int i) {
         return StreamSupport.stream(spliteratorUnknownSize(arrayList.listIterator(i), Spliterator.ORDERED),
-                false).map(PROVDER::of)
-                .map(v -> v.get(clazz))
-                .collect(Collectors.toList())
+                false).map(fromJSON())
+                .collect(toList())
                 .listIterator();
     }
 
     @Override
     public List<T> subList(int i, int i1) {
-        return arrayList.subList(i, i1).stream().map(PROVDER::of)
-                .map(v -> v.get(clazz)).collect(Collectors.toList());
+        return arrayList.subList(i, i1).stream().
+                map(fromJSON())
+                .collect(toList());
     }
 
     @Override
     public boolean remove(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.remove(PROVDER.toJson(o));
+        return arrayList.remove(JSONB.toJson(o));
     }
 
     @Override
     public boolean containsAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return arrayList.containsAll(collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
+        return arrayList.containsAll(collection.stream().map(JSONB::toJson).collect(toList()));
     }
+
     @Override
     public boolean contains(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.contains(PROVDER.toJson(o));
+        return arrayList.contains(JSONB.toJson(o));
     }
 
     @Override
     public boolean addAll(int i, Collection<? extends T> collection) {
         requireNonNull(collection, "collection is required");
-        return arrayList.addAll(i, collection.stream().map(PROVDER::toJson).collect(Collectors.toList()));
+        return arrayList.addAll(i, collection.stream().map(JSONB::toJson).collect(toList()));
     }
 }
