@@ -21,9 +21,10 @@ import com.couchbase.client.java.document.json.JsonObject;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
+import org.jnosql.diana.driver.ValueJSON;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,7 +32,7 @@ import java.util.Optional;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jnosql.diana.driver.value.ValueUtil.convert;
+import static org.jnosql.diana.driver.ValueUtil.convert;
 
 /**
  * The couchbase implementation to {@link BucketManager}
@@ -40,7 +41,7 @@ public class CouchbaseBucketManager implements BucketManager {
 
     private static final String VALUE_FIELD = "value";
 
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private static final Jsonb JSONB = JsonbBuilder.create();
 
     private final Bucket bucket;
 
@@ -56,7 +57,7 @@ public class CouchbaseBucketManager implements BucketManager {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
         JsonObject jsonObject = JsonObject.create()
-                .put("value", PROVDER.toJson(value));
+                .put("value", JSONB.toJson(value));
 
         bucket.upsert(JsonDocument.create(key.toString(), jsonObject));
     }
@@ -98,7 +99,7 @@ public class CouchbaseBucketManager implements BucketManager {
             return Optional.empty();
         }
         Object value = jsonDocument.content().get(VALUE_FIELD);
-        return Optional.of(PROVDER.of(value.toString()));
+        return Optional.of(ValueJSON.of(value.toString()));
     }
 
     @Override
