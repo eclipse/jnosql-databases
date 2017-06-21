@@ -15,15 +15,7 @@
 
 package org.jnosql.diana.redis.key;
 
-<<<<<<< HEAD
 import static java.util.Objects.requireNonNull;
-=======
-<<<<<<< HEAD
-import static java.util.Objects.requireNonNull;
-=======
-import redis.clients.jedis.Jedis;
->>>>>>> 3169492abbc79dce61fa385e55d29f4204b22509
->>>>>>> 9bb420181be681dd1ad09eae26c12aef57d9ccd7
 
 import java.util.Collection;
 import java.util.Map;
@@ -33,15 +25,8 @@ import java.util.stream.Collectors;
 
 import org.jnosql.diana.driver.value.JSONValueProvider;
 
-<<<<<<< HEAD
 import redis.clients.jedis.Jedis;
-=======
-<<<<<<< HEAD
-import redis.clients.jedis.Jedis;
-=======
-import static java.util.Objects.requireNonNull;
->>>>>>> 3169492abbc79dce61fa385e55d29f4204b22509
->>>>>>> 9bb420181be681dd1ad09eae26c12aef57d9ccd7
+
 
 public class RedisMap<K, V> implements Map<K, V> {
 
