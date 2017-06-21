@@ -20,6 +20,7 @@ import com.arangodb.entity.BaseDocument;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -90,7 +91,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
 
         return ofNullable(entity)
                 .map(TO_JSON)
-                .map(j -> JSONB.of(j));
+                .map(j -> ValueJSON.of(j));
 
     }
 
@@ -102,7 +103,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
                         .getDocument(k, BaseDocument.class))
                 .filter(Objects::nonNull)
                 .map(TO_JSON)
-                .map(j -> JSONB.of(j))
+                .map(j -> ValueJSON.of(j))
                 .collect(toList());
     }
 

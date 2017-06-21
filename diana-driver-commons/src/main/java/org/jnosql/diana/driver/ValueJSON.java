@@ -23,15 +23,15 @@ import java.util.Objects;
 
 
 /**
- * A {@link Value} implementation that storage all the information as a {@link String} JSON.
+ * A {@link Value} implementation that storage all the information as a {@link String} with JSON format.
  */
-public class JSONValue implements Value {
+public class ValueJSON implements Value {
 
     private static final Jsonb JSONB = JsonbBuilder.create();
 
     private final String json;
 
-    JSONValue(String json) {
+    ValueJSON(String json) {
         this.json = json;
     }
 
@@ -62,7 +62,7 @@ public class JSONValue implements Value {
      */
     public static Value of(String json) throws NullPointerException {
         Objects.requireNonNull(json, "json is required");
-        return new JSONValue(json);
+        return new ValueJSON(json);
     }
 
     /**
@@ -74,6 +74,6 @@ public class JSONValue implements Value {
      */
     public static Value of(Object json) throws NullPointerException {
         Objects.requireNonNull(json, "json is required");
-        return new JSONValue(JSONB.toJson(json));
+        return new ValueJSON(JSONB.toJson(json));
     }
 }
