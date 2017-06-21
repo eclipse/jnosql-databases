@@ -23,7 +23,7 @@ public class User {
     private final String nickName;
 
     @JsonbCreator
-    public User(@JsonbProperty("name") String nickName) {
+    public User(@JsonbProperty("nickName") String nickName) {
         this.nickName = nickName;
 
     }
