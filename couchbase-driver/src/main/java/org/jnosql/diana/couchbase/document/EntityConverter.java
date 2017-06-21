@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 package org.jnosql.diana.couchbase.document;
 
@@ -34,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -125,27 +123,31 @@ final class EntityConverter {
         JsonObject jsonObject = JsonObject.create();
         entity.getDocuments().stream()
                 .filter(d -> !d.getName().equals(ID_FIELD))
-                .forEach(d -> {
-                    Object value = ValueUtil.convert(d.getValue());
-                    if (Document.class.isInstance(value)) {
-                        Document document = Document.class.cast(value);
-                        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
-                    } else if (Iterable.class.isInstance(value)) {
-                        JsonArray jsonArray = JsonArray.create();
-                        Iterable.class.cast(value).forEach(o -> {
-                            if (Document.class.isInstance(o)) {
-                                Document document = Document.class.cast(o);
-                                jsonArray.add(Collections.singletonMap(document.getName(), document.get()));
-                            } else {
-                                jsonArray.add(value);
-                            }
-                        });
-                        jsonObject.put(d.getName(), jsonArray);
+                .forEach(toJsonObject(jsonObject));
+        return jsonObject;
+    }
+
+    private static Consumer<Document> toJsonObject(JsonObject jsonObject) {
+        return d -> {
+            Object value = ValueUtil.convert(d.getValue());
+            if (Document.class.isInstance(value)) {
+                Document document = Document.class.cast(value);
+                jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+            } else if (Iterable.class.isInstance(value)) {
+                JsonArray jsonArray = JsonArray.create();
+                Iterable.class.cast(value).forEach(o -> {
+                    if (Document.class.isInstance(o)) {
+                        Document document = Document.class.cast(o);
+                        jsonArray.add(Collections.singletonMap(document.getName(), document.get()));
                     } else {
-                        jsonObject.put(d.getName(), value);
+                        jsonArray.add(o);
                     }
                 });
-        return jsonObject;
+                jsonObject.put(d.getName(), jsonArray);
+            } else {
+                jsonObject.put(d.getName(), value);
+            }
+        };
     }
 
 }

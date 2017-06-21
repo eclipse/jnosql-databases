@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 
 package org.jnosql.diana.cassandra.column;
@@ -41,7 +38,7 @@ import java.util.stream.StreamSupport;
 /**
  * The Cassandra implementation of {@link ColumnFamilyManager}, that supports all methods and also supports
  * CQL and ConsistencyLevel.
- * <p>{@link CassandraColumnFamilyManager#find(ColumnQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnFamilyManager#select(ColumnQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnFamilyManager#cql(String)}</p>
  * <p>{@link CassandraColumnFamilyManager#nativeQueryPrepare(String)}</p>
  * <p>{@link CassandraColumnFamilyManager#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
@@ -62,7 +59,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity) {
+    public ColumnEntity insert(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         session.execute(insert);
@@ -71,12 +68,12 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public ColumnEntity update(ColumnEntity entity) throws NullPointerException {
-        return save(entity);
+        return insert(entity);
     }
 
 
     @Override
-    public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
+    public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
@@ -95,7 +92,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public List<ColumnEntity> find(ColumnQuery query) {
+    public List<ColumnEntity> select(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSet resultSet = session.execute(select);
@@ -198,7 +195,7 @@ public class CassandraColumnFamilyManager implements ColumnFamilyManager {
      * @return the query using a consistency level
      * @throws NullPointerException when either query or level are null
      */
-    public List<ColumnEntity> find(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
+    public List<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(level, "level is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);

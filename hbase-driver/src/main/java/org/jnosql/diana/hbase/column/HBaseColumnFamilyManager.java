@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 package org.jnosql.diana.hbase.column;
 
@@ -74,7 +71,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity) {
+    public ColumnEntity insert(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         String family = entity.getName();
         List<Column> columns = entity.getColumns();
@@ -98,11 +95,11 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     @Override
     public ColumnEntity update(ColumnEntity entity) throws NullPointerException {
-        return save(entity);
+        return insert(entity);
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity, Duration ttl) throws NullPointerException {
+    public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
@@ -131,7 +128,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public List<ColumnEntity> find(ColumnQuery query) {
+    public List<ColumnEntity> select(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
         ColumnCondition condition = query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));

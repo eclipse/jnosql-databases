@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 
 package org.jnosql.diana.hbase.column;
@@ -60,7 +57,7 @@ public class HBaseColumnFamilyManagerTest {
     @Test
     public void shouldSave() {
         ColumnEntity entity = createEntity();
-        columnFamilyManager.save(entity);
+        columnFamilyManager.insert(entity);
     }
 
     @Test(expected = DianaHBaseException.class)
@@ -69,15 +66,15 @@ public class HBaseColumnFamilyManagerTest {
         entity.add(Column.of("id", "otaviojava"));
         entity.add(Column.of("age", 26));
         entity.add(Column.of("country", "Brazil"));
-        columnFamilyManager.save(entity);
+        columnFamilyManager.insert(entity);
     }
 
     @Test
     public void shouldFind() {
-        columnFamilyManager.save(createEntity());
+        columnFamilyManager.insert(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
-        List<ColumnEntity> columnFamilyEntities = columnFamilyManager.find(query);
+        List<ColumnEntity> columnFamilyEntities = columnFamilyManager.select(query);
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
@@ -87,36 +84,36 @@ public class HBaseColumnFamilyManagerTest {
 
     @Test
     public void shouldFindInBatch() {
-        columnFamilyManager.save(createEntity());
-        columnFamilyManager.save(createEntity2());
+        columnFamilyManager.insert(createEntity());
+        columnFamilyManager.insert(createEntity2());
 
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "poliana")));
-        List<ColumnEntity> entities = columnFamilyManager.find(query);
+        List<ColumnEntity> entities = columnFamilyManager.select(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(entities.size()));
 
     }
 
     @Test
     public void shouldDeleteEntity() {
-        columnFamilyManager.save(createEntity());
+        columnFamilyManager.insert(createEntity());
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
         columnFamilyManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()));
-        List<ColumnEntity> entities = columnFamilyManager.find(query);
+        List<ColumnEntity> entities = columnFamilyManager.select(query);
         assertTrue(entities.isEmpty());
     }
 
     @Test
     public void shouldDeleteEntities() {
-        columnFamilyManager.save(createEntity());
-        columnFamilyManager.save(createEntity2());
+        columnFamilyManager.insert(createEntity());
+        columnFamilyManager.insert(createEntity2());
         ColumnQuery query = ColumnQuery.of(FAMILY);
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "otaviojava")));
         query.and(ColumnCondition.eq(Column.of(ID_FIELD, "poliana")));
         columnFamilyManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()));
-        List<ColumnEntity> entities = columnFamilyManager.find(query);
+        List<ColumnEntity> entities = columnFamilyManager.select(query);
         assertTrue(entities.isEmpty());
     }
 

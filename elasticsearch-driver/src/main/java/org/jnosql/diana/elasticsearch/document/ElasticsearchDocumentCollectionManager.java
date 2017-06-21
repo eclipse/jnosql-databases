@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 package org.jnosql.diana.elasticsearch.document;
 
@@ -57,7 +54,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
     }
 
     @Override
-    public DocumentEntity save(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
@@ -75,7 +72,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
 
     @Override
-    public DocumentEntity save(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
         Document id = entity.find(ID_FIELD)
@@ -95,13 +92,13 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
     @Override
     public DocumentEntity update(DocumentEntity entity) throws NullPointerException {
-        return save(entity);
+        return insert(entity);
     }
 
     @Override
     public void delete(DocumentDeleteQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        List<DocumentEntity> entities = find(DocumentQuery.of(query.getCollection())
+        List<DocumentEntity> entities = select(DocumentQuery.of(query.getCollection())
                 .and(query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"))));
 
         entities.stream()
@@ -118,7 +115,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
 
 
     @Override
-    public List<DocumentEntity> find(DocumentQuery query) throws NullPointerException {
+    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         return EntityConverter.query(query, client, index);
     }
@@ -131,7 +128,7 @@ public class ElasticsearchDocumentCollectionManager implements DocumentCollectio
      * @return the objects from query
      * @throws NullPointerException when query is null
      */
-    public List<DocumentEntity> find(QueryBuilder query, String... types) throws NullPointerException {
+    public List<DocumentEntity> select(QueryBuilder query, String... types) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
         SearchResponse searchResponse = null;

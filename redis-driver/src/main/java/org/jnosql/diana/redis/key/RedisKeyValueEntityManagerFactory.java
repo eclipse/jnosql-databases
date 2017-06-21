@@ -1,27 +1,19 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 
 package org.jnosql.diana.redis.key;
-
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
-import redis.clients.jedis.JedisPool;
 
 import java.util.List;
 import java.util.Map;
@@ -29,12 +21,18 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+import org.jnosql.diana.driver.value.JSONValueProviderService;
+
+import redis.clients.jedis.JedisPool;
+
 /**
  * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisKeyValueEntityManager}
  */
 public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<RedisKeyValueEntityManager> {
 
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private static final JSONValueProvider PROVIDER = JSONValueProviderService.getProvider();
 
     private final JedisPool jedisPool;
 
@@ -47,35 +45,35 @@ public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<R
     public RedisKeyValueEntityManager getBucketManager(String bucketName) {
         Objects.requireNonNull(bucketName, "bucket name is required");
 
-        return new RedisKeyValueEntityManager(bucketName, PROVDER, jedisPool.getResource());
+        return new RedisKeyValueEntityManager(bucketName, PROVIDER, jedisPool.getResource());
     }
 
     @Override
     public <T> List<T> getList(String bucketName, Class<T> clazz) {
         Objects.requireNonNull(bucketName, "bucket name is required");
         Objects.requireNonNull(clazz, "Class type is required");
-        return new RedisList<T>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisList<T>(jedisPool.getResource(), clazz, bucketName,PROVIDER);
     }
 
     @Override
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
         Objects.requireNonNull(bucketName, "bucket name is required");
         Objects.requireNonNull(clazz, "Class type is required");
-        return new RedisSet<T>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisSet<T>(jedisPool.getResource(), clazz, bucketName,PROVIDER);
     }
 
     @Override
     public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
         Objects.requireNonNull(bucketName, "bucket name is required");
         Objects.requireNonNull(clazz, "Class type is required");
-        return new RedisQueue<T>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisQueue<T>(jedisPool.getResource(), clazz, bucketName,PROVIDER);
     }
 
     @Override
     public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
         Objects.requireNonNull(bucketName, "bucket name is required");
         Objects.requireNonNull(valueValue, "Class type is required");
-        return new RedisMap<>(jedisPool.getResource(), keyValue, valueValue, bucketName);
+        return new RedisMap<>(jedisPool.getResource(), keyValue, valueValue, bucketName,PROVIDER);
     }
 
     /**

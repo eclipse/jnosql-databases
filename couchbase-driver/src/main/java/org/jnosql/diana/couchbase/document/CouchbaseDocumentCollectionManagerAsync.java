@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 package org.jnosql.diana.couchbase.document;
 
@@ -51,39 +48,39 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
 
 
     @Override
-    public void save(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, NOOP);
+    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        insert(entity, NOOP);
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, ttl, NOOP);
+    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        insert(entity, ttl, NOOP);
     }
 
     @Override
-    public void save(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(callBack, "callBack is required");
         just(entity)
-                .map(manager::save)
+                .map(manager::insert)
                 .subscribe(callBack::accept, ERROR_SAVE);
     }
 
     @Override
-    public void save(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(callBack, "callBack is required");
         just(entity)
-                .map(e -> manager.save(e, ttl))
+                .map(e -> manager.insert(e, ttl))
                 .subscribe(callBack::accept, ERROR_SAVE);
     }
 
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity);
+        insert(entity);
     }
 
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, callBack);
+        insert(entity, callBack);
     }
 
     @Override
@@ -103,8 +100,8 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
     }
 
     @Override
-    public void find(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        just(query).map(manager::find).subscribe(callBack::accept, ERROR_FIND);
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        just(query).map(manager::select).subscribe(callBack::accept, ERROR_FIND);
     }
 
 

@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 package org.jnosql.diana.cassandra.column;
 
@@ -46,7 +43,7 @@ import java.util.stream.StreamSupport;
  * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel, Consumer)}</p>
  * <p>{@link CassandraColumnFamilyManagerAsync#cql(String, Consumer)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#find(ColumnQuery, ConsistencyLevel, Consumer)}</p>
+ * <p>{@link CassandraColumnFamilyManagerAsync#select(ColumnQuery, ConsistencyLevel, Consumer)}</p>
  */
 public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsync {
 
@@ -63,7 +60,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     }
 
     @Override
-    public void save(ColumnEntity entity) {
+    public void insert(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         session.executeAsync(insert);
@@ -111,7 +108,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     }
 
     @Override
-    public void save(ColumnEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(ColumnEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
@@ -172,14 +169,14 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     }
 
     @Override
-    public void save(ColumnEntity entity, Consumer<ColumnEntity> consumer) {
+    public void insert(ColumnEntity entity, Consumer<ColumnEntity> consumer) {
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> consumer.accept(entity), executor);
     }
 
     @Override
-    public void save(ColumnEntity entity, Duration ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void insert(ColumnEntity entity, Duration ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
@@ -189,12 +186,12 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
 
     @Override
     public void update(ColumnEntity entity) {
-        save(entity);
+        insert(entity);
     }
 
     @Override
     public void update(ColumnEntity entity, Consumer<ColumnEntity> consumer) {
-        save(entity, consumer);
+        insert(entity, consumer);
     }
 
     @Override
@@ -246,7 +243,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
     }
 
     @Override
-    public void find(ColumnQuery query, Consumer<List<ColumnEntity>> consumer)
+    public void select(ColumnQuery query, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         Objects.requireNonNull(query, "query is required");
@@ -267,7 +264,7 @@ public class CassandraColumnFamilyManagerAsync implements ColumnFamilyManagerAsy
      * @throws ExecuteAsyncQueryException a thread exception
      * @throws NullPointerException       when any arguments are null
      */
-    public void find(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer)
+    public void select(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException {
         BuiltStatement select = QueryUtils.add(query, keyspace);
         select.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));

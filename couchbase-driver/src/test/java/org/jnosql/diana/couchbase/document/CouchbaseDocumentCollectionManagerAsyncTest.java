@@ -1,19 +1,16 @@
 /*
- * Copyright 2017 Otavio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   You may elect to redistribute this code under either of these licenses.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   Contributors:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *   Otavio Santana
  */
 package org.jnosql.diana.couchbase.document;
 
@@ -68,13 +65,13 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldSaveAsync() throws InterruptedException {
         DocumentEntity entity = getEntity();
-        entityManagerAsync.save(entity);
+        entityManagerAsync.insert(entity);
 
         Thread.sleep(1_000L);
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("name");
         query.and(DocumentCondition.eq(id.get()));
-        List<DocumentEntity> entities = entityManager.find(query);
+        List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
 
     }
@@ -82,7 +79,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldUpdateAsync() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.save(entity);
+        DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         entityManagerAsync.update(entity);
@@ -90,13 +87,13 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldRemoveEntityAsync() throws InterruptedException {
-        DocumentEntity documentEntity = entityManager.save(getEntity());
+        DocumentEntity documentEntity = entityManager.insert(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
         query.and(DocumentCondition.eq(id.get()));
         entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
         Thread.sleep(1_000L);
-        assertTrue(entityManager.find(query).isEmpty());
+        assertTrue(entityManager.select(query).isEmpty());
 
     }
 
