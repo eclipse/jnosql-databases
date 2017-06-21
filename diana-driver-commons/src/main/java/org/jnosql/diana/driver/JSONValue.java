@@ -54,7 +54,7 @@ public class JSONValue implements Value {
     }
 
     /**
-     * Returns a new instance of {@link Value}
+     * Returns a new instance of {@link Value} keeping the value as JSON
      *
      * @param json the value
      * @return the new Value instance
@@ -63,5 +63,17 @@ public class JSONValue implements Value {
     public static Value of(String json) throws NullPointerException {
         Objects.requireNonNull(json, "json is required");
         return new JSONValue(json);
+    }
+
+    /**
+     * Returns a new instance of {@link Value} converting to JSON first
+     *
+     * @param json the value
+     * @return the new Value instance
+     * @throws NullPointerException when json is null
+     */
+    public static Value of(Object json) throws NullPointerException {
+        Objects.requireNonNull(json, "json is required");
+        return new JSONValue(JSONB.toJson(json));
     }
 }
