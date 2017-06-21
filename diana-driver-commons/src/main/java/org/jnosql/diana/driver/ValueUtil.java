@@ -21,7 +21,7 @@ import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.util.Objects;
 
-public class ValueUtil {
+public final class ValueUtil {
 
     private static final ValueWriter VALUE_WRITER = ValueWriterDecorator.getInstance();
 
