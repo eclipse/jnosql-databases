@@ -22,14 +22,17 @@ public class ProductCart implements Serializable {
 
     private static final long serialVersionUID = 4087960613230439836L;
 
-    private final String name;
+    private String name;
 
-    private final BigDecimal price;
+    private BigDecimal price;
 
 
     public ProductCart(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
+    }
+
+    public ProductCart() {
     }
 
     public String getName() {
@@ -41,6 +44,13 @@ public class ProductCart implements Serializable {
     }
 
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     @Override
     public boolean equals(Object o) {

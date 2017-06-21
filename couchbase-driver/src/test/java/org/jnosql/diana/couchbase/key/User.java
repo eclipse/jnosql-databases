@@ -14,13 +14,16 @@
  */
 package org.jnosql.diana.couchbase.key;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
 public class User {
 
     private final String nickName;
 
-    public User(String nickName) {
+    @JsonbCreator
+    public User(@JsonbProperty("name") String nickName) {
         this.nickName = nickName;
 
     }
