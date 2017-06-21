@@ -16,19 +16,20 @@
 package org.jnosql.diana.redis.key;
 
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import redis.clients.jedis.Jedis;
+import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.value.JSONValueProvider;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * The redis implementation to {@link BucketManager}
