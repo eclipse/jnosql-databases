@@ -2,13 +2,13 @@
 ![Hbase Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/hbase.png)
 
 
-**Elasticsearch**: Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java and is released as open source under the terms of the Apache License. Elasticsearch is the most popular enterprise search engine followed by Apache Solr, also based on Lucene.
+**Hbase**: HBase is an open source, non-relational, distributed database modeled after Google's BigTable and is written in Java. It is developed as part of Apache Software Foundation's Apache Hadoop project and runs on top of HDFS (Hadoop Distributed File System), providing BigTable-like capabilities for Hadoop. That is, it provides a fault-tolerant way of storing large quantities of sparse data (small amounts of information caught within a large collection of empty or unimportant data, such as finding the 50 largest items in a group of 2 billion records, or finding the non-zero items representing less than 0.1% of a huge collection).
 
 
 ### How To Install
 
-1. Download the code: https://www.elastic.co/downloads/elasticsearch
-1. Follow the install and run steps: https://www.elastic.co/downloads/elasticsearch
+1. Download the code: http://www.apache.org/dyn/closer.cgi/hbase/
+1. Follow the install and run steps: https://hbase.apache.org/book.html#quickstart
 1. Execute the maven install `mvn clean install`
 
 
