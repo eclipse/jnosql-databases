@@ -6,6 +6,8 @@
 
 ### How To test
 
+Once this a communication layer to Arango, we're using integration test, so you need to install ArangoDB. The recommended way is using Docker.
+
 ![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
 
 
