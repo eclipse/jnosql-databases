@@ -19,3 +19,10 @@ Once this a communication layer to Couchbase, we're using integration test, so y
 1. Follow the instructions: https://hub.docker.com/r/couchbase/server/
 1. Execute the test `mvn clean install`
 
+
+### Install without testing
+
+
+If you won't run the tests the database is not required, so just run the maven skipping the tests.
+
+1. Execute the test `mvn clean install -DskipTests`
