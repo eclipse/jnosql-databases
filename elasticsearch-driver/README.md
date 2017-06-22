@@ -8,6 +8,7 @@
 
 1. Download the code: https://www.elastic.co/downloads/elasticsearch
 1. Follow the install and run steps: https://www.elastic.co/downloads/elasticsearch
+1. Execute the maven install `mvn clean install`
 
 
 ### Install without testing
