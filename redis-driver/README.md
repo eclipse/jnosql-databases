@@ -3,6 +3,7 @@
 
 
 
+**Redis**: Redis is a software project that implements data structure servers. It is open-source, networked, in-memory, and stores keys with optional durability.
 
 ### How To Install
 
@@ -12,9 +13,9 @@ Once this a communication layer to Arango, we're using integration test, so you 
 
 
 1. Install docker: https://www.docker.com/
-1. https://hub.docker.com/r/arangodb/arangodb/
+1. https://hub.docker.com/_/redis/
 1. Run docker command
-1. `docker run -e ARANGO_NO_AUTH=1 -d --name arangodb-instance -p 8529:8529 -d arangodb/arangodb`
+1. `docker run --name redis-instance -p 6379:6379 -d redis`
 1. Execute the maven install `mvn clean install`
 
 
