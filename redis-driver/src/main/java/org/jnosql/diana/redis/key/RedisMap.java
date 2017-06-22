@@ -29,7 +29,7 @@ import javax.json.bind.JsonbBuilder;
 
 import redis.clients.jedis.Jedis;
 
-public class RedisMap<K, V> implements Map<K, V> {
+class RedisMap<K, V> implements Map<K, V> {
 
 
     protected static final Jsonb JSONB = JsonbBuilder.create();
