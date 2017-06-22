@@ -15,7 +15,7 @@ Once this a communication layer to Arango, we're using integration test, so you 
 1. https://hub.docker.com/r/arangodb/arangodb/
 1. Run docker command
 1. `docker run -e ARANGO_NO_AUTH=1 -d --name arangodb-instance -p 8529:8529 -d arangodb/arangodb`
-1. Execute the test `mvn clean install`
+1. Execute the maven install `mvn clean install`
 
 
 ### Install without testing
