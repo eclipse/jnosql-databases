@@ -33,7 +33,7 @@ import redis.clients.jedis.JedisPool;
  */
 public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<RedisKeyValueEntityManager> {
 
-    private static final Jsonb PROVDER = JsonbBuilder.create();
+    private static final Jsonb JSON = JsonbBuilder.create();
 
     private final JedisPool jedisPool;
 
@@ -46,7 +46,7 @@ public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<R
     public RedisKeyValueEntityManager getBucketManager(String bucketName) {
         Objects.requireNonNull(bucketName, "bucket name is required");
 
-        return new RedisKeyValueEntityManager(bucketName, PROVDER, jedisPool.getResource());
+        return new RedisKeyValueEntityManager(bucketName, JSON, jedisPool.getResource());
     }
 
     @Override

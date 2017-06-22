@@ -39,13 +39,13 @@ import redis.clients.jedis.Jedis;
 public class RedisKeyValueEntityManager implements BucketManager {
 
     private final String nameSpace;
-    private final Jsonb provider;
+    private final Jsonb jsonB;
 
     private final Jedis jedis;
 
     RedisKeyValueEntityManager(String nameSpace, Jsonb provider, Jedis jedis) {
         this.nameSpace = nameSpace;
-        this.provider = provider;
+        this.jsonB = provider;
         this.jedis = jedis;
     }
 
@@ -54,7 +54,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
         Objects.requireNonNull(value, "Value is required");
         Objects.requireNonNull(key, "key is required");
         String valideKey = createKeyWithNameSpace(key.toString(), nameSpace);
-        jedis.set(valideKey, provider.toJson(value));
+        jedis.set(valideKey, jsonB.toJson(value));
     }
 
     @Override

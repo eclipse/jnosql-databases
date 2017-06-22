@@ -34,13 +34,13 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected Jedis jedis;
 
-    protected Jsonb JsonB;
+    protected Jsonb jsonB;
 
     RedisCollection(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
         this.clazz = clazz;
         this.keyWithNameSpace = keyWithNameSpace;
         this.jedis = jedis;
-        this.JsonB = JsonbBuilder.create();
+        this.jsonB = JsonbBuilder.create();
     }
 
     @Override
@@ -135,7 +135,7 @@ abstract class RedisCollection<T> implements Collection<T> {
         String value = jedis.lindex(keyWithNameSpace, (long) index);
         if (value != null && !value.isEmpty()) {
             jedis.lrem(keyWithNameSpace, 1, value);
-            return JsonB.fromJson(value,clazz);
+            return jsonB.fromJson(value,clazz);
         }
         return null;
     }
@@ -145,7 +145,7 @@ abstract class RedisCollection<T> implements Collection<T> {
             return -1;
         }
 
-        String value = JsonB.toJson(o);
+        String value = jsonB.toJson(o);
         for (int index = 0; index < size(); index++) {
             String findedValue = jedis.lindex(keyWithNameSpace, (long) index);
             if (value.equals(findedValue)) {
@@ -171,7 +171,7 @@ abstract class RedisCollection<T> implements Collection<T> {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        return JsonB.fromJson(value,clazz);
+        return jsonB.fromJson(value,clazz);
     }
 
     @Override

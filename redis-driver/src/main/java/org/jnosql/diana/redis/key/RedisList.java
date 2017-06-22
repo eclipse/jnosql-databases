@@ -63,11 +63,11 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         Objects.requireNonNull(e);
         int index = size();
         if (index == 0) {
-            jedis.lpush(keyWithNameSpace, JsonB.toJson(e));
+            jedis.lpush(keyWithNameSpace, jsonB.toJson(e));
         } else {
             String previewValue = jedis.lindex(keyWithNameSpace, index - 1);
             jedis.linsert(keyWithNameSpace, LIST_POSITION.AFTER, previewValue,
-                    JsonB.toJson(e));
+                    jsonB.toJson(e));
         }
         return true;
     }
@@ -94,7 +94,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
     @Override
     public T set(int index, T element) {
         Objects.requireNonNull(element);
-        jedis.lset(keyWithNameSpace, index, JsonB.toJson(element));
+        jedis.lset(keyWithNameSpace, index, jsonB.toJson(element));
         return element;
     }
 
@@ -103,7 +103,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         Objects.requireNonNull(element);
         String previewValue = jedis.lindex(keyWithNameSpace, index);
         if (previewValue != null && !previewValue.isEmpty()) {
-            jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, JsonB.toJson(element));
+            jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, jsonB.toJson(element));
         } else {
             add(element);
         }
@@ -123,7 +123,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
     @Override
     public int lastIndexOf(Object o) {
         Objects.requireNonNull(o);
-        String value = JsonB.toJson(o);
+        String value = jsonB.toJson(o);
         for (int index = size(); index > 0; --index) {
             String findedValue = jedis.lindex(keyWithNameSpace, (long) index);
             if (value.equals(findedValue)) {
@@ -138,7 +138,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         List<T> subList = new ArrayList<>();
         List<String> elements = jedis.lrange(keyWithNameSpace, fromIndex, toIndex);
         for (String element : elements) {
-            subList.add(JsonB.fromJson(element, clazz));
+            subList.add(jsonB.fromJson(element, clazz));
         }
         return subList;
     }
