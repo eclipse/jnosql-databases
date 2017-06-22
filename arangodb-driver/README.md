@@ -4,7 +4,7 @@
 **Arangodb**: ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 
 
-### How To test
+### How To Install
 
 Once this a communication layer to Arango, we're using integration test, so you need to install ArangoDB. The recommended way is using Docker.
 
