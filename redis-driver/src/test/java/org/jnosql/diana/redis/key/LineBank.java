@@ -23,35 +23,49 @@ import java.util.Objects;
 public class LineBank {
 
 
-    private final Person person;
+    private final String name;
 
-    public Person getPerson() {
-        return person;
-    }
+    private final Integer age;
+
 
     @JsonbCreator
     public LineBank(@JsonbProperty("name") String name, @JsonbProperty("age") Integer age) {
-        this.person = new Person(name, age);
+        this.name = name;
+        this.age = age;
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getAge() {
+        return age;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof LineBank)) {
+            return false;
+        }
         LineBank lineBank = (LineBank) o;
-        return Objects.equals(person, lineBank.person);
+        return Objects.equals(name, lineBank.name) &&
+                Objects.equals(age, lineBank.age);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(person);
+        return Objects.hash(name, age);
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("LineBank{");
-        sb.append("person=").append(person);
+        sb.append("name='").append(name).append('\'');
+        sb.append(", age=").append(age);
         sb.append('}');
         return sb.toString();
     }
