@@ -2,20 +2,20 @@
 ![Orient Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/orientdb.png)
 
 
-**Arangodb**: ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
+**Orientdb**: OrientDB is an open source NoSQL database management system written in Java. It is a multi-model database, supporting graph, document, key/value, and object models, but the relationships are managed as in graph databases with direct connections between records. It supports schema-less, schema-full and schema-mixed modes. It has a strong security profiling system based on users and roles and supports querying with Gremlin along with SQL extended for graph traversal. OrientDB uses several indexing mechanisms based on B-tree and Extendible hashing, the last one is known as "hash index", there are plans to implement LSM-tree and Fractal tree index based indexes. Each record has Surrogate key which indicates position of record inside of Array list , links between records are stored either as single value of record's position stored inside of referrer or as B-tree of record positions (so-called record IDs or RIDs) which allows fast traversal (with O(1) complexity) of one-to-many relationships and fast addition/removal of new links. OrientDB is the second most popular graph database according to the DB-Engines graph database ranking
 
 
 ### How To Install
 
-Once this a communication layer to Arango, we're using integration test, so you need to install ArangoDB. The recommended way is using Docker.
+Once this a communication layer to Orientdb, we're using integration test, so you need to install Orientdb. The recommended way is using Docker.
 
 ![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
 
 
 1. Install docker: https://www.docker.com/
-1. https://hub.docker.com/r/arangodb/arangodb/
+1. https://hub.docker.com/_/orientdb/
 1. Run docker command
-1. `docker run -e ARANGO_NO_AUTH=1 -d --name arangodb-instance -p 8529:8529 -d arangodb/arangodb`
+1. `docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb`
 1. Execute the maven install `mvn clean install`
 
 
