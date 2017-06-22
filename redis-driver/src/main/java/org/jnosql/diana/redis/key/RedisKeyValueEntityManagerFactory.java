@@ -15,23 +15,25 @@
 
 package org.jnosql.diana.redis.key;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import org.jnosql.diana.driver.value.JSONValueProviderService;
-import redis.clients.jedis.JedisPool;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+
+import org.jnosql.diana.api.key.BucketManagerFactory;
+
+import redis.clients.jedis.JedisPool;
+
 /**
  * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisKeyValueEntityManager}
  */
 public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<RedisKeyValueEntityManager> {
 
-    private static final JSONValueProvider PROVDER = JSONValueProviderService.getProvider();
+    private static final Jsonb JSON = JsonbBuilder.create();
 
     private final JedisPool jedisPool;
 
@@ -44,7 +46,7 @@ public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<R
     public RedisKeyValueEntityManager getBucketManager(String bucketName) {
         Objects.requireNonNull(bucketName, "bucket name is required");
 
-        return new RedisKeyValueEntityManager(bucketName, PROVDER, jedisPool.getResource());
+        return new RedisKeyValueEntityManager(bucketName, JSON, jedisPool.getResource());
     }
 
     @Override

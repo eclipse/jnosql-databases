@@ -15,14 +15,16 @@
 
 package org.jnosql.diana.redis.key;
 
-import com.google.gson.Gson;
-import redis.clients.jedis.Jedis;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+
+import redis.clients.jedis.Jedis;
 
 abstract class RedisCollection<T> implements Collection<T> {
 
@@ -32,13 +34,13 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected Jedis jedis;
 
-    protected Gson gson;
+    protected Jsonb jsonB;
 
     RedisCollection(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
         this.clazz = clazz;
         this.keyWithNameSpace = keyWithNameSpace;
         this.jedis = jedis;
-        gson = new Gson();
+        this.jsonB = JsonbBuilder.create();
     }
 
     @Override
@@ -133,7 +135,7 @@ abstract class RedisCollection<T> implements Collection<T> {
         String value = jedis.lindex(keyWithNameSpace, (long) index);
         if (value != null && !value.isEmpty()) {
             jedis.lrem(keyWithNameSpace, 1, value);
-            return gson.fromJson(value, clazz);
+            return jsonB.fromJson(value,clazz);
         }
         return null;
     }
@@ -143,7 +145,7 @@ abstract class RedisCollection<T> implements Collection<T> {
             return -1;
         }
 
-        String value = gson.toJson(o);
+        String value = jsonB.toJson(o);
         for (int index = 0; index < size(); index++) {
             String findedValue = jedis.lindex(keyWithNameSpace, (long) index);
             if (value.equals(findedValue)) {
@@ -169,7 +171,7 @@ abstract class RedisCollection<T> implements Collection<T> {
         if (value == null || value.isEmpty()) {
             return null;
         }
-        return gson.fromJson(value, clazz);
+        return jsonB.fromJson(value,clazz);
     }
 
     @Override

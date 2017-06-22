@@ -31,7 +31,7 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
     @Override
     public boolean add(T e) {
         Objects.requireNonNull(e);
-        jedis.sadd(keyWithNameSpace, gson.toJson(e));
+        jedis.sadd(keyWithNameSpace, jsonB.toJson(e));
         return false;
     }
 
@@ -48,7 +48,7 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
     @Override
     protected int indexOf(Object o) {
         Objects.requireNonNull(o);
-        String find = gson.toJson(o);
+        String find = jsonB.toJson(o);
         Set<String> values = jedis.smembers(keyWithNameSpace);
         int index = 0;
         for (String value : values) {
@@ -75,7 +75,7 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
         if (!clazz.isInstance(o)) {
             throw new ClassCastException("The object required is " + clazz.getName());
         }
-        String find = gson.toJson(o);
+        String find = jsonB.toJson(o);
         Set<String> values = jedis.smembers(keyWithNameSpace);
         for (String value : values) {
             if (value.contains(find)) {
@@ -91,7 +91,7 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
         Set<String> redisValues = jedis.smembers(keyWithNameSpace);
         List<T> list = new ArrayList<>();
         for (String redisValue : redisValues) {
-            list.add(gson.fromJson(redisValue, clazz));
+            list.add(jsonB.fromJson(redisValue, clazz));
         }
         return list;
     }

@@ -66,13 +66,22 @@
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
+    	 
+    	 <dependency>
+             <groupId>javax.json</groupId>
+             <artifactId>javax.json-api</artifactId>
+             <version>1.1</version>
+             <scope>provided</scope>
+         </dependency>
+ 
+         <dependency>
+             <groupId>org.glassfish</groupId>
+             <artifactId>javax.json</artifactId>
+             <version>1.1</version>
+             <scope>provided</scope>
+         </dependency>
+         
+         <dependency>
             <groupId>org.jnosql.diana</groupId>
             <artifactId>diana-api</artifactId>
             <version>${project.version}</version>
@@ -87,6 +96,24 @@
             <artifactId>diana-driver-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+         <!-- TEST DEPENDENCIES -->
+  
+          <dependency>
+             <groupId>org.eclipse</groupId>
+             <artifactId>yasson</artifactId>
+             <version>1.0.0-RC2</version>
+             <scope>test</scope>
+         </dependency>
+ 
+         
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
     </dependencies>
     <build>
         <plugins>

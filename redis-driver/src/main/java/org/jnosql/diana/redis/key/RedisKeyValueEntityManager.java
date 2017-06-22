@@ -16,19 +16,22 @@
 package org.jnosql.diana.redis.key;
 
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
-import org.jnosql.diana.driver.value.JSONValueProvider;
-import redis.clients.jedis.Jedis;
+import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
+import javax.json.bind.Jsonb;
+
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.ValueJSON;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * The redis implementation to {@link BucketManager}
@@ -36,13 +39,13 @@ import static org.jnosql.diana.redis.key.RedisUtils.createKeyWithNameSpace;
 public class RedisKeyValueEntityManager implements BucketManager {
 
     private final String nameSpace;
-    private final JSONValueProvider provider;
+    private final Jsonb jsonB;
 
     private final Jedis jedis;
 
-    RedisKeyValueEntityManager(String nameSpace, JSONValueProvider provider, Jedis jedis) {
+    RedisKeyValueEntityManager(String nameSpace, Jsonb provider, Jedis jedis) {
         this.nameSpace = nameSpace;
-        this.provider = provider;
+        this.jsonB = provider;
         this.jedis = jedis;
     }
 
@@ -51,7 +54,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
         Objects.requireNonNull(value, "Value is required");
         Objects.requireNonNull(key, "key is required");
         String valideKey = createKeyWithNameSpace(key.toString(), nameSpace);
-        jedis.set(valideKey, provider.toJson(value));
+        jedis.set(valideKey, jsonB.toJson(value));
     }
 
     @Override
@@ -83,7 +86,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
     public <K> Optional<Value> get(K key) throws NullPointerException {
         String value = jedis.get(createKeyWithNameSpace(key.toString(), nameSpace));
         if (value != null && !value.isEmpty()) {
-            return Optional.of(provider.of(value));
+            return Optional.of(ValueJSON.of(value));
         }
         return Optional.empty();
     }
@@ -93,7 +96,7 @@ public class RedisKeyValueEntityManager implements BucketManager {
         return StreamSupport.stream(keys.spliterator(), false)
                 .map(k -> jedis.get(createKeyWithNameSpace(k.toString(), nameSpace)))
                 .filter(value -> value != null && !value.isEmpty())
-                .map(v -> provider.of(v)).collect(toList());
+                .map(v -> ValueJSON.of(v)).collect(toList());
     }
 
     @Override
