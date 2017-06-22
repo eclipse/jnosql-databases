@@ -6,7 +6,7 @@
 
 ### How To test
 
-![Arangodb Project](https://www.docker.com/sites/all/themes/docker/assets/images/brand-full.svg)
+![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
 
 1. Install docker: https://www.docker.com/
 1. https://hub.docker.com/r/arangodb/arangodb/
