@@ -15,6 +15,8 @@
 
 package org.jnosql.diana.redis.key;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +28,8 @@ public class Species implements Serializable {
 
     private final List<String> animals;
 
-    public Species(String... animals) {
+    @JsonbCreator
+    public Species(@JsonbProperty("animals") String... animals) {
         this.animals = Arrays.asList(animals);
     }
 

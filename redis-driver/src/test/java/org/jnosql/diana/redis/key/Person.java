@@ -15,6 +15,8 @@
 
 package org.jnosql.diana.redis.key;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -36,7 +38,8 @@ public class Person implements Serializable {
     }
 
 
-    public Person(String name, Integer age) {
+    @JsonbCreator
+    public Person(@JsonbProperty("name") String name, @JsonbProperty("age") Integer age) {
         this.name = name;
         this.age = age;
     }

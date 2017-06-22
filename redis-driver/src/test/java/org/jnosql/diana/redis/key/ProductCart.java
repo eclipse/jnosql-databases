@@ -15,6 +15,8 @@
 
 package org.jnosql.diana.redis.key;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -36,7 +38,8 @@ public class ProductCart implements Serializable {
     }
 
 
-    public ProductCart(String name, BigDecimal price) {
+    @JsonbCreator
+    public ProductCart(@JsonbProperty("name") String name, @JsonbProperty("price") BigDecimal price) {
         this.name = name;
         this.price = price;
     }

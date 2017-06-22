@@ -15,6 +15,8 @@
 
 package org.jnosql.diana.redis.key;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
 
@@ -22,7 +24,8 @@ public class User {
 
     private final String nickName;
 
-    public User(String nickName) {
+    @JsonbCreator
+    public User(@JsonbProperty("nickName") String nickName) {
         this.nickName = nickName;
 
     }

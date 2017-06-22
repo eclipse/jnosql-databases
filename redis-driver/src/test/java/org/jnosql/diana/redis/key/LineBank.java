@@ -16,6 +16,8 @@
 package org.jnosql.diana.redis.key;
 
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
 public class LineBank {
@@ -27,7 +29,8 @@ public class LineBank {
         return person;
     }
 
-    public LineBank(String name, Integer age) {
+    @JsonbCreator
+    public LineBank(@JsonbProperty("name") String name, @JsonbProperty("age") Integer age) {
         this.person = new Person(name, age);
 
     }
