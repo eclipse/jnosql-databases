@@ -2,20 +2,11 @@
 ![MongoDB Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/mongodb.png)
 
 
-**Arangodb**: ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
+**Mongodb**: MongoDB is a free and open-source cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
 
 
 ### How To Install
 
-Once this a communication layer to Arango, we're using integration test, so you need to install ArangoDB. The recommended way is using Docker.
-
-![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
-
-
-1. Install docker: https://www.docker.com/
-1. https://hub.docker.com/r/arangodb/arangodb/
-1. Run docker command
-1. `docker run -e ARANGO_NO_AUTH=1 -d --name arangodb-instance -p 8529:8529 -d arangodb/arangodb`
 1. Execute the maven install `mvn clean install`
 
 
