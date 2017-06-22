@@ -27,7 +27,7 @@ import java.util.Objects;
 
 abstract class RedisCollection<T> implements Collection<T> {
 
-    protected static final  Jsonb JSONB = JsonbBuilder.create()
+    protected static final  Jsonb JSONB = JsonbBuilder.create();
 
     protected Class<T> clazz;
 
@@ -35,7 +35,7 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected Jedis jedis;
 
-    
+
 
     RedisCollection(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
         this.clazz = clazz;
