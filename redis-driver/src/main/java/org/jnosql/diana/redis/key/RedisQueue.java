@@ -35,7 +35,7 @@ class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
     @Override
     public boolean add(T e) {
         Objects.requireNonNull(e);
-        jedis.rpush(keyWithNameSpace, jsonB.toJson(e));
+        jedis.rpush(keyWithNameSpace, JSONB.toJson(e));
         return true;
     }
 
@@ -57,7 +57,7 @@ class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
     public T poll() {
         String value = jedis.lpop(keyWithNameSpace);
         if (value != null && !value.isEmpty()) {
-            return jsonB.fromJson(value, clazz);
+            return JSONB.fromJson(value, clazz);
         }
         return null;
     }
@@ -77,7 +77,7 @@ class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
         if (index == 0) {
             return null;
         }
-        return jsonB.fromJson(jedis.lindex(keyWithNameSpace, (long) index - 1), clazz);
+        return JSONB.fromJson(jedis.lindex(keyWithNameSpace, (long) index - 1), clazz);
     }
 
 }

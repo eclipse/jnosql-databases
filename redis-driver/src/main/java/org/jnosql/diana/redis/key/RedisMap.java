@@ -32,6 +32,8 @@ import redis.clients.jedis.Jedis;
 public class RedisMap<K, V> implements Map<K, V> {
 
 
+    protected static final Jsonb JSONB = JsonbBuilder.create();
+
     private final Class<K> keyClass;
 
     private final Class<V> valueClass;
@@ -40,15 +42,12 @@ public class RedisMap<K, V> implements Map<K, V> {
 
     private final Jedis jedis;
 
-    protected Jsonb jsonB;
-
 
     RedisMap(Jedis jedis, Class<K> keyValue, Class<V> valueClass, String keyWithNameSpace) {
         this.keyClass = keyValue;
         this.valueClass = valueClass;
         this.nameSpace = keyWithNameSpace;
         this.jedis = jedis;
-        this.jsonB = JsonbBuilder.create();
     }
 
     @Override
@@ -63,13 +62,13 @@ public class RedisMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return jedis.hexists(nameSpace, jsonB.toJson(requireNonNull(key)));
+        return jedis.hexists(nameSpace, JSONB.toJson(requireNonNull(key)));
     }
 
     @Override
     public boolean containsValue(Object value) {
         requireNonNull(value);
-        String valueString = jsonB.toJson(value);
+        String valueString = JSONB.toJson(value);
         Map<String, String> map = createRedisMap();
         return map.containsValue(valueString);
     }
@@ -77,9 +76,9 @@ public class RedisMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         requireNonNull(key, "Key is required");
-        String value = jedis.hget(nameSpace, jsonB.toJson(key));
+        String value = jedis.hget(nameSpace, JSONB.toJson(key));
         if (value != null && !value.isEmpty()) {
-            return jsonB.fromJson(value, valueClass);
+            return JSONB.fromJson(value, valueClass);
         }
         return null;
     }
@@ -88,8 +87,8 @@ public class RedisMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         requireNonNull(value, "Value is required");
         requireNonNull(value, "Key is required");
-        String keyJson = jsonB.toJson(key);
-        jedis.hset(nameSpace, keyJson, jsonB.toJson(value));
+        String keyJson = JSONB.toJson(key);
+        jedis.hset(nameSpace, keyJson, JSONB.toJson(value));
         return value;
     }
 
@@ -97,7 +96,7 @@ public class RedisMap<K, V> implements Map<K, V> {
     public V remove(Object key) {
         V value = get(key);
         if (value != null) {
-            jedis.hdel(nameSpace, jsonB.toJson(requireNonNull(key, "Key is required")));
+            jedis.hdel(nameSpace, JSONB.toJson(requireNonNull(key, "Key is required")));
             return value;
         }
         return null;
@@ -144,7 +143,7 @@ public class RedisMap<K, V> implements Map<K, V> {
         Map<K, V> values = new HashMap<>();
         Map<String, String> redisMap = createRedisMap();
         return redisMap.keySet().stream().collect(Collectors
-                .toMap(k -> jsonB.fromJson(k, keyClass), k -> jsonB.fromJson(redisMap.get(k), valueClass)));
+                .toMap(k -> JSONB.fromJson(k, keyClass), k -> JSONB.fromJson(redisMap.get(k), valueClass)));
     }
 
 
@@ -155,7 +154,7 @@ public class RedisMap<K, V> implements Map<K, V> {
         sb.append(", valueClass=").append(valueClass);
         sb.append(", nameSpace='").append(nameSpace).append('\'');
         sb.append(", jedis=").append(jedis);
-        sb.append(", JsonB=").append(jsonB);
+        sb.append(", JsonB=").append(JSONB);
         sb.append('}');
         return sb.toString();
     }
