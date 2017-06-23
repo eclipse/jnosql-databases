@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>couchbase-driver</artifactId>
     <version>0.0.2-SNAPSHOT</version>
-    <name>Couchbase driver JNOSQL diana Project</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <parent>
         <groupId>org.jnosql.diana</groupId>
         <artifactId>diana-driver</artifactId>
