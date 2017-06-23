@@ -24,7 +24,6 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
 import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.time.Duration;
@@ -35,14 +34,7 @@ import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 /**
- * The implementation of {@link ColumnFamilyManagerAsync} whose implements all methods and also has support to CQL and
- * consistencyLevel.
- * <p>{@link CassandraColumnFamilyManagerAsync#save(ColumnEntity, ConsistencyLevel)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#save(ColumnEntity, Duration, ConsistencyLevel)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#delete(ColumnDeleteQuery, ConsistencyLevel, Consumer)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#cql(String, Consumer)}</p>
- * <p>{@link CassandraColumnFamilyManagerAsync#select(ColumnQuery, ConsistencyLevel, Consumer)}</p>
+ * The default implementation of {@link CassandraColumnFamilyManagerAsync}
  */
 class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyManagerAsync {
     private final Session session;
