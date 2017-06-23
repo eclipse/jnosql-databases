@@ -40,7 +40,7 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
- * <p>{@link MongoDBDocumentCollectionManager#save(DocumentEntity, Duration)}</p>
+ * <p>{@link MongoDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
  */
 public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
 
