@@ -27,7 +27,7 @@ import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.driver.value.ValueUtil;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.time.Duration;
 import java.util.List;
