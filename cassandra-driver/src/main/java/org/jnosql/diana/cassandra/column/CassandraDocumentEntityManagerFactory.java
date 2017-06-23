@@ -48,7 +48,7 @@ public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManage
 
     @Override
     public CassandraColumnFamilyManager get(String database) {
-        return new CassandraColumnFamilyManager(cluster.connect(database), executor, database);
+        return new DefaultCassandraColumnFamilyManager(cluster.connect(database), executor, database);
     }
 
     @Override
