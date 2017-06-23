@@ -54,7 +54,7 @@ import static org.jnosql.diana.api.Condition.IN;
 /**
  * The Hbase implementation to {@link ColumnFamilyManager}.
  * It does not support TTL methods
- * <p>{@link HBaseColumnFamilyManager#save(ColumnEntity, Duration)}</p>
+ * <p>{@link HBaseColumnFamilyManager#insert(ColumnEntity, Duration)}</p>
  */
 public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 

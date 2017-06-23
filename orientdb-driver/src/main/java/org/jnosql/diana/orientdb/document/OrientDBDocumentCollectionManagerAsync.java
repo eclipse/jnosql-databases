@@ -39,8 +39,8 @@ import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 
 /**
  * The OrientDB implementation to {@link DocumentCollectionManagerAsync} this method does not support TTL method:
- * <p> {@link OrientDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration)}</p>
- * <p>{@link OrientDBDocumentCollectionManagerAsync#save(DocumentEntity, Duration, Consumer)}</p>
+ * <p> {@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration)}</p>
+ * <p>{@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration, Consumer)}</p>
  * Also has supports to query:
  * <p>{@link OrientDBDocumentCollectionManagerAsync#find(String, Consumer, Object...)}</p>
  */

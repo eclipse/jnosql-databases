@@ -43,9 +43,9 @@ import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 /**
  * The orientdb implementation to {@link DocumentCollectionManager}, this implementation
  * does not support TTL.
- * <p>{@link OrientDBDocumentCollectionManager#save(DocumentEntity, Duration)}</p>
+ * <p>{@link OrientDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
  * Also this implementation has support SQL query and also live query.
- * <p>{@link OrientDBDocumentCollectionManager#find(String, Object...)}</p>
+ * <p>{@link OrientDBDocumentCollectionManager#select(String, Object...)}</p>
  * <p>{@link OrientDBDocumentCollectionManager#live(DocumentQuery, Consumer)}</p>
  * <p>{@link OrientDBDocumentCollectionManager#live(String, Consumer, Object...)}</p>
  */
