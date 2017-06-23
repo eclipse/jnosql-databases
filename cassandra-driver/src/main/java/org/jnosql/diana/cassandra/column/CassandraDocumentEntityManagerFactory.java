@@ -53,7 +53,7 @@ public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManage
 
     @Override
     public CassandraColumnFamilyManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new CassandraColumnFamilyManagerAsync(cluster.connect(database), executor, database);
+        return new DefaultCassandraColumnFamilyManagerAsync(cluster.connect(database), executor, database);
     }
 
     @Override
