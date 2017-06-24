@@ -44,102 +44,16 @@ import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
  * Also has supports to query:
  * <p>{@link OrientDBDocumentCollectionManagerAsync#find(String, Consumer, Object...)}</p>
  */
-public class OrientDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
-
-    private static final Consumer<DocumentEntity> NOOPS = d -> {
-    };
+public interface OrientDBDocumentCollectionManagerAsync extends DocumentCollectionManagerAsync {
 
 
-    private final OPartitionedDatabasePool pool;
-
-    OrientDBDocumentCollectionManagerAsync(OPartitionedDatabasePool pool) {
-        this.pool = pool;
-    }
-
-    @Override
-    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
-    }
-
-    @Override
-    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity, NOOPS);
-    }
-
-    @Override
-    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.toString(entity, "Entity is required");
-        ODatabaseDocumentTx tx = pool.acquire();
-        ODocument document = new ODocument(entity.getName());
-        Map<String, Object> entityValues = entity.toMap();
-        entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-        ORecordCallback<Number> createCallBack = (a, b) -> {
-            entity.add(Document.of(RID_FIELD, a.toString()));
-            callBack.accept(entity);
-        };
-        ORecordCallback<Integer> updateCallback = (a, b) -> {
-            entity.add(Document.of(RID_FIELD, a.toString()));
-            callBack.accept(entity);
-        };
-        tx.save(document, null, ASYNCHRONOUS, false, createCallBack, updateCallback);
-    }
-
-    @Override
-    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
-    }
-
-    @Override
-    public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity);
-    }
-
-    @Override
-    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity, callBack);
-    }
-
-    @Override
-    public void delete(DocumentDeleteQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        delete(query, v -> {
-        });
-    }
-
-    @Override
-    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(DocumentQuery.of(query.getCollection())
-                .and(query.getCondition().orElseThrow(() -> new IllegalArgumentException("Condition is required"))), l -> {
-                l.forEach(d -> d.delete());
-                callBack.accept(null);
-            });
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-    }
-
-    @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
-            callBack.accept(l.stream()
-                    .map(OrientDBConverter::convert)
-                    .collect(toList()));
-        });
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-    }
-
-    public void find(String query, Consumer<List<DocumentEntity>> callBack, Object... params) {
-        ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
-            callBack.accept(l.stream()
-                    .map(OrientDBConverter::convert)
-                    .collect(toList()));
-        }, params);
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-    }
-
-
-    @Override
-    public void close() {
-        pool.close();
-    }
+    /**
+     * Find async from Query
+     *
+     * @param query    the query
+     * @param callBack the callback
+     * @param params   the params
+     * @throws NullPointerException when there any parameter null
+     */
+    void find(String query, Consumer<List<DocumentEntity>> callBack, Object... params) throws NullPointerException;
 }
