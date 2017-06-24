@@ -20,8 +20,9 @@ import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -36,13 +37,22 @@ public class CassandraColumnFamilyManagerFactoryTest {
 
     private CassandraDocumentEntityManagerFactory subject;
 
+    @BeforeClass
+    public static void before() throws InterruptedException, IOException, TTransportException {
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
+    }
+
+    @AfterClass
+    public static void end(){
+        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+    }
+
     @Before
     public void setUp() throws InterruptedException, IOException, TTransportException {
         Map<String, String> configurations = new HashMap<>();
         configurations.put("cassandra-hoster-1", "localhost");
         configurations.put("cassandra-port", "9142");
         configurations.put("cassandra-query-1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         subject = cassandraConfiguration.getManagerFactory(configurations);
     }
@@ -67,8 +77,4 @@ public class CassandraColumnFamilyManagerFactoryTest {
         assertTrue(cluster.isClosed());
     }
 
-    @After
-    public void end(){
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    }
 }

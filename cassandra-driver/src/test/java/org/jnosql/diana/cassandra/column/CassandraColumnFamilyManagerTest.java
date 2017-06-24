@@ -28,13 +28,13 @@ import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -61,9 +61,18 @@ public class CassandraColumnFamilyManagerTest {
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnFamilyManager columnEntityManager;
 
+    @BeforeClass
+    public static void before() throws InterruptedException, IOException, TTransportException {
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
+    }
+
+    @AfterClass
+    public static void end(){
+        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+    }
+
     @Before
     public void setUp() throws InterruptedException, IOException, TTransportException {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.get(KEY_SPACE);
@@ -73,7 +82,7 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldClose() throws Exception {
         columnEntityManager.close();
-        CassandraColumnFamilyManager cassandraColumnFamilyManager = CassandraColumnFamilyManager.class.cast(columnEntityManager);
+        DefaultCassandraColumnFamilyManager cassandraColumnFamilyManager = DefaultCassandraColumnFamilyManager.class.cast(columnEntityManager);
         Session session = cassandraColumnFamilyManager.getSession();
         assertTrue(session.isClosed());
     }
@@ -266,9 +275,4 @@ public class CassandraColumnFamilyManagerTest {
         return columnFamily;
     }
 
-
-    @After
-    public void end() {
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    }
 }

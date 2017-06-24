@@ -20,8 +20,9 @@ import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.Columns;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -40,9 +41,19 @@ public class CassandraColumnFamilyManagerAsyncTest {
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnFamilyManagerAsync columnEntityManager;
 
+    @BeforeClass
+    public static void before() throws InterruptedException, IOException, TTransportException {
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
+    }
+
+    @AfterClass
+    public static void end(){
+        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+    }
+
     @Before
     public void setUp() throws InterruptedException, IOException, TTransportException {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
+
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.getAsync(KEY_SPACE);
@@ -79,8 +90,4 @@ public class CassandraColumnFamilyManagerAsyncTest {
         return columnFamily;
     }
 
-    @After
-    public void end(){
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    }
 }
