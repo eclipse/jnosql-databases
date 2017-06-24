@@ -19,90 +19,15 @@ import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.Statement;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
-import rx.functions.Action1;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static java.util.Objects.requireNonNull;
-import static rx.Observable.just;
-
-public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
-
-    private static final Consumer<DocumentEntity> NOOP = d -> {
-    };
-    private static final Action1<Throwable> ERROR_SAVE = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase save method");
-    private static final Action1<Throwable> ERROR_FIND = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase find method");
-    private static final Action1<Throwable> ERROR_DELETE = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase delete method");
-    private static final Action1<Throwable> ERROR_N1QLQUERY = a -> new ExecuteAsyncQueryException("On error when try to execute couchbase n1qlQuery method");
-
-    private final CouchbaseDocumentCollectionManager manager;
-
-    CouchbaseDocumentCollectionManagerAsync(CouchbaseDocumentCollectionManager manager) {
-        this.manager = manager;
-    }
-
-
-    @Override
-    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity, NOOP);
-    }
-
-    @Override
-    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity, ttl, NOOP);
-    }
-
-    @Override
-    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        requireNonNull(callBack, "callBack is required");
-        just(entity)
-                .map(manager::insert)
-                .subscribe(callBack::accept, ERROR_SAVE);
-    }
-
-    @Override
-    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        requireNonNull(callBack, "callBack is required");
-        just(entity)
-                .map(e -> manager.insert(e, ttl))
-                .subscribe(callBack::accept, ERROR_SAVE);
-    }
-
-    @Override
-    public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity);
-    }
-
-    @Override
-    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity, callBack);
-    }
-
-    @Override
-    public void delete(DocumentDeleteQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        delete(query, v -> {
-        });
-    }
-
-    @Override
-    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        requireNonNull(query, "query is required");
-        requireNonNull(callBack, "callBack is required");
-        just(query).map(q -> {
-            manager.delete(q);
-            return true;
-        }).subscribe(a -> callBack.accept(null), ERROR_DELETE);
-    }
-
-    @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        just(query).map(manager::select).subscribe(callBack::accept, ERROR_FIND);
-    }
+/**
+ * The Couchbase interface of {@link DocumentCollectionManagerAsync}
+ */
+public interface CouchbaseDocumentCollectionManagerAsync extends DocumentCollectionManagerAsync {
 
 
     /**
@@ -114,11 +39,7 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    public void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
-        requireNonNull(callback, "callback is required");
-        just(n1qlQuery).map(n -> manager.n1qlQuery(n, params))
-                .subscribe(callback::accept, ERROR_N1QLQUERY);
-    }
+    void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
     /**
      * Executes the n1qlquery  with params and then result que result
@@ -129,11 +50,7 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    public void n1qlQuery(Statement n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
-        requireNonNull(callback, "callback is required");
-        just(n1qlQuery).map(n -> manager.n1qlQuery(n, params))
-                .subscribe(callback::accept, ERROR_N1QLQUERY);
-    }
+    void n1qlQuery(Statement n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
     /**
      * Executes the n1qlquery  plain query and then result que result
@@ -143,10 +60,7 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    public void n1qlQuery(String n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
-        requireNonNull(callback, "callback is required");
-        just(n1qlQuery).map(manager::n1qlQuery).subscribe(callback::accept, ERROR_N1QLQUERY);
-    }
+    void n1qlQuery(String n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
     /**
      * Executes the n1qlquery  plain query and then result que result
@@ -156,13 +70,6 @@ public class CouchbaseDocumentCollectionManagerAsync implements DocumentCollecti
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    public void n1qlQuery(Statement n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
-        requireNonNull(callback, "callback is required");
-        just(n1qlQuery).map(manager::n1qlQuery).subscribe(callback::accept, ERROR_N1QLQUERY);
-    }
+    void n1qlQuery(Statement n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
-    @Override
-    public void close() {
-        manager.close();
-    }
 }
