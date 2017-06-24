@@ -112,14 +112,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         }
     }
 
-    /**
-     * Find using query
-     *
-     * @param query  the query
-     * @param params the params
-     * @return the query result
-     * @throws NullPointerException when either query or params are null
-     */
+    @Override
     public List<DocumentEntity> select(String query, Object... params) throws NullPointerException {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
@@ -173,7 +166,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         } else if (isADocumentIterable(valueAsObject)) {
             Map<String, Object> map = new java.util.HashMap<>();
             stream(Iterable.class.cast(valueAsObject).spliterator(), false)
-                    .forEach(d ->  toDocument(map, Document.class.cast(d)));
+                    .forEach(d -> toDocument(map, Document.class.cast(d)));
             entityValues.put(document.getName(), map);
         } else {
             entityValues.put(document.getName(), document.get());
