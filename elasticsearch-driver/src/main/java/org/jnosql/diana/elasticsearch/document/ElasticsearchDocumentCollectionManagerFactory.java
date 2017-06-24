@@ -49,7 +49,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
     @Override
     public ElasticsearchDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
         initDatabase(database);
-        return new ElasticsearchDocumentCollectionManagerAsync(client, database);
+        return new DefaultElasticsearchDocumentCollectionManagerAsync(client, database);
     }
 
 
@@ -58,7 +58,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
         Objects.requireNonNull(database, "database is required");
 
         initDatabase(database);
-        return new ElasticsearchDocumentCollectionManager(client, database);
+        return new DefaultElasticsearchDocumentCollectionManager(client, database);
     }
 
     private byte[] getBytes(URL url) {
