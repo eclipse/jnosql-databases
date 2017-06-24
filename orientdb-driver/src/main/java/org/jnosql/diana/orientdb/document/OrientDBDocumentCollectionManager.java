@@ -19,14 +19,13 @@ import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * The orientdb implementation to {@link DocumentCollectionManager}, this implementation
  * does not support TTL.
- * <p>{@link OrientDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
+ * <p>{@link OrientDBDocumentCollectionManager#insert(DocumentEntity, java.time.Duration)}</p>
  * Also this implementation has support SQL query and also live query.
  * <p>{@link OrientDBDocumentCollectionManager#select(String, Object...)}</p>
  * <p>{@link OrientDBDocumentCollectionManager#live(DocumentQuery, Consumer)}</p>

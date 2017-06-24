@@ -15,32 +15,16 @@
 package org.jnosql.diana.orientdb.document;
 
 
-import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.storage.ORecordCallback;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
-
-import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
-import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.orientdb.document.OSQLQueryFactory.toAsync;
-import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 
 /**
  * The OrientDB implementation to {@link DocumentCollectionManagerAsync} this method does not support TTL method:
- * <p> {@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration)}</p>
- * <p>{@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration, Consumer)}</p>
+ * <p> {@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, java.time.Duration)}</p>
+ * <p>{@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, java.time.Duration, Consumer)}</p>
  * Also has supports to query:
  * <p>{@link OrientDBDocumentCollectionManagerAsync#find(String, Consumer, Object...)}</p>
  */
