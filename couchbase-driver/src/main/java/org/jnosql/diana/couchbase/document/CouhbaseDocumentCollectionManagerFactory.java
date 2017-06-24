@@ -41,7 +41,7 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
 
     @Override
     public CouchbaseDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new CouchbaseDocumentCollectionManagerAsync(get(database));
+        return new DefaultCouchbaseDocumentCollectionManagerAsync(get(database));
     }
 
     @Override
@@ -58,9 +58,9 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
         if (DEFAULT_BUCKET.equals(database)) {
             Bucket bucket = couchbaseCluster.openBucket(database);
             bucket.bucketManager().createN1qlPrimaryIndex(true, false);
-            return new CouchbaseDocumentCollectionManager(bucket, database);
+            return new DefaultCouchbaseDocumentCollectionManager(bucket, database);
         }
-        return new CouchbaseDocumentCollectionManager(couchbaseCluster.openBucket(database, password), database);
+        return new DefaultCouchbaseDocumentCollectionManager(couchbaseCluster.openBucket(database, password), database);
     }
 
     @Override
