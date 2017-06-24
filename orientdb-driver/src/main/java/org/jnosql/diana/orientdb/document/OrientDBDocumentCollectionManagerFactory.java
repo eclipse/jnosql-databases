@@ -55,7 +55,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
                 serverAdmin.createDatabase(database, DATABASE_TYPE, storageType);
             }
             OPartitionedDatabasePool pool = new OPartitionedDatabasePool("remote:" + host + '/' + database, user, password);
-            return new OrientDBDocumentCollectionManager(pool);
+            return new DefaultOrientDBDocumentCollectionManager(pool);
         } catch (IOException e) {
             throw new OrientDBException("Error when getDocumentEntityManager", e);
         }
@@ -71,7 +71,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
                 serverAdmin.createDatabase(database, DATABASE_TYPE, storageType);
             }
             OPartitionedDatabasePool pool = new OPartitionedDatabasePool("remote:" + host + '/' + database, user, password);
-            return new OrientDBDocumentCollectionManagerAsync(pool);
+            return new DefaultOrientDBDocumentCollectionManagerAsync(pool);
         } catch (IOException e) {
             throw new OrientDBException("Error when getDocumentEntityManager", e);
         }
