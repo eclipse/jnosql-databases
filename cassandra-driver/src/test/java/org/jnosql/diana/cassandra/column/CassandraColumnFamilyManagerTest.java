@@ -48,6 +48,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.jnosql.diana.api.column.ColumnCondition.eq;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
 import static org.junit.Assert.assertEquals;
@@ -113,7 +114,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldFindById() {
 
         columnEntityManager.insert(getColumnFamily());
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(eq(Columns.of("id", 10L)));
         List<ColumnEntity> columnEntity = columnEntityManager.select(query);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
@@ -126,7 +127,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldFindByIdWithConsistenceLevel() {
 
         columnEntityManager.insert(getColumnFamily());
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(eq(Columns.of("id", 10L)));
         List<ColumnEntity> columnEntity = columnEntityManager.select(query, CONSISTENCY_LEVEL);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
@@ -160,7 +161,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldDeleteColumnFamily() {
         columnEntityManager.insert(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(eq(Columns.of("id", 10L)));
         columnEntityManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()));
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
@@ -170,7 +171,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldDeleteColumnFamilyWithConsistencyLevel() {
         columnEntityManager.insert(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
-        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(ColumnCondition.eq(Columns.of("id", 10L)));
+        ColumnQuery query = ColumnQuery.of(COLUMN_FAMILY).and(eq(Columns.of("id", 10L)));
         columnEntityManager.delete(ColumnDeleteQuery.of(query.getColumnFamily(), query.getCondition().get()), CONSISTENCY_LEVEL);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
@@ -236,6 +237,8 @@ public class CassandraColumnFamilyManagerTest {
         entity.add(udt);
         columnEntityManager.insert(entity);
         ColumnQuery query = ColumnQuery.of("users");
+        query.with(eq(Column.of("nickname", "Ioda")));
+
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
         Column column = columnEntity.find("name").get();
         udt = UDT.class.cast(column);
@@ -257,7 +260,7 @@ public class CassandraColumnFamilyManagerTest {
         entity.add(Column.of("dateEnd", dateEnd));
         columnEntityManager.insert(entity);
         ColumnQuery query = ColumnQuery.of("history");
-        query.and(ColumnCondition.eq(Column.of("name", "World war II")));
+        query.and(eq(Column.of("name", "World war II")));
         ColumnEntity entity1 = columnEntityManager.singleResult(query).get();
         Assert.assertNotNull(entity1);
 
