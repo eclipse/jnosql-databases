@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.jnosql</groupId>
         <artifactId>jnosql-parent</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.2</version>
     </parent>
 
     <groupId>org.jnosql.diana</groupId>
     <artifactId>diana-driver</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>JNoSQL Diana drivers</description>
