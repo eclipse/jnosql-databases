@@ -150,7 +150,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
 
 
     @Override
-    public void find(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws NullPointerException, ExecuteAsyncQueryException {
+    public void select(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws NullPointerException, ExecuteAsyncQueryException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 

@@ -140,7 +140,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
                     .map(ElasticsearchEntry::toEntity)
                     .collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
-            throw new ElasticsearchException("An error when do find from QueryBuilder on elasticsearch", e);
+            throw new ElasticsearchException("An error when do select from QueryBuilder on elasticsearch", e);
         }
 
 
