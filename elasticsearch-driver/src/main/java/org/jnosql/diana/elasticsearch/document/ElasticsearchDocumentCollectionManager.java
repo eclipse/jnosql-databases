@@ -34,7 +34,7 @@ public interface ElasticsearchDocumentCollectionManager extends DocumentCollecti
      * @return the objects from query
      * @throws NullPointerException when query is null
      */
-     List<DocumentEntity> select(QueryBuilder query, String... types) throws NullPointerException;
+     List<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException;
 
 
 }

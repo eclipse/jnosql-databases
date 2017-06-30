@@ -124,7 +124,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     }
 
     @Override
-    public List<DocumentEntity> select(QueryBuilder query, String... types) throws NullPointerException {
+    public List<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
         SearchResponse searchResponse = null;
@@ -140,7 +140,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
                     .map(ElasticsearchEntry::toEntity)
                     .collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
-            throw new ElasticsearchException("An error when do select from QueryBuilder on elasticsearch", e);
+            throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
         }
 
 

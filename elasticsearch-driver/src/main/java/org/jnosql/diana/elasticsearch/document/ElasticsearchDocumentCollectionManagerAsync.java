@@ -34,6 +34,6 @@ public interface ElasticsearchDocumentCollectionManagerAsync extends DocumentCol
      * @param callBack the callback
      * @throws NullPointerException when query is null
      */
-    void select(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws
+    void search(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws
             NullPointerException, ExecuteAsyncQueryException;
 }
