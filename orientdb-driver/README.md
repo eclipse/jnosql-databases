@@ -13,7 +13,7 @@ Once this a communication layer to Orientdb, we're using integration test, so yo
 
 
 1. Install docker: https://www.docker.com/
-1. https://hub.docker.com/_/orientdb/
+1. https://store.docker.com/images/orientdb
 1. Run docker command
 1. `docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb`
 1. Execute the maven install `mvn clean install`
