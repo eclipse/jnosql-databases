@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * <p> {@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, java.time.Duration)}</p>
  * <p>{@link OrientDBDocumentCollectionManagerAsync#insert(DocumentEntity, java.time.Duration, Consumer)}</p>
  * Also has supports to query:
- * <p>{@link OrientDBDocumentCollectionManagerAsync#find(String, Consumer, Object...)}</p>
+ * <p>{@link OrientDBDocumentCollectionManagerAsync#sql(String, Consumer, Object...)}</p>
  */
 public interface OrientDBDocumentCollectionManagerAsync extends DocumentCollectionManagerAsync {
 
@@ -39,5 +39,5 @@ public interface OrientDBDocumentCollectionManagerAsync extends DocumentCollecti
      * @param params   the params
      * @throws NullPointerException when there any parameter null
      */
-    void find(String query, Consumer<List<DocumentEntity>> callBack, Object... params) throws NullPointerException;
+    void sql(String query, Consumer<List<DocumentEntity>> callBack, Object... params) throws NullPointerException;
 }

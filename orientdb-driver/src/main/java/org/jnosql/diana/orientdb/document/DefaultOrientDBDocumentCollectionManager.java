@@ -113,7 +113,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public List<DocumentEntity> select(String query, Object... params) throws NullPointerException {
+    public List<DocumentEntity> sql(String query, Object... params) throws NullPointerException {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             List<ODocument> result = tx.command(OSQLQueryFactory.parse(query)).execute(params);

@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * does not support TTL.
  * <p>{@link OrientDBDocumentCollectionManager#insert(DocumentEntity, java.time.Duration)}</p>
  * Also this implementation has support SQL query and also live query.
- * <p>{@link OrientDBDocumentCollectionManager#select(String, Object...)}</p>
+ * <p>{@link OrientDBDocumentCollectionManager#sql(String, Object...)}</p>
  * <p>{@link OrientDBDocumentCollectionManager#live(DocumentQuery, Consumer)}</p>
  * <p>{@link OrientDBDocumentCollectionManager#live(String, Consumer, Object...)}</p>
  */
@@ -43,7 +43,7 @@ public interface OrientDBDocumentCollectionManager extends DocumentCollectionMan
      * @return the query result
      * @throws NullPointerException when either query or params are null
      */
-    List<DocumentEntity> select(String query, Object... params) throws NullPointerException;
+    List<DocumentEntity> sql(String query, Object... params) throws NullPointerException;
 
     /**
      * Execute live query

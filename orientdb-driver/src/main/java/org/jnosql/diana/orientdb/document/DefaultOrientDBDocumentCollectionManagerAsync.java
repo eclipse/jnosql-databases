@@ -121,7 +121,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
     }
 
     @Override
-    public void find(String query, Consumer<List<DocumentEntity>> callBack, Object... params) throws NullPointerException {
+    public void sql(String query, Consumer<List<DocumentEntity>> callBack, Object... params) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         ODatabaseDocumentTx tx = pool.acquire();
