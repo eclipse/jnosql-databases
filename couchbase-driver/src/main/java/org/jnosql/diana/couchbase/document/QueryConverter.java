@@ -16,7 +16,6 @@ package org.jnosql.diana.couchbase.document;
 
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.Delete;
-import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.query.dsl.path.MutateLimitPath;
@@ -33,13 +32,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.couchbase.client.java.query.dsl.Expression.i;
 import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Objects.nonNull;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
-import static org.jnosql.diana.couchbase.document.StatementFactory.create;
 import static org.jnosql.diana.couchbase.document.StatementFactory.create;
 
 final class QueryConverter {
