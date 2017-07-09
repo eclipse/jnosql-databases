@@ -205,7 +205,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         System.out.println(entities);
     }
 
-    static DocumentEntity getEntity() {
+    private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");

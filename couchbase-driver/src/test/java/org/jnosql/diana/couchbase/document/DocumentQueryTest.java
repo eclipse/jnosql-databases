@@ -23,6 +23,7 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -31,7 +32,6 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
-import static org.jnosql.diana.couchbase.document.CouchbaseDocumentCollectionManagerTest.getEntity;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -58,10 +58,12 @@ public class DocumentQueryTest {
         keyValueEntityManager.remove("person:id3");
     }
 
+    @BeforeClass
+    public static void beforeClass() throws InterruptedException {
+        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouchbaseDocumentCollectionManager entityManager = managerFactory.get("default");
 
-
-    @Test
-    public void shouldShouldDefineLimit() {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name")));
         DocumentEntity entity2 = DocumentEntity.of("person", asList(Document.of("_id", "id2")
@@ -70,6 +72,16 @@ public class DocumentQueryTest {
                 , Document.of("name", "name")));
 
         entityManager.insert(Arrays.asList(entity, entity2, entity3));
+        Thread.sleep(2_000L);
+
+    }
+
+
+    @Test
+    public void shouldShouldDefineLimit() {
+
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
+                , Document.of("name", "name")));
 
         Optional<Document> name = entity.find("name");
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
@@ -78,21 +90,13 @@ public class DocumentQueryTest {
         List<DocumentEntity> entities = entityManager.select(query);
         assertEquals(2, entities.size());
 
-        entityManager.delete(query.toDeleteQuery());
-        assertTrue(entityManager.select(query).isEmpty());
-
     }
 
     @Test
     public void shouldShouldDefineStart()  {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name")));
-        DocumentEntity entity2 = DocumentEntity.of("person", asList(Document.of("_id", "id2")
-                , Document.of("name", "name")));
-        DocumentEntity entity3 = DocumentEntity.of("person", asList(Document.of("_id", "id3")
-                , Document.of("name", "name")));
 
-        entityManager.insert(Arrays.asList(entity, entity2, entity3));
         Optional<Document> name = entity.find("name");
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(name.get()));
@@ -100,18 +104,18 @@ public class DocumentQueryTest {
         List<DocumentEntity> entities = entityManager.select(query);
         assertEquals(2, entities.size());
 
-        entityManager.delete(query.toDeleteQuery());
-        assertTrue(entityManager.select(query).isEmpty());
-
     }
 
     @Test
     public void shouldSelectAll(){
-        DocumentEntity entity = getEntity();
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
+                , Document.of("name", "name")));
+
+
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = entity.find("name");
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertEquals(3, entities.size());
     }
 }
