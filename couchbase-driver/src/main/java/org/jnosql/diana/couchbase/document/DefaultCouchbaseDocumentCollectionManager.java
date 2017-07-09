@@ -30,7 +30,6 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
-import java.security.Key;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,8 +95,8 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
             ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
             N1qlQueryResult result = bucket.query(n1qlQuery);
         }
-        if (!delete.getIds().isEmpty()) {
-            delete.getIds()
+        if (!delete.getKeys().isEmpty()) {
+            delete.getKeys()
                     .stream()
                     .map(s -> getPrefix(query.getCollection(), s))
                     .forEach(bucket::remove);
@@ -115,8 +114,8 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
             N1qlQueryResult result = bucket.query(n1qlQuery);
             entities.addAll(convert(result, database));
         }
-        if (!select.getIds().isEmpty()) {
-            entities.addAll(convert(select.getIds(), query.getCollection(), bucket));
+        if (!select.getKeys().isEmpty()) {
+            entities.addAll(convert(select.getKeys(), query.getCollection(), bucket));
         }
 
         return entities;

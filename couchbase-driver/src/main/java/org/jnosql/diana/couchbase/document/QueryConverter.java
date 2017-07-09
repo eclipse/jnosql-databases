@@ -38,7 +38,6 @@ import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Objects.nonNull;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
-import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 
 final class QueryConverter {
@@ -53,20 +52,20 @@ final class QueryConverter {
 
     static QueryConverterResult select(DocumentQuery query, String bucket) {
         JsonObject params = JsonObject.create();
-        List<String> ids = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
         String[] documents = query.getDocuments().stream().toArray(size -> new String[size]);
         if (documents.length == 0) {
             documents = ALL_SELECT;
         }
         Expression condition = getCondition(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("Condition is required")), params, ids);
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required")), params, keys);
         Statement statement = null;
         if (nonNull(condition)) {
             statement = Select.select(documents).from(i(bucket))
                     .where(condition);
         }
 
-        return new QueryConverterResult(params, statement, ids);
+        return new QueryConverterResult(params, statement, keys);
     }
 
     static QueryConverterResult delete(DocumentDeleteQuery query, String bucket) {
@@ -82,15 +81,15 @@ final class QueryConverter {
         return new QueryConverterResult(params, statement, ids);
     }
 
-    private static Expression getCondition(DocumentCondition condition, JsonObject params, List<String> ids) {
+    private static Expression getCondition(DocumentCondition condition, JsonObject params, List<String> keys) {
         Document document = condition.getDocument();
 
         if (!NOT_APPENDABLE.contains(condition.getCondition()) && isKeyField(document)) {
             if (IN.equals(condition.getCondition())) {
-                ids.addAll(document.get(new TypeReference<List<String>>() {
+                keys.addAll(document.get(new TypeReference<List<String>>() {
                 }));
             } else if (EQUALS.equals(condition.getCondition())) {
-                ids.add(document.get(String.class));
+                keys.add(document.get(String.class));
             }
 
             return null;
@@ -118,7 +117,7 @@ final class QueryConverter {
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                 })
                         .stream()
-                        .map(d -> getCondition(d, params, ids))
+                        .map(d -> getCondition(d, params, keys))
                         .filter(Objects::nonNull)
                         .reduce((d1, d2) -> d1.and(d2))
                         .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
@@ -128,12 +127,12 @@ final class QueryConverter {
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                 })
                         .stream()
-                        .map(d -> getCondition(d, params, ids))
+                        .map(d -> getCondition(d, params, keys))
                         .reduce((d1, d2) -> d1.or(d2))
                         .orElseThrow(() -> new IllegalStateException("An or condition cannot be empty"));
             case NOT:
                 DocumentCondition dc = document.get(DocumentCondition.class);
-                return getCondition(dc, params, ids).not();
+                return getCondition(dc, params, keys).not();
             default:
                 throw new IllegalStateException("This condition is not supported at coubhbase: " + condition.getCondition());
         }
@@ -149,12 +148,12 @@ final class QueryConverter {
 
         private final Statement statement;
 
-        private final List<String> ids;
+        private final List<String> keys;
 
-        QueryConverterResult(JsonObject params, Statement statement, List<String> ids) {
+        QueryConverterResult(JsonObject params, Statement statement, List<String> keys) {
             this.params = params;
             this.statement = statement;
-            this.ids = ids;
+            this.keys = keys;
         }
 
         JsonObject getParams() {
@@ -165,8 +164,8 @@ final class QueryConverter {
             return statement;
         }
 
-        List<String> getIds() {
-            return ids;
+        List<String> getKeys() {
+            return keys;
         }
     }
 

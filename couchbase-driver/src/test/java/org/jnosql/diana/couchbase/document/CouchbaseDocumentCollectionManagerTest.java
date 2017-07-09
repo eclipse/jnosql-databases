@@ -114,6 +114,18 @@ public class CouchbaseDocumentCollectionManagerTest {
         assertThat(entities, contains(entity));
     }
 
+    @Test
+    public void shouldFindDocumentByKey() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> id = entity.find("_key");
+        query.and(DocumentCondition.eq(id.get()));
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+
 
     @Test
     public void shouldSaveSubDocument() {
