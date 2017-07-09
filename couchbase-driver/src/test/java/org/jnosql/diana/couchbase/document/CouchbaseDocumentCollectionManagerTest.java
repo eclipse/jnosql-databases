@@ -23,7 +23,10 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.Before;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -35,6 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -53,12 +57,21 @@ public class CouchbaseDocumentCollectionManagerTest {
         entityManager = managerFactory.get("default");
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        keyValueEntityManager.remove("person:id");
+    }
+
     @Test
     public void shouldSave() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
+
 
     @Test
     public void shouldUpdateSave() {
@@ -102,6 +115,29 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldShouldDefineLimit() {
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
+                , Document.of("name", "name")));
+        DocumentEntity entity2 = DocumentEntity.of("person", asList(Document.of("_id", "id2")
+                , Document.of("name", "name")));
+        DocumentEntity entity3 = DocumentEntity.of("person", asList(Document.of("_id", "id3")
+                , Document.of("name", "name")));
+
+        entityManager.insert(Arrays.asList(entity, entity2, entity3));
+
+        Optional<Document> name = entity.find("name");
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        query.and(DocumentCondition.eq(name.get()));
+        query.withMaxResults(2L);
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertEquals(2, entities.size());
+
+        entityManager.delete(query.toDeleteQuery());
+        assertTrue(entityManager.select(query).isEmpty());
+
+    }
+
+    @Test
     public void shouldSelectAll() {
         DocumentEntity entity = entityManager.insert(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
@@ -134,7 +170,6 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
 
-
     @Test
     public void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
@@ -153,7 +188,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     @Test
     public void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
+        entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
@@ -188,9 +223,9 @@ public class CouchbaseDocumentCollectionManagerTest {
     @Ignore
     public void shouldSearchElement() {
         DocumentEntity entity = getEntity();
+        entity.add("description", "Founded by the Portuguese in 1549 as the first capital of Brazil, Salvador is" +
+                " one of the oldest colonial cities in the Americas.");
         entityManager.insert(entity);
-//        map.put("description", "Founded by the Portuguese in 1549 as the first capital of Brazil, Salvador is" +
-//                " one of the oldest colonial cities in the Americas.");
         MatchQuery fts = SearchQuery.match("Salvador");
         SearchQuery query = new SearchQuery("search-index-diana", fts).fields("city");
         List<DocumentEntity> entities = entityManager.search(query);

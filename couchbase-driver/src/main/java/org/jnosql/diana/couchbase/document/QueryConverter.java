@@ -19,7 +19,6 @@ import com.couchbase.client.java.query.Delete;
 import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
-import com.couchbase.client.java.query.dsl.path.AsPath;
 import com.couchbase.client.java.query.dsl.path.MutateLimitPath;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
@@ -40,6 +39,8 @@ import static java.util.Objects.nonNull;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
+import static org.jnosql.diana.couchbase.document.StatementFactory.create;
+import static org.jnosql.diana.couchbase.document.StatementFactory.create;
 
 final class QueryConverter {
 
@@ -59,18 +60,24 @@ final class QueryConverter {
             documents = ALL_SELECT;
         }
 
-        AsPath statement = Select.select(documents).from(i(bucket));
+        Statement statement = null;
+        int firstResult = (int) query.getFirstResult();
+        int maxResult = (int) query.getMaxResults();
+
+
         if (query.getCondition().isPresent()) {
             Expression condition = getCondition(query.getCondition().get(), params, keys);
-            if (Objects.nonNull(condition)) {
-                statement.where(condition);
+            if (nonNull(condition)) {
+                statement = StatementFactory.create(bucket, documents, firstResult, maxResult, condition);
             } else {
                 statement = null;
             }
+        } else {
+            statement = create(bucket, documents, firstResult, maxResult);
         }
-
         return new QueryConverterResult(params, statement, keys);
     }
+
 
     static QueryConverterResult delete(DocumentDeleteQuery query, String bucket) {
         JsonObject params = JsonObject.create();
