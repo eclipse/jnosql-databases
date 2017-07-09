@@ -48,8 +48,8 @@ final class EntityConverter {
     private EntityConverter() {
     }
 
-    static List<DocumentEntity> convert(Collection<String> ids, Bucket bucket) {
-        return ids
+    static List<DocumentEntity> convert(Collection<String> keys, Bucket bucket) {
+        return keys
                 .stream()
                 .map(bucket::get)
                 .filter(Objects::nonNull)

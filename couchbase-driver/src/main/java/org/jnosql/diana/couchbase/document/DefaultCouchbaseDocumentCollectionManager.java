@@ -162,8 +162,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         Set<String> keys = StreamSupport.stream(result.spliterator(), false)
                 .map(SearchQueryRow::id).collect(toSet());
 
-        convert(keys, bucket);
-        return Collections.emptyList();
+        return convert(keys, bucket);
     }
 
     @Override

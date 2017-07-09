@@ -17,28 +17,21 @@ package org.jnosql.diana.couchbase.document;
 
 import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.queries.MatchQuery;
-import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class SearchQueryTest {
@@ -95,12 +88,40 @@ public class SearchQueryTest {
 
 
     @Test
-//    @Ignore
     public void shouldSearchElement() {
-        MatchQuery fts = SearchQuery.match("Financial");
-        SearchQuery query = new SearchQuery("index-diana", fts);
+        MatchQuery match = SearchQuery.match("Financial");
+        SearchQuery query = new SearchQuery("index-diana", match);
         List<DocumentEntity> entities = entityManager.search(query);
-        System.out.println(entities);
+        assertEquals(1, entities.size());
+        assertEquals(Document.of("name", "São Paulo"), entities.get(0).find("name").get());
+    }
+
+    @Test
+    public void shouldSearchElement2() {
+        MatchQuery match = SearchQuery.match("Brazil");
+        SearchQuery query = new SearchQuery("index-diana", match);
+        List<DocumentEntity> entities = entityManager.search(query);
+        assertEquals(3, entities.size());
+        List<String> result = entities.stream()
+                .flatMap(e -> e.getDocuments().stream())
+                .filter(d -> "name".equals(d.getName()))
+                .map(d -> d.get(String.class)).collect(Collectors.toList());
+
+        assertThat(result, containsInAnyOrder("Salvador", "Rio de Janeiro", "Manaus"));
+    }
+
+    @Test
+    public void shouldSearchElement3() {
+        MatchQuery match = SearchQuery.match("Salvador").field("name");
+        SearchQuery query = new SearchQuery("index-diana", match);
+        List<DocumentEntity> entities = entityManager.search(query);
+        assertEquals(1, entities.size());
+        List<String> result = entities.stream()
+                .flatMap(e -> e.getDocuments().stream())
+                .filter(d -> "name".equals(d.getName()))
+                .map(d -> d.get(String.class)).collect(Collectors.toList());
+
+        assertThat(result, containsInAnyOrder("Salvador"));
     }
 
 }
