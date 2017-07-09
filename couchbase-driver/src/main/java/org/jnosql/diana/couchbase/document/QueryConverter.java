@@ -61,7 +61,12 @@ final class QueryConverter {
 
         AsPath statement = Select.select(documents).from(i(bucket));
         if (query.getCondition().isPresent()) {
-            statement.where(getCondition(query.getCondition().get(), params, keys));
+            Expression condition = getCondition(query.getCondition().get(), params, keys);
+            if (Objects.nonNull(condition)) {
+                statement.where(condition);
+            } else {
+                statement = null;
+            }
         }
 
         return new QueryConverterResult(params, statement, keys);
