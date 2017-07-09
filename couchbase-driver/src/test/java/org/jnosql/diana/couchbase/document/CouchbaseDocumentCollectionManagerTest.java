@@ -138,7 +138,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldSelectAll() {
+    public void shouldSelectAll(){
         DocumentEntity entity = entityManager.insert(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = entity.find("name");
@@ -171,10 +171,11 @@ public class CouchbaseDocumentCollectionManagerTest {
 
 
     @Test
-    public void shouldSaveSubDocument() {
+    public void shouldSaveSubDocument() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
+        Thread.sleep(5_00L);
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(id));
@@ -186,10 +187,11 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() {
+    public void shouldSaveSubDocument2() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
+        Thread.sleep(1_00L);
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(id));
