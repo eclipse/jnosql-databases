@@ -65,6 +65,20 @@ final class EntityConverter {
                 .collect(Collectors.toList());
     }
 
+    static List<DocumentEntity> convert(N1qlQueryResult result, String database) {
+        return result.allRows().stream()
+                .map(N1qlQueryRow::value)
+                .map(JsonObject::toMap)
+                .map(m -> (Map<String, Object>) m.get(database))
+                .filter(Objects::nonNull)
+                .map(map -> {
+                    List<Document> documents = toDocuments(map);
+                    Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
+                    String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
+                    return DocumentEntity.of(collection, documents);
+                }).collect(toList());
+    }
+
     static String getPrefix(Document document, String collection) {
         String id = document.get(String.class);
         return getPrefix(collection, id);
@@ -104,19 +118,7 @@ final class EntityConverter {
     }
 
 
-    static List<DocumentEntity> convert(N1qlQueryResult result, String database) {
-        return result.allRows().stream()
-                .map(N1qlQueryRow::value)
-                .map(JsonObject::toMap)
-                .map(m -> (Map<String, Object>) m.get(database))
-                .filter(Objects::nonNull)
-                .map(Documents::of)
-                .map(ds -> {
-                    Optional<Document> keyDocument = ds.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
-                    String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
-                    return DocumentEntity.of(collection, ds);
-                }).collect(toList());
-    }
+
 
     static JsonObject convert(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
