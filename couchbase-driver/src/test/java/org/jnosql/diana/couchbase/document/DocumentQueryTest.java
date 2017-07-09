@@ -16,6 +16,7 @@ package org.jnosql.diana.couchbase.document;
 
 
 import org.hamcrest.Matcher;
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -30,6 +31,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
@@ -111,6 +113,23 @@ public class DocumentQueryTest {
     }
 
     @Test
+    public void shouldShouldDefineLimitAndStart() {
+
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
+                , Document.of("name", "name")));
+
+        Optional<Document> name = entity.find("name");
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        query.and(DocumentCondition.eq(name.get()));
+        query.withMaxResults(2L);
+        query.withFirstResult(2L);
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertEquals(1, entities.size());
+
+    }
+
+
+    @Test
     public void shouldSelectAll(){
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name")));
@@ -135,6 +154,42 @@ public class DocumentQueryTest {
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldFindDocumentByNameSortAsc() {
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
+                , Document.of("name", "name3"), Document.of("_key", "person:id4")));
+
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> name = entity.find("name");
+        query.addSort(Sort.of("name", Sort.SortType.ASC));
+        List<DocumentEntity> entities = entityManager.select(query);
+        List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
+                .filter(d -> "name".equals(d.getName()))
+                .map(d -> d.get(String.class))
+                .collect(Collectors.toList());
+
+        assertFalse(result.isEmpty());
+        assertThat(result, contains("name", "name", "name", "name3"));
+    }
+
+    @Test
+    public void shouldFindDocumentByNameSortDesc() {
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
+                , Document.of("name", "name3"), Document.of("_key", "person:id4")));
+
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> name = entity.find("name");
+        query.addSort(Sort.of("name", Sort.SortType.DESC));
+        List<DocumentEntity> entities = entityManager.select(query);
+        List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
+                .filter(d -> "name".equals(d.getName()))
+                .map(d -> d.get(String.class))
+                .collect(Collectors.toList());
+
+        assertFalse(result.isEmpty());
+        assertThat(result, contains("name3", "name", "name", "name"));
     }
 
 

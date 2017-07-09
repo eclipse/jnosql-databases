@@ -20,6 +20,7 @@ import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.query.dsl.path.MutateLimitPath;
 import org.jnosql.diana.api.Condition;
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -31,6 +32,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Objects.nonNull;
@@ -45,6 +47,13 @@ final class QueryConverter {
 
     private static final char PARAM_PREFIX = '$';
     private static final String[] ALL_SELECT = {"*"};
+    private static final Function<Sort, com.couchbase.client.java.query.dsl.Sort> SORT_MAP = s -> {
+        if (Sort.SortType.ASC.equals(s.getType())) {
+            return com.couchbase.client.java.query.dsl.Sort.asc(s.getName());
+        } else {
+            return com.couchbase.client.java.query.dsl.Sort.desc(s.getName());
+        }
+    };
 
     private QueryConverter() {
     }
@@ -61,16 +70,17 @@ final class QueryConverter {
         int firstResult = (int) query.getFirstResult();
         int maxResult = (int) query.getMaxResults();
 
-
+        com.couchbase.client.java.query.dsl.Sort[] sorts = query.getSorts().stream().map(SORT_MAP).
+                toArray(com.couchbase.client.java.query.dsl.Sort[]::new);
         if (query.getCondition().isPresent()) {
             Expression condition = getCondition(query.getCondition().get(), params, keys);
             if (nonNull(condition)) {
-                statement = StatementFactory.create(bucket, documents, firstResult, maxResult, condition);
+                statement = create(bucket, documents, firstResult, maxResult, sorts, condition);
             } else {
                 statement = null;
             }
         } else {
-            statement = create(bucket, documents, firstResult, maxResult);
+            statement = create(bucket, documents, firstResult, maxResult, sorts);
         }
         return new QueryConverterResult(params, statement, keys);
     }
