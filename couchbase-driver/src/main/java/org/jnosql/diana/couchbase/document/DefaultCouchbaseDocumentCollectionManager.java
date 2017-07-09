@@ -23,13 +23,17 @@ import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.ParameterizedN1qlQuery;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.search.SearchQuery;
+import com.couchbase.client.java.search.result.SearchQueryResult;
+import com.couchbase.client.java.search.result.SearchQueryRow;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.security.Key;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +41,7 @@ import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
+import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.convert;
 import static org.jnosql.diana.couchbase.document.EntityConverter.getPrefix;
 
@@ -60,10 +65,8 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
         String prefix = getPrefix(id, entity.getName());
-        jsonObject.put(ID_FIELD, prefix);
         bucket.upsert(JsonDocument.create(prefix, jsonObject));
-        entity.remove(ID_FIELD);
-        entity.add(Document.of(ID_FIELD, prefix));
+        entity.add(Document.of(KEY_FIELD, prefix));
         return entity;
     }
 
@@ -149,8 +152,16 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         return convert(result, database);
     }
 
+    @Override
     public List<DocumentEntity> search(SearchQuery query) throws NullPointerException {
-        bucket.query()
+        Objects.requireNonNull(query, "query is required");
+        SearchQueryResult result = bucket.query(query);
+
+        for (SearchQueryRow searchQueryRow : result) {
+            System.out.println(searchQueryRow);
+        }
+
+        return Collections.emptyList();
     }
 
     @Override
