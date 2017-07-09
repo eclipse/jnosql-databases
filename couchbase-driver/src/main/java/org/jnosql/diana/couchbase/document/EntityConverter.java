@@ -41,6 +41,7 @@ import static java.util.stream.StreamSupport.stream;
 final class EntityConverter {
 
     static final String ID_FIELD = "_id";
+    static final String KEY_FIELD = "_key";
     static final String SPLIT_KEY = ":";
     static final char SPLIT_KEY_CHAR = ':';
 
@@ -122,7 +123,6 @@ final class EntityConverter {
 
         JsonObject jsonObject = JsonObject.create();
         entity.getDocuments().stream()
-                .filter(d -> !d.getName().equals(ID_FIELD))
                 .forEach(toJsonObject(jsonObject));
         return jsonObject;
     }
