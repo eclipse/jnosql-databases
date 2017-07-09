@@ -34,10 +34,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toSet;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.convert;
@@ -92,7 +95,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
         if (nonNull(delete.getStatement())) {
             ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
-            N1qlQueryResult result = bucket.query(n1qlQuery);
+            bucket.query(n1qlQuery);
         }
         if (!delete.getKeys().isEmpty()) {
             delete.getKeys()
@@ -114,7 +117,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
             entities.addAll(convert(result, database));
         }
         if (!select.getKeys().isEmpty()) {
-            entities.addAll(convert(select.getKeys(), query.getCollection(), bucket));
+            entities.addAll(convert(select.getKeys(), bucket));
         }
 
         return entities;
@@ -156,10 +159,10 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         requireNonNull(query, "query is required");
         SearchQueryResult result = bucket.query(query);
 
-        for (SearchQueryRow searchQueryRow : result) {
-            System.out.println(searchQueryRow);
-        }
+        Set<String> keys = StreamSupport.stream(result.spliterator(), false)
+                .map(SearchQueryRow::id).collect(toSet());
 
+        convert(keys, bucket);
         return Collections.emptyList();
     }
 
