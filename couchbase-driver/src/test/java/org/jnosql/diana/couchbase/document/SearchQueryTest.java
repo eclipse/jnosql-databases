@@ -22,6 +22,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -45,7 +46,7 @@ public class SearchQueryTest {
         entityManager = managerFactory.get("default");
     }
 
-//    @AfterClass
+    @AfterClass
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
