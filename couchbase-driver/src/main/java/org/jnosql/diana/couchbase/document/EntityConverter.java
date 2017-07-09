@@ -22,7 +22,6 @@ import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -56,8 +55,7 @@ final class EntityConverter {
                 .filter(Objects::nonNull)
                 .map(j -> {
                     List<Document> documents = toDocuments(j.content().toMap());
-                    DocumentEntity entity = DocumentEntity.of(j.id().split(SPLIT_KEY)[0], documents);
-                    return entity;
+                    return DocumentEntity.of(j.id().split(SPLIT_KEY)[0], documents);
                 })
                 .collect(Collectors.toList());
     }
