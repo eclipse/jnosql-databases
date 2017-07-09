@@ -14,6 +14,8 @@
  */
 package org.jnosql.diana.couchbase.document;
 
+import com.couchbase.client.java.search.SearchQuery;
+import com.couchbase.client.java.search.queries.MatchQuery;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
@@ -44,12 +46,12 @@ import static org.junit.Assert.assertTrue;
 public class CouchbaseDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private DocumentCollectionManager entityManager;
+    private CouchbaseDocumentCollectionManager entityManager;
 
     @Before
     public void setUp() {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get("default");
     }
 
@@ -162,6 +164,16 @@ public class CouchbaseDocumentCollectionManagerTest {
         assertEquals(set, setFoods);
     }
 
+    @Test
+    public void shouldSearchElement() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+
+        MatchQuery fts = SearchQuery.match("Salvador");
+        SearchQuery query = new SearchQuery("search-index-diana", fts).fields("city");
+        List<DocumentEntity> entities = entityManager.search(query);
+        System.out.println(entities);
+    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
@@ -169,6 +181,8 @@ public class CouchbaseDocumentCollectionManagerTest {
         map.put("name", "Poliana");
         map.put("city", "Salvador");
         map.put("_id", "id");
+        map.put("description", "Founded by the Portuguese in 1549 as the first capital of Brazil, Salvador is" +
+                " one of the oldest colonial cities in the Americas.");
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
