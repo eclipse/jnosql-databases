@@ -15,7 +15,6 @@
 package org.jnosql.diana.couchbase.document;
 
 
-import org.hamcrest.Matcher;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -38,7 +37,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class DocumentQueryTest {
 
