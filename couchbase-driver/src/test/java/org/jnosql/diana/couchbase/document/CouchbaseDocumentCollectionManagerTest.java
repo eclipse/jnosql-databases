@@ -103,6 +103,16 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldSelectAll() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> name = entity.find("name");
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+    @Test
     public void shouldFindDocumentById() {
         DocumentEntity entity = entityManager.insert(getEntity());
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);

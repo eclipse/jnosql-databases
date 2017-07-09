@@ -19,6 +19,7 @@ import com.couchbase.client.java.query.Delete;
 import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
+import com.couchbase.client.java.query.dsl.path.AsPath;
 import com.couchbase.client.java.query.dsl.path.MutateLimitPath;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
@@ -57,12 +58,10 @@ final class QueryConverter {
         if (documents.length == 0) {
             documents = ALL_SELECT;
         }
-        Expression condition = getCondition(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("Condition is required")), params, keys);
-        Statement statement = null;
-        if (nonNull(condition)) {
-            statement = Select.select(documents).from(i(bucket))
-                    .where(condition);
+
+        AsPath statement = Select.select(documents).from(i(bucket));
+        if (query.getCondition().isPresent()) {
+            statement.where(getCondition(query.getCondition().get(), params, keys));
         }
 
         return new QueryConverterResult(params, statement, keys);

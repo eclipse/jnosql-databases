@@ -64,8 +64,10 @@ final class EntityConverter {
         return result.allRows().stream()
                 .map(N1qlQueryRow::value)
                 .map(JsonObject::toMap)
-                .map(m -> (Map<String, Object>) m.get(database))
+                .map(m ->  m.get(database))
                 .filter(Objects::nonNull)
+                .filter(Map.class::isInstance)
+                .map(m -> (Map<String, Object>) m)
                 .map(map -> {
                     List<Document> documents = toDocuments(map);
                     Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();

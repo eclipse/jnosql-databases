@@ -15,16 +15,20 @@
 package org.jnosql.diana.couchbase.key;
 
 
+import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 public class CouchbaseListTest {
@@ -35,7 +39,7 @@ public class CouchbaseListTest {
     private ProductCart waterMelon = new ProductCart("waterMelon", BigDecimal.TEN);
     private ProductCart melon = new ProductCart("melon", BigDecimal.ONE);
 
-    private BucketManagerFactory keyValueEntityManagerFactory;
+    private CouchbaseBucketManagerFactory keyValueEntityManagerFactory;
 
     private List<ProductCart> fruits;
 
@@ -44,6 +48,14 @@ public class CouchbaseListTest {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         keyValueEntityManagerFactory = configuration.get();
         fruits = keyValueEntityManagerFactory.getList(FRUITS, ProductCart.class);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        keyValueEntityManager.remove("default:list");
     }
 
     @Test
