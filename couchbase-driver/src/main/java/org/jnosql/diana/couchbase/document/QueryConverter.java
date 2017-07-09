@@ -72,6 +72,7 @@ final class QueryConverter {
 
         com.couchbase.client.java.query.dsl.Sort[] sorts = query.getSorts().stream().map(SORT_MAP).
                 toArray(com.couchbase.client.java.query.dsl.Sort[]::new);
+
         if (query.getCondition().isPresent()) {
             Expression condition = getCondition(query.getCondition().get(), params, keys);
             if (nonNull(condition)) {

@@ -30,28 +30,58 @@ final class StatementFactory {
                             int firstResult,
                             int maxResult, Sort[] sorts) {
 
-        boolean hasFistResult = firstResult > 0;
-        boolean hasMaxResult = maxResult > 0;
-
-        if (hasFistResult && hasMaxResult) {
-            return select(documents)
-                    .from(i(bucket))
-                    .orderBy(sorts)
-                    .limit(maxResult)
-                    .offset(firstResult);
-        } else if (hasFistResult) {
-            return select(documents).from(i(bucket)).orderBy(sorts).offset(firstResult);
-        } else if (hasMaxResult) {
-            return select(documents).from(i(bucket)).orderBy(sorts).limit(maxResult);
+        if (sorts.length == 0) {
+            return get(bucket, documents, firstResult, maxResult);
+        } else {
+            return get(bucket, documents, firstResult, maxResult, sorts);
         }
-        return select(documents).from(i(bucket)).orderBy(sorts);
     }
 
     static Statement create(String bucket, String[] documents,
                             int firstResult,
-                            int maxResult,
-                            Sort[] sorts,
-                            Expression condition) {
+                            int maxResult, Sort[] sorts, Expression condition) {
+
+        if (sorts.length == 0) {
+            return get(bucket, documents, firstResult, maxResult, condition);
+        } else {
+            return get(bucket, documents, firstResult, maxResult, sorts, condition);
+        }
+    }
+
+
+    private static Statement get(String bucket, String[] documents,
+                                 int firstResult,
+                                 int maxResult,
+                                 Expression condition) {
+
+        boolean hasFistResult = firstResult > 0;
+        boolean hasMaxResult = maxResult > 0;
+
+        if (hasFistResult && hasMaxResult) {
+            return select(documents).from(i(bucket))
+                    .where(condition)
+                    .limit(maxResult)
+                    .offset(firstResult);
+
+        } else if (hasFistResult) {
+            return select(documents).from(i(bucket))
+                    .where(condition)
+                    .offset(firstResult);
+        } else if (hasMaxResult) {
+            return select(documents).from(i(bucket)).where(condition)
+                    .limit(maxResult);
+        }
+        return select(documents).from(i(bucket)).where(condition);
+
+    }
+
+
+    private static Statement get(String bucket,
+                          String[] documents,
+                          int firstResult,
+                          int maxResult,
+                          Sort[] sorts,
+                          Expression condition) {
 
         boolean hasFistResult = firstResult > 0;
         boolean hasMaxResult = maxResult > 0;
@@ -76,5 +106,49 @@ final class StatementFactory {
         return select(documents).from(i(bucket)).where(condition).orderBy(sorts);
 
     }
+
+
+    private static Statement get(String bucket, String[] documents,
+                                 int firstResult,
+                                 int maxResult,
+                                 Sort[] sorts) {
+
+        boolean hasFistResult = firstResult > 0;
+        boolean hasMaxResult = maxResult > 0;
+
+        if (hasFistResult && hasMaxResult) {
+            return select(documents)
+                    .from(i(bucket))
+                    .orderBy(sorts)
+                    .limit(maxResult)
+                    .offset(firstResult);
+        } else if (hasFistResult) {
+            return select(documents).from(i(bucket)).orderBy(sorts).offset(firstResult);
+        } else if (hasMaxResult) {
+            return select(documents).from(i(bucket)).orderBy(sorts).limit(maxResult);
+        }
+        return select(documents).from(i(bucket)).orderBy(sorts);
+    }
+
+    private static Statement get(String bucket, String[] documents,
+                                 int firstResult,
+                                 int maxResult) {
+
+        boolean hasFistResult = firstResult > 0;
+        boolean hasMaxResult = maxResult > 0;
+
+        if (hasFistResult && hasMaxResult) {
+            return select(documents)
+                    .from(i(bucket))
+                    .limit(maxResult)
+                    .offset(firstResult);
+        } else if (hasFistResult) {
+            return select(documents).from(i(bucket)).offset(firstResult);
+        } else if (hasMaxResult) {
+            return select(documents).from(i(bucket)).limit(maxResult);
+        }
+        return select(documents).from(i(bucket));
+    }
+
 
 }
