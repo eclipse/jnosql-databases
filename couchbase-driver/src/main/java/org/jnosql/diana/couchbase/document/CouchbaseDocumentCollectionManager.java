@@ -17,6 +17,7 @@ package org.jnosql.diana.couchbase.document;
 
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.search.SearchQuery;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentEntity;
 
@@ -26,7 +27,6 @@ import java.util.List;
  * The couchbase implementation of {@link DocumentCollectionManager}
  */
 public interface CouchbaseDocumentCollectionManager extends DocumentCollectionManager {
-
 
 
     /**
@@ -66,5 +66,14 @@ public interface CouchbaseDocumentCollectionManager extends DocumentCollectionMa
      * @throws NullPointerException when either n1qlQuery or params are null
      */
     List<DocumentEntity> n1qlQuery(Statement n1qlQuery) throws NullPointerException;
+
+    /**
+     * Searches in Couchbase using Full Text Search
+     *
+     * @param query the query to be used
+     * @return the elements from the query
+     * @throws NullPointerException when the query is null
+     */
+    List<DocumentEntity> search(SearchQuery query) throws NullPointerException;
 
 }
