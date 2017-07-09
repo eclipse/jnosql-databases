@@ -17,6 +17,8 @@ Once this a communication layer to Couchbase, we're using integration test, so y
 1. Run docker command
 1. `docker run -d --name couchbase-instance -p 8091-8094:8091-8094 -p 11210:11210 couchbase`
 1. Follow the instructions: https://hub.docker.com/r/couchbase/server/
+1. On step one in the "Services" field enable the Full-Text Resource
+1. Follow the instructions: https://developer.couchbase.com/documentation/server/current/fts/full-text-intro.html to create a index-diana full text index
 1. Execute the test `mvn clean install`
 
 
