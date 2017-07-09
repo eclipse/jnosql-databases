@@ -71,10 +71,9 @@ public interface CouchbaseDocumentCollectionManager extends DocumentCollectionMa
      * Searches in Couchbase using Full Text Search
      *
      * @param query the query to be used
-     * @param index the index name
      * @return the elements from the query
      * @throws NullPointerException when either the query or index are null
      */
-    List<DocumentEntity> search(SearchQuery query, String index) throws NullPointerException;
+    List<DocumentEntity> search(SearchQuery query) throws NullPointerException;
 
 }

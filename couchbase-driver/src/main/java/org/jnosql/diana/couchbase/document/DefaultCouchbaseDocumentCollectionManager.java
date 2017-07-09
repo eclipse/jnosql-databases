@@ -58,7 +58,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         JsonObject jsonObject = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
@@ -72,7 +72,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
         JsonObject jsonObject = convert(entity);
         Document id = entity.find(ID_FIELD)
@@ -154,7 +154,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
     @Override
     public List<DocumentEntity> search(SearchQuery query) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         SearchQueryResult result = bucket.query(query);
 
         for (SearchQueryRow searchQueryRow : result) {

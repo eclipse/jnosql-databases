@@ -47,8 +47,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     public static final String COLLECTION_NAME = "person";
     private CouchbaseDocumentCollectionManager entityManager;
 
-    @Before
-    public void setUp() throws InterruptedException {
+    {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get("default");
