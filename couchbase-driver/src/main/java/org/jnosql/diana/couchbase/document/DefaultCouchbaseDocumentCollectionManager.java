@@ -22,6 +22,7 @@ import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.ParameterizedN1qlQuery;
 import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.search.SearchQuery;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -42,7 +43,7 @@ import static org.jnosql.diana.couchbase.document.EntityConverter.getPrefix;
 /**
  * The default implementation of {@link CouchbaseDocumentCollectionManager}
  */
-class DefaultCouchbaseDocumentCollectionManager  implements CouchbaseDocumentCollectionManager {
+class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentCollectionManager {
     private final Bucket bucket;
     private final String database;
 
@@ -146,6 +147,10 @@ class DefaultCouchbaseDocumentCollectionManager  implements CouchbaseDocumentCol
         requireNonNull(n1qlQuery, "n1qlQuery is required");
         N1qlQueryResult result = bucket.query(N1qlQuery.simple(n1qlQuery));
         return convert(result, database);
+    }
+
+    public List<DocumentEntity> search(SearchQuery query) throws NullPointerException {
+        bucket.query()
     }
 
     @Override
