@@ -63,6 +63,8 @@ public class CouchbaseDocumentCollectionManagerTest {
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
         keyValueEntityManager.remove("person:id");
+        keyValueEntityManager.remove("person:id2");
+        keyValueEntityManager.remove("person:id3");
     }
 
     @Test
@@ -129,6 +131,28 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         query.and(DocumentCondition.eq(name.get()));
         query.withMaxResults(2L);
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertEquals(2, entities.size());
+
+        entityManager.delete(query.toDeleteQuery());
+        assertTrue(entityManager.select(query).isEmpty());
+
+    }
+
+    @Test
+    public void shouldShouldDefineStart()  {
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
+                , Document.of("name", "name")));
+        DocumentEntity entity2 = DocumentEntity.of("person", asList(Document.of("_id", "id2")
+                , Document.of("name", "name")));
+        DocumentEntity entity3 = DocumentEntity.of("person", asList(Document.of("_id", "id3")
+                , Document.of("name", "name")));
+
+        entityManager.insert(Arrays.asList(entity, entity2, entity3));
+        Optional<Document> name = entity.find("name");
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        query.and(DocumentCondition.eq(name.get()));
+        query.withFirstResult(1);
         List<DocumentEntity> entities = entityManager.select(query);
         assertEquals(2, entities.size());
 
