@@ -56,10 +56,7 @@ final class EntityConverter {
                 .filter(Objects::nonNull)
                 .map(j -> {
                     List<Document> documents = toDocuments(j.content().toMap());
-                    Document id = Document.of(ID_FIELD, j.id());
                     DocumentEntity entity = DocumentEntity.of(j.id().split(SPLIT_KEY)[0], documents);
-                    entity.remove(ID_FIELD);
-                    entity.add(id);
                     return entity;
                 })
                 .collect(Collectors.toList());
