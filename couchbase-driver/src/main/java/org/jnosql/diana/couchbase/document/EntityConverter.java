@@ -25,6 +25,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,9 @@ final class EntityConverter {
     private EntityConverter() {
     }
 
-    static List<DocumentEntity> convert(List<String> ids, String collection, Bucket bucket) {
+    static List<DocumentEntity> convert(Collection<String> ids, Bucket bucket) {
         return ids
                 .stream()
-                .map(s -> getPrefix(collection, s))
                 .map(bucket::get)
                 .filter(Objects::nonNull)
                 .map(j -> {
@@ -64,7 +64,7 @@ final class EntityConverter {
         return result.allRows().stream()
                 .map(N1qlQueryRow::value)
                 .map(JsonObject::toMap)
-                .map(m ->  m.get(database))
+                .map(m -> m.get(database))
                 .filter(Objects::nonNull)
                 .filter(Map.class::isInstance)
                 .map(m -> (Map<String, Object>) m)
@@ -113,8 +113,6 @@ final class EntityConverter {
         }
         return collection + SPLIT_KEY_CHAR + id;
     }
-
-
 
 
     static JsonObject convert(DocumentEntity entity) {
