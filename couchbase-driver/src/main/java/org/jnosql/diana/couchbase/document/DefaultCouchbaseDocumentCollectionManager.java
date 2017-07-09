@@ -65,6 +65,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
         String prefix = getPrefix(id, entity.getName());
+        jsonObject.put(KEY_FIELD, prefix);
         bucket.upsert(JsonDocument.create(prefix, jsonObject));
         entity.add(Document.of(KEY_FIELD, prefix));
         return entity;

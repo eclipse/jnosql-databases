@@ -39,6 +39,7 @@ import static java.util.Objects.nonNull;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
+import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 
 final class QueryConverter {
 
@@ -84,7 +85,7 @@ final class QueryConverter {
     private static Expression getCondition(DocumentCondition condition, JsonObject params, List<String> ids) {
         Document document = condition.getDocument();
 
-        if (!NOT_APPENDABLE.contains(condition.getCondition()) && isIdField(document)) {
+        if (!NOT_APPENDABLE.contains(condition.getCondition()) && isKeyField(document)) {
             if (IN.equals(condition.getCondition())) {
                 ids.addAll(document.get(new TypeReference<List<String>>() {
                 }));
@@ -138,8 +139,8 @@ final class QueryConverter {
         }
     }
 
-    private static boolean isIdField(Document document) {
-        return ID_FIELD.equals(document.getName());
+    private static boolean isKeyField(Document document) {
+        return KEY_FIELD.equals(document.getName());
     }
 
     static class QueryConverterResult {
