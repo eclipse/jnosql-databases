@@ -18,14 +18,13 @@ import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.queries.MatchQuery;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -49,7 +48,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     private CouchbaseDocumentCollectionManager entityManager;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get("default");
@@ -177,10 +176,12 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
+    @Ignore
     public void shouldSearchElement() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
-
+//        map.put("description", "Founded by the Portuguese in 1549 as the first capital of Brazil, Salvador is" +
+//                " one of the oldest colonial cities in the Americas.");
         MatchQuery fts = SearchQuery.match("Salvador");
         SearchQuery query = new SearchQuery("search-index-diana", fts).fields("city");
         List<DocumentEntity> entities = entityManager.search(query);
@@ -193,8 +194,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         map.put("name", "Poliana");
         map.put("city", "Salvador");
         map.put("_id", "id");
-        map.put("description", "Founded by the Portuguese in 1549 as the first capital of Brazil, Salvador is" +
-                " one of the oldest colonial cities in the Americas.");
+
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
