@@ -14,8 +14,6 @@
  */
 package org.jnosql.diana.couchbase.document;
 
-import com.couchbase.client.java.search.SearchQuery;
-import com.couchbase.client.java.search.queries.MatchQuery;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -27,10 +25,8 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.AfterClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +37,6 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -63,8 +58,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
         keyValueEntityManager.remove("person:id");
-        keyValueEntityManager.remove("person:id2");
-        keyValueEntityManager.remove("person:id3");
     }
 
     @Test
@@ -94,52 +87,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
         assertTrue(entityManager.select(query).isEmpty());
     }
-
-    @Test
-    public void shouldRemoveEntityById() {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = documentEntity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
-        assertTrue(entityManager.select(query).isEmpty());
-    }
-
-    @Test
-    public void shouldFindDocumentByName() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> name = entity.find("name");
-        query.and(DocumentCondition.eq(name.get()));
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
-    }
-
-
-
-    @Test
-    public void shouldFindDocumentById() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = entity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
-    }
-
-    @Test
-    public void shouldFindDocumentByKey() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> id = entity.find("_key");
-        query.and(DocumentCondition.eq(id.get()));
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
-    }
-
 
     @Test
     public void shouldSaveSubDocument() throws InterruptedException {
@@ -192,18 +139,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         assertEquals(set, setFoods);
     }
 
-    @Test
-    @Ignore
-    public void shouldSearchElement() {
-        DocumentEntity entity = getEntity();
-        entity.add("description", "Founded by the Portuguese in 1549 as the first capital of Brazil, Salvador is" +
-                " one of the oldest colonial cities in the Americas.");
-        entityManager.insert(entity);
-        MatchQuery fts = SearchQuery.match("Salvador");
-        SearchQuery query = new SearchQuery("search-index-diana", fts).fields("city");
-        List<DocumentEntity> entities = entityManager.search(query);
-        System.out.println(entities);
-    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

@@ -15,6 +15,7 @@
 package org.jnosql.diana.couchbase.document;
 
 
+import org.hamcrest.Matcher;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -56,6 +57,7 @@ public class DocumentQueryTest {
         keyValueEntityManager.remove("person:id");
         keyValueEntityManager.remove("person:id2");
         keyValueEntityManager.remove("person:id3");
+        keyValueEntityManager.remove("person:id4");
     }
 
     @BeforeClass
@@ -70,8 +72,10 @@ public class DocumentQueryTest {
                 , Document.of("name", "name")));
         DocumentEntity entity3 = DocumentEntity.of("person", asList(Document.of("_id", "id3")
                 , Document.of("name", "name")));
+        DocumentEntity entity4 = DocumentEntity.of("person", asList(Document.of("_id", "id4")
+                , Document.of("name", "name3")));
 
-        entityManager.insert(Arrays.asList(entity, entity2, entity3));
+        entityManager.insert(Arrays.asList(entity, entity2, entity3, entity4));
         Thread.sleep(2_000L);
 
     }
@@ -116,6 +120,47 @@ public class DocumentQueryTest {
         Optional<Document> name = entity.find("name");
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
-        assertEquals(3, entities.size());
+        assertEquals(4, entities.size());
+    }
+
+
+    @Test
+    public void shouldFindDocumentByName() {
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
+                , Document.of("name", "name3"), Document.of("_key", "person:id4")));
+
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> name = entity.find("name");
+        query.and(DocumentCondition.eq(name.get()));
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+
+
+    @Test
+    public void shouldFindDocumentById() {
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
+                , Document.of("name", "name"), Document.of("_key", "person:id")));
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> id = entity.find("_id");
+        query.and(DocumentCondition.eq(id.get()));
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldFindDocumentByKey() {
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
+                , Document.of("name", "name"), Document.of("_key", "person:id")));
+
+        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        Optional<Document> id = entity.find("_key");
+        query.and(DocumentCondition.eq(id.get()));
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
     }
 }

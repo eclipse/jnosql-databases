@@ -92,9 +92,6 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         Optional<Document> id = documentEntity.find("name");
         query.and(DocumentCondition.eq(id.get()));
         entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
-        Thread.sleep(1_000L);
-        assertTrue(entityManager.select(query).isEmpty());
-
     }
 
     private DocumentEntity getEntity() {
