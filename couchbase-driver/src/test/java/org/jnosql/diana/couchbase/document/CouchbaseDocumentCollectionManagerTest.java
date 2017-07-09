@@ -116,60 +116,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         assertThat(entities, contains(entity));
     }
 
-    @Test
-    public void shouldShouldDefineLimit() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name")));
-        DocumentEntity entity2 = DocumentEntity.of("person", asList(Document.of("_id", "id2")
-                , Document.of("name", "name")));
-        DocumentEntity entity3 = DocumentEntity.of("person", asList(Document.of("_id", "id3")
-                , Document.of("name", "name")));
 
-        entityManager.insert(Arrays.asList(entity, entity2, entity3));
-
-        Optional<Document> name = entity.find("name");
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(name.get()));
-        query.withMaxResults(2L);
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertEquals(2, entities.size());
-
-        entityManager.delete(query.toDeleteQuery());
-        assertTrue(entityManager.select(query).isEmpty());
-
-    }
-
-    @Test
-    public void shouldShouldDefineStart()  {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name")));
-        DocumentEntity entity2 = DocumentEntity.of("person", asList(Document.of("_id", "id2")
-                , Document.of("name", "name")));
-        DocumentEntity entity3 = DocumentEntity.of("person", asList(Document.of("_id", "id3")
-                , Document.of("name", "name")));
-
-        entityManager.insert(Arrays.asList(entity, entity2, entity3));
-        Optional<Document> name = entity.find("name");
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(name.get()));
-        query.withFirstResult(1);
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertEquals(2, entities.size());
-
-        entityManager.delete(query.toDeleteQuery());
-        assertTrue(entityManager.select(query).isEmpty());
-
-    }
-
-    @Test
-    public void shouldSelectAll(){
-        DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        Optional<Document> name = entity.find("name");
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
-    }
 
     @Test
     public void shouldFindDocumentById() {
@@ -258,7 +205,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         System.out.println(entities);
     }
 
-    private DocumentEntity getEntity() {
+    static DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
