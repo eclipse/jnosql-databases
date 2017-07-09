@@ -112,8 +112,8 @@ final class EntityConverter {
                 .filter(Objects::nonNull)
                 .map(Documents::of)
                 .map(ds -> {
-                    Optional<Document> first = ds.stream().filter(d -> ID_FIELD.equals(d.getName())).findFirst();
-                    String collection = first.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
+                    Optional<Document> keyDocument = ds.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
+                    String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
                     return DocumentEntity.of(collection, ds);
                 }).collect(toList());
     }
