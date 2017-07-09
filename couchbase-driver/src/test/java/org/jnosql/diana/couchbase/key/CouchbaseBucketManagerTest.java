@@ -18,6 +18,8 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,15 +36,17 @@ import static org.junit.Assert.*;
 public class CouchbaseBucketManagerTest {
 
 
+    private static final String KEY_SORO = "soro";
+    private static final String KEY_OTAVIO = "otavio";
     private BucketManager keyValueEntityManager;
 
     private BucketManagerFactory keyValueEntityManagerFactory;
 
-    private User userOtavio = new User("otavio");
-    private KeyValueEntity keyValueOtavio = KeyValueEntity.of("otavio", Value.of(userOtavio));
+    private User userOtavio = new User(KEY_OTAVIO);
+    private KeyValueEntity entityOtavio = KeyValueEntity.of(KEY_OTAVIO, Value.of(userOtavio));
 
-    private User userSoro = new User("soro");
-    private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
+    private User userSoro = new User(KEY_SORO);
+    private KeyValueEntity soroEntity = KeyValueEntity.of(KEY_SORO, Value.of(userSoro));
 
     @Before
     public void init() {
@@ -51,19 +55,28 @@ public class CouchbaseBucketManagerTest {
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        keyValueEntityManager.remove(KEY_OTAVIO);
+        keyValueEntityManager.remove(KEY_SORO);
+    }
+
 
     @Test
     public void shouldPutValue() {
-        keyValueEntityManager.put("otavio", userOtavio);
-        Optional<Value> otavio = keyValueEntityManager.get("otavio");
+        keyValueEntityManager.put(KEY_OTAVIO, userOtavio);
+        Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
         assertEquals(userOtavio, otavio.get().get(User.class));
     }
 
     @Test
     public void shouldPutKeyValue() {
-        keyValueEntityManager.put(keyValueOtavio);
-        Optional<Value> otavio = keyValueEntityManager.get("otavio");
+        keyValueEntityManager.put(entityOtavio);
+        Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
         assertEquals(userOtavio, otavio.get().get(User.class));
     }
@@ -72,22 +85,22 @@ public class CouchbaseBucketManagerTest {
     public void shouldPutIterableKeyValue() {
 
 
-        keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
-        Optional<Value> otavio = keyValueEntityManager.get("otavio");
+        keyValueEntityManager.put(asList(soroEntity, entityOtavio));
+        Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
         assertEquals(userOtavio, otavio.get().get(User.class));
 
-        Optional<Value> soro = keyValueEntityManager.get("soro");
+        Optional<Value> soro = keyValueEntityManager.get(KEY_SORO);
         assertTrue(soro.isPresent());
         assertEquals(userSoro, soro.get().get(User.class));
     }
 
     @Test
     public void shouldMultiGet() {
-        User user = new User("otavio");
-        KeyValueEntity keyValue = KeyValueEntity.of("otavio", Value.of(user));
+        User user = new User(KEY_OTAVIO);
+        KeyValueEntity keyValue = KeyValueEntity.of(KEY_OTAVIO, Value.of(user));
         keyValueEntityManager.put(keyValue);
-        assertNotNull(keyValueEntityManager.get("otavio"));
+        assertNotNull(keyValueEntityManager.get(KEY_OTAVIO));
 
 
     }
@@ -95,21 +108,23 @@ public class CouchbaseBucketManagerTest {
     @Test
     public void shouldRemoveKey() {
 
-        keyValueEntityManager.put(keyValueOtavio);
-        assertTrue(keyValueEntityManager.get("otavio").isPresent());
-        keyValueEntityManager.remove("otavio");
-        assertFalse(keyValueEntityManager.get("otavio").isPresent());
+        keyValueEntityManager.put(entityOtavio);
+        assertTrue(keyValueEntityManager.get(KEY_OTAVIO).isPresent());
+        keyValueEntityManager.remove(KEY_OTAVIO);
+        assertFalse(keyValueEntityManager.get(KEY_OTAVIO).isPresent());
     }
 
     @Test
     public void shouldRemoveMultiKey() {
 
-        keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
-        List<String> keys = asList("otavio", "soro");
+        keyValueEntityManager.put(asList(soroEntity, entityOtavio));
+        List<String> keys = asList(KEY_OTAVIO, KEY_SORO);
         Iterable<Value> values = keyValueEntityManager.get(keys);
         assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), containsInAnyOrder(userOtavio, userSoro));
         keyValueEntityManager.remove(keys);
         Iterable<Value> users = values;
         assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
     }
+
+
 }
