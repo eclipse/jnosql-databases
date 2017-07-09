@@ -58,7 +58,7 @@ final class QueryConverter {
             documents = ALL_SELECT;
         }
         Expression condition = getCondition(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("Condigtion is required")), params, ids);
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required")), params, ids);
         Statement statement = null;
         if (nonNull(condition)) {
             statement = Select.select(documents).from(i(bucket))
