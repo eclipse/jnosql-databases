@@ -126,7 +126,7 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(callBack, "callBack is required");
 
-        String collection = query.getCollection();
+        String collection = query.getDocumentCollection();
         if (checkCondition(query.getCondition())) {
             return;
         }
@@ -161,7 +161,7 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
         DocumentCondition condition = query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         Value value = condition.getDocument().getValue();
-        String collection = query.getCollection();
+        String collection = query.getDocumentCollection();
         if (Condition.EQUALS.equals(condition.getCondition())) {
             String key = value.get(String.class);
             CompletableFuture<BaseDocument> future = arangoDBAsync.db(database).collection(collection)

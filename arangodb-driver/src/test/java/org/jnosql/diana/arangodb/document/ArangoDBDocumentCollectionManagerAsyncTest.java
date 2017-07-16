@@ -17,10 +17,8 @@ package org.jnosql.diana.arangodb.document;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +29,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
 
 
@@ -68,11 +68,11 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldRemoveEntityAsync() {
-        DocumentEntity documentEntity = entityManager.insert    (getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        DocumentEntity documentEntity = entityManager.insert(getEntity());
+
         Optional<Document> id = documentEntity.find(KEY_NAME);
-        query.and(DocumentCondition.eq(id.get()));
-        entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        entityManagerAsync.delete(query);
     }
 
 

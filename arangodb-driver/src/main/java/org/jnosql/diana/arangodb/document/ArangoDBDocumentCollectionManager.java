@@ -92,7 +92,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
-        String collection = query.getCollection();
+        String collection = query.getDocumentCollection();
         if (checkCondition(query.getCondition())) {
             return;
         }
@@ -120,7 +120,7 @@ public class ArangoDBDocumentCollectionManager implements DocumentCollectionMana
         DocumentCondition condition = query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         Value value = condition.getDocument().getValue();
-        String collection = query.getCollection();
+        String collection = query.getDocumentCollection();
         if (Condition.EQUALS.equals(condition.getCondition())) {
             String key = value.get(String.class);
             DocumentEntity entity = toEntity(collection, key);
