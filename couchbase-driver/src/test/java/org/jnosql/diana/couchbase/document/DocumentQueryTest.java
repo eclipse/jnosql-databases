@@ -17,7 +17,6 @@ package org.jnosql.diana.couchbase.document;
 
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.key.BucketManager;
@@ -34,6 +33,10 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
+import static org.jnosql.diana.api.Sort.SortType.ASC;
+import static org.jnosql.diana.api.Sort.SortType.DESC;
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -88,9 +91,12 @@ public class DocumentQueryTest {
                 , Document.of("name", "name")));
 
         Optional<Document> name = entity.find("name");
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(name.get()));
-        query.withMaxResults(2L);
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(name.get()))
+                .limit(2L)
+                .build();
+
         List<DocumentEntity> entities = entityManager.select(query);
         assertEquals(2, entities.size());
 
@@ -102,9 +108,11 @@ public class DocumentQueryTest {
                 , Document.of("name", "name")));
 
         Optional<Document> name = entity.find("name");
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(name.get()));
-        query.withFirstResult(1);
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(name.get()))
+                .start(1L)
+                .build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertEquals(2, entities.size());
 
@@ -117,10 +125,12 @@ public class DocumentQueryTest {
                 , Document.of("name", "name")));
 
         Optional<Document> name = entity.find("name");
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(name.get()));
-        query.withMaxResults(2L);
-        query.withFirstResult(2L);
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(name.get()))
+                .start(2L)
+                .limit(2L)
+                .build();
+
         List<DocumentEntity> entities = entityManager.select(query);
         assertEquals(1, entities.size());
 
@@ -133,7 +143,7 @@ public class DocumentQueryTest {
                 , Document.of("name", "name")));
 
 
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
         Optional<Document> name = entity.find("name");
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
@@ -146,9 +156,8 @@ public class DocumentQueryTest {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
                 , Document.of("name", "name3"), Document.of("_key", "person:id4")));
 
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = entity.find("name");
-        query.and(DocumentCondition.eq(name.get()));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(name.get())).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -159,9 +168,12 @@ public class DocumentQueryTest {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
                 , Document.of("name", "name3"), Document.of("_key", "person:id4")));
 
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = entity.find("name");
-        query.addSort(Sort.of("name", Sort.SortType.ASC));
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .orderBy(Sort.of("name", ASC))
+                .build();
+
         List<DocumentEntity> entities = entityManager.select(query);
         List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
                 .filter(d -> "name".equals(d.getName()))
@@ -177,9 +189,11 @@ public class DocumentQueryTest {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
                 , Document.of("name", "name3"), Document.of("_key", "person:id4")));
 
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = entity.find("name");
-        query.addSort(Sort.of("name", Sort.SortType.DESC));
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .orderBy(Sort.of("name", DESC))
+                .build();
         List<DocumentEntity> entities = entityManager.select(query);
         List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
                 .filter(d -> "name".equals(d.getName()))
@@ -196,9 +210,12 @@ public class DocumentQueryTest {
     public void shouldFindDocumentById() {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name"), Document.of("_key", "person:id")));
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(id.get()))
+                .build();
+
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -209,9 +226,10 @@ public class DocumentQueryTest {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name"), Document.of("_key", "person:id")));
 
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("_key");
-        query.and(DocumentCondition.eq(id.get()));
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(id.get()))
+                .build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));

@@ -21,6 +21,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
@@ -36,6 +37,8 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -90,10 +93,12 @@ public class CouchbaseDocumentCollectionManagerTest {
     @Test
     public void shouldRemoveEntityByName() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+
         Optional<Document> name = documentEntity.find("name");
-        query.and(DocumentCondition.eq(name.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(name.get())).build();
+        DocumentDeleteQuery deleteQuery = DocumentQueryBuilder.delete().from(COLLECTION_NAME)
+                .where(eq(name.get())).build();
+        entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
     }
 
@@ -104,8 +109,10 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Thread.sleep(5_00L);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+
+
+
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id)).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -120,8 +127,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Thread.sleep(1_00L);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id)).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -139,8 +145,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         entity.add(Document.of("foods", set));
         entityManager.insert(entity);
         Document id = entity.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id)).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Optional<Document> foods = entityFound.find("foods");
         Set<String> setFoods = foods.get().get(new TypeReference<Set<String>>() {

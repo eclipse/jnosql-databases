@@ -17,7 +17,6 @@ package org.jnosql.diana.couchbase.document;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -31,8 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 
 public class CouchbaseDocumentCollectionManagerAsyncTest {
@@ -55,10 +56,10 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         entityManagerAsync = managerFactory.getAsync("default");
         entityManager = managerFactory.get("default");
         DocumentEntity documentEntity = getEntity();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        entityManagerAsync.delete(deleteQuery);
     }
 
 
@@ -68,9 +69,8 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         entityManagerAsync.insert(entity);
 
         Thread.sleep(1_000L);
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id.get())).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
 
@@ -88,10 +88,10 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRemoveEntityAsync() throws InterruptedException {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        entityManagerAsync.delete(deleteQuery);
     }
 
     private DocumentEntity getEntity() {

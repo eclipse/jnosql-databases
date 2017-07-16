@@ -99,7 +99,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         if (!delete.getKeys().isEmpty()) {
             delete.getKeys()
                     .stream()
-                    .map(s -> getPrefix(query.getCollection(), s))
+                    .map(s -> getPrefix(query.getDocumentCollection(), s))
                     .forEach(bucket::remove);
         }
 
