@@ -50,6 +50,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.api.Condition.AND;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
+import static org.jnosql.diana.hbase.column.HBaseUtils.KEY_COLUMN;
 
 /**
  * The Hbase implementation to {@link ColumnFamilyManager}.
@@ -78,7 +79,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         if (columns.isEmpty()) {
             return entity;
         }
-        Column columnID = entity.find(HBaseUtils.KEY_COLUMN).orElseThrow(() -> new DianaHBaseException(KEY_REQUIRED_ERROR));
+        Column columnID = entity.find(KEY_COLUMN).orElseThrow(() -> new DianaHBaseException(KEY_REQUIRED_ERROR));
 
         Put put = new Put(Bytes.toBytes(valueToString(columnID.getValue())));
         columns.stream().filter(Predicate.isEqual(columnID).negate()).forEach(column -> {
