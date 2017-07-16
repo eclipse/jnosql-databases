@@ -124,7 +124,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     private void delete(DocumentDeleteQuery query, SingleResultCallback<DeleteResult> callBack) {
-        String collectionName = query.getCollection();
+        String collectionName = query.getDocumentCollection();
         com.mongodb.async.client.MongoCollection<Document> asyncCollection =
                 asyncMongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()

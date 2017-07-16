@@ -18,7 +18,6 @@ package org.jnosql.diana.mongodb.document;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -28,13 +27,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -73,19 +75,27 @@ public class MongoDBDocumentCollectionManagerTest {
     @Test
     public void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+
         Optional<Document> id = documentEntity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(id.get()))
+                .build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get()))
+                .build();
+
+        entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
     }
 
     @Test
     public void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(id.get()))
+                .build();
+
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -98,8 +108,10 @@ public class MongoDBDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(id))
+                .build();
+
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -110,11 +122,13 @@ public class MongoDBDocumentCollectionManagerTest {
     @Test
     public void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
+        entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(eq(id))
+                .build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -145,12 +159,12 @@ public class MongoDBDocumentCollectionManagerTest {
         oReilly.add(Document.of("name", "O'Reilly Media"));
         oReilly.add(Document.of("founded", "1980"));
         oReilly.add(Document.of("location", "CA"));
-        oReilly.add(Document.of("books", Arrays.asList("123456789", "234567890")));
+        oReilly.add(Document.of("books", asList("123456789", "234567890")));
 
         DocumentEntity mongoBook = DocumentEntity.of("book");
         mongoBook.add(Document.of("_id", "123456789"));
         mongoBook.add(Document.of("title", "MongoDB: The Definitive Guide"));
-        mongoBook.add(Document.of("author", Arrays.asList("ristina Chodorow", "Mike Dirolf")));
+        mongoBook.add(Document.of("author", asList("ristina Chodorow", "Mike Dirolf")));
         mongoBook.add(Document.of("published_date", "2010-09-24"));
         mongoBook.add(Document.of("pages", 216));
         mongoBook.add(Document.of("language", "English"));
@@ -159,7 +173,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentEntity mongoDBDeveloper = DocumentEntity.of("book");
         mongoDBDeveloper.add(Document.of("_id", "234567890"));
         mongoDBDeveloper.add(Document.of("title", "50 Tips and Tricks for MongoDB Developer"));
-        mongoDBDeveloper.add(Document.of("author", Arrays.asList("Kristina Chodorow")));
+        mongoDBDeveloper.add(Document.of("author", asList("Kristina Chodorow")));
         mongoDBDeveloper.add(Document.of("published_date", "2011-05-06"));
         mongoDBDeveloper.add(Document.of("pages", 68));
         mongoDBDeveloper.add(Document.of("language", "English"));

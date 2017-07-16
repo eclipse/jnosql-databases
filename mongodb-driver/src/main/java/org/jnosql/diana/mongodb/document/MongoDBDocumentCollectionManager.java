@@ -92,7 +92,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-        String collectionName = query.getCollection();
+        String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("condition is required")));
@@ -102,7 +102,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
-        String collectionName = query.getCollection();
+        String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("condition is required")));

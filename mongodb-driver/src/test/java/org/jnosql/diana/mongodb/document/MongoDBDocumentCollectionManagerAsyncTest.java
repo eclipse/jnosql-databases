@@ -16,10 +16,8 @@ package org.jnosql.diana.mongodb.document;
 
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -31,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
 
 
@@ -66,10 +66,13 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRemoveEntityAsync() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
+                .where(eq(id.get()))
+                .build();
+
+        entityManager.delete(deleteQuery);
 
     }
 
