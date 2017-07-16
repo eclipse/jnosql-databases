@@ -16,7 +16,6 @@ package org.jnosql.diana.orientdb.document;
 
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -31,9 +30,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
+import static java.util.logging.Level.FINEST;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.DocumentCondition.gte;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.get;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 import static org.junit.Assert.assertEquals;
@@ -48,19 +53,22 @@ public class OrientDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
 
+    private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentCollectionManagerTest.class.getName());
+
     private OrientDBDocumentCollectionManager entityManager;
 
     @Before
     public void setUp() {
         entityManager = get().get("database");
         DocumentEntity documentEntity = getEntity();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
-        try {
-            entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
-        } catch (Exception e) {
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
 
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        try {
+            entityManager.delete(deleteQuery);
+        } catch (Exception e) {
+            LOGGER.log(FINEST, "error on OrientDB setup", e);
         }
 
     }
@@ -88,19 +96,21 @@ public class OrientDBDocumentCollectionManagerTest {
     @Test
     public void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+
         Optional<Document> id = documentEntity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
     }
 
     @Test
     public void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -113,8 +123,7 @@ public class OrientDBDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("name").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id)).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -128,8 +137,7 @@ public class OrientDBDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("name").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id)).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -143,14 +151,16 @@ public class OrientDBDocumentCollectionManagerTest {
         entity.add(Document.of("age", 24));
         entityManager.insert(entity);
 
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
 
-        query.and(DocumentCondition.eq(Document.of("name", "Poliana"))
-                .and(DocumentCondition.gte(Document.of("age", 10))));
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
+                .and(gte(Document.of("age", 10))).build();
+
+        DocumentDeleteQuery deleteQuery =  delete().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
+                .and(gte(Document.of("age", 10))).build();
 
         assertFalse(entityManager.select(query).isEmpty());
 
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
     }
 
@@ -160,14 +170,17 @@ public class OrientDBDocumentCollectionManagerTest {
         entity.add(Document.of("age", 24));
         entityManager.insert(entity);
 
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
 
-        query.and(DocumentCondition.eq(Document.of("name", "Poliana"))
-                .or(DocumentCondition.gte(Document.of("age", 100))));
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
+                .or(gte(Document.of("age", 10))).build();
+
+        DocumentDeleteQuery deleteQuery =  delete().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
+                .or(gte(Document.of("age", 10))).build();
 
         assertFalse(entityManager.select(query).isEmpty());
 
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
     }
 
@@ -177,9 +190,10 @@ public class OrientDBDocumentCollectionManagerTest {
         Consumer<DocumentEntity> callback = entities::add;
 
         DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
+
         entityManager.live(query, callback);
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);

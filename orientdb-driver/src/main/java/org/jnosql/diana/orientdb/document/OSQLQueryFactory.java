@@ -123,7 +123,7 @@ final class OSQLQueryFactory {
         StringBuilder query = new StringBuilder();
         List<Object> params = new java.util.ArrayList<>();
         query.append("SELECT FROM ");
-        query.append(documentQuery.getCollection());
+        query.append(documentQuery.getDocumentCollection());
         int counter = 0;
         if (documentQuery.getCondition().isPresent()) {
             query.append(" WHERE ");

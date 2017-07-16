@@ -26,6 +26,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.time.Duration;
@@ -52,7 +53,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
-        Objects.toString(entity, "Entity is required");
+        requireNonNull(entity, "Entity is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             ODocument document = new ODocument(entity.getName());
 
@@ -84,18 +85,18 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
+        requireNonNull(entity, "Entity is required");
         return insert(entity);
     }
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-        Objects.requireNonNull(query, "query is required");
-        try (ODatabaseDocumentTx tx = pool.acquire()) {
-            OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory
-                    .to(DocumentQuery.of(query.getCollection())
-                            .and(query.getCondition()
-                                    .orElseThrow(() -> new IllegalArgumentException("Condition is required"))));
+        requireNonNull(query, "query is required");
+        DocumentQuery selectQuery = DocumentQueryBuilder.select().from(query.getDocumentCollection()).where(query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"))).build();
 
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+            OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(selectQuery);
             List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
             result.forEach(tx::delete);
         }
@@ -105,6 +106,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
+        requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(query);
             List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());

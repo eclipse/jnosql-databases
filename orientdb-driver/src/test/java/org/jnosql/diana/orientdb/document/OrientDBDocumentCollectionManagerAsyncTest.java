@@ -17,7 +17,6 @@ package org.jnosql.diana.orientdb.document;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -29,7 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
+import static java.util.logging.Level.FINEST;
+import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.getAsync;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -43,18 +47,20 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     private DocumentCollectionManager entityManager;
 
+    private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentCollectionManagerTest.class.getName());
+
     @Before
     public void setUp() {
         entityManagerAsync = getAsync().getAsync("database");
         entityManager = DocumentConfigurationUtils.get().get("database");
         DocumentEntity documentEntity = getEntity();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
-        try {
-            entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
-        } catch (Exception e) {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
 
+        try {
+            entityManagerAsync.delete(deleteQuery);
+        } catch (Exception e) {
+            LOGGER.log(FINEST, "error on OrientDB setup", e);
         }
     }
 
@@ -65,9 +71,9 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         entityManagerAsync.insert(entity);
 
         Thread.sleep(1_000L);
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
 
@@ -85,10 +91,12 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRemoveEntityAsync() throws InterruptedException {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("name");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManagerAsync.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+
+        entityManagerAsync.delete(deleteQuery);
         Thread.sleep(1_000L);
         assertTrue(entityManager.select(query).isEmpty());
 
