@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,6 +36,8 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -76,10 +79,13 @@ public class ElasticsearchDocumentCollectionManagerTest {
     @Ignore
     public void shouldRemoveEntityByName() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
+
         Optional<Document> name = documentEntity.find("name");
-        query.and(DocumentCondition.eq(name.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+        DocumentQuery query = select().from(COLLECTION_NAME).where(DocumentCondition.eq(name.get())).build();
+
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(DocumentCondition.eq(name.get())).build();
+
+        entityManager.delete(deleteQuery);
         List<DocumentEntity> entities = entityManager.select(query);
         System.out.println(entities);
         assertTrue(entities.isEmpty());
@@ -88,19 +94,22 @@ public class ElasticsearchDocumentCollectionManagerTest {
     @Test
     public void shouldRemoveEntityById() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = documentEntity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
-        entityManager.delete(DocumentDeleteQuery.of(query.getCollection(), query.getCondition().get()));
+
+        DocumentQuery query = select().from(COLLECTION_NAME).where(DocumentCondition.eq(id.get())).build();
+
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(DocumentCondition.eq(id.get())).build();
+
+        entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
     }
 
     @Test
     public void shouldFindDocumentByName() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> name = entity.find("name");
-        query.and(DocumentCondition.eq(name.get()));
+
+        DocumentQuery query = select().from(COLLECTION_NAME).where(DocumentCondition.eq(name.get())).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -109,9 +118,10 @@ public class ElasticsearchDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocumentById() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
         Optional<Document> id = entity.find("_id");
-        query.and(DocumentCondition.eq(id.get()));
+
+        DocumentQuery query = select().from(COLLECTION_NAME).where(DocumentCondition.eq(id.get())).build();
+
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -124,9 +134,10 @@ public class ElasticsearchDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+
+
+        DocumentQuery query = select().from(COLLECTION_NAME).where(DocumentCondition.eq(id)).build();
+        DocumentEntity entityFound = entityManager.singleResult(query).get();
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -139,8 +150,8 @@ public class ElasticsearchDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = DocumentQuery.of(COLLECTION_NAME);
-        query.and(DocumentCondition.eq(id));
+
+        DocumentQuery query = select().from(COLLECTION_NAME).where(DocumentCondition.eq(id)).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {

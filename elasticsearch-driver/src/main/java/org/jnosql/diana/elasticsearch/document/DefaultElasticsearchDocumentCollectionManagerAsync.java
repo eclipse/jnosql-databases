@@ -25,6 +25,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -117,14 +118,17 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
-        List<DocumentEntity> entities = EntityConverter.query(DocumentQuery.of(query.getCollection())
-                .and(query.getCondition()
-                        .orElseThrow(() -> new IllegalArgumentException("condition is required"))), client, index);
+
+        DocumentQuery select = DocumentQueryBuilder.select().from(query.getDocumentCollection())
+                .where(query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required")))
+                .build();
+
+        List<DocumentEntity> entities = EntityConverter.query(select, client, index);
 
         BulkRequestBuilder bulkRequest = client.prepareBulk();
         entities.stream()
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))
-                .map(id -> client.prepareDelete(index, query.getCollection(), id))
+                .map(id -> client.prepareDelete(index, query.getDocumentCollection(), id))
                 .forEach(bulkRequest::add);
 
         ActionListener<BulkResponse> s = new ActionListener<BulkResponse>() {

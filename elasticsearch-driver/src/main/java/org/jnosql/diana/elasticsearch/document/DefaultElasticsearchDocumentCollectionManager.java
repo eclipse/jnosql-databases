@@ -22,6 +22,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -101,14 +102,18 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     @Override
     public void delete(DocumentDeleteQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        List<DocumentEntity> entities = select(DocumentQuery.of(query.getCollection())
-                .and(query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"))));
+
+        DocumentQuery select = DocumentQueryBuilder.select().from(query.getDocumentCollection())
+                .where(query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required")))
+                .build();
+
+        List<DocumentEntity> entities = select(select);
 
         entities.stream()
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))
                 .forEach(id -> {
                     try {
-                        client.prepareDelete(index, query.getCollection(), id).execute().get();
+                        client.prepareDelete(index, query.getDocumentCollection(), id).execute().get();
                     } catch (InterruptedException | ExecutionException e) {
                         throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
                     }

@@ -86,7 +86,7 @@ final class EntityConverter {
 
             if (!select.getIds().isEmpty()) {
                 MultiGetResponse multiGetItemResponses = client
-                        .prepareMultiGet().add(index, query.getCollection(), select.getIds())
+                        .prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
                         .execute().get();
 
                 Stream.of(multiGetItemResponses.getResponses())
@@ -98,7 +98,7 @@ final class EntityConverter {
             }
             if (nonNull(select.getStatement())) {
                 SearchResponse searchResponse = client.prepareSearch(index)
-                        .setTypes(query.getCollection())
+                        .setTypes(query.getDocumentCollection())
                         .setQuery(select.getStatement())
                         .execute().get();
                 stream(searchResponse.getHits().spliterator(), false)
@@ -117,18 +117,18 @@ final class EntityConverter {
 
     static void queryAsync(DocumentQuery query, Client client, String index, Consumer<List<DocumentEntity>> callBack) {
 
-        FindAsyncListener listener = new FindAsyncListener(callBack, query.getCollection());
+        FindAsyncListener listener = new FindAsyncListener(callBack, query.getDocumentCollection());
         QueryConverter.QueryConverterResult select = QueryConverter.select(query);
 
         if (!select.getIds().isEmpty()) {
-            client.prepareMultiGet().add(index, query.getCollection(), select.getIds())
+            client.prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
                     .execute().addListener(listener.getIds());
 
 
         }
         if (nonNull(select.getStatement())) {
             client.prepareSearch(index)
-                    .setTypes(query.getCollection())
+                    .setTypes(query.getDocumentCollection())
                     .setQuery(select.getStatement())
                     .execute().addListener(listener.getSearch());
         }
