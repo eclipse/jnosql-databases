@@ -15,11 +15,15 @@
 package org.jnosql.diana.orientdb.document;
 
 
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Map;
 import java.util.logging.Logger;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 /**
  * The orientDB implementation of {@link UnaryDocumentConfiguration} that returns
@@ -73,7 +77,32 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
     }
 
     @Override
+    public OrientDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+        return getOrientDBDocumentCollectionManagerFactory(settings);
+    }
+
+    @Override
     public OrientDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
         return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
+    }
+
+    @Override
+    public OrientDBDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
+        return getOrientDBDocumentCollectionManagerFactory(settings);
+    }
+
+
+    private OrientDBDocumentCollectionManagerFactory getOrientDBDocumentCollectionManagerFactory(Settings settings) {
+        requireNonNull(settings, "settings is required");
+
+        String host = getValue(settings, "mongodb-server-host");
+        String user = getValue(settings, "mongodb-server-user");
+        String password = getValue(settings, "mongodb-server-password");
+        String storageType = getValue(settings, "mongodb-server-storageType");
+        return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
+    }
+
+    private String getValue(Settings settings, String key) {
+        return ofNullable(settings.get(key)).map(Object::toString).orElse(null);
     }
 }
