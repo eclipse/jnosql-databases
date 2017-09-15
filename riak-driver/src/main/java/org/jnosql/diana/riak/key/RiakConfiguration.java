@@ -17,14 +17,16 @@ package org.jnosql.diana.riak.key;
 
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Logger;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakKeyValueEntityManagerFactory}.
@@ -43,7 +45,6 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
 
     private final List<RiakNode> nodes = new ArrayList<>();
 
-    private RiakCluster cluster;
 
     public RiakConfiguration() {
         Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
@@ -62,7 +63,7 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
      * @throws NullPointerException when node is null
      */
     public void add(RiakNode node) throws NullPointerException {
-        Objects.requireNonNull(node, "Node is required");
+        requireNonNull(node, "Node is required");
         this.nodes.add(node);
     }
 
@@ -73,7 +74,7 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
      * @throws NullPointerException when address is null
      */
     public void add(String address) throws NullPointerException {
-        Objects.requireNonNull(address, "Address is required");
+        requireNonNull(address, "Address is required");
         this.nodes.add(new RiakNode.Builder().withRemoteAddress(address).build());
     }
 
@@ -83,7 +84,28 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
         if (nodes.isEmpty()) {
             nodes.add(DEFAULT_NODE);
         }
-        cluster = new RiakCluster.Builder(nodes)
+        RiakCluster cluster = new RiakCluster.Builder(nodes)
+                .build();
+
+        return new RiakKeyValueEntityManagerFactory(cluster);
+    }
+
+    @Override
+    public RiakKeyValueEntityManagerFactory get(Settings settings) {
+        requireNonNull(settings, "settings is required");
+        List<RiakNode> nodes = new ArrayList<>();
+
+        settings.keySet().stream()
+                .filter(k -> k.startsWith(SERVER_PREFIX))
+                .sorted().map(settings::get)
+                .map(a -> new RiakNode.Builder()
+                        .withRemoteAddress(a.toString()).build())
+                .forEach(nodes::add);
+
+        if (nodes.isEmpty()) {
+            nodes.add(DEFAULT_NODE);
+        }
+        RiakCluster cluster = new RiakCluster.Builder(nodes)
                 .build();
 
         return new RiakKeyValueEntityManagerFactory(cluster);
