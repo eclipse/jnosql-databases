@@ -17,12 +17,15 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.Cluster;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.column.UnaryColumnConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The Cassandra implementation to {@link UnaryColumnConfiguration} that returns
@@ -42,14 +45,14 @@ public class CassandraConfiguration implements UnaryColumnConfiguration<Cassandr
     private static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 
     public CassandraDocumentEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
-        Objects.requireNonNull(configurations);
+        requireNonNull(configurations);
         CassandraProperties properties = CassandraProperties.of(configurations);
         ExecutorService executorService = properties.createExecutorService();
         return new CassandraDocumentEntityManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
     }
 
     public CassandraDocumentEntityManagerFactory getEntityManagerFactory(Cluster cluster) {
-        Objects.requireNonNull(cluster, "Cluster is required");
+        requireNonNull(cluster, "Cluster is required");
 
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         CassandraProperties properties = CassandraProperties.of(configuration);
@@ -64,8 +67,21 @@ public class CassandraConfiguration implements UnaryColumnConfiguration<Cassandr
     }
 
     @Override
+    public CassandraDocumentEntityManagerFactory get(Settings settings) throws NullPointerException {
+        requireNonNull(settings, "settings is required");
+        Map<String, String> configurations = new HashMap<>();
+        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        return getManagerFactory(configurations);
+    }
+
+    @Override
     public CassandraDocumentEntityManagerFactory getAsync() {
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         return getManagerFactory(configuration);
+    }
+
+    @Override
+    public CassandraDocumentEntityManagerFactory getAsync(Settings settings) throws NullPointerException {
+        return get(settings);
     }
 }
