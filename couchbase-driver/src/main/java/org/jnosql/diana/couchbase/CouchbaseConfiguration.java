@@ -28,6 +28,9 @@ import java.util.Objects;
 public abstract class CouchbaseConfiguration {
 
     private static final String CASSANDRA_FILE_CONFIGURATION = "diana-couchbase.properties";
+    protected static final String COUCHBASE_HOST = "couchbase-host-";
+    protected static final String COUCHBASE_USER = "couchbase-user";
+    protected static final String COUCHBASE_PASSWORD = "couchbase-password";
 
     protected final List<String> nodes = new ArrayList<>();
 
@@ -39,12 +42,12 @@ public abstract class CouchbaseConfiguration {
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         configuration.keySet()
                 .stream()
-                .filter(k -> k.startsWith("couchbase-host-"))
+                .filter(k -> k.startsWith(COUCHBASE_HOST))
                 .sorted()
                 .map(configuration::get)
                 .forEach(this::add);
-        this.user = configuration.get("couchbase-user");
-        this.password = configuration.get("couchbase-password");
+        this.user = configuration.get(COUCHBASE_USER);
+        this.password = configuration.get(COUCHBASE_PASSWORD);
     }
 
     /**
