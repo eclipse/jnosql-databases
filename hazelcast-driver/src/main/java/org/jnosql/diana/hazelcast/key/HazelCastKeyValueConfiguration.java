@@ -19,13 +19,16 @@ package org.jnosql.diana.hazelcast.key;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The hazelcast implementation of {@link KeyValueConfiguration} that returns
@@ -63,7 +66,7 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
      * @throws NullPointerException when config is null
      */
     public HazelCastKeyValueEntityManagerFactory get(Config config)throws NullPointerException {
-        Objects.requireNonNull(config, "config is required");
+        requireNonNull(config, "config is required");
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
         return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);
     }
@@ -72,5 +75,14 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
     public HazelCastKeyValueEntityManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(HAZELCAST_FILE_CONFIGURATION);
         return get(configuration);
+    }
+
+    @Override
+    public HazelCastKeyValueEntityManagerFactory get(Settings settings) {
+        requireNonNull(settings, "settings is required");
+
+        Map<String, String> configurations = new HashMap<>();
+        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        return get(configurations);
     }
 }
