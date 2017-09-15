@@ -20,12 +20,16 @@ import com.mongodb.ServerAddress;
 import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.connection.ClusterSettings;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -70,8 +74,22 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
     }
 
     @Override
+    public MongoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+        requireNonNull(settings, "settings is required");
+
+        Map<String, String> configurations = new HashMap<>();
+        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        return get(configurations);
+    }
+
+    @Override
     public MongoDBDocumentCollectionManagerFactory getAsync() {
         return get();
+    }
+
+    @Override
+    public MongoDBDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
+        return get(settings);
     }
 
     private class HostPortConfiguration {
