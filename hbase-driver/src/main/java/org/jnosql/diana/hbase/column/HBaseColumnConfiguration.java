@@ -17,16 +17,19 @@ package org.jnosql.diana.hbase.column;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.column.ColumnConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
 /**
  * Configuration to HBase that returns {@link HBaseColumnFamilyManagerFactory}
+ * <p>hbase-family-n-: as prefix to add family, eg: hbase-family-1=column-family</p>
  */
 public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumnFamilyManagerFactory> {
 
@@ -66,6 +69,7 @@ public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumn
 
     /**
      * Adds a new family
+     *
      * @param family the family
      */
     public void add(String family) {
@@ -75,6 +79,16 @@ public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumn
 
     @Override
     public HBaseColumnFamilyManagerFactory get() {
+        return new HBaseColumnFamilyManagerFactory(configuration, families);
+    }
+
+    @Override
+    public HBaseColumnFamilyManagerFactory get(Settings settings) throws NullPointerException {
+
+        requireNonNull(settings, "settings is required");
+
+        List<String> families = settings.keySet().stream().filter(s -> s.startsWith("hbase-family-"))
+                .map(settings::get).map(Object::toString).collect(Collectors.toList());
         return new HBaseColumnFamilyManagerFactory(configuration, families);
     }
 
