@@ -16,16 +16,20 @@
 package org.jnosql.diana.redis.key;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisKeyValueEntityManagerFactory}.
@@ -49,6 +53,7 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
 
     /**
      * Creates a {@link RedisConfiguration} from map configuration
+     *
      * @param configurations the map configuration
      * @return the RedisConfiguration instance
      */
@@ -94,5 +99,13 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
             LOGGER.info("File does not found using default configuration");
             return getManagerFactory(Collections.emptyMap());
         }
+    }
+
+    @Override
+    public RedisKeyValueEntityManagerFactory get(Settings settings) {
+        Objects.requireNonNull(settings, "settings is required");
+        Map<String, String> configurations = new HashMap<>();
+        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        return getManagerFactory(configurations);
     }
 }
