@@ -22,6 +22,14 @@ import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
 /**
  * The ArangoDB implementation to {@link KeyValueConfiguration}
+ * The Properties:
+ * <p>arangodb-host: the host</p>
+ * <p>arangodb-user: the user</p>
+ * <p>arangodb-password: the password</p>
+ * <p>arangodb-port: the port</p>
+ * <p>arangodb-timeout: the timeout</p>
+ * <p>arangodb-chuckSize: the chuckSize</p>
+ * <p>arangodb-userSsl: the userSsl</p>
  */
 public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBKeyValueEntityManagerFactory> {

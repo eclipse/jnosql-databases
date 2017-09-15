@@ -26,8 +26,16 @@ import static java.util.Objects.requireNonNull;
 /**
  * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
  * It tries to read the configuration properties from arangodb.properties file.
- * @see ArangoDBConfiguration
  *
+ * @see ArangoDBConfiguration
+ * The Properties:
+ * <p>arangodb-host: the host</p>
+ * <p>arangodb-user: the user</p>
+ * <p>arangodb-password: the password</p>
+ * <p>arangodb-port: the port</p>
+ * <p>arangodb-timeout: the timeout</p>
+ * <p>arangodb-chuckSize: the chuckSize</p>
+ * <p>arangodb-userSsl: the userSsl</p>
  */
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
