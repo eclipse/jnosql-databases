@@ -15,8 +15,13 @@
 
 package org.jnosql.diana.arangodb.document;
 
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBAsync;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
@@ -34,7 +39,21 @@ public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
     }
 
     @Override
+    public ArangoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+        requireNonNull(settings, "settings is required");
+
+        ArangoDB arangoDB = getArangoDB(settings);
+        ArangoDBAsync arangoDBAsync = getArangoDBAsync(settings);
+        return new ArangoDBDocumentCollectionManagerFactory(arangoDB, arangoDBAsync);
+    }
+
+    @Override
     public ArangoDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
         return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
+    }
+
+    @Override
+    public ArangoDBDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
+        return get(settings);
     }
 }

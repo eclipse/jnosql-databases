@@ -17,8 +17,11 @@ package org.jnosql.diana.arangodb;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
+import org.jnosql.diana.api.Settings;
 
 import java.util.Objects;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * The base to configuration both key-value and document on mongoDB.
@@ -124,6 +127,33 @@ public abstract class ArangoDBConfiguration {
     public void asyncBuilder(ArangoDBAsync.Builder builderAsync) throws NullPointerException {
         Objects.requireNonNull(builderAsync, "asyncBuilder is required");
         this.builderAsync = builderAsync;
+    }
+
+    protected ArangoDB getArangoDB(Settings settings) {
+        ArangoDB.Builder arangoDB = new ArangoDB.Builder();
+        ofNullable(settings.get("arangodb-host")).map(Object::toString).ifPresent(arangoDB::host);
+        ofNullable(settings.get("arangodb-user")).map(Object::toString).ifPresent(arangoDB::user);
+        ofNullable(settings.get("arangodb-password")).map(Object::toString).ifPresent(arangoDB::password);
+
+        ofNullable(settings.get("arangodb-port")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
+        ofNullable(settings.get("arangodb-timeout")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
+        ofNullable(settings.get("arangodb-chuckSize")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
+        ofNullable(settings.get("arangodb-userSsl")).map(Object::toString).map(Boolean::valueOf).ifPresent(arangoDB::useSsl);
+        return arangoDB.build();
+    }
+
+    protected ArangoDBAsync getArangoDBAsync(Settings settings) {
+        ArangoDBAsync.Builder arangoDB = new ArangoDBAsync.Builder();
+
+        ofNullable(settings.get("arangodb-host")).map(Object::toString).ifPresent(arangoDB::host);
+        ofNullable(settings.get("arangodb-user")).map(Object::toString).ifPresent(arangoDB::user);
+        ofNullable(settings.get("arangodb-password")).map(Object::toString).ifPresent(arangoDB::password);
+
+        ofNullable(settings.get("arangodb-port")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
+        ofNullable(settings.get("arangodb-timeout")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
+        ofNullable(settings.get("arangodb-chuckSize")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
+        ofNullable(settings.get("arangodb-userSsl")).map(Object::toString).map(Boolean::valueOf).ifPresent(arangoDB::useSsl);
+        return arangoDB.build();
     }
 
 }
