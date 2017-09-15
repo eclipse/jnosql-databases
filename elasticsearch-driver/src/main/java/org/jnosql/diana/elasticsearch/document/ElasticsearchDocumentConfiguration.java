@@ -87,7 +87,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
     /**
      * Adds a new address to elasticsearch client
      *
-     * @param address the adress
+     * @param address the address
      * @throws NullPointerException when address is null
      */
     public void add(TransportAddress address) throws NullPointerException {
@@ -112,10 +112,45 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         return getFactory(settings);
     }
 
+    @Override
+    public ElasticsearchDocumentCollectionManagerFactory get(org.jnosql.diana.api.Settings settings) throws NullPointerException {
+        requireNonNull(settings, "settings is required");
+
+        Map<String, String> configurations = new HashMap<>();
+        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+
+        List<TransportAddress> hosts = new ArrayList<>();
+
+        String name = configurations.getOrDefault("elasticsearch-cluster-name", DEFAULT_CLUSTER_NAME);
+
+        configurations.keySet().stream()
+                .filter(k -> k.startsWith(HOST_PREFIX))
+                .sorted()
+                .map(h -> ElastissearchAdress.of(configurations.get(h), DEFAULT_PORT))
+                .map(ElastissearchAdress::toTransportAddress)
+                .forEach(hosts::add);
+
+        Settings.Builder builder = Settings.builder();
+        builder.put("cluster.name", name);
+
+        configurations.keySet().stream().filter(k -> k.startsWith(SETTINGS_PREFIX))
+                .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""), k -> configurations.get(k)))
+                .forEach((k, v) -> builder.put(k, v));
+
+        PreBuiltTransportClient transportClient = new PreBuiltTransportClient(builder.build());
+        hosts.forEach(transportClient::addTransportAddress);
+        return new ElasticsearchDocumentCollectionManagerFactory(transportClient);
+    }
+
 
     @Override
     public ElasticsearchDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
         return get();
+    }
+
+    @Override
+    public ElasticsearchDocumentCollectionManagerFactory getAsync(org.jnosql.diana.api.Settings settings) throws NullPointerException {
+        return get(settings);
     }
 
     /**
