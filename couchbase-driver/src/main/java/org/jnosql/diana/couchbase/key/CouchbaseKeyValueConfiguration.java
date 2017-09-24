@@ -30,7 +30,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The couchbase implementation to {@link KeyValueConfiguration} that returns {@link CouchbaseBucketManagerFactory}.
+ * The couchbase implementation to {@link KeyValueConfiguration} that returns {@link DefaultCouchbaseBucketManagerFactory}.
  * It tries to read the diana-couchbase.properties file to get some informations:
  * <p>couchbase-host-: the prefix to add a new host</p>
  * <p>couchbase-user: the user</p>
@@ -41,21 +41,21 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
 
 
     /**
-     * Creates a {@link CouchbaseBucketManagerFactory} from {@link CouchbaseEnvironment}
+     * Creates a {@link DefaultCouchbaseBucketManagerFactory} from {@link CouchbaseEnvironment}
      *
      * @param environment the {@link CouchbaseEnvironment}
-     * @return the new {@link CouchbaseBucketManagerFactory} instance
+     * @return the new {@link DefaultCouchbaseBucketManagerFactory} instance
      * @throws NullPointerException when environment is null
      */
     public CouchbaseBucketManagerFactory getManagerFactory(CouchbaseEnvironment environment) throws NullPointerException {
         Objects.requireNonNull(environment, "environment is required");
         CouchbaseCluster couchbaseCluster = CouchbaseCluster.create(environment, nodes);
-        return new CouchbaseBucketManagerFactory(couchbaseCluster, user, password);
+        return new DefaultCouchbaseBucketManagerFactory(couchbaseCluster, user, password);
     }
 
     @Override
     public CouchbaseBucketManagerFactory get() {
-        return new CouchbaseBucketManagerFactory(CouchbaseCluster.create(nodes), user, password);
+        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(nodes), user, password);
     }
 
     @Override
@@ -76,6 +76,6 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
 
         String user = configurations.get(COUCHBASE_USER);
         String password = configurations.get(COUCHBASE_PASSWORD);
-        return new CouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
+        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }
 }

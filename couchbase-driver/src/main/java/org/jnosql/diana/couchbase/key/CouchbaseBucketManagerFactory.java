@@ -14,13 +14,10 @@
  */
 package org.jnosql.diana.couchbase.key;
 
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.CouchbaseCluster;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -32,78 +29,67 @@ import java.util.Set;
  * <p>{@link CouchbaseSet}</p>
  * <p>{@link CouchbaseQueue}</p>
  * <p>{@link CouchbaseMap}</p>
+ * The default implementation creates the particular structure with the bucket name as the key.
  */
-public class CouchbaseBucketManagerFactory implements BucketManagerFactory<CouchbaseBucketManager> {
+public interface CouchbaseBucketManagerFactory extends BucketManagerFactory<CouchbaseBucketManager> {
 
-    private static final String DEFAULT_BUCKET = "default";
+    /**
+     * Creates a {@link Queue} from bucket name
+     *
+     * @param bucketName a bucket name
+     * @param clazz      the value class
+     * @param key        key to the queue
+     * @param <T>        the value type
+     * @return a {@link Queue} instance
+     * @throws UnsupportedOperationException when the database does not have to it
+     * @throws NullPointerException          when either bucketName or class are null
+     */
+    <T> Queue<T> getQueue(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException,
+            NullPointerException;
 
-    private final CouchbaseCluster couchbaseCluster;
+    /**
+     * Creates a {@link Set} from bucket name
+     *
+     * @param bucketName a bucket name
+     * @param clazz      the valeu class
+     * @param key        key to the set
+     * @param <T>        the value type
+     * @return a {@link Set} instance
+     * @throws UnsupportedOperationException when the database does not have to it
+     * @throws NullPointerException          when either bucketName or class are null
+     */
+    <T> Set<T> getSet(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException,
+            NullPointerException;
 
-    private final String user;
 
-    private final String password;
+    /**
+     * Creates a {@link List} from bucket name
+     *
+     * @param bucketName a bucket name
+     * @param clazz      the valeu class
+     * @param key        key to the List
+     * @param <T>        the value type
+     * @return a {@link List} instance
+     * @throws UnsupportedOperationException when the database does not have to it
+     * @throws NullPointerException          when either bucketName or class are null
+     */
+    <T> List<T> getList(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException,
+            NullPointerException;
 
-    CouchbaseBucketManagerFactory(CouchbaseCluster couchbaseCluster, String user, String password) {
-        this.couchbaseCluster = couchbaseCluster;
-        this.user = user;
-        this.password = password;
-    }
 
-
-    @Override
-    public CouchbaseBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
-        Objects.requireNonNull(bucketName, "bucket is required");
-        return new CouchbaseBucketManager(getBucket(bucketName), bucketName);
-    }
-
-    @Override
-    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) throws
-            UnsupportedOperationException {
-        Objects.requireNonNull(bucketName, "bucketName is required");
-        Objects.requireNonNull(valueValue, "valueValue is required");
-        Objects.requireNonNull(keyValue, "keyValue is required");
-        return new CouchbaseMap<>(getBucket(bucketName), bucketName, keyValue, valueValue);
-    }
-
-    @Override
-    public Queue getQueue(String bucketName, Class clazz) throws UnsupportedOperationException {
-        Objects.requireNonNull(bucketName, "bucketName is required");
-        Objects.requireNonNull(clazz, "valueValue is required");
-        return new CouchbaseQueue<>(getBucket(bucketName), bucketName, clazz);
-    }
-
-    @Override
-    public Set getSet(String bucketName, Class clazz) throws UnsupportedOperationException {
-        Objects.requireNonNull(bucketName, "bucketName is required");
-        Objects.requireNonNull(clazz, "valueValue is required");
-        return new CouchbaseSet<>(getBucket(bucketName), bucketName, clazz);
-    }
-
-    @Override
-    public List getList(String bucketName, Class clazz) throws UnsupportedOperationException {
-        Objects.requireNonNull(bucketName, "bucketName is required");
-        Objects.requireNonNull(clazz, "valueValue is required");
-        return new CouchbaseList<>(getBucket(bucketName), bucketName, clazz);
-    }
-
-    private Bucket getBucket(String bucketName) {
-        Objects.requireNonNull(bucketName, "bucket is required");
-
-        /*
-        ClusterManager clusterManager = couchbaseCluster.clusterManager(user, password);
-
-        if(!clusterManager.hasBucket(bucketName)){
-            BucketSettings settings = DefaultBucketSettings.builder().name(bucketName);
-            clusterManager.insertBucket(settings);
-        }*/
-        if (DEFAULT_BUCKET.equals(bucketName)) {
-            return couchbaseCluster.openBucket(bucketName);
-        }
-        return couchbaseCluster.openBucket(bucketName, password);
-    }
-
-    @Override
-    public void close() {
-        couchbaseCluster.clusterManager();
-    }
+    /**
+     * Creates a {@link  Map} from bucket name
+     *
+     * @param bucketName the bucket name
+     * @param key        key to the Map
+     * @param keyValue   the key class
+     * @param valueValue the value class
+     * @param <K>        the key type
+     * @param <V>        the value type
+     * @return a {@link Map} instance
+     * @throws UnsupportedOperationException when the database does not have to it
+     * @throws NullPointerException          when either bucketName or class are null
+     */
+    <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue) throws
+            UnsupportedOperationException, NullPointerException;
 }

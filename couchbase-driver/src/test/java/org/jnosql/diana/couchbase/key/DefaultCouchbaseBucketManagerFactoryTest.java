@@ -19,12 +19,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 
+public class DefaultCouchbaseBucketManagerFactoryTest {
 
-public class CouchbaseBucketManagerFactoryTest {
-
-    private CouchbaseBucketManagerFactory factory;
+    private DefaultCouchbaseBucketManagerFactory factory;
 
     @Before
     public void init() {
