@@ -39,7 +39,7 @@ public class CouchbaseListTest {
     private ProductCart waterMelon = new ProductCart("waterMelon", BigDecimal.TEN);
     private ProductCart melon = new ProductCart("melon", BigDecimal.ONE);
 
-    private DefaultCouchbaseBucketManagerFactory keyValueEntityManagerFactory;
+    private CouchbaseBucketManagerFactory keyValueEntityManagerFactory;
 
     private List<ProductCart> fruits;
 

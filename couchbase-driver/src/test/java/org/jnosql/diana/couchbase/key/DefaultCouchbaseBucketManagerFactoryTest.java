@@ -22,7 +22,7 @@ import org.junit.Test;
 
 public class DefaultCouchbaseBucketManagerFactoryTest {
 
-    private DefaultCouchbaseBucketManagerFactory factory;
+    private CouchbaseBucketManagerFactory factory;
 
     @Before
     public void init() {

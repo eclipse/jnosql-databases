@@ -16,7 +16,6 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;
-import org.jnosql.diana.api.key.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,9 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The couchbase implementation of {@link BucketManagerFactory}. That has support to
- * {@link BucketManagerFactory#getBucketManager(String)} and also the structure {@link Map}, {@link Set},
+ * The couchbase implementation of {@link org.jnosql.diana.api.key.BucketManagerFactory}. That has support to
+ * {@link org.jnosql.diana.api.key.BucketManagerFactory#getBucketManager(String)}
+ * and also the structure {@link Map}, {@link Set},
  * {@link Queue}, {@link List}. Each structure has this specific implementation.
  * <p>{@link CouchbaseList}</p>
  * <p>{@link CouchbaseSet}</p>
