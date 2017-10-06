@@ -41,14 +41,17 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
 
     private static final String FILE_CONFIGURATION = "diana-mongodb.properties";
 
-    private static final int DEFAULT_PORT = 27017;
+    static final int DEFAULT_PORT = 27017;
 
     /**
      * Creates a {@link MongoDBDocumentCollectionManagerFactory} from map configurations
+     *
      * @param configurations the configurations map
      * @return a MongoDBDocumentCollectionManagerFactory instance
+     * @throws NullPointerException when the configurations is null
      */
-    public MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) {
+    public MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
+        requireNonNull(configurations, "configurations is required");
         List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith("mongodb-server-host-"))
                 .map(configurations::get).map(HostPortConfiguration::new)
                 .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
@@ -92,26 +95,4 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
         return get(settings);
     }
 
-    private class HostPortConfiguration {
-
-
-        private final String host;
-
-        private final int port;
-
-        HostPortConfiguration(String value) {
-            String[] values = value.split(":");
-            if (values.length == 2) {
-                host = values[0];
-                port = Integer.valueOf(values[1]);
-            } else {
-                host = values[0];
-                port = DEFAULT_PORT;
-            }
-        }
-
-        public ServerAddress toServerAddress() {
-            return new ServerAddress(host, port);
-        }
-    }
 }
