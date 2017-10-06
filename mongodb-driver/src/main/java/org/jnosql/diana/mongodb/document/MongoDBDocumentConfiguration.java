@@ -21,6 +21,8 @@ import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.connection.ClusterSettings;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.document.DocumentConfiguration;
+import org.jnosql.diana.api.document.DocumentConfigurationAsync;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -37,7 +39,8 @@ import static java.util.Objects.requireNonNull;
  * It tries to read the diana-mongodb.properties file whose has the following properties
  * <p>mongodb-server-host-: as prefix to add host client, eg: mongodb-server-host-1=host1, mongodb-server-host-2= host2</p>
  */
-public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
+public class MongoDBDocumentConfiguration implements DocumentConfiguration<MongoDBDocumentCollectionManagerFactory>,
+        DocumentConfigurationAsync<MongoDBDocumentCollectionManagerAsyncFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-mongodb.properties";
 
@@ -56,10 +59,10 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
                 .map(configurations::get).map(HostPortConfiguration::new)
                 .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
         if (servers.isEmpty()) {
-            return new MongoDBDocumentCollectionManagerFactory(new MongoClient(), MongoClients.create());
+            return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
         }
 
-        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers), getAsyncMongoClient(servers));
+        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers));
     }
 
     /**
@@ -71,7 +74,7 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
      */
     public MongoDBDocumentCollectionManagerFactory get(MongoClient mongoClient) throws NullPointerException {
         requireNonNull(mongoClient, "mongo client is required");
-
+        return new MongoDBDocumentCollectionManagerFactory(mongoClient);
     }
 
     private com.mongodb.async.client.MongoClient getAsyncMongoClient(List<ServerAddress> servers) {
@@ -98,13 +101,30 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
     }
 
     @Override
-    public MongoDBDocumentCollectionManagerFactory getAsync() {
-        return get();
+    public MongoDBDocumentCollectionManagerAsyncFactory getAsync() {
+        Map<String, String> configurations = ConfigurationReader.from(FILE_CONFIGURATION);
+        return getAsync(configurations);
     }
 
+
     @Override
-    public MongoDBDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
-        return get(settings);
+    public MongoDBDocumentCollectionManagerAsyncFactory getAsync(Settings settings) throws NullPointerException {
+        requireNonNull(settings, "settings is required");
+        Map<String, String> configurations = new HashMap<>();
+        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        
+        return getAsync(configurations);
+    }
+
+
+    private MongoDBDocumentCollectionManagerAsyncFactory getAsync(Map<String, String> configurations) {
+        List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith("mongodb-server-host-"))
+                .map(configurations::get).map(HostPortConfiguration::new)
+                .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
+        if (servers.isEmpty()) {
+            return new MongoDBDocumentCollectionManagerAsyncFactory(MongoClients.create());
+        }
+        return new MongoDBDocumentCollectionManagerAsyncFactory(getAsyncMongoClient(servers));
     }
 
 }
