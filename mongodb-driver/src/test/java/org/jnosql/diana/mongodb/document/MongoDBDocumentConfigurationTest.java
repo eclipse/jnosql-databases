@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 public class MongoDBDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
-        Map<String, String> map  = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("mongodb-server-host-1", "172.17.0.2:27017");
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get(map);
@@ -41,4 +41,19 @@ public class MongoDBDocumentConfigurationTest {
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnErrorWhendSettingsIsNull() {
+        DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        configuration.get(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnErrorWhendMapSettingsIsNull() {
+        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        configuration.get((Map) null);
+    }
+
+    
+
 }
