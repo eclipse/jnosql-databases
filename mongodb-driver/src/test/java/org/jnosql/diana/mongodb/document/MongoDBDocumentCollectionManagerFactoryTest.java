@@ -42,7 +42,7 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
+        MongoDBDocumentCollectionManagerAsyncFactory mongoDBFactory = configuration.getAsync();
         assertNotNull(mongoDBFactory.getAsync("database"));
     }
 
