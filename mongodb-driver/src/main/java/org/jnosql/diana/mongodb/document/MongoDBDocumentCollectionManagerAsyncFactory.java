@@ -12,28 +12,24 @@
  *
  *   Otavio Santana
  */
-
 package org.jnosql.diana.mongodb.document;
 
-import com.mongodb.MongoClient;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import com.mongodb.async.client.MongoClient;
+import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 
-/**
- * The mongodb implementation to {@link DocumentCollectionManagerFactory}
- */
-class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager> {
+class MongoDBDocumentCollectionManagerAsyncFactory implements DocumentCollectionManagerAsyncFactory<MongoDBDocumentCollectionManagerAsync> {
 
     private final MongoClient mongoClient;
 
-    MongoDBDocumentCollectionManagerFactory(MongoClient mongoClient) {
+    MongoDBDocumentCollectionManagerAsyncFactory(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
     }
 
-    @Override
-    public MongoDBDocumentCollectionManager get(String database) {
-        return new MongoDBDocumentCollectionManager(mongoClient.getDatabase(database));
-    }
 
+    @Override
+    public MongoDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        return new MongoDBDocumentCollectionManagerAsync(mongoClient.getDatabase(database));
+    }
 
     @Override
     public void close() {
@@ -42,7 +38,7 @@ class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManag
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MongoDBDocumentCollectionManagerFactory{");
+        final StringBuilder sb = new StringBuilder("MongoDBDocumentCollectionManagerAsyncFactory{");
         sb.append("mongoClient=").append(mongoClient);
         sb.append('}');
         return sb.toString();

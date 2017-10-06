@@ -15,11 +15,14 @@
 
 package org.jnosql.diana.mongodb.document;
 
+import com.mongodb.MongoClient;
+import org.jnosql.diana.api.Settings;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -40,14 +43,40 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
         assertNotNull(mongoDBFactory.get("database"));
     }
 
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnNPEWhenSettingsIsNull() {
+        configuration.get((Settings) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnNPEWhenMapSettingsIsNull() {
+        configuration.get((Map<String, String>) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnNPEWhenMongoClientIsNull() {
+        configuration.get((MongoClient) null);
+    }
+
+
     @Test
     public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
+        MongoDBDocumentCollectionManagerAsyncFactory mongoDBFactory = configuration.getAsync();
         assertNotNull(mongoDBFactory.getAsync("database"));
     }
 
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnNPEWhenSettingOnAsyncsIsNull() {
+        configuration.getAsync((Settings) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnNPEWhenMongoClientAsyncIsNull() {
+        configuration.getAsync((com.mongodb.async.client.MongoClient) null);
+    }
+
     @AfterClass
-    public static void end(){
+    public static void end() {
         MongoDbHelper.stopMongoDb();
     }
 }
