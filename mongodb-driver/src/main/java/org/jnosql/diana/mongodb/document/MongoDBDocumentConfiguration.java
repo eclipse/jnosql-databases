@@ -62,6 +62,18 @@ public class MongoDBDocumentConfiguration implements UnaryDocumentConfiguration<
         return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers), getAsyncMongoClient(servers));
     }
 
+    /**
+     * Creates a {@link MongoDBDocumentCollectionManagerFactory} from mongoClient
+     *
+     * @param mongoClient the mongo client {@link MongoClient}
+     * @return a MongoDBDocumentCollectionManagerFactory instance
+     * @throws NullPointerException when the mongoClient is null
+     */
+    public MongoDBDocumentCollectionManagerFactory get(MongoClient mongoClient) throws NullPointerException {
+        requireNonNull(mongoClient, "mongo client is required");
+
+    }
+
     private com.mongodb.async.client.MongoClient getAsyncMongoClient(List<ServerAddress> servers) {
         ClusterSettings clusterSettings = ClusterSettings.builder().hosts(servers).build();
         MongoClientSettings settings = MongoClientSettings.builder().clusterSettings(clusterSettings).build();

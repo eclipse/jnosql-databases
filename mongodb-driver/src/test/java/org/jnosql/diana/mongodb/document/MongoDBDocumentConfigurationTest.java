@@ -54,6 +54,6 @@ public class MongoDBDocumentConfigurationTest {
         configuration.get((Map) null);
     }
 
-    
+
 
 }
