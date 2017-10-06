@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.mongodb.document;
 
+import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -52,6 +53,11 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
         configuration.get((Map<String, String>) null);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnNPEWhenMongoClientIsNull() {
+        configuration.get((MongoClient) null);
+    }
+
 
     @Test
     public void shouldCreateEntityManagerAsync() {
@@ -62,6 +68,11 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
     @Test(expected = NullPointerException.class)
     public void shouldReturnNPEWhenSettingOnAsyncsIsNull() {
         configuration.getAsync((Settings) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnNPEWhenMongoClientAsyncIsNull() {
+        configuration.getAsync((com.mongodb.async.client.MongoClient) null);
     }
 
     @AfterClass

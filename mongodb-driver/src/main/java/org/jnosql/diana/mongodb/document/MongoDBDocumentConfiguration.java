@@ -116,6 +116,19 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
         return getAsync(configurations);
     }
 
+    /**
+     * Creates a {@link MongoDBDocumentCollectionManagerAsyncFactory} from mongoClient
+     *
+     * @param mongoClient the mongo client {@link MongoClient}
+     * @return a MongoDBDocumentCollectionManagerAsyncFactory instance
+     * @throws NullPointerException when the mongoClient is null
+     */
+    public MongoDBDocumentCollectionManagerAsyncFactory getAsync(com.mongodb.async.client.MongoClient mongoClient) throws NullPointerException {
+        requireNonNull(mongoClient, "mongo client is required");
+        return new MongoDBDocumentCollectionManagerAsyncFactory(mongoClient);
+    }
+
+
 
     private MongoDBDocumentCollectionManagerAsyncFactory getAsync(Map<String, String> configurations) {
         List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith("mongodb-server-host-"))
