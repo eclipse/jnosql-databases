@@ -23,7 +23,6 @@ import com.mongodb.connection.ClusterSettings;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.api.document.DocumentConfigurationAsync;
-import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.HashMap;
