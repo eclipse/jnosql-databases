@@ -128,28 +128,36 @@ final class EntityConverter {
         return d -> {
             Object value = ValueUtil.convert(d.getValue());
             if (Document.class.isInstance(value)) {
-                Document document = Document.class.cast(value);
-                jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+                convertDocument(jsonObject, d, value);
             } else if (Iterable.class.isInstance(value)) {
-                JsonObject map = JsonObject.create();
-                JsonArray array = JsonArray.create();
-                Iterable.class.cast(value).forEach(o -> {
-                    if (Document.class.isInstance(o)) {
-                        Document document = Document.class.cast(o);
-                        map.put(document.getName(), document.get());
-                    } else {
-                        array.add(o);
-                    }
-                });
-                if(array.isEmpty()) {
-                    jsonObject.put(d.getName(), map);
-                } else {
-                    jsonObject.put(d.getName(), array);
-                }
+                convertIterable(jsonObject, d, value);
             } else {
                 jsonObject.put(d.getName(), value);
             }
         };
+    }
+
+    private static void convertDocument(JsonObject jsonObject, Document d, Object value) {
+        Document document = Document.class.cast(value);
+        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+    }
+
+    private static void convertIterable(JsonObject jsonObject, Document d, Object value) {
+        JsonObject map = JsonObject.create();
+        JsonArray array = JsonArray.create();
+        Iterable.class.cast(value).forEach(o -> {
+            if (Document.class.isInstance(o)) {
+                Document document = Document.class.cast(o);
+                map.put(document.getName(), document.get());
+            } else {
+                array.add(o);
+            }
+        });
+        if(array.isEmpty()) {
+            jsonObject.put(d.getName(), map);
+        } else {
+            jsonObject.put(d.getName(), array);
+        }
     }
 
 }
