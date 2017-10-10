@@ -40,6 +40,7 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class DocumentQueryTest {
 
@@ -147,7 +148,7 @@ public class DocumentQueryTest {
         Optional<Document> name = entity.find("name");
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
-        assertEquals(4, entities.size());
+        assertTrue(entities.size() >= 4);
     }
 
 
