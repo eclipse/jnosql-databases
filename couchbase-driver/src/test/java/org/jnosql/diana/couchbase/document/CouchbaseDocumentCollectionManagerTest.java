@@ -136,7 +136,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldSaveSetDocument() {
+    public void shouldSaveSetDocument() throws InterruptedException {
         Set<String> set = new HashSet<>();
         set.add("Acarajé");
         set.add("Munguzá");
@@ -145,8 +145,9 @@ public class CouchbaseDocumentCollectionManagerTest {
         entity.add(Document.of("foods", set));
         entityManager.insert(entity);
         Document id = entity.find("_id").get();
+        Thread.sleep(1_000L);
         DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id)).build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.singleResult(query).get();
         Optional<Document> foods = entityFound.find("foods");
         Set<String> setFoods = foods.get().get(new TypeReference<Set<String>>() {
         });
