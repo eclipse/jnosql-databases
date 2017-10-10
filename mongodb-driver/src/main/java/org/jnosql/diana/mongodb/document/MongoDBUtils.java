@@ -20,7 +20,8 @@ import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 final class MongoDBUtils {
@@ -43,13 +44,15 @@ final class MongoDBUtils {
             return new Document(subDocument.getName(), converted);
         }
         if (isSudDocument(val)) {
-            return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .map(d -> {
-                        org.jnosql.diana.api.document.Document dianaDocument = org.jnosql.diana.api.document.Document.class.cast(d);
-                        Document document = new Document();
-                        document.append(dianaDocument.getName(), dianaDocument.get());
-                        return document;
-                    }).collect(Collectors.toList());
+            Map<String, Object> subDocument = new HashMap<>();
+
+            StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+                    .forEach(d -> {
+                                org.jnosql.diana.api.document.Document dianaDocument = org.jnosql.diana.api.document.Document.class.cast(d);
+                                subDocument.put(dianaDocument.getName(), dianaDocument.get());
+                            }
+                    );
+            return subDocument;
         }
         if (WRITER.isCompatible(val.getClass())) {
             return WRITER.write(val);
