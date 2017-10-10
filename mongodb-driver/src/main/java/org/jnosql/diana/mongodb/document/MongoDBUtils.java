@@ -20,11 +20,15 @@ import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
-import java.util.stream.Collectors;
+import java.util.function.Function;
 import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toMap;
 
 final class MongoDBUtils {
     private static final ValueWriter WRITER = ValueWriterDecorator.getInstance();
+    private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> cast(d).get();
 
     private MongoDBUtils() {
     }
@@ -43,18 +47,18 @@ final class MongoDBUtils {
             return new Document(subDocument.getName(), converted);
         }
         if (isSudDocument(val)) {
+
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .map(d -> {
-                        org.jnosql.diana.api.document.Document dianaDocument = org.jnosql.diana.api.document.Document.class.cast(d);
-                        Document document = new Document();
-                        document.append(dianaDocument.getName(), dianaDocument.get());
-                        return document;
-                    }).collect(Collectors.toList());
+                    .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
         }
         if (WRITER.isCompatible(val.getClass())) {
             return WRITER.write(val);
         }
         return val;
+    }
+
+    private static org.jnosql.diana.api.document.Document cast(Object document) {
+        return org.jnosql.diana.api.document.Document.class.cast(document);
     }
 
     private static boolean isSudDocument(Object value) {
