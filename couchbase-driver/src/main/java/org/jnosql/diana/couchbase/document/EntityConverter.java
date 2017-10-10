@@ -131,16 +131,21 @@ final class EntityConverter {
                 Document document = Document.class.cast(value);
                 jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
             } else if (Iterable.class.isInstance(value)) {
-                JsonArray jsonArray = JsonArray.create();
+                JsonObject map = JsonObject.create();
+                JsonArray array = JsonArray.create();
                 Iterable.class.cast(value).forEach(o -> {
                     if (Document.class.isInstance(o)) {
                         Document document = Document.class.cast(o);
-                        jsonArray.add(Collections.singletonMap(document.getName(), document.get()));
+                        map.put(document.getName(), document.get());
                     } else {
-                        jsonArray.add(o);
+                        array.add(o);
                     }
                 });
-                jsonObject.put(d.getName(), jsonArray);
+                if(array.isEmpty()) {
+                    jsonObject.put(d.getName(), map);
+                } else {
+                    jsonObject.put(d.getName(), array);
+                }
             } else {
                 jsonObject.put(d.getName(), value);
             }
