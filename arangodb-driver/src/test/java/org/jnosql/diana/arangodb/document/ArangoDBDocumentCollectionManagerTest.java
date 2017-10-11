@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
@@ -124,7 +125,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
     }
 
 
