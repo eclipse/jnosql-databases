@@ -32,12 +32,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
 /**
@@ -48,6 +51,9 @@ public final class ArangoDBUtil {
     public static final String KEY = "_key";
     public static final String ID = "_id";
     public static final String REV = "_rev";
+
+    private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> cast(d).get();
 
     private static final ValueWriter WRITER = ValueWriterDecorator.getInstance();
 
@@ -140,7 +146,20 @@ public final class ArangoDBUtil {
             Document document = Document.class.cast(val);
             return singletonMap(document.getName(), convert(document.getValue()));
         }
+        if(isSudDocument(val)) {
+            return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+                    .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+        }
         return val;
+    }
+
+    private static boolean isSudDocument(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
+    }
+
+    private static org.jnosql.diana.api.document.Document cast(Object document) {
+        return org.jnosql.diana.api.document.Document.class.cast(document);
     }
 
 }
