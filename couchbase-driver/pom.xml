@@ -43,6 +43,11 @@
         </dependency>
         <dependency>
             <groupId>org.jnosql.diana</groupId>
+            <artifactId>diana-key-value</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jnosql.diana</groupId>
             <artifactId>diana-driver-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
