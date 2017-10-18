@@ -68,7 +68,7 @@
     <dependencies>
          <dependency>
             <groupId>org.jnosql.diana</groupId>
-            <artifactId>diana-api</artifactId>
+            <artifactId>diana-key-value</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -75,7 +75,7 @@
         </dependency>
         <dependency>
             <groupId>org.jnosql.diana</groupId>
-            <artifactId>diana-api</artifactId>
+            <artifactId>diana-core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
