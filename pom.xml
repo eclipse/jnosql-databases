@@ -29,7 +29,7 @@
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>JNoSQL Diana drivers</description>
+    <description>The Eclipse JNoSQL communication layer, Diana, implementations</description>
     <url>http://jnosql.org/</url>
 
     <licenses>

@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>diana-driver-commons</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>JNoSQL Diana driver commons</description>
+    <description>The Eclipse JNoSQL communication layer, Diana, commons </description>
     <url>http://jnosql.org/</url>
 
     <licenses>

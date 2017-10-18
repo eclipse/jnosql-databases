@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>elasticsearch-driver</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>JNoSQL Diana driver to Eclasticsearch</description>
+    <description>The Eclipse JNoSQL communication layer, Diana, implementation to Eclasticsearch</description>
     <url>http://jnosql.org/</url>
 
     <licenses>

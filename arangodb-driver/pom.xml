@@ -19,6 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>arangodb-driver</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
+    <description>The Eclipse JNoSQL communication layer, Diana, to AranboDB</description>
 
     <parent>
         <groupId>org.jnosql.diana</groupId>

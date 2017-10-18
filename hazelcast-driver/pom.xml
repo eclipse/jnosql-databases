@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hazelcast-driver</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>JNoSQL Diana driver to Hazelcast</description>
+    <description>The Eclipse JNoSQL communication layer, Diana, implementation to Hazelcast</description>
     <url>http://jnosql.org/</url>
 
     <licenses>
