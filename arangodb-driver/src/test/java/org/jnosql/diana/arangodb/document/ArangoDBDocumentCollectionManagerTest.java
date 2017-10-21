@@ -18,11 +18,14 @@ package org.jnosql.diana.arangodb.document;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -132,7 +135,24 @@ public class ArangoDBDocumentCollectionManagerTest {
 
 
     @Test
-    public void shouldConvertFromListEmbeddable() {
+    public void shouldConvertFromListSubdocumentList() {
+        DocumentEntity entity = createSubdocumentList();
+        entityManager.insert(entity);
+
+    }
+
+    @Test
+    public void shouldRetrieveListSubdocumentList() {
+        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+        Document key = entity.find(KEY_NAME).get();
+        DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
+
+        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        assertEquals(entity, documentEntity);
+
+    }
+
+    private DocumentEntity createSubdocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         entity.add(Document.of("_id", "ids"));
         List<List<Document>> documents = new ArrayList<>();
@@ -147,9 +167,7 @@ public class ArangoDBDocumentCollectionManagerTest {
                 Document.of("information", "phone")));
 
         entity.add(Document.of("contacts", documents));
-
-        entityManager.insert(entity);
-
+        return entity;
     }
 
 
