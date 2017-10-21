@@ -147,10 +147,23 @@ public final class ArangoDBUtil {
             return singletonMap(document.getName(), convert(document.getValue()));
         }
         if(isSudDocument(val)) {
+            return getMap(val);
+        }
+        if(isSudDocumentList(val)) {
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+                    .map(ArangoDBUtil::getMap).collect(toList());
         }
         return val;
+    }
+
+    private static Object getMap(Object val) {
+        return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+                .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+    }
+
+    private static boolean isSudDocumentList(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
     private static boolean isSudDocument(Object value) {
