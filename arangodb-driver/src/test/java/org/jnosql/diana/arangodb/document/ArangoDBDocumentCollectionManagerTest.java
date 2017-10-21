@@ -25,6 +25,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.DocumentCondition.eq;
@@ -126,6 +128,28 @@ public class ArangoDBDocumentCollectionManagerTest {
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
         assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+    }
+
+
+    @Test
+    public void shouldConvertFromListEmbeddable() {
+        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        entity.add(Document.of("_id", "ids"));
+        List<List<Document>> documents = new ArrayList<>();
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "EMAIL"),
+                Document.of("information", "ada@lovelace.com")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "MOBILE"),
+                Document.of("information", "11 1231231 123")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "PHONE"),
+                Document.of("information", "phone")));
+
+        entity.add(Document.of("contacts", documents));
+
+        entityManager.insert(entity);
+
     }
 
 
