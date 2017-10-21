@@ -45,6 +45,7 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -148,8 +149,12 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
-        assertEquals(entity, documentEntity);
+        assertNotNull(documentEntity);
 
+        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+
+        assertEquals(3, contacts.size());
+        assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
     }
 
     private DocumentEntity createSubdocumentList() {
