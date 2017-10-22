@@ -90,7 +90,7 @@ final class OrientDBConverter {
             entityValues.put(document.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
                     .map(OrientDBConverter::getMap).collect(toList()));
         } else {
-            entityValues.put(document.getName(), document.get());
+            entityValues.put(document.getName(), value);
         }
     }
 
