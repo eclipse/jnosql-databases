@@ -16,9 +16,8 @@ package org.jnosql.diana.mongodb.document;
 
 import org.bson.Document;
 import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,6 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
 final class MongoDBUtils {
-    private static final ValueWriter WRITER = ValueWriterDecorator.getInstance();
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
     private static final Function<Object, Object> VALUE_DOCUMENT = d -> cast(d).get();
 
@@ -51,7 +49,7 @@ final class MongoDBUtils {
     }
 
     private static Object convert(Value value) {
-        Object val = value.get();
+        Object val = ValueUtil.convert(value);
         if (val instanceof org.jnosql.diana.api.document.Document) {
             org.jnosql.diana.api.document.Document subDocument = (org.jnosql.diana.api.document.Document) val;
             Object converted = convert(subDocument.getValue());
@@ -64,11 +62,9 @@ final class MongoDBUtils {
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
                     .map(MongoDBUtils::getMap).collect(toList());
         }
-        if (WRITER.isCompatible(val.getClass())) {
-            return WRITER.write(val);
-        }
         return val;
     }
+
 
     public static List<org.jnosql.diana.api.document.Document> of(Map<String, ?> values) {
         Predicate<String> isNotNull = s -> values.get(s) != null;
