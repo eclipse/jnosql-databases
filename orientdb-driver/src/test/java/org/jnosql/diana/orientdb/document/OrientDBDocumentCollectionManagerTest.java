@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -225,7 +226,7 @@ public class OrientDBDocumentCollectionManagerTest {
 
     private DocumentEntity createSubdocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
-        entity.add(Document.of("_id", "ids"));
+        entity.add(Document.of("_id", new Random().nextInt()));
         List<List<Document>> documents = new ArrayList<>();
 
         documents.add(asList(Document.of("name", "Ada"), Document.of("type", "EMAIL"),

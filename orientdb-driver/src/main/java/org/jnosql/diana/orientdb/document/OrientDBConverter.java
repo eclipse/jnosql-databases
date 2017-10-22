@@ -41,7 +41,6 @@ final class OrientDBConverter {
     static List<DocumentEntity> convert(List<ODocument> result) {
         List<DocumentEntity> entities = new ArrayList<>();
         for (ODocument document : result) {
-
             DocumentEntity entity = convert(document);
             entities.add(entity);
         }
