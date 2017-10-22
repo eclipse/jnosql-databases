@@ -19,11 +19,10 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +54,6 @@ public final class ArangoDBUtil {
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
     private static final Function<Object, Object> VALUE_DOCUMENT = d -> cast(d).get();
 
-    private static final ValueWriter WRITER = ValueWriterDecorator.getInstance();
 
 
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
@@ -141,10 +139,8 @@ public final class ArangoDBUtil {
     }
 
     private static Object convert(Value value) {
-        Object val = value.get();
-        if (WRITER.isCompatible(val.getClass())) {
-            return WRITER.write(val);
-        }
+        Object val = ValueUtil.convert(value);
+
         if (Document.class.isInstance(val)) {
             Document document = Document.class.cast(val);
             return singletonMap(document.getName(), convert(document.getValue()));
