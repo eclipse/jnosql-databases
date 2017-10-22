@@ -28,6 +28,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -48,6 +49,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     private final MongoDatabase mongoDatabase;
 
+    private static final Function<Map.Entry<?, ?>, org.jnosql.diana.api.document.Document> ENTRY_DOCUMENT = entry ->
+            org.jnosql.diana.api.document.Document.of(entry.getKey().toString(), entry.getValue());
 
     MongoDBDocumentCollectionManager(MongoDatabase mongoDatabase) {
         this.mongoDatabase = mongoDatabase;
@@ -119,10 +122,12 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
             if (value instanceof Document) {
                 return org.jnosql.diana.api.document.Document.of(key, of(Document.class.cast(value)));
             } else if (isDocumentIterable(value)) {
-                return org.jnosql.diana.api.document.Document.of(key, stream(Iterable.class.cast(value)
-                        .spliterator(), false)
-                        .flatMap(d -> of((Document) d).stream())
-                        .collect(Collectors.toList()));
+                List<List<org.jnosql.diana.api.document.Document>> documents = new ArrayList<>();
+                for (Object object : Iterable.class.cast(value)) {
+                    Map<?, ?> map = Map.class.cast(object);
+                    documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
+                }
+                return org.jnosql.diana.api.document.Document.of(key, documents);
             }
             return org.jnosql.diana.api.document.Document.of(key, Value.of(value));
         };
