@@ -62,6 +62,9 @@ final class OrientDBConverter {
             return map.keySet().stream()
                     .map(k -> Document.of(k.toString(), map.get(k)))
                     .collect(toList());
+        } else if(List.class.isInstance(object)) {
+            return StreamSupport.stream( List.class.cast(object).spliterator(), false)
+                    .map(OrientDBConverter::convert).collect(toList());
         }
         return object;
     }
