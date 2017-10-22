@@ -20,7 +20,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -28,12 +27,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -49,8 +43,6 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     private final MongoDatabase mongoDatabase;
 
-    private static final Function<Map.Entry<?, ?>, org.jnosql.diana.api.document.Document> ENTRY_DOCUMENT = entry ->
-            org.jnosql.diana.api.document.Document.of(entry.getKey().toString(), entry.getValue());
 
     MongoDBDocumentCollectionManager(MongoDatabase mongoDatabase) {
         this.mongoDatabase = mongoDatabase;
@@ -109,35 +101,9 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("condition is required")));
-        return stream(collection.find(mongoDBQuery).spliterator(), false).map(this::of)
+        return stream(collection.find(mongoDBQuery).spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
 
-    }
-
-
-    private List<org.jnosql.diana.api.document.Document> of(Map<String, ?> values) {
-        Predicate<String> isNotNull = s -> values.get(s) != null;
-        Function<String, org.jnosql.diana.api.document.Document> documentMap = key -> {
-            Object value = values.get(key);
-            if (value instanceof Document) {
-                return org.jnosql.diana.api.document.Document.of(key, of(Document.class.cast(value)));
-            } else if (isDocumentIterable(value)) {
-                List<List<org.jnosql.diana.api.document.Document>> documents = new ArrayList<>();
-                for (Object object : Iterable.class.cast(value)) {
-                    Map<?, ?> map = Map.class.cast(object);
-                    documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
-                }
-                return org.jnosql.diana.api.document.Document.of(key, documents);
-            }
-            return org.jnosql.diana.api.document.Document.of(key, Value.of(value));
-        };
-        return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
-    }
-
-    private boolean isDocumentIterable(Object value) {
-        return value instanceof Iterable &&
-                stream(Iterable.class.cast(value).spliterator(), false)
-                        .allMatch(v -> Document.class.isInstance(v));
     }
 
     @Override
