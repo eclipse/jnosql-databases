@@ -26,6 +26,7 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
