@@ -21,13 +21,11 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OLiveQuery;
-import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
-import org.jnosql.diana.driver.ValueUtil;
 
 import java.time.Duration;
 import java.util.List;
@@ -35,10 +33,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.StreamSupport.stream;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
+import static org.jnosql.diana.orientdb.document.OrientDBConverter.toMap;
 
 class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollectionManager {
 
@@ -150,34 +147,6 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         pool.close();
     }
 
-    private Map<String, Object> toMap(DocumentEntity entity) {
-        Map<String, Object> entityValues = new HashedMap();
-        for (Document document : entity.getDocuments()) {
-            toDocument(entityValues, document);
 
-        }
 
-        return entityValues;
-    }
-
-    private void toDocument(Map<String, Object> entityValues, Document document) {
-        Object valueAsObject = ValueUtil.convert(document.getValue());
-        if (Document.class.isInstance(valueAsObject)) {
-            Document subDocument = Document.class.cast(valueAsObject);
-            entityValues.put(document.getName(), singletonMap(subDocument.getName(), subDocument.get()));
-        } else if (isADocumentIterable(valueAsObject)) {
-            Map<String, Object> map = new java.util.HashMap<>();
-            stream(Iterable.class.cast(valueAsObject).spliterator(), false)
-                    .forEach(d -> toDocument(map, Document.class.cast(d)));
-            entityValues.put(document.getName(), map);
-        } else {
-            entityValues.put(document.getName(), document.get());
-        }
-    }
-
-    private static boolean isADocumentIterable(Object value) {
-        return Iterable.class.isInstance(value) &&
-                stream(Iterable.class.cast(value).spliterator(), false)
-                        .allMatch(d -> Document.class.isInstance(d));
-    }
 }

@@ -60,6 +60,9 @@ public final class ArangoDBUtil {
 
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
 
+    private static final Function<Map.Entry<?, ?>, Document> ENTRY_DOCUMENT = entry ->
+            Document.of(entry.getKey().toString(), entry.getValue());
+
     private ArangoDBUtil() {
     }
 
@@ -120,10 +123,10 @@ public final class ArangoDBUtil {
                     .collect(Collectors.toList()));
         }
         if (isADocumentIterable(value)) {
-            List<Document> documents = new ArrayList<>();
+            List<List<Document>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
-                documents.add(Document.of(Map.class.cast(object).get("name").toString(),
-                        Map.class.cast(Map.class.cast(object).get("value")).get("value")));
+                Map<?, ?> map = Map.class.cast(object);
+                documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
             }
             return Document.of(key, documents);
 
@@ -146,11 +149,24 @@ public final class ArangoDBUtil {
             Document document = Document.class.cast(val);
             return singletonMap(document.getName(), convert(document.getValue()));
         }
-        if(isSudDocument(val)) {
+        if (isSudDocument(val)) {
+            return getMap(val);
+        }
+        if (isSudDocumentList(val)) {
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+                    .map(ArangoDBUtil::getMap).collect(toList());
         }
         return val;
+    }
+
+    private static Object getMap(Object val) {
+        return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+                .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+    }
+
+    private static boolean isSudDocumentList(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
     private static boolean isSudDocument(Object value) {

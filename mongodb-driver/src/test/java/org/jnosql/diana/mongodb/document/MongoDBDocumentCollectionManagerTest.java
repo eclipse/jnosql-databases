@@ -27,10 +27,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
@@ -41,6 +43,7 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -135,6 +138,46 @@ public class MongoDBDocumentCollectionManagerTest {
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
         assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+    }
+
+    @Test
+    public void shouldConvertFromListSubdocumentList() {
+        DocumentEntity entity = createSubdocumentList();
+        entityManager.insert(entity);
+
+    }
+
+    @Test
+    public void shouldRetrieveListSubdocumentList() {
+        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+        Document key = entity.find("_id").get();
+        DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
+
+        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        assertNotNull(documentEntity);
+
+        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+
+        assertEquals(3, contacts.size());
+        assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
+    }
+
+    private DocumentEntity createSubdocumentList() {
+        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        entity.add(Document.of("_id", new Random().nextInt()));
+        List<List<Document>> documents = new ArrayList<>();
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "EMAIL"),
+                Document.of("information", "ada@lovelace.com")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "MOBILE"),
+                Document.of("information", "11 1231231 123")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "PHONE"),
+                Document.of("information", "phone")));
+
+        entity.add(Document.of("contacts", documents));
+        return entity;
     }
 
 

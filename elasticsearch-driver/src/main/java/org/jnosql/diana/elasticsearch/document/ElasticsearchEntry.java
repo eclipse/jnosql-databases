@@ -21,9 +21,11 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
@@ -34,6 +36,10 @@ class ElasticsearchEntry {
     private final Map<String, Object> map;
 
     private final String collection;
+
+    private static final Function<Map.Entry<?, ?>, Document> ENTRY_DOCUMENT = entry ->
+            Document.of(entry.getKey().toString(), entry.getValue());
+
 
     ElasticsearchEntry(String id, String collection, Map<String, Object> map) {
         this.id = id;
@@ -69,10 +75,10 @@ class ElasticsearchEntry {
                     .collect(Collectors.toList()));
         }
         if (isADocumentIterable(value)) {
-            List<Document> documents = new ArrayList<>();
+            List<List<Document>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
-                documents.add(Document.of(Map.class.cast(object).get("name").toString(),
-                        Map.class.cast(Map.class.cast(object).get("value")).get("value")));
+                Map<?, ?> map = Map.class.cast(object);
+                documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
             }
             return Document.of(key, documents);
 

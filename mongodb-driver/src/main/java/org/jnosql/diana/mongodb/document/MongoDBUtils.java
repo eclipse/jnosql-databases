@@ -20,15 +20,26 @@ import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.StreamSupport.stream;
 
 final class MongoDBUtils {
     private static final ValueWriter WRITER = ValueWriterDecorator.getInstance();
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
     private static final Function<Object, Object> VALUE_DOCUMENT = d -> cast(d).get();
+
+    private static final Function<Map.Entry<?, ?>, org.jnosql.diana.api.document.Document> ENTRY_DOCUMENT = entry ->
+            org.jnosql.diana.api.document.Document.of(entry.getKey().toString(), entry.getValue());
+
 
     private MongoDBUtils() {
     }
@@ -47,14 +58,46 @@ final class MongoDBUtils {
             return new Document(subDocument.getName(), converted);
         }
         if (isSudDocument(val)) {
-
+            return getMap(val);
+        }
+        if (isSudDocumentList(val)) {
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+                    .map(MongoDBUtils::getMap).collect(toList());
         }
         if (WRITER.isCompatible(val.getClass())) {
             return WRITER.write(val);
         }
         return val;
+    }
+
+    public static List<org.jnosql.diana.api.document.Document> of(Map<String, ?> values) {
+        Predicate<String> isNotNull = s -> values.get(s) != null;
+        Function<String, org.jnosql.diana.api.document.Document> documentMap = key -> {
+            Object value = values.get(key);
+            if (value instanceof Document) {
+                return org.jnosql.diana.api.document.Document.of(key, of(Document.class.cast(value)));
+            } else if (isDocumentIterable(value)) {
+                List<List<org.jnosql.diana.api.document.Document>> documents = new ArrayList<>();
+                for (Object object : Iterable.class.cast(value)) {
+                    Map<?, ?> map = Map.class.cast(object);
+                    documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
+                }
+                return org.jnosql.diana.api.document.Document.of(key, documents);
+            }
+            return org.jnosql.diana.api.document.Document.of(key, Value.of(value));
+        };
+        return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
+    }
+
+    private static boolean isDocumentIterable(Object value) {
+        return value instanceof Iterable &&
+                stream(Iterable.class.cast(value).spliterator(), false)
+                        .allMatch(v -> Document.class.isInstance(v));
+    }
+
+    private static Object getMap(Object val) {
+        return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+                .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
     }
 
     private static org.jnosql.diana.api.document.Document cast(Object document) {
@@ -64,5 +107,10 @@ final class MongoDBUtils {
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
+    }
+
+    private static boolean isSudDocumentList(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 }

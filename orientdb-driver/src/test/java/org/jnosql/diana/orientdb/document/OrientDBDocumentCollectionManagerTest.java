@@ -29,9 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+import static java.util.Arrays.asList;
 import static java.util.logging.Level.FINEST;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -198,6 +200,46 @@ public class OrientDBDocumentCollectionManagerTest {
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());
+    }
+
+    @Test
+    public void shouldConvertFromListSubdocumentList() {
+        DocumentEntity entity = createSubdocumentList();
+        entityManager.insert(entity);
+
+    }
+
+    @Test
+    public void shouldRetrieveListSubdocumentList() {
+        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+        Document key = entity.find("_id").get();
+        DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
+
+        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        assertNotNull(documentEntity);
+
+        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+
+        assertEquals(3, contacts.size());
+        assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
+    }
+
+    private DocumentEntity createSubdocumentList() {
+        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        entity.add(Document.of("_id", new Random().nextInt()));
+        List<List<Document>> documents = new ArrayList<>();
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "EMAIL"),
+                Document.of("information", "ada@lovelace.com")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "MOBILE"),
+                Document.of("information", "11 1231231 123")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "PHONE"),
+                Document.of("information", "phone")));
+
+        entity.add(Document.of("contacts", documents));
+        return entity;
     }
 
     private DocumentEntity getEntity() {

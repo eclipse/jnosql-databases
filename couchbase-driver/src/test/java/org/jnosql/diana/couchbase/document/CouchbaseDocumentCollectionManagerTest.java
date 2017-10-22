@@ -26,8 +26,10 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +42,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -153,6 +156,47 @@ public class CouchbaseDocumentCollectionManagerTest {
         });
         assertEquals(set, setFoods);
     }
+
+    @Test
+    public void shouldConvertFromListSubdocumentList() {
+        DocumentEntity entity = createSubdocumentList();
+        entityManager.insert(entity);
+
+    }
+
+    @Test
+    public void shouldRetrieveListSubdocumentList() {
+        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+        Document key = entity.find("_id").get();
+        DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
+
+        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        assertNotNull(documentEntity);
+
+        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+
+        assertEquals(3, contacts.size());
+        assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
+    }
+
+    private DocumentEntity createSubdocumentList() {
+        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        entity.add(Document.of("_id", "ids"));
+        List<List<Document>> documents = new ArrayList<>();
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "EMAIL"),
+                Document.of("information", "ada@lovelace.com")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "MOBILE"),
+                Document.of("information", "11 1231231 123")));
+
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "PHONE"),
+                Document.of("information", "phone")));
+
+        entity.add(Document.of("contacts", documents));
+        return entity;
+    }
+
 
 
     private DocumentEntity getEntity() {
