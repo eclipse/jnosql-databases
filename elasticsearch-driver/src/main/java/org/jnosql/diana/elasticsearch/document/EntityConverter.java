@@ -35,6 +35,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
 final class EntityConverter {
@@ -62,19 +63,32 @@ final class EntityConverter {
                 Document subDocument = Document.class.cast(value);
                 jsonObject.put(d.getName(), singletonMap(subDocument.getName(), subDocument.get()));
             } else if (isSudDocument(value)) {
-                Map<String, Object> subDocument = new HashMap<>();
-                StreamSupport.stream(Iterable.class.cast(value).spliterator(),
-                        false).forEach(feedJSON(subDocument));
+                Map<String, Object> subDocument = getMap(value);
                 jsonObject.put(d.getName(), subDocument);
+            } else if (isSudDocumentList(value)) {
+                jsonObject.put(d.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
+                        .map(EntityConverter::getMap).collect(toList()));
             } else {
                 jsonObject.put(d.getName(), value);
             }
         };
     }
 
+    private static Map<String, Object> getMap(Object value) {
+        Map<String, Object> subDocument = new HashMap<>();
+        StreamSupport.stream(Iterable.class.cast(value).spliterator(),
+                false).forEach(feedJSON(subDocument));
+        return subDocument;
+    }
+
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
+    }
+
+    private static boolean isSudDocumentList(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
     static List<DocumentEntity> query(DocumentQuery query, Client client, String index) {
