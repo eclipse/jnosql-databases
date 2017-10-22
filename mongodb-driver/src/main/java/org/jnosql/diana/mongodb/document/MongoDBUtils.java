@@ -47,7 +47,6 @@ final class MongoDBUtils {
             return new Document(subDocument.getName(), converted);
         }
         if (isSudDocument(val)) {
-
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
                     .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
         }
