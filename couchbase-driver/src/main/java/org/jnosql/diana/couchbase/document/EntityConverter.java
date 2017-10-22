@@ -89,8 +89,10 @@ final class EntityConverter {
             if (Map.class.isInstance(value)) {
                 documents.add(Document.of(key, toDocuments(Map.class.cast(value))));
             } else if (isADocumentIterable(value)) {
-                List<Document> subDocuments = new ArrayList<>();
-                Iterable.class.cast(value).forEach( o -> toDocuments(Map.class.cast(o)));
+                List<List<Document>> subDocuments = new ArrayList<>();
+                stream(Iterable.class.cast(value).spliterator(), false)
+                        .map(m -> toDocuments(Map.class.cast(m)))
+                        .forEach(e -> subDocuments.add((List<Document>) e));
                 documents.add(Document.of(key, subDocuments));
             } else {
                 documents.add(Document.of(key, value));
