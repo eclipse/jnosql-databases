@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -137,27 +138,45 @@ final class EntityConverter {
         };
     }
 
+
     private static void convertDocument(JsonObject jsonObject, Document d, Object value) {
         Document document = Document.class.cast(value);
         jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
     }
 
-    private static void convertIterable(JsonObject jsonObject, Document d, Object value) {
+    private static void convertIterable(JsonObject jsonObject, Document document, Object value) {
         JsonObject map = JsonObject.create();
         JsonArray array = JsonArray.create();
-        Iterable.class.cast(value).forEach(o -> {
-            if (Document.class.isInstance(o)) {
-                Document document = Document.class.cast(o);
-                map.put(document.getName(), document.get());
+        Iterable.class.cast(value).forEach(element -> {
+            if (Document.class.isInstance(element)) {
+                Document subdocument = Document.class.cast(element);
+                map.put(subdocument.getName(), subdocument.get());
+            } else if (isSudDocument(element)) {
+                JsonObject subJson = JsonObject.create();
+
+                stream(Iterable.class.cast(element).spliterator(), false)
+                        .forEach(getSubdocument(subJson));
+                array.add(subJson);
             } else {
-                array.add(o);
+                array.add(element);
             }
         });
-        if(array.isEmpty()) {
-            jsonObject.put(d.getName(), map);
+        if (array.isEmpty()) {
+            jsonObject.put(document.getName(), map);
         } else {
-            jsonObject.put(d.getName(), array);
+            jsonObject.put(document.getName(), array);
         }
     }
+
+    private static Consumer getSubdocument(JsonObject subJson) {
+        return e -> toJsonObject(subJson).accept((Document) e);
+    }
+
+
+    private static boolean isSudDocument(Object value) {
+        return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
+    }
+
 
 }
