@@ -229,13 +229,13 @@ public class OrientDBDocumentCollectionManagerTest {
         entity.add(Document.of("_id", new Random().nextInt()));
         List<List<Document>> documents = new ArrayList<>();
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "EMAIL"),
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.EMAIL),
                 Document.of("information", "ada@lovelace.com")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "MOBILE"),
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.MOBILE),
                 Document.of("information", "11 1231231 123")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", "PHONE"),
+        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.PHONE),
                 Document.of("information", "phone")));
 
         entity.add(Document.of("contacts", documents));
