@@ -52,8 +52,7 @@ public final class ArangoDBUtil {
     public static final String REV = "_rev";
 
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> cast(d).get();
-
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> ValueUtil.convert(cast(d).getValue());
 
 
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
