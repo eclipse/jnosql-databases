@@ -16,15 +16,20 @@ package org.jnosql.diana.orientdb.document;
 
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
 final class OrientDBConverter {
 
@@ -46,19 +51,62 @@ final class OrientDBConverter {
     static DocumentEntity convert(ODocument document) {
         DocumentEntity entity = DocumentEntity.of(document.getClassName());
         Stream.of(document.fieldNames())
-                .map(f -> Document.of(f,  convert((Object) document.field(f))))
+                .map(f -> Document.of(f, convert((Object) document.field(f))))
                 .forEach(entity::add);
         entity.add(Document.of(RID_FIELD, document.field(RID_FIELD).toString()));
         return entity;
     }
 
     private static Object convert(Object object) {
-        if(Map.class.isInstance(object)) {
+        if (Map.class.isInstance(object)) {
             Map map = Map.class.cast(object);
             return map.keySet().stream()
                     .map(k -> Document.of(k.toString(), map.get(k)))
                     .collect(toList());
         }
         return object;
+    }
+
+
+    public static Map<String, Object> toMap(DocumentEntity entity) {
+        Map<String, Object> entityValues = new HashedMap();
+        for (Document document : entity.getDocuments()) {
+            toDocument(entityValues, document);
+        }
+
+        return entityValues;
+    }
+
+    private static void toDocument(Map<String, Object> entityValues, Document document) {
+        Object value = ValueUtil.convert(document.getValue());
+        if (Document.class.isInstance(value)) {
+            Document subDocument = Document.class.cast(value);
+            entityValues.put(document.getName(), singletonMap(subDocument.getName(), subDocument.get()));
+        } else if (isDocumentIterable(value)) {
+            entityValues.put(document.getName(), getMap(value));
+        } else if (isSudDocumentList(value)) {
+            entityValues.put(document.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
+                    .map(OrientDBConverter::getMap).collect(toList()));
+        } else {
+            entityValues.put(document.getName(), document.get());
+        }
+    }
+
+    private static Map<String, Object> getMap(Object valueAsObject) {
+        Map<String, Object> map = new java.util.HashMap<>();
+        stream(Iterable.class.cast(valueAsObject).spliterator(), false)
+                .forEach(d -> toDocument(map, Document.class.cast(d)));
+        return map;
+    }
+
+    private static boolean isDocumentIterable(Object value) {
+        return Iterable.class.isInstance(value) &&
+                stream(Iterable.class.cast(value).spliterator(), false)
+                        .allMatch(d -> Document.class.isInstance(d));
+    }
+
+    private static boolean isSudDocumentList(Object value) {
+        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+                allMatch(d -> d instanceof Iterable && isDocumentIterable(d));
     }
 }
