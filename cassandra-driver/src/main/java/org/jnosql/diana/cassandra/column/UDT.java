@@ -33,9 +33,11 @@ public interface UDT extends Column {
     /**
      * Returns a UDT builder
      *
+     * @param userType the user type name
      * @return the {@link UDTBuilder} instance
+     * @throws NullPointerException when userType is null
      */
-    static UDTBuilder builder() {
-        return new UDTBuilder();
+    static UDTBuilder builder(String userType) throws NullPointerException {
+        return new UDTBuilder(userType);
     }
 }
