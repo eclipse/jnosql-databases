@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
 /**
  * The UDT builder
  */
-public class UDTBuilder {
+class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilder {
 
     private String name;
 
@@ -40,41 +40,22 @@ public class UDTBuilder {
         this.typeName = userType;
     }
 
-    /**
-     * Set the name column name
-     *
-     * @param name the name
-     * @return the builder instance
-     * @throws NullPointerException when name is null
-     */
+    @Override
     public UDTBuilder withName(String name) throws NullPointerException {
         this.name = Objects.requireNonNull(name, "name is required");
         return this;
     }
 
 
-    /**
-     * Adds the udt when the type is just one element
-     *
-     * @param udt the elements in a UDT to be added
-     * @return the builder instance
-     * @throws NullPointerException when either the udt or there is a null element
-     */
+    @Override
     public UDTBuilder addUDT(Iterable<Column> udt) throws NullPointerException {
         Objects.requireNonNull(udt, "udt is required");
         StreamSupport.stream(udt.spliterator(), false).forEach(this.columns::add);
         return this;
     }
 
-    /**
-     * <p>On Cassandra, there is the option to a UDT be part of a list. This implementation holds this option.</p>
-     * <p>eg: CREATE COLUMNFAMILY IF NOT EXISTS contacts ( user text PRIMARY KEY, names list<frozen <fullname>>);</p>
-     *
-     * @param udts the UTDs to be added
-     * @return the builder instance
-     * @throws NullPointerException when either the udt or there is a null element
-     */
-    public UDTBuilder addUDTs(List<Iterable<Column>> udts) throws NullPointerException, IllegalStateException {
+    @Override
+    public UDTBuilder addUDTs(List<Iterable<Column>> udts) throws NullPointerException {
         Objects.requireNonNull(udts, "udts is required");
         for (Iterable<Column> subColumn : udts) {
             List<Column> ts = new ArrayList<>();
@@ -86,12 +67,7 @@ public class UDTBuilder {
         return this;
     }
 
-    /**
-     * Creates a udt instance
-     *
-     * @return a udt instance
-     * @throws IllegalStateException when there is a null element
-     */
+    @Override
     public UDT build() throws IllegalStateException {
         if (Objects.isNull(name)) {
             throw new IllegalStateException("name is required");
