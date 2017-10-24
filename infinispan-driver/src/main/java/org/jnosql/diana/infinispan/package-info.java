@@ -12,5 +12,15 @@
  *
  *   The Infinispan Team
  */
-
+/**
+ * <p>Infinispan is a distributed in-memory key/value data store with optional schema, available under the Apache License 2.0.</p>
+ * <ul>
+ * <li>Available as an embedded Java library or as a language-independent service accessed remotely over a variety of protocols (Hot Rod, REST, Memcached and WebSockets)</li>
+ * <li>Use it as a cache or a data grid.</li>
+ * <li>Advanced functionality such as transactions, events, querying, distributed processing, off-heap and geographical failover.</li>
+ * <li>Monitor and manage it through JMX, a CLI and a web-based console.</li>
+ * <li>Integrates with JPA, JCache, Spring, Spark and many more.</li>
+ * <li>Works on AWS, Azure, Google Cloud and OpenShift.</li>
+ * <ul>
+ */
 package org.jnosql.diana.infinispan;
