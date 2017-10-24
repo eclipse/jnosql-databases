@@ -84,10 +84,14 @@ final class QueryUtils {
     private static void insertUDT(UDT udt, String keyspace, Session session, Insert insert) {
         UserType userType = session.getCluster().getMetadata().getKeyspace(keyspace).getUserType(udt.getUserType());
         UDTValue udtValue = userType.newValue();
-        for (Column column : udt.getColumns()) {
-            Object convert = ValueUtil.convert(column.getValue());
-            TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(convert);
-            udtValue.set(column.getName(), convert, objectTypeCodec);
+        for (Object object : Iterable.class.cast(udt.get())) {
+            if(Column.class.isInstance(object)) {
+                Column column = Column.class.cast(object);
+                Object convert = ValueUtil.convert(column.getValue());
+                TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(convert);
+                udtValue.set(column.getName(), convert, objectTypeCodec);
+            }
+
         }
         insert.value(udt.getName(), udtValue);
     }
