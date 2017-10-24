@@ -35,11 +35,13 @@ public class UDTBuilder {
 
     private List<List<Column>> subColumns = new ArrayList<>();
 
-    UDTBuilder() {
+
+    UDTBuilder(String userType) {
+        this.typeName = userType;
     }
 
     /**
-     * Set the name
+     * Set the name column name
      *
      * @param name the name
      * @return the builder instance
@@ -47,18 +49,6 @@ public class UDTBuilder {
      */
     public UDTBuilder withName(String name) throws NullPointerException {
         this.name = Objects.requireNonNull(name, "name is required");
-        return this;
-    }
-
-    /**
-     * Set the typeName
-     *
-     * @param typeName the typeName
-     * @return the builder instance
-     * @throws NullPointerException when name is null
-     */
-    public UDTBuilder withTypeName(String typeName) throws NullPointerException {
-        this.typeName = Objects.requireNonNull(typeName, "typeName is required");
         return this;
     }
 
@@ -84,7 +74,7 @@ public class UDTBuilder {
      * @return the builder instance
      * @throws NullPointerException when either the udt or there is a null element
      */
-    public UDTBuilder addUDTs(Iterable<Iterable<Column>> udts) throws NullPointerException, IllegalStateException {
+    public UDTBuilder addUDTs(List<Iterable<Column>> udts) throws NullPointerException, IllegalStateException {
         Objects.requireNonNull(udts, "udts is required");
         for (Iterable<Column> subColumn : udts) {
             List<Column> ts = new ArrayList<>();

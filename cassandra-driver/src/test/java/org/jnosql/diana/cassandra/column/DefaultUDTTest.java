@@ -36,7 +36,7 @@ public class DefaultUDTTest {
         columns.add(Column.of("lastname", "Lovelace"));
         UDT udt = UDT.builder().withName("name")
                 .withTypeName("fullname")
-                .addAll(columns).build();
+                .addUDT(columns).build();
 
         assertEquals("fullname", udt.getUserType());
         assertEquals("name", udt.getName());
@@ -49,7 +49,7 @@ public class DefaultUDTTest {
         columns.add(Column.of("lastname", "Lovelace"));
         UDT udt = UDT.builder()
                 .withTypeName("fullname")
-                .addAll(columns).build();
+                .addUDT(columns).build();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -59,7 +59,7 @@ public class DefaultUDTTest {
         columns.add(Column.of("lastname", "Lovelace"));
         UDT udt = UDT.builder()
                 .withName("name")
-                .addAll(columns).build();
+                .addUDT(columns).build();
     }
 
     @Test
@@ -69,7 +69,7 @@ public class DefaultUDTTest {
         columns.add(Column.of("lastname", "Lovelace"));
         UDT udt = UDT.builder().withName("name")
                 .withTypeName("fullname")
-                .addAll(columns).build();
+                .addUDT(columns).build();
 
         List<Column> udtColumn = udt.get(new TypeReference<List<Column>>() {
         });
