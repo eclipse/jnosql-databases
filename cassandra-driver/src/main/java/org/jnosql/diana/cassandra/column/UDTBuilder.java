@@ -55,7 +55,7 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
     }
 
     @Override
-    public UDTBuilder addUDTs(List<Iterable<Column>> udts) throws NullPointerException {
+    public UDTBuilder addUDTs(Iterable<Iterable<Column>> udts) throws NullPointerException {
         Objects.requireNonNull(udts, "udts is required");
         for (Iterable<Column> subColumn : udts) {
             List<Column> ts = new ArrayList<>();

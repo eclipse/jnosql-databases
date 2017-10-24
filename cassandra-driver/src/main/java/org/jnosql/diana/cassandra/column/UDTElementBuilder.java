@@ -16,8 +16,6 @@ package org.jnosql.diana.cassandra.column;
 
 import org.jnosql.diana.api.column.Column;
 
-import java.util.List;
-
 public interface UDTElementBuilder {
 
 
@@ -37,5 +35,5 @@ public interface UDTElementBuilder {
      * @return the builder instance
      * @throws NullPointerException when either the udt or there is a null element
      */
-    UDTFinisherBuilder addUDTs(List<Iterable<Column>> udts) throws NullPointerException;
+    UDTFinisherBuilder addUDTs(Iterable<Iterable<Column>> udts) throws NullPointerException;
 }
