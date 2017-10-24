@@ -17,8 +17,6 @@ package org.jnosql.diana.cassandra.column;
 
 import org.jnosql.diana.api.column.Column;
 
-import java.util.List;
-
 /**
  * A Cassandra user data type, this interface does not support both Value alias method:
  * get(class) and get(TypeSupplier);
@@ -31,13 +29,6 @@ public interface UDT extends Column {
      * @return the UDT name
      */
     String getUserType();
-
-    /**
-     * The columns at this UDT
-     *
-     * @return the fields at UDT
-     */
-    List<Column> getColumns();
 
     /**
      * Returns a UDT builder
