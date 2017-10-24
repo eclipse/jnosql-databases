@@ -69,11 +69,6 @@ class DefaultUDT implements UDT {
     }
 
     @Override
-    public List<Column> getColumns() {
-        return Collections.unmodifiableList(columns);
-    }
-
-    @Override
     public String getUserType() {
         return userType;
     }
@@ -89,7 +84,7 @@ class DefaultUDT implements UDT {
         UDT udt = (UDT) o;
         return Objects.equals(name, udt.getName()) &&
                 Objects.equals(userType, udt.getUserType()) &&
-                Objects.equals(columns, udt.getColumns());
+                Objects.equals(columns, udt.get());
     }
 
     @Override
