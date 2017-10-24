@@ -49,6 +49,7 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<In
      * @throws NullPointerException when configurations is null
      */
     public InfinispanKeyValueEntityManagerFactory get(Map<String, String> configurations) {
+        requireNonNull(configurations, "configurations is required");
         List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("infinispan-server-"))
               .collect(Collectors.toList());
         if (!servers.isEmpty()) {
