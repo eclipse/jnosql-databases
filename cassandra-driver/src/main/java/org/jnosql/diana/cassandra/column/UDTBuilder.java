@@ -70,7 +70,7 @@ public class UDTBuilder {
      * @return the builder instance
      * @throws NullPointerException when either the udt or there is a null element
      */
-    public UDTBuilder addAll(Iterable<Column> udt) throws NullPointerException {
+    public UDTBuilder addUDT(Iterable<Column> udt) throws NullPointerException {
         Objects.requireNonNull(udt, "udt is required");
         StreamSupport.stream(udt.spliterator(), false).forEach(this.columns::add);
         return this;
@@ -84,7 +84,7 @@ public class UDTBuilder {
      * @return the builder instance
      * @throws NullPointerException when either the udt or there is a null element
      */
-    public UDTBuilder addElement(Iterable<Iterable<Column>> udts) throws NullPointerException, IllegalStateException {
+    public UDTBuilder addUDTs(Iterable<Iterable<Column>> udts) throws NullPointerException, IllegalStateException {
         Objects.requireNonNull(udts, "udts is required");
         for (Iterable<Column> subColumn : udts) {
             List<Column> ts = new ArrayList<>();
