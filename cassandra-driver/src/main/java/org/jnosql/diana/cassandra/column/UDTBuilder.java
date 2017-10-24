@@ -33,6 +33,8 @@ public class UDTBuilder {
 
     private List<Column> columns = new ArrayList<>();
 
+    private List<List<Column>> subColumns = new ArrayList<>();
+
     UDTBuilder() {
     }
 
@@ -60,29 +62,37 @@ public class UDTBuilder {
         return this;
     }
 
+
     /**
-     * add a column
+     * Adds the udt when the type is just one element
      *
-     * @param column a column
+     * @param udt the elements in a UDT to be added
      * @return the builder instance
-     * @throws NullPointerException when column is null
+     * @throws NullPointerException when either the udt or there is a null element
      */
-    public UDTBuilder add(Column column) throws NullPointerException {
-        columns.add(Objects.requireNonNull(column, "column is required"));
+    public UDTBuilder addAll(Iterable<Column> udt) throws NullPointerException {
+        Objects.requireNonNull(udt, "udt is required");
+        StreamSupport.stream(udt.spliterator(), false).forEach(this.columns::add);
         return this;
     }
 
-
     /**
-     * addd all columns elements
+     * <p>On Cassandra, there is the option to a UDT be part of a list. This implementation holds this option.</p>
+     * <p>eg: CREATE COLUMNFAMILY IF NOT EXISTS contacts ( user text PRIMARY KEY, names list<frozen <fullname>>);</p>
      *
-     * @param columns the iterable to be added
+     * @param udts the UTDs to be added
      * @return the builder instance
-     * @throws NullPointerException when either the columns or there is a null element
+     * @throws NullPointerException when either the udt or there is a null element
      */
-    public UDTBuilder addAll(Iterable<Column> columns) throws NullPointerException {
-        Objects.requireNonNull(columns, "columns is required");
-        StreamSupport.stream(columns.spliterator(), false).forEach(this::add);
+    public UDTBuilder addElement(Iterable<Iterable<Column>> udts) throws NullPointerException, IllegalStateException {
+        Objects.requireNonNull(udts, "udts is required");
+        for (Iterable<Column> subColumn : udts) {
+            List<Column> ts = new ArrayList<>();
+            for (Column column : subColumn) {
+                ts.add(column);
+            }
+            this.subColumns.add(ts);
+        }
         return this;
     }
 
@@ -101,4 +111,7 @@ public class UDTBuilder {
         }
         return new DefaultUDT(name, typeName, columns);
     }
+
+
 }
+
