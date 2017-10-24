@@ -214,9 +214,8 @@ public class CassandraColumnFamilyManagerTest {
         List<Column> columns = new ArrayList<>();
         columns.add(Column.of("firstname", "Ada"));
         columns.add(Column.of("lastname", "Lovelace"));
-        UDT udt = UDT.builder().withName("name")
-                .withTypeName("fullname")
-                .addAll(columns).build();
+        UDT udt = UDT.builder("fullname").withName("name")
+                .addUDT(columns).build();
         entity.add(udt);
         columnEntityManager.insert(entity);
 
@@ -224,7 +223,7 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
         Column column = columnEntity.find("name").get();
         udt = UDT.class.cast(column);
-        List<Column> udtColumns = udt.getColumns();
+        List<Column> udtColumns = (List<Column>) udt.get();
         Assert.assertEquals("name", udt.getName());
         Assert.assertEquals("fullname", udt.getUserType());
         assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ada"),
@@ -237,9 +236,8 @@ public class CassandraColumnFamilyManagerTest {
         entity.add(Column.of("nickname", "Ioda"));
         List<Column> columns = new ArrayList<>();
         columns.add(Column.of("firstname", "Ioda"));
-        UDT udt = UDT.builder().withName("name")
-                .withTypeName("fullname")
-                .addAll(columns).build();
+        UDT udt = UDT.builder("fullname").withName("name")
+                .addUDT(columns).build();
         entity.add(udt);
         columnEntityManager.insert(entity);
 
@@ -250,7 +248,7 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
         Column column = columnEntity.find("name").get();
         udt = UDT.class.cast(column);
-        List<Column> udtColumns = udt.getColumns();
+        List<Column> udtColumns = (List<Column>) udt.get();
         Assert.assertEquals("name", udt.getName());
         Assert.assertEquals("fullname", udt.getUserType());
         assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ioda")));
@@ -274,6 +272,19 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity entity1 = columnEntityManager.singleResult(query).get();
         Assert.assertNotNull(entity1);
 
+    }
+
+    @Test
+    public void shouldSupportListUDTs() {
+        ColumnEntity entity = ColumnEntity.of("contacts");
+        entity.add(Column.of("user", "otaviojava"));
+
+        List<Iterable<Column>> columns = new ArrayList<>();
+        columns.add(asList(Column.of("firstname", "Poliana"), Column.of("lastname", "Santana")));
+        columns.add(asList(Column.of("firstname", "Ada"), Column.of("lastname", "Lovelace")));
+        columns.add(asList(Column.of("firstname", ""), Column.of("lastname", "")));
+        UDT udt = UDT.builder("fullname").withName("names")
+                .addUDTs(columns).build();
     }
 
     private ColumnEntity getColumnFamily() {

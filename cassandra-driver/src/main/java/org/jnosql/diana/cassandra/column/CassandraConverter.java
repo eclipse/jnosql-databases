@@ -86,7 +86,7 @@ final class CassandraConverter {
                         columns.add(Column.of(fieldName, elementValue));
                     }
                 }
-                return UDT.builder().withName(name).withTypeName(type.getTypeName()).addAll(columns).build();
+                return UDT.builder().withName(name).withTypeName(type.getTypeName()).addUDT(columns).build();
             default:
                 TypeCodec<Object> objectTypeCodec = CODE_REGISTRY.codecFor(definition.getType());
                 return row.get(name, objectTypeCodec);
