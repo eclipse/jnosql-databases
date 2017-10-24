@@ -34,41 +34,20 @@ public class DefaultUDTTest {
         List<Column> columns = new ArrayList<>();
         columns.add(Column.of("firstname", "Ada"));
         columns.add(Column.of("lastname", "Lovelace"));
-        UDT udt = UDT.builder().withName("name")
-                .withTypeName("fullname")
+        UDT udt = UDT.builder("fullname").withName("name")
                 .addUDT(columns).build();
 
         assertEquals("fullname", udt.getUserType());
         assertEquals("name", udt.getName());
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void shouldReturnErrorWhenNameIsNull() {
-        List<Column> columns = new ArrayList<>();
-        columns.add(Column.of("firstname", "Ada"));
-        columns.add(Column.of("lastname", "Lovelace"));
-        UDT udt = UDT.builder()
-                .withTypeName("fullname")
-                .addUDT(columns).build();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void shouldReturnErrorWhenTypeNameIsNull() {
-        List<Column> columns = new ArrayList<>();
-        columns.add(Column.of("firstname", "Ada"));
-        columns.add(Column.of("lastname", "Lovelace"));
-        UDT udt = UDT.builder()
-                .withName("name")
-                .addUDT(columns).build();
-    }
 
     @Test
     public void shouldReturnGetType() {
         List<Column> columns = new ArrayList<>();
         columns.add(Column.of("firstname", "Ada"));
         columns.add(Column.of("lastname", "Lovelace"));
-        UDT udt = UDT.builder().withName("name")
-                .withTypeName("fullname")
+        UDT udt = UDT.builder("fullname").withName("name")
                 .addUDT(columns).build();
 
         List<Column> udtColumn = udt.get(new TypeReference<List<Column>>() {
