@@ -21,7 +21,10 @@ import org.jnosql.diana.api.column.Column;
 import java.util.List;
 import java.util.Objects;
 
-class IterableUDT implements UDT{
+/**
+ * On Cassandra, there is the option to a UDT be part of a list. This implementation holds this option.
+ */
+class IterableUDT implements UDT {
 
     private final String name;
 
