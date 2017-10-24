@@ -282,9 +282,10 @@ public class CassandraColumnFamilyManagerTest {
         List<Iterable<Column>> columns = new ArrayList<>();
         columns.add(asList(Column.of("firstname", "Poliana"), Column.of("lastname", "Santana")));
         columns.add(asList(Column.of("firstname", "Ada"), Column.of("lastname", "Lovelace")));
-        columns.add(asList(Column.of("firstname", ""), Column.of("lastname", "")));
+        columns.add(asList(Column.of("firstname", "Maria"), Column.of("lastname", "Goncalves")));
         UDT udt = UDT.builder("fullname").withName("names")
                 .addUDTs(columns).build();
+        columnEntityManager.insert(entity);
     }
 
     private ColumnEntity getColumnFamily() {
