@@ -162,7 +162,11 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public List<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException {
-        return null;
+        requireNonNull(query, "query is required");
+        requireNonNull(values, "values is required");
+        ResultSet resultSet = session.execute(query, values);
+        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+                .collect(Collectors.toList());
     }
 
     @Override
