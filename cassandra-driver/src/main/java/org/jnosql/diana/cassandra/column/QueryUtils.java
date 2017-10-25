@@ -40,9 +40,11 @@ import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -83,17 +85,39 @@ final class QueryUtils {
 
     private static void insertUDT(UDT udt, String keyspace, Session session, Insert insert) {
         UserType userType = session.getCluster().getMetadata().getKeyspace(keyspace).getUserType(udt.getUserType());
-        UDTValue udtValue = userType.newValue();
-        for (Object object : Iterable.class.cast(udt.get())) {
-            if(Column.class.isInstance(object)) {
+
+        Iterable elements = Iterable.class.cast(udt.get());
+        Object udtValue = getUdtValue(userType, elements);
+        insert.value(udt.getName(), udtValue);
+    }
+
+    private static Object getUdtValue(UserType userType, Iterable elements) {
+
+        for (Object object : elements) {
+            if (Column.class.isInstance(object)) {
+                UDTValue udtValue = userType.newValue();
                 Column column = Column.class.cast(object);
                 Object convert = ValueUtil.convert(column.getValue());
                 TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(convert);
                 udtValue.set(column.getName(), convert, objectTypeCodec);
+                return udtValue;
+            } else if (Set.class.isInstance(object)) {
+                return Collections.emptySet();
+            } else if (Iterable.class.isInstance(object)) {
+                UDTValue udtValue = userType.newValue();
+                List<Object> udtValues = new ArrayList<>();
+                for (Object udt : Iterable.class.cast(object)) {
+                    udtValues.add(getUdtValue(userType, Iterable.class.cast(udt)));
+                }
+                return udtValues;
+
             }
 
+            throw new UnsupportedOperationException("There is not support to UDT to the type: ");
         }
-        insert.value(udt.getName(), udtValue);
+
+        return null;
+
     }
 
     private static void insertSingleField(Column column, Insert insert) {

@@ -18,7 +18,6 @@ import org.jnosql.diana.api.TypeSupplier;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,9 +29,9 @@ class IterableUDT implements UDT {
 
     private final String userType;
 
-    private final List<List<Column>> columns;
+    private final Iterable<Iterable<Column>> columns;
 
-    IterableUDT(String name, String userType, List<List<Column>> columns) {
+    IterableUDT(String name, String userType, Iterable<Iterable<Column>> columns) {
         this.name = name;
         this.userType = userType;
         this.columns = columns;

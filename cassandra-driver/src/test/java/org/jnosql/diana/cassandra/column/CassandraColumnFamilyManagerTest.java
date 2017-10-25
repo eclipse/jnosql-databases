@@ -285,6 +285,7 @@ public class CassandraColumnFamilyManagerTest {
         columns.add(asList(Column.of("firstname", "Maria"), Column.of("lastname", "Goncalves")));
         UDT udt = UDT.builder("fullname").withName("names")
                 .addUDTs(columns).build();
+        entity.add(udt);
         columnEntityManager.insert(entity);
     }
 

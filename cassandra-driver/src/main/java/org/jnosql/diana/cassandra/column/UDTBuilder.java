@@ -20,6 +20,7 @@ import org.jnosql.diana.api.column.Column;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -33,7 +34,7 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
 
     private List<Column> columns = new ArrayList<>();
 
-    private List<List<Column>> subColumns = new ArrayList<>();
+    private Iterable<Iterable<Column>> udts = new ArrayList<>();
 
 
     UDTBuilder(String userType) {
@@ -57,13 +58,7 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
     @Override
     public UDTBuilder addUDTs(Iterable<Iterable<Column>> udts) throws NullPointerException {
         Objects.requireNonNull(udts, "udts is required");
-        for (Iterable<Column> subColumn : udts) {
-            List<Column> ts = new ArrayList<>();
-            for (Column column : subColumn) {
-                ts.add(column);
-            }
-            this.subColumns.add(ts);
-        }
+        this.udts = udts;
         return this;
     }
 
@@ -75,7 +70,11 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
         if (Objects.isNull(typeName)) {
             throw new IllegalStateException("typeName is required");
         }
-        return new DefaultUDT(name, typeName, columns);
+        if (Stream.of(udts).count() == 0) {
+            return new DefaultUDT(name, typeName, columns);
+        } else {
+            return new IterableUDT(name, typeName, udts);
+        }
     }
 
 
