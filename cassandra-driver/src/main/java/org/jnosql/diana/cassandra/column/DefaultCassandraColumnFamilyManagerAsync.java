@@ -28,10 +28,12 @@ import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The default implementation of {@link CassandraColumnFamilyManagerAsync}
@@ -51,40 +53,40 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
 
     @Override
     public void insert(ColumnEntity entity) {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         session.executeAsync(insert);
     }
 
     @Override
     public void save(ColumnEntity entity, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
-        insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         session.executeAsync(insert);
     }
 
     @Override
     public void save(Iterable<ColumnEntity> entities, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entities, "entities is required");
+        requireNonNull(entities, "entities is required");
         StreamSupport.stream(entities.spliterator(), false).forEach(e -> this.save(e, level));
     }
 
     @Override
     public void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(callBack, "consumer is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "consumer is required");
 
         Insert insert = QueryUtils.insert(entity, keyspace, session);
-        insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> callBack.accept(entity), executor);
     }
 
     @Override
     public void insert(ColumnEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(ttl, "ttl is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.executeAsync(insert);
@@ -92,20 +94,20 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
 
     @Override
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(ttl, "ttl is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
-        insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.executeAsync(insert);
     }
 
     @Override
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(callBack, "consumer is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "consumer is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
-        insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> callBack.accept(entity), executor);
@@ -113,7 +115,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
 
     @Override
     public void save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entities, "entities is required");
+        requireNonNull(entities, "entities is required");
         StreamSupport.stream(entities.spliterator(), false).forEach(e -> this.save(e, ttl, level));
     }
 
@@ -145,35 +147,35 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
 
     @Override
     public void delete(ColumnDeleteQuery query) {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         session.executeAsync(delete);
     }
 
     @Override
     public void delete(ColumnDeleteQuery query, ConsistencyLevel level) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(level, "level is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(level, "level is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
-        delete.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        delete.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         session.executeAsync(delete);
     }
 
     @Override
     public void delete(ColumnDeleteQuery query, ConsistencyLevel level, Consumer<Void> consumer) {
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(level, "level is required");
-        Objects.requireNonNull(consumer, "consumer is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(level, "level is required");
+        requireNonNull(consumer, "consumer is required");
 
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
-        delete.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        delete.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         ResultSetFuture resultSetFuture = session.executeAsync(delete);
         resultSetFuture.addListener(() -> consumer.accept(null), executor);
     }
 
     @Override
     public void delete(ColumnDeleteQuery query, Consumer<Void> consumer) {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         ResultSetFuture resultSetFuture = session.executeAsync(delete);
         resultSetFuture.addListener(() -> consumer.accept(null), executor);
@@ -183,8 +185,8 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     public void select(ColumnQuery query, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(consumer, "consumer is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(consumer, "consumer is required");
 
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSetFuture resultSet = session.executeAsync(select);
@@ -196,7 +198,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     public void select(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException {
         BuiltStatement select = QueryUtils.add(query, keyspace);
-        select.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        select.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         ResultSetFuture resultSet = session.executeAsync(select);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
         resultSet.addListener(executeAsync, executor);
@@ -205,9 +207,21 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     @Override
     public void cql(String query, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException {
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(consumer, "consumer is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(consumer, "consumer is required");
         ResultSetFuture resultSet = session.executeAsync(query);
+        CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
+        resultSet.addListener(executeAsync, executor);
+    }
+
+    @Override
+    public void cql(String query, Map<String, Object> values, Consumer<List<ColumnEntity>> consumer) throws ExecuteAsyncQueryException, NullPointerException {
+
+        requireNonNull(query, "query is required");
+        requireNonNull(values, "values is required");
+        requireNonNull(consumer, "consumer is required");
+
+        ResultSetFuture resultSet = session.executeAsync(query, values);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
         resultSet.addListener(executeAsync, executor);
     }
@@ -216,8 +230,8 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     public void execute(Statement statement, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException {
 
-        Objects.requireNonNull(statement, "statement is required");
-        Objects.requireNonNull(consumer, "consumer is required");
+        requireNonNull(statement, "statement is required");
+        requireNonNull(consumer, "consumer is required");
 
         ResultSetFuture resultSet = session.executeAsync(statement);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
@@ -226,7 +240,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
 
     @Override
     public CassandraPrepareStatment nativeQueryPrepare(String query) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         com.datastax.driver.core.PreparedStatement prepare = session.prepare(query);
         return new CassandraPrepareStatment(prepare, executor, session);
     }
