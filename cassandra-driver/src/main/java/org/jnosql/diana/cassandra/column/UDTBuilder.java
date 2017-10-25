@@ -70,7 +70,8 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
         if (Objects.isNull(typeName)) {
             throw new IllegalStateException("typeName is required");
         }
-        if (Stream.of(udts).count() == 0) {
+
+        if (udts.spliterator().getExactSizeIfKnown() == 0) {
             return new DefaultUDT(name, typeName, columns);
         } else {
             return new IterableUDT(name, typeName, udts);

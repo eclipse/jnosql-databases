@@ -276,6 +276,24 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldSupportListUDTs() {
+        ColumnEntity entity = createEntityWithIterable();
+        columnEntityManager.insert(entity);
+    }
+
+
+    @Test
+    public void shouldReturnListUDT() {
+        ColumnEntity entity = createEntityWithIterable();
+        columnEntityManager.insert(entity);
+
+        ColumnQuery query = select().from("contacts").where(eq(Column.of("user", "otaviojava"))).build();
+        ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
+        List<List<Column>> names = (List<List<Column>>) columnEntity.find("names").get().get();
+        assertEquals(3, names.size());
+        assertTrue(names.stream().allMatch(n -> n.size() == 2));
+    }
+
+    private ColumnEntity createEntityWithIterable() {
         ColumnEntity entity = ColumnEntity.of("contacts");
         entity.add(Column.of("user", "otaviojava"));
 
@@ -286,7 +304,7 @@ public class CassandraColumnFamilyManagerTest {
         UDT udt = UDT.builder("fullname").withName("names")
                 .addUDTs(columns).build();
         entity.add(udt);
-        columnEntityManager.insert(entity);
+        return entity;
     }
 
     private ColumnEntity getColumnFamily() {

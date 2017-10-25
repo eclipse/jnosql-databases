@@ -29,7 +29,12 @@ import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnEntity;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
+
 
 final class CassandraConverter {
 
@@ -45,17 +50,45 @@ final class CassandraConverter {
             DataType type = definition.getType();
             columnFamily = definition.getTable();
             Object result = CassandraConverter.get(definition, row);
-            if (DataType.Name.UDT.equals(definition.getType().getName())) {
-                columns.add(Column.class.cast(result));
-            } else {
-                Value value = Value.of(result);
-                Column column = Column.of(definition.getName(), value);
-                columns.add(column);
-            }
+            columns.add(getColumn(definition, result));
 
         }
         return ColumnEntity.of(columnFamily, columns);
     }
+
+    private static Column getColumn(ColumnDefinitions.Definition definition, Object result) {
+        switch (definition.getType().getName()) {
+            case UDT:
+                return Column.class.cast(result);
+            case LIST:
+            case SET:
+                if (isUDTIterable(result)) {
+                    return UDT.builder(getUserType(definition, result)).withName(definition.getName())
+                            .addUDTs(getColumns(definition, result)).build();
+
+                }
+
+            default:
+                Value value = Value.of(result);
+                return Column.of(definition.getName(), value);
+        }
+    }
+
+    private static Iterable<Iterable<Column>> getColumns(ColumnDefinitions.Definition definition, Object result) {
+        return (Iterable<Iterable<Column>>)
+                StreamSupport.stream(Iterable.class.cast(result).spliterator(), false)
+                        .map(c -> (List<Column>) getUDT(definition.getName(), (UDTValue) c).get())
+                        .collect(toList());
+    }
+
+    private static String getUserType(ColumnDefinitions.Definition definition, Object result) {
+        return StreamSupport.stream(Iterable.class.cast(result).spliterator(), false)
+                .limit(1L)
+                .map(c -> getUDT(definition.getName(), (UDTValue) c).getUserType())
+                .findFirst()
+                .get().toString();
+    }
+
 
     public static Object get(ColumnDefinitions.Definition definition, Row row) {
 
@@ -77,22 +110,31 @@ final class CassandraConverter {
                 return row.getMap(name, javaTypeKey, javaTypeValue);
             case UDT:
                 UDTValue udtValue = row.getUDTValue(name);
-                UserType type = udtValue.getType();
-                List<Column> columns = new ArrayList<>();
-                for (String fieldName : type.getFieldNames()) {
-                    DataType fieldType = type.getFieldType(fieldName);
-                    Object elementValue = udtValue.get(fieldName, CODE_REGISTRY.codecFor(fieldType));
-                    if (elementValue != null) {
-                        columns.add(Column.of(fieldName, elementValue));
-                    }
-                }
-                return UDT.builder(type.getTypeName()).withName(name).addUDT(columns).build();
+                return getUDT(name, udtValue);
             default:
                 TypeCodec<Object> objectTypeCodec = CODE_REGISTRY.codecFor(definition.getType());
                 return row.get(name, objectTypeCodec);
         }
 
 
+    }
+
+    private static UDT getUDT(String name, UDTValue udtValue) {
+        List<Column> columns = new ArrayList<>();
+        UserType type = udtValue.getType();
+        for (String fieldName : type.getFieldNames()) {
+            DataType fieldType = type.getFieldType(fieldName);
+            Object elementValue = udtValue.get(fieldName, CODE_REGISTRY.codecFor(fieldType));
+            if (elementValue != null) {
+                columns.add(Column.of(fieldName, elementValue));
+            }
+        }
+        return UDT.builder(type.getTypeName()).withName(name).addUDT(columns).build();
+    }
+
+    private static boolean isUDTIterable(Object result) {
+        return StreamSupport.stream(Iterable.class.cast(result).spliterator(), false)
+                .allMatch(UDTValue.class::isInstance);
     }
 
 
