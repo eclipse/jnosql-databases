@@ -20,7 +20,6 @@ import org.jnosql.diana.api.column.Column;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
