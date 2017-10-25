@@ -45,6 +45,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.column.ColumnCondition.eq;
@@ -150,6 +151,16 @@ public class CassandraColumnFamilyManagerTest {
         assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
     }
 
+    @Test
+    public void shouldRunNativeQuery2() {
+        columnEntityManager.insert(getColumnFamily());
+        String query = "select * from newKeySpace.newColumnFamily where id = :id;";
+        List<ColumnEntity> entities = columnEntityManager.cql(query, singletonMap("id", 10L));
+        assertFalse(entities.isEmpty());
+        List<Column> columns = entities.get(0).getColumns();
+        assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
+        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
+    }
     @Test
     public void shouldPrepareStatment() {
         columnEntityManager.insert(getColumnFamily());
