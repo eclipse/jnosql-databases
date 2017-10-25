@@ -66,10 +66,9 @@ final class CassandraConverter {
                             .addUDTs(getColumns(definition, result)).build();
 
                 }
-
+                return Column.of(definition.getName(), Value.of(result));
             default:
-                Value value = Value.of(result);
-                return Column.of(definition.getName(), value);
+                return Column.of(definition.getName(), Value.of(result));
         }
     }
 
