@@ -116,7 +116,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * E.g.: "SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)"
      *
      * @param query  the Cassndra query language
-     * @param values the names params
+     * @param values the param values
      * @return the result of this query
      * @throws NullPointerException when either query or values are null
      */

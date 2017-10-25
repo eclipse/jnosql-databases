@@ -25,6 +25,7 @@ import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -141,6 +142,18 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @throws ExecuteAsyncQueryException a thread exception
      */
     void cql(String query, Consumer<List<ColumnEntity>> consumer)
+            throws ExecuteAsyncQueryException, NullPointerException;
+
+    /**
+     *Executes CQL using the provided named values.
+     * E.g.: "SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)"
+     *
+     *  @param query    the query
+     *                  @param values the params values
+     * @param consumer the callback
+     * @throws ExecuteAsyncQueryException a thread exception
+     */
+    void cql(String query, Map<String, Object> values, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException;
 
     /**
