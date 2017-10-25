@@ -25,6 +25,7 @@ import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Cassandra implementation of {@link ColumnFamilyManager}, that supports all methods and also supports
@@ -109,6 +110,16 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * @throws NullPointerException when query is null
      */
     List<ColumnEntity> cql(String query) throws NullPointerException;
+
+
+    /**
+     * Executes CQL using the provided named values.
+     *E.g.: "SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)"
+     * @param query the Cassndra query language
+     * @return the result of this query
+     * @throws NullPointerException when query is null
+     */
+    List<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException;
 
     /**
      * Executes a statement
