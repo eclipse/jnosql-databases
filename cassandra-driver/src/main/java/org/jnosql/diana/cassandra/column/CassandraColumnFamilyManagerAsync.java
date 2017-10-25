@@ -67,7 +67,6 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
     void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException;
 
 
-
     /**
      * Saves the entity with ConsistencyLevel
      *
@@ -145,11 +144,11 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
             throws ExecuteAsyncQueryException, NullPointerException;
 
     /**
-     *Executes CQL using the provided named values.
+     * Executes CQL using the provided named values.
      * E.g.: "SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)"
      *
-     *  @param query    the query
-     *                  @param values the params values
+     * @param query    the query
+     * @param values   the params values
      * @param consumer the callback
      * @throws ExecuteAsyncQueryException a thread exception
      */
