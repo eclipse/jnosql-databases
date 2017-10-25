@@ -28,10 +28,12 @@ import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static java.util.Objects.requireNonNull;
 
 
 class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManager {
@@ -50,7 +52,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public ColumnEntity insert(ColumnEntity entity) {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         session.execute(insert);
         return entity;
@@ -64,8 +66,8 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(ttl, "ttl is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.execute(insert);
@@ -75,7 +77,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public void delete(ColumnDeleteQuery query) {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         session.execute(delete);
     }
@@ -83,7 +85,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public List<ColumnEntity> select(ColumnQuery query) {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSet resultSet = session.execute(select);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
@@ -92,9 +94,9 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public ColumnEntity save(ColumnEntity entity, ConsistencyLevel level) throws NullPointerException {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
-        insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         session.execute(insert);
         return entity;
     }
@@ -102,11 +104,11 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public ColumnEntity save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws NullPointerException {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(ttl, "ttl is required");
-        Objects.requireNonNull(level, "level is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
+        requireNonNull(level, "level is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
-        insert.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.execute(insert);
         return entity;
@@ -114,7 +116,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, ConsistencyLevel level) throws NullPointerException {
-        Objects.requireNonNull(entities, "entity is required");
+        requireNonNull(entities, "entity is required");
 
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(e -> this.save(e, level))
@@ -124,7 +126,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) throws NullPointerException {
-        Objects.requireNonNull(entities, "entity is required");
+        requireNonNull(entities, "entity is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(e -> this.save(e, ttl, level))
                 .collect(Collectors.toList());
@@ -132,19 +134,19 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public void delete(ColumnDeleteQuery query, ConsistencyLevel level) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(level, "level is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(level, "level is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
-        delete.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        delete.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         session.execute(delete);
     }
 
     @Override
     public List<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(level, "level is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(level, "level is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
-        select.setConsistencyLevel(Objects.requireNonNull(level, "ConsistencyLevel is required"));
+        select.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         ResultSet resultSet = session.execute(select);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
                 .collect(Collectors.toList());
@@ -152,15 +154,20 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public List<ColumnEntity> cql(String query) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         ResultSet resultSet = session.execute(query);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
                 .collect(Collectors.toList());
     }
 
     @Override
+    public List<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException {
+        return null;
+    }
+
+    @Override
     public List<ColumnEntity> execute(Statement statement) throws NullPointerException {
-        Objects.requireNonNull(statement, "statement is required");
+        requireNonNull(statement, "statement is required");
         ResultSet resultSet = session.execute(statement);
         return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
                 .collect(Collectors.toList());
@@ -168,7 +175,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     @Override
     public CassandraPrepareStatment nativeQueryPrepare(String query) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         com.datastax.driver.core.PreparedStatement prepare = session.prepare(query);
         return new CassandraPrepareStatment(prepare, executor, session);
     }
