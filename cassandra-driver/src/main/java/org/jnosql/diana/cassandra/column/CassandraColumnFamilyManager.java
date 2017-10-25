@@ -38,8 +38,6 @@ import java.util.Map;
 public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
 
 
-
-
     /**
      * Saves a ColumnEntity with a defined ConsistencyLevel
      *
@@ -102,6 +100,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * @throws NullPointerException when either query or level are null
      */
     List<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException;
+
     /**
      * Executes CQL
      *
@@ -114,10 +113,12 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
 
     /**
      * Executes CQL using the provided named values.
-     *E.g.: "SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)"
-     * @param query the Cassndra query language
+     * E.g.: "SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)"
+     *
+     * @param query  the Cassndra query language
+     * @param values the names params
      * @return the result of this query
-     * @throws NullPointerException when query is null
+     * @throws NullPointerException when either query or values are null
      */
     List<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException;
 
