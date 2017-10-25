@@ -93,30 +93,23 @@ final class QueryUtils {
 
     private static Object getUdtValue(UserType userType, Iterable elements) {
 
+        List<Object> udtValues = new ArrayList<>();
+        UDTValue udtValue = userType.newValue();
         for (Object object : elements) {
             if (Column.class.isInstance(object)) {
-                UDTValue udtValue = userType.newValue();
                 Column column = Column.class.cast(object);
                 Object convert = ValueUtil.convert(column.getValue());
                 TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(convert);
                 udtValue.set(column.getName(), convert, objectTypeCodec);
-                return udtValue;
-            } else if (Set.class.isInstance(object)) {
-                return Collections.emptySet();
+
             } else if (Iterable.class.isInstance(object)) {
-                UDTValue udtValue = userType.newValue();
-                List<Object> udtValues = new ArrayList<>();
-                for (Object udt : Iterable.class.cast(object)) {
-                    udtValues.add(getUdtValue(userType, Iterable.class.cast(udt)));
-                }
-                return udtValues;
-
+                udtValues.add(getUdtValue(userType, Iterable.class.cast(Iterable.class.cast(object))));
             }
-
-            throw new UnsupportedOperationException("There is not support to UDT to the type: ");
         }
-
-        return null;
+        if (udtValues.isEmpty()) {
+            return udtValue;
+        }
+        return udtValues;
 
     }
 
