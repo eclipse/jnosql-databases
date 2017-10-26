@@ -33,4 +33,14 @@ class AQLQueryResult {
     public Map<String, Object> getValues() {
         return values;
     }
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("AQLQueryResult{");
+        sb.append("query='").append(query).append('\'');
+        sb.append(", values=").append(values);
+        sb.append('}');
+        return sb.toString();
+    }
 }
