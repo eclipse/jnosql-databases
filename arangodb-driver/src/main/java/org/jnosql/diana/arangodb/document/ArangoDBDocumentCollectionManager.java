@@ -32,6 +32,7 @@ import org.jnosql.diana.api.writer.ValueWriterDecorator;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +47,14 @@ import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 public interface ArangoDBDocumentCollectionManager extends DocumentCollectionManager {
 
 
-
+    /**
+     * Executes ArangoDB query language, AQL.
+     *
+     * @param query  the query
+     * @param values the named queries
+     * @return the query result
+     * @throws NullPointerException when either query or values are null
+     */
+    List<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException;
 
 }
