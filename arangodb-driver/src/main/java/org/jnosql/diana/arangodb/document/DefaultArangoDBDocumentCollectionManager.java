@@ -109,7 +109,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
-      requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         AQLQueryResult result = AQLUtils.convert(query);
 
         ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.getQuery(),
@@ -146,7 +146,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     private boolean checkCondition(Optional<DocumentCondition> query) {
         return !query.isPresent();
     }
-
 
 
     @Override
