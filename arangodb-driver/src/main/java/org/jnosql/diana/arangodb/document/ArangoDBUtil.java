@@ -92,14 +92,16 @@ public final class ArangoDBUtil {
         return query.isPresent();
     }
 
-    static DocumentEntity toEntity(String collection, BaseDocument document) {
+    static DocumentEntity toEntity(BaseDocument document) {
         Map<String, Object> properties = document.getProperties();
         List<Document> documents = properties.keySet().stream()
                 .map(k -> toDocument(k, properties))
                 .collect(Collectors.toList());
+
         documents.add(Document.of(KEY, document.getKey()));
         documents.add(Document.of(ID, document.getId()));
         documents.add(Document.of(REV, document.getRevision()));
+        String collection = document.getId().split("/")[0];
         return DocumentEntity.of(collection, documents);
     }
 

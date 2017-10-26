@@ -167,7 +167,7 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
             CompletableFuture<BaseDocument> future = arangoDBAsync.db(database).collection(collection)
                     .getDocument(key, BaseDocument.class);
 
-            future.thenAccept(d -> callBack.accept(singletonList(toEntity(collection, d))));
+            future.thenAccept(d -> callBack.accept(singletonList(toEntity(d))));
 
             return;
         }
@@ -185,7 +185,7 @@ public class ArangoDBDocumentCollectionManagerAsync implements DocumentCollectio
             for (String key : keys) {
                 CompletableFuture<BaseDocument> future = arangoDBAsync.db(database).collection(collection)
                         .getDocument(key, BaseDocument.class);
-                futures.add(future.thenAcceptAsync(d -> entities.add(toEntity(collection, d))));
+                futures.add(future.thenAcceptAsync(d -> entities.add(toEntity(d))));
             }
             CompletableFuture.allOf(futures.toArray(
                     new CompletableFuture[futures.size()]))

@@ -14,31 +14,11 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.DocumentCreateEntity;
-import org.jnosql.diana.api.Condition;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
-import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
-import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.singletonList;
-import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 
 /**
  * The ArangoDB implementation of {@link DocumentCollectionManager} it does not support to TTL methods:

@@ -17,15 +17,11 @@ package org.jnosql.diana.arangodb.document;
 
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -37,6 +33,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.DocumentCondition.eq;
@@ -53,7 +50,7 @@ import static org.junit.Assert.assertTrue;
 public class ArangoDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private DocumentCollectionManager entityManager;
+    private ArangoDBDocumentCollectionManager entityManager;
     private Random random;
     private String KEY_NAME = "_key";
 
@@ -155,6 +152,17 @@ public class ArangoDBDocumentCollectionManagerTest {
 
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
+    }
+
+    @Test
+    public void shouldRunAQL() {
+        DocumentEntity entity = getEntity();
+        DocumentEntity entitySaved = entityManager.insert(entity);
+
+        String aql = "FOR a IN person FILTER a.name == @name RETURN a";
+        List<DocumentEntity> entities = entityManager.aql(aql,
+                singletonMap("name", "Poliana"));
+        assertNotNull(entities);
     }
 
     private DocumentEntity createSubdocumentList() {

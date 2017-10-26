@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.arangodb.document;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
@@ -31,14 +32,17 @@ import org.jnosql.diana.api.writer.ValueWriterDecorator;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 
-class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollectionManager{
+class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollectionManager {
 
 
     public static final String KEY = "_key";
@@ -86,7 +90,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         String collection = query.getDocumentCollection();
         if (checkCondition(query.getCondition())) {
             return;
@@ -108,7 +112,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         if (checkCondition(query.getCondition())) {
             return Collections.emptyList();
         }
@@ -128,9 +132,22 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
             List<String> keys = value.get(new TypeReference<List<String>>() {
             });
             return keys.stream().map(k -> toEntity(collection, k))
-                    .collect(Collectors.toList());
+                    .collect(toList());
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        requireNonNull(values, "values is required");
+
+        ArangoCursor<BaseDocument> result = arangoDB.db(database).query(query, values, null, BaseDocument.class);
+        List<DocumentEntity> entities = StreamSupport.stream(result.spliterator(), false)
+                .map(ArangoDBUtil::toEntity)
+                .collect(toList());
+
+        return entities;
     }
 
 
@@ -153,7 +170,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         if (Objects.isNull(document)) {
             return null;
         }
-        return ArangoDBUtil.toEntity(collection, document);
+        return ArangoDBUtil.toEntity(document);
     }
 
 
@@ -161,4 +178,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
+
+
 }
