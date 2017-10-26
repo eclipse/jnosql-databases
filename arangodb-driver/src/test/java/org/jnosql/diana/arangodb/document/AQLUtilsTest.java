@@ -126,6 +126,18 @@ public class AQLUtilsTest {
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 1, 5 RETURN c", aql);
+    }
+
+    @Test
+    public void shouldRunEqualsQueryNot() {
+        DocumentQuery query = select().from("collection")
+                .where(eq(Document.of("name", "value")).negate()).build();
+
+        AQLQueryResult convert = AQLUtils.convert(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER  NOT  c.name == @name RETURN c", aql);
 
     }
 
