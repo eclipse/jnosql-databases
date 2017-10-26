@@ -31,6 +31,7 @@
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
         <arango.driver>4.2.6</arango.driver>
+        <arango.async.driver>4.2.5</arango.async.driver>
     </properties>
     <dependencies>
         <dependency>
@@ -62,7 +63,7 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>arangodb-java-driver-async</artifactId>
-            <version>${arango.driver}</version>
+            <version>${arango.async.driver}</version>
         </dependency>
     </dependencies>
     <build>
