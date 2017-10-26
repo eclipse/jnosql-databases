@@ -15,12 +15,14 @@
 package org.jnosql.diana.arangodb.document;
 
 import org.jnosql.diana.api.document.Document;
+import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.junit.Test;
 
 import java.util.Map;
 
 import static org.jnosql.diana.api.document.DocumentCondition.eq;
+import static org.jnosql.diana.api.document.DocumentCondition.lte;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
 
@@ -36,6 +38,36 @@ public class AQLUtilsTest {
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name RETURN c", aql);
+
+    }
+
+    @Test
+    public void shouldRunEqualsQueryAnd() {
+        DocumentQuery query = select().from("collection")
+                .where(eq(Document.of("name", "value")))
+                .and(lte(Document.of("age", 10)))
+                .build();
+
+        AQLQueryResult convert = AQLUtils.convert(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER  c.name == @name AND  c.age <= @age RETURN c", aql);
+
+    }
+
+    @Test
+    public void shouldRunEqualsQueryOr() {
+        DocumentQuery query = select().from("collection")
+                .where(eq(Document.of("name", "value")))
+                .or(lte(Document.of("age", 10)))
+                .build();
+
+        AQLQueryResult convert = AQLUtils.convert(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER  c.name == @name OR  c.age <= @age RETURN c", aql);
 
     }
 
