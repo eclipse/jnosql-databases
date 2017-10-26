@@ -83,7 +83,7 @@ public class AQLUtilsTest {
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name SORT c.name ASC RETURN c", aql);
+        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC RETURN c", aql);
     }
 
     @Test
@@ -99,5 +99,35 @@ public class AQLUtilsTest {
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC , c.age DESC RETURN c", aql);
     }
+
+
+    @Test
+    public void shouldRunEqualsQueryLimit() {
+        DocumentQuery query = select().from("collection")
+                .where(eq(Document.of("name", "value")))
+                .limit(5).build();
+
+        AQLQueryResult convert = AQLUtils.convert(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 5 RETURN c", aql);
+
+    }
+
+    @Test
+    public void shouldRunEqualsQueryLimit2() {
+        DocumentQuery query = select().from("collection")
+                .where(eq(Document.of("name", "value")))
+                .start(1).limit(5).build();
+
+        AQLQueryResult convert = AQLUtils.convert(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 1, 5 RETURN c", aql);
+
+    }
+
 
 }
