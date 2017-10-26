@@ -14,13 +14,15 @@
  */
 package org.jnosql.diana.arangodb.document;
 
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.junit.Test;
 
 import java.util.Map;
 
+import static org.jnosql.diana.api.Sort.SortType.ASC;
+import static org.jnosql.diana.api.Sort.SortType.DESC;
 import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.DocumentCondition.lte;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
@@ -69,6 +71,33 @@ public class AQLUtilsTest {
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name OR  c.age <= @age RETURN c", aql);
 
+    }
+
+    @Test
+    public void shouldRunEqualsQuerySort() {
+        DocumentQuery query = select().from("collection")
+                .where(eq(Document.of("name", "value")))
+                .orderBy(Sort.of("name", ASC)).build();
+
+        AQLQueryResult convert = AQLUtils.convert(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER  c.name == @name SORT c.name ASC RETURN c", aql);
+    }
+
+    @Test
+    public void shouldRunEqualsQuerySort2() {
+        DocumentQuery query = select().from("collection")
+                .where(eq(Document.of("name", "value")))
+                .orderBy(Sort.of("name", ASC))
+                .orderBy(Sort.of("age", DESC)).build();
+
+        AQLQueryResult convert = AQLUtils.convert(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC , c.age DESC RETURN c", aql);
     }
 
 }
