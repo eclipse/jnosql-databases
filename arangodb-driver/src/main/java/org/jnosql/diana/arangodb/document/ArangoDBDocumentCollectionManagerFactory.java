@@ -36,7 +36,7 @@ public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollect
     @Override
     public ArangoDBDocumentCollectionManager get(String database) {
         ArangoDBUtil.checkDatabase(database, arangoDB);
-        return new ArangoDBDocumentCollectionManager(database, arangoDB);
+        return new DefaultArangoDBDocumentCollectionManager(database, arangoDB);
     }
 
     @Override
