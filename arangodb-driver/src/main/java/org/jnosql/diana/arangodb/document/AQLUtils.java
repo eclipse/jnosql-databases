@@ -75,25 +75,25 @@ final class AQLUtils {
         Document document = condition.getDocument();
         switch (condition.getCondition()) {
             case IN:
-                appendcondition(aql, params, entity, document, " IN ");
+                appendCondtion(aql, params, entity, document, " IN ");
                 return;
             case EQUALS:
-                appendcondition(aql, params, entity, document, " == ");
+                appendCondtion(aql, params, entity, document, " == ");
                 return;
             case GREATER_EQUALS_THAN:
-                appendcondition(aql, params, entity, document, " >= ");
+                appendCondtion(aql, params, entity, document, " >= ");
                 return;
             case GREATER_THAN:
-                appendcondition(aql, params, entity, document, " > ");
+                appendCondtion(aql, params, entity, document, " > ");
                 return;
             case LESSER_THAN:
-                appendcondition(aql, params, entity, document, " < ");
+                appendCondtion(aql, params, entity, document, " < ");
                 return;
             case LESSER_EQUALS_THAN:
-                appendcondition(aql, params, entity, document, " <= ");
+                appendCondtion(aql, params, entity, document, " <= ");
                 return;
             case LIKE:
-                appendcondition(aql, params, entity, document, " LIKE ");
+                appendCondtion(aql, params, entity, document, " LIKE ");
                 return;
             case AND:
 
@@ -123,11 +123,19 @@ final class AQLUtils {
         }
     }
 
-    private static void appendcondition(StringBuilder aql, Map<String, Object> params, char entity, Document document,
-                                        String condition) {
+    private static void appendCondtion(StringBuilder aql, Map<String, Object> params, char entity, Document document,
+                                       String condition) {
+        String nameParam = getNameParam(document.getName());
         aql.append(" ").append(entity).append('.').append(document.getName())
-                .append(condition).append('@').append(document.getName());
-        params.put(document.getName(), document.get());
+                .append(condition).append('@').append(nameParam);
+        params.put(nameParam, document.get());
+    }
+
+    private static String getNameParam(String name) {
+        if ('_' == name.charAt(0)) {
+            return name.substring(1);
+        }
+        return name;
     }
 
 
