@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.arangodb.document;
 
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -22,6 +23,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 final class AQLUtils {
 
@@ -39,9 +41,31 @@ final class AQLUtils {
             DocumentCondition condition = query.getCondition().get();
             definesCondition(condition, aql, params, entity, 0);
         }
+        if (!query.getSorts().isEmpty()) {
+            sort(query, aql, entity);
+        }
+
+        if (query.getFirstResult() > 0 && query.getMaxResults() > 0) {
+            aql.append(" LIMIT ").append(query.getFirstResult())
+                    .append(", ").append(query.getMaxResults());
+        } else if (query.getMaxResults() > 0) {
+            aql.append(" LIMIT ").append(query.getMaxResults());
+        }
 
         aql.append(" RETURN ").append(entity);
         return new AQLQueryResult(aql.toString(), params);
+    }
+
+    private static void sort(DocumentQuery query, StringBuilder aql, char entity) {
+        aql.append(" SORT ");
+        String separator = " ";
+        for (Sort sort : query.getSorts()) {
+            aql.append(separator)
+                    .append(entity).append('.')
+                    .append(sort.getName())
+                    .append(" ").append(sort.getType());
+            separator = " , ";
+        }
     }
 
     private static void definesCondition(DocumentCondition condition,
@@ -107,14 +131,5 @@ final class AQLUtils {
         params.put(document.getName(), document.get());
     }
 
-//    == equality
-//!= inequality
-//            < less than
-//<= less or equal
-//> greater than
-//>= greater or equal
-//    IN test if a value is contained in an array
-//    NOT IN test if a value is not contained in an array
-//    LIKE tests if a string value matches a pattern
 
 }
