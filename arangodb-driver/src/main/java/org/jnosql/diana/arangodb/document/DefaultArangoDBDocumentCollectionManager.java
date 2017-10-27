@@ -97,9 +97,12 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
             deleteByKey(query, collection, arangoDB, database);
         }
 
+        AQLQueryResult delete = AQLUtils.delete(query);
+        arangoDB.db(database).query(delete.getQuery(), delete.getValues(),
+                null, BaseDocument.class);
+
+
     }
-
-
 
 
     @Override
