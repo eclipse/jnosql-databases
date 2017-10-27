@@ -41,7 +41,7 @@ public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollect
 
     @Override
     public ArangoDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new ArangoDBDocumentCollectionManagerAsync(database, arangoDB, arangoDBAsync);
+        return new DefaultArangoDBDocumentCollectionManagerAsync(database, arangoDB, arangoDBAsync);
     }
 
     @Override
