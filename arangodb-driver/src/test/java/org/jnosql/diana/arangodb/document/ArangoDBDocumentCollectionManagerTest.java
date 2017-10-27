@@ -89,6 +89,17 @@ public class ArangoDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldRemoveEntity2() {
+        DocumentEntity documentEntity = entityManager.insert(getEntity());
+        Optional<Document> id = documentEntity.find("name");
+        DocumentQuery select = select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        entityManager.delete(deleteQuery);
+        assertTrue(entityManager.select(select).isEmpty());
+    }
+
+
+    @Test
     public void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find(KEY_NAME);
