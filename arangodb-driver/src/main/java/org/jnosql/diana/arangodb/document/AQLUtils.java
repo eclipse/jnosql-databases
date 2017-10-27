@@ -54,7 +54,6 @@ final class AQLUtils {
     }
 
 
-
     private static AQLQueryResult convert(String documentCollection,
                                           Optional<DocumentCondition> documentCondition,
                                           List<Sort> sorts,
@@ -151,6 +150,8 @@ final class AQLUtils {
                 aql.append(" NOT ");
                 definesCondition(documentCondition, aql, params, entity, ++count);
                 return;
+            default:
+                throw new IllegalArgumentException("The condition does not support in AQL: " + condition.getCondition());
         }
     }
 
@@ -168,8 +169,6 @@ final class AQLUtils {
         }
         return name;
     }
-
-
 
 
 }
