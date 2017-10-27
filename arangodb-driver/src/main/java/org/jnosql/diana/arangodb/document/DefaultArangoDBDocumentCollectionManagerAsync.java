@@ -19,14 +19,8 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
-import com.arangodb.entity.DocumentDeleteEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
-import com.arangodb.entity.MultiDocumentEntity;
-import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -37,13 +31,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.KEY;
-import static org.jnosql.diana.arangodb.document.ArangoDBUtil.checkCondition;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
+import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.deleteByKey;
 import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.findByKeys;
 import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.isJustKey;
 
@@ -121,27 +114,13 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(callBack, "callBack is required");
 
-        String collection = query.getDocumentCollection();
-        if (checkCondition(query.getCondition())) {
-            return;
-        }
-        DocumentCondition condition = query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
-        Value value = condition.getDocument().getValue();
-        if (Condition.IN.equals(condition.getCondition())) {
-            List<String> keys = value.get(new TypeReference<List<String>>() {
-            });
-            CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> future = arangoDBAsync.db(database)
-                    .collection(collection).deleteDocuments(keys);
-            future.thenAccept(d -> callBack.accept(null));
-        } else if (Condition.IN.equals(condition.getCondition())) {
-            String key = value.get(String.class);
-            CompletableFuture<DocumentDeleteEntity<Void>> future = arangoDBAsync.db(database).
-                    collection(collection).deleteDocument(key);
-            future.thenAccept(d -> callBack.accept(null));
+        if (isJustKey(query.getCondition(), KEY)) {
+            deleteByKey(query, callBack, arangoDBAsync, database);
         }
 
     }
+
+
 
     @Override
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)

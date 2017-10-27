@@ -17,6 +17,8 @@ package org.jnosql.diana.arangodb.document;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.DocumentDeleteEntity;
+import com.arangodb.entity.MultiDocumentEntity;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
@@ -81,7 +83,7 @@ final class OperationsByKeysUtils {
 
             return;
         }
-        if (Condition.IN.equals(condition.getCondition())) {
+        if (IN.equals(condition.getCondition())) {
             List<String> keys = value.get(new TypeReference<List<String>>() {
             });
             List<DocumentEntity> entities = synchronizedList(new ArrayList<>());
@@ -136,6 +138,27 @@ final class OperationsByKeysUtils {
         } else if (EQUALS.equals(condition.getCondition())) {
             String key = value.get(String.class);
             arangoDB.db(database).collection(collection).deleteDocument(key);
+        }
+    }
+
+    public static void deleteByKey(DocumentDeleteQuery query, Consumer<Void> callBack,
+                                   ArangoDBAsync arangoDBAsync, String database) {
+
+        String collection = query.getDocumentCollection();
+        DocumentCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
+        Value value = condition.getDocument().getValue();
+        if (IN.equals(condition.getCondition())) {
+            List<String> keys = value.get(new TypeReference<List<String>>() {
+            });
+            CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> future = arangoDBAsync.db(database)
+                    .collection(collection).deleteDocuments(keys);
+            future.thenAccept(d -> callBack.accept(null));
+        } else if (EQUALS.equals(condition.getCondition())) {
+            String key = value.get(String.class);
+            CompletableFuture<DocumentDeleteEntity<Void>> future = arangoDBAsync.db(database).
+                    collection(collection).deleteDocument(key);
+            future.thenAccept(d -> callBack.accept(null));
         }
     }
 }
