@@ -108,12 +108,12 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     @Override
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        AQLQueryResult result = AQLUtils.select(query);
+
 
         if (isJustKey(query.getCondition(), KEY)) {
             return findByKeys(query, arangoDB, database);
         }
-
+        AQLQueryResult result = AQLUtils.select(query);
         ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.getQuery(),
                 result.getValues(), null, BaseDocument.class);
 
