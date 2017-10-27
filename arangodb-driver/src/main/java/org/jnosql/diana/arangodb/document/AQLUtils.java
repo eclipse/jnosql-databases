@@ -39,7 +39,7 @@ final class AQLUtils {
                 Collections.emptyList(),
                 0L,
                 0L,
-                " REMOVE ");
+                " REMOVE ", true);
     }
 
     public static AQLQueryResult select(DocumentQuery query) throws NullPointerException {
@@ -49,7 +49,7 @@ final class AQLUtils {
                 query.getSorts(),
                 query.getFirstResult(),
                 query.getMaxResults(),
-                " RETURN ");
+                " RETURN ", false);
 
     }
 
@@ -59,7 +59,7 @@ final class AQLUtils {
                                           List<Sort> sorts,
                                           long firstResult,
                                           long maxResult,
-                                          String conclusion) {
+                                          String conclusion, boolean delete) {
         StringBuilder aql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
         char entity = Character.toLowerCase(documentCollection.charAt(0));
@@ -82,6 +82,9 @@ final class AQLUtils {
         }
 
         aql.append(conclusion).append(entity);
+        if (delete) {
+            aql.append(" IN ").append(documentCollection);
+        }
         return new AQLQueryResult(aql.toString(), params);
     }
 
