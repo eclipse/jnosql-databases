@@ -28,11 +28,11 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.KEY;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
@@ -111,23 +111,26 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
     public void delete(DocumentDeleteQuery query, Consumer<Void> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
 
         if (isJustKey(query.getCondition(), KEY)) {
             deleteByKey(query, callBack, arangoDBAsync, database);
         }
 
+        AQLQueryResult delete = AQLUtils.delete(query);
+        CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(delete.getQuery(), delete.getValues(),
+                null, BaseDocument.class);
+        future.thenAccept(c -> callBack.accept(null));
     }
-
 
 
     @Override
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
 
         if (isJustKey(query.getCondition(), KEY)) {
             findByKeys(query, callBack, arangoDBAsync, database);
