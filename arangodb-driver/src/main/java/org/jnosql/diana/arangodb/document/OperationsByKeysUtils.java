@@ -15,7 +15,9 @@
 package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.BaseDocument;
+import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -23,12 +25,16 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static java.util.Collections.singletonList;
+import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
@@ -57,6 +63,47 @@ final class OperationsByKeysUtils {
         }
 
         return Collections.emptyList();
+    }
+
+    public static void findByKeys(DocumentQuery query, Consumer<List<DocumentEntity>> callBack,
+                                  ArangoDBAsync arangoDBAsync, String database) {
+
+        DocumentCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
+        Value value = condition.getDocument().getValue();
+        String collection = query.getDocumentCollection();
+        if (Condition.EQUALS.equals(condition.getCondition())) {
+            String key = value.get(String.class);
+            CompletableFuture<BaseDocument> future = arangoDBAsync.db(database).collection(collection)
+                    .getDocument(key, BaseDocument.class);
+
+            future.thenAccept(d -> callBack.accept(singletonList(ArangoDBUtil.toEntity(d))));
+
+            return;
+        }
+        if (Condition.IN.equals(condition.getCondition())) {
+            List<String> keys = value.get(new TypeReference<List<String>>() {
+            });
+            List<DocumentEntity> entities = synchronizedList(new ArrayList<>());
+
+            if (keys.isEmpty()) {
+                callBack.accept(Collections.emptyList());
+                return;
+            }
+
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            for (String key : keys) {
+                CompletableFuture<BaseDocument> future = arangoDBAsync.db(database).collection(collection)
+                        .getDocument(key, BaseDocument.class);
+                futures.add(future.thenAcceptAsync(d -> entities.add(ArangoDBUtil.toEntity(d))));
+            }
+            CompletableFuture.allOf(futures.toArray(
+                    new CompletableFuture[futures.size()]))
+                    .thenAcceptAsync(v -> callBack.accept(entities));
+
+        }
+
+        callBack.accept(Collections.emptyList());
     }
 
     private static DocumentEntity toEntity(String collection, String key, ArangoDB arangoDB, String database) {
