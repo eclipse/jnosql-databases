@@ -15,37 +15,14 @@
 package org.jnosql.diana.arangodb.document;
 
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.DocumentCreateEntity;
-import com.arangodb.entity.DocumentDeleteEntity;
-import com.arangodb.entity.DocumentUpdateEntity;
-import com.arangodb.entity.MultiDocumentEntity;
-import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-
-import static java.util.Collections.singletonList;
-import static java.util.Collections.synchronizedList;
-import static org.jnosql.diana.arangodb.document.ArangoDBUtil.checkCondition;
-import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
-import static org.jnosql.diana.arangodb.document.ArangoDBUtil.toEntity;
 
 /**
  * The ArandoDB implementation of {@link DocumentCollectionManagerAsync}. It does not support to TTL methods:
