@@ -19,15 +19,14 @@ import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentEntity;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 /**
  * The ArandoDB implementation of {@link DocumentCollectionManagerAsync}. It does not support to TTL methods:
- * <p>{@link DocumentCollectionManagerAsync#insert(DocumentEntity, Duration)}</p>
- * <p>{@link DocumentCollectionManagerAsync#insert(DocumentEntity, Duration, Consumer)}</p>
+ * <p>{@link DocumentCollectionManagerAsync#insert(DocumentEntity, java.time.Duration)}</p>
+ * <p>{@link DocumentCollectionManagerAsync#insert(DocumentEntity, java.time.Duration, Consumer)}</p>
  */
 public interface ArangoDBDocumentCollectionManagerAsync extends DocumentCollectionManagerAsync {
 
