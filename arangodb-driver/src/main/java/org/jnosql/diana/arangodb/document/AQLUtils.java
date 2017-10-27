@@ -14,51 +14,92 @@
  */
 package org.jnosql.diana.arangodb.document;
 
+import com.arangodb.ArangoDB;
+import com.arangodb.entity.BaseDocument;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
+import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
+import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.api.Condition.EQUALS;
+import static org.jnosql.diana.api.Condition.IN;
 
 final class AQLUtils {
 
     private AQLUtils() {
     }
 
-    public static AQLQueryResult convert(DocumentQuery query) throws NullPointerException {
+    public static AQLQueryResult delete(DocumentDeleteQuery query) throws NullPointerException {
+
+        return convert(query.getDocumentCollection(),
+                query.getCondition(),
+                Collections.emptyList(),
+                0L,
+                0L,
+                " REMOVE ");
+    }
+
+    public static AQLQueryResult select(DocumentQuery query) throws NullPointerException {
+
+        return convert(query.getDocumentCollection(),
+                query.getCondition(),
+                query.getSorts(),
+                query.getFirstResult(),
+                query.getMaxResults(),
+                " RETURN ");
+
+    }
+
+
+
+    private static AQLQueryResult convert(String documentCollection,
+                                          Optional<DocumentCondition> documentCondition,
+                                          List<Sort> sorts,
+                                          long firstResult,
+                                          long maxResult,
+                                          String conclusion) {
         StringBuilder aql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
-        char entity = Character.toLowerCase(query.getDocumentCollection().charAt(0));
-        aql.append("FOR ").append(entity).append(" IN ").append(query.getDocumentCollection());
+        char entity = Character.toLowerCase(documentCollection.charAt(0));
+        aql.append("FOR ").append(entity).append(" IN ").append(documentCollection);
 
-        if (query.getCondition().isPresent()) {
+        if (documentCondition.isPresent()) {
             aql.append(" FILTER ");
-            DocumentCondition condition = query.getCondition().get();
+            DocumentCondition condition = documentCondition.get();
             definesCondition(condition, aql, params, entity, 0);
         }
-        if (!query.getSorts().isEmpty()) {
-            sort(query, aql, entity);
+        if (!sorts.isEmpty()) {
+            sort(sorts, aql, entity);
         }
 
-        if (query.getFirstResult() > 0 && query.getMaxResults() > 0) {
-            aql.append(" LIMIT ").append(query.getFirstResult())
-                    .append(", ").append(query.getMaxResults());
-        } else if (query.getMaxResults() > 0) {
-            aql.append(" LIMIT ").append(query.getMaxResults());
+        if (firstResult > 0 && maxResult > 0) {
+            aql.append(" LIMIT ").append(firstResult)
+                    .append(", ").append(maxResult);
+        } else if (maxResult > 0) {
+            aql.append(" LIMIT ").append(maxResult);
         }
 
-        aql.append(" RETURN ").append(entity);
+        aql.append(conclusion).append(entity);
         return new AQLQueryResult(aql.toString(), params);
     }
 
-    private static void sort(DocumentQuery query, StringBuilder aql, char entity) {
+    private static void sort(List<Sort> sorts, StringBuilder aql, char entity) {
         aql.append(" SORT ");
         String separator = " ";
-        for (Sort sort : query.getSorts()) {
+        for (Sort sort : sorts) {
             aql.append(separator)
                     .append(entity).append('.')
                     .append(sort.getName())
@@ -137,6 +178,8 @@ final class AQLUtils {
         }
         return name;
     }
+
+
 
 
 }
