@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.arangodb.document;
 
+import com.arangodb.ArangoCursorAsync;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.BaseDocument;
@@ -36,14 +37,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.KEY;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.checkCondition;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.findByKeys;
 import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.isJustKey;
 
-public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDocumentCollectionManagerAsync{
+public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDocumentCollectionManagerAsync {
 
     private final ArangoDB arangoDB;
 
@@ -145,9 +149,18 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
 
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(callBack, "callBack is required");
-        if(isJustKey(query.getCondition(), KEY)) {
+
+        if (isJustKey(query.getCondition(), KEY)) {
             findByKeys(query, callBack, arangoDBAsync, database);
         }
+        AQLQueryResult result = AQLUtils.select(query);
+        CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(result.getQuery(),
+                result.getValues(), null, BaseDocument.class);
+
+        future.thenAccept(b -> {
+            List<DocumentEntity> entities = StreamSupport.stream(b.spliterator(), false).map(ArangoDBUtil::toEntity).collect(toList());
+            callBack.accept(entities);
+        });
 
 
     }
