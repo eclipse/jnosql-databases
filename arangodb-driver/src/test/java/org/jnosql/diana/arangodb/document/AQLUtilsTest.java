@@ -35,7 +35,7 @@ public class AQLUtilsTest {
         DocumentQuery query = select().from("collection")
                 .where(eq(Document.of("name", "value"))).build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
@@ -50,7 +50,7 @@ public class AQLUtilsTest {
                 .and(lte(Document.of("age", 10)))
                 .build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
@@ -65,7 +65,7 @@ public class AQLUtilsTest {
                 .or(lte(Document.of("age", 10)))
                 .build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
@@ -79,7 +79,7 @@ public class AQLUtilsTest {
                 .where(eq(Document.of("name", "value")))
                 .orderBy(Sort.of("name", ASC)).build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
@@ -93,7 +93,7 @@ public class AQLUtilsTest {
                 .orderBy(Sort.of("name", ASC))
                 .orderBy(Sort.of("age", DESC)).build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
@@ -107,7 +107,7 @@ public class AQLUtilsTest {
                 .where(eq(Document.of("name", "value")))
                 .limit(5).build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
@@ -121,7 +121,7 @@ public class AQLUtilsTest {
                 .where(eq(Document.of("name", "value")))
                 .start(1).limit(5).build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));
@@ -133,7 +133,7 @@ public class AQLUtilsTest {
         DocumentQuery query = select().from("collection")
                 .where(eq(Document.of("name", "value")).negate()).build();
 
-        AQLQueryResult convert = AQLUtils.convert(query);
+        AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals("value", values.get("name"));

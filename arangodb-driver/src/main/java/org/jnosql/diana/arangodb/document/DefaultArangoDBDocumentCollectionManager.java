@@ -18,8 +18,6 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -29,19 +27,18 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.api.Condition.EQUALS;
-import static org.jnosql.diana.api.Condition.IN;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
+import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.deleteByKey;
+import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.findByKeys;
+import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.isJustKey;
 
 class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollectionManager {
 
@@ -96,28 +93,22 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         if (checkCondition(query.getCondition())) {
             return;
         }
-        DocumentCondition condition = query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
-        Value value = condition.getDocument().getValue();
-        if (IN.equals(condition.getCondition())) {
-            List<String> keys = value.get(new TypeReference<List<String>>() {
-            });
-            arangoDB.db(database).collection(collection).deleteDocuments(keys);
-        } else if (EQUALS.equals(condition.getCondition())) {
-            String key = value.get(String.class);
-            arangoDB.db(database).collection(collection).deleteDocument(key);
+        if (isJustKey(query.getCondition(), KEY)) {
+            deleteByKey(query, collection, arangoDB, database);
         }
 
     }
 
 
+
+
     @Override
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        AQLQueryResult result = AQLUtils.convert(query);
+        AQLQueryResult result = AQLUtils.select(query);
 
-        if (isJustKey(query)) {
-            return findByKeys(query);
+        if (isJustKey(query.getCondition(), KEY)) {
+            return findByKeys(query, arangoDB, database);
         }
 
         ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.getQuery(),
@@ -128,38 +119,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
                 .collect(toList());
     }
 
-    private List<DocumentEntity> findByKeys(DocumentQuery query) {
-        DocumentCondition condition = query.getCondition().get();
-        Value value = condition.getDocument().getValue();
-        String collection = query.getDocumentCollection();
-        if (EQUALS.equals(condition.getCondition())) {
-            String key = value.get(String.class);
-            DocumentEntity entity = toEntity(collection, key);
-            if (Objects.isNull(entity)) {
-                return Collections.emptyList();
-            }
-            return singletonList(entity);
-        } else if (IN.equals(condition.getCondition())) {
-            List<String> keys = value.get(new TypeReference<List<String>>() {
-            });
-            return keys.stream().map(k -> toEntity(collection, k))
-                    .collect(toList());
-        }
-
-        return Collections.emptyList();
-    }
-
-
-    private boolean isJustKey(DocumentQuery query) {
-        if (query.getCondition().isPresent()) {
-            DocumentCondition condition = query.getCondition().get();
-            boolean isKeyDocument = KEY.equals(condition.getDocument().getName());
-            boolean isEqualsKeys = EQUALS.equals(condition.getCondition()) && isKeyDocument;
-            boolean isINKeys = IN.equals(condition.getCondition()) && isKeyDocument;
-            return isEqualsKeys || isINKeys;
-        }
-        return false;
-    }
 
     private DocumentEntity toEntity(String collection, String key) {
         BaseDocument document = arangoDB.db(database).collection(collection).getDocument(key, BaseDocument.class);
