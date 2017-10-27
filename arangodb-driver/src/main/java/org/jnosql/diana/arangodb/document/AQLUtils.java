@@ -14,28 +14,18 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.entity.BaseDocument;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.api.Condition.EQUALS;
-import static org.jnosql.diana.api.Condition.IN;
 
 final class AQLUtils {
 
