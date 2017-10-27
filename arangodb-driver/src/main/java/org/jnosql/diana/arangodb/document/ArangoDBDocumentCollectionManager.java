@@ -29,6 +29,7 @@ public interface ArangoDBDocumentCollectionManager extends DocumentCollectionMan
 
     /**
      * Executes ArangoDB query language, AQL.
+     * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
      *
      * @param query  the query
      * @param values the named queries
