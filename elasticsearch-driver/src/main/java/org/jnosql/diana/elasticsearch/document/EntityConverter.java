@@ -113,12 +113,17 @@ final class EntityConverter {
         }
     }
 
-    private static void executeStatement(DocumentQuery query, Client client, String index, QueryConverter.QueryConverterResult select, List<DocumentEntity> entities) throws InterruptedException, ExecutionException {
+    private static void executeStatement(DocumentQuery query, Client client, String index,
+                                         QueryConverter.QueryConverterResult select,
+                                         List<DocumentEntity> entities)
+            throws InterruptedException, ExecutionException {
+
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch(index)
                 .setTypes(query.getDocumentCollection());
         if (select.hasQuery()) {
             searchRequestBuilder.setQuery(select.getStatement());
         }
+
         SearchResponse searchResponse = searchRequestBuilder.execute().get();
         stream(searchResponse.getHits().spliterator(), false)
                 .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
@@ -127,7 +132,10 @@ final class EntityConverter {
                 .forEach(entities::add);
     }
 
-    private static void executeId(DocumentQuery query, Client client, String index, QueryConverter.QueryConverterResult select, List<DocumentEntity> entities) throws InterruptedException, ExecutionException {
+    private static void executeId(DocumentQuery query, Client client, String index,
+                                  QueryConverter.QueryConverterResult select,
+                                  List<DocumentEntity> entities) throws InterruptedException, ExecutionException {
+        
         MultiGetResponse multiGetItemResponses = client
                 .prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
                 .execute().get();

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
@@ -115,8 +114,6 @@ final class QueryConverter {
 
     static class QueryConverterResult {
 
-
-        private static QueryConverterResult EMPTY = new QueryConverterResult(null, emptyList());
 
         private final QueryBuilder statement;
 
