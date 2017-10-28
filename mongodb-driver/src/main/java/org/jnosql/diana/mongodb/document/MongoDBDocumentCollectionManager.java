@@ -18,6 +18,7 @@ package org.jnosql.diana.mongodb.document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
@@ -40,6 +41,7 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
 
     private static final String ID_FIELD = "_id";
+    private static final BsonDocument EMPTY = new BsonDocument();
 
     private final MongoDatabase mongoDatabase;
 
@@ -99,8 +101,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     public List<DocumentEntity> select(DocumentQuery query) {
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("condition is required")));
+        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
         return stream(collection.find(mongoDBQuery).spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
 

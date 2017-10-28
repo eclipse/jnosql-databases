@@ -15,9 +15,13 @@
 package org.jnosql.diana.mongodb.document;
 
 
+import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.FindIterable;
+import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
@@ -29,6 +33,7 @@ import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
@@ -41,6 +46,8 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 public class MongoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
     private static final String ID_FIELD = "_id";
+
+    private static final BsonDocument EMPTY = new BsonDocument();
 
     private final MongoDatabase asyncMongoDatabase;
 
@@ -102,6 +109,19 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
+        String collectionName = query.getDocumentCollection();
+        MongoCollection<Document> collection = asyncMongoDatabase.getCollection(collectionName);
+        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
+        List<DocumentEntity> entities = new CopyOnWriteArrayList<>();
+        FindIterable<Document> result = collection.find(mongoDBQuery);
+        Block<Document> documentBlock = d -> entities.add(createEntity(collectionName, d));
+        SingleResultCallback<Void> voidSingleResultCallback = (v, e) -> callBack.accept(entities);
+        result.forEach(documentBlock, voidSingleResultCallback);
+    }
+
+    private DocumentEntity createEntity(String collectionName, Document document) {
+        ;
+        return DocumentEntity.of(collectionName, MongoDBUtils.of(document));
     }
 
     private void save(DocumentEntity entity, SingleResultCallback<Void> callBack) {
