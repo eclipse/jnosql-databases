@@ -15,9 +15,9 @@
 package org.jnosql.diana.mongodb.document;
 
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
+import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,23 +27,23 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.jnosql.diana.api.document.DocumentCondition.eq;
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
-import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getAsync;
+import static org.junit.Assert.assertTrue;
 
 
 public class MongoDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
 
-    private static DocumentCollectionManager entityManager;
+    private static DocumentCollectionManagerAsync entityManager;
 
     @BeforeClass
     public static void setUp() throws IOException {
         MongoDbHelper.startMongoDb();
-        entityManager = get().get("database");
+        entityManager = getAsync().getAsync("database");
     }
 
 
@@ -55,9 +55,23 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
     }
 
     @Test
+    public void shouldSelete() throws InterruptedException {
+        DocumentEntity entity = getEntity();
+        for (int index = 0; index < 10; index++) {
+            entityManager.insert(entity);
+        }
+        AtomicBoolean condition = new AtomicBoolean(false);
+        Thread.sleep(1000L);
+        DocumentQuery query = select().from(entity.getName()).build();
+        entityManager.select(query, c -> condition.set(true));
+        Thread.sleep(1000L);
+        assertTrue(condition.get());
+    }
+
+    @Test
     public void shouldUpdateAsync() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         entityManager.update(entity);
@@ -65,14 +79,8 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldRemoveEntityAsync() {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
-        Optional<Document> id = documentEntity.find("_id");
+        entityManager.insert(getEntity());
 
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
-                .where(eq(id.get()))
-                .build();
-
-        entityManager.delete(deleteQuery);
 
     }
 
