@@ -21,7 +21,6 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,14 +37,13 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getAsync;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
 public class MongoDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static final long WAIT_TIME = 1_000L;
+    private static final long WAIT_TIME = 400L;
 
     private static DocumentCollectionManagerAsync entityManager;
 
@@ -80,14 +78,6 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         assertTrue(condition.get());
     }
 
-    @Test
-    public void shouldUpdateAsync() {
-        DocumentEntity entity = getEntity();
-        entityManager.insert(entity);
-        Document newField = Documents.of("newField", "10");
-        entity.add(newField);
-        entityManager.update(entity);
-    }
 
     @Test
     public void shouldRemoveEntityAsync() throws InterruptedException {
