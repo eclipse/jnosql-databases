@@ -17,6 +17,7 @@ package org.jnosql.diana.elasticsearch.document;
 
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.jnosql.diana.api.document.Document;
@@ -98,28 +99,11 @@ final class EntityConverter {
         try {
             List<DocumentEntity> entities = new ArrayList<>();
 
-            if (!select.getIds().isEmpty()) {
-                MultiGetResponse multiGetItemResponses = client
-                        .prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
-                        .execute().get();
-
-                Stream.of(multiGetItemResponses.getResponses())
-                        .map(MultiGetItemResponse::getResponse)
-                        .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
-                        .filter(ElasticsearchEntry::isNotEmpty)
-                        .map(ElasticsearchEntry::toEntity)
-                        .forEach(entities::add);
+            if (select.hasId()) {
+                executeId(query, client, index, select, entities);
             }
-            if (nonNull(select.getStatement())) {
-                SearchResponse searchResponse = client.prepareSearch(index)
-                        .setTypes(query.getDocumentCollection())
-                        .setQuery(select.getStatement())
-                        .execute().get();
-                stream(searchResponse.getHits().spliterator(), false)
-                        .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
-                        .filter(ElasticsearchEntry::isNotEmpty)
-                        .map(ElasticsearchEntry::toEntity)
-                        .forEach(entities::add);
+            if (select.hasStatement()) {
+                executeStatement(query, client, index, select, entities);
             }
 
 
@@ -127,6 +111,33 @@ final class EntityConverter {
         } catch (InterruptedException | ExecutionException e) {
             throw new ElasticsearchException("An error to execute a query on elasticsearch", e);
         }
+    }
+
+    private static void executeStatement(DocumentQuery query, Client client, String index, QueryConverter.QueryConverterResult select, List<DocumentEntity> entities) throws InterruptedException, ExecutionException {
+        SearchRequestBuilder searchRequestBuilder = client.prepareSearch(index)
+                .setTypes(query.getDocumentCollection());
+        if (select.hasQuery()) {
+            searchRequestBuilder.setQuery(select.getStatement());
+        }
+        SearchResponse searchResponse = searchRequestBuilder.execute().get();
+        stream(searchResponse.getHits().spliterator(), false)
+                .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
+                .filter(ElasticsearchEntry::isNotEmpty)
+                .map(ElasticsearchEntry::toEntity)
+                .forEach(entities::add);
+    }
+
+    private static void executeId(DocumentQuery query, Client client, String index, QueryConverter.QueryConverterResult select, List<DocumentEntity> entities) throws InterruptedException, ExecutionException {
+        MultiGetResponse multiGetItemResponses = client
+                .prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
+                .execute().get();
+
+        Stream.of(multiGetItemResponses.getResponses())
+                .map(MultiGetItemResponse::getResponse)
+                .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
+                .filter(ElasticsearchEntry::isNotEmpty)
+                .map(ElasticsearchEntry::toEntity)
+                .forEach(entities::add);
     }
 
     static void queryAsync(DocumentQuery query, Client client, String index, Consumer<List<DocumentEntity>> callBack) {

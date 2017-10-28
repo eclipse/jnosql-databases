@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
@@ -39,8 +40,6 @@ import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
 final class QueryConverter {
 
-    static final String[] ALL_SELECT = new String[0];
-
     private static final Set<Condition> NOT_APPENDABLE = EnumSet.of(IN, Condition.AND, Condition.OR);
 
     private QueryConverter() {
@@ -48,13 +47,10 @@ final class QueryConverter {
 
     static QueryConverterResult select(DocumentQuery query) {
         List<String> ids = new ArrayList<>();
-        String[] documents = query.getDocuments().stream().toArray(size -> new String[size]);
-        if (documents.length == 0) {
-            documents = ALL_SELECT;
-        }
-        QueryBuilder condition = getCondition(query.getCondition().orElseThrow(() ->
-                new IllegalArgumentException("Condition is required")), ids);
-        return new QueryConverterResult(condition, ids);
+        return query.getCondition()
+                .map(c -> getCondition(c, ids))
+                .map(q -> new QueryConverterResult(q, ids))
+                .orElse(new QueryConverterResult(null, ids));
     }
 
 
@@ -117,9 +113,10 @@ final class QueryConverter {
     }
 
 
-
     static class QueryConverterResult {
 
+
+        private static QueryConverterResult EMPTY = new QueryConverterResult(null, emptyList());
 
         private final QueryBuilder statement;
 
@@ -137,6 +134,18 @@ final class QueryConverter {
 
         List<String> getIds() {
             return ids;
+        }
+
+        public boolean hasId() {
+            return !ids.isEmpty();
+        }
+
+        public boolean hasStatement() {
+            return statement != null || ids.isEmpty();
+        }
+
+        public boolean hasQuery() {
+            return statement != null;
         }
     }
 
