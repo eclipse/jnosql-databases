@@ -112,6 +112,16 @@ public class CassandraColumnFamilyManagerTest {
         columnEntityManager.save(columnEntity, CONSISTENCY_LEVEL);
     }
 
+    @Test
+    public void shouldFindAll() {
+        ColumnEntity columnEntity = getColumnFamily();
+        columnEntityManager.insert(columnEntity);
+
+        ColumnQuery query = select().from(columnEntity.getName()).build();
+        List<ColumnEntity> entities = columnEntityManager.select(query);
+        assertFalse(entities.isEmpty());
+    }
+
 
     @Test
     public void shouldFindById() {
