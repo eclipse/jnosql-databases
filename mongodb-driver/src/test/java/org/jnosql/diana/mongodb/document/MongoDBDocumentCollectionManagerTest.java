@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -103,6 +104,14 @@ public class MongoDBDocumentCollectionManagerTest {
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldFindAll() {
+        entityManager.insert(getEntity());
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(query);
+        Assert.assertFalse(entities.isEmpty());
     }
 
 
