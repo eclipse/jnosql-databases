@@ -69,7 +69,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        save(entity, (aVoid, throwable) -> callBack.accept(entity));
+        insert(entity, (aVoid, throwable) -> callBack.accept(entity));
     }
 
     @Override
@@ -120,11 +120,10 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     private DocumentEntity createEntity(String collectionName, Document document) {
-        ;
         return DocumentEntity.of(collectionName, MongoDBUtils.of(document));
     }
 
-    private void save(DocumentEntity entity, SingleResultCallback<Void> callBack) {
+    private void insert(DocumentEntity entity, SingleResultCallback<Void> callBack) {
         String collectionName = entity.getName();
         com.mongodb.async.client.MongoCollection<Document> collectionAsync =
                 asyncMongoDatabase.getCollection(collectionName);
@@ -138,7 +137,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
                 asyncMongoDatabase.getCollection(collectionName);
         Document id = entity.find(ID_FIELD).map(d -> new Document(d.getName(), d.getValue().get()))
                 .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
-                        "the field `id` is required"));
+                        "the field `_id` is required"));
 
         asyncCollection.findOneAndReplace(id, getDocument(entity), callBack);
     }
