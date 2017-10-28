@@ -131,6 +131,16 @@ public class ElasticsearchDocumentCollectionManagerTest {
         assertThat(entities, contains(entity));
     }
 
+    @Test
+    public void shouldFindAll() {
+        entityManager.insert(getEntity());
+
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+    }
+
+
 
     @Test
     public void shouldSaveSubDocument() {
