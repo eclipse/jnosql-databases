@@ -135,7 +135,7 @@ final class EntityConverter {
     private static void executeId(DocumentQuery query, Client client, String index,
                                   QueryConverter.QueryConverterResult select,
                                   List<DocumentEntity> entities) throws InterruptedException, ExecutionException {
-        
+
         MultiGetResponse multiGetItemResponses = client
                 .prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
                 .execute().get();
