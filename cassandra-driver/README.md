@@ -1,5 +1,5 @@
 
-![Cassandra Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/cassandra.png)
+![Cassandra Project](https://jnosql.github.io/jnosql-site/img/logos/cassandra.png)
 
 
 **Cassandra**: Apache Cassandra is a free and open-source distributed database management system designed to handle large amounts of data across many commodity servers, providing high availability with no single point of failure.
