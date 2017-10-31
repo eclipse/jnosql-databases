@@ -1,4 +1,4 @@
-![Couchbase Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/couchbase.png)
+![Couchbase Project](https://jnosql.github.io/jnosql-site/img/logos/couchbase.svg)
 
 
 
