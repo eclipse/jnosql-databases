@@ -1,4 +1,4 @@
-![Infinista Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/infinispan.png)
+![Infinista Project](https://jnosql.github.io/jnosql-site/img/logos/infinispan.svg)
 
 
 **Infinispan**:Infinispan is a distributed in-memory key/value data store with optional schema, available under the Apache License 2.0.
