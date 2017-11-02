@@ -1,5 +1,5 @@
 
-![Riak Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/riak.png)
+![Riak Project](https://jnosql.github.io/jnosql-site/img/logos/riak.png)
 
 
 **Riak**: Riak (pronounced "ree-ack" ) is a distributed NoSQL key-value data store that offers high availability, fault tolerance, operational simplicity, and scalability. In addition to the open-source version, it comes in a supported enterprise version and a cloud storage version. Riak implements the principles from Amazon's Dynamo paper with heavy influence from the CAP Theorem. Written in Erlang, Riak has fault tolerance data replication and automatic data distribution across the cluster for performance and resilience.

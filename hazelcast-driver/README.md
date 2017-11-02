@@ -1,7 +1,7 @@
-![Infinispan Project](https://github.com/JNOSQL/jnosql-site/blob/master/assets/img/logos/infinispan.png)
+![Hazelcast Project](https://jnosql.github.io/jnosql-site/img/logos/hazelcast.svg)
 
 
-**Infinispan**:In computing, Hazelcast is an open source in-memory data grid based on Java.
+**Hazelcast**:In computing, Hazelcast is an open source in-memory data grid based on Java.
 
 
 ### How To Install
