@@ -122,6 +122,17 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
+    public List<DocumentEntity> sql(String query, Map<String, Object> params) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        requireNonNull(params, "params is required");
+
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+            List<ODocument> result = tx.command(OSQLQueryFactory.parse(query)).execute(params);
+            return OrientDBConverter.convert(result);
+        }
+    }
+
+    @Override
     public void live(DocumentQuery query, Consumer<DocumentEntity> callBack) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callback is required");
