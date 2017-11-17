@@ -28,14 +28,14 @@ import static java.util.Optional.ofNullable;
 /**
  * The orientDB implementation of {@link UnaryDocumentConfiguration} that returns
  * {@link OrientDBDocumentCollectionManagerFactory}. It tries to read diana-arangodb.properties file.
- * <p>mongodb-server-host: the host</p>
- * <p>mongodb-server-user: the user</p>
- * <p>mongodb-server-password: the password</p>
- * <p>mongodb-server-storageType: the storage type</p>
+ * <p>orientdb-server-host: the host</p>
+ * <p>orientdb-server-user: the user</p>
+ * <p>orientdb-server-password: the password</p>
+ * <p>orientdb-server-storageType: the storage type</p>
  */
 public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
 
-    private static final String FILE_CONFIGURATION = "diana-arangodb.properties";
+    private static final String FILE_CONFIGURATION = "diana-orientdb.properties";
 
     private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentConfiguration.class.getName());
 
@@ -49,10 +49,10 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
 
     public OrientDBDocumentConfiguration() {
         Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
-        this.host = properties.get("mongodb-server-host");
-        this.user = properties.get("mongodb-server-user");
-        this.password = properties.get("mongodb-server-password");
-        this.storageType = properties.get("mongodb-server-storageType");
+        this.host = properties.get("orientdb-server-host");
+        this.user = properties.get("orientdb-server-user");
+        this.password = properties.get("orientdb-server-password");
+        this.storageType = properties.get("orientdb-server-storageType");
     }
 
     public void setHost(String host) {
@@ -95,10 +95,10 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
     private OrientDBDocumentCollectionManagerFactory getOrientDBDocumentCollectionManagerFactory(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        String host = getValue(settings, "mongodb-server-host");
-        String user = getValue(settings, "mongodb-server-user");
-        String password = getValue(settings, "mongodb-server-password");
-        String storageType = getValue(settings, "mongodb-server-storageType");
+        String host = getValue(settings, "orientdb-server-host");
+        String user = getValue(settings, "orientdb-server-user");
+        String password = getValue(settings, "orientdb-server-password");
+        String storageType = getValue(settings, "orientdb-server-storageType");
         return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
     }
 
