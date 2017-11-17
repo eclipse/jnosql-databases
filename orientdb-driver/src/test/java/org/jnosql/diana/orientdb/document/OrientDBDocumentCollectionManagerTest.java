@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
 import static java.util.logging.Level.FINEST;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -114,6 +115,26 @@ public class OrientDBDocumentCollectionManagerTest {
 
         DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
         List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shoulSQL() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("name");
+
+        List<DocumentEntity> entities = entityManager.sql("select * from person where name = ?", id.get().get());
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shoulSQL2() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("name");
+
+        List<DocumentEntity> entities = entityManager.sql("select * from person where name = :name", singletonMap("name", id.get().get()));
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
