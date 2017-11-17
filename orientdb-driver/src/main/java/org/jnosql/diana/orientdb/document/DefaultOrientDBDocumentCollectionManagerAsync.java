@@ -137,6 +137,21 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
+    @Override
+    public void sql(String query, Consumer<List<DocumentEntity>> callBack, Map<String, Object> params) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
+        requireNonNull(params, "params is required");
+
+        ODatabaseDocumentTx tx = pool.acquire();
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
+            callBack.accept(l.stream()
+                    .map(OrientDBConverter::convert)
+                    .collect(toList()));
+        }, params);
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+    }
+
 
     @Override
     public void close() {

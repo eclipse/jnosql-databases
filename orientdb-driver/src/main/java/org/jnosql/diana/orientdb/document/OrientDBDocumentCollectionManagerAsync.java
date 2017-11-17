@@ -19,6 +19,7 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentEntity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -40,4 +41,15 @@ public interface OrientDBDocumentCollectionManagerAsync extends DocumentCollecti
      * @throws NullPointerException when there any parameter null
      */
     void sql(String query, Consumer<List<DocumentEntity>> callBack, Object... params) throws NullPointerException;
+
+
+    /**
+     * Find async from Query
+     *
+     * @param query    the query
+     * @param callBack the callback
+     * @param params   the params
+     * @throws NullPointerException when there any parameter null
+     */
+    void sql(String query, Consumer<List<DocumentEntity>> callBack, Map<String, Object> params) throws NullPointerException;
 }
