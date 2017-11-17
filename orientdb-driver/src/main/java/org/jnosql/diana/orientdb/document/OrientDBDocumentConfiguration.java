@@ -20,7 +20,6 @@ import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -36,8 +35,10 @@ import static java.util.Optional.ofNullable;
 public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-orientdb.properties";
-
-    private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentConfiguration.class.getName());
+    private static final String SERVER_HOST = "orientdb-server-host";
+    private static final String SERVER_USER = "orientdb-server-user";
+    private static final String SERVER_PASSWORD = "orientdb-server-password";
+    private static final String SERVER_STORAGE_TYPE = "orientdb-server-storageType";
 
     private String host;
 
@@ -49,10 +50,10 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
 
     public OrientDBDocumentConfiguration() {
         Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
-        this.host = properties.get("orientdb-server-host");
-        this.user = properties.get("orientdb-server-user");
-        this.password = properties.get("orientdb-server-password");
-        this.storageType = properties.get("orientdb-server-storageType");
+        this.host = properties.get(SERVER_HOST);
+        this.user = properties.get(SERVER_USER);
+        this.password = properties.get(SERVER_PASSWORD);
+        this.storageType = properties.get(SERVER_STORAGE_TYPE);
     }
 
     public void setHost(String host) {
@@ -95,10 +96,10 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
     private OrientDBDocumentCollectionManagerFactory getOrientDBDocumentCollectionManagerFactory(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        String host = getValue(settings, "orientdb-server-host");
-        String user = getValue(settings, "orientdb-server-user");
-        String password = getValue(settings, "orientdb-server-password");
-        String storageType = getValue(settings, "orientdb-server-storageType");
+        String host = getValue(settings, SERVER_HOST);
+        String user = getValue(settings, SERVER_USER);
+        String password = getValue(settings, SERVER_PASSWORD);
+        String storageType = getValue(settings, SERVER_STORAGE_TYPE);
         return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
     }
 
