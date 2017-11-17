@@ -20,6 +20,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -44,6 +45,16 @@ public interface OrientDBDocumentCollectionManager extends DocumentCollectionMan
      * @throws NullPointerException when either query or params are null
      */
     List<DocumentEntity> sql(String query, Object... params) throws NullPointerException;
+
+    /**
+     * Find using query
+     *
+     * @param query  the query
+     * @param params the params
+     * @return the query result
+     * @throws NullPointerException when either query or params are null
+     */
+    List<DocumentEntity> sql(String query, Map<String, Object> params) throws NullPointerException;
 
     /**
      * Execute live query
