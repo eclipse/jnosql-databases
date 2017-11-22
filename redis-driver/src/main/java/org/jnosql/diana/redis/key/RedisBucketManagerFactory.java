@@ -15,67 +15,13 @@
 
 package org.jnosql.diana.redis.key;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
-
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
 import org.jnosql.diana.api.key.BucketManagerFactory;
-
-import redis.clients.jedis.JedisPool;
 
 /**
  * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisBucketManager}
  */
-public class RedisBucketManagerFactory implements BucketManagerFactory<RedisBucketManager> {
+public interface RedisBucketManagerFactory extends BucketManagerFactory<RedisBucketManager> {
 
-    private static final Jsonb JSON = JsonbBuilder.create();
-
-    private final JedisPool jedisPool;
-
-    RedisBucketManagerFactory(JedisPool jedisPool) {
-        this.jedisPool = jedisPool;
-    }
-
-
-    @Override
-    public RedisBucketManager getBucketManager(String bucketName) {
-        Objects.requireNonNull(bucketName, "bucket name is required");
-
-        return new RedisBucketManager(bucketName, JSON, jedisPool.getResource());
-    }
-
-    @Override
-    public <T> List<T> getList(String bucketName, Class<T> clazz) {
-        Objects.requireNonNull(bucketName, "bucket name is required");
-        Objects.requireNonNull(clazz, "Class type is required");
-        return new RedisList<T>(jedisPool.getResource(), clazz, bucketName);
-    }
-
-    @Override
-    public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
-        Objects.requireNonNull(bucketName, "bucket name is required");
-        Objects.requireNonNull(clazz, "Class type is required");
-        return new RedisSet<T>(jedisPool.getResource(), clazz, bucketName);
-    }
-
-    @Override
-    public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
-        Objects.requireNonNull(bucketName, "bucket name is required");
-        Objects.requireNonNull(clazz, "Class type is required");
-        return new RedisQueue<T>(jedisPool.getResource(), clazz, bucketName);
-    }
-
-    @Override
-    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
-        Objects.requireNonNull(bucketName, "bucket name is required");
-        Objects.requireNonNull(valueValue, "Class type is required");
-        return new RedisMap<>(jedisPool.getResource(), keyValue, valueValue, bucketName);
-    }
 
     /**
      * Creates a {@link SortedSet} from key
@@ -84,11 +30,7 @@ public class RedisBucketManagerFactory implements BucketManagerFactory<RedisBuck
      * @return the SortedSet from key
      * @throws NullPointerException when key is null
      */
-    public SortedSet getSortedSet(String key) throws NullPointerException {
-        Objects.requireNonNull(key, "key is required");
-        return new DefaultSortedSet(jedisPool.getResource(), key);
-    }
-
+    SortedSet getSortedSet(String key) throws NullPointerException;
     /**
      * Creates {@link Counter}
      *
@@ -96,22 +38,6 @@ public class RedisBucketManagerFactory implements BucketManagerFactory<RedisBuck
      * @return a counter instance from key
      * @throws NullPointerException when key is null
      */
-    public Counter getCounter(String key) throws NullPointerException {
-        Objects.requireNonNull(key, "key is required");
-        return new DefaultCounter(key, jedisPool.getResource());
-    }
+    Counter getCounter(String key) throws NullPointerException;
 
-
-    @Override
-    public void close() {
-        jedisPool.close();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("RedisBucketManagerFactory{");
-        sb.append("jedisPool=").append(jedisPool);
-        sb.append('}');
-        return sb.toString();
-    }
 }
