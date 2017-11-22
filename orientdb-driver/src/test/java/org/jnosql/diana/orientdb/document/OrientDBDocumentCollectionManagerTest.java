@@ -120,7 +120,7 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shoulSQL() {
+    public void shouldSQL() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find("name");
 
@@ -130,7 +130,7 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shoulSQL2() {
+    public void shouldSQL2() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find("name");
 

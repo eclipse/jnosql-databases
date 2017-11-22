@@ -31,13 +31,13 @@ import java.util.Set;
  * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
  */
-public class ArangoDBKeyValueEntityManagerFactory implements BucketManagerFactory<ArangoDBValueEntityManager> {
+public class ArangoDBBucketManagerFactory implements BucketManagerFactory<ArangoDBValueEntityManager> {
 
     private static final String DEFAULT_NAMESPACE = "diana";
 
     private final ArangoDB arangoDB;
 
-    ArangoDBKeyValueEntityManagerFactory(ArangoDB arangoDB) {
+    ArangoDBBucketManagerFactory(ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
     }
 

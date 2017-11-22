@@ -32,16 +32,16 @@ import org.jnosql.diana.arangodb.ArangoDBConfiguration;
  * <p>arangodb-userSsl: the userSsl</p>
  */
 public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
-        implements KeyValueConfiguration<ArangoDBKeyValueEntityManagerFactory> {
+        implements KeyValueConfiguration<ArangoDBBucketManagerFactory> {
 
     @Override
-    public ArangoDBKeyValueEntityManagerFactory get() {
-        return new ArangoDBKeyValueEntityManagerFactory(builder.build());
+    public ArangoDBBucketManagerFactory get() {
+        return new ArangoDBBucketManagerFactory(builder.build());
     }
 
     @Override
-    public ArangoDBKeyValueEntityManagerFactory get(Settings settings) {
+    public ArangoDBBucketManagerFactory get(Settings settings) {
         ArangoDB arangoDB = getArangoDB(settings);
-        return new ArangoDBKeyValueEntityManagerFactory(arangoDB);
+        return new ArangoDBBucketManagerFactory(arangoDB);
     }
 }
