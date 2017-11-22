@@ -26,17 +26,17 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 /**
  * The hazelcast implementation of {@link BucketManagerFactory}
  */
-public class HazelCastKeyValueEntityManagerFactory implements BucketManagerFactory<HazelCastKeyValueEntityManager> {
+public class HazelCastBucketManagerFactory implements BucketManagerFactory<HazelCastBucketManager> {
 
     private final HazelcastInstance hazelcastInstance;
 
-    HazelCastKeyValueEntityManagerFactory(HazelcastInstance hazelcastInstance) {
+    HazelCastBucketManagerFactory(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
     }
 
     @Override
-    public HazelCastKeyValueEntityManager getBucketManager(String bucketName) {
-        return new HazelCastKeyValueEntityManager(hazelcastInstance.getMap(bucketName));
+    public HazelCastBucketManager getBucketManager(String bucketName) {
+        return new HazelCastBucketManager(hazelcastInstance.getMap(bucketName));
     }
 
     @Override

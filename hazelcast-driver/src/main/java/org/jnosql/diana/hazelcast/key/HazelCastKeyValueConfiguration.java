@@ -32,53 +32,53 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The hazelcast implementation of {@link KeyValueConfiguration} that returns
- * {@link HazelCastKeyValueEntityManagerFactory}. It tries to read the diana-hazelcast.properties file
+ * {@link HazelCastBucketManagerFactory}. It tries to read the diana-hazelcast.properties file
  * that has the properties:
  * <p>hazelcast-instanceName: the instance name</p>
  * <p>hazelcast-host-: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
  *
  */
-public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<HazelCastKeyValueEntityManagerFactory> {
+public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<HazelCastBucketManagerFactory> {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
 
 
     /**
-     * Creates a {@link HazelCastKeyValueEntityManagerFactory} from configuration map
+     * Creates a {@link HazelCastBucketManagerFactory} from configuration map
      * @param configurations the configuration map
-     * @return the HazelCastKeyValueEntityManagerFactory instance
+     * @return the HazelCastBucketManagerFactory instance
      * @throws NullPointerException when configurations is null
      */
-    public HazelCastKeyValueEntityManagerFactory get(Map<String, String> configurations) throws NullPointerException {
+    public HazelCastBucketManagerFactory get(Map<String, String> configurations) throws NullPointerException {
 
         List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("hazelcast-hoster-"))
                 .collect(Collectors.toList());
         Config config = new Config(configurations.getOrDefault("hazelcast-instanceName", "hazelcast-instanceName"));
 
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
-        return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);
+        return new HazelCastBucketManagerFactory(hazelcastInstance);
     }
 
     /**
-     * Creates a {@link HazelCastKeyValueEntityManagerFactory} from hazelcast config
+     * Creates a {@link HazelCastBucketManagerFactory} from hazelcast config
      * @param config the {@link Config}
-     * @return the HazelCastKeyValueEntityManagerFactory instance
+     * @return the HazelCastBucketManagerFactory instance
      * @throws NullPointerException when config is null
      */
-    public HazelCastKeyValueEntityManagerFactory get(Config config)throws NullPointerException {
+    public HazelCastBucketManagerFactory get(Config config)throws NullPointerException {
         requireNonNull(config, "config is required");
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
-        return new HazelCastKeyValueEntityManagerFactory(hazelcastInstance);
+        return new HazelCastBucketManagerFactory(hazelcastInstance);
     }
 
     @Override
-    public HazelCastKeyValueEntityManagerFactory get() {
+    public HazelCastBucketManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(HAZELCAST_FILE_CONFIGURATION);
         return get(configuration);
     }
 
     @Override
-    public HazelCastKeyValueEntityManagerFactory get(Settings settings) {
+    public HazelCastBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
         Map<String, String> configurations = new HashMap<>();

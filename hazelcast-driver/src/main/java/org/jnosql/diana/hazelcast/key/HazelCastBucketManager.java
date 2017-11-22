@@ -30,11 +30,11 @@ import java.util.stream.StreamSupport;
 /**
  * The hazelcast implementation of {@link BucketManager}
  */
-public class HazelCastKeyValueEntityManager implements BucketManager {
+public class HazelCastBucketManager implements BucketManager {
 
     private final IMap map;
 
-    HazelCastKeyValueEntityManager(IMap map) {
+    HazelCastBucketManager(IMap map) {
         this.map = map;
     }
 
