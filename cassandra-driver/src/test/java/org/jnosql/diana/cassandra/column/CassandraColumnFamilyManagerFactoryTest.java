@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 
 public class CassandraColumnFamilyManagerFactoryTest {
 
-    private CassandraDocumentEntityManagerFactory subject;
+    private CassandraColumnFamilyManagerFactory subject;
 
     @BeforeClass
     public static void before() throws InterruptedException, IOException, TTransportException {
@@ -72,8 +72,8 @@ public class CassandraColumnFamilyManagerFactoryTest {
     @Test
     public void shouldCloseNode() throws Exception {
         subject.close();
-        CassandraDocumentEntityManagerFactory cassandraDocumentEntityManagerFactory = CassandraDocumentEntityManagerFactory.class.cast(subject);
-        Cluster cluster = cassandraDocumentEntityManagerFactory.getCluster();
+        CassandraColumnFamilyManagerFactory cassandraColumnFamilyManagerFactory = CassandraColumnFamilyManagerFactory.class.cast(subject);
+        Cluster cluster = cassandraColumnFamilyManagerFactory.getCluster();
         assertTrue(cluster.isClosed());
     }
 

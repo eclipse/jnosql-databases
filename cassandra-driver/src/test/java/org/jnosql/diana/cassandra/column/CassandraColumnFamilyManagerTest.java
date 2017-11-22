@@ -78,7 +78,7 @@ public class CassandraColumnFamilyManagerTest {
     @Before
     public void setUp() throws InterruptedException, IOException, TTransportException {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
+        CassandraColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.get(KEY_SPACE);
     }
 

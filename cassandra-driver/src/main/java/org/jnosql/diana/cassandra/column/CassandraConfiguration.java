@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The Cassandra implementation to {@link UnaryColumnConfiguration} that returns
- * {@link CassandraDocumentEntityManagerFactory}
+ * {@link CassandraColumnFamilyManagerFactory}
  * This configuration reads "diana-cassandra.properties" files and has the following configuration:
  * <p>cassandra-host-: The Cassandra host as prefix, you can set how much you want just setting the number order,
  * eg: cassandra-host-1 = host, cassandra-host-2 = host2</p>
@@ -40,34 +40,34 @@ import static java.util.Objects.requireNonNull;
  * <p>cassandra-metrics: enable metrics, the default value is true</p>
  * <p>cassandra-jmx: enable JMX, the default value is true</p>
  */
-public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraDocumentEntityManagerFactory> {
+public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory> {
 
     private static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 
-    public CassandraDocumentEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
+    public CassandraColumnFamilyManagerFactory getManagerFactory(Map<String, String> configurations) {
         requireNonNull(configurations);
         CassandraProperties properties = CassandraProperties.of(configurations);
         ExecutorService executorService = properties.createExecutorService();
-        return new CassandraDocumentEntityManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
+        return new CassandraColumnFamilyManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
     }
 
-    public CassandraDocumentEntityManagerFactory getEntityManagerFactory(Cluster cluster) {
+    public CassandraColumnFamilyManagerFactory getEntityManagerFactory(Cluster cluster) {
         requireNonNull(cluster, "Cluster is required");
 
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         CassandraProperties properties = CassandraProperties.of(configuration);
         ExecutorService executorService = properties.createExecutorService();
-        return new CassandraDocumentEntityManagerFactory(cluster, properties.getQueries(), executorService);
+        return new CassandraColumnFamilyManagerFactory(cluster, properties.getQueries(), executorService);
     }
 
     @Override
-    public CassandraDocumentEntityManagerFactory get() {
+    public CassandraColumnFamilyManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         return getManagerFactory(configuration);
     }
 
     @Override
-    public CassandraDocumentEntityManagerFactory get(Settings settings) throws NullPointerException {
+    public CassandraColumnFamilyManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
         Map<String, String> configurations = new HashMap<>();
         settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
@@ -75,13 +75,13 @@ public class CassandraConfiguration implements UnaryColumnConfiguration<Cassandr
     }
 
     @Override
-    public CassandraDocumentEntityManagerFactory getAsync() {
+    public CassandraColumnFamilyManagerFactory getAsync() {
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         return getManagerFactory(configuration);
     }
 
     @Override
-    public CassandraDocumentEntityManagerFactory getAsync(Settings settings) throws NullPointerException {
+    public CassandraColumnFamilyManagerFactory getAsync(Settings settings) throws NullPointerException {
         return get(settings);
     }
 }

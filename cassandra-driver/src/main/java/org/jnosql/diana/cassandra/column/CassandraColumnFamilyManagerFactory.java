@@ -27,14 +27,14 @@ import java.util.concurrent.Executor;
 /**
  * The Cassandra implementation to {@link ColumnFamilyManagerFactory}
  */
-public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManagerFactory<CassandraColumnFamilyManager>
+public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerFactory<CassandraColumnFamilyManager>
         , ColumnFamilyManagerAsyncFactory<CassandraColumnFamilyManagerAsync> {
 
     private final Cluster cluster;
 
     private final Executor executor;
 
-    CassandraDocumentEntityManagerFactory(final Cluster cluster, List<String> queries, Executor executor) {
+    CassandraColumnFamilyManagerFactory(final Cluster cluster, List<String> queries, Executor executor) {
         this.cluster = cluster;
         this.executor = executor;
         runIniticialQuery(queries);
@@ -67,7 +67,7 @@ public class CassandraDocumentEntityManagerFactory implements ColumnFamilyManage
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CassandraDocumentEntityManagerFactory{");
+        final StringBuilder sb = new StringBuilder("CassandraColumnFamilyManagerFactory{");
         sb.append("cluster=").append(cluster);
         sb.append(", executor=").append(executor);
         sb.append('}');

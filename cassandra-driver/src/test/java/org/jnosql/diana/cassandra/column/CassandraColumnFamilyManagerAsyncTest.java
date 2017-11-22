@@ -55,7 +55,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     public void setUp() throws InterruptedException, IOException, TTransportException {
 
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        CassandraDocumentEntityManagerFactory entityManagerFactory = cassandraConfiguration.get();
+        CassandraColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.getAsync(KEY_SPACE);
     }
 
