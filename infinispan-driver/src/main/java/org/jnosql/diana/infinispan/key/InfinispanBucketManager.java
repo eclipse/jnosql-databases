@@ -30,11 +30,11 @@ import org.jnosql.diana.api.key.KeyValueEntity;
 /**
  * The Infinispan implementation of {@link BucketManager}
  */
-public class InfinispanKeyValueEntityManager implements BucketManager {
+public class InfinispanBucketManager implements BucketManager {
 
     private final BasicCache cache;
 
-    InfinispanKeyValueEntityManager(BasicCache cache) {
+    InfinispanBucketManager(BasicCache cache) {
         this.cache = cache;
     }
 

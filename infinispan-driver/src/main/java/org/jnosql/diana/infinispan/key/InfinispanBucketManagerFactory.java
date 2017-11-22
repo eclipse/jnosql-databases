@@ -26,17 +26,17 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 /**
  * The Infinispan implementation of {@link BucketManagerFactory}
  */
-public class InfinispanKeyValueEntityManagerFactory implements BucketManagerFactory<InfinispanKeyValueEntityManager> {
+public class InfinispanBucketManagerFactory implements BucketManagerFactory<InfinispanBucketManager> {
 
     private final BasicCacheContainer cacheContainer;
 
-    InfinispanKeyValueEntityManagerFactory(BasicCacheContainer cacheContainer) {
+    InfinispanBucketManagerFactory(BasicCacheContainer cacheContainer) {
         this.cacheContainer = cacheContainer;
     }
 
     @Override
-    public InfinispanKeyValueEntityManager getBucketManager(String bucketName) {
-        return new InfinispanKeyValueEntityManager(cacheContainer.getCache(bucketName));
+    public InfinispanBucketManager getBucketManager(String bucketName) {
+        return new InfinispanBucketManager(cacheContainer.getCache(bucketName));
     }
 
     @Override

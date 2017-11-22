@@ -32,23 +32,23 @@ import org.jnosql.diana.driver.ConfigurationReader;
 
 /**
  * The Infinispan implementation of {@link KeyValueConfiguration} that returns
- * {@link InfinispanKeyValueEntityManagerFactory}. It tries to read the diana-infinispan.properties file
+ * {@link InfinispanBucketManagerFactory}. It tries to read the diana-infinispan.properties file
  * that has the properties:
  * <p>infinispan-config: the optional path to an Infinispan configuration file</p>
  * <p>infinispan-host-: as prefix to n host where n is the number of host, eg: infinispan-host-1: host </p>
  *
  */
-public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<InfinispanKeyValueEntityManagerFactory> {
+public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<InfinispanBucketManagerFactory> {
 
     private static final String INFINISPAN_FILE_CONFIGURATION = "diana-infinispan.properties";
 
     /**
-     * Creates a {@link InfinispanKeyValueEntityManagerFactory} from configuration map
+     * Creates a {@link InfinispanBucketManagerFactory} from configuration map
      * @param configurations the configuration map
-     * @return the InfinispanKeyValueEntityManagerFactory instance
+     * @return the InfinispanBucketManagerFactory instance
      * @throws NullPointerException when configurations is null
      */
-    public InfinispanKeyValueEntityManagerFactory get(Map<String, String> configurations) {
+    public InfinispanBucketManagerFactory get(Map<String, String> configurations) {
         requireNonNull(configurations, "configurations is required");
         List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("infinispan-server-"))
               .collect(Collectors.toList());
@@ -57,40 +57,40 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<In
             for(String server : servers) {
                 builder.addServer().host(server);
             }
-            return  new InfinispanKeyValueEntityManagerFactory(new RemoteCacheManager(builder.build()));
+            return  new InfinispanBucketManagerFactory(new RemoteCacheManager(builder.build()));
         } else if (configurations.containsKey("infinispan-config")) {
             try {
-                return new InfinispanKeyValueEntityManagerFactory(new DefaultCacheManager(configurations.get("infinispan-config")));
+                return new InfinispanBucketManagerFactory(new DefaultCacheManager(configurations.get("infinispan-config")));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
             GlobalConfigurationBuilder builder = new GlobalConfigurationBuilder();
             builder.globalJmxStatistics().allowDuplicateDomains(true);
-            return new InfinispanKeyValueEntityManagerFactory(new DefaultCacheManager(builder.build()));
+            return new InfinispanBucketManagerFactory(new DefaultCacheManager(builder.build()));
         }
     }
 
     /**
-     * Creates a {@link InfinispanKeyValueEntityManagerFactory} from infinispan config
+     * Creates a {@link InfinispanBucketManagerFactory} from infinispan config
      * @param config the {@link org.infinispan.configuration.cache.Configuration}
-     * @return the InfinispanKeyValueEntityManagerFactory instance
+     * @return the InfinispanBucketManagerFactory instance
      * @throws NullPointerException when config is null
      */
-    public InfinispanKeyValueEntityManagerFactory get(org.infinispan.configuration.cache.Configuration config)throws NullPointerException {
+    public InfinispanBucketManagerFactory get(org.infinispan.configuration.cache.Configuration config)throws NullPointerException {
         requireNonNull(config, "config is required");
 
-        return new InfinispanKeyValueEntityManagerFactory(new DefaultCacheManager(config));
+        return new InfinispanBucketManagerFactory(new DefaultCacheManager(config));
     }
 
     @Override
-    public InfinispanKeyValueEntityManagerFactory get() {
+    public InfinispanBucketManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(INFINISPAN_FILE_CONFIGURATION);
         return get(configuration);
     }
 
     @Override
-    public InfinispanKeyValueEntityManagerFactory get(Settings settings) {
+    public InfinispanBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
         Map<String, String> configurations = new HashMap<>();
