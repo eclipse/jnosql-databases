@@ -29,24 +29,24 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 import redis.clients.jedis.JedisPool;
 
 /**
- * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisKeyValueEntityManager}
+ * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisBucketManager}
  */
-public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<RedisKeyValueEntityManager> {
+public class RedisBucketManagerFactory implements BucketManagerFactory<RedisBucketManager> {
 
     private static final Jsonb JSON = JsonbBuilder.create();
 
     private final JedisPool jedisPool;
 
-    RedisKeyValueEntityManagerFactory(JedisPool jedisPool) {
+    RedisBucketManagerFactory(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
     }
 
 
     @Override
-    public RedisKeyValueEntityManager getBucketManager(String bucketName) {
+    public RedisBucketManager getBucketManager(String bucketName) {
         Objects.requireNonNull(bucketName, "bucket name is required");
 
-        return new RedisKeyValueEntityManager(bucketName, JSON, jedisPool.getResource());
+        return new RedisBucketManager(bucketName, JSON, jedisPool.getResource());
     }
 
     @Override
@@ -109,7 +109,7 @@ public class RedisKeyValueEntityManagerFactory implements BucketManagerFactory<R
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("RedisKeyValueEntityManagerFactory{");
+        final StringBuilder sb = new StringBuilder("RedisBucketManagerFactory{");
         sb.append("jedisPool=").append(jedisPool);
         sb.append('}');
         return sb.toString();

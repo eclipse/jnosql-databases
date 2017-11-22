@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisKeyValueEntityManagerFactory}.
+ * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisBucketManagerFactory}.
  * It tries to read diana-redis.properties file.
  * <p>redis-master-host: the host client </p>
  * <p>redis-master-port: the port, the default value 6379</p>
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * <p>redis-configuration-min-idle: The min idle {@link JedisPoolConfig}, the default value 1 </p>
  * <p>redis-configuration-max--wait-millis: The max wait on millis on {@link JedisPoolConfig}, the default value 3000 </p>
  */
-public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyValueEntityManagerFactory> {
+public final class RedisConfiguration implements KeyValueConfiguration<RedisBucketManagerFactory> {
 
     private static final String REDIS_FILE_CONFIGURATION = "diana-redis.properties";
 
@@ -57,11 +57,11 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
      * @param configurations the map configuration
      * @return the RedisConfiguration instance
      */
-    public RedisKeyValueEntityManagerFactory getManagerFactory(Map<String, String> configurations) {
+    public RedisBucketManagerFactory getManagerFactory(Map<String, String> configurations) {
         JedisPoolConfig poolConfig = getJedisPoolConfig(configurations);
         JedisPool jedisPool = getJedisPool(configurations, poolConfig);
 
-        return new RedisKeyValueEntityManagerFactory(jedisPool);
+        return new RedisBucketManagerFactory(jedisPool);
     }
 
     private JedisPool getJedisPool(Map<String, String> configurations, JedisPoolConfig poolConfig) {
@@ -86,7 +86,7 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
 
 
     @Override
-    public RedisKeyValueEntityManagerFactory get() {
+    public RedisBucketManagerFactory get() {
         try {
             Properties properties = new Properties();
             InputStream stream = RedisConfiguration.class.getClassLoader()
@@ -102,7 +102,7 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisKeyV
     }
 
     @Override
-    public RedisKeyValueEntityManagerFactory get(Settings settings) {
+    public RedisBucketManagerFactory get(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
         Map<String, String> configurations = new HashMap<>();
         settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));

@@ -35,7 +35,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class RedisKeyValueEntityManagerTest {
+public class RedisBucketManagerTest {
 
     private BucketManager keyValueEntityManager;
 

@@ -29,7 +29,7 @@ import java.util.Set;
 import static org.junit.Assert.assertNotNull;
 
 
-public class RedisKeyValueEntityManagerFactoryTest {
+public class RedisBucketManagerFactoryTest {
 
     public static final String BUCKET_NAME = "bucketName";
     private BucketManagerFactory managerFactory;

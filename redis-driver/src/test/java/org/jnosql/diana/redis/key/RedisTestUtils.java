@@ -15,15 +15,12 @@
 
 package org.jnosql.diana.redis.key;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
-
 
 public class RedisTestUtils {
 
-    public static RedisKeyValueEntityManagerFactory get() {
+    public static RedisBucketManagerFactory get() {
         RedisConfiguration configuration = new RedisConfiguration();
-        RedisKeyValueEntityManagerFactory managerFactory = configuration.get();
+        RedisBucketManagerFactory managerFactory = configuration.get();
         return managerFactory;
     }
 }

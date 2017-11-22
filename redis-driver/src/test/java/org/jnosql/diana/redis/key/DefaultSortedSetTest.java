@@ -15,8 +15,6 @@
 
 package org.jnosql.diana.redis.key;
 
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +33,7 @@ public class DefaultSortedSetTest {
     private static final String USA = "USA";
     private static final String ENGLAND = "England";
 
-    private RedisKeyValueEntityManagerFactory keyValueEntityManagerFactory;
+    private RedisBucketManagerFactory keyValueEntityManagerFactory;
     private SortedSet sortedSet;
 
     @Before

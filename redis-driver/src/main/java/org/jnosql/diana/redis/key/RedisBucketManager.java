@@ -36,14 +36,14 @@ import redis.clients.jedis.Jedis;
 /**
  * The redis implementation to {@link BucketManager}
  */
-public class RedisKeyValueEntityManager implements BucketManager {
+public class RedisBucketManager implements BucketManager {
 
     private final String nameSpace;
     private final Jsonb jsonB;
 
     private final Jedis jedis;
 
-    RedisKeyValueEntityManager(String nameSpace, Jsonb provider, Jedis jedis) {
+    RedisBucketManager(String nameSpace, Jsonb provider, Jedis jedis) {
         this.nameSpace = nameSpace;
         this.jsonB = provider;
         this.jedis = jedis;

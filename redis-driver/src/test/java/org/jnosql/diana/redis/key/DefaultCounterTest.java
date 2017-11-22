@@ -29,7 +29,7 @@ public class DefaultCounterTest {
     private static final String USA = "USA";
     private static final String ENGLAND = "England";
 
-    private RedisKeyValueEntityManagerFactory keyValueEntityManagerFactory;
+    private RedisBucketManagerFactory keyValueEntityManagerFactory;
     private Counter counter;
 
     @Before
