@@ -38,7 +38,7 @@ import static java.util.stream.StreamSupport.stream;
  * <p>{@link BucketManager#put(Iterable, Duration)}</p>
  * <p>{@link BucketManager#put(Iterable, Duration)}</p>
  */
-public class ArangoDBValueEntityManager implements BucketManager {
+public class ArangoDBBucketManager implements BucketManager {
 
 
     private static final String VALUE = "_value";
@@ -51,7 +51,7 @@ public class ArangoDBValueEntityManager implements BucketManager {
     private final String namespace;
 
 
-    ArangoDBValueEntityManager(ArangoDB arangoDB, String bucketName, String namespace) {
+    ArangoDBBucketManager(ArangoDB arangoDB, String bucketName, String namespace) {
         this.arangoDB = arangoDB;
         this.bucketName = bucketName;
         this.namespace = namespace;

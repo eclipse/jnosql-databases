@@ -31,7 +31,7 @@ import java.util.Set;
  * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
  */
-public class ArangoDBBucketManagerFactory implements BucketManagerFactory<ArangoDBValueEntityManager> {
+public class ArangoDBBucketManagerFactory implements BucketManagerFactory<ArangoDBBucketManager> {
 
     private static final String DEFAULT_NAMESPACE = "diana";
 
@@ -42,13 +42,13 @@ public class ArangoDBBucketManagerFactory implements BucketManagerFactory<Arango
     }
 
     @Override
-    public ArangoDBValueEntityManager getBucketManager(String bucketName) throws UnsupportedOperationException {
+    public ArangoDBBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
         return getBucketManager(bucketName, DEFAULT_NAMESPACE);
     }
 
-    public ArangoDBValueEntityManager getBucketManager(String bucketName, String namespace) {
+    public ArangoDBBucketManager getBucketManager(String bucketName, String namespace) {
         ArangoDBUtil.checkCollection(bucketName, arangoDB, namespace);
-        return new ArangoDBValueEntityManager(arangoDB, bucketName, namespace);
+        return new ArangoDBBucketManager(arangoDB, bucketName, namespace);
     }
 
     @Override
