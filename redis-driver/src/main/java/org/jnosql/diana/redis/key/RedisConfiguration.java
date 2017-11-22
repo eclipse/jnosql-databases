@@ -61,7 +61,7 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisBuck
         JedisPoolConfig poolConfig = getJedisPoolConfig(configurations);
         JedisPool jedisPool = getJedisPool(configurations, poolConfig);
 
-        return new RedisBucketManagerFactory(jedisPool);
+        return new DefaultRedisBucketManagerFactory(jedisPool);
     }
 
     private JedisPool getJedisPool(Map<String, String> configurations, JedisPoolConfig poolConfig) {

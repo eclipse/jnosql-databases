@@ -26,7 +26,7 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 class DefaultRedisBucketManagerFactory implements RedisBucketManagerFactory {
-    
+
     private static final Jsonb JSON = JsonbBuilder.create();
 
     private final JedisPool jedisPool;
