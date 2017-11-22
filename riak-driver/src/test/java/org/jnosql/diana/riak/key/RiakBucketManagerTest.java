@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 
-public class RiakKeyValueEntityManagerTest {
+public class RiakBucketManagerTest {
 
     private BucketManager keyValueEntityManager;
 

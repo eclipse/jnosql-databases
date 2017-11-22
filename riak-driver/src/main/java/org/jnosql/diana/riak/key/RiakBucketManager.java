@@ -39,7 +39,7 @@ import static org.jnosql.diana.riak.key.RiakUtils.createDeleteValue;
 import static org.jnosql.diana.riak.key.RiakUtils.createFetchValue;
 import static org.jnosql.diana.riak.key.RiakUtils.createStoreValue;
 
-public class RiakKeyValueEntityManager implements BucketManager {
+public class RiakBucketManager implements BucketManager {
 
 
     private final RiakClient client;
@@ -48,7 +48,7 @@ public class RiakKeyValueEntityManager implements BucketManager {
 
     private final Namespace nameSpace;
 
-    RiakKeyValueEntityManager(RiakClient client, Jsonb jsonb, Namespace nameSpace) {
+    RiakBucketManager(RiakClient client, Jsonb jsonb, Namespace nameSpace) {
         this.client = client;
         this.provider = jsonb;
         this.nameSpace = nameSpace;

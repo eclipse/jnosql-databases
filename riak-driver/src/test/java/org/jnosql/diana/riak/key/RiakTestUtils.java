@@ -22,10 +22,10 @@ public final class RiakTestUtils {
 
 
     public static BucketManagerFactory get() {
-        RiakConfiguration riakConfiguration = new RiakConfiguration();
+        RiakKeyValueConfiguration riakKeyValueConfiguration = new RiakKeyValueConfiguration();
         RiakNode node = new RiakNode.Builder()
                 .withRemoteAddress("localhost").build();
-        riakConfiguration.add(node);
-        return riakConfiguration.get();
+        riakKeyValueConfiguration.add(node);
+        return riakKeyValueConfiguration.get();
     }
 }

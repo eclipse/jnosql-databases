@@ -29,14 +29,14 @@ import java.util.logging.Logger;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakKeyValueEntityManagerFactory}.
+ * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakBucketManagerFactory}.
  * It tries to read diana-riak.properties file.
  * <p>riak-server-host-: The prefix to host. eg: riak-server-host-1= host1</p>
  */
-public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEntityManagerFactory> {
+public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBucketManagerFactory> {
 
     private static final String SERVER_PREFIX = "riak-server-host-";
-    private static final Logger LOGGER = Logger.getLogger(RiakConfiguration.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RiakKeyValueConfiguration.class.getName());
 
     private static final String FILE_CONFIGURATION = "diana-riak.properties";
 
@@ -46,7 +46,7 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     private final List<RiakNode> nodes = new ArrayList<>();
 
 
-    public RiakConfiguration() {
+    public RiakKeyValueConfiguration() {
         Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
         properties.keySet().stream()
                 .filter(k -> k.startsWith(SERVER_PREFIX))
@@ -79,7 +79,7 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
     }
 
     @Override
-    public RiakKeyValueEntityManagerFactory get() {
+    public RiakBucketManagerFactory get() {
 
         if (nodes.isEmpty()) {
             nodes.add(DEFAULT_NODE);
@@ -87,11 +87,11 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
         RiakCluster cluster = new RiakCluster.Builder(nodes)
                 .build();
 
-        return new RiakKeyValueEntityManagerFactory(cluster);
+        return new RiakBucketManagerFactory(cluster);
     }
 
     @Override
-    public RiakKeyValueEntityManagerFactory get(Settings settings) {
+    public RiakBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
         List<RiakNode> nodes = new ArrayList<>();
 
@@ -108,6 +108,6 @@ public class RiakConfiguration implements KeyValueConfiguration<RiakKeyValueEnti
         RiakCluster cluster = new RiakCluster.Builder(nodes)
                 .build();
 
-        return new RiakKeyValueEntityManagerFactory(cluster);
+        return new RiakBucketManagerFactory(cluster);
     }
 }

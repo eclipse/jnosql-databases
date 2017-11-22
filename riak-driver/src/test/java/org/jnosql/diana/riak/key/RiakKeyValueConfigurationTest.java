@@ -22,13 +22,13 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 
-public class RiakConfigurationTest {
+public class RiakKeyValueConfigurationTest {
 
-    private RiakConfiguration configuration;
+    private RiakKeyValueConfiguration configuration;
 
     @Before
     public void setUp() {
-        configuration = new RiakConfiguration();
+        configuration = new RiakKeyValueConfiguration();
     }
 
     @Test(expected = NullPointerException.class)

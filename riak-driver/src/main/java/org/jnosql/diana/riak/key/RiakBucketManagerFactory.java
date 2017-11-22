@@ -27,32 +27,32 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * The riak implementation to {@link BucketManagerFactory} that returns {@link RiakKeyValueEntityManager}
- * This implementation just has support to {@link RiakKeyValueEntityManagerFactory#getBucketManager(String)}
+ * The riak implementation to {@link BucketManagerFactory} that returns {@link RiakBucketManager}
+ * This implementation just has support to {@link RiakBucketManagerFactory#getBucketManager(String)}
  * So, these metdhos will returns {@link UnsupportedOperationException}
  * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getSet(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getMap(String, Class, Class)}</p>
  */
-public class RiakKeyValueEntityManagerFactory implements BucketManagerFactory<RiakKeyValueEntityManager> {
+public class RiakBucketManagerFactory implements BucketManagerFactory<RiakBucketManager> {
 
     private static final Jsonb JSONB = JsonbBuilder.create();
 
     private final RiakCluster cluster;
 
-    RiakKeyValueEntityManagerFactory(RiakCluster cluster) {
+    RiakBucketManagerFactory(RiakCluster cluster) {
         this.cluster = cluster;
     }
 
     @Override
-    public RiakKeyValueEntityManager getBucketManager(String bucketName) throws UnsupportedOperationException {
+    public RiakBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
 
         cluster.start();
         RiakClient riakClient = new RiakClient(cluster);
         Namespace quotesBucket = new Namespace(bucketName);
 
-        return new RiakKeyValueEntityManager(riakClient, JSONB, quotesBucket);
+        return new RiakBucketManager(riakClient, JSONB, quotesBucket);
     }
 
     @Override
