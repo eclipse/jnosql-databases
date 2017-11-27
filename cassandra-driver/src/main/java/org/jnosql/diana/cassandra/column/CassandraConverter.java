@@ -99,7 +99,7 @@ final class CassandraConverter {
             case SET:
                 DataType typeSet = definition.getType().getTypeArguments().get(0);
                 TypeToken<Object> javaTypeSet = CODE_REGISTRY.codecFor(typeSet).getJavaType();
-                return row.getList(name, javaTypeSet);
+                return row.getSet(name, javaTypeSet);
             case MAP:
                 DataType typeKey = definition.getType().getTypeArguments().get(0);
                 DataType typeValue = definition.getType().getTypeArguments().get(1);
