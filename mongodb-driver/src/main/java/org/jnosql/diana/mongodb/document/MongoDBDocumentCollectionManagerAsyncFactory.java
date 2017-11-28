@@ -17,7 +17,7 @@ package org.jnosql.diana.mongodb.document;
 import com.mongodb.async.client.MongoClient;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 
-class MongoDBDocumentCollectionManagerAsyncFactory implements DocumentCollectionManagerAsyncFactory<MongoDBDocumentCollectionManagerAsync> {
+public class MongoDBDocumentCollectionManagerAsyncFactory implements DocumentCollectionManagerAsyncFactory<MongoDBDocumentCollectionManagerAsync> {
 
     private final MongoClient mongoClient;
 
