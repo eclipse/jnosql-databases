@@ -24,6 +24,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 final class DocumentQueryConversor {
 
@@ -49,15 +50,15 @@ final class DocumentQueryConversor {
             case LIKE:
                 return Filters.regex(document.getName(), value.toString());
             case AND:
-                List<Document> andList = condition.getDocument().getValue().get(new TypeReference<List<Document>>() {
+                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
                 });
                 return Filters.and(andList.stream()
-                        .map(d -> new BasicDBObject(d.getName(), d.getValue().get())).toArray(BasicDBObject[]::new));
+                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
             case OR:
-                List<Document> orList = condition.getDocument().getValue().get(new TypeReference<List<Document>>() {
+                List<DocumentCondition> orList = condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
                 });
                 return Filters.or(orList.stream()
-                        .map(d -> new BasicDBObject(d.getName(), d.getValue().get())).toArray(BasicDBObject[]::new));
+                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
             default:
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
                         + " is not supported from mongoDB diana driver");

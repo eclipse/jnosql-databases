@@ -109,10 +109,11 @@ public class MongoDBDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocument2() {
         DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("_id");
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
-                .and("city").eq("Salvador")
+                .and("city").eq("Salvador").and(eq(id.get()))
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);
@@ -123,10 +124,11 @@ public class MongoDBDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocument3() {
         DocumentEntity entity = entityManager.insert(getEntity());
-
+        Optional<Document> id = entity.find("_id");
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
+                .and(eq(id.get()))
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);
