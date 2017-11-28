@@ -61,7 +61,7 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldSave() {
+    public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
@@ -105,6 +105,37 @@ public class MongoDBDocumentCollectionManagerTest {
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
+
+    @Test
+    public void shouldFindDocument2() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("_id");
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("name").eq("Poliana")
+                .and("city").eq("Salvador")
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldFindDocument3() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("_id");
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("name").eq("Poliana")
+                .or("city").eq("Salvador")
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
 
     @Test
     public void shouldFindAll() {
