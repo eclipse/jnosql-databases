@@ -16,7 +16,6 @@
 package org.jnosql.diana.mongodb.document;
 
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import org.jnosql.diana.api.TypeReference;
