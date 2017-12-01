@@ -1,4 +1,4 @@
-![Hazelcast Project](https://jnosql.github.io/jnosql-site/img/logos/hazelcast.svg)
+![Hazelcast Project](https://jnosql.github.io/img/logos/hazelcast.svg)
 
 
 **Hazelcast**:In computing, Hazelcast is an open source in-memory data grid based on Java.
