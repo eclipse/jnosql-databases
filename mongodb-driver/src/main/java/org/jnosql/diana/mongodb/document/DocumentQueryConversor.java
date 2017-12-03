@@ -33,7 +33,7 @@ final class DocumentQueryConversor {
 
     public static Bson convert(DocumentCondition condition) {
         Document document = condition.getDocument();
-        Object value = getValue(document);
+        Object value = document.get();
         switch (condition.getCondition()) {
             case EQUALS:
                 return Filters.eq(document.getName(), value);
@@ -65,12 +65,5 @@ final class DocumentQueryConversor {
         }
     }
 
-    private static Object getValue(Document document) {
-        Object value = document.getValue().get();
-        if(MongoDBUtils.ID_FIELD.equals(document.getName()) && !ObjectId.class.isInstance(value)) {
-            return new ObjectId(document.get(String.class));
-        }
-        return value;
-    }
 
 }
