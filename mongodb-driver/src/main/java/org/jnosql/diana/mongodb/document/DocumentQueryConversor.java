@@ -18,7 +18,6 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
