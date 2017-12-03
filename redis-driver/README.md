@@ -1,5 +1,5 @@
 
-![Redis Project](https://jnosql.github.io/jnosql-site/img/logos/redis.png)
+![Redis Project](https://jnosql.github.io/img/logos/redis.png)
 
 
 
