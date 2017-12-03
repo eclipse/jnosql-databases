@@ -106,6 +106,22 @@ public class MongoDBDocumentCollectionManagerTest {
         assertThat(entities, contains(entity));
     }
 
+
+    @Test
+    public void shouldFindDocumentString() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("_id");
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("_id").eq(id.get().get(String.class))
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+
     @Test
     public void shouldFindDocument2() {
         DocumentEntity entity = entityManager.insert(getEntity());
