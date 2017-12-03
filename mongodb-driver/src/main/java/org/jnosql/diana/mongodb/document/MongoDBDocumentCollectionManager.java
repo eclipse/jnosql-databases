@@ -32,6 +32,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
 /**
@@ -40,7 +41,6 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
  */
 public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
 
-    private static final String ID_FIELD = "_id";
     private static final BsonDocument EMPTY = new BsonDocument();
 
     private final MongoDatabase mongoDatabase;

@@ -32,6 +32,8 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
 final class MongoDBUtils {
+    static final String ID_FIELD = "_id";
+
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
     private static final Function<Object, Object> VALUE_DOCUMENT = d -> ValueUtil.convert(cast(d).getValue());
 

@@ -32,7 +32,7 @@ final class DocumentQueryConversor {
 
     public static Bson convert(DocumentCondition condition) {
         Document document = condition.getDocument();
-        Object value = document.getValue().get();
+        Object value = getValue(document);
         switch (condition.getCondition()) {
             case EQUALS:
                 return Filters.eq(document.getName(), value);
@@ -62,5 +62,10 @@ final class DocumentQueryConversor {
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
                         + " is not supported from mongoDB diana driver");
         }
+    }
+
+    private static Object getValue(Document document) {
+        Object value = document.getValue().get();
+        if()
     }
 }
