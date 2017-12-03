@@ -18,6 +18,7 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -66,6 +67,10 @@ final class DocumentQueryConversor {
 
     private static Object getValue(Document document) {
         Object value = document.getValue().get();
-        if()
+        if(MongoDBUtils.ID_FIELD.equals(document.getName()) && !ObjectId.class.isInstance(value)) {
+            return new ObjectId(document.get(String.class));
+        }
+        return value;
     }
+
 }
