@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
 /**
