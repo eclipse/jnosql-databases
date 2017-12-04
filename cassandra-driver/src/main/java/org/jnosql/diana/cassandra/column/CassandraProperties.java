@@ -74,9 +74,9 @@ class CassandraProperties {
         Cluster.Builder builder = Cluster.builder();
 
         nodes.forEach(builder::addContactPoint);
-        name.ifPresent(n -> builder.withClusterName(n));
-        maxSchemaAgreementWaitSeconds.ifPresent(m -> builder.withMaxSchemaAgreementWaitSeconds(m));
-        port.ifPresent(p -> builder.withPort(p));
+        name.ifPresent(builder::withClusterName);
+        maxSchemaAgreementWaitSeconds.ifPresent(builder::withMaxSchemaAgreementWaitSeconds);
+        port.ifPresent(builder::withPort);
 
         if (withoutJXMReporting) {
             builder.withoutJMXReporting();

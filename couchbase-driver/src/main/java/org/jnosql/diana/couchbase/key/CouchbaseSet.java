@@ -103,7 +103,7 @@ public class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
     public Object[] toArray() {
         return StreamSupport.stream(arraySet.spliterator(), false)
                 .map(fromJSON())
-                .toArray(size -> new Object[size]);
+                .toArray(Object[]::new);
     }
 
     @Override

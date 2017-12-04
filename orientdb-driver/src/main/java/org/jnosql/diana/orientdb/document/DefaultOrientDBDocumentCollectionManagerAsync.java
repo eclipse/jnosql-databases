@@ -17,6 +17,7 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.record.ORecordAbstract;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.ORecordCallback;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
@@ -107,7 +108,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"))).build();
 
         OSQLQueryFactory.QueryResult orientQuery = toAsync(selectQuery, l -> {
-            l.forEach(d -> d.delete());
+            l.forEach(ORecordAbstract::delete);
             callBack.accept(null);
         });
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());

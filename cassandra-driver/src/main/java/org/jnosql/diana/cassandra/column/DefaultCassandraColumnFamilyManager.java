@@ -88,7 +88,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
         requireNonNull(query, "query is required");
         BuiltStatement select = QueryUtils.add(query, keyspace);
         ResultSet resultSet = session.execute(select);
-        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
     }
 
@@ -148,7 +148,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
         BuiltStatement select = QueryUtils.add(query, keyspace);
         select.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         ResultSet resultSet = session.execute(select);
-        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
     }
 
@@ -156,7 +156,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     public List<ColumnEntity> cql(String query) throws NullPointerException {
         requireNonNull(query, "query is required");
         ResultSet resultSet = session.execute(query);
-        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
     }
 
@@ -165,7 +165,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
         ResultSet resultSet = session.execute(query, values);
-        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
     }
 
@@ -173,7 +173,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     public List<ColumnEntity> execute(Statement statement) throws NullPointerException {
         requireNonNull(statement, "statement is required");
         ResultSet resultSet = session.execute(statement);
-        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
     }
 

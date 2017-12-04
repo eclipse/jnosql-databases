@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -74,7 +75,7 @@ public class InfinispanBucketManager implements BucketManager {
 
     @Override
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
-        return StreamSupport.stream(keys.spliterator(), false).map(k -> cache.get(k)).filter(Objects::nonNull)
+        return StreamSupport.stream(keys.spliterator(), false).map((Function<K, Object>) cache::get).filter(Objects::nonNull)
                 .map(Value::of).collect(Collectors.toList());
     }
 

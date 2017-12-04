@@ -70,7 +70,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .keySet()
                 .stream()
                 .filter(k -> k.startsWith(SETTINGS_PREFIX))
-                .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""), k -> configurations.get(k))));
+                .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""), configurations::get)));
     }
 
 
@@ -134,8 +134,8 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         builder.put("cluster.name", name);
 
         configurations.keySet().stream().filter(k -> k.startsWith(SETTINGS_PREFIX))
-                .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""), k -> configurations.get(k)))
-                .forEach((k, v) -> builder.put(k, v));
+                .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""), configurations::get))
+                .forEach(builder::put);
 
         PreBuiltTransportClient transportClient = new PreBuiltTransportClient(builder.build());
         hosts.forEach(transportClient::addTransportAddress);

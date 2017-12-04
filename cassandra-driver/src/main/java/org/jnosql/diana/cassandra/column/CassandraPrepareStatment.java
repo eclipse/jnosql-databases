@@ -49,7 +49,7 @@ public class CassandraPrepareStatment {
     public List<ColumnEntity> executeQuery() {
         loadBoundStatment();
         ResultSet resultSet = session.execute(boundStatement);
-        return resultSet.all().stream().map(row -> CassandraConverter.toDocumentEntity(row))
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
     }
 

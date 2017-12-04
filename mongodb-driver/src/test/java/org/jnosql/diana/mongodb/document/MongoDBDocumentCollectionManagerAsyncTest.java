@@ -82,7 +82,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRemoveEntityAsync() throws InterruptedException {
         AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
-        entityManager.insert(getEntity(), e -> entityAtomic.set(e));
+        entityManager.insert(getEntity(), entityAtomic::set);
         Thread.sleep(WAIT_TIME);
         DocumentEntity entity = entityAtomic.get();
         assertNotNull(entity);

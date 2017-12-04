@@ -91,7 +91,7 @@ public class ArangoDBBucketManager implements BucketManager {
 
         return ofNullable(entity)
                 .map(TO_JSON)
-                .map(j -> ValueJSON.of(j));
+                .map(ValueJSON::of);
 
     }
 
@@ -103,7 +103,7 @@ public class ArangoDBBucketManager implements BucketManager {
                         .getDocument(k, BaseDocument.class))
                 .filter(Objects::nonNull)
                 .map(TO_JSON)
-                .map(j -> ValueJSON.of(j))
+                .map(ValueJSON::of)
                 .collect(toList());
     }
 

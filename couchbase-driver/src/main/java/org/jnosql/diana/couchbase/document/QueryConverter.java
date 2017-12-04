@@ -61,7 +61,7 @@ final class QueryConverter {
     static QueryConverterResult select(DocumentQuery query, String bucket) {
         JsonObject params = JsonObject.create();
         List<String> keys = new ArrayList<>();
-        String[] documents = query.getDocuments().stream().toArray(size -> new String[size]);
+        String[] documents = query.getDocuments().stream().toArray(String[]::new);
         if (documents.length == 0) {
             documents = ALL_SELECT;
         }
@@ -138,7 +138,7 @@ final class QueryConverter {
                         .stream()
                         .map(d -> getCondition(d, params, keys))
                         .filter(Objects::nonNull)
-                        .reduce((d1, d2) -> d1.and(d2))
+                        .reduce(Expression::and)
                         .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
 
 
@@ -147,7 +147,7 @@ final class QueryConverter {
                 })
                         .stream()
                         .map(d -> getCondition(d, params, keys))
-                        .reduce((d1, d2) -> d1.or(d2))
+                        .reduce(Expression::or)
                         .orElseThrow(() -> new IllegalStateException("An or condition cannot be empty"));
             case NOT:
                 DocumentCondition dc = document.get(DocumentCondition.class);

@@ -117,7 +117,7 @@ public class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> 
     public Object[] toArray() {
         return StreamSupport.stream(arrayList.spliterator(), false)
                 .map(fromJSON())
-                .toArray(size -> new Object[size]);
+                .toArray(Object[]::new);
     }
 
     @Override

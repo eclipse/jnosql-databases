@@ -136,7 +136,7 @@ public final class ArangoDBUtil {
     private static boolean isADocumentIterable(Object value) {
         return Iterable.class.isInstance(value) &&
                 stream(Iterable.class.cast(value).spliterator(), false)
-                        .allMatch(d -> Map.class.isInstance(d));
+                        .allMatch(Map.class::isInstance);
     }
 
     private static Object convert(Value value) {

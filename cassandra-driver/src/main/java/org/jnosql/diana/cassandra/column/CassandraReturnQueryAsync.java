@@ -43,7 +43,7 @@ class CassandraReturnQueryAsync implements Runnable {
         try {
             ResultSet resultSet = this.resultSet.get();
             List<ColumnEntity> entities = resultSet.all().stream()
-                    .map(row -> CassandraConverter.toDocumentEntity(row)).collect(Collectors.toList());
+                    .map(CassandraConverter::toDocumentEntity).collect(Collectors.toList());
             consumer.accept(entities);
         } catch (InterruptedException | ExecutionException e) {
             throw new ExecuteAsyncQueryException(e);

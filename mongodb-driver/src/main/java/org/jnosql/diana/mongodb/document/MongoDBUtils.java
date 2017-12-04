@@ -90,7 +90,7 @@ final class MongoDBUtils {
     private static boolean isDocumentIterable(Object value) {
         return value instanceof Iterable &&
                 stream(Iterable.class.cast(value).spliterator(), false)
-                        .allMatch(v -> Document.class.isInstance(v));
+                        .allMatch(Document.class::isInstance);
     }
 
     private static Object getMap(Object val) {
@@ -104,7 +104,7 @@ final class MongoDBUtils {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
+                allMatch(org.jnosql.diana.api.document.Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

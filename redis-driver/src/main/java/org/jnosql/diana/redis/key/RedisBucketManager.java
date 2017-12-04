@@ -96,7 +96,7 @@ public class RedisBucketManager implements BucketManager {
         return StreamSupport.stream(keys.spliterator(), false)
                 .map(k -> jedis.get(createKeyWithNameSpace(k.toString(), nameSpace)))
                 .filter(value -> value != null && !value.isEmpty())
-                .map(v -> ValueJSON.of(v)).collect(toList());
+                .map(ValueJSON::of).collect(toList());
     }
 
     @Override

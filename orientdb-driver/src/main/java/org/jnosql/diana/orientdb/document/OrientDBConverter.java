@@ -104,7 +104,7 @@ final class OrientDBConverter {
     private static boolean isDocumentIterable(Object value) {
         return Iterable.class.isInstance(value) &&
                 stream(Iterable.class.cast(value).spliterator(), false)
-                        .allMatch(d -> Document.class.isInstance(d));
+                        .allMatch(Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {
