@@ -75,7 +75,7 @@ final class CassandraConverter {
     private static Iterable<Iterable<Column>> getColumns(ColumnDefinitions.Definition definition, Object result) {
         return (Iterable<Iterable<Column>>)
                 StreamSupport.stream(Iterable.class.cast(result).spliterator(), false)
-                        .map(c -> (List<Column>) getUDT(definition.getName(), (UDTValue) c).get())
+                        .map(c -> getUDT(definition.getName(), (UDTValue) c).get())
                         .collect(toList());
     }
 

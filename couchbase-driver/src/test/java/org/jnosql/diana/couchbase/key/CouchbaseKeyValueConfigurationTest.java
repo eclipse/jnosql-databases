@@ -32,7 +32,7 @@ public class CouchbaseKeyValueConfigurationTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldReturnErroWhenNodeIsNull() {
-        configuration.add((String) null);
+        configuration.add(null);
     }
 
     @Test

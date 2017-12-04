@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.DocumentCondition.eq;
@@ -259,7 +260,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentEntity mongoDBDeveloper = DocumentEntity.of("book");
         mongoDBDeveloper.add(Document.of("_id", "234567890"));
         mongoDBDeveloper.add(Document.of("title", "50 Tips and Tricks for MongoDB Developer"));
-        mongoDBDeveloper.add(Document.of("author", asList("Kristina Chodorow")));
+        mongoDBDeveloper.add(Document.of("author", singletonList("Kristina Chodorow")));
         mongoDBDeveloper.add(Document.of("published_date", "2011-05-06"));
         mongoDBDeveloper.add(Document.of("pages", 68));
         mongoDBDeveloper.add(Document.of("language", "English"));
