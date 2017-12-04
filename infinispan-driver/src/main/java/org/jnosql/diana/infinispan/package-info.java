@@ -21,6 +21,6 @@
  * <li>Monitor and manage it through JMX, a CLI and a web-based console.</li>
  * <li>Integrates with JPA, JCache, Spring, Spark and many more.</li>
  * <li>Works on AWS, Azure, Google Cloud and OpenShift.</li>
- * <ul>
+ * </ul>
  */
 package org.jnosql.diana.infinispan;
