@@ -14,10 +14,6 @@
  */
 
 /**
- * The mongodb implementation to document
- */
-
-/**
  * The mongodb document implementation
  */
 package org.jnosql.diana.mongodb.document;
