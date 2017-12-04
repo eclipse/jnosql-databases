@@ -29,7 +29,7 @@ public interface UDTElementBuilder {
     UDTFinisherBuilder addUDT(Iterable<Column> udt) throws NullPointerException;
     /**
      * <p>On Cassandra, there is the option to a UDT be part of a list. This implementation holds this option.</p>
-     * <p>eg: CREATE COLUMNFAMILY IF NOT EXISTS contacts ( user text PRIMARY KEY, names list<frozen <fullname>>);</p>
+     * <p>eg: CREATE COLUMNFAMILY IF NOT EXISTS contacts ( user text PRIMARY KEY, names list&#60;frozen &#60;fullname&#62;&#62;);</p>
      *
      * @param udts the UTDs to be added
      * @return the builder instance
