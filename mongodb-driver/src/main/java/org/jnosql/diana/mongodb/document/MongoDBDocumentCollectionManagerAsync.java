@@ -88,9 +88,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        update(entity, (d, throwable) -> {
-            callBack.accept(DocumentEntity.of(entity.getName(), Documents.of(d)));
-        });
+        update(entity, (d, throwable) -> callBack.accept(DocumentEntity.of(entity.getName(), Documents.of(d))));
     }
 
     @Override

@@ -82,10 +82,10 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         Column columnID = entity.find(KEY_COLUMN).orElseThrow(() -> new DianaHBaseException(KEY_REQUIRED_ERROR));
 
         Put put = new Put(Bytes.toBytes(valueToString(columnID.getValue())));
-        columns.stream().filter(Predicate.isEqual(columnID).negate()).forEach(column -> {
-            put.addColumn(Bytes.toBytes(family), Bytes.toBytes(column.getName()), Bytes
-                    .toBytes(valueToString(column.getValue())));
-        });
+        columns.stream().filter(Predicate.isEqual(columnID).negate()).forEach(column ->
+                put.addColumn(Bytes.toBytes(family),
+                        Bytes.toBytes(column.getName()),
+                        Bytes.toBytes(valueToString(column.getValue()))));
         try {
             table.put(put);
         } catch (IOException e) {

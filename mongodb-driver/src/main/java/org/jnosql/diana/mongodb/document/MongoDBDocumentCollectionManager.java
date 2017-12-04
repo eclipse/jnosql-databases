@@ -58,7 +58,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         Document document = getDocument(entity);
         collection.insertOne(document);
         boolean hasNotId = entity.getDocuments().stream()
-                .map(document1 -> document1.getName()).noneMatch(k -> k.equals(ID_FIELD));
+                .map(org.jnosql.diana.api.document.Document::getName).noneMatch(k -> k.equals(ID_FIELD));
         if (hasNotId) {
             entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
         }

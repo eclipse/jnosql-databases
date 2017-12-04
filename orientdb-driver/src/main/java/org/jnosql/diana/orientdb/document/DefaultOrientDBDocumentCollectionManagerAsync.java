@@ -117,11 +117,9 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
     @Override
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
-            callBack.accept(l.stream()
-                    .map(OrientDBConverter::convert)
-                    .collect(toList()));
-        });
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+                .map(OrientDBConverter::convert)
+                .collect(toList())));
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
@@ -130,11 +128,9 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
-            callBack.accept(l.stream()
-                    .map(OrientDBConverter::convert)
-                    .collect(toList()));
-        }, params);
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+                .map(OrientDBConverter::convert)
+                .collect(toList())), params);
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
@@ -145,11 +141,9 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         requireNonNull(params, "params is required");
 
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> {
-            callBack.accept(l.stream()
-                    .map(OrientDBConverter::convert)
-                    .collect(toList()));
-        }, params);
+        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+                .map(OrientDBConverter::convert)
+                .collect(toList())), params);
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 

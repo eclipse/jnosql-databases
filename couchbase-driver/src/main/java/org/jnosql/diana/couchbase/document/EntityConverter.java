@@ -174,7 +174,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
+                allMatch(org.jnosql.diana.api.document.Document.class::isInstance);
     }
 
 

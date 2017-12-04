@@ -168,7 +168,7 @@ public final class ArangoDBUtil {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(d -> org.jnosql.diana.api.document.Document.class.isInstance(d));
+                allMatch(org.jnosql.diana.api.document.Document.class::isInstance);
     }
 
     private static org.jnosql.diana.api.document.Document cast(Object document) {
