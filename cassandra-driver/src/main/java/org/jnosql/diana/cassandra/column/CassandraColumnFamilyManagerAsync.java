@@ -63,8 +63,9 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @param callBack the callback
      * @param entity   the entity
      * @param level    {@link ConsistencyLevel}
+     * @throws ExecuteAsyncQueryException when there is async error
      */
-    void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException;
+    void save(ColumnEntity entity, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException;
 
 
     /**
@@ -73,10 +74,9 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @param entity the entity
      * @param ttl    the ttl
      * @param level  {@link ConsistencyLevel}
-     * @throws ExecuteAsyncQueryException
-     * @throws UnsupportedOperationException
+     * @throws ExecuteAsyncQueryException when there is async error
      */
-    void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException;
+    void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException;
 
     /**
      * Saves the entity with ConsistencyLevel
@@ -85,10 +85,9 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @param entity   the entity
      * @param ttl      the ttl
      * @param level    {@link ConsistencyLevel}
-     * @throws ExecuteAsyncQueryException
-     * @throws UnsupportedOperationException
+     * @throws ExecuteAsyncQueryException  when there is async error
      */
-    void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException;
+    void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException;
 
     /**
      * Saves the entity with ConsistencyLevel
@@ -96,10 +95,9 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @param entities the entities
      * @param ttl      the ttl
      * @param level    {@link ConsistencyLevel}
-     * @throws ExecuteAsyncQueryException
-     * @throws UnsupportedOperationException
+     * @throws ExecuteAsyncQueryException  when there is async error
      */
-    void save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException;
+    void save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException;
 
 
     /**

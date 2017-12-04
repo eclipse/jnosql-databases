@@ -113,7 +113,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
 
     /**
      * Executes CQL using the provided named values.
-     * E.g.: "SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)"
+     * <p>E.g.: SELECT * FROM users WHERE id = :i", Map.<String, Object>of("i", 1)</p>
      *
      * @param query  the Cassndra query language
      * @param values values required for the execution of {@code query}

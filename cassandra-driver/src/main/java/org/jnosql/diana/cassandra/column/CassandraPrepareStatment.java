@@ -58,7 +58,7 @@ public class CassandraPrepareStatment {
      * Executes and call the callback with the result
      *
      * @param consumer the callback
-     * @throws ExecuteAsyncQueryException
+     * @throws ExecuteAsyncQueryException when has async error
      * @throws NullPointerException       when consumer is null
      */
     public void executeQueryAsync(Consumer<List<ColumnEntity>> consumer) throws ExecuteAsyncQueryException, NullPointerException {
