@@ -66,7 +66,7 @@ final class OSQLQueryFactory {
 
     static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
         Query query = getQuery(documentQuery);
-        return new QueryResult(new OSQLAsynchQuery<ODocument>(query.getQuery(), new OCommandResultListener() {
+        return new QueryResult(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
 
             @Override
@@ -96,7 +96,7 @@ final class OSQLQueryFactory {
     }
 
     static QueryResult toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {
-        return new QueryResult(new OSQLAsynchQuery<ODocument>(query, new OCommandResultListener() {
+        return new QueryResult(new OSQLAsynchQuery<>(query, new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
 
             @Override

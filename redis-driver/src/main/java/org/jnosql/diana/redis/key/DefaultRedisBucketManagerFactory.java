@@ -47,21 +47,21 @@ class DefaultRedisBucketManagerFactory implements RedisBucketManagerFactory {
     public <T> List<T> getList(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucket name is required");
         requireNonNull(clazz, "Class type is required");
-        return new RedisList<T>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisList<>(jedisPool.getResource(), clazz, bucketName);
     }
 
     @Override
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucket name is required");
         requireNonNull(clazz, "Class type is required");
-        return new RedisSet<T>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisSet<>(jedisPool.getResource(), clazz, bucketName);
     }
 
     @Override
     public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucket name is required");
         requireNonNull(clazz, "Class type is required");
-        return new RedisQueue<T>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisQueue<>(jedisPool.getResource(), clazz, bucketName);
     }
 
     @Override
