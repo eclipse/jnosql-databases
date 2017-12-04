@@ -94,7 +94,7 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<In
         requireNonNull(settings, "settings is required");
 
         Map<String, String> configurations = new HashMap<>();
-        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        settings.forEach((key, value) -> configurations.put(key, value.toString()));
         return get(configurations);
     }
 }

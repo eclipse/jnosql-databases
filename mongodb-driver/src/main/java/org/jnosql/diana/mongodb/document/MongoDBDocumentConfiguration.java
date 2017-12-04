@@ -96,7 +96,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
         requireNonNull(settings, "settings is required");
 
         Map<String, String> configurations = new HashMap<>();
-        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        settings.forEach((key, value) -> configurations.put(key, value.toString()));
         return get(configurations);
     }
 
@@ -111,7 +111,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
     public MongoDBDocumentCollectionManagerAsyncFactory getAsync(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
         Map<String, String> configurations = new HashMap<>();
-        settings.entrySet().forEach(e -> configurations.put(e.getKey(), e.getValue().toString()));
+        settings.forEach((key, value) -> configurations.put(key, value.toString()));
 
         return getAsync(configurations);
     }
