@@ -16,7 +16,6 @@
 package org.jnosql.diana.redis.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 

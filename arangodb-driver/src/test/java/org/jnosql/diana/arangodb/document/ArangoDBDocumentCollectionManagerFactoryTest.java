@@ -17,7 +17,6 @@ package org.jnosql.diana.arangodb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.junit.Before;
 import org.junit.Test;
 

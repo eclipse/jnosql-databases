@@ -15,9 +15,6 @@
 
 package org.jnosql.diana.orientdb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
-
-
 public final class DocumentConfigurationUtils {
 
     private DocumentConfigurationUtils() {

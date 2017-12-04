@@ -23,7 +23,6 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

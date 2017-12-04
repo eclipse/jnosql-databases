@@ -16,13 +16,11 @@
 package org.jnosql.diana.hbase.column;
 
 import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnCondition;
 import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import org.jnosql.diana.api.column.ColumnQuery;
-import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
