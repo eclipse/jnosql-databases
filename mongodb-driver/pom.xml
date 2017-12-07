@@ -64,7 +64,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
-        <monbodb.driver>3.5.0</monbodb.driver>
+        <monbodb.driver>3.6.0</monbodb.driver>
     </properties>
     <dependencies>
         <dependency>
