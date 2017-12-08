@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * The hazelcast implementation of {@link BucketManagerFactory}
  */
-public interface HazelCastBucketManagerFactory extends BucketManagerFactory<HazelCastBucketManager> {
+public interface HazelcastBucketManagerFactory extends BucketManagerFactory<HazelcastBucketManager> {
 
     /**
      * Creates a {@link List} from bucket name

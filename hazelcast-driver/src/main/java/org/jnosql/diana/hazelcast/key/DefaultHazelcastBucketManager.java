@@ -34,11 +34,11 @@ import static java.util.stream.Collectors.toList;
 /**
  * The default implementation of hazelcast bucket manager
  */
-class DefaultHazelCastBucketManager implements HazelCastBucketManager {
+class DefaultHazelcastBucketManager implements HazelcastBucketManager {
 
     private final IMap map;
 
-    DefaultHazelCastBucketManager(IMap map) {
+    DefaultHazelcastBucketManager(IMap map) {
         this.map = map;
     }
 

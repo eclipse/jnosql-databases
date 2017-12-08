@@ -25,7 +25,7 @@ import java.util.Collection;
 /**
  * The hazelcast implementation of {@link BucketManager}
  */
-public interface HazelCastBucketManager extends BucketManager {
+public interface HazelcastBucketManager extends BucketManager {
 
 
     /**
