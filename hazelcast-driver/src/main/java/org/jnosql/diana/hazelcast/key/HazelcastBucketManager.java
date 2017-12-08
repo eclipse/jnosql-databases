@@ -20,6 +20,7 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * The hazelcast implementation of {@link BucketManager}
@@ -35,6 +36,17 @@ public interface HazelcastBucketManager extends BucketManager {
      * @throws NullPointerException when there is null query
      */
     Collection<Value> query(String query) throws NullPointerException;
+
+    /**
+     * Executes hazelcast query with named query.
+     * E.g.:  bucketManager.query("name = :name", singletonMap("name", "Matrix"))
+     *
+     * @param query  the query
+     * @param params the params to bind
+     * @return the result query
+     * @throws NullPointerException when there is null query
+     */
+    Collection<Value> query(String query, Map<String, Object> params) throws NullPointerException;
 
     /**
      * Executes hazelcast query
