@@ -34,7 +34,7 @@ public interface HazelcastBucketManager extends BucketManager {
      * @return the result query
      * @throws NullPointerException when there is null query
      */
-    Collection<Value> get(String query) throws NullPointerException;
+    Collection<Value> query(String query) throws NullPointerException;
 
     /**
      * Executes hazelcast query
@@ -45,6 +45,6 @@ public interface HazelcastBucketManager extends BucketManager {
      * @return the result query
      * @throws NullPointerException when there is null predicate
      */
-    <K, V> Collection<Value> get(Predicate<K, V> predicate) throws NullPointerException;
+    <K, V> Collection<Value> query(Predicate<K, V> predicate) throws NullPointerException;
 
 }

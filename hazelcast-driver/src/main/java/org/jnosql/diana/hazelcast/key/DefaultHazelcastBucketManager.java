@@ -97,13 +97,13 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
     }
 
     @Override
-    public Collection<Value> get(String query) throws NullPointerException {
+    public Collection<Value> query(String query) throws NullPointerException {
         requireNonNull(query, "query is required");
-        return get(new SqlPredicate(query));
+        return query(new SqlPredicate(query));
     }
 
     @Override
-    public <K, V> Collection<Value> get(Predicate<K, V> predicate) throws NullPointerException {
+    public <K, V> Collection<Value> query(Predicate<K, V> predicate) throws NullPointerException {
         requireNonNull(predicate, "predicate is required");
         Collection<V> values = map.values(predicate);
         return values.stream().map(Value::of).collect(toList());
