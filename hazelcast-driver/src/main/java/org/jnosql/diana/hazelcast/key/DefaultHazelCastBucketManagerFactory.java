@@ -35,7 +35,7 @@ class DefaultHazelCastBucketManagerFactory implements HazelCastBucketManagerFact
     @Override
     public HazelCastBucketManager getBucketManager(String bucketName) {
         requireNonNull(bucketName, "bucketName is required");
-        return new HazelCastBucketManager(hazelcastInstance.getMap(bucketName));
+        return new DefaultHazelCastBucketManager(hazelcastInstance.getMap(bucketName));
     }
 
     @Override
