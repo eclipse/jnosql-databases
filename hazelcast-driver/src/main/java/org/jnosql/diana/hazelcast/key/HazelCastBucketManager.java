@@ -15,81 +15,12 @@
 
 package org.jnosql.diana.hazelcast.key;
 
-import com.hazelcast.core.IMap;
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
-
-import java.time.Duration;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * The hazelcast implementation of {@link BucketManager}
  */
-public class HazelCastBucketManager implements BucketManager {
+public interface HazelCastBucketManager extends BucketManager {
 
-    private final IMap map;
 
-    HazelCastBucketManager(IMap map) {
-        this.map = map;
-    }
-
-    @Override
-    public <K, V> void put(K key, V value) {
-        map.put(key, value);
-    }
-
-    @Override
-    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
-        map.put(entity.getKey(), entity.getValue().get());
-    }
-
-    @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
-        map.put(entity.getKey(), entity.getValue().get(), ttl.toMillis(), TimeUnit.MILLISECONDS);
-    }
-
-    @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities) throws NullPointerException {
-        StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
-    }
-
-    @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
-        StreamSupport.stream(entities.spliterator(), false).forEach(kv -> this.put(kv, ttl));
-    }
-
-    @Override
-    public <K> Optional<Value> get(K key) throws NullPointerException {
-        Object value = map.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(Value.of(value));
-    }
-
-    @Override
-    public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
-        return StreamSupport.stream(keys.spliterator(), false).map((Function<K, Object>) map::get).filter(Objects::nonNull)
-                .map(Value::of).collect(Collectors.toList());
-    }
-
-    @Override
-    public <K> void remove(K key) {
-        map.remove(key);
-    }
-
-    @Override
-    public <K> void remove(Iterable<K> keys) {
-        StreamSupport.stream(keys.spliterator(), false).forEach(this::remove);
-    }
-
-    @Override
-    public void close() {
-    }
 }
