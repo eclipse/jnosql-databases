@@ -15,11 +15,14 @@
 package org.jnosql.diana.hazelcast.key;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IAtomicLong;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+
+import static java.util.Objects.requireNonNull;
 
 class DefaultHazelCastBucketManagerFactory implements HazelCastBucketManagerFactory {
 
@@ -31,31 +34,42 @@ class DefaultHazelCastBucketManagerFactory implements HazelCastBucketManagerFact
 
     @Override
     public HazelCastBucketManager getBucketManager(String bucketName) {
+        requireNonNull(bucketName, "bucketName is required");
         return new HazelCastBucketManager(hazelcastInstance.getMap(bucketName));
     }
 
     @Override
     public <T> List<T> getList(String bucketName, Class<T> clazz) {
+        requireNonNull(bucketName, "bucketName is required");
         return hazelcastInstance.getList(bucketName);
     }
 
     @Override
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
+        requireNonNull(bucketName, "bucketName is required");
         return hazelcastInstance.getSet(bucketName);
     }
 
     @Override
     public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
+        requireNonNull(bucketName, "bucketName is required");
         return hazelcastInstance.getQueue(bucketName);
     }
 
     @Override
     public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
+        requireNonNull(bucketName, "bucketName is required");
         return hazelcastInstance.getMap(bucketName);
     }
 
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public IAtomicLong getAtomicLong(String bucketName) throws NullPointerException {
+        requireNonNull(bucketName, "bucketName is required");
+        return hazelcastInstance.getAtomicLong(bucketName);
     }
 }

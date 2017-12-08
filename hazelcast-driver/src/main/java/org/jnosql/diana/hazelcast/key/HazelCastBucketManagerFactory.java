@@ -16,6 +16,7 @@
 package org.jnosql.diana.hazelcast.key;
 
 
+import com.hazelcast.core.IAtomicLong;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
 /**
@@ -24,4 +25,11 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 public interface HazelCastBucketManagerFactory extends BucketManagerFactory<HazelCastBucketManager> {
 
 
+    /**
+     * Creates a {@link IAtomicLong} implementation
+     * @param bucketName
+     * @return
+     * @throws NullPointerException
+     */
+    IAtomicLong getAtomicLong(String bucketName) throws NullPointerException;
 }
