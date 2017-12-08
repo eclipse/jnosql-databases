@@ -18,7 +18,6 @@ package org.jnosql.diana.hazelcast.key;
 import com.hazelcast.query.Predicate;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
 
 import java.util.Collection;
 
