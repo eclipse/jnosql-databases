@@ -37,7 +37,6 @@ public class DefaultHazelCastBucketManagerFactoryTest {
 
     @Test
     public void shouldReturnList() {
-
         List<String> list = managerFactory.getList("list_sample", String.class);
         assertNotNull(list);
     }
@@ -80,6 +79,53 @@ public class DefaultHazelCastBucketManagerFactoryTest {
     @Test(expected = NullPointerException.class)
     public void shouldReturnErrorWhenNullParameterMap() {
         managerFactory.getList(null, String.class);
+    }
+
+    //
+    @Test
+    public void shouldReturnListHazelcast() {
+        List<String> list = managerFactory.getList("list_sample");
+        assertNotNull(list);
+    }
+
+    @Test
+    public void shouldReturnSetHazelcast() {
+        Set<String> set = managerFactory.getSet("set_sample");
+        assertNotNull(set);
+    }
+
+    @Test
+    public void shouldReturnQueueHazelcast() {
+        Queue<String> queue = managerFactory.getQueue("queue_sample");
+        assertNotNull(queue);
+    }
+
+    @Test
+    public void shouldReturnMapHazelcast() {
+        Map<String, String> map = managerFactory.getMap("queue_sample");
+        assertNotNull(map);
+    }
+
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnErrorWhenNullParameterListHazelcast() {
+
+        managerFactory.getList(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnErrorWhenNullParameterSetHazelcast() {
+        managerFactory.getList(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnErrorWhenNullParameterQueueHazelcast() {
+        managerFactory.getList(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldReturnErrorWhenNullParameterMapHazelcast() {
+        managerFactory.getList(null);
     }
 
 }
