@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class DefaultHazelcastBucketManagerFactoryTest {
 
-    private HazelCastBucketManagerFactory managerFactory;
+    private HazelcastBucketManagerFactory managerFactory;
 
     @Before
     public void setUp() {
