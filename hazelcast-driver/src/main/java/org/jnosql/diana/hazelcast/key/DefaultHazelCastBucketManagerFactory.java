@@ -64,7 +64,6 @@ class DefaultHazelCastBucketManagerFactory implements HazelCastBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(keyValue, "keyValue is required");
         requireNonNull(valueValue, "valueValue is required");
-        ;
         return hazelcastInstance.getMap(bucketName);
     }
 
