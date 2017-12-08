@@ -26,11 +26,11 @@ import static org.junit.Assert.assertNotNull;
 
 public class KeyValueConfigurationTest {
 
-    private HazelCastKeyValueConfiguration configuration;
+    private HazelcastKeyValueConfiguration configuration;
 
     @Before
     public void setUp() {
-        configuration = new HazelCastKeyValueConfiguration();
+        configuration = new HazelcastKeyValueConfiguration();
     }
 
     @Test

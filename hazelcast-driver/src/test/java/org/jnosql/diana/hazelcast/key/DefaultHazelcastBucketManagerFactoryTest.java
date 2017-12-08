@@ -30,7 +30,7 @@ public class DefaultHazelcastBucketManagerFactoryTest {
 
     @Before
     public void setUp() {
-        HazelCastKeyValueConfiguration configuration = new HazelCastKeyValueConfiguration();
+        HazelcastKeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
         managerFactory = configuration.get();
     }
 

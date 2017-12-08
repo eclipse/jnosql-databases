@@ -24,11 +24,11 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-class DefaultHazelCastBucketManagerFactory implements HazelCastBucketManagerFactory {
+class DefaultHazelcastBucketManagerFactory implements HazelcastBucketManagerFactory {
 
     private final HazelcastInstance hazelcastInstance;
 
-    DefaultHazelCastBucketManagerFactory(HazelcastInstance hazelcastInstance) {
+    DefaultHazelcastBucketManagerFactory(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
     }
 

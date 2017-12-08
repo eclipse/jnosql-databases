@@ -36,7 +36,7 @@ public class KeyValueEntityManagerFactoryTest {
 
     @Before
     public void setUp() {
-        KeyValueConfiguration configuration = new HazelCastKeyValueConfiguration();
+        KeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
         managerFactory = configuration.get();
     }
 

@@ -17,13 +17,13 @@ package org.jnosql.diana.hazelcast.key.util;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.jnosql.diana.hazelcast.key.HazelCastKeyValueConfiguration;
+import org.jnosql.diana.hazelcast.key.HazelcastKeyValueConfiguration;
 
 
 public class KeyValueEntityManagerFactoryUtils {
 
     public static BucketManagerFactory get() {
-        KeyValueConfiguration configuration = new HazelCastKeyValueConfiguration();
+        KeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
         BucketManagerFactory managerFactory = configuration.get();
         return managerFactory;
     }
