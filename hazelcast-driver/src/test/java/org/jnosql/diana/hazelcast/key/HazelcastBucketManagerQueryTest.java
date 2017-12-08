@@ -19,11 +19,15 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.hazelcast.key.model.Movie;
 import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
+
+import static com.hazelcast.query.Predicates.and;
+import static com.hazelcast.query.Predicates.equal;
+import static com.hazelcast.query.Predicates.greaterEqual;
+import static org.junit.Assert.assertEquals;
 
 public class HazelcastBucketManagerQueryTest {
 
@@ -58,7 +62,40 @@ public class HazelcastBucketManagerQueryTest {
     @Test
     public void shouldReturnActive() {
         Collection<Value> result = bucketManager.query("active");
-        Assert.assertEquals(2, result.size());
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void shouldReturnActiveAndGreaterThan2000() {
+        Collection<Value> result = bucketManager.query("NOT active AND year > 1990");
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void shouldReturnEqualsMatrix() {
+        Collection<Value> result = bucketManager.query("name = `Matrix`");
+        assertEquals(2, result.size());
+    }
+
+
+    @Test
+    public void shouldReturnActivePredicate() {
+        Collection<Value> result = bucketManager.query(equal("active", true));
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void shouldReturnActiveAndGreaterThan2000Predicate() {
+        Predicate predicate = and(equal("active", false), greaterEqual("year", 1990));
+        Collection<Value> result = bucketManager.query(predicate);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void shouldReturnEqualsMatrixPredicate() {
+        Predicate predicate = equal("name", "Matrix");
+        Collection<Value> result = bucketManager.query("name = `Matrix`");
+        assertEquals(2, result.size());
     }
 
 }
