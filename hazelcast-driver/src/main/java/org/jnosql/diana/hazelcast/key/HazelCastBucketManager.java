@@ -15,12 +15,37 @@
 
 package org.jnosql.diana.hazelcast.key;
 
+import com.hazelcast.query.Predicate;
+import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
+
+import java.util.Collection;
 
 /**
  * The hazelcast implementation of {@link BucketManager}
  */
 public interface HazelCastBucketManager extends BucketManager {
 
+
+    /**
+     * Executes hazelcast query
+     *
+     * @param query the query
+     * @return the result query
+     * @throws NullPointerException when there is null query
+     */
+    Collection<Value> get(String query) throws NullPointerException;
+
+    /**
+     * Executes hazelcast query
+     *
+     * @param predicate the hazelcast predicate
+     * @param <K>       the key type
+     * @param <V>       the value type
+     * @return the result query
+     * @throws NullPointerException when there is null predicate
+     */
+    <K, V> Collection<Value> get(Predicate<K, V> predicate) throws NullPointerException;
 
 }
