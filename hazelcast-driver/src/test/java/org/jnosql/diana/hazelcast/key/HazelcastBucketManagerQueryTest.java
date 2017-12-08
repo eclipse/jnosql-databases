@@ -94,7 +94,7 @@ public class HazelcastBucketManagerQueryTest {
     @Test
     public void shouldReturnEqualsMatrixPredicate() {
         Predicate predicate = equal("name", "Matrix");
-        Collection<Value> result = bucketManager.query("name = `Matrix`");
+        Collection<Value> result = bucketManager.query(predicate);
         assertEquals(1, result.size());
     }
 
