@@ -22,6 +22,7 @@ import org.jnosql.diana.api.key.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +101,19 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
     public Collection<Value> query(String query) throws NullPointerException {
         requireNonNull(query, "query is required");
         return query(new SqlPredicate(query));
+    }
+
+    @Override
+    public Collection<Value> query(String query, Map<String, Object> params) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        requireNonNull(params, "params is required");
+        StringBuilder sb = new StringBuilder(query);
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            String key = ":" + entry.getKey();
+            int indexOf = query.indexOf(key);
+            sb.replace(indexOf, indexOf + key.length(), entry.getValue().toString());
+        }
+        return query(new SqlPredicate(sb.toString()));
     }
 
     @Override
