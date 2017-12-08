@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-class DefaultHazelCastBucketManagerFactory {
+class DefaultHazelCastBucketManagerFactory implements HazelCastBucketManagerFactory {
 
     private final HazelcastInstance hazelcastInstance;
 
-    HazelCastBucketManagerFactory(HazelcastInstance hazelcastInstance) {
+    DefaultHazelCastBucketManagerFactory(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
     }
 
