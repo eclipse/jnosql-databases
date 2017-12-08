@@ -56,7 +56,7 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
         Config config = new Config(configurations.getOrDefault("hazelcast-instanceName", "hazelcast-instanceName"));
 
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
-        return new HazelCastBucketManagerFactory(hazelcastInstance);
+        return new DefaultHazelCastBucketManagerFactory(hazelcastInstance);
     }
 
     /**
@@ -68,7 +68,7 @@ public class HazelCastKeyValueConfiguration implements KeyValueConfiguration<Haz
     public HazelCastBucketManagerFactory get(Config config)throws NullPointerException {
         requireNonNull(config, "config is required");
         HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
-        return new HazelCastBucketManagerFactory(hazelcastInstance);
+        return new DefaultHazelCastBucketManagerFactory(hazelcastInstance);
     }
 
     @Override
