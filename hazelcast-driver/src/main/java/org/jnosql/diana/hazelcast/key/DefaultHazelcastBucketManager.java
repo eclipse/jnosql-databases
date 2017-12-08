@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -107,13 +108,14 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
     public Collection<Value> query(String query, Map<String, Object> params) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(params, "params is required");
-        StringBuilder sb = new StringBuilder(query);
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            String key = ":" + entry.getKey();
+        final StringBuilder finalQuery = new StringBuilder(query);
+        final Consumer<Map.Entry<String, Object>> consumer = e -> {
+            String key = ":" + e.getKey();
             int indexOf = query.indexOf(key);
-            sb.replace(indexOf, indexOf + key.length(), entry.getValue().toString());
-        }
-        return query(new SqlPredicate(sb.toString()));
+            finalQuery.replace(indexOf, indexOf + key.length(), e.getValue().toString());
+        };
+        params.entrySet().forEach(consumer);
+        return query(new SqlPredicate(finalQuery.toString()));
     }
 
     @Override

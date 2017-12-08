@@ -23,6 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.hazelcast.query.Predicates.and;
 import static com.hazelcast.query.Predicates.equal;
@@ -102,6 +104,16 @@ public class HazelcastBucketManagerQueryTest {
     @Test
     public void shouldReturnEqualsNameParam() {
         Collection<Value> result = bucketManager.query("name = :name", singletonMap("name", "Matrix"));
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void shouldReturnNameAndYearParam() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", "Matrix");
+        params.put("year", 1900);
+        Collection<Value> result = bucketManager.query("name = :name AND year > :year", params);
+
         assertEquals(1, result.size());
     }
 
