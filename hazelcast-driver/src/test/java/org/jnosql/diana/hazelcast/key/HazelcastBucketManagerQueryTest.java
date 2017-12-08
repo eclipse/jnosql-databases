@@ -117,5 +117,10 @@ public class HazelcastBucketManagerQueryTest {
         assertEquals(1, result.size());
     }
 
+    @Test
+    public void shouldReturnLikeNameParam() {
+        Collection<Value> result = bucketManager.query("name like :name", singletonMap("name", "Mat%"));
+        assertEquals(1, result.size());
+    }
 
 }
