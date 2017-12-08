@@ -27,6 +27,7 @@ import java.util.Collection;
 import static com.hazelcast.query.Predicates.and;
 import static com.hazelcast.query.Predicates.equal;
 import static com.hazelcast.query.Predicates.greaterEqual;
+import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 
 public class HazelcastBucketManagerQueryTest {
@@ -97,5 +98,12 @@ public class HazelcastBucketManagerQueryTest {
         Collection<Value> result = bucketManager.query(predicate);
         assertEquals(1, result.size());
     }
+
+    @Test
+    public void shouldReturnEqualsNameParam() {
+        Collection<Value> result = bucketManager.query("name = :name", singletonMap("name", "Matrix"));
+        assertEquals(1, result.size());
+    }
+
 
 }
