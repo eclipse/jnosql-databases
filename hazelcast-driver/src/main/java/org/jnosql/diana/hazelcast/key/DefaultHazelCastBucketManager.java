@@ -15,16 +15,21 @@
 package org.jnosql.diana.hazelcast.key;
 
 import com.hazelcast.core.IMap;
+import com.hazelcast.query.Predicate;
+import com.hazelcast.query.SqlPredicate;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.KeyValueEntity;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The default implementation of hazelcast bucket manager
@@ -74,7 +79,7 @@ class DefaultHazelCastBucketManager implements HazelCastBucketManager {
     @Override
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
         return StreamSupport.stream(keys.spliterator(), false).map((Function<K, Object>) map::get).filter(Objects::nonNull)
-                .map(Value::of).collect(Collectors.toList());
+                .map(Value::of).collect(toList());
     }
 
     @Override
@@ -89,5 +94,18 @@ class DefaultHazelCastBucketManager implements HazelCastBucketManager {
 
     @Override
     public void close() {
+    }
+
+    @Override
+    public Collection<Value> get(String query) throws NullPointerException {
+        requireNonNull(query, "query is required");
+        return get(new SqlPredicate(query));
+    }
+
+    @Override
+    public <K, V> Collection<Value> get(Predicate<K, V> predicate) throws NullPointerException {
+        requireNonNull(predicate, "predicate is required");
+        Collection<V> values = map.values(predicate);
+        return values.stream().map(Value::of).collect(toList());
     }
 }
