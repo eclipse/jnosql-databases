@@ -27,9 +27,10 @@ public interface HazelCastBucketManagerFactory extends BucketManagerFactory<Haze
 
     /**
      * Creates a {@link IAtomicLong} implementation
-     * @param bucketName
-     * @return
-     * @throws NullPointerException
+     *
+     * @param bucketName the bucket name
+     * @return a {@link IAtomicLong} instance
+     * @throws NullPointerException when bucketName is null
      */
     IAtomicLong getAtomicLong(String bucketName) throws NullPointerException;
 }
