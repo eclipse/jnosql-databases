@@ -6,12 +6,16 @@ public class Movie implements Serializable {
 
     private String name;
 
-    private String description;
-
     private Integer year;
 
     private boolean active;
 
+
+    public Movie(String name, Integer year, boolean active) {
+        this.name = name;
+        this.year = year;
+        this.active = active;
+    }
 
     public String getName() {
         return name;
@@ -21,13 +25,6 @@ public class Movie implements Serializable {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public Integer getYear() {
         return year;
@@ -50,7 +47,6 @@ public class Movie implements Serializable {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Movie{");
         sb.append("name='").append(name).append('\'');
-        sb.append(", description='").append(description).append('\'');
         sb.append(", year=").append(year);
         sb.append(", active=").append(active);
         sb.append('}');
