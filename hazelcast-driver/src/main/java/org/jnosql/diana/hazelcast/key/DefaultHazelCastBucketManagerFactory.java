@@ -63,13 +63,38 @@ class DefaultHazelCastBucketManagerFactory implements HazelCastBucketManagerFact
     public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(keyValue, "keyValue is required");
-        requireNonNull(valueValue, "valueValue is required");;
+        requireNonNull(valueValue, "valueValue is required");
+        ;
         return hazelcastInstance.getMap(bucketName);
     }
 
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public <T> List<T> getList(String bucketName) throws UnsupportedOperationException, NullPointerException {
+        requireNonNull(bucketName, "bucketName is required");
+        return hazelcastInstance.getList(bucketName);
+    }
+
+    @Override
+    public <T> Set<T> getSet(String bucketName) throws UnsupportedOperationException, NullPointerException {
+        requireNonNull(bucketName, "bucketName is required");
+        return hazelcastInstance.getSet(bucketName);
+    }
+
+    @Override
+    public <T> Queue<T> getQueue(String bucketName) throws UnsupportedOperationException, NullPointerException {
+        requireNonNull(bucketName, "bucketName is required");
+        return hazelcastInstance.getQueue(bucketName);
+    }
+
+    @Override
+    public <K, V> Map<K, V> getMap(String bucketName) throws UnsupportedOperationException, NullPointerException {
+        requireNonNull(bucketName, "bucketName is required");
+        return hazelcastInstance.getMap(bucketName);
     }
 
     @Override
