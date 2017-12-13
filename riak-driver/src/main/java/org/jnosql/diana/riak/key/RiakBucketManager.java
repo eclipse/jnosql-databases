@@ -27,7 +27,6 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.driver.ValueJSON;
 
-import javax.json.bind.Jsonb;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
