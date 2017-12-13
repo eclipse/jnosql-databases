@@ -43,14 +43,12 @@ public class RiakBucketManager implements BucketManager {
 
 
     private final RiakClient client;
-    private final Jsonb provider;
 
 
     private final Namespace nameSpace;
 
-    RiakBucketManager(RiakClient client, Jsonb jsonb, Namespace nameSpace) {
+    RiakBucketManager(RiakClient client, Namespace nameSpace) {
         this.client = client;
-        this.provider = jsonb;
         this.nameSpace = nameSpace;
     }
 
