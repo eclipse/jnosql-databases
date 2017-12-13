@@ -37,7 +37,6 @@ import java.util.Set;
  */
 public class RiakBucketManagerFactory implements BucketManagerFactory<RiakBucketManager> {
 
-    private static final Jsonb JSONB = JsonbBuilder.create();
 
     private final RiakCluster cluster;
 
@@ -52,7 +51,7 @@ public class RiakBucketManagerFactory implements BucketManagerFactory<RiakBucket
         RiakClient riakClient = new RiakClient(cluster);
         Namespace quotesBucket = new Namespace(bucketName);
 
-        return new RiakBucketManager(riakClient, JSONB, quotesBucket);
+        return new RiakBucketManager(riakClient, quotesBucket);
     }
 
     @Override
