@@ -19,8 +19,6 @@ import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.query.Namespace;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
