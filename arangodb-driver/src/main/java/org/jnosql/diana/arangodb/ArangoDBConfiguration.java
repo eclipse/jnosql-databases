@@ -19,8 +19,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import org.jnosql.diana.api.Settings;
 
-import java.util.Objects;
-
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -40,7 +39,9 @@ public abstract class ArangoDBConfiguration {
      * set the setHost
      *
      * @param host the setHost
+     * @deprecated use ArangoDBConfiguration{@link #addHost(String, int)}
      */
+    @Deprecated
     public void setHost(String host) {
         builder.host(host);
         builderAsync.host(host);
@@ -50,10 +51,18 @@ public abstract class ArangoDBConfiguration {
      * set the setPort
      *
      * @param port the setPort
+     * @deprecated use ArangoDBConfiguration{@link #addHost(String, int)}
      */
+    @Deprecated
     public void setPort(int port) {
         builder.port(port);
         builderAsync.port(port);
+    }
+
+    public void addHost(String host, int port) throws NullPointerException {
+        requireNonNull(host, "host is required");
+        builder.host(host, port);
+        builderAsync.host(host, port);
     }
 
 
@@ -114,7 +123,7 @@ public abstract class ArangoDBConfiguration {
      * @throws NullPointerException when builder is null
      */
     public void syncBuilder(ArangoDB.Builder builder) throws NullPointerException {
-        Objects.requireNonNull(builder, "builder is required");
+        requireNonNull(builder, "builder is required");
         this.builder = builder;
     }
 
@@ -125,7 +134,7 @@ public abstract class ArangoDBConfiguration {
      * @throws NullPointerException when builderAsync is null
      */
     public void asyncBuilder(ArangoDBAsync.Builder builderAsync) throws NullPointerException {
-        Objects.requireNonNull(builderAsync, "asyncBuilder is required");
+        requireNonNull(builderAsync, "asyncBuilder is required");
         this.builderAsync = builderAsync;
     }
 
