@@ -30,6 +30,8 @@ import org.jnosql.diana.arangodb.ArangoDBConfiguration;
  * <p>arangodb-timeout: the timeout</p>
  * <p>arangodb-chuckSize: the chuckSize</p>
  * <p>arangodb-userSsl: the userSsl</p>
+ * <p>arangodb.hosts:  the hosts</p>
+ * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
  */
 public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBBucketManagerFactory> {
