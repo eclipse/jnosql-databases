@@ -21,7 +21,6 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import org.jnosql.diana.api.Settings;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
 
 /**
  * The base to configuration both key-value and document on mongoDB.
@@ -165,17 +164,9 @@ public abstract class ArangoDBConfiguration {
     }
 
     protected ArangoDBAsync getArangoDBAsync(Settings settings) {
-        ArangoDBAsync.Builder arangoDB = new ArangoDBAsync.Builder();
-
-        ofNullable(settings.get("arangodb-host")).map(Object::toString).ifPresent(arangoDB::host);
-        ofNullable(settings.get("arangodb-user")).map(Object::toString).ifPresent(arangoDB::user);
-        ofNullable(settings.get("arangodb-password")).map(Object::toString).ifPresent(arangoDB::password);
-
-        ofNullable(settings.get("arangodb-port")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
-        ofNullable(settings.get("arangodb-timeout")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
-        ofNullable(settings.get("arangodb-chuckSize")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
-        ofNullable(settings.get("arangodb-userSsl")).map(Object::toString).map(Boolean::valueOf).ifPresent(arangoDB::useSsl);
-        return arangoDB.build();
+        ArangoDBBuilderAsync aragonDB = new ArangoDBBuilderAsync();
+        ArangoDBBuilders.load(settings, aragonDB);
+        return aragonDB.build();
     }
 
 }
