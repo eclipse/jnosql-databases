@@ -17,33 +17,29 @@ package org.jnosql.diana.arangodb.document;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 
-import javax.net.ssl.SSLContext;
-
 interface ArangoDBBuilder {
 
     void host(String host);
 
     void port(int port);
 
-    void host(final String host, final int port);
+    void host(String host, int port);
 
-    void timeout(final Integer timeout);
+    void timeout(int timeout);
 
-    void user(final String user);
+    void user(String user);
 
-    void password(final String password);
+    void password(String password);
 
     void useSsl(boolean useSsl);
 
-    void sslContext(final SSLContext sslContext);
-
-   void chunksize(final Integer chunksize);
+   void chunksize(int chunksize);
 
     void maxConnections(int maxConnections);
 
-   void useProtocol(final Protocol protocol);
+   void useProtocol(Protocol protocol);
 
-   void acquireHostList(final Boolean acquireHostList);
+   void acquireHostList(boolean acquireHostList);
 
-    void loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy);
+    void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy);
 }
