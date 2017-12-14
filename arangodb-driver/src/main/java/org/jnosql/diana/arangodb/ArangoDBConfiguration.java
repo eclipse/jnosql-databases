@@ -165,9 +165,12 @@ public abstract class ArangoDBConfiguration {
         ofNullable(settings.get("arangodb-password")).map(Object::toString).ifPresent(arangoDB::password);
 
         ofNullable(settings.get("arangodb-port")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
-        ofNullable(settings.get("arangodb-timeout")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
         ofNullable(settings.get("arangodb-chuckSize")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
+        ofNullable(settings.get("arangodb-timeout")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
         ofNullable(settings.get("arangodb-userSsl")).map(Object::toString).map(Boolean::valueOf).ifPresent(arangoDB::useSsl);
+        ofNullable(settings.get("arangodb.loadBalancingStrategy")).map(Object::toString).map(LoadBalancingStrategy::valueOf)
+                .ifPresent(arangoDB::loadBalancingStrategy);
+
         return arangoDB.build();
     }
 
