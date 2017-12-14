@@ -32,6 +32,7 @@ import org.jnosql.diana.arangodb.ArangoDBConfiguration;
  * <p>arangodb-userSsl: the userSsl</p>
  * <p>arangodb.hosts:  the hosts</p>
  * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
+ * <p>arangodb.protocol: the protocol</p>
  */
 public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBBucketManagerFactory> {

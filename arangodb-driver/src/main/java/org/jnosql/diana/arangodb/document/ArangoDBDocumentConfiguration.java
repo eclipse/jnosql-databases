@@ -38,6 +38,7 @@ import static java.util.Objects.requireNonNull;
  * <p>arangodb-userSsl: the userSsl</p>
  * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
  * <p>arangodb.hosts:  the hosts</p>
+ * <p>arangodb.protocol: the protocol</p>
  */
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
