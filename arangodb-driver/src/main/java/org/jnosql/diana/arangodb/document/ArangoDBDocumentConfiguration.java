@@ -36,6 +36,8 @@ import static java.util.Objects.requireNonNull;
  * <p>arangodb-timeout: the timeout</p>
  * <p>arangodb-chuckSize: the chuckSize</p>
  * <p>arangodb-userSsl: the userSsl</p>
+ * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
+ * <p>arangodb.hosts:  the hosts</p>
  */
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
