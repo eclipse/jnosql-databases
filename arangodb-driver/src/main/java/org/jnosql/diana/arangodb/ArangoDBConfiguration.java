@@ -17,6 +17,7 @@ package org.jnosql.diana.arangodb;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
+import com.arangodb.entity.LoadBalancingStrategy;
 import org.jnosql.diana.api.Settings;
 
 import static java.util.Objects.requireNonNull;
@@ -70,6 +71,18 @@ public abstract class ArangoDBConfiguration {
         requireNonNull(host, "host is required");
         builder.host(host, port);
         builderAsync.host(host, port);
+    }
+
+    /**
+     * Set the {@link LoadBalancingStrategy}
+     *
+     * @param loadBalancingStrategy the LoadBalancingStrategy
+     * @throws NullPointerException when the loadBalancingStrategy is null
+     */
+    public void setLoadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy) throws NullPointerException {
+        requireNonNull(loadBalancingStrategy, "loadBalancingStrategy is required");
+        builder.loadBalancingStrategy(loadBalancingStrategy);
+        builderAsync.loadBalancingStrategy(loadBalancingStrategy);
     }
 
 
