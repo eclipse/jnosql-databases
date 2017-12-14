@@ -159,19 +159,9 @@ public abstract class ArangoDBConfiguration {
     }
 
     protected ArangoDB getArangoDB(Settings settings) {
-        ArangoDB.Builder arangoDB = new ArangoDB.Builder();
-        ofNullable(settings.get("arangodb-host")).map(Object::toString).ifPresent(arangoDB::host);
-        ofNullable(settings.get("arangodb-user")).map(Object::toString).ifPresent(arangoDB::user);
-        ofNullable(settings.get("arangodb-password")).map(Object::toString).ifPresent(arangoDB::password);
-
-        ofNullable(settings.get("arangodb-port")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
-        ofNullable(settings.get("arangodb-chuckSize")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
-        ofNullable(settings.get("arangodb-timeout")).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
-        ofNullable(settings.get("arangodb-userSsl")).map(Object::toString).map(Boolean::valueOf).ifPresent(arangoDB::useSsl);
-        ofNullable(settings.get("arangodb.loadBalancingStrategy")).map(Object::toString).map(LoadBalancingStrategy::valueOf)
-                .ifPresent(arangoDB::loadBalancingStrategy);
-
-        return arangoDB.build();
+        ArangoDBBuilderSync aragonDB = new ArangoDBBuilderSync();
+        ArangoDBBuilders.load(settings, aragonDB);
+        return aragonDB.build();
     }
 
     protected ArangoDBAsync getArangoDBAsync(Settings settings) {

@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.arangodb.document;
+package org.jnosql.diana.arangodb;
 
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
@@ -42,7 +42,7 @@ final class ArangoDBBuilders {
     private ArangoDBBuilders() {
     }
 
-    public static void load(Settings settings, ArangoDBBuilder arangoDB) {
+    static void load(Settings settings, ArangoDBBuilder arangoDB) {
 
         ofNullable(settings.get(HOST)).map(Object::toString).ifPresent(arangoDB::host);
         ofNullable(settings.get(USER)).map(Object::toString).ifPresent(arangoDB::user);

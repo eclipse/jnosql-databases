@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.arangodb.document;
+package org.jnosql.diana.arangodb;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
@@ -81,5 +81,9 @@ public class ArangoDBBuilderSync implements ArangoDBBuilder {
     @Override
     public void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy) {
         arangoDB.loadBalancingStrategy(loadBalancingStrategy);
+    }
+
+    public ArangoDB build() {
+        return arangoDB.build();
     }
 }

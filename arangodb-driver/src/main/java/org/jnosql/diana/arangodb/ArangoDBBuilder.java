@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.arangodb.document;
+package org.jnosql.diana.arangodb;
 
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
