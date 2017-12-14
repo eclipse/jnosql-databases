@@ -39,6 +39,10 @@ import static java.util.Objects.requireNonNull;
  * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
  * <p>arangodb.hosts:  the hosts</p>
  * <p>arangodb.protocol: the protocol</p>
+ * <p>arangodb.chunksize: the chunksize</p>
+ * <p>arangodb.connections.max: the max connection</p>
+ * <p>arangodb.acquireHostList: the max connection</p>
+ *
  */
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {

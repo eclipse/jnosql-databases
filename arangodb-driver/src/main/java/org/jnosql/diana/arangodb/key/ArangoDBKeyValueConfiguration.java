@@ -33,6 +33,7 @@ import org.jnosql.diana.arangodb.ArangoDBConfiguration;
  * <p>arangodb.hosts:  the hosts</p>
  * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
  * <p>arangodb.protocol: the protocol</p>
+ * <p>arangodb.connections.max: the max connection</p>
  */
 public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBBucketManagerFactory> {

@@ -18,8 +18,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 
-import javax.net.ssl.SSLContext;
-
 public class ArangoDBBuilderSync implements ArangoDBBuilder {
 
     private final ArangoDB.Builder arangoDB = new ArangoDB.Builder();
