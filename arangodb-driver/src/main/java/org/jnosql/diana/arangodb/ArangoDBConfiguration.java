@@ -59,6 +59,13 @@ public abstract class ArangoDBConfiguration {
         builderAsync.port(port);
     }
 
+    /**
+     * Adds a host in the arangodb builder
+     *
+     * @param host the host
+     * @param port the port
+     * @throws NullPointerException when host is null
+     */
     public void addHost(String host, int port) throws NullPointerException {
         requireNonNull(host, "host is required");
         builder.host(host, port);
