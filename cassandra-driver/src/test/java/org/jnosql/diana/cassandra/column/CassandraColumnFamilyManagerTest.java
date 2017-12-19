@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,8 +49,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.jnosql.diana.api.column.ColumnCondition.eq;
-import static org.jnosql.diana.api.column.ColumnCondition.in;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
@@ -128,7 +127,7 @@ public class CassandraColumnFamilyManagerTest {
 
         columnEntityManager.insert(getColumnFamily());
 
-        ColumnQuery query = select().from(COLUMN_FAMILY).where(eq(Columns.of("id", 10L))).build();
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
         List<ColumnEntity> columnEntity = columnEntityManager.select(query);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
@@ -141,7 +140,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldFindByIdWithConsistenceLevel() {
 
         columnEntityManager.insert(getColumnFamily());
-        ColumnQuery query = select().from(COLUMN_FAMILY).where(eq(Columns.of("id", 10L))).build();
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
         ;
         List<ColumnEntity> columnEntity = columnEntityManager.select(query, CONSISTENCY_LEVEL);
         assertFalse(columnEntity.isEmpty());
@@ -186,8 +185,8 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldDeleteColumnFamily() {
         columnEntityManager.insert(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
-        ColumnQuery query = select().from(COLUMN_FAMILY).where(eq(Columns.of("id", 10L))).build();
-        ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where(eq(Columns.of("id", 10L))).build();
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
+        ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
         columnEntityManager.delete(deleteQuery);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
@@ -197,8 +196,8 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldDeleteColumnFamilyWithConsistencyLevel() {
         columnEntityManager.insert(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
-        ColumnQuery query = select().from(COLUMN_FAMILY).where(eq(Columns.of("id", 10L))).build();
-        ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where(eq(Columns.of("id", 10L))).build();
+        ColumnQuery query =  select().from(COLUMN_FAMILY).where("id").eq(10L).build();
+        ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
         columnEntityManager.delete(deleteQuery, CONSISTENCY_LEVEL);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         Assert.assertTrue(entities.isEmpty());
@@ -207,7 +206,7 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldLimitResult() {
         getEntities().forEach(columnEntityManager::insert);
-        ColumnQuery query = select().from(COLUMN_FAMILY).where(in(Column.of("id", asList(1L, 2L, 3L))))
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").in(Arrays.asList(1L, 2L, 3L))
                 .limit(2).build();
         List<ColumnEntity> columnFamilyEntities = columnEntityManager.select(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(columnFamilyEntities.size()));
@@ -263,7 +262,7 @@ public class CassandraColumnFamilyManagerTest {
         columnEntityManager.insert(entity);
 
         ColumnQuery query = select().from("users")
-                .where(eq(Column.of("nickname", "Ioda")))
+                .where("nickname").eq( "Ioda")
                 .build();
 
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
@@ -287,7 +286,7 @@ public class CassandraColumnFamilyManagerTest {
         entity.add(Column.of("dateEnd", dateEnd));
         columnEntityManager.insert(entity);
         ColumnQuery query = select().from("history")
-                .where(eq(Column.of("name", "World war II")))
+                .where("name").eq( "World war II")
                 .build();
 
         ColumnEntity entity1 = columnEntityManager.singleResult(query).get();
@@ -307,7 +306,7 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity entity = createEntityWithIterable();
         columnEntityManager.insert(entity);
 
-        ColumnQuery query = select().from("contacts").where(eq(Column.of("user", "otaviojava"))).build();
+        ColumnQuery query = select().from("contacts").where("user").eq("otaviojava").build();
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
         List<List<Column>> names = (List<List<Column>>) columnEntity.find("names").get().get();
         assertEquals(3, names.size());
