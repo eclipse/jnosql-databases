@@ -64,10 +64,10 @@ public class OrientDBDocumentCollectionManagerTest {
     public void setUp() {
         entityManager = get().get("database");
         DocumentEntity documentEntity = getEntity();
-        Optional<Document> id = documentEntity.find("name");
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        Document id = documentEntity.find("name").get();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         try {
             entityManager.delete(deleteQuery);
         } catch (Exception e) {
@@ -100,10 +100,10 @@ public class OrientDBDocumentCollectionManagerTest {
     public void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
-        Optional<Document> id = documentEntity.find("name");
+        Document id = documentEntity.find("name").get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
     }
@@ -111,9 +111,9 @@ public class OrientDBDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("name");
+        Document id = entity.find("name").get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -146,7 +146,7 @@ public class OrientDBDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("name").get();
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id)).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -160,7 +160,7 @@ public class OrientDBDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("name").get();
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id)).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -175,11 +175,11 @@ public class OrientDBDocumentCollectionManagerTest {
         entityManager.insert(entity);
 
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
-                .and(gte(Document.of("age", 10))).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where("name").eq("Poliana")
+                .and("age").gte( 10).build();
 
-        DocumentDeleteQuery deleteQuery =  delete().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
-                .and(gte(Document.of("age", 10))).build();
+        DocumentDeleteQuery deleteQuery =  delete().from(COLLECTION_NAME).where("name").eq("Poliana")
+                .and("age").gte( 10).build();
 
         assertFalse(entityManager.select(query).isEmpty());
 
@@ -195,11 +195,11 @@ public class OrientDBDocumentCollectionManagerTest {
 
 
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
-                .or(gte(Document.of("age", 10))).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where("name").eq("Poliana")
+                .or("age").gte(10).build();
 
-        DocumentDeleteQuery deleteQuery =  delete().from(COLLECTION_NAME).where(eq(Document.of("name", "Poliana")))
-                .or(gte(Document.of("age", 10))).build();
+        DocumentDeleteQuery deleteQuery =  delete().from(COLLECTION_NAME).where("name").eq("Poliana")
+                .or("age").gte(10).build();
 
         assertFalse(entityManager.select(query).isEmpty());
 
@@ -213,9 +213,9 @@ public class OrientDBDocumentCollectionManagerTest {
         Consumer<DocumentEntity> callback = entities::add;
 
         DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("name");
+        Document id = entity.find("name").get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         entityManager.live(query, callback);
         entityManager.insert(getEntity());
@@ -234,7 +234,7 @@ public class OrientDBDocumentCollectionManagerTest {
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
+        DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);

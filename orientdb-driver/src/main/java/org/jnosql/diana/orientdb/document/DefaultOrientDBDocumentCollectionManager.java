@@ -22,10 +22,10 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import org.jnosql.diana.api.document.Document;
+import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 
 import java.time.Duration;
 import java.util.List;
@@ -89,8 +89,9 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     @Override
     public void delete(DocumentDeleteQuery query) {
         requireNonNull(query, "query is required");
-        DocumentQuery selectQuery = DocumentQueryBuilder.select().from(query.getDocumentCollection()).where(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("Condition is required"))).build();
+        DocumentCondition condition = query.getCondition()
+                .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
+        DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
 
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             OSQLQueryFactory.QueryResult orientQuery = OSQLQueryFactory.to(selectQuery);

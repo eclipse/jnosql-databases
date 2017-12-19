@@ -54,8 +54,8 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         entityManagerAsync = getAsync().getAsync("database");
         entityManager = DocumentConfigurationUtils.get().get("database");
         DocumentEntity documentEntity = getEntity();
-        Optional<Document> id = documentEntity.find("name");
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        Document id = documentEntity.find("name").get();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         try {
             entityManagerAsync.delete(deleteQuery);
@@ -71,9 +71,9 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         entityManagerAsync.insert(entity);
 
         Thread.sleep(1_000L);
-        Optional<Document> id = entity.find("name");
+        Document id = entity.find("name").get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
 
@@ -91,10 +91,10 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRemoveEntityAsync() throws InterruptedException {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        Optional<Document> id = documentEntity.find("name");
+        Document id = documentEntity.find("name").get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(eq(id.get())).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         entityManagerAsync.delete(deleteQuery);
         Thread.sleep(1_000L);
