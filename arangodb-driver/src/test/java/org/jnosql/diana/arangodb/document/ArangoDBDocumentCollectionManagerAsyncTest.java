@@ -70,8 +70,9 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
     public void shouldRemoveEntityAsync() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
-        Optional<Document> id = documentEntity.find(KEY_NAME);
-        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        Document id = documentEntity.find(KEY_NAME).get();
+        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).where(id.getName())
+                .eq(id.get()).build();
         entityManagerAsync.delete(query);
     }
 

@@ -29,14 +29,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
@@ -81,9 +79,9 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Test
     public void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        Optional<Document> id = documentEntity.find("_key");
-        DocumentQuery select = select().from(COLLECTION_NAME).where(eq(id.get())).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        Document id = documentEntity.find("_key").get();
+        DocumentQuery select = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(select).isEmpty());
     }
@@ -91,9 +89,9 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Test
     public void shouldRemoveEntity2() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
-        Optional<Document> id = documentEntity.find("name");
-        DocumentQuery select = select().from(COLLECTION_NAME).where(eq(id.get())).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get())).build();
+        Document id = documentEntity.find("name").get();
+        DocumentQuery select = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(select).isEmpty());
     }
@@ -102,8 +100,8 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find(KEY_NAME);
-        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id.get())).build();
+        Document id = entity.find(KEY_NAME).get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         DocumentEntity documentEntity = entities.get(0);
@@ -120,7 +118,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find(KEY_NAME).get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id)).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -134,7 +132,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find(KEY_NAME).get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(eq(id)).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -154,7 +152,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find(KEY_NAME).get();
-        DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
+        DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);

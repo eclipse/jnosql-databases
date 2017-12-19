@@ -14,17 +14,11 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.Sort;
-import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.junit.Test;
 
 import java.util.Map;
 
-import static org.jnosql.diana.api.Sort.SortType.ASC;
-import static org.jnosql.diana.api.Sort.SortType.DESC;
-import static org.jnosql.diana.api.document.DocumentCondition.eq;
-import static org.jnosql.diana.api.document.DocumentCondition.lte;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
 
@@ -33,7 +27,7 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQuery() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value"))).build();
+                .where("name").eq("value").build();
 
         AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
@@ -46,8 +40,8 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQueryAnd() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value")))
-                .and(lte(Document.of("age", 10)))
+                .where("name").eq("value")
+                .and("age").lte(10)
                 .build();
 
         AQLQueryResult convert = AQLUtils.select(query);
@@ -61,8 +55,8 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQueryOr() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value")))
-                .or(lte(Document.of("age", 10)))
+                .where("name").eq("value")
+                .or("age").lte(10)
                 .build();
 
         AQLQueryResult convert = AQLUtils.select(query);
@@ -76,8 +70,8 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQuerySort() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value")))
-                .orderBy(Sort.of("name", ASC)).build();
+                .where("name").eq("value")
+                .orderBy("name").asc().build();
 
         AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
@@ -89,9 +83,9 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQuerySort2() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value")))
-                .orderBy(Sort.of("name", ASC))
-                .orderBy(Sort.of("age", DESC)).build();
+                .where("name").eq("value")
+                .orderBy("name").asc()
+                .orderBy("age").desc().build();
 
         AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
@@ -104,7 +98,7 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQueryLimit() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value")))
+                .where("name").eq("value")
                 .limit(5).build();
 
         AQLQueryResult convert = AQLUtils.select(query);
@@ -118,7 +112,7 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQueryLimit2() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value")))
+                .where("name").eq("value")
                 .start(1).limit(5).build();
 
         AQLQueryResult convert = AQLUtils.select(query);
@@ -131,7 +125,7 @@ public class AQLUtilsTest {
     @Test
     public void shouldRunEqualsQueryNot() {
         DocumentQuery query = select().from("collection")
-                .where(eq(Document.of("name", "value")).negate()).build();
+                .where("name").not().eq("value").build();
 
         AQLQueryResult convert = AQLUtils.select(query);
         String aql = convert.getQuery();
