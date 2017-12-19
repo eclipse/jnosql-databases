@@ -27,7 +27,6 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.jnosql.diana.api.column.ColumnCondition.eq;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.junit.Assert.assertEquals;
@@ -75,7 +74,7 @@ public class HBaseColumnFamilyManagerTest {
     public void shouldFind() {
         columnFamilyManager.insert(createEntity());
 
-        ColumnQuery query = select().from(FAMILY).where(eq(Column.of(ID_FIELD, "otaviojava"))).build();
+        ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
         List<ColumnEntity> columnFamilyEntities = columnFamilyManager.select(query);
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
@@ -90,8 +89,8 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.insert(createEntity());
         columnFamilyManager.insert(createEntity2());
 
-        ColumnQuery query = select().from(FAMILY).where(eq(Column.of(ID_FIELD, "otaviojava")))
-                .and(eq(Column.of(ID_FIELD, "poliana"))).build();
+        ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava")
+                .or(ID_FIELD).eq("poliana").build();
 
         List<ColumnEntity> entities = columnFamilyManager.select(query);
         assertEquals(Integer.valueOf(2), Integer.valueOf(entities.size()));
@@ -101,8 +100,8 @@ public class HBaseColumnFamilyManagerTest {
     @Test
     public void shouldDeleteEntity() {
         columnFamilyManager.insert(createEntity());
-        ColumnQuery query = select().from(FAMILY).where(eq(Column.of(ID_FIELD, "otaviojava"))).build();
-        ColumnDeleteQuery deleteQuery = delete().from(FAMILY).where(eq(Column.of(ID_FIELD, "otaviojava"))).build();
+        ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
+        ColumnDeleteQuery deleteQuery = delete().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
         columnFamilyManager.delete(deleteQuery);
         List<ColumnEntity> entities = columnFamilyManager.select(query);
         assertTrue(entities.isEmpty());
@@ -113,11 +112,11 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.insert(createEntity());
         columnFamilyManager.insert(createEntity2());
 
-        ColumnQuery query = select().from(FAMILY).where(eq(Column.of(ID_FIELD, "otaviojava")))
-                .and(eq(Column.of(ID_FIELD, "poliana"))).build();
+        ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava")
+                .or(ID_FIELD).eq("poliana").build();
 
-        ColumnDeleteQuery deleteQuery = delete().from(FAMILY).where(eq(Column.of(ID_FIELD, "otaviojava")))
-                .and(eq(Column.of(ID_FIELD, "poliana"))).build();
+        ColumnDeleteQuery deleteQuery = delete().from(FAMILY).where(ID_FIELD).eq("otaviojava")
+                .or(ID_FIELD).eq("poliana").build();
 
         columnFamilyManager.delete(deleteQuery);
         List<ColumnEntity> entities = columnFamilyManager.select(query);

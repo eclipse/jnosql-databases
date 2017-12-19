@@ -15,8 +15,6 @@
 package org.jnosql.diana.hbase.column;
 
 
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
@@ -39,17 +37,15 @@ import org.jnosql.diana.api.writer.ValueWriterDecorator;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.api.Condition.AND;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
+import static org.jnosql.diana.api.Condition.OR;
 import static org.jnosql.diana.hbase.column.HBaseUtils.KEY_COLUMN;
 
 /**
@@ -171,24 +167,11 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         }
     }
 
-    private Map<String, List<Column>> toMap(Result result) {
-        Map<String, List<Column>> columnsByKey = new HashMap<>();
-        for (Cell cell : result.rawCells()) {
-            String key = new String(CellUtil.cloneRow(cell));
-            String name = new String(CellUtil.cloneQualifier(cell));
-            String value = new String(CellUtil.cloneValue(cell));
-            List<Column> columns = columnsByKey.getOrDefault(key, new ArrayList<>());
-            columns.add(Column.of(name, value));
-            columnsByKey.put(key, columns);
-        }
-        return columnsByKey;
-    }
-
 
     private void convert(ColumnCondition columnCondition, List<String> values) {
         Condition condition = columnCondition.getCondition();
 
-        if (AND.equals(condition)) {
+        if (OR.equals(condition)) {
             columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
             }).forEach(c -> convert(c, values));
         } else if (IN.equals(condition)) {
@@ -204,7 +187,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     private void checkedCondition(ColumnCondition columnCondition) {
 
         Condition condition = columnCondition.getCondition();
-        if (AND.equals(condition)) {
+        if (OR.equals(condition)) {
             List<ColumnCondition> columnConditions = columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
             });
             for (ColumnCondition cc : columnConditions) {
