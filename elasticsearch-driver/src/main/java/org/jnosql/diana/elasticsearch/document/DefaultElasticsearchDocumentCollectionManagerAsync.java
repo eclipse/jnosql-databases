@@ -25,7 +25,6 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -119,9 +118,8 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         requireNonNull(callBack, "callBack is required");
 
 
-        DocumentQuery select = DocumentQueryBuilder.select().from(query.getDocumentCollection())
-                .where(query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required")))
-                .build();
+        query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"));
+        DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = EntityConverter.query(select, client, index);
 
