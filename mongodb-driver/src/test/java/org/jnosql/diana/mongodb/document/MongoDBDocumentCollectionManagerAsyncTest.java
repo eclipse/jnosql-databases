@@ -87,9 +87,8 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         DocumentEntity entity = entityAtomic.get();
         assertNotNull(entity);
         String collection = entity.getName();
-        DocumentCondition documentCondition = eq(entity.find("name").get());
         DocumentDeleteQuery deleteQuery = delete().from(collection)
-                .where(documentCondition)
+                .where("name").eq(entity.find("name").get().get())
                 .build();
         AtomicBoolean condition = new AtomicBoolean(false);
         entityManager.delete(deleteQuery, c -> condition.set(true));

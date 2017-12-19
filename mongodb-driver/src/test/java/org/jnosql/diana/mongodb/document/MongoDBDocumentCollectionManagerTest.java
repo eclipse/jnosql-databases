@@ -39,7 +39,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
@@ -84,9 +83,10 @@ public class MongoDBDocumentCollectionManagerTest {
 
         Optional<Document> id = documentEntity.find("_id");
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(eq(id.get()))
+                .where("_id").eq(id.get().get())
                 .build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(eq(id.get()))
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("_id")
+                .eq(id.get().get())
                 .build();
 
         entityManager.delete(deleteQuery);
@@ -99,14 +99,13 @@ public class MongoDBDocumentCollectionManagerTest {
         Optional<Document> id = entity.find("_id");
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(eq(id.get()))
+                .where("_id").eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
-
 
 
     @Test
@@ -116,7 +115,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
-                .and("city").eq("Salvador").and(eq(id.get()))
+                .and("city").eq("Salvador").and("_id").eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);
@@ -131,7 +130,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
-                .and(eq(id.get()))
+                .and(id.get().getName()).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);
@@ -156,7 +155,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(eq(id))
+                .where("_id").eq(id.get())
                 .build();
 
         DocumentEntity entityFound = entityManager.select(query).get(0);
@@ -174,7 +173,7 @@ public class MongoDBDocumentCollectionManagerTest {
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(eq(id))
+                .where(id.getName()).eq(id.get())
                 .build();
         DocumentEntity entityFound = entityManager.select(query).get(0);
         Document subDocument = entityFound.find("phones").get();
@@ -194,7 +193,9 @@ public class MongoDBDocumentCollectionManagerTest {
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook").where(eq(key)).build();
+        DocumentQuery query = select().from("AppointmentBook")
+                .where(key.getName())
+                .eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
@@ -224,7 +225,6 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
 
-
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
@@ -236,7 +236,7 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @AfterClass
-    public static void end(){
+    public static void end() {
         MongoDbHelper.stopMongoDb();
     }
 
