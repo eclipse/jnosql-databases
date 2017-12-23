@@ -41,7 +41,6 @@ import static java.util.stream.StreamSupport.stream;
 final class EntityConverter {
 
     static final String ID_FIELD = "_id";
-    static final String KEY_FIELD = "_key";
     static final String SPLIT_KEY = ":";
     static final char SPLIT_KEY_CHAR = ':';
 
@@ -70,7 +69,7 @@ final class EntityConverter {
                 .map(m -> (Map<String, Object>) m)
                 .map(map -> {
                     List<Document> documents = toDocuments(map);
-                    Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
+                    Optional<Document> keyDocument = documents.stream().filter(d -> ID_FIELD.equals(d.getName())).findFirst();
                     String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
                     return DocumentEntity.of(collection, documents);
                 }).collect(toList());
