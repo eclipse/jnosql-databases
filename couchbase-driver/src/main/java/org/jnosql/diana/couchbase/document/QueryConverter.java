@@ -38,7 +38,7 @@ import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Objects.nonNull;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
-import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
+import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.StatementFactory.create;
 
 final class QueryConverter {
@@ -158,7 +158,7 @@ final class QueryConverter {
     }
 
     private static boolean isKeyField(Document document) {
-        return KEY_FIELD.equals(document.getName());
+        return ID_FIELD.equals(document.getName());
     }
 
     static class QueryConverterResult {
