@@ -126,7 +126,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         CouchbaseCluster couchbaseCluster = CouchbaseClusterUtil.getCouchbaseCluster(bucketName, this.couchbaseCluster, user, password);
         return couchbaseCluster.openBucket(bucketName);
     }
-    
+
 
 
     @Override
