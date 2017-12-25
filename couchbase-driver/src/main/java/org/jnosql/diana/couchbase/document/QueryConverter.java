@@ -39,6 +39,7 @@ import static java.util.Objects.nonNull;
 import static org.jnosql.diana.api.Condition.EQUALS;
 import static org.jnosql.diana.api.Condition.IN;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
+import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 import static org.jnosql.diana.couchbase.document.StatementFactory.create;
 
 final class QueryConverter {
@@ -74,7 +75,7 @@ final class QueryConverter {
                 toArray(com.couchbase.client.java.query.dsl.Sort[]::new);
 
         if (query.getCondition().isPresent()) {
-            Expression condition = getCondition(query.getCondition().get(), params, keys);
+            Expression condition = getCondition(query.getCondition().get(), params, keys, query.getDocumentCollection());
             if (nonNull(condition)) {
                 statement = create(bucket, documents, firstResult, maxResult, sorts, condition);
             } else {
@@ -91,7 +92,8 @@ final class QueryConverter {
         JsonObject params = JsonObject.create();
         List<String> ids = new ArrayList<>();
         Expression condition = getCondition(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("Condigtion is required")), params, ids);
+                .orElseThrow(() -> new IllegalArgumentException("Condigtion is required")), params, ids,
+                query.getDocumentCollection());
         MutateLimitPath statement = null;
         if (nonNull(condition)) {
             statement = Delete.deleteFrom(bucket).where(condition);
@@ -100,15 +102,16 @@ final class QueryConverter {
         return new QueryConverterResult(params, statement, ids);
     }
 
-    private static Expression getCondition(DocumentCondition condition, JsonObject params, List<String> keys) {
+    private static Expression getCondition(DocumentCondition condition, JsonObject params
+            , List<String> keys, String documentCollection) {
         Document document = condition.getDocument();
 
         if (!NOT_APPENDABLE.contains(condition.getCondition()) && isKeyField(document)) {
             if (IN.equals(condition.getCondition())) {
-                keys.addAll(document.get(new TypeReference<List<String>>() {
-                }));
+                inKeys(keys, documentCollection, document);
             } else if (EQUALS.equals(condition.getCondition())) {
-                keys.add(document.get(String.class));
+                eqKeys(keys, documentCollection, document);
+
             }
 
             return null;
@@ -136,7 +139,7 @@ final class QueryConverter {
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                 })
                         .stream()
-                        .map(d -> getCondition(d, params, keys))
+                        .map(d -> getCondition(d, params, keys, documentCollection))
                         .filter(Objects::nonNull)
                         .reduce(Expression::and)
                         .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
@@ -146,19 +149,38 @@ final class QueryConverter {
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                 })
                         .stream()
-                        .map(d -> getCondition(d, params, keys))
+                        .map(d -> getCondition(d, params, keys, documentCollection))
                         .reduce(Expression::or)
                         .orElseThrow(() -> new IllegalStateException("An or condition cannot be empty"));
             case NOT:
                 DocumentCondition dc = document.get(DocumentCondition.class);
-                return getCondition(dc, params, keys).not();
+                return getCondition(dc, params, keys, documentCollection).not();
             default:
                 throw new IllegalStateException("This condition is not supported at coubhbase: " + condition.getCondition());
         }
     }
 
+    private static void eqKeys(List<String> keys, String documentCollection, Document document) {
+        if(document.getName().equals(KEY_FIELD)){
+            keys.add(document.get(String.class));
+        } else {
+            keys.add(EntityConverter.getPrefix(documentCollection, document.get(String.class)));
+        }
+    }
+
+    private static void inKeys(List<String> keys, String documentCollection, Document document) {
+        if(document.getName().equals(KEY_FIELD)){
+            keys.addAll(document.get(new TypeReference<List<String>>() {
+            }));
+        } else {
+            List<String> ids = document.get(new TypeReference<List<String>>() {});
+            ids.stream().map(id -> EntityConverter.getPrefix(documentCollection, id))
+                    .forEach(keys::add);
+        }
+    }
+
     private static boolean isKeyField(Document document) {
-        return ID_FIELD.equals(document.getName());
+        return ID_FIELD.equals(document.getName()) || KEY_FIELD.equals(document.getName());
     }
 
     static class QueryConverterResult {
