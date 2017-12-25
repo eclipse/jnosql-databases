@@ -16,6 +16,7 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;
+import org.jnosql.diana.couchbase.util.CouchbaseClusterUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -122,9 +123,11 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
 
     private Bucket getBucket(String bucketName) {
         requireNonNull(bucketName, "bucket is required");
-
-        return couchbaseCluster.authenticate(user, password).openBucket(bucketName);
+        CouchbaseCluster couchbaseCluster = CouchbaseClusterUtil.getCouchbaseCluster(bucketName, this.couchbaseCluster, user, password);
+        return couchbaseCluster.openBucket(bucketName);
     }
+    
+
 
     @Override
     public void close() {
