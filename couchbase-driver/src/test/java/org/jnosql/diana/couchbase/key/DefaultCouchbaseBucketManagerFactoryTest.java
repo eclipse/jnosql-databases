@@ -15,6 +15,7 @@
 package org.jnosql.diana.couchbase.key;
 
 import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class DefaultCouchbaseBucketManagerFactoryTest {
 
     @Test
     public void shouldReturnManager() {
-        BucketManager database = factory.getBucketManager("default");
+        BucketManager database = factory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         Assert.assertNotNull(database);
     }
 

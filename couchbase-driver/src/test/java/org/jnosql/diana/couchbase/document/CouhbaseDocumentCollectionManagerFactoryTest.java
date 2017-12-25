@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.couchbase.document;
 
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,12 +34,12 @@ public class CouhbaseDocumentCollectionManagerFactoryTest {
     @Test
     public void shouldCreateEntityManager() {
         CouhbaseDocumentCollectionManagerFactory factory = configuration.get();
-        assertNotNull(factory.get("default"));
+        assertNotNull(factory.get(CouchbaseUtil.BUCKET_NAME));
     }
 
     @Test
     public void shouldCreateEntityManagerAsync() {
         CouhbaseDocumentCollectionManagerFactory factory = configuration.getAsync();
-        assertNotNull(factory.getAsync("default"));
+        assertNotNull(factory.getAsync(CouchbaseUtil.BUCKET_NAME));
     }
 }

@@ -16,6 +16,7 @@ package org.jnosql.diana.couchbase.key;
 
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,7 +47,7 @@ public class CouchbaseMapTest {
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("default:map");
     }
 

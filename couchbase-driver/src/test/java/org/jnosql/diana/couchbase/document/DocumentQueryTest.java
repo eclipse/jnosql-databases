@@ -20,6 +20,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,14 +47,14 @@ public class DocumentQueryTest {
     {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManager = managerFactory.get("default");
+        entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterClass
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("person:id");
         keyValueEntityManager.remove("person:id2");
         keyValueEntityManager.remove("person:id3");
@@ -64,7 +65,7 @@ public class DocumentQueryTest {
     public static void beforeClass() throws InterruptedException {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        CouchbaseDocumentCollectionManager entityManager = managerFactory.get("default");
+        CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
 
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name")));

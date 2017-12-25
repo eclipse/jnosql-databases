@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -53,14 +54,14 @@ public class CouchbaseDocumentCollectionManagerTest {
     {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManager = managerFactory.get("default");
+        entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterClass
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("person:id");
     }
 

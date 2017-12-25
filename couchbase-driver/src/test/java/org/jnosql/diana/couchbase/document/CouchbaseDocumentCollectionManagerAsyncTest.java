@@ -21,6 +21,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,8 +52,8 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     public void setUp() {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManagerAsync = managerFactory.getAsync("default");
-        entityManager = managerFactory.get("default");
+        entityManagerAsync = managerFactory.getAsync(CouchbaseUtil.BUCKET_NAME);
+        entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
         DocumentEntity documentEntity = getEntity();
         Document id = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();

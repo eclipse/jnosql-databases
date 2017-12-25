@@ -36,8 +36,6 @@ import static java.util.Objects.requireNonNull;
  */
 class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFactory {
 
-    private static final String DEFAULT_BUCKET = "default";
-
     private final CouchbaseCluster couchbaseCluster;
 
     private final String user;
@@ -125,17 +123,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     private Bucket getBucket(String bucketName) {
         requireNonNull(bucketName, "bucket is required");
 
-        /*
-        ClusterManager clusterManager = couchbaseCluster.clusterManager(user, password);
-
-        if(!clusterManager.hasBucket(bucketName)){
-            BucketSettings settings = DefaultBucketSettings.builder().name(bucketName);
-            clusterManager.insertBucket(settings);
-        }*/
-        if (DEFAULT_BUCKET.equals(bucketName)) {
-            return couchbaseCluster.openBucket(bucketName);
-        }
-        return couchbaseCluster.openBucket(bucketName, password);
+        return couchbaseCluster.authenticate(user, password).openBucket(bucketName);
     }
 
     @Override

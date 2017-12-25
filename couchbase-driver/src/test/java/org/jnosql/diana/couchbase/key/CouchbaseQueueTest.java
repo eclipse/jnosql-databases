@@ -16,6 +16,7 @@ package org.jnosql.diana.couchbase.key;
 
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,7 +41,7 @@ public class CouchbaseQueueTest {
 
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         keyValueEntityManagerFactory = configuration.get();
-        users = keyValueEntityManagerFactory.getQueue("default", User.class);
+        users = keyValueEntityManagerFactory.getQueue(CouchbaseUtil.BUCKET_NAME, User.class);
 
 
     }
@@ -49,7 +50,7 @@ public class CouchbaseQueueTest {
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("default:queue");
     }
 

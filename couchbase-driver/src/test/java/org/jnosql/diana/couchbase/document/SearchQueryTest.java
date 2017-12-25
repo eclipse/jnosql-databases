@@ -21,6 +21,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -43,14 +44,14 @@ public class SearchQueryTest {
     {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManager = managerFactory.get("default");
+        entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterClass
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("default");
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("city:salvador");
         keyValueEntityManager.remove("city:sao_paulo");
         keyValueEntityManager.remove("city:rio_janeiro");
@@ -61,7 +62,7 @@ public class SearchQueryTest {
     public static void beforeClass() throws InterruptedException {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        CouchbaseDocumentCollectionManager entityManager = managerFactory.get("default");
+        CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
 
         DocumentEntity salvador = DocumentEntity.of("city", asList(Document.of("_id", "salvador")
                 , Document.of("name", "Salvador"),
