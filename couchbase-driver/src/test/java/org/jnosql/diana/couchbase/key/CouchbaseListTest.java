@@ -34,7 +34,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CouchbaseListTest {
 
-    private static final String FRUITS = "default";
     private ProductCart banana = new ProductCart("banana", BigDecimal.ONE);
     private ProductCart orange = new ProductCart("orange", BigDecimal.ONE);
     private ProductCart waterMelon = new ProductCart("waterMelon", BigDecimal.TEN);
@@ -48,7 +47,7 @@ public class CouchbaseListTest {
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         keyValueEntityManagerFactory = configuration.get();
-        fruits = keyValueEntityManagerFactory.getList(FRUITS, ProductCart.class);
+        fruits = keyValueEntityManagerFactory.getList(CouchbaseUtil.BUCKET_NAME, ProductCart.class);
     }
 
     @AfterClass
@@ -56,7 +55,7 @@ public class CouchbaseListTest {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("default:list");
+        keyValueEntityManager.remove("jnosql:list");
     }
 
     @Test

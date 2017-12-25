@@ -40,7 +40,7 @@ public class CouchbaseMapTest {
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         entityManagerFactory = configuration.get();
-        entityManagerFactory.getMap("default", String.class, User.class).clear();
+        entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class).clear();
     }
 
     @AfterClass
@@ -48,12 +48,12 @@ public class CouchbaseMapTest {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("default:map");
+        keyValueEntityManager.remove("jnosql:map");
     }
 
     @Test
     public void shouldPutAndGetMap() {
-        Map<String, User> vertebrates = entityManagerFactory.getMap("default", String.class, User.class);
+        Map<String, User> vertebrates = entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class);
         assertTrue(vertebrates.isEmpty());
 
         assertNull(vertebrates.put("mammals", mammals));
@@ -66,7 +66,7 @@ public class CouchbaseMapTest {
     @Test
     public void shouldVerifyExist() {
 
-        Map<String, User> vertebrates = entityManagerFactory.getMap("default", String.class, User.class);
+        Map<String, User> vertebrates = entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class);
         vertebrates.put("mammals", mammals);
         assertTrue(vertebrates.containsKey("mammals"));
         Assert.assertFalse(vertebrates.containsKey("redfish"));

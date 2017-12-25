@@ -38,7 +38,7 @@ public class CouchbaseSetTest {
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         keyValueEntityManagerFactory = configuration.get();
-        users = keyValueEntityManagerFactory.getSet("default", User.class);
+        users = keyValueEntityManagerFactory.getSet(CouchbaseUtil.BUCKET_NAME, User.class);
     }
 
     @AfterClass
@@ -46,7 +46,7 @@ public class CouchbaseSetTest {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("default:set");
+        keyValueEntityManager.remove("jnosql:set");
     }
 
     @Test
