@@ -17,9 +17,14 @@ package org.jnosql.diana.couchbase.document;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.cluster.BucketSettings;
+import com.couchbase.client.java.cluster.ClusterManager;
+import com.couchbase.client.java.cluster.DefaultBucketSettings;
+import com.couchbase.client.java.query.N1qlQuery;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
+import java.util.List;
 import java.util.Objects;
 
 public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchbaseDocumentCollectionManager>,
@@ -44,8 +49,18 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
     @Override
     public CouchbaseDocumentCollectionManager get(String database) throws UnsupportedOperationException, NullPointerException {
         Objects.requireNonNull(database, "database is required");
-        Bucket bucket = couchbaseCluster.authenticate(user, password).openBucket(database);
-        return new DefaultCouchbaseDocumentCollectionManager(bucket, database);
+        CouchbaseCluster authenticate = couchbaseCluster.authenticate(user, password);
+        ClusterManager clusterManager = authenticate.clusterManager();
+        List<BucketSettings> buckets = clusterManager.getBuckets();
+        if(buckets.stream().noneMatch(b -> b.name().equals(database))) {
+            BucketSettings bucketSettings =  DefaultBucketSettings.builder().name(database).quota(120);
+            clusterManager.insertBucket(bucketSettings);
+            Bucket bucket = authenticate.openBucket(database);
+            bucket.query(N1qlQuery.simple("CREATE PRIMARY INDEX index_" + database + " on " + database));
+            bucket.close();
+
+        }
+        return new DefaultCouchbaseDocumentCollectionManager(authenticate.openBucket(database), database);
     }
 
     @Override
