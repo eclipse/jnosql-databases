@@ -151,14 +151,14 @@ public class DocumentQueryTest {
 
     @Test
     public void shouldFindDocumentByName() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
-                , Document.of("name", "name3"), Document.of("_key", "person:id4")));
+        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4"),
+                Document.of("name", "name3"), Document.of("_key", "person:id4")));
 
         Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertEquals(entities.get(0), entity);
     }
 
     @Test
@@ -206,7 +206,7 @@ public class DocumentQueryTest {
     @Test
     public void shouldFindDocumentById() {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name"), Document.of("_key", "person:id")));
+                , Document.of("name", "name")));
         Document id = entity.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
@@ -218,17 +218,4 @@ public class DocumentQueryTest {
         assertThat(entities, contains(entity));
     }
 
-    @Test
-    public void shouldFindDocumentByKey() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name"), Document.of("_key", "person:id")));
-
-        Document id = entity.find("_key").get();
-        DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
-                .build();
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
-    }
 }

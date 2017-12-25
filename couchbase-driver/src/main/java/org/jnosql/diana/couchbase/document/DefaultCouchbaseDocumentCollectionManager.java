@@ -41,6 +41,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toSet;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
+import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.convert;
 import static org.jnosql.diana.couchbase.document.EntityConverter.getPrefix;
 
@@ -64,7 +65,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
         String prefix = getPrefix(id, entity.getName());
-        jsonObject.put(ID_FIELD, prefix);
+        jsonObject.put(KEY_FIELD, prefix);
         bucket.upsert(JsonDocument.create(prefix, jsonObject));
         entity.add(Document.of(ID_FIELD, prefix));
         return entity;
@@ -79,6 +80,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
         String prefix = getPrefix(id, entity.getName());
+        jsonObject.put(KEY_FIELD, prefix);
         bucket.upsert(JsonDocument.create(prefix, jsonObject), ttl.toMillis(), MILLISECONDS);
         return entity;
     }
