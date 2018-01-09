@@ -115,8 +115,21 @@ class RedisMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         requireNonNull(value, "Value is required");
         requireNonNull(value, "Key is required");
-        String keyJson = JSONB.toJson(key);
-        jedis.hset(nameSpace, keyJson, JSONB.toJson(value));
+
+        String keyJson;
+        if(isKeyString) {
+            keyJson = key.toString();
+        } else {
+             keyJson = JSONB.toJson(key);
+        }
+        String valueJSON;
+
+        if(isValueString) {
+            valueJSON = value.toString();
+        } else {
+            valueJSON = JSONB.toJson(value);
+        }
+        jedis.hset(nameSpace, keyJson, valueJSON);
         return value;
     }
 
