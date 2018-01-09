@@ -35,7 +35,7 @@ public class RedisSetStringTest {
     @Before
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
-        users = keyValueEntityManagerFactory.getSet("social-media", String.class);
+        users = keyValueEntityManagerFactory.getSet("social-media-string", String.class);
     }
 
     @Test
