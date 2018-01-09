@@ -29,11 +29,11 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected static final  Jsonb JSONB = JsonbBuilder.create();
 
-    protected Class<T> clazz;
+    protected final Class<T> clazz;
 
-    protected String keyWithNameSpace;
+    protected final String keyWithNameSpace;
 
-    protected Jedis jedis;
+    protected final Jedis jedis;
 
 
 
