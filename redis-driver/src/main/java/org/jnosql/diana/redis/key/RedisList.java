@@ -63,11 +63,19 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         Objects.requireNonNull(e);
         int index = size();
         if (index == 0) {
-            jedis.lpush(keyWithNameSpace, JSONB.toJson(e));
+            if(isString) {
+                jedis.lpush(keyWithNameSpace, e.toString());
+            } else {
+                jedis.lpush(keyWithNameSpace, JSONB.toJson(e));
+            }
         } else {
             String previewValue = jedis.lindex(keyWithNameSpace, index - 1);
-            jedis.linsert(keyWithNameSpace, LIST_POSITION.AFTER, previewValue,
-                    JSONB.toJson(e));
+            if(isString) {
+                jedis.linsert(keyWithNameSpace, LIST_POSITION.AFTER, previewValue, e.toString());
+            }else {
+                jedis.linsert(keyWithNameSpace, LIST_POSITION.AFTER, previewValue,
+                        JSONB.toJson(e));
+            }
         }
         return true;
     }
@@ -94,7 +102,12 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
     @Override
     public T set(int index, T element) {
         Objects.requireNonNull(element);
-        jedis.lset(keyWithNameSpace, index, JSONB.toJson(element));
+        if(isString) {
+            jedis.lset(keyWithNameSpace, index, element.toString());
+        } else {
+            jedis.lset(keyWithNameSpace, index, JSONB.toJson(element));
+        }
+
         return element;
     }
 
@@ -103,7 +116,12 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         Objects.requireNonNull(element);
         String previewValue = jedis.lindex(keyWithNameSpace, index);
         if (previewValue != null && !previewValue.isEmpty()) {
-            jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, JSONB.toJson(element));
+            if(isString) {
+                jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, element.toString());
+            } else {
+                jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, JSONB.toJson(element));
+            }
+
         } else {
             add(element);
         }
@@ -123,7 +141,8 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
     @Override
     public int lastIndexOf(Object o) {
         Objects.requireNonNull(o);
-        String value = JSONB.toJson(o);
+
+        String value = serialize(o);
         for (int index = size(); index > 0; --index) {
             String findedValue = jedis.lindex(keyWithNameSpace, (long) index);
             if (value.equals(findedValue)) {
@@ -138,7 +157,11 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         List<T> subList = new ArrayList<>();
         List<String> elements = jedis.lrange(keyWithNameSpace, fromIndex, toIndex);
         for (String element : elements) {
-            subList.add(JSONB.fromJson(element, clazz));
+            if(isString) {
+                subList.add((T) element);
+            } else {
+                subList.add(JSONB.fromJson(element, clazz));
+            }
         }
         return subList;
     }
