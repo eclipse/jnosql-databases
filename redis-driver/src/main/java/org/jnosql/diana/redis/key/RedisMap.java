@@ -15,19 +15,19 @@
 
 package org.jnosql.diana.redis.key;
 
-import static java.util.Objects.requireNonNull;
+import redis.clients.jedis.Jedis;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
-import redis.clients.jedis.Jedis;
+import static java.util.Objects.requireNonNull;
 
 class RedisMap<K, V> implements Map<K, V> {
 
@@ -42,12 +42,18 @@ class RedisMap<K, V> implements Map<K, V> {
 
     private final Jedis jedis;
 
+    private final boolean isKeyString;
+
+    private final boolean isValueString;
+
 
     RedisMap(Jedis jedis, Class<K> keyValue, Class<V> valueClass, String keyWithNameSpace) {
         this.keyClass = keyValue;
         this.valueClass = valueClass;
         this.nameSpace = keyWithNameSpace;
         this.jedis = jedis;
+        this.isKeyString = String.class.equals(keyClass);
+        this.isValueString = String.class.equals(valueClass);
     }
 
     @Override
@@ -62,13 +68,24 @@ class RedisMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return jedis.hexists(nameSpace, JSONB.toJson(requireNonNull(key)));
+        requireNonNull(key, "key is required");
+        if (isKeyString) {
+            return jedis.hexists(nameSpace, key.toString());
+        } else {
+            return jedis.hexists(nameSpace, JSONB.toJson(key));
+        }
     }
 
     @Override
     public boolean containsValue(Object value) {
         requireNonNull(value);
-        String valueString = JSONB.toJson(value);
+        String valueString;
+        if (isValueString) {
+            valueString = value.toString();
+        } else {
+            valueString = JSONB.toJson(value);
+        }
+
         Map<String, String> map = createRedisMap();
         return map.containsValue(valueString);
     }
@@ -76,9 +93,20 @@ class RedisMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         requireNonNull(key, "Key is required");
+
         String value = jedis.hget(nameSpace, JSONB.toJson(key));
+        if (isKeyString) {
+            value = jedis.hget(nameSpace, key.toString());
+        } else {
+            value = jedis.hget(nameSpace, JSONB.toJson(key));
+        }
         if (value != null && !value.isEmpty()) {
-            return JSONB.fromJson(value, valueClass);
+            if (isValueString) {
+                return (V) value;
+            } else {
+                return JSONB.fromJson(value, valueClass);
+            }
+
         }
         return null;
     }
@@ -94,9 +122,15 @@ class RedisMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(Object key) {
+        requireNonNull(key, "Key is required");
         V value = get(key);
         if (value != null) {
-            jedis.hdel(nameSpace, JSONB.toJson(requireNonNull(key, "Key is required")));
+            if (isKeyString) {
+                jedis.hdel(nameSpace, key.toString());
+            } else {
+                jedis.hdel(nameSpace, JSONB.toJson(key));
+            }
+
             return value;
         }
         return null;
@@ -142,8 +176,22 @@ class RedisMap<K, V> implements Map<K, V> {
     private Map<K, V> createHashMap() {
         Map<K, V> values = new HashMap<>();
         Map<String, String> redisMap = createRedisMap();
+        final Function<String, K> keyFunction = k -> {
+            if(isKeyString) {
+                return (K) k;
+            } else {
+                return JSONB.fromJson(k, keyClass);
+            }
+        };
+        final Function<String, V> valueFunction = k -> {
+            if(isValueString) {
+                return (V) redisMap.get(k);
+            } else {
+                return JSONB.fromJson(redisMap.get(k), valueClass);
+            }
+        };
         return redisMap.keySet().stream().collect(Collectors
-                .toMap(k -> JSONB.fromJson(k, keyClass), k -> JSONB.fromJson(redisMap.get(k), valueClass)));
+                .toMap(keyFunction, valueFunction));
     }
 
 
