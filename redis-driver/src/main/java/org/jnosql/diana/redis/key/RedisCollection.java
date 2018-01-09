@@ -35,12 +35,15 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected final Jedis jedis;
 
+    protected final boolean isString;
+
 
 
     RedisCollection(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
         this.clazz = clazz;
         this.keyWithNameSpace = keyWithNameSpace;
         this.jedis = jedis;
+        this.isString = String.class.equals(clazz);
     }
 
     @Override
@@ -135,17 +138,18 @@ abstract class RedisCollection<T> implements Collection<T> {
         String value = jedis.lindex(keyWithNameSpace, (long) index);
         if (value != null && !value.isEmpty()) {
             jedis.lrem(keyWithNameSpace, 1, value);
-            return JSONB.fromJson(value,clazz);
+            return serialize(value);
         }
         return null;
     }
+
 
     protected int indexOf(Object o) {
         if (!clazz.isInstance(o)) {
             return -1;
         }
 
-        String value = JSONB.toJson(o);
+        String value = serialize(o);
         for (int index = 0; index < size(); index++) {
             String findedValue = jedis.lindex(keyWithNameSpace, (long) index);
             if (value.equals(findedValue)) {
@@ -154,6 +158,7 @@ abstract class RedisCollection<T> implements Collection<T> {
         }
         return -1;
     }
+
 
     protected List<T> toArrayList() {
         List<T> list = new ArrayList<>();
@@ -171,8 +176,24 @@ abstract class RedisCollection<T> implements Collection<T> {
         if (value == null || value.isEmpty()) {
             return null;
         }
+        return serialize(value);
+    }
+
+
+    protected T serialize(String value) {
+        if(isString) {
+            return (T) value;
+        }
         return JSONB.fromJson(value,clazz);
     }
+
+    protected String serialize(Object value) {
+        if(value instanceof String) {
+            return value.toString();
+        }
+        return JSONB.toJson(value);
+    }
+
 
     @Override
     public int hashCode() {
