@@ -14,14 +14,8 @@
  */
 package org.jnosql.diana.couchbase.util;
 
-import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;
-import com.couchbase.client.java.cluster.BucketSettings;
-import com.couchbase.client.java.cluster.ClusterManager;
-import com.couchbase.client.java.cluster.DefaultBucketSettings;
-import com.couchbase.client.java.query.N1qlQuery;
 
-import java.util.List;
 import java.util.Objects;
 
 public final class CouchbaseClusterUtil {
@@ -31,6 +25,8 @@ public final class CouchbaseClusterUtil {
     public static CouchbaseCluster getCouchbaseCluster(String database, CouchbaseCluster couchbaseCluster, String user, String password) {
         Objects.requireNonNull(database, "database is required");
         CouchbaseCluster authenticate = couchbaseCluster.authenticate(user, password);
+
+       /*
         ClusterManager clusterManager = authenticate.clusterManager();
         List<BucketSettings> buckets = clusterManager.getBuckets();
         if(buckets.stream().noneMatch(b -> b.name().equals(database))) {
@@ -39,8 +35,7 @@ public final class CouchbaseClusterUtil {
             Bucket bucket = authenticate.openBucket(database);
             bucket.query(N1qlQuery.simple("CREATE PRIMARY INDEX index_" + database + " on " + database));
             bucket.close();
-
-        }
+        }*/
         return authenticate;
     }
 
