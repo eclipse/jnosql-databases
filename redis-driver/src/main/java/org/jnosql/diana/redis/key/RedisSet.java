@@ -31,8 +31,12 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
     @Override
     public boolean add(T e) {
         Objects.requireNonNull(e);
-        jedis.sadd(keyWithNameSpace, JSONB.toJson(e));
-        return false;
+        if (isString) {
+            jedis.sadd(keyWithNameSpace, e.toString());
+        } else {
+            jedis.sadd(keyWithNameSpace, JSONB.toJson(e));
+        }
+        return true;
     }
 
     @Override
@@ -92,7 +96,7 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
         Set<String> redisValues = jedis.smembers(keyWithNameSpace);
         List<T> list = new ArrayList<>();
         for (String redisValue : redisValues) {
-            if(isString) {
+            if (isString) {
                 list.add((T) redisValue);
             } else {
                 list.add(JSONB.fromJson(redisValue, clazz));
