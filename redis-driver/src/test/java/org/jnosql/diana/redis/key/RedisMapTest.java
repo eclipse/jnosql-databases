@@ -16,21 +16,16 @@
 package org.jnosql.diana.redis.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisMapTest {
 
@@ -40,7 +35,7 @@ public class RedisMapTest {
     private Species fishes = new Species("redfish", "glassfish");
     private Species amphibians = new Species("crododile", "frog");
 
-    @Before
+    @BeforeEach
     public void init() {
         entityManagerFactory = RedisTestUtils.get();
     }
@@ -63,10 +58,10 @@ public class RedisMapTest {
         Map<String, Species> vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
         vertebrates.put("mammals", mammals);
         assertTrue(vertebrates.containsKey("mammals"));
-        Assert.assertFalse(vertebrates.containsKey("redfish"));
+        assertFalse(vertebrates.containsKey("redfish"));
 
         assertTrue(vertebrates.containsValue(mammals));
-        Assert.assertFalse(vertebrates.containsValue(fishes));
+        assertFalse(vertebrates.containsValue(fishes));
     }
 
     @Test
@@ -89,7 +84,7 @@ public class RedisMapTest {
         assertTrue(vertebrates.size() == 2);
     }
 
-    @After
+    @AfterEach
     public void dispose() {
         Map<String, Species> vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
         vertebrates.clear();

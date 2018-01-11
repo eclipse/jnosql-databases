@@ -17,18 +17,14 @@ package org.jnosql.diana.redis.key;
 
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisQueueStringTest {
 
@@ -37,7 +33,7 @@ public class RedisQueueStringTest {
 
     private Queue<String> lineBank;
 
-    @Before
+    @BeforeEach
     public void init() {
 
         keyValueEntityManagerFactory = RedisTestUtils.get();
@@ -107,7 +103,7 @@ public class RedisQueueStringTest {
         assertTrue(count == 0);
     }
 
-    @After
+    @AfterEach
     public void dispose() {
         lineBank.clear();
     }

@@ -16,19 +16,15 @@
 package org.jnosql.diana.redis.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisListTest {
 
@@ -43,7 +39,7 @@ public class RedisListTest {
 
     private List<ProductCart> fruits;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         fruits = keyValueEntityManagerFactory.getList(FRUITS, ProductCart.class);
@@ -132,7 +128,7 @@ public class RedisListTest {
         assertTrue(count == 0);
     }
 
-    @After
+    @AfterEach
     public void end() {
         fruits.clear();
     }

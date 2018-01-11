@@ -17,13 +17,13 @@ package org.jnosql.diana.redis.key;
 
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedisSetTest {
 
@@ -33,7 +33,7 @@ public class RedisSetTest {
     private User felipe = new User("ffrancesquini");
     private Set<User> users;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         users = keyValueEntityManagerFactory.getSet("social-media", User.class);
@@ -73,7 +73,7 @@ public class RedisSetTest {
         assertTrue(count == 0);
     }
 
-    @After
+    @AfterEach
     public void dispose() {
         users.clear();
     }

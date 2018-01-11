@@ -15,17 +15,14 @@
 
 package org.jnosql.diana.redis.key;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultSortedSetTest {
 
@@ -36,7 +33,7 @@ public class DefaultSortedSetTest {
     private RedisBucketManagerFactory keyValueEntityManagerFactory;
     private SortedSet sortedSet;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         sortedSet = keyValueEntityManagerFactory.getSortedSet("world-cup-2018");

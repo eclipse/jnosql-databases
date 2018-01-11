@@ -17,14 +17,14 @@ package org.jnosql.diana.redis.key;
 
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedisSetStringTest {
 
@@ -33,7 +33,7 @@ public class RedisSetStringTest {
 
     private Set<String> users;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         users = keyValueEntityManagerFactory.getSet("social-media-string", String.class);
@@ -81,7 +81,7 @@ public class RedisSetStringTest {
         assertTrue(count == 0);
     }
 
-    @After
+    @AfterEach
     public void dispose() {
         users.clear();
     }

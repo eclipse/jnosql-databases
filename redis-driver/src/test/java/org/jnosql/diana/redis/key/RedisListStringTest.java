@@ -16,18 +16,14 @@
 package org.jnosql.diana.redis.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisListStringTest {
 
@@ -38,7 +34,7 @@ public class RedisListStringTest {
 
     private List<String> fruits;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         fruits = keyValueEntityManagerFactory.getList(FRUITS, String.class);
@@ -127,7 +123,7 @@ public class RedisListStringTest {
         assertTrue(count == 0);
     }
 
-    @After
+    @AfterEach
     public void end() {
         fruits.clear();
     }
