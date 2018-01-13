@@ -17,21 +17,21 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDBDocumentCollectionManagerFactoryTest {
 
     private static MongoDBDocumentConfiguration configuration;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         configuration = new MongoDBDocumentConfiguration();
         MongoDbHelper.startMongoDb();
@@ -43,19 +43,19 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
         assertNotNull(mongoDBFactory.get("database"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnNPEWhenSettingsIsNull() {
-        configuration.get((Settings) null);
+        assertThrows(NullPointerException.class, () -> configuration.get((Settings) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnNPEWhenMapSettingsIsNull() {
-        configuration.get((Map<String, String>) null);
+        assertThrows(NullPointerException.class, () -> configuration.get((Map<String, String>) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnNPEWhenMongoClientIsNull() {
-        configuration.get((MongoClient) null);
+        assertThrows(NullPointerException.class, () -> configuration.get((MongoClient) null));
     }
 
 
@@ -65,17 +65,17 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
         assertNotNull(mongoDBFactory.getAsync("database"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnNPEWhenSettingOnAsyncsIsNull() {
-        configuration.getAsync((Settings) null);
+        assertThrows(NullPointerException.class, () -> configuration.getAsync((Settings) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnNPEWhenMongoClientAsyncIsNull() {
-        configuration.getAsync((com.mongodb.async.client.MongoClient) null);
+        assertThrows(NullPointerException.class, () -> configuration.getAsync((com.mongodb.async.client.MongoClient) null));
     }
 
-    @AfterClass
+    @AfterAll
     public static void end() {
         MongoDbHelper.stopMongoDb();
     }

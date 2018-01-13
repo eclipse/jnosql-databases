@@ -17,15 +17,16 @@ package org.jnosql.diana.mongodb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDBDocumentConfigurationTest {
+
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
         Map<String, String> map = new HashMap<>();
@@ -42,18 +43,16 @@ public class MongoDBDocumentConfigurationTest {
         assertNotNull(managerFactory);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhendSettingsIsNull() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        configuration.get(null);
+        assertThrows(NullPointerException.class, () -> configuration.get(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhendMapSettingsIsNull() {
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        configuration.get((Map) null);
+        assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
     }
-
-
 
 }
