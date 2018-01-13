@@ -16,10 +16,10 @@
 package org.jnosql.diana.hbase.column;
 
 import org.jnosql.diana.api.column.ColumnConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HBaseColumnConfigurationTest {
 
@@ -36,8 +36,8 @@ public class HBaseColumnConfigurationTest {
         assertNotNull(configuration.get());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorCreatesColumnFamilyManagerFactory() {
-        new HBaseColumnConfiguration(null);
+        assertThrows(NullPointerException.class, () -> new HBaseColumnConfiguration(null));
     }
 }
