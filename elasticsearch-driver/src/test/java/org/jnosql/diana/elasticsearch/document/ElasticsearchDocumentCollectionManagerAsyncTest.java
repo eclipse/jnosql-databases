@@ -21,8 +21,8 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +30,8 @@ import java.util.Map;
 
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ElasticsearchDocumentCollectionManagerAsyncTest {
@@ -41,7 +41,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
     private DocumentCollectionManager entityManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         ElasticsearchDocumentCollectionManagerFactory managerFactory = configuration.get();
