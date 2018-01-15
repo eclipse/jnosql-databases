@@ -26,16 +26,13 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.hazelcast.key.model.User;
 import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HazelcastBucketManagerTest {
 
@@ -49,7 +46,7 @@ public class HazelcastBucketManagerTest {
     private User userSoro = new User("soro");
     private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = KeyValueEntityManagerFactoryUtils.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");

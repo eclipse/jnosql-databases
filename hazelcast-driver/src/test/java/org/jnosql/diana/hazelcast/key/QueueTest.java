@@ -19,15 +19,14 @@ package org.jnosql.diana.hazelcast.key;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.hazelcast.key.model.LineBank;
 import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import static org.junit.Assert.*;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QueueTest {
 
@@ -36,7 +35,7 @@ public class QueueTest {
 
     private Queue<LineBank> lineBank;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory =  KeyValueEntityManagerFactoryUtils.get();
         lineBank = keyValueEntityManagerFactory.getQueue("physical-bank", LineBank.class);
@@ -101,7 +100,7 @@ public class QueueTest {
         }
         assertTrue(count == 0);
     }
-    @After
+    @AfterEach
     public void dispose() {
         lineBank.clear();
     }
