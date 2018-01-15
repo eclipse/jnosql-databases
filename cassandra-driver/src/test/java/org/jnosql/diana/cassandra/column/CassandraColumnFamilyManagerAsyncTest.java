@@ -20,10 +20,10 @@ import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.Columns;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,17 +41,17 @@ public class CassandraColumnFamilyManagerAsyncTest {
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnFamilyManagerAsync columnEntityManager;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws InterruptedException, IOException, TTransportException {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
     }
 
-    @AfterClass
+    @AfterAll
     public static void end(){
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws InterruptedException, IOException, TTransportException {
 
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();

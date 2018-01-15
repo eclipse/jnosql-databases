@@ -19,24 +19,25 @@ package org.jnosql.diana.cassandra.column;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CassandraConfigurationTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws InterruptedException, IOException, TTransportException {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
     }
 
-    @AfterClass
+    @AfterAll
     public static void end(){
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
@@ -58,10 +59,10 @@ public class CassandraConfigurationTest {
         assertNotNull(entityManagerFactory);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnNPEWhenMapIsNull() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        cassandraConfiguration.getManagerFactory(null);
+        assertThrows(NullPointerException.class, () -> cassandraConfiguration.getManagerFactory(null));
     }
 
 }
