@@ -20,16 +20,14 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 
-import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
 
@@ -42,7 +40,7 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
     private Random random;
     private String KEY_NAME = "_key";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         random = new Random();
         entityManagerAsync = getConfiguration().getAsync("database");
