@@ -17,18 +17,13 @@ package org.jnosql.diana.couchbase.key;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CouchbaseMapTest {
     private BucketManagerFactory entityManagerFactory;
@@ -36,14 +31,14 @@ public class CouchbaseMapTest {
     private User mammals = new User("lion");
     private User fishes = new User("redfish");
 
-    @Before
+    @BeforeEach
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         entityManagerFactory = configuration.get();
         entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class).clear();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
@@ -69,10 +64,10 @@ public class CouchbaseMapTest {
         Map<String, User> vertebrates = entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class);
         vertebrates.put("mammals", mammals);
         assertTrue(vertebrates.containsKey("mammals"));
-        Assert.assertFalse(vertebrates.containsKey("redfish"));
+        assertFalse(vertebrates.containsKey("redfish"));
 
         assertTrue(vertebrates.containsValue(mammals));
-        Assert.assertFalse(vertebrates.containsValue(fishes));
+        assertFalse(vertebrates.containsValue(fishes));
     }
 
 

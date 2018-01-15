@@ -17,26 +17,22 @@ package org.jnosql.diana.couchbase.key;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CouchbaseQueueTest {
     private BucketManagerFactory keyValueEntityManagerFactory;
 
     private Queue<User> users;
 
-    @Before
+    @BeforeEach
     public void init() {
 
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
@@ -46,7 +42,7 @@ public class CouchbaseQueueTest {
 
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
@@ -110,7 +106,7 @@ public class CouchbaseQueueTest {
         assertTrue(count == 0);
     }
 
-    @After
+    @AfterEach
     public void dispose() {
         users.clear();
     }

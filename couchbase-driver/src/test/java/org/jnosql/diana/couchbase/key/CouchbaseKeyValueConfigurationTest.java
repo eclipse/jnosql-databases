@@ -15,24 +15,24 @@
 package org.jnosql.diana.couchbase.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CouchbaseKeyValueConfigurationTest {
 
     private CouchbaseKeyValueConfiguration configuration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new CouchbaseKeyValueConfiguration();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErroWhenNodeIsNull() {
-        configuration.add(null);
+        assertThrows(NullPointerException.class, () -> configuration.add(null));
     }
 
     @Test

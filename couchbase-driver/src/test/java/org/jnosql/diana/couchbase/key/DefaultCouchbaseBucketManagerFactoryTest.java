@@ -16,16 +16,17 @@ package org.jnosql.diana.couchbase.key;
 
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultCouchbaseBucketManagerFactoryTest {
 
     private CouchbaseBucketManagerFactory factory;
 
-    @Before
+    @BeforeEach
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         factory = configuration.get();
@@ -34,11 +35,11 @@ public class DefaultCouchbaseBucketManagerFactoryTest {
     @Test
     public void shouldReturnManager() {
         BucketManager database = factory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        Assert.assertNotNull(database);
+        assertNotNull(database);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnError() {
-        factory.getBucketManager(null);
+        assertThrows(NullPointerException.class, () -> factory.getBucketManager(null));
     }
 }

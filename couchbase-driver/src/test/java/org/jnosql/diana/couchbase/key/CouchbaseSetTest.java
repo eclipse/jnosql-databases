@@ -17,15 +17,14 @@ package org.jnosql.diana.couchbase.key;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
-
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseSetTest {
 
@@ -34,14 +33,14 @@ public class CouchbaseSetTest {
     private User felipe = new User("ffrancesquini");
     private Set<User> users;
 
-    @Before
+    @BeforeEach
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         keyValueEntityManagerFactory = configuration.get();
         users = keyValueEntityManagerFactory.getSet(CouchbaseUtil.BUCKET_NAME, User.class);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
@@ -83,7 +82,7 @@ public class CouchbaseSetTest {
         assertTrue(count == 0);
     }
 
-    @After
+    @AfterEach
     public void dispose() {
         users.clear();
     }
