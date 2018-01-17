@@ -66,7 +66,8 @@
     </developers>
 
     <properties>
-        <junit.version>5.0.2</junit.version>
+        <junit.jupiter.version>5.0.3</junit.jupiter.version>
+        <junit.platform.version>1.0.3</junit.platform.version>
         <hamcrest-all.version>1.3</hamcrest-all.version>
         <json.b.version>1.0.1</json.b.version>
         <javax.json.bind.version>1.0</javax.json.bind.version>
@@ -124,8 +125,8 @@
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.3</version>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -148,5 +149,20 @@
         </repository>
     </distributionManagement>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>${junit.platform.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
