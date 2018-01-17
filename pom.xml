@@ -124,8 +124,8 @@
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.0.2</version>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.0.3</version>
             <scope>test</scope>
         </dependency>
 
