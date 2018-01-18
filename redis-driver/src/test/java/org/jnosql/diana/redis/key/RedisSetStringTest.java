@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RedisSetStringTest {
@@ -44,6 +45,14 @@ public class RedisSetStringTest {
         users.add("otaviojava");
         assertTrue(users.size() == 1);
 
+        String user = users.iterator().next();
+        assertEquals("otaviojava", user);
+    }
+
+    @Test
+    public void shouldRemoveSet() {
+        assertTrue(users.isEmpty());
+        users.add("otaviojava");
         users.remove("otaviojava");
         assertTrue(users.isEmpty());
     }
