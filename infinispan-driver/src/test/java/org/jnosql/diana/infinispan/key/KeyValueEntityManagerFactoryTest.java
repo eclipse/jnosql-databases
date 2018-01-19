@@ -14,15 +14,16 @@
  */
 package org.jnosql.diana.infinispan.key;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Map;
 
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class KeyValueEntityManagerFactoryTest {
@@ -30,7 +31,7 @@ public class KeyValueEntityManagerFactoryTest {
     public static final String BUCKET_NAME = "bucketName";
     private BucketManagerFactory managerFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         KeyValueConfiguration configuration = new InfinispanKeyValueConfiguration();
         managerFactory = configuration.get();
@@ -48,19 +49,19 @@ public class KeyValueEntityManagerFactoryTest {
         assertNotNull(map);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void shouldCreateSet(){
-        managerFactory.getSet(BUCKET_NAME, String.class);
+        assertThrows(UnsupportedOperationException.class, () -> managerFactory.getSet(BUCKET_NAME, String.class));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void shouldCreateList(){
-        managerFactory.getList(BUCKET_NAME, String.class);
+        assertThrows(UnsupportedOperationException.class, () -> managerFactory.getList(BUCKET_NAME, String.class));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void shouldCreateQueue(){
-        managerFactory.getQueue(BUCKET_NAME, String.class);
+        assertThrows(UnsupportedOperationException.class, () -> managerFactory.getQueue(BUCKET_NAME, String.class));
     }
 
 }

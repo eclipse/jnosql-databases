@@ -18,16 +18,15 @@ package org.jnosql.diana.hazelcast.key;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.hazelcast.key.model.ProductCart;
 import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ListTest {
 
@@ -42,7 +41,7 @@ public class ListTest {
 
     private List<ProductCart> fruits;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory =  KeyValueEntityManagerFactoryUtils.get();
         fruits = keyValueEntityManagerFactory.getList(FRUITS, ProductCart.class);
@@ -130,7 +129,7 @@ public class ListTest {
         }
         assertTrue(count == 0);
     }
-    @After
+    @AfterEach
     public  void end() {
         fruits.clear();
     }

@@ -14,21 +14,22 @@
  */
 package org.jnosql.diana.hazelcast.key;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultHazelcastBucketManagerFactoryTest {
 
     private HazelcastBucketManagerFactory managerFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         HazelcastKeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
         managerFactory = configuration.get();
@@ -60,25 +61,24 @@ public class DefaultHazelcastBucketManagerFactoryTest {
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterList() {
-
-        managerFactory.getList(null, String.class);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null, String.class));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterSet() {
-        managerFactory.getList(null, String.class);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null, String.class));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterQueue() {
-        managerFactory.getList(null, String.class);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null, String.class));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterMap() {
-        managerFactory.getList(null, String.class);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null, String.class));
     }
 
     //
@@ -107,25 +107,24 @@ public class DefaultHazelcastBucketManagerFactoryTest {
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterListHazelcast() {
-
-        managerFactory.getList(null);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterSetHazelcast() {
-        managerFactory.getList(null);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterQueueHazelcast() {
-        managerFactory.getList(null);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErrorWhenNullParameterMapHazelcast() {
-        managerFactory.getList(null);
+        assertThrows(NullPointerException.class, () -> managerFactory.getList(null));
     }
 
 }

@@ -16,24 +16,24 @@
 package org.jnosql.diana.riak.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RiakKeyValueConfigurationTest {
 
     private RiakKeyValueConfiguration configuration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new RiakKeyValueConfiguration();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnErroWhenNodeIsNull() {
-        configuration.add((String) null);
+        assertThrows(NullPointerException.class, () -> configuration.add((String) null));
     }
 
     @Test

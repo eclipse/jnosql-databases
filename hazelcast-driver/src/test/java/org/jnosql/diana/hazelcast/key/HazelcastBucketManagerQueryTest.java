@@ -19,8 +19,8 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.hazelcast.key.model.Movie;
 import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,7 +30,8 @@ import static com.hazelcast.query.Predicates.and;
 import static com.hazelcast.query.Predicates.equal;
 import static com.hazelcast.query.Predicates.greaterEqual;
 import static java.util.Collections.singletonMap;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HazelcastBucketManagerQueryTest {
 
@@ -40,7 +41,7 @@ public class HazelcastBucketManagerQueryTest {
 
 
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = KeyValueEntityManagerFactoryUtils.get();
         bucketManager = (HazelcastBucketManager) keyValueEntityManagerFactory.getBucketManager("movies-entity");
@@ -52,14 +53,14 @@ public class HazelcastBucketManagerQueryTest {
         bucketManager.put("avengers", new Movie("The Avengers", 2012, false));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnWhenStringQueryIsNull() {
-        bucketManager.query((String) null);
+        assertThrows(NullPointerException.class, () -> bucketManager.query((String) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldReturnWhenPredicateQueryIsNull() {
-        bucketManager.query((Predicate<? extends Object, ? extends Object>) null);
+        assertThrows(NullPointerException.class, () -> bucketManager.query((Predicate<? extends Object, ? extends Object>) null));
     }
 
     @Test

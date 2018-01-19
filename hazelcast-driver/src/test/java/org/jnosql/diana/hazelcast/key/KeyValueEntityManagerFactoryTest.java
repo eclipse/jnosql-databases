@@ -18,23 +18,22 @@ package org.jnosql.diana.hazelcast.key;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KeyValueEntityManagerFactoryTest {
 
     public static final String BUCKET_NAME = "bucketName";
     private BucketManagerFactory managerFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         KeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
         managerFactory = configuration.get();

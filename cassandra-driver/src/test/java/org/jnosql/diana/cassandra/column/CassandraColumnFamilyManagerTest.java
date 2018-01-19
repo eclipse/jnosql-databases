@@ -27,11 +27,10 @@ import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.Month;
@@ -48,33 +47,30 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CassandraColumnFamilyManagerTest {
 
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnFamilyManager columnEntityManager;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws InterruptedException, IOException, TTransportException {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
     }
 
-    @AfterClass
+    @AfterAll
     public static void end() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws InterruptedException, IOException, TTransportException {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
@@ -189,7 +185,7 @@ public class CassandraColumnFamilyManagerTest {
         ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
         columnEntityManager.delete(deleteQuery);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
-        Assert.assertTrue(entities.isEmpty());
+        assertTrue(entities.isEmpty());
     }
 
     @Test
@@ -200,7 +196,7 @@ public class CassandraColumnFamilyManagerTest {
         ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
         columnEntityManager.delete(deleteQuery, CONSISTENCY_LEVEL);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
-        Assert.assertTrue(entities.isEmpty());
+        assertTrue(entities.isEmpty());
     }
 
     @Test
@@ -244,8 +240,8 @@ public class CassandraColumnFamilyManagerTest {
         Column column = columnEntity.find("name").get();
         udt = UDT.class.cast(column);
         List<Column> udtColumns = (List<Column>) udt.get();
-        Assert.assertEquals("name", udt.getName());
-        Assert.assertEquals("fullname", udt.getUserType());
+        assertEquals("name", udt.getName());
+        assertEquals("fullname", udt.getUserType());
         assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ada"),
                 Column.of("lastname", "Lovelace")));
     }
@@ -269,8 +265,8 @@ public class CassandraColumnFamilyManagerTest {
         Column column = columnEntity.find("name").get();
         udt = UDT.class.cast(column);
         List<Column> udtColumns = (List<Column>) udt.get();
-        Assert.assertEquals("name", udt.getName());
-        Assert.assertEquals("fullname", udt.getUserType());
+        assertEquals("name", udt.getName());
+        assertEquals("fullname", udt.getUserType());
         assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ioda")));
     }
 
@@ -290,7 +286,7 @@ public class CassandraColumnFamilyManagerTest {
                 .build();
 
         ColumnEntity entity1 = columnEntityManager.singleResult(query).get();
-        Assert.assertNotNull(entity1);
+        assertNotNull(entity1);
 
     }
 

@@ -18,19 +18,15 @@ package org.jnosql.diana.couchbase.key;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CouchbaseListTest {
 
@@ -43,14 +39,14 @@ public class CouchbaseListTest {
 
     private List<ProductCart> fruits;
 
-    @Before
+    @BeforeEach
     public void init() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         keyValueEntityManagerFactory = configuration.get();
         fruits = keyValueEntityManagerFactory.getList(CouchbaseUtil.BUCKET_NAME, ProductCart.class);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
@@ -79,7 +75,7 @@ public class CouchbaseListTest {
     }
 
 
-    @After
+    @AfterEach
     public void end() {
         fruits.clear();
     }

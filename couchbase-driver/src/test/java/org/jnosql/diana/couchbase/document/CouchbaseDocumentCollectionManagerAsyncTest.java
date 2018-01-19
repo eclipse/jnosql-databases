@@ -22,9 +22,9 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +32,7 @@ import java.util.Map;
 
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.junit.Assert.assertFalse;
-
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class CouchbaseDocumentCollectionManagerAsyncTest {
 
@@ -43,12 +42,12 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
 
     private DocumentCollectionManager entityManager;
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws InterruptedException {
         Thread.sleep(1_000L);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();

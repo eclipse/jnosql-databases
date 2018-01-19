@@ -16,16 +16,16 @@ package org.jnosql.diana.orientdb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OrientDBDocumentCollectionManagerFactoryTest {
 
     private DocumentCollectionManagerFactory managerFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         managerFactory = DocumentConfigurationUtils.get();
     }

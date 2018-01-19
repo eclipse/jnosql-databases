@@ -14,20 +14,20 @@
  */
 package org.jnosql.diana.infinispan.key;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KeyValueConfigurationTest {
 
     private InfinispanKeyValueConfiguration configuration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new InfinispanKeyValueConfiguration();
     }

@@ -22,10 +22,9 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,24 +36,20 @@ import java.util.Random;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MongoDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     private static DocumentCollectionManager entityManager;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         MongoDbHelper.startMongoDb();
         entityManager = get().get("database");
@@ -144,7 +139,7 @@ public class MongoDBDocumentCollectionManagerTest {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(query);
-        Assert.assertFalse(entities.isEmpty());
+        assertFalse(entities.isEmpty());
     }
 
 
@@ -235,7 +230,7 @@ public class MongoDBDocumentCollectionManagerTest {
         return entity;
     }
 
-    @AfterClass
+    @AfterAll
     public static void end() {
         MongoDbHelper.stopMongoDb();
     }

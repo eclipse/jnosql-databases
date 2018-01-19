@@ -22,9 +22,9 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,12 +32,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DocumentQueryTest {
 
@@ -50,7 +50,7 @@ public class DocumentQueryTest {
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
@@ -61,7 +61,7 @@ public class DocumentQueryTest {
         keyValueEntityManager.remove("person:id4");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws InterruptedException {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();

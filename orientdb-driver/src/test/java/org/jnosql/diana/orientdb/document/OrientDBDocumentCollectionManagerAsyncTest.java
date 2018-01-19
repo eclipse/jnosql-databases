@@ -21,8 +21,8 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +31,11 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.FINEST;
-import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.getAsync;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class OrientDBDocumentCollectionManagerAsyncTest {
@@ -49,7 +48,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentCollectionManagerTest.class.getName());
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entityManagerAsync = getAsync().getAsync("database");
         entityManager = DocumentConfigurationUtils.get().get("database");

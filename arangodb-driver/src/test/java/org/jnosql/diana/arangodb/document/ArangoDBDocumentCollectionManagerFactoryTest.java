@@ -17,17 +17,16 @@ package org.jnosql.diana.arangodb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ArangoDBDocumentCollectionManagerFactoryTest {
 
     private ArangoDBDocumentCollectionManagerFactory managerFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         managerFactory = DocumentConfigurationUtils.getConfiguration();
     }

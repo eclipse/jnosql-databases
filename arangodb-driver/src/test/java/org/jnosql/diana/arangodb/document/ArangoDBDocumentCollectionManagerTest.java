@@ -21,8 +21,8 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,17 +33,13 @@ import java.util.Random;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ArangoDBDocumentCollectionManagerTest {
 
@@ -52,7 +48,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     private Random random;
     private String KEY_NAME = "_key";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         random = new Random();
         entityManager = getConfiguration().get("database");

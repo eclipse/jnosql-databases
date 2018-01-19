@@ -23,18 +23,18 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SearchQueryTest {
 
@@ -47,7 +47,7 @@ public class SearchQueryTest {
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
@@ -58,7 +58,7 @@ public class SearchQueryTest {
         keyValueEntityManager.remove("city:manaus");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws InterruptedException {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();

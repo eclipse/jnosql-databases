@@ -14,12 +14,12 @@
  */
 package org.jnosql.diana.redis.key;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class DefaultCounterTest {
@@ -31,7 +31,7 @@ public class DefaultCounterTest {
     private RedisBucketManagerFactory keyValueEntityManagerFactory;
     private Counter counter;
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         counter = keyValueEntityManagerFactory.getCounter("counter-redis");
@@ -54,7 +54,7 @@ public class DefaultCounterTest {
     @Test
     public void shouldGet() {
         counter.increment(10.15);
-        assertEquals(10.15D, counter.get().doubleValue(), 0);
+        assertEquals(10.15D, counter.get().doubleValue());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class DefaultCounterTest {
         counter.increment(10.15);
         counter.expire(Duration.ofSeconds(1));
         Thread.sleep(2_000L);
-        assertEquals(0D, counter.get().doubleValue(), 0);
+        assertEquals(0D, counter.get().doubleValue());
     }
 
     @Test
@@ -71,13 +71,13 @@ public class DefaultCounterTest {
         counter.expire(Duration.ofSeconds(1));
         counter.persist();
         Thread.sleep(2_000L);
-        assertEquals(10.15D, counter.get().doubleValue(), 0);
+        assertEquals(10.15D, counter.get().doubleValue());
     }
 
     @Test
     public void shouldDelete() {
         counter.increment(10.15);
         counter.delete();
-        assertEquals(0D, counter.get().doubleValue(), 0);
+        assertEquals(0D, counter.get().doubleValue());
     }
 }

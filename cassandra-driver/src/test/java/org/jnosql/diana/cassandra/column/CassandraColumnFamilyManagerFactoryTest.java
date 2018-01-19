@@ -20,34 +20,33 @@ import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraColumnFamilyManagerFactoryTest {
 
     private CassandraColumnFamilyManagerFactory subject;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws InterruptedException, IOException, TTransportException {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
     }
 
-    @AfterClass
+    @AfterAll
     public static void end(){
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws InterruptedException, IOException, TTransportException {
         Map<String, String> configurations = new HashMap<>();
         configurations.put("cassandra-hoster-1", "localhost");

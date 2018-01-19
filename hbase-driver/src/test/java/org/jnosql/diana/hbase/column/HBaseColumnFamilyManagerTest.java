@@ -21,20 +21,16 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import org.jnosql.diana.api.column.ColumnQuery;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HBaseColumnFamilyManagerTest {
 
@@ -46,7 +42,7 @@ public class HBaseColumnFamilyManagerTest {
 
     private ColumnFamilyManager columnFamilyManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         HBaseColumnConfiguration configuration = new HBaseColumnConfiguration();
         configuration.add(FAMILY);
@@ -61,13 +57,13 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.insert(entity);
     }
 
-    @Test(expected = DianaHBaseException.class)
+    @Test
     public void shouldReturnErrorWhenKeyIsNotDefined() {
         ColumnEntity entity = ColumnEntity.of(FAMILY);
         entity.add(Column.of("id", "otaviojava"));
         entity.add(Column.of("age", 26));
         entity.add(Column.of("country", "Brazil"));
-        columnFamilyManager.insert(entity);
+        assertThrows(DianaHBaseException.class, () -> columnFamilyManager.insert(entity));
     }
 
     @Test

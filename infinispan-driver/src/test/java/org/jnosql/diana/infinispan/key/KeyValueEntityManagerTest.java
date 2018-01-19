@@ -25,16 +25,16 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.infinispan.key.model.User;
 import org.jnosql.diana.infinispan.key.util.KeyValueEntityManagerFactoryUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KeyValueEntityManagerTest {
 
@@ -48,7 +48,7 @@ public class KeyValueEntityManagerTest {
     private User userSoro = new User("soro");
     private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
 
-    @Before
+    @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = KeyValueEntityManagerFactoryUtils.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");

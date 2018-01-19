@@ -16,14 +16,13 @@ package org.jnosql.diana.mongodb.document;
 
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,8 +35,8 @@ import static org.jnosql.diana.api.document.DocumentCondition.eq;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getAsync;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class MongoDBDocumentCollectionManagerAsyncTest {
@@ -47,7 +46,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
 
     private static DocumentCollectionManagerAsync entityManager;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException, InterruptedException {
         MongoDbHelper.startMongoDb();
         entityManager = getAsync().getAsync("database");
@@ -107,7 +106,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         return entity;
     }
 
-    @AfterClass
+    @AfterAll
     public static void end() {
         MongoDbHelper.stopMongoDb();
     }
