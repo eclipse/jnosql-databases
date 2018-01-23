@@ -142,6 +142,35 @@ public class CassandraColumnFamilyManagerTest {
         entityManager.save(columnEntity, CONSISTENCY_LEVEL);
     }
 
+
+    @Test
+    public void shouldReturnErrorWhenUpdatetWithColumnsNull() {
+
+        assertThrows(NullPointerException.class, () -> {
+            entityManager.update((Iterable<ColumnEntity>) null);
+        });
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenUpdatetWithColumnNull() {
+        assertThrows(NullPointerException.class, () -> {
+            entityManager.update((ColumnEntity) null);
+        });
+    }
+
+    @Test
+    public void shouldUpdateColumn() {
+        ColumnEntity columnEntity = getColumnFamily();
+        entityManager.update(columnEntity);
+    }
+
+    @Test
+    public void shouldUpdateColumns() {
+        entityManager.update(getEntities());
+    }
+
+
     @Test
     public void shouldFindAll() {
         ColumnEntity columnEntity = getColumnFamily();
