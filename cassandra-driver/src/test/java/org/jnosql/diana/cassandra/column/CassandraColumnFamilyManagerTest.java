@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -113,7 +114,7 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity, Duration.ofSeconds(1L));
 
-        Thread.sleep(2_000L);
+        sleep(2_000L);
 
         List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).where("id").eq(10L).build());
         assertTrue(entities.isEmpty());
@@ -123,7 +124,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldInsertIterableWithTtl() throws InterruptedException {
         entityManager.insert(getEntities(), Duration.ofSeconds(1L));
 
-        Thread.sleep(2_000L);
+        sleep(2_000L);
 
         List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).build());
         assertTrue(entities.isEmpty());
