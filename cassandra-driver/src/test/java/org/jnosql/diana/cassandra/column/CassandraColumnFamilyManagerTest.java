@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -108,6 +109,27 @@ public class CassandraColumnFamilyManagerTest {
     }
 
     @Test
+    public void shouldInsertWithTtl() throws InterruptedException {
+        ColumnEntity columnEntity = getColumnFamily();
+        entityManager.insert(columnEntity, Duration.ofSeconds(1L));
+
+        Thread.sleep(2_000L);
+
+        List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).where("id").eq(10L).build());
+        assertTrue(entities.isEmpty());
+    }
+
+    @Test
+    public void shouldInsertIterableWithTtl() throws InterruptedException {
+        entityManager.insert(getEntities(), Duration.ofSeconds(1L));
+
+        Thread.sleep(2_000L);
+
+        List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).build());
+        assertTrue(entities.isEmpty());
+    }
+
+    @Test
     public void shouldReturnErrorWhenInsertWithColumnNull() {
 
         assertThrows(NullPointerException.class, () -> {
@@ -169,7 +191,6 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldUpdateColumns() {
         entityManager.update(getEntities());
     }
-
 
     @Test
     public void shouldFindAll() {
