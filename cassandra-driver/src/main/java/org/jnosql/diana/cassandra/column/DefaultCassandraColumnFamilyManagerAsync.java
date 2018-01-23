@@ -61,6 +61,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     @Override
     public void save(ColumnEntity entity, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(entity, "entity is required");
+        requireNonNull(level, "level is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         session.executeAsync(insert);
@@ -69,6 +70,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     @Override
     public void save(Iterable<ColumnEntity> entities, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(entities, "entities is required");
+        requireNonNull(level, "level is required");
         StreamSupport.stream(entities.spliterator(), false).forEach(e -> this.save(e, level));
     }
 
@@ -96,6 +98,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
+        requireNonNull(level, "level is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
@@ -106,6 +109,8 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     public void save(ColumnEntity entity, Duration ttl, ConsistencyLevel level, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(entity, "entity is required");
         requireNonNull(callBack, "consumer is required");
+        requireNonNull(level, "level is required");
+
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
