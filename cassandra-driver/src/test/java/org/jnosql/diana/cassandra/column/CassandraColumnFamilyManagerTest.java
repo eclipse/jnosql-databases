@@ -53,7 +53,11 @@ import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraColumnFamilyManagerTest {
 
@@ -71,7 +75,7 @@ public class CassandraColumnFamilyManagerTest {
     }
 
     @BeforeEach
-    public void setUp() throws InterruptedException, IOException, TTransportException {
+    public void setUp() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
         columnEntityManager = entityManagerFactory.get(KEY_SPACE);
@@ -102,6 +106,35 @@ public class CassandraColumnFamilyManagerTest {
     }
 
     @Test
+    public void shouldReturnErrorWhenInsertWithColumnNull() {
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert((ColumnEntity) null);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenInsertWithConsistencyLevelNull() {
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(getColumnFamily(), null);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(getEntities(), null);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenInsertWithColumnsNull() {
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert((Iterable<ColumnEntity>) null);
+        });
+    }
+
+
+    @Test
     public void shouldInsertColumnsWithConsistencyLevel() {
         ColumnEntity columnEntity = getColumnFamily();
         columnEntityManager.save(columnEntity, CONSISTENCY_LEVEL);
@@ -115,6 +148,13 @@ public class CassandraColumnFamilyManagerTest {
         ColumnQuery query = select().from(columnEntity.getName()).build();
         List<ColumnEntity> entities = columnEntityManager.select(query);
         assertFalse(entities.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnErrorWhenQueryIsNull() {
+        assertThrows(NullPointerException.class, () ->{
+           columnEntityManager.select(null);
+        });
     }
 
 
@@ -137,7 +177,6 @@ public class CassandraColumnFamilyManagerTest {
 
         columnEntityManager.insert(getColumnFamily());
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
-        ;
         List<ColumnEntity> columnEntity = columnEntityManager.select(query, CONSISTENCY_LEVEL);
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
@@ -166,6 +205,7 @@ public class CassandraColumnFamilyManagerTest {
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
         assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
     }
+
     @Test
     public void shouldPrepareStatment() {
         columnEntityManager.insert(getColumnFamily());
@@ -192,7 +232,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldDeleteColumnFamilyWithConsistencyLevel() {
         columnEntityManager.insert(getColumnFamily());
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
-        ColumnQuery query =  select().from(COLUMN_FAMILY).where("id").eq(10L).build();
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
         ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
         columnEntityManager.delete(deleteQuery, CONSISTENCY_LEVEL);
         List<ColumnEntity> entities = columnEntityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
@@ -258,7 +298,7 @@ public class CassandraColumnFamilyManagerTest {
         columnEntityManager.insert(entity);
 
         ColumnQuery query = select().from("users")
-                .where("nickname").eq( "Ioda")
+                .where("nickname").eq("Ioda")
                 .build();
 
         ColumnEntity columnEntity = columnEntityManager.singleResult(query).get();
@@ -282,7 +322,7 @@ public class CassandraColumnFamilyManagerTest {
         entity.add(Column.of("dateEnd", dateEnd));
         columnEntityManager.insert(entity);
         ColumnQuery query = select().from("history")
-                .where("name").eq( "World war II")
+                .where("name").eq("World war II")
                 .build();
 
         ColumnEntity entity1 = columnEntityManager.singleResult(query).get();
