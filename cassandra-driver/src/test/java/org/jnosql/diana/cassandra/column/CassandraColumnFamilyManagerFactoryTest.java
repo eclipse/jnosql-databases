@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraColumnFamilyManagerFactoryTest {
@@ -42,7 +43,7 @@ public class CassandraColumnFamilyManagerFactoryTest {
     }
 
     @AfterAll
-    public static void end(){
+    public static void end() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
@@ -54,6 +55,18 @@ public class CassandraColumnFamilyManagerFactoryTest {
         configurations.put("cassandra-query-1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         subject = cassandraConfiguration.getManagerFactory(configurations);
+    }
+
+    @Test
+    public void shouldReturnErrorWhenSettingsIsNull() {
+        CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
+        assertThrows(NullPointerException.class, () -> {
+            cassandraConfiguration.get(null);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            cassandraConfiguration.getAsync(null);
+        });
     }
 
     @Test
