@@ -26,9 +26,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -95,6 +97,42 @@ public class CassandraColumnFamilyManagerAsyncTest {
             columnEntityManager.insert((Iterable<ColumnEntity>) null);
         });
     }
+
+    @Test
+    public void shouldReturnErrorWhenInsertWithTTLNull() {
+        ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(entity, (Duration) null);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(singletonList(entity), (Duration) null);
+        });
+    }
+
+
+    @Test
+    public void shouldReturnErrorWhenInsertWithCallbackNull() {
+        ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(entity, (Consumer<ColumnEntity>) null);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenSaveWithCallbackNull() {
+        ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.update(entity, (Consumer<ColumnEntity>) null);
+        });
+    }
+
+
+
+
     @Test
     public void shouldInsertColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
