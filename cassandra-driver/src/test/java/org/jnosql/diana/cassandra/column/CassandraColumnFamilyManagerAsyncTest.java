@@ -165,7 +165,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         columnEntityManager.select(query, entities::set);
 
-        await().until(entities.get()::size, not(equalTo(0)));
+        await().until(() -> entities.get().size(), not(equalTo(0)));
 
         assertThat(entities.get(), contains(columnEntity));
 
