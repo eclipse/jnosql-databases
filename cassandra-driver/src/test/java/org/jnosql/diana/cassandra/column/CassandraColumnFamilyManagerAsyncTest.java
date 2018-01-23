@@ -69,19 +69,32 @@ public class CassandraColumnFamilyManagerAsyncTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenColumnFamilyIsNull() {
+    public void shouldReturnErrorWhenInsertColumnFamilyIsNull() {
         assertThrows(NullPointerException.class, () -> {
             columnEntityManager.insert((ColumnEntity) null);
         });
     }
 
     @Test
-    public void shouldReturnErrorWhenIterableColumnFamilyIsNull() {
+    public void shouldReturnErrorWhenInsertIterableColumnFamilyIsNull() {
         assertThrows(NullPointerException.class, () -> {
             columnEntityManager.insert((Iterable<ColumnEntity>) null);
         });
     }
 
+    @Test
+    public void shouldReturnErrorWhenUpdateColumnFamilyIsNull() {
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert((ColumnEntity) null);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenUpdateIterableColumnFamilyIsNull() {
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert((Iterable<ColumnEntity>) null);
+        });
+    }
     @Test
     public void shouldInsertColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
