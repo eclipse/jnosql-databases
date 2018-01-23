@@ -118,7 +118,6 @@ public class CassandraColumnFamilyManagerAsyncTest {
         assertThrows(NullPointerException.class, () -> {
             columnEntityManager.insert(entity, (Duration) null);
         });
-
         assertThrows(NullPointerException.class, () -> {
             columnEntityManager.insert(singletonList(entity), (Duration) null);
         });
@@ -128,7 +127,6 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldReturnErrorWhenInsertWithCallbackNull() {
         ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
-
         assertThrows(NullPointerException.class, () -> {
             columnEntityManager.insert(entity, (Consumer<ColumnEntity>) null);
         });
@@ -137,7 +135,6 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldReturnErrorWhenSaveWithCallbackNull() {
         ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
-
         assertThrows(NullPointerException.class, () -> {
             columnEntityManager.update(entity, (Consumer<ColumnEntity>) null);
         });
@@ -151,6 +148,12 @@ public class CassandraColumnFamilyManagerAsyncTest {
     }
 
     @Test
+    public void shouldInsertIterableColumnsAsync() {
+        ColumnEntity columnEntity = getColumnFamily();
+        columnEntityManager.insert(singletonList(columnEntity));
+    }
+
+    @Test
     public void shouldInsertColumnsAsyncWithCallBack() {
         ColumnEntity columnEntity = getColumnFamily();
         AtomicBoolean callBack = new AtomicBoolean(false);
@@ -160,16 +163,14 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
 
-
         AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
 
         columnEntityManager.select(query, entities::set);
-
         await().until(() -> entities.get().size(), not(equalTo(0)));
-
         assertThat(entities.get(), contains(columnEntity));
 
     }
+
 
     @Test
     public void shouldReturnErrorWhenDeleteIsNull() {
@@ -212,16 +213,12 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
 
-
-
         AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
-
         callback.set(false);
         Consumer<List<ColumnEntity>> result = (l) -> {
             callback.set(true);
             entities.set(l);
         };
-
         columnEntityManager.select(query, result);
         await().untilTrue(callback);
 
