@@ -34,6 +34,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class CassandraColumnFamilyManagerAsyncTest {
@@ -47,7 +48,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     }
 
     @AfterAll
-    public static void end(){
+    public static void end() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
@@ -65,6 +66,20 @@ public class CassandraColumnFamilyManagerAsyncTest {
         ColumnEntity columnEntity = ColumnEntity.of(COLUMN_FAMILY);
         columnEntity.add(key);
         columnEntityManager.insert(columnEntity);
+    }
+
+    @Test
+    public void shouldReturnErrorWhenColumnFamilyIsNull() {
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert((ColumnEntity) null);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenIterableColumnFamilyIsNull() {
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert((Iterable<ColumnEntity>) null);
+        });
     }
 
     @Test
