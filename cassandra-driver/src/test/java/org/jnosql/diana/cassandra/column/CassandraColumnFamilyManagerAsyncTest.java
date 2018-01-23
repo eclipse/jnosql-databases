@@ -17,8 +17,8 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
-import org.hamcrest.Matchers;
 import org.jnosql.diana.api.column.Column;
+import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
@@ -29,24 +29,27 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.synchronizedList;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CassandraColumnFamilyManagerAsyncTest {
@@ -158,17 +161,71 @@ public class CassandraColumnFamilyManagerAsyncTest {
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
 
 
-        final List<ColumnEntity> entities = synchronizedList(new ArrayList<>());
+        AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
 
+        columnEntityManager.select(query, entities::set);
+
+        await().until(entities.get()::size, not(equalTo(0)));
+
+        assertThat(entities.get(), contains(columnEntity));
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDeleteIsNull() {
+        assertThrows(NullPointerException.class, () ->{
+           columnEntityManager.delete(null);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenCallBackIsNull() {
+        ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).build();
+        assertThrows(NullPointerException.class, () ->{
+            columnEntityManager.delete(query, (Consumer<Void>) null);
+        });
+
+    }
+
+    @Test
+    public void shouldReturnErrorWhenConsistencyIsNull() {
+        ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).build();
+        assertThrows(NullPointerException.class, () ->{
+            columnEntityManager.delete(query, (ConsistencyLevel) null);
+        });
+
+    }
+
+    @Test
+    public void shouldDelete() {
+        ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
+        columnEntityManager.delete(query);
+    }
+
+    @Test
+    public void shouldDeleteWithCallBack() {
+        AtomicBoolean callback = new AtomicBoolean(false);
+        ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
+        columnEntityManager.delete(deleteQuery, v -> callback.set(true));
+
+        await().untilTrue(callback);
+
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
+
+
+
+        AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
+
+        callback.set(false);
         Consumer<List<ColumnEntity>> result = (l) -> {
-            entities.addAll(l);
+            callback.set(true);
+            entities.set(l);
         };
+
         columnEntityManager.select(query, result);
+        await().untilTrue(callback);
 
-        await().until(entities::size, not(equalTo(0)));
-
-        assertThat(entities, Matchers.contains(columnEntity));
-
+        assertTrue(entities.get().isEmpty());
     }
 
     @Test

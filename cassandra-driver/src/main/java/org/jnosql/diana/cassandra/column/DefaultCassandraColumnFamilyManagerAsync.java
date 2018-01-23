@@ -187,6 +187,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     @Override
     public void delete(ColumnDeleteQuery query, Consumer<Void> consumer) {
         requireNonNull(query, "query is required");
+        requireNonNull(consumer, "consumer is required");
         BuiltStatement delete = QueryUtils.delete(query, keyspace);
         ResultSetFuture resultSetFuture = session.executeAsync(delete);
         resultSetFuture.addListener(() -> consumer.accept(null), executor);
