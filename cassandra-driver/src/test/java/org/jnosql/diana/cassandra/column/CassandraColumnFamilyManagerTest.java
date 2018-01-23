@@ -29,6 +29,7 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,14 @@ public class CassandraColumnFamilyManagerTest {
         entityManager = entityManagerFactory.get(KEY_SPACE);
     }
 
+    @AfterEach
+    public void afterEach() {
+        DefaultCassandraColumnFamilyManager cassandraColumnFamilyManager = DefaultCassandraColumnFamilyManager.class.cast(entityManager);
+        Session session = cassandraColumnFamilyManager.getSession();
+        if (!session.isClosed()) {
+            entityManager.cql("DROP TABLE IF EXISTS " + Constants.KEY_SPACE + '.' + Constants.COLUMN_FAMILY);
+        }
+    }
 
     @Test
     public void shouldClose() throws Exception {
@@ -306,6 +315,7 @@ public class CassandraColumnFamilyManagerTest {
         List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
         assertTrue(entities.isEmpty());
     }
+
 
     @Test
     public void shouldReturnErrorWhenDeleteQueryIsNull() {
