@@ -121,6 +121,8 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
 
     @Override
     public void insert(ColumnEntity entity, Consumer<ColumnEntity> consumer) {
+        requireNonNull(entity, "entity is required");
+        requireNonNull(consumer, "consumer is required");
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
         resultSetFuture.addListener(() -> consumer.accept(entity), executor);
@@ -128,6 +130,10 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
 
     @Override
     public void insert(ColumnEntity entity, Duration ttl, Consumer<ColumnEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
+        requireNonNull(callBack, "callBack is required");
+
         Insert insert = QueryUtils.insert(entity, keyspace, session);
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         ResultSetFuture resultSetFuture = session.executeAsync(insert);
