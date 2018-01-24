@@ -39,6 +39,7 @@ import static java.util.Objects.requireNonNull;
  * The default implementation of {@link CassandraColumnFamilyManagerAsync}
  */
 class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyManagerAsync {
+
     private final Session session;
 
     private final Executor executor;

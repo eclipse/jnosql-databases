@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -44,6 +45,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
@@ -88,6 +90,46 @@ public class CassandraColumnFamilyManagerAsyncTest {
         assertThrows(NullPointerException.class, () -> {
             columnEntityManager.insert((ColumnEntity) null);
         });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenInsertHasNullElement() {
+        final Consumer<ColumnEntity> callBack = c -> {
+        };
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(null, Duration.ofSeconds(1L), callBack);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(getColumnFamily(), null, callBack);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.insert(getColumnFamily(), Duration.ofSeconds(1L), null);
+        });
+    }
+
+    @Test
+    public void shouldInsertWithTTl() throws InterruptedException {
+
+        AtomicBoolean callBack = new AtomicBoolean(false);
+
+        columnEntityManager.insert(getColumnFamily(), Duration.ofSeconds(1L), c -> {
+            callBack.set(true);
+        });
+        await().untilTrue(callBack);
+
+        sleep(2_000L);
+        callBack.set(false);
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
+        AtomicReference<List<ColumnEntity>> references = new AtomicReference<>();
+        columnEntityManager.select(query, l -> {
+            references.set(l);
+        });
+
+        await().until(references::get, notNullValue(List.class));
+        assertTrue(references.get().isEmpty());
     }
 
     @Test
@@ -174,15 +216,15 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
     @Test
     public void shouldReturnErrorWhenDeleteIsNull() {
-        assertThrows(NullPointerException.class, () ->{
-           columnEntityManager.delete(null);
+        assertThrows(NullPointerException.class, () -> {
+            columnEntityManager.delete(null);
         });
     }
 
     @Test
     public void shouldReturnErrorWhenCallBackIsNull() {
         ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).build();
-        assertThrows(NullPointerException.class, () ->{
+        assertThrows(NullPointerException.class, () -> {
             columnEntityManager.delete(query, (Consumer<Void>) null);
         });
 
@@ -191,7 +233,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldReturnErrorWhenConsistencyIsNull() {
         ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).build();
-        assertThrows(NullPointerException.class, () ->{
+        assertThrows(NullPointerException.class, () -> {
             columnEntityManager.delete(query, (ConsistencyLevel) null);
         });
 
