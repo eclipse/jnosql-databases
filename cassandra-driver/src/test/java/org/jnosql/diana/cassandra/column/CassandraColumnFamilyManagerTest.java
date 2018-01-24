@@ -203,6 +203,36 @@ public class CassandraColumnFamilyManagerTest {
     }
 
     @Test
+    public void shouldReturnErrorWhenSaveHasNullElement() {
+        assertThrows(NullPointerException.class, () ->{
+           entityManager.save((ColumnEntity) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL);
+        });
+
+        assertThrows(NullPointerException.class, () ->{
+            entityManager.save(getColumnFamily(), null, ConsistencyLevel.ALL);
+        });
+
+        assertThrows(NullPointerException.class, () ->{
+            entityManager.save(getColumnFamily(), Duration.ofSeconds(1L), null);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorWhenSaveIterableHasNullElement() {
+        assertThrows(NullPointerException.class, () ->{
+            entityManager.save((List<ColumnEntity>) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL);
+        });
+
+        assertThrows(NullPointerException.class, () ->{
+            entityManager.save(getEntities(), null, ConsistencyLevel.ALL);
+        });
+
+        assertThrows(NullPointerException.class, () ->{
+            entityManager.save(getEntities(), Duration.ofSeconds(1L), null);
+        });
+    }
+
+    @Test
     public void shouldFindAll() {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity);
