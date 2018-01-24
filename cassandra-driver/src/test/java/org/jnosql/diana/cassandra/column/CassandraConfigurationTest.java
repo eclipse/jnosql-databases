@@ -18,6 +18,7 @@ package org.jnosql.diana.cassandra.column;
 
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,12 +39,12 @@ public class CassandraConfigurationTest {
     }
 
     @AfterAll
-    public static void end(){
+    public static void end() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
     @Test
-    public void shoudlCreateDocumentEntityManagerFactory() throws InterruptedException, IOException, TTransportException {
+    public void shoudlCreateDocumentEntityManagerFactory() {
         Map<String, String> configurations = new HashMap<>();
         configurations.put("cassandra-hoster-1", "localhost");
         configurations.put("cassandra-port", "9142");
@@ -51,6 +52,17 @@ public class CassandraConfigurationTest {
         ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory(configurations);
         assertNotNull(entityManagerFactory);
     }
+
+    @Test
+    public void shoudlCreateDocumentEntityManagerFactoryFromSettings() {
+
+        Settings settings = Settings.builder().put("cassandra-hoster-1", "localhost").
+                put("cassandra-port", "9142").build();
+        CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
+        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
+        assertNotNull(entityManagerFactory);
+    }
+
 
     @Test
     public void shoudlCreateDocumentEntityManagerFactoryFromFile() {
