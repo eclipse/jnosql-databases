@@ -132,6 +132,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
         assertTrue(references.get().isEmpty());
     }
 
+
     @Test
     public void shouldReturnErrorWhenInsertIterableColumnFamilyIsNull() {
         assertThrows(NullPointerException.class, () -> {
@@ -212,6 +213,39 @@ public class CassandraColumnFamilyManagerAsyncTest {
         assertThat(entities.get(), contains(columnEntity));
 
     }
+
+
+
+    @Test
+    public void shouldUpdateColumnsAsync() {
+        ColumnEntity columnEntity = getColumnFamily();
+        columnEntityManager.update(columnEntity);
+    }
+
+    @Test
+    public void shouldUpdateIterableColumnsAsync() {
+        ColumnEntity columnEntity = getColumnFamily();
+        columnEntityManager.update(singletonList(columnEntity));
+    }
+
+    @Test
+    public void shouldUpdateColumnsAsyncWithCallBack() {
+        ColumnEntity columnEntity = getColumnFamily();
+        AtomicBoolean callBack = new AtomicBoolean(false);
+        columnEntityManager.update(columnEntity, c -> callBack.set(true));
+
+        await().untilTrue(callBack);
+
+        ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
+
+        AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
+
+        columnEntityManager.select(query, entities::set);
+        await().until(() -> entities.get().size(), not(equalTo(0)));
+        assertThat(entities.get(), contains(columnEntity));
+
+    }
+
 
 
     @Test
