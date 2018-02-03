@@ -54,11 +54,12 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
 
 
     @Test
-    public void shouldSaveAsync() throws InterruptedException {
+    public void shouldInsertAsync() throws InterruptedException {
         AtomicBoolean condition = new AtomicBoolean(false);
         DocumentEntity entity = getEntity();
         entityManager.insert(entity, c -> condition.set(true));
-
+        await().untilTrue(condition);
+        assertTrue(condition.get());
     }
 
     @Test

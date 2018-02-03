@@ -47,7 +47,6 @@ import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 public class MongoDBDocumentCollectionManagerAsync implements DocumentCollectionManagerAsync {
 
 
-
     private static final BsonDocument EMPTY = new BsonDocument();
 
     private final MongoDatabase asyncMongoDatabase;
