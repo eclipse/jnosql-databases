@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.mongodb.document;
 
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,14 @@ public class MongoDBDocumentConfigurationTest {
     }
 
     @Test
+    public void shouldCreateSettings() {
+        Settings settings = Settings.builder().put("mongodb-server-host-1", "172.17.0.2:27017").build();
+        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        DocumentCollectionManagerFactory managerFactory = configuration.get(settings);
+        assertNotNull(managerFactory);
+    }
+
+    @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
@@ -54,5 +63,7 @@ public class MongoDBDocumentConfigurationTest {
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
     }
+
+    
 
 }
