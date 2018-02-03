@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getAsync;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -63,6 +65,12 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
     }
 
     @Test
+    public void shouldInsertIterableAsync() throws InterruptedException {
+        List<DocumentEntity> entities = Collections.singletonList(getEntity());
+        entityManager.insert(entities);
+    }
+
+    @Test
     public void shouldSelect() throws InterruptedException {
         DocumentEntity entity = getEntity();
         for (int index = 0; index < 10; index++) {
@@ -70,9 +78,18 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         }
         AtomicBoolean condition = new AtomicBoolean(false);
         DocumentQuery query = select().from(entity.getName()).build();
-        entityManager.select(query, c -> condition.set(true));
+        AtomicReference<List<DocumentEntity>> atomicReference = new AtomicReference<>();
+
+        entityManager.select(query, c -> {
+            condition.set(true);
+            atomicReference.set(c);
+        });
+
+        List<DocumentEntity> entities = atomicReference.get();
         await().untilTrue(condition);
         assertTrue(condition.get());
+        assertFalse(entities.isEmpty());
+
     }
 
 
