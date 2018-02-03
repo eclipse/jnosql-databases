@@ -85,8 +85,8 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
             atomicReference.set(c);
         });
 
-        List<DocumentEntity> entities = atomicReference.get();
         await().untilTrue(condition);
+        List<DocumentEntity> entities = atomicReference.get();
         assertTrue(condition.get());
         assertFalse(entities.isEmpty());
 
