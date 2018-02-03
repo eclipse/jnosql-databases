@@ -43,6 +43,7 @@ public class MongoDBDocumentConfigurationTest {
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get(settings);
         assertNotNull(managerFactory);
+        assertNotNull(configuration.getAsync(settings));
     }
 
     @Test
@@ -63,7 +64,5 @@ public class MongoDBDocumentConfigurationTest {
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
     }
-
-    
 
 }
