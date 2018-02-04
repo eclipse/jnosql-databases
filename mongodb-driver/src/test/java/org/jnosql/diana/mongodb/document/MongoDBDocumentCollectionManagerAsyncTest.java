@@ -86,15 +86,27 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
             condition.set(true);
             reference.set(c);
         });
-        entityManager.update(reference.get(), c -> condition.set(true));
         await().untilTrue(condition);
+        entityManager.update(reference.get(), c -> condition.set(true));
         assertTrue(condition.get());
     }
 
     @Test
     public void shouldUpdateIterableAsync() throws InterruptedException {
-        List<DocumentEntity> entities = Collections.singletonList(getEntity());
-        entityManager.update(entities);
+        Random random = new Random();
+        long id = random.nextLong();
+
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicReference<DocumentEntity> reference = new AtomicReference<>();
+        DocumentEntity entity = getEntity();
+        entity.add("_id", id);
+        entityManager.insert(entity, c -> {
+            condition.set(true);
+            reference.set(c);
+        });
+        await().untilTrue(condition);
+        entityManager.update(Collections.singletonList(entity));
+
     }
 
 
