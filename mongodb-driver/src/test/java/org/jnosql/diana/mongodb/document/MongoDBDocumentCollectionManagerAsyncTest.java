@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -69,6 +70,33 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         List<DocumentEntity> entities = Collections.singletonList(getEntity());
         entityManager.insert(entities);
     }
+
+
+    @Test
+    public void shouldUpdateAsync() throws InterruptedException {
+
+        Random random = new Random();
+        long id = random.nextLong();
+        
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicReference<DocumentEntity> reference = new AtomicReference<>();
+        DocumentEntity entity = getEntity();
+        entity.add("_id", id);
+        entityManager.insert(entity, c -> {
+            condition.set(true);
+            reference.set(c);
+        });
+        entityManager.update(reference.get(), c -> condition.set(true));
+        await().untilTrue(condition);
+        assertTrue(condition.get());
+    }
+
+    @Test
+    public void shouldUpdateIterableAsync() throws InterruptedException {
+        List<DocumentEntity> entities = Collections.singletonList(getEntity());
+        entityManager.update(entities);
+    }
+
 
     @Test
     public void shouldSelect() throws InterruptedException {
