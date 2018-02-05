@@ -84,7 +84,6 @@ public class DefaultCounterTest {
 
     @AfterEach
     public void removeCounter(){
-        counter = keyValueEntityManagerFactory.getCounter("counter-redis");
         counter.delete();
     }
 
