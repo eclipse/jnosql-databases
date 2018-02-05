@@ -14,12 +14,13 @@
  */
 package org.jnosql.diana.redis.key;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class DefaultCounterTest {
@@ -80,4 +81,10 @@ public class DefaultCounterTest {
         counter.delete();
         assertEquals(0D, counter.get().doubleValue());
     }
+
+    @AfterEach
+    public void removeCounter(){
+        counter.delete();
+    }
+
 }
