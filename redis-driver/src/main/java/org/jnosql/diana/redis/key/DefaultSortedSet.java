@@ -126,6 +126,11 @@ class DefaultSortedSet implements SortedSet {
     }
 
     @Override
+    public void clear() {
+        delete();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

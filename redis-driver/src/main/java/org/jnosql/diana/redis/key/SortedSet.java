@@ -140,4 +140,9 @@ public interface SortedSet {
      * @see SortedSet#revRange(long, long)
      */
     List<Ranking> getRevRanking();
+
+    /**
+     * Removes all of the elements from this sortedset
+     */
+    void clear();
 }
