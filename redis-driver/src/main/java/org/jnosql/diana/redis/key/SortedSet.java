@@ -85,7 +85,10 @@ public interface SortedSet {
 
     /**
      * Delete this SortedSet
+     *
+     * @deprecated As of release 0.0.5, replaced by {@link #clear()}
      */
+    @Deprecated
     void delete();
 
     /**

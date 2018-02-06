@@ -16,13 +16,13 @@
 package org.jnosql.diana.redis.key;
 
 
-import redis.clients.jedis.Jedis;
+import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
+import redis.clients.jedis.Jedis;
 
 /**
  * The default {@link SortedSet} implementation
@@ -127,7 +127,7 @@ class DefaultSortedSet implements SortedSet {
 
     @Override
     public void clear() {
-        delete();
+        jedis.del(key);
     }
 
     @Override
