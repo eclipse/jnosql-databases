@@ -27,10 +27,13 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.FINEST;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.getAsync;
@@ -66,10 +69,11 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldSaveAsync() throws InterruptedException {
-        DocumentEntity entity = getEntity();
-        entityManagerAsync.insert(entity);
+        AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
+        entityManagerAsync.insert(getEntity(), entityAtomic::set);
+        await().until(entityAtomic::get, notNullValue(DocumentEntity.class));
 
-        Thread.sleep(1_000L);
+        DocumentEntity entity = entityAtomic.get();
         Document id = entity.find("name").get();
 
         DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
@@ -81,9 +85,10 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldUpdateAsync() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
+
         entityManagerAsync.update(entity);
     }
 
@@ -95,10 +100,10 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        entityManagerAsync.delete(deleteQuery);
-        Thread.sleep(1_000L);
+        AtomicBoolean condition = new AtomicBoolean(false);
+        entityManagerAsync.delete(deleteQuery, c -> condition.set(true));
+        await().untilTrue(condition);
         assertTrue(entityManager.select(query).isEmpty());
-
     }
 
     private DocumentEntity getEntity() {
