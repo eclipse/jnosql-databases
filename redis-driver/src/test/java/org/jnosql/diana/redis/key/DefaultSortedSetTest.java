@@ -79,6 +79,16 @@ public class DefaultSortedSetTest {
     }
 
     @Test
+    public void souldClear() {
+        sortedSet.add(BRAZIL, 1);
+        sortedSet.add(USA, 2);
+        sortedSet.add(ENGLAND, 3);
+        assertFalse(sortedSet.isEmpty());
+        sortedSet.clear();
+        assertTrue(sortedSet.isEmpty());
+    }
+
+    @Test
     public void shouldIncrement() {
         sortedSet.add(BRAZIL, 10);
         Number points = sortedSet.increment(BRAZIL, 2);
@@ -160,9 +170,7 @@ public class DefaultSortedSetTest {
 
     @AfterEach
     public void remove() {
-        sortedSet.remove(BRAZIL);
-        sortedSet.remove(USA);
-        sortedSet.remove(ENGLAND);
+        sortedSet.clear();
     }
 
 }
