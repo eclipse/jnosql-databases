@@ -56,7 +56,7 @@ public class DefaultHazelcastBucketManagerFactoryTest {
 
     @Test
     public void shouldReturnMap() {
-        Map<String, String> map = managerFactory.getMap("queue_sample", String.class, String.class);
+        Map<String, String> map = managerFactory.getMap("map_sample", String.class, String.class);
         assertNotNull(map);
     }
 
@@ -102,7 +102,7 @@ public class DefaultHazelcastBucketManagerFactoryTest {
 
     @Test
     public void shouldReturnMapHazelcast() {
-        Map<String, String> map = managerFactory.getMap("queue_sample");
+        Map<String, String> map = managerFactory.getMap("map_sample");
         assertNotNull(map);
     }
 

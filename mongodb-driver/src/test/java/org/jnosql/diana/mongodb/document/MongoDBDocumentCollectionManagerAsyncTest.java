@@ -140,16 +140,30 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         await().until(entityAtomic::get, notNullValue(DocumentEntity.class));
 
         DocumentEntity entity = entityAtomic.get();
+        Document document = entity.find("name").get();
         assertNotNull(entity);
+        assertNotNull(document);
+
         String collection = entity.getName();
         DocumentDeleteQuery deleteQuery = delete().from(collection)
-                .where("name").eq(entity.find("name").get().get())
+                .where("name").eq(document.get())
                 .build();
         AtomicBoolean condition = new AtomicBoolean(false);
         entityManager.delete(deleteQuery, c -> condition.set(true));
         await().untilTrue(condition);
-        assertTrue(condition.get());
 
+        AtomicBoolean selectCondition = new AtomicBoolean(false);
+        AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
+        DocumentQuery selectQuery = select().from(collection)
+                .where("name").eq(document.get())
+                .build();
+        entityManager.select(selectQuery, c -> {
+            selectCondition.set(true);
+            reference.set(c);
+        });
+        await().untilTrue(selectCondition);
+
+        assertTrue(reference.get().isEmpty());
     }
 
     private DocumentEntity getEntity() {
