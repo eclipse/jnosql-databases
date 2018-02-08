@@ -23,10 +23,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedisSetTest {
-
 
     private BucketManagerFactory keyValueEntityManagerFactory;
     private User userOtavioJava = new User("otaviojava");
@@ -41,19 +43,23 @@ public class RedisSetTest {
 
     @Test
     public void shouldAddUsers() {
-        assertTrue(users.isEmpty());
         users.add(userOtavioJava);
         assertTrue(users.size() == 1);
-
-        users.remove(userOtavioJava);
-        assertTrue(users.isEmpty());
     }
 
+    @Test
+    public void shouldRemove() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        users.remove(felipe);
+        
+        assertTrue(users.size() == 1);
+        assertThat(users, not(contains(felipe)));
+    }
 
     @SuppressWarnings("unused")
     @Test
     public void shouldIterate() {
-
         users.add(userOtavioJava);
         users.add(userOtavioJava);
         users.add(felipe);
