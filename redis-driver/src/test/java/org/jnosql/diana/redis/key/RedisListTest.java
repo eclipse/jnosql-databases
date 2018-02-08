@@ -24,6 +24,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisListTest {
@@ -76,7 +79,12 @@ public class RedisListTest {
 
     @Test
     public void shouldRemoveList() {
+        fruits.add(orange);
         fruits.add(banana);
+        fruits.add(waterMelon);
+        
+        fruits.remove(waterMelon);
+        assertThat(fruits, not(contains(waterMelon)));
     }
 
     @Test
