@@ -48,8 +48,6 @@ public class RedisMapTest {
 
     @Test
     public void shouldPutAndGetMap() {
-        assertTrue(vertebrates.isEmpty());
-
         assertNotNull(vertebrates.put("mammals", mammals));
         Species species = vertebrates.get("mammals");
         assertNotNull(species);
@@ -69,11 +67,9 @@ public class RedisMapTest {
 
     @Test
     public void shouldShowKeyAndValues() {
-        Map<String, Species> vertebratesMap = new HashMap<>();
-        vertebratesMap.put("mammals", mammals);
-        vertebratesMap.put("fishes", fishes);
-        vertebratesMap.put("amphibians", amphibians);
-        vertebrates.putAll(vertebratesMap);
+        vertebrates.put("mammals", mammals);
+        vertebrates.put("fishes", fishes);
+        vertebrates.put("amphibians", amphibians);
 
         Set<String> keys = vertebrates.keySet();
         Collection<Species> collectionSpecies = vertebrates.values();
