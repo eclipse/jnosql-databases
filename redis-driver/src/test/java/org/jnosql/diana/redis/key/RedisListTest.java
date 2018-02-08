@@ -62,7 +62,6 @@ public class RedisListTest {
 
     @Test
     public void shouldSetList() {
-
         fruits.add(banana);
         fruits.add(0, orange);
         assertTrue(fruits.size() == 2);
@@ -73,7 +72,6 @@ public class RedisListTest {
         fruits.set(0, waterMelon);
         assertEquals(fruits.get(0).getName(), "waterMelon");
         assertEquals(fruits.get(1).getName(), "banana");
-
     }
 
     @Test
@@ -83,7 +81,6 @@ public class RedisListTest {
 
     @Test
     public void shouldReturnIndexOf() {
-
         fruits.add(new ProductCart("orange", BigDecimal.ONE));
         fruits.add(banana);
         fruits.add(new ProductCart("watermellon", BigDecimal.ONE));
@@ -98,7 +95,6 @@ public class RedisListTest {
 
     @Test
     public void shouldReturnContains() {
-
         fruits.add(orange);
         fruits.add(banana);
         fruits.add(waterMelon);
@@ -106,7 +102,6 @@ public class RedisListTest {
         assertFalse(fruits.contains(melon));
         assertTrue(fruits.containsAll(Arrays.asList(banana, orange)));
         assertFalse(fruits.containsAll(Arrays.asList(banana, melon)));
-
     }
 
     @SuppressWarnings("unused")
