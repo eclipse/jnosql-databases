@@ -39,14 +39,16 @@ public class RedisMapStringTest {
     private static final String AMPHIBIANS = "amphibians";
     private static final String BUCKET_NAME = "vertebrates_string";
 
+    private Map<String, String> vertebrates;
+
     @BeforeEach
     public void init() {
         entityManagerFactory = RedisTestUtils.get();
+        vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
     }
 
     @Test
     public void shouldPutAndGetMap() {
-        Map<String, String> vertebrates = getMap();
         assertTrue(vertebrates.isEmpty());
 
         assertNotNull(vertebrates.put(MAMMALS, MAMMALS));
@@ -58,7 +60,6 @@ public class RedisMapStringTest {
 
     @Test
     public void shouldVerifyExist() {
-        Map<String, String> vertebrates = getMap();
         vertebrates.put(MAMMALS, MAMMALS);
         assertTrue(vertebrates.containsKey(MAMMALS));
         assertFalse(vertebrates.containsKey(FISHES));
@@ -73,7 +74,6 @@ public class RedisMapStringTest {
         vertebratesMap.put(MAMMALS, MAMMALS);
         vertebratesMap.put(FISHES, FISHES);
         vertebratesMap.put(AMPHIBIANS, AMPHIBIANS);
-        Map<String, String> vertebrates = getMap();
         vertebrates.putAll(vertebratesMap);
 
         Set<String> keys = vertebrates.keySet();
@@ -89,7 +89,6 @@ public class RedisMapStringTest {
 
     @Test
     public void shouldRemove() {
-        Map<String, String> vertebrates = getMap();
         vertebrates.put(MAMMALS, MAMMALS);
         vertebrates.put(FISHES, FISHES);
         vertebrates.put(AMPHIBIANS, AMPHIBIANS);
@@ -101,7 +100,6 @@ public class RedisMapStringTest {
 
     @Test
     public void shouldClear() {
-        Map<String, String> vertebrates = getMap();
         vertebrates.put(MAMMALS, MAMMALS);
         vertebrates.put(FISHES, FISHES);
 
@@ -111,12 +109,7 @@ public class RedisMapStringTest {
 
     @AfterEach
     public void dispose() {
-        Map<String, String> vertebrates = getMap();
         vertebrates.clear();
-    }
-
-    private Map getMap(){
-        return entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
     }
 
 }
