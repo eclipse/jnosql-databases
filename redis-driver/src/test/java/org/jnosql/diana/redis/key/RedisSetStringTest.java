@@ -78,6 +78,13 @@ public class RedisSetStringTest {
         assertTrue(count == 0);
     }
 
+    @Test
+    public void shouldClear() {
+        users.add("otaviojava");
+        users.clear();
+        assertTrue(users.isEmpty());
+    }
+
     @AfterEach
     public void dispose() {
         users.clear();
