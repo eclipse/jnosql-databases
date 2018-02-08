@@ -100,6 +100,14 @@ public class RedisSetStringTest {
         assertTrue(users.containsAll(Arrays.asList("furlaneto", "otaviojava")));
     }
 
+    @Test
+    public void shouldReturnSize() {
+        users.add("otaviojava");
+        users.add("furlaneto");
+        users.add("joao");
+        assertTrue(users.size() == 3);
+    }
+    
     @AfterEach
     public void dispose() {
         users.clear();
