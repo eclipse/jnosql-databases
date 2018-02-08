@@ -23,6 +23,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisListStringTest {
@@ -73,6 +76,11 @@ public class RedisListStringTest {
     @Test
     public void shouldRemoveList() {
         fruits.add("banana");
+        fruits.add("orange");
+        fruits.add("watermellon");
+
+        fruits.remove("banana");
+        assertThat(fruits, not(contains("banana")));
     }
 
     @Test
