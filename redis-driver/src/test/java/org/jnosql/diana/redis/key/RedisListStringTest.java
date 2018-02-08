@@ -57,6 +57,12 @@ public class RedisListStringTest {
         assertNotNull(banana);
         assertEquals(banana, "banana");
     }
+    
+    @Test
+    public void shouldAddAll() {
+        fruits.addAll(Arrays.asList("banana", "orange"));
+        assertTrue(fruits.size() == 2);
+    }
 
     @Test
     public void shouldSetList() {
