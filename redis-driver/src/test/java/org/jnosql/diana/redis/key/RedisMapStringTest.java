@@ -49,8 +49,6 @@ public class RedisMapStringTest {
 
     @Test
     public void shouldPutAndGetMap() {
-        assertTrue(vertebrates.isEmpty());
-
         assertNotNull(vertebrates.put(MAMMALS, MAMMALS));
         String species = vertebrates.get(MAMMALS);
         assertNotNull(species);
