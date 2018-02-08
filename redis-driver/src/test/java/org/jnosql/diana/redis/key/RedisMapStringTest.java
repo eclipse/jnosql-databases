@@ -25,6 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisMapStringTest {
@@ -82,6 +85,18 @@ public class RedisMapStringTest {
         assertNull(vertebrates.remove(MAMMALS));
         assertNull(vertebrates.get(MAMMALS));
         assertTrue(vertebrates.size() == 2);
+    }
+
+    @Test
+    public void shouldRemove() {
+        Map<String, String> vertebrates = getMap();
+        vertebrates.put(MAMMALS, MAMMALS);
+        vertebrates.put(FISHES, FISHES);
+        vertebrates.put(AMPHIBIANS, AMPHIBIANS);
+
+        vertebrates.remove(FISHES);
+        assertTrue(vertebrates.size() == 2);
+        assertThat(vertebrates, not(hasKey(FISHES)));
     }
 
     @AfterEach
