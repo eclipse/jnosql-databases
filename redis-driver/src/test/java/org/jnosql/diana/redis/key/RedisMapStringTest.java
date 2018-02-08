@@ -99,6 +99,16 @@ public class RedisMapStringTest {
         assertThat(vertebrates, not(hasKey(FISHES)));
     }
 
+    @Test
+    public void shouldClear() {
+        Map<String, String> vertebrates = getMap();
+        vertebrates.put(MAMMALS, MAMMALS);
+        vertebrates.put(FISHES, FISHES);
+
+        vertebrates.clear();
+        assertTrue(vertebrates.isEmpty());
+    }
+
     @AfterEach
     public void dispose() {
         Map<String, String> vertebrates = getMap();
