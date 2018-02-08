@@ -56,6 +56,15 @@ public class RedisSetTest {
 
         assertTrue(users.size() == 1);
         assertThat(users, not(contains(felipe)));
+   }
+
+    @Test
+    public void shouldRemoveAll() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        users.removeAll(Arrays.asList(felipe, userOtavioJava));
+
+        assertTrue(users.size() == 0);
     }
 
     @SuppressWarnings("unused")
