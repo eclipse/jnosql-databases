@@ -56,6 +56,16 @@ public class RedisMapTest {
     }
 
     @Test
+    public void shouldPutAll() {
+        Map toPutAll = new HashMap<String, Species>();
+        toPutAll.put("mammals", mammals);
+        toPutAll.put("fishes", fishes);
+
+        vertebrates.putAll(toPutAll);
+        assertTrue(vertebrates.size() == 2);
+    }
+
+    @Test
     public void shouldVerifyExist() {
         vertebrates.put("mammals", mammals);
         assertTrue(vertebrates.containsKey("mammals"));
