@@ -86,6 +86,13 @@ public class RedisSetTest {
         assertTrue(users.containsAll(Arrays.asList(userOtavioJava, felipe)));
     }
 
+    @Test
+    public void shouldReturnSize() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        assertTrue(users.size() == 2);
+    }
+
     @AfterEach
     public void dispose() {
         users.clear();
