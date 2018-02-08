@@ -100,6 +100,17 @@ public class RedisListTest {
     }
 
     @Test
+    public void shouldRemoveWithIndex() {
+        fruits.add(orange);
+        fruits.add(banana);
+        fruits.add(waterMelon);
+
+        fruits.remove(0);
+        assertTrue(fruits.size() == 2);
+        assertThat(fruits, not(contains(orange)));
+    }
+
+    @Test
     public void shouldReturnIndexOf() {
         fruits.add(new ProductCart("orange", BigDecimal.ONE));
         fruits.add(banana);
