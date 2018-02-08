@@ -88,6 +88,17 @@ public class RedisListTest {
     }
 
     @Test
+    public void shouldRemoveAll() {
+        fruits.add(orange);
+        fruits.add(banana);
+        fruits.add(waterMelon);
+
+        fruits.removeAll(Arrays.asList(orange, banana));
+        assertTrue(fruits.size() == 1);
+        assertThat(fruits, contains(waterMelon));
+    }
+
+    @Test
     public void shouldReturnIndexOf() {
         fruits.add(new ProductCart("orange", BigDecimal.ONE));
         fruits.add(banana);
