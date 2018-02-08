@@ -93,6 +93,15 @@ public class RedisSetTest {
         assertTrue(users.size() == 2);
     }
 
+    @Test
+    public void shouldClear() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+
+        users.clear();
+        assertTrue(users.isEmpty());
+    }
+
     @AfterEach
     public void dispose() {
         users.clear();
