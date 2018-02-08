@@ -31,6 +31,11 @@ public class RedisMapStringTest {
 
     private BucketManagerFactory entityManagerFactory;
 
+    private static final String MAMMALS = "mammals";
+    private static final String FISHES = "fishes";
+    private static final String AMPHIBIANS = "amphibians";
+    private static final String BUCKET_NAME = "vertebrates_string";
+
     @BeforeEach
     public void init() {
         entityManagerFactory = RedisTestUtils.get();
@@ -38,34 +43,34 @@ public class RedisMapStringTest {
 
     @Test
     public void shouldPutAndGetMap() {
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
+        Map<String, String> vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
         assertTrue(vertebrates.isEmpty());
 
-        assertNotNull(vertebrates.put("mammals", "mammals"));
-        String species = vertebrates.get("mammals");
+        assertNotNull(vertebrates.put(MAMMALS, MAMMALS));
+        String species = vertebrates.get(MAMMALS);
         assertNotNull(species);
-        assertEquals("mammals", vertebrates.get("mammals"));
+        assertEquals(MAMMALS, vertebrates.get(MAMMALS));
         assertTrue(vertebrates.size() == 1);
     }
 
     @Test
     public void shouldVerifyExist() {
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
-        vertebrates.put("mammals", "mammals");
-        assertTrue(vertebrates.containsKey("mammals"));
-        assertFalse(vertebrates.containsKey("redfish"));
+        Map<String, String> vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
+        vertebrates.put(MAMMALS, MAMMALS);
+        assertTrue(vertebrates.containsKey(MAMMALS));
+        assertFalse(vertebrates.containsKey(FISHES));
 
-        assertTrue(vertebrates.containsValue("mammals"));
-        assertFalse(vertebrates.containsValue("fishes"));
+        assertTrue(vertebrates.containsValue(MAMMALS));
+        assertFalse(vertebrates.containsValue(FISHES));
     }
 
     @Test
     public void shouldShowKeyAndValues() {
         Map<String, String> vertebratesMap = new HashMap<>();
-        vertebratesMap.put("mammals", "mammals");
-        vertebratesMap.put("fishes", "fishes");
-        vertebratesMap.put("amphibians", "amphibians");
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
+        vertebratesMap.put(MAMMALS, MAMMALS);
+        vertebratesMap.put(FISHES, FISHES);
+        vertebratesMap.put(AMPHIBIANS, AMPHIBIANS);
+        Map<String, String> vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
         vertebrates.putAll(vertebratesMap);
 
         Set<String> keys = vertebrates.keySet();
@@ -73,15 +78,15 @@ public class RedisMapStringTest {
 
         assertTrue(keys.size() == 3);
         assertTrue(collectionSpecies.size() == 3);
-        assertNotNull(vertebrates.remove("mammals"));
-        assertNull(vertebrates.remove("mammals"));
-        assertNull(vertebrates.get("mammals"));
+        assertNotNull(vertebrates.remove(MAMMALS));
+        assertNull(vertebrates.remove(MAMMALS));
+        assertNull(vertebrates.get(MAMMALS));
         assertTrue(vertebrates.size() == 2);
     }
 
     @AfterEach
     public void dispose() {
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
+        Map<String, String> vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
         vertebrates.clear();
     }
 
