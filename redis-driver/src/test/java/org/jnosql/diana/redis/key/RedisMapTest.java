@@ -97,6 +97,15 @@ public class RedisMapTest {
         assertThat(vertebrates, not(hasKey(fishes)));
     }
 
+    @Test
+    public void shouldClear() {
+        vertebrates.put("mammals", mammals);
+        vertebrates.put("fishes", fishes);
+
+        vertebrates.clear();
+        assertTrue(vertebrates.isEmpty());
+    }
+
     @AfterEach
     public void dispose() {
         vertebrates.clear();
