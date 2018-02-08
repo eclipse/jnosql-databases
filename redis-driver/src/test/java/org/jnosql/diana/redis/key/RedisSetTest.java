@@ -52,7 +52,7 @@ public class RedisSetTest {
         users.add(userOtavioJava);
         users.add(felipe);
         users.remove(felipe);
-        
+
         assertTrue(users.size() == 1);
         assertThat(users, not(contains(felipe)));
     }
@@ -70,13 +70,6 @@ public class RedisSetTest {
             count++;
         }
         assertTrue(count == 2);
-        users.remove(userOtavioJava);
-        users.remove(felipe);
-        count = 0;
-        for (User user : users) {
-            count++;
-        }
-        assertTrue(count == 0);
     }
 
     @AfterEach
