@@ -22,11 +22,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedisSetTest {
@@ -109,6 +111,11 @@ public class RedisSetTest {
 
         users.clear();
         assertTrue(users.isEmpty());
+    }
+
+    @Test
+    public void shouldThrowExceptionRetainAll() {
+        assertThrows(UnsupportedOperationException.class, () -> users.retainAll(Collections.singletonList(userOtavioJava)));
     }
 
     @AfterEach
