@@ -70,11 +70,9 @@ public class RedisMapStringTest {
 
     @Test
     public void shouldShowKeyAndValues() {
-        Map<String, String> vertebratesMap = new HashMap<>();
-        vertebratesMap.put(MAMMALS, MAMMALS);
-        vertebratesMap.put(FISHES, FISHES);
-        vertebratesMap.put(AMPHIBIANS, AMPHIBIANS);
-        vertebrates.putAll(vertebratesMap);
+        vertebrates.put(MAMMALS, MAMMALS);
+        vertebrates.put(FISHES, FISHES);
+        vertebrates.put(AMPHIBIANS, AMPHIBIANS);
 
         Set<String> keys = vertebrates.keySet();
         Collection<String> collectionSpecies = vertebrates.values();
