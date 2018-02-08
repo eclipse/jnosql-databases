@@ -57,7 +57,6 @@ public class RedisListStringTest {
 
     @Test
     public void shouldSetList() {
-
         fruits.add("banana");
         fruits.add(0, "orange");
         assertTrue(fruits.size() == 2);
@@ -78,7 +77,6 @@ public class RedisListStringTest {
 
     @Test
     public void shouldReturnIndexOf() {
-
         fruits.add("orange");
         fruits.add("banana");
         fruits.add("watermellon");
@@ -93,7 +91,6 @@ public class RedisListStringTest {
 
     @Test
     public void shouldReturnContains() {
-
         fruits.add("orange");
         fruits.add("banana");
         fruits.add("watermellon");
