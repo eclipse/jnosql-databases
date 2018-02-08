@@ -128,6 +128,16 @@ public class RedisListStringTest {
         assertTrue(count == 0);
     }
 
+    @Test
+    public void shouldClear(){
+        fruits.add("orange");
+        fruits.add("banana");
+        fruits.add("watermellon");
+
+        fruits.clear();
+        assertTrue(fruits.isEmpty());
+    }
+
     @AfterEach
     public void end() {
         fruits.clear();
