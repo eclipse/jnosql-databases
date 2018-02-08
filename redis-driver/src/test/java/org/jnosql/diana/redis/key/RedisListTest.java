@@ -82,7 +82,7 @@ public class RedisListTest {
         fruits.add(orange);
         fruits.add(banana);
         fruits.add(waterMelon);
-        
+
         fruits.remove(waterMelon);
         assertThat(fruits, not(contains(waterMelon)));
     }
@@ -129,6 +129,16 @@ public class RedisListTest {
             count++;
         }
         assertTrue(count == 0);
+    }
+
+    @Test
+    public void shouldClear(){
+        fruits.add(orange);
+        fruits.add(banana);
+        fruits.add(waterMelon);
+
+        fruits.clear();
+        assertTrue(fruits.isEmpty());
     }
 
     @AfterEach
