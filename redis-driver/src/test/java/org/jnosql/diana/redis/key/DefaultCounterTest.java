@@ -25,10 +25,6 @@ import org.junit.jupiter.api.Test;
 
 public class DefaultCounterTest {
 
-    private static final String BRAZIL = "Brazil";
-    private static final String USA = "USA";
-    private static final String ENGLAND = "England";
-
     private RedisBucketManagerFactory keyValueEntityManagerFactory;
     private Counter counter;
 
