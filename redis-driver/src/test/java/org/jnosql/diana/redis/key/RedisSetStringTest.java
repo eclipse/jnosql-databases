@@ -21,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -83,6 +84,20 @@ public class RedisSetStringTest {
         users.add("otaviojava");
         users.clear();
         assertTrue(users.isEmpty());
+    }
+
+    @Test
+    public void shouldContains() {
+        users.add("otaviojava");
+        assertTrue(users.contains("otaviojava"));
+    }
+
+    @Test
+    public void shouldContainsAll() {
+        users.add("otaviojava");
+        users.add("furlaneto");
+        users.add("joao");
+        assertTrue(users.containsAll(Arrays.asList("furlaneto", "otaviojava")));
     }
 
     @AfterEach
