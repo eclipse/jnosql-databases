@@ -31,7 +31,6 @@ public class RedisMapStringTest {
 
     private BucketManagerFactory entityManagerFactory;
 
-
     @BeforeEach
     public void init() {
         entityManagerFactory = RedisTestUtils.get();
@@ -51,7 +50,6 @@ public class RedisMapStringTest {
 
     @Test
     public void shouldVerifyExist() {
-
         Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
         vertebrates.put("mammals", "mammals");
         assertTrue(vertebrates.containsKey("mammals"));
