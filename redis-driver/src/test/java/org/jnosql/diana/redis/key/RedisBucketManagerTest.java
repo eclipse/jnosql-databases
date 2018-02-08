@@ -75,8 +75,6 @@ public class RedisBucketManagerTest {
 
     @Test
     public void shouldPutIterableKeyValue() {
-
-
         keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
@@ -93,13 +91,10 @@ public class RedisBucketManagerTest {
         KeyValueEntity keyValue = KeyValueEntity.of("otavio", Value.of(user));
         keyValueEntityManager.put(keyValue);
         assertNotNull(keyValueEntityManager.get("otavio"));
-
-
     }
 
     @Test
     public void shouldRemoveKey() {
-
         keyValueEntityManager.put(keyValueOtavio);
         assertTrue(keyValueEntityManager.get("otavio").isPresent());
         keyValueEntityManager.remove("otavio");
@@ -108,7 +103,6 @@ public class RedisBucketManagerTest {
 
     @Test
     public void shouldRemoveMultiKey() {
-
         keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
         List<String> keys = asList("otavio", "soro");
         Iterable<Value> values = keyValueEntityManager.get(keys);
