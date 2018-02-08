@@ -21,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -70,6 +71,19 @@ public class RedisSetTest {
             count++;
         }
         assertTrue(count == 2);
+    }
+
+    @Test
+    public void shouldContains() {
+        users.add(userOtavioJava);
+        assertTrue(users.contains(userOtavioJava));
+    }
+
+    @Test
+    public void shouldContainsAll() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        assertTrue(users.containsAll(Arrays.asList(userOtavioJava, felipe)));
     }
 
     @AfterEach
