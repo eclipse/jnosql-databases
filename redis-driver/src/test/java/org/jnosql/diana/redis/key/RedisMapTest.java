@@ -25,6 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisMapTest {
@@ -35,16 +38,16 @@ public class RedisMapTest {
     private Species fishes = new Species("redfish", "glassfish");
     private Species amphibians = new Species("crododile", "frog");
 
+    private Map<String, Species> vertebrates;
+
     @BeforeEach
     public void init() {
         entityManagerFactory = RedisTestUtils.get();
+        vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
     }
 
     @Test
     public void shouldPutAndGetMap() {
-        Map<String, Species> vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
-        assertTrue(vertebrates.isEmpty());
-
         assertNotNull(vertebrates.put("mammals", mammals));
         Species species = vertebrates.get("mammals");
         assertNotNull(species);
@@ -53,9 +56,17 @@ public class RedisMapTest {
     }
 
     @Test
-    public void shouldVerifyExist() {
+    public void shouldPutAll() {
+        Map toPutAll = new HashMap<String, Species>();
+        toPutAll.put("mammals", mammals);
+        toPutAll.put("fishes", fishes);
 
-        Map<String, Species> vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
+        vertebrates.putAll(toPutAll);
+        assertTrue(vertebrates.size() == 2);
+    }
+
+    @Test
+    public void shouldVerifyExist() {
         vertebrates.put("mammals", mammals);
         assertTrue(vertebrates.containsKey("mammals"));
         assertFalse(vertebrates.containsKey("redfish"));
@@ -66,12 +77,9 @@ public class RedisMapTest {
 
     @Test
     public void shouldShowKeyAndValues() {
-        Map<String, Species> vertebratesMap = new HashMap<>();
-        vertebratesMap.put("mammals", mammals);
-        vertebratesMap.put("fishes", fishes);
-        vertebratesMap.put("amphibians", amphibians);
-        Map<String, Species> vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
-        vertebrates.putAll(vertebratesMap);
+        vertebrates.put("mammals", mammals);
+        vertebrates.put("fishes", fishes);
+        vertebrates.put("amphibians", amphibians);
 
         Set<String> keys = vertebrates.keySet();
         Collection<Species> collectionSpecies = vertebrates.values();
@@ -84,9 +92,28 @@ public class RedisMapTest {
         assertTrue(vertebrates.size() == 2);
     }
 
+    @Test
+    public void shouldRemove() {
+        vertebrates.put("mammals", mammals);
+        vertebrates.put("fishes", fishes);
+        vertebrates.put("amphibians", amphibians);
+
+        vertebrates.remove("fishes");
+        assertTrue(vertebrates.size() == 2);
+        assertThat(vertebrates, not(hasKey(fishes)));
+    }
+
+    @Test
+    public void shouldClear() {
+        vertebrates.put("mammals", mammals);
+        vertebrates.put("fishes", fishes);
+
+        vertebrates.clear();
+        assertTrue(vertebrates.isEmpty());
+    }
+
     @AfterEach
     public void dispose() {
-        Map<String, Species> vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
         vertebrates.clear();
     }
 

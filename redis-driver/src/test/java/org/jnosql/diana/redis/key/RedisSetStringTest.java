@@ -21,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +42,6 @@ public class RedisSetStringTest {
 
     @Test
     public void shouldAddUsers() {
-        assertTrue(users.isEmpty());
         users.add("otaviojava");
         assertTrue(users.size() == 1);
 
@@ -51,7 +51,6 @@ public class RedisSetStringTest {
 
     @Test
     public void shouldRemoveSet() {
-        assertTrue(users.isEmpty());
         users.add("otaviojava");
         users.remove("otaviojava");
         assertTrue(users.isEmpty());
@@ -61,7 +60,6 @@ public class RedisSetStringTest {
     @SuppressWarnings("unused")
     @Test
     public void shouldIterate() {
-
         users.add("otaviojava");
         users.add("otaviojava");
         users.add("felipe");
@@ -81,6 +79,35 @@ public class RedisSetStringTest {
         assertTrue(count == 0);
     }
 
+    @Test
+    public void shouldClear() {
+        users.add("otaviojava");
+        users.clear();
+        assertTrue(users.isEmpty());
+    }
+
+    @Test
+    public void shouldContains() {
+        users.add("otaviojava");
+        assertTrue(users.contains("otaviojava"));
+    }
+
+    @Test
+    public void shouldContainsAll() {
+        users.add("otaviojava");
+        users.add("furlaneto");
+        users.add("joao");
+        assertTrue(users.containsAll(Arrays.asList("furlaneto", "otaviojava")));
+    }
+
+    @Test
+    public void shouldReturnSize() {
+        users.add("otaviojava");
+        users.add("furlaneto");
+        users.add("joao");
+        assertTrue(users.size() == 3);
+    }
+    
     @AfterEach
     public void dispose() {
         users.clear();

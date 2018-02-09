@@ -67,12 +67,7 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
 
     @Override
     protected T remove(int index) {
-        T element = toArrayList().get(index);
-        if (element == null) {
-            return null;
-        }
-        remove(element);
-        return element;
+        throw new UnsupportedOperationException("Remove with index is not supported on Redis Set");
     }
 
     @Override

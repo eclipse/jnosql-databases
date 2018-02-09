@@ -25,65 +25,86 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisMapStringTest {
 
     private BucketManagerFactory entityManagerFactory;
 
+    private static final String MAMMALS = "mammals";
+    private static final String FISHES = "fishes";
+    private static final String AMPHIBIANS = "amphibians";
+    private static final String BUCKET_NAME = "vertebrates_string";
+
+    private Map<String, String> vertebrates;
 
     @BeforeEach
     public void init() {
         entityManagerFactory = RedisTestUtils.get();
+        vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
     }
 
     @Test
     public void shouldPutAndGetMap() {
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
-        assertTrue(vertebrates.isEmpty());
-
-        assertNotNull(vertebrates.put("mammals", "mammals"));
-        String species = vertebrates.get("mammals");
+        assertNotNull(vertebrates.put(MAMMALS, MAMMALS));
+        String species = vertebrates.get(MAMMALS);
         assertNotNull(species);
-        assertEquals("mammals", vertebrates.get("mammals"));
+        assertEquals(MAMMALS, vertebrates.get(MAMMALS));
         assertTrue(vertebrates.size() == 1);
     }
 
     @Test
     public void shouldVerifyExist() {
+        vertebrates.put(MAMMALS, MAMMALS);
+        assertTrue(vertebrates.containsKey(MAMMALS));
+        assertFalse(vertebrates.containsKey(FISHES));
 
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
-        vertebrates.put("mammals", "mammals");
-        assertTrue(vertebrates.containsKey("mammals"));
-        assertFalse(vertebrates.containsKey("redfish"));
-
-        assertTrue(vertebrates.containsValue("mammals"));
-        assertFalse(vertebrates.containsValue("fishes"));
+        assertTrue(vertebrates.containsValue(MAMMALS));
+        assertFalse(vertebrates.containsValue(FISHES));
     }
 
     @Test
     public void shouldShowKeyAndValues() {
-        Map<String, String> vertebratesMap = new HashMap<>();
-        vertebratesMap.put("mammals", "mammals");
-        vertebratesMap.put("fishes", "fishes");
-        vertebratesMap.put("amphibians", "amphibians");
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
-        vertebrates.putAll(vertebratesMap);
+        vertebrates.put(MAMMALS, MAMMALS);
+        vertebrates.put(FISHES, FISHES);
+        vertebrates.put(AMPHIBIANS, AMPHIBIANS);
 
         Set<String> keys = vertebrates.keySet();
         Collection<String> collectionSpecies = vertebrates.values();
 
         assertTrue(keys.size() == 3);
         assertTrue(collectionSpecies.size() == 3);
-        assertNotNull(vertebrates.remove("mammals"));
-        assertNull(vertebrates.remove("mammals"));
-        assertNull(vertebrates.get("mammals"));
+        assertNotNull(vertebrates.remove(MAMMALS));
+        assertNull(vertebrates.remove(MAMMALS));
+        assertNull(vertebrates.get(MAMMALS));
         assertTrue(vertebrates.size() == 2);
+    }
+
+    @Test
+    public void shouldRemove() {
+        vertebrates.put(MAMMALS, MAMMALS);
+        vertebrates.put(FISHES, FISHES);
+        vertebrates.put(AMPHIBIANS, AMPHIBIANS);
+
+        vertebrates.remove(FISHES);
+        assertTrue(vertebrates.size() == 2);
+        assertThat(vertebrates, not(hasKey(FISHES)));
+    }
+
+    @Test
+    public void shouldClear() {
+        vertebrates.put(MAMMALS, MAMMALS);
+        vertebrates.put(FISHES, FISHES);
+
+        vertebrates.clear();
+        assertTrue(vertebrates.isEmpty());
     }
 
     @AfterEach
     public void dispose() {
-        Map<String, String> vertebrates = entityManagerFactory.getMap("vertebrates_string", String.class, String.class);
         vertebrates.clear();
     }
 

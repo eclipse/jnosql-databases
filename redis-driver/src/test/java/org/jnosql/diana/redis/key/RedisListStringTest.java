@@ -23,6 +23,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisListStringTest {
@@ -54,10 +57,15 @@ public class RedisListStringTest {
         assertNotNull(banana);
         assertEquals(banana, "banana");
     }
+    
+    @Test
+    public void shouldAddAll() {
+        fruits.addAll(Arrays.asList("banana", "orange"));
+        assertTrue(fruits.size() == 2);
+    }
 
     @Test
     public void shouldSetList() {
-
         fruits.add("banana");
         fruits.add(0, "orange");
         assertTrue(fruits.size() == 2);
@@ -74,11 +82,15 @@ public class RedisListStringTest {
     @Test
     public void shouldRemoveList() {
         fruits.add("banana");
+        fruits.add("orange");
+        fruits.add("watermellon");
+
+        fruits.remove("banana");
+        assertThat(fruits, not(contains("banana")));
     }
 
     @Test
     public void shouldReturnIndexOf() {
-
         fruits.add("orange");
         fruits.add("banana");
         fruits.add("watermellon");
@@ -93,7 +105,6 @@ public class RedisListStringTest {
 
     @Test
     public void shouldReturnContains() {
-
         fruits.add("orange");
         fruits.add("banana");
         fruits.add("watermellon");
@@ -121,6 +132,16 @@ public class RedisListStringTest {
             count++;
         }
         assertTrue(count == 0);
+    }
+
+    @Test
+    public void shouldClear(){
+        fruits.add("orange");
+        fruits.add("banana");
+        fruits.add("watermellon");
+
+        fruits.clear();
+        assertTrue(fruits.isEmpty());
     }
 
     @AfterEach

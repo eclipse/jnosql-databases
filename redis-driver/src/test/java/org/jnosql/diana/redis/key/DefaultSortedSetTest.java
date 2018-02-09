@@ -40,9 +40,7 @@ public class DefaultSortedSetTest {
     public void init() {
         keyValueEntityManagerFactory = RedisTestUtils.get();
         sortedSet = keyValueEntityManagerFactory.getSortedSet("world-cup-2018");
-        sortedSet.remove(BRAZIL);
-        sortedSet.remove(USA);
-        sortedSet.remove(ENGLAND);
+        sortedSet.clear();
     }
 
     @Test

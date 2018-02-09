@@ -35,11 +35,8 @@ public class RedisQueueStringTest {
 
     @BeforeEach
     public void init() {
-
         keyValueEntityManagerFactory = RedisTestUtils.get();
         lineBank = keyValueEntityManagerFactory.getQueue("physical-bank-string", String.class);
-
-
     }
 
     @Test
@@ -101,6 +98,13 @@ public class RedisQueueStringTest {
             count++;
         }
         assertTrue(count == 0);
+    }
+
+    @Test
+    public void shouldClear() {
+        lineBank.add("Otavio");
+        lineBank.clear();
+        assertTrue(lineBank.isEmpty());
     }
 
     @AfterEach

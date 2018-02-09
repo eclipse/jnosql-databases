@@ -22,8 +22,12 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RedisListTest {
@@ -62,7 +66,6 @@ public class RedisListTest {
 
     @Test
     public void shouldSetList() {
-
         fruits.add(banana);
         fruits.add(0, orange);
         assertTrue(fruits.size() == 2);
@@ -73,17 +76,42 @@ public class RedisListTest {
         fruits.set(0, waterMelon);
         assertEquals(fruits.get(0).getName(), "waterMelon");
         assertEquals(fruits.get(1).getName(), "banana");
-
     }
 
     @Test
     public void shouldRemoveList() {
+        fruits.add(orange);
         fruits.add(banana);
+        fruits.add(waterMelon);
+
+        fruits.remove(waterMelon);
+        assertThat(fruits, not(contains(waterMelon)));
+    }
+
+    @Test
+    public void shouldRemoveAll() {
+        fruits.add(orange);
+        fruits.add(banana);
+        fruits.add(waterMelon);
+
+        fruits.removeAll(Arrays.asList(orange, banana));
+        assertTrue(fruits.size() == 1);
+        assertThat(fruits, contains(waterMelon));
+    }
+
+    @Test
+    public void shouldRemoveWithIndex() {
+        fruits.add(orange);
+        fruits.add(banana);
+        fruits.add(waterMelon);
+
+        fruits.remove(0);
+        assertTrue(fruits.size() == 2);
+        assertThat(fruits, not(contains(orange)));
     }
 
     @Test
     public void shouldReturnIndexOf() {
-
         fruits.add(new ProductCart("orange", BigDecimal.ONE));
         fruits.add(banana);
         fruits.add(new ProductCart("watermellon", BigDecimal.ONE));
@@ -98,7 +126,6 @@ public class RedisListTest {
 
     @Test
     public void shouldReturnContains() {
-
         fruits.add(orange);
         fruits.add(banana);
         fruits.add(waterMelon);
@@ -106,7 +133,6 @@ public class RedisListTest {
         assertFalse(fruits.contains(melon));
         assertTrue(fruits.containsAll(Arrays.asList(banana, orange)));
         assertFalse(fruits.containsAll(Arrays.asList(banana, melon)));
-
     }
 
     @SuppressWarnings("unused")
@@ -126,6 +152,21 @@ public class RedisListTest {
             count++;
         }
         assertTrue(count == 0);
+    }
+
+    @Test
+    public void shouldClear(){
+        fruits.add(orange);
+        fruits.add(banana);
+        fruits.add(waterMelon);
+
+        fruits.clear();
+        assertTrue(fruits.isEmpty());
+    }
+
+    @Test
+    public void shouldThrowExceptionRetainAll() {
+        assertThrows(UnsupportedOperationException.class, () -> fruits.retainAll(Collections.singletonList(orange)));
     }
 
     @AfterEach

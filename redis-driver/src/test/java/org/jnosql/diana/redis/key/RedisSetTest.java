@@ -21,12 +21,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedisSetTest {
-
 
     private BucketManagerFactory keyValueEntityManagerFactory;
     private User userOtavioJava = new User("otaviojava");
@@ -41,19 +46,32 @@ public class RedisSetTest {
 
     @Test
     public void shouldAddUsers() {
-        assertTrue(users.isEmpty());
         users.add(userOtavioJava);
         assertTrue(users.size() == 1);
-
-        users.remove(userOtavioJava);
-        assertTrue(users.isEmpty());
     }
 
+    @Test
+    public void shouldRemove() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        users.remove(felipe);
+
+        assertTrue(users.size() == 1);
+        assertThat(users, not(contains(felipe)));
+   }
+
+    @Test
+    public void shouldRemoveAll() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        users.removeAll(Arrays.asList(felipe, userOtavioJava));
+
+        assertTrue(users.size() == 0);
+    }
 
     @SuppressWarnings("unused")
     @Test
     public void shouldIterate() {
-
         users.add(userOtavioJava);
         users.add(userOtavioJava);
         users.add(felipe);
@@ -64,13 +82,40 @@ public class RedisSetTest {
             count++;
         }
         assertTrue(count == 2);
-        users.remove(userOtavioJava);
-        users.remove(felipe);
-        count = 0;
-        for (User user : users) {
-            count++;
-        }
-        assertTrue(count == 0);
+    }
+
+    @Test
+    public void shouldContains() {
+        users.add(userOtavioJava);
+        assertTrue(users.contains(userOtavioJava));
+    }
+
+    @Test
+    public void shouldContainsAll() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        assertTrue(users.containsAll(Arrays.asList(userOtavioJava, felipe)));
+    }
+
+    @Test
+    public void shouldReturnSize() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+        assertTrue(users.size() == 2);
+    }
+
+    @Test
+    public void shouldClear() {
+        users.add(userOtavioJava);
+        users.add(felipe);
+
+        users.clear();
+        assertTrue(users.isEmpty());
+    }
+
+    @Test
+    public void shouldThrowExceptionRetainAll() {
+        assertThrows(UnsupportedOperationException.class, () -> users.retainAll(Collections.singletonList(userOtavioJava)));
     }
 
     @AfterEach
