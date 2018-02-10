@@ -140,8 +140,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = new ArrayList<>();
-        entitiesSaved.forEach(entities::add);
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -158,8 +157,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = new ArrayList<>();
-        entitiesSaved.forEach(entities::add);
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gte(23)
