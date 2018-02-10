@@ -33,12 +33,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.not;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
@@ -133,6 +135,105 @@ public class MongoDBDocumentCollectionManagerTest {
         assertThat(entities, contains(entity));
     }
 
+    @Test
+    public void shouldFindDocumentGreaterThan() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 2);
+        assertThat(entitiesFound, not(contains(entities.get(0))));
+    }
+
+    @Test
+    public void shouldFindDocumentGreaterEqualsThan() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gte(23)
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 2);
+        assertThat(entitiesFound, not(contains(entities.get(0))));
+    }
+
+    @Test
+    public void shouldFindDocumentLesserThan() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").lt(23)
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 1);
+        assertThat(entitiesFound, contains(entities.get(0)));
+    }
+
+    @Test
+    public void shouldFindDocumentLesserEqualsThan() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").lte(23)
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 2);
+        assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
+    }
+
+    @Test
+    public void shouldFindDocumentLike() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("name").like("Lu")
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 2);
+        assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
+    }
+
+    @Test
+    public void shouldFindDocumentIn() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("location").in(asList("BR", "US"))
+                .and("type").eq("V")
+                .build();
+
+        assertEquals(entities, entityManager.select(query));
+    }
 
     @Test
     public void shouldFindAll() {
@@ -230,37 +331,30 @@ public class MongoDBDocumentCollectionManagerTest {
         return entity;
     }
 
+    private List<DocumentEntity> getEntitiesWithValues() {
+        DocumentEntity lucas = DocumentEntity.of(COLLECTION_NAME);
+        lucas.add(Document.of("name", "Lucas"));
+        lucas.add(Document.of("age", 22));
+        lucas.add(Document.of("location", "BR"));
+        lucas.add(Document.of("type", "V"));
+
+        DocumentEntity otavio = DocumentEntity.of(COLLECTION_NAME);
+        otavio.add(Document.of("name", "Otavio"));
+        otavio.add(Document.of("age", 25));
+        otavio.add(Document.of("location", "BR"));
+        otavio.add(Document.of("type", "V"));
+
+        DocumentEntity luna = DocumentEntity.of(COLLECTION_NAME);
+        luna.add(Document.of("name", "Luna"));
+        luna.add(Document.of("age", 23));
+        luna.add(Document.of("location", "US"));
+        luna.add(Document.of("type", "V"));
+
+        return asList(lucas, otavio, luna);
+    }
+
     @AfterAll
     public static void end() {
         MongoDbHelper.stopMongoDb();
     }
-
-    public void init() {
-        DocumentEntity oReilly = DocumentEntity.of("oReilly");
-        oReilly.add(Document.of("_id", "oreilly"));
-        oReilly.add(Document.of("name", "O'Reilly Media"));
-        oReilly.add(Document.of("founded", "1980"));
-        oReilly.add(Document.of("location", "CA"));
-        oReilly.add(Document.of("books", asList("123456789", "234567890")));
-
-        DocumentEntity mongoBook = DocumentEntity.of("book");
-        mongoBook.add(Document.of("_id", "123456789"));
-        mongoBook.add(Document.of("title", "MongoDB: The Definitive Guide"));
-        mongoBook.add(Document.of("author", asList("ristina Chodorow", "Mike Dirolf")));
-        mongoBook.add(Document.of("published_date", "2010-09-24"));
-        mongoBook.add(Document.of("pages", 216));
-        mongoBook.add(Document.of("language", "English"));
-        mongoBook.add(Document.of("publisher_id", "oreilly"));
-
-        DocumentEntity mongoDBDeveloper = DocumentEntity.of("book");
-        mongoDBDeveloper.add(Document.of("_id", "234567890"));
-        mongoDBDeveloper.add(Document.of("title", "50 Tips and Tricks for MongoDB Developer"));
-        mongoDBDeveloper.add(Document.of("author", singletonList("Kristina Chodorow")));
-        mongoDBDeveloper.add(Document.of("published_date", "2011-05-06"));
-        mongoDBDeveloper.add(Document.of("pages", 68));
-        mongoDBDeveloper.add(Document.of("language", "English"));
-        mongoDBDeveloper.add(Document.of("publisher_id", "oreilly"));
-    }
-
-
 }
