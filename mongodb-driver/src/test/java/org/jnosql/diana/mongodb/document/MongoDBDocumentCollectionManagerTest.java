@@ -230,6 +230,28 @@ public class MongoDBDocumentCollectionManagerTest {
         return entity;
     }
 
+    private List<DocumentEntity> getEntitiesWithValues() {
+        DocumentEntity lucas = DocumentEntity.of(COLLECTION_NAME);
+        lucas.add(Document.of("name", "Lucas"));
+        lucas.add(Document.of("age", 22));
+        lucas.add(Document.of("location", "BR"));
+        lucas.add(Document.of("type", "V"));
+
+        DocumentEntity otavio = DocumentEntity.of(COLLECTION_NAME);
+        otavio.add(Document.of("name", "Otavio"));
+        otavio.add(Document.of("age", 25));
+        otavio.add(Document.of("location", "BR"));
+        otavio.add(Document.of("type", "V"));
+
+        DocumentEntity luna = DocumentEntity.of(COLLECTION_NAME);
+        luna.add(Document.of("name", "Luna"));
+        luna.add(Document.of("age", 23));
+        luna.add(Document.of("location", "US"));
+        luna.add(Document.of("type", "V"));
+
+        return asList(lucas, otavio, luna);
+    }
+
     @AfterAll
     public static void end() {
         MongoDbHelper.stopMongoDb();
