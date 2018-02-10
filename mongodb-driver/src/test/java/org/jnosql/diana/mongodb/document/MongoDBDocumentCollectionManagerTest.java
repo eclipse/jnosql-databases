@@ -150,6 +150,22 @@ public class MongoDBDocumentCollectionManagerTest {
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
 
+    @Test
+    public void shouldFindDocumentGreaterEqualsThan() {
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = new ArrayList<>();
+        entitiesSaved.forEach(entities::add);
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gte(23)
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 2);
+        assertThat(entitiesFound, not(contains(entities.get(0))));
+    }
+
 
     @Test
     public void shouldFindAll() {
