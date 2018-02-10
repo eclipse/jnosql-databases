@@ -45,7 +45,9 @@ final class DocumentQueryConversor {
             case LESSER_EQUALS_THAN:
                 return Filters.lte(document.getName(), value);
             case IN:
-                return Filters.in(document.getName(), value);
+                List<Object> inList = document.get(new TypeReference<List<Object>>() {
+                });
+                return Filters.in(document.getName(), inList.toArray());
             case LIKE:
                 return Filters.regex(document.getName(), value.toString());
             case AND:
