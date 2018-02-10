@@ -39,6 +39,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.not;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
@@ -131,6 +132,22 @@ public class MongoDBDocumentCollectionManagerTest {
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldFindDocumentGreaterThan() {
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = new ArrayList<>();
+        entitiesSaved.forEach(entities::add);
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 2);
+        assertThat(entitiesFound, not(contains(entities.get(0))));
     }
 
 
