@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -169,6 +171,22 @@ public class MongoDBDocumentCollectionManagerTest {
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
 
+    @Test
+    public void shouldFindDocumentLesserThan() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").lt(23)
+                .and("type").eq("V")
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 1);
+        assertThat(entitiesFound, contains(entities.get(0)));
+    }
 
     @Test
     public void shouldFindAll() {
