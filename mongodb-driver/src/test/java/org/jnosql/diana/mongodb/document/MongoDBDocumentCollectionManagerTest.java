@@ -234,33 +234,4 @@ public class MongoDBDocumentCollectionManagerTest {
     public static void end() {
         MongoDbHelper.stopMongoDb();
     }
-
-    public void init() {
-        DocumentEntity oReilly = DocumentEntity.of("oReilly");
-        oReilly.add(Document.of("_id", "oreilly"));
-        oReilly.add(Document.of("name", "O'Reilly Media"));
-        oReilly.add(Document.of("founded", "1980"));
-        oReilly.add(Document.of("location", "CA"));
-        oReilly.add(Document.of("books", asList("123456789", "234567890")));
-
-        DocumentEntity mongoBook = DocumentEntity.of("book");
-        mongoBook.add(Document.of("_id", "123456789"));
-        mongoBook.add(Document.of("title", "MongoDB: The Definitive Guide"));
-        mongoBook.add(Document.of("author", asList("ristina Chodorow", "Mike Dirolf")));
-        mongoBook.add(Document.of("published_date", "2010-09-24"));
-        mongoBook.add(Document.of("pages", 216));
-        mongoBook.add(Document.of("language", "English"));
-        mongoBook.add(Document.of("publisher_id", "oreilly"));
-
-        DocumentEntity mongoDBDeveloper = DocumentEntity.of("book");
-        mongoDBDeveloper.add(Document.of("_id", "234567890"));
-        mongoDBDeveloper.add(Document.of("title", "50 Tips and Tricks for MongoDB Developer"));
-        mongoDBDeveloper.add(Document.of("author", singletonList("Kristina Chodorow")));
-        mongoDBDeveloper.add(Document.of("published_date", "2011-05-06"));
-        mongoDBDeveloper.add(Document.of("pages", 68));
-        mongoDBDeveloper.add(Document.of("language", "English"));
-        mongoDBDeveloper.add(Document.of("publisher_id", "oreilly"));
-    }
-
-
 }
