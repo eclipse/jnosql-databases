@@ -35,7 +35,6 @@ import java.util.Optional;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -136,6 +135,8 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentGreaterThan() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = new ArrayList<>();
         entitiesSaved.forEach(entities::add);
@@ -152,6 +153,8 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentGreaterEqualsThan() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = new ArrayList<>();
         entitiesSaved.forEach(entities::add);
