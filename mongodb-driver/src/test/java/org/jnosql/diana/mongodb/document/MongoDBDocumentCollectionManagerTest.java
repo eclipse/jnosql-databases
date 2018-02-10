@@ -221,6 +221,21 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldFindDocumentIn() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("location").in(asList("BR", "US"))
+                .and("type").eq("V")
+                .build();
+
+        assertEquals(entities, entityManager.select(query));
+    }
+
+    @Test
     public void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
