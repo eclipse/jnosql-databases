@@ -76,6 +76,11 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
     }
 
     @Test
+    public void shouldThrowExceptionWhenInsertWithTTLWithCallback() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10), r -> {}));
+    }
+
+    @Test
     public void shouldUpdateAsync() throws InterruptedException {
 
         Random random = new Random();
