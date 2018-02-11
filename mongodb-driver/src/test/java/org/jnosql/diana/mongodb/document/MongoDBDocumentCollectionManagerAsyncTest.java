@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getAsync;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -71,6 +73,15 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         entityManager.insert(entities);
     }
 
+    @Test
+    public void shouldThrowExceptionWhenInsertWithTTL() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10)));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenInsertWithTTLWithCallback() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10), r -> {}));
+    }
 
     @Test
     public void shouldUpdateAsync() throws InterruptedException {
@@ -164,6 +175,21 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         await().untilTrue(selectCondition);
 
         assertTrue(reference.get().isEmpty());
+    }
+
+    @Test
+    public void shouldRemoveEntity() {
+        AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
+        entityManager.insert(getEntity(), entityAtomic::set);
+        await().until(entityAtomic::get, notNullValue(DocumentEntity.class));
+
+        DocumentEntity entity = entityAtomic.get();
+        Document document = entity.find("name").get();
+
+        DocumentDeleteQuery deleteQuery = delete().from(entity.getName())
+                .where(document.getName()).eq(document.get())
+                .build();
+        entityManager.delete(deleteQuery);
     }
 
     private DocumentEntity getEntity() {
