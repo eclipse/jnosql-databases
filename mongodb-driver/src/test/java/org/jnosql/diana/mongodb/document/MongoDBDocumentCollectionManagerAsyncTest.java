@@ -174,6 +174,21 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         assertTrue(reference.get().isEmpty());
     }
 
+    @Test
+    public void shouldRemoveEntity() {
+        AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
+        entityManager.insert(getEntity(), entityAtomic::set);
+        await().until(entityAtomic::get, notNullValue(DocumentEntity.class));
+
+        DocumentEntity entity = entityAtomic.get();
+        Document document = entity.find("name").get();
+
+        DocumentDeleteQuery deleteQuery = delete().from(entity.getName())
+                .where(document.getName()).eq(document.get())
+                .build();
+        entityManager.delete(deleteQuery);
+    }
+
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
