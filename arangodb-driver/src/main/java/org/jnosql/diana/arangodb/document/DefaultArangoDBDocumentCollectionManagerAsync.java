@@ -39,9 +39,6 @@ import static org.jnosql.diana.arangodb.document.ArangoDBUtil.ID;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.KEY;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.REV;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
-import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.deleteByKey;
-import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.findByKeys;
-import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.isJustKey;
 
 public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDocumentCollectionManagerAsync {
 
@@ -131,10 +128,6 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
-        if (isJustKey(query.getCondition(), KEY)) {
-            deleteByKey(query, callBack, arangoDBAsync, database);
-        }
-
         AQLQueryResult delete = AQLUtils.delete(query);
         CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(delete.getQuery(), delete.getValues(),
                 null, BaseDocument.class);
@@ -149,9 +142,6 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
-        if (isJustKey(query.getCondition(), KEY)) {
-            findByKeys(query, callBack, arangoDBAsync, database);
-        }
         AQLQueryResult result = AQLUtils.select(query);
         runAql(result.getQuery(), result.getValues(), callBack);
 
