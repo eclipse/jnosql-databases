@@ -33,6 +33,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -293,6 +295,24 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldQueryIn() {
+        List<DocumentEntity> entities = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false)
+                .collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("city").in(asList("Salvador", "Assis"))
+                .build();
+        assertTrue(entityManager.select(query).size() == 2);
+
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
+                .where("city").in(asList("Salvador", "Assis", "Sao Paulo"))
+                .build();
+        entityManager.delete(deleteQuery);
+
+        assertTrue(entityManager.select(query).isEmpty());
+    }
+
+    @Test
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
         Consumer<DocumentEntity> callback = entities::add;
@@ -356,5 +376,17 @@ public class OrientDBDocumentCollectionManagerTest {
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
+    }
+
+    private List<DocumentEntity> getEntities() {
+        DocumentEntity otavio = DocumentEntity.of(COLLECTION_NAME);
+        otavio.add(Document.of("name", "Otavio"));
+        otavio.add(Document.of("city", "Sao Paulo"));
+
+        DocumentEntity lucas = DocumentEntity.of(COLLECTION_NAME);
+        lucas.add(Document.of("name", "Lucas"));
+        lucas.add(Document.of("city", "Assis"));
+
+        return asList(getEntity(), otavio, lucas);
     }
 }
