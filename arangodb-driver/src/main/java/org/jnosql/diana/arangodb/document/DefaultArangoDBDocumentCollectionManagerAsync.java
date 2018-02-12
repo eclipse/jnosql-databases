@@ -174,6 +174,14 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         requireNonNull(callBack, "callBack is required");
         requireNonNull(values, "values is required");
 
+        CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(query,
+                values, null, BaseDocument.class);
+
+        future.thenAccept(b -> {
+            List<DocumentEntity> entities = StreamSupport.stream(b.spliterator(), false).map(ArangoDBUtil::toEntity).collect(toList());
+            callBack.accept(entities);
+        });
+
     }
 
 
