@@ -32,7 +32,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.awaitility.Awaitility.await;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 public class ArangoDBDocumentCollectionManagerAsyncTest {
@@ -90,12 +92,31 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
     }
 
     @Test
-    public void shouldSeletc() {
+    public void shouldSelect() {
         DocumentEntity entity = getEntity();
         AtomicReference<DocumentEntity> reference = new AtomicReference<>();
-        AtomicBoolean condition = new AtomicBoolean();
+        AtomicBoolean condition = new AtomicBoolean(false);
 
-        entityManagerAsync.insert(entity);
+
+        entityManagerAsync.insert(entity, d -> {
+            condition.set(true);
+            reference.set(d);
+        });
+
+        await().untilTrue(condition);
+
+        DocumentEntity entity1 = reference.get();
+        Document key = entity1.find("_key").get();
+
+        condition.set(false);
+        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        entityManagerAsync.select(select().from(entity1.getName()).where("_key").eq(key.get()).build(), l -> {
+            condition.set(true);
+            references.set(l);
+        });
+
+        List<DocumentEntity> entities = references.get();
+        assertFalse(entities.isEmpty());
     }
 
     private DocumentEntity getEntity() {
