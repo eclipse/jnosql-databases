@@ -94,7 +94,25 @@ public class OrientDBDocumentCollectionManagerTest {
         Optional<DocumentEntity> updated = entityManager.singleResult(query);
 
         assertTrue(updated.isPresent());
-        assertEquals(newField, updated.get().find("newField").get());
+        assertEquals(newField, updated.get().find(newField.getName()).get());
+    }
+
+    @Test
+    public void shouldUpdateWithRetry() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        entity.add(Document.of(OrientDBConverter.VERSION_FIELD, 0));
+        Document newField = Documents.of("newField", "99");
+        entity.add(newField);
+        entityManager.update(entity);
+
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        DocumentQuery query = select().from(entity.getName())
+                .where(id.getName()).eq(id.get())
+                .build();
+        Optional<DocumentEntity> updated = entityManager.singleResult(query);
+
+        assertTrue(updated.isPresent());
+        assertEquals(newField, updated.get().find(newField.getName()).get());
     }
 
     @Test
