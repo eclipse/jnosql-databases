@@ -250,8 +250,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentQuery query2 = select().from(COLLECTION_NAME)
                 .where("age").gt(24)
                 .build();
-        List<DocumentEntity> entities = entityManager.select(query2);
-        assertTrue(entities.size() == 1);
+        assertTrue(entityManager.select(query2).size() == 1);
     }
 
     @Test
@@ -268,8 +267,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentQuery query2 = select().from(COLLECTION_NAME)
                 .where("age").lt(26)
                 .build();
-        List<DocumentEntity> entities = entityManager.select(query2);
-        assertTrue(entities.size() == 1);
+        assertTrue(entityManager.select(query2).size() == 1);
     }
 
     @Test
@@ -291,7 +289,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentQuery query3 = select().from(COLLECTION_NAME)
                 .where("age").lte(26)
                 .build();
-        assertTrue(entityManager.select(query2).size() == 1);
+        assertTrue(entityManager.select(query3).size() == 1);
     }
 
     @Test
