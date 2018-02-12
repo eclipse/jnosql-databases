@@ -18,6 +18,7 @@ package org.jnosql.diana.orientdb.document;
 import com.orientechnologies.common.concur.ONeedRetryException;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OLiveQuery;
@@ -35,6 +36,7 @@ import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
+import static org.jnosql.diana.orientdb.document.OrientDBConverter.VERSION_FIELD;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.toMap;
 
 class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollectionManager {
@@ -53,26 +55,13 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(entity, "Entity is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             ODocument document = new ODocument(entity.getName());
-
             Map<String, Object> entityValues = toMap(entity);
             entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-            ODocument save = null;
-            try {
-                save = tx.save(document);
-            } catch (ONeedRetryException e) {
-                save = tx.reload(document);
-            }
-            if (Objects.nonNull(save)) {
-                ORecordId ridField = save.field("@rid");
-                if (Objects.nonNull(ridField)) {
-                    entity.add(Document.of(RID_FIELD, ridField.toString()));
-                }
-            }
-
+            ODocument save = tx.save(document);
+            updateEntity(entity, save);
             return entity;
         }
     }
-
 
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
@@ -159,6 +148,9 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         pool.close();
     }
 
-
-
+    private void updateEntity(DocumentEntity entity, ODocument save) {
+        ORecordId ridField = new ORecordId(save.getIdentity());
+        entity.add(Document.of(RID_FIELD, ridField.toString()));
+        entity.add(Document.of(VERSION_FIELD, save.getVersion()));
+    }
 }
