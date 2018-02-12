@@ -255,6 +255,24 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldQueryLesserThan() {
+        DocumentEntity entity = getEntity();
+        entity.add("age", 25);
+        entityManager.insert(entity);
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").lt(25)
+                .build();
+        assertTrue(entityManager.select(query).isEmpty());
+
+        DocumentQuery query2 = select().from(COLLECTION_NAME)
+                .where("age").lt(26)
+                .build();
+        List<DocumentEntity> entities = entityManager.select(query2);
+        assertTrue(entities.size() == 1);
+    }
+
+    @Test
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
         Consumer<DocumentEntity> callback = entities::add;
