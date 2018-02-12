@@ -21,6 +21,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -34,7 +35,9 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.jnosql.diana.arangodb.document.ArangoDBUtil.ID;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.KEY;
+import static org.jnosql.diana.arangodb.document.ArangoDBUtil.REV;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.deleteByKey;
 import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.findByKeys;
@@ -42,7 +45,8 @@ import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.isJustKey
 
 public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDocumentCollectionManagerAsync {
 
-    private static final Consumer NOOP = v -> {};
+    private static final Consumer NOOP = v -> {
+    };
 
     private final ArangoDB arangoDB;
 
@@ -79,7 +83,9 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         BaseDocument baseDocument = getBaseDocument(entity);
         CompletableFuture<DocumentCreateEntity<BaseDocument>> future = arangoDBAsync.db(database)
                 .collection(collectionName).insertDocument(baseDocument);
-        future.thenAccept(d -> callBack.accept(entity));
+        future.thenAccept(d -> {
+            createConsumer(entity, callBack, d.getKey(), d.getId(), d.getRev());
+        });
     }
 
     @Override
@@ -104,7 +110,9 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         BaseDocument baseDocument = getBaseDocument(entity);
         CompletableFuture<DocumentUpdateEntity<BaseDocument>> future = arangoDBAsync.db(database).collection(collectionName)
                 .updateDocument(baseDocument.getKey(), baseDocument);
-        future.thenAccept(d -> callBack.accept(entity));
+        future.thenAccept(d -> {
+            createConsumer(entity, callBack, d.getKey(), d.getId(), d.getRev());
+        });
     }
 
 
@@ -177,6 +185,14 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
     private void checkCollection(String collectionName) {
         ArangoDBUtil.checkCollection(database, arangoDB, collectionName);
     }
+
+    private void createConsumer(DocumentEntity entity, Consumer<DocumentEntity> callBack, String key, String id, String rev) {
+        entity.add(Document.of(KEY, key));
+        entity.add(Document.of(ID, id));
+        entity.add(Document.of(REV, rev));
+        callBack.accept(entity);
+    }
+
 
 
 }
