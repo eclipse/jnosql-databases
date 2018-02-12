@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
@@ -37,6 +38,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.getAsync;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,6 +92,29 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         entity.add(newField);
 
         entityManagerAsync.update(entity);
+    }
+
+    @Test
+    public void shouldUpdateAsyncWithCallback() {
+        final String NEW_FIELD_NAME = "newField2";
+        final String NEW_FIELD_VALUE = "55";
+
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document newField = Documents.of(NEW_FIELD_NAME, NEW_FIELD_VALUE);
+        entity.add(newField);
+
+        AtomicBoolean condition = new AtomicBoolean(false);
+        entityManagerAsync.update(entity, c -> condition.set(true));
+        await().untilTrue(condition);
+
+        Optional<Document> idDocument = entity.find(OrientDBConverter.RID_FIELD);
+        DocumentQuery query = select().from(entity.getName())
+                .where(idDocument.get().getName()).eq(idDocument.get().get())
+                .build();
+        Optional<DocumentEntity> entityUpdated = entityManager.singleResult(query);
+
+        assertTrue(entityUpdated.isPresent());
+        assertEquals(entityUpdated.get().find(NEW_FIELD_NAME).get(), newField);
     }
 
     @Test
