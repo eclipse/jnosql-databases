@@ -123,14 +123,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     }
 
 
-    private DocumentEntity toEntity(String collection, String key) {
-        BaseDocument document = arangoDB.db(database).collection(collection).getDocument(key, BaseDocument.class);
-        if (Objects.isNull(document)) {
-            return null;
-        }
-        return ArangoDBUtil.toEntity(document);
-    }
-
     @Override
     public List<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException {
         requireNonNull(query, "query is required");
