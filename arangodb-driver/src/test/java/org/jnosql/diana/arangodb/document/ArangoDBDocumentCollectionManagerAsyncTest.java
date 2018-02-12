@@ -27,7 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static org.awaitility.Awaitility.await;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
 
@@ -49,10 +52,22 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
 
 
     @Test
-    public void shouldSaveAsync() {
+    public void shouldInserAsync() {
         DocumentEntity entity = getEntity();
         entityManagerAsync.insert(entity);
 
+    }
+
+    @Test
+    public void shouldInsertCallBack() {
+        DocumentEntity entity = getEntity();
+        AtomicBoolean condition = new AtomicBoolean();
+
+        entityManagerAsync.insert(entity, d -> {
+            condition.set(true);
+        });
+
+        await().untilTrue(condition);
     }
 
     @Test
@@ -74,6 +89,14 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
         entityManagerAsync.delete(query);
     }
 
+    @Test
+    public void shouldSeletc() {
+        DocumentEntity entity = getEntity();
+        AtomicReference<DocumentEntity> reference = new AtomicReference<>();
+        AtomicBoolean condition = new AtomicBoolean();
+
+        entityManagerAsync.insert(entity);
+    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

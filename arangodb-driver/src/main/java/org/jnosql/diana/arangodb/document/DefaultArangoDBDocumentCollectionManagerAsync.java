@@ -42,6 +42,8 @@ import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.isJustKey
 
 public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDocumentCollectionManagerAsync {
 
+    private static final Consumer NOOP = v -> {};
+
     private final ArangoDB arangoDB;
 
     private final ArangoDBAsync arangoDBAsync;
@@ -56,8 +58,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
 
     @Override
     public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        insert(entity, v -> {
-        });
+        insert(entity, NOOP);
     }
 
     @Override
@@ -69,6 +70,9 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
     @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException
             , UnsupportedOperationException {
+
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "callBack is required");
 
         String collectionName = entity.getName();
         checkCollection(collectionName);
@@ -85,13 +89,16 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
 
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        update(entity, v -> {
-        });
+        update(entity, NOOP);
     }
 
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
+
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "callBack is required");
+
         String collectionName = entity.getName();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
@@ -103,13 +110,15 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
 
     @Override
     public void delete(DocumentDeleteQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        delete(query, v -> {
-        });
+        delete(query, NOOP);
     }
 
     @Override
     public void delete(DocumentDeleteQuery query, Consumer<Void> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
+
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
 
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
@@ -152,6 +161,10 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
     public void aql(String query, Map<String, Object> values, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException,
             UnsupportedOperationException, NullPointerException {
+
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
+        requireNonNull(values, "values is required");
 
     }
 
