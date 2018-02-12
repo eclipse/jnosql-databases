@@ -41,9 +41,6 @@ import static org.jnosql.diana.orientdb.document.OrientDBConverter.toMap;
 
 class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollectionManager {
 
-
-    private static final Consumer<DocumentEntity> NOOPS = d -> {
-    };
     private final OPartitionedDatabasePool pool;
 
     DefaultOrientDBDocumentCollectionManager(OPartitionedDatabasePool pool) {
