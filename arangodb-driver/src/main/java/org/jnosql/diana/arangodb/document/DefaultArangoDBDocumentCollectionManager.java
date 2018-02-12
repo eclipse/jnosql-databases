@@ -35,9 +35,6 @@ import java.util.stream.StreamSupport;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
-import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.deleteByKey;
-import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.findByKeys;
-import static org.jnosql.diana.arangodb.document.OperationsByKeysUtils.isJustKey;
 
 class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollectionManager {
 
@@ -81,12 +78,8 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     @Override
     public void delete(DocumentDeleteQuery query) {
         requireNonNull(query, "query is required");
-        String collection = query.getDocumentCollection();
         if (checkCondition(query.getCondition())) {
             return;
-        }
-        if (isJustKey(query.getCondition(), KEY)) {
-            deleteByKey(query, collection, arangoDB, database);
         }
 
         AQLQueryResult delete = AQLUtils.delete(query);
@@ -101,10 +94,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
 
-
-        if (isJustKey(query.getCondition(), KEY)) {
-            return findByKeys(query, arangoDB, database);
-        }
         AQLQueryResult result = AQLUtils.select(query);
         ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.getQuery(),
                 result.getValues(), null, BaseDocument.class);
