@@ -70,12 +70,12 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         ODocument document = new ODocument(entity.getName());
         Map<String, Object> entityValues = entity.toMap();
         entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-        ORecordCallback<Number> createCallBack = (a, b) -> {
-            entity.add(Document.of(RID_FIELD, a.toString()));
+        ORecordCallback<Number> createCallBack = (rid, clusterPosition) -> {
+            entity.add(Document.of(RID_FIELD, rid.toString()));
             callBack.accept(entity);
         };
-        ORecordCallback<Integer> updateCallback = (a, b) -> {
-            entity.add(Document.of(RID_FIELD, a.toString()));
+        ORecordCallback<Integer> updateCallback = (rid, version) -> {
+            entity.add(Document.of(RID_FIELD, rid.toString()));
             callBack.accept(entity);
         };
         tx.save(document, null, ASYNCHRONOUS, false, createCallBack, updateCallback);
