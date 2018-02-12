@@ -153,13 +153,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
             findByKeys(query, callBack, arangoDBAsync, database);
         }
         AQLQueryResult result = AQLUtils.select(query);
-        CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(result.getQuery(),
-                result.getValues(), null, BaseDocument.class);
-
-        future.thenAccept(b -> {
-            List<DocumentEntity> entities = StreamSupport.stream(b.spliterator(), false).map(ArangoDBUtil::toEntity).collect(toList());
-            callBack.accept(entities);
-        });
+        runAql(result.getQuery(), result.getValues(), callBack);
 
 
     }
@@ -174,6 +168,11 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         requireNonNull(callBack, "callBack is required");
         requireNonNull(values, "values is required");
 
+        runAql(query, values, callBack);
+
+    }
+
+    private void runAql(String query, Map<String, Object> values, Consumer<List<DocumentEntity>> callBack) {
         CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(query,
                 values, null, BaseDocument.class);
 
@@ -181,7 +180,6 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
             List<DocumentEntity> entities = StreamSupport.stream(b.spliterator(), false).map(ArangoDBUtil::toEntity).collect(toList());
             callBack.accept(entities);
         });
-
     }
 
 
