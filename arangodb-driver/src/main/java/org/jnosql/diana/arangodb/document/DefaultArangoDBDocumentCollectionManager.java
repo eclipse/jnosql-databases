@@ -29,7 +29,6 @@ import org.jnosql.diana.api.writer.ValueWriterDecorator;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -64,16 +63,9 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
         DocumentCreateEntity<BaseDocument> arandoDocument = arangoDB.db(database).collection(collectionName).insertDocument(baseDocument);
-        if (!entity.find(KEY).isPresent()) {
-            entity.add(Document.of(KEY, arandoDocument.getKey()));
-        }
-        if (!entity.find(ID).isPresent()) {
-            entity.add(Document.of(ID, arandoDocument.getId()));
-        }
-        if (!entity.find(REV).isPresent()) {
-            entity.add(Document.of(REV, arandoDocument.getRev()));
-        }
-
+        entity.add(Document.of(KEY, arandoDocument.getKey()));
+        entity.add(Document.of(ID, arandoDocument.getId()));
+        entity.add(Document.of(REV, arandoDocument.getRev()));
         return entity;
     }
 
