@@ -30,7 +30,6 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
@@ -38,6 +37,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.orientdb.document.OSQLQueryFactory.toAsync;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
+import static org.jnosql.diana.orientdb.document.OrientDBConverter.VERSION_FIELD;
 
 class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentCollectionManagerAsync {
 
@@ -63,17 +63,20 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
 
     @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.toString(entity, "Entity is required");
+        requireNonNull(entity, "Entity is required");
+        requireNonNull(callBack, "Callback is required");
+
         ODatabaseDocumentTx tx = pool.acquire();
         ODocument document = new ODocument(entity.getName());
         Map<String, Object> entityValues = entity.toMap();
         entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-        ORecordCallback<Number> createCallBack = (a, b) -> {
-            entity.add(Document.of(RID_FIELD, a.toString()));
+        ORecordCallback<Number> createCallBack = (rid, clusterPosition) -> {
+            entity.add(Document.of(RID_FIELD, rid.toString()));
             callBack.accept(entity);
         };
-        ORecordCallback<Integer> updateCallback = (a, b) -> {
-            entity.add(Document.of(RID_FIELD, a.toString()));
+        ORecordCallback<Integer> updateCallback = (rid, version) -> {
+            entity.add(Document.of(RID_FIELD, rid.toString()));
+            entity.add(Document.of(VERSION_FIELD, version));
             callBack.accept(entity);
         };
         tx.save(document, null, ASYNCHRONOUS, false, createCallBack, updateCallback);
@@ -81,7 +84,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
 
     @Override
     public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
+        throw new UnsupportedOperationException("There is no support to ttl on OrientDB");
     }
 
     @Override

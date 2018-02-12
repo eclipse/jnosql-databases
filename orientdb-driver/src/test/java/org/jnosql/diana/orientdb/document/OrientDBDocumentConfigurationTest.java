@@ -19,10 +19,9 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OrientDBDocumentConfigurationTest {
-
-
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactory() {
@@ -39,5 +38,10 @@ public class OrientDBDocumentConfigurationTest {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSettingsIsNull() {
+        assertThrows(NullPointerException.class, () -> new OrientDBDocumentConfiguration().get(null));
     }
 }

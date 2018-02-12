@@ -14,7 +14,6 @@
  */
 package org.jnosql.diana.orientdb.document;
 
-
 import com.orientechnologies.common.concur.ONeedRetryException;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
@@ -30,18 +29,15 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
+import static org.jnosql.diana.orientdb.document.OrientDBConverter.VERSION_FIELD;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.toMap;
 
 class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollectionManager {
 
-
-    private static final Consumer<DocumentEntity> NOOPS = d -> {
-    };
     private final OPartitionedDatabasePool pool;
 
     DefaultOrientDBDocumentCollectionManager(OPartitionedDatabasePool pool) {
@@ -49,34 +45,28 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             ODocument document = new ODocument(entity.getName());
-
-            Map<String, Object> entityValues = toMap(entity);
-            entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-            ODocument save = null;
+            toMap(entity).forEach(document::field);
             try {
-                save = tx.save(document);
+                tx.save(document);
             } catch (ONeedRetryException e) {
-                save = tx.reload(document);
+                document = tx.reload(document);
+                Map<String, Object> entityValues = toMap(entity);
+                entityValues.put(OrientDBConverter.VERSION_FIELD, document.getVersion());
+                entityValues.forEach(document::field);
+                tx.save(document);
             }
-            if (Objects.nonNull(save)) {
-                ORecordId ridField = save.field("@rid");
-                if (Objects.nonNull(ridField)) {
-                    entity.add(Document.of(RID_FIELD, ridField.toString()));
-                }
-            }
-
+            updateEntity(entity, document);
             return entity;
         }
     }
 
-
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
-        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
+        throw new UnsupportedOperationException("There is no support to ttl on OrientDB");
     }
 
 
@@ -159,6 +149,9 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         pool.close();
     }
 
-
-
+    private void updateEntity(DocumentEntity entity, ODocument save) {
+        ORecordId ridField = new ORecordId(save.getIdentity());
+        entity.add(Document.of(RID_FIELD, ridField.toString()));
+        entity.add(Document.of(VERSION_FIELD, save.getVersion()));
+    }
 }

@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -81,13 +82,43 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldThrowExceptionWhenSaveWithTTL() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ZERO));
+    }
+
+    @Test
     public void shouldUpdateSave() {
-        DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        DocumentEntity entity = entityManager.insert(getEntity());
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
-        DocumentEntity updated = entityManager.update(entity);
-        assertEquals(newField, updated.find("newField").get());
+        entityManager.update(entity);
+
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        DocumentQuery query = select().from(entity.getName())
+                .where(id.getName()).eq(id.get())
+                .build();
+        Optional<DocumentEntity> updated = entityManager.singleResult(query);
+
+        assertTrue(updated.isPresent());
+        assertEquals(newField, updated.get().find(newField.getName()).get());
+    }
+
+    @Test
+    public void shouldUpdateWithRetry() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        entity.add(Document.of(OrientDBConverter.VERSION_FIELD, 0));
+        Document newField = Documents.of("newField", "99");
+        entity.add(newField);
+        entityManager.update(entity);
+
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        DocumentQuery query = select().from(entity.getName())
+                .where(id.getName()).eq(id.get())
+                .build();
+        Optional<DocumentEntity> updated = entityManager.singleResult(query);
+
+        assertTrue(updated.isPresent());
+        assertEquals(newField, updated.get().find(newField.getName()).get());
     }
 
     @Test
