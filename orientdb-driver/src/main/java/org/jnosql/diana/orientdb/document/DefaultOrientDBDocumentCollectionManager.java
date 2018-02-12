@@ -66,7 +66,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
 
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
-        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
+        throw new UnsupportedOperationException("There is no support to ttl on OrientDB");
     }
 
 
