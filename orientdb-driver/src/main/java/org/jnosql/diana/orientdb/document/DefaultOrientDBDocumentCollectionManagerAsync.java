@@ -63,7 +63,8 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
 
     @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.toString(entity, "Entity is required");
+        requireNonNull(entity, "Entity is required");
+
         ODatabaseDocumentTx tx = pool.acquire();
         ODocument document = new ODocument(entity.getName());
         Map<String, Object> entityValues = entity.toMap();
