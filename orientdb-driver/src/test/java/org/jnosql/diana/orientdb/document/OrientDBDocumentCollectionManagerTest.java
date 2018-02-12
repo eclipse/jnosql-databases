@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -78,6 +79,11 @@ public class OrientDBDocumentCollectionManagerTest {
         Optional<Document> document = documentEntity.find(RID_FIELD);
         assertTrue(document.isPresent());
 
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSaveWithTTL() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ZERO));
     }
 
     @Test
