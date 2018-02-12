@@ -18,6 +18,7 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.entity.DocumentUpdateEntity;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -60,9 +61,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
         DocumentCreateEntity<BaseDocument> arandoDocument = arangoDB.db(database).collection(collectionName).insertDocument(baseDocument);
-        entity.add(Document.of(KEY, arandoDocument.getKey()));
-        entity.add(Document.of(ID, arandoDocument.getId()));
-        entity.add(Document.of(REV, arandoDocument.getRev()));
+        updateEntity(entity, arandoDocument.getKey(), arandoDocument.getId(), arandoDocument.getRev());
         return entity;
     }
 
@@ -71,7 +70,9 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         String collectionName = entity.getName();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
-        arangoDB.db(database).collection(collectionName).updateDocument(baseDocument.getKey(), baseDocument);
+        DocumentUpdateEntity<BaseDocument> arandoDocument = arangoDB.db(database)
+                .collection(collectionName).updateDocument(baseDocument.getKey(), baseDocument);
+        updateEntity(entity, arandoDocument.getKey(), arandoDocument.getId(), arandoDocument.getRev());
         return entity;
     }
 
@@ -88,7 +89,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
 
 
     }
-
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
@@ -135,6 +135,12 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
+    }
+
+    private void updateEntity(DocumentEntity entity, String key, String id, String rev) {
+        entity.add(Document.of(KEY, key));
+        entity.add(Document.of(ID, id));
+        entity.add(Document.of(REV, rev));
     }
 
 
