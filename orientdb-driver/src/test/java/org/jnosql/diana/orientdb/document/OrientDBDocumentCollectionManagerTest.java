@@ -20,6 +20,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,13 +33,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
-import static java.util.logging.Level.FINEST;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -53,28 +50,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrientDBDocumentCollectionManagerTest {
-
-
     public static final String COLLECTION_NAME = "person";
-
-    private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentCollectionManagerTest.class.getName());
 
     private OrientDBDocumentCollectionManager entityManager;
 
     @BeforeEach
     public void setUp() {
         entityManager = get().get("database");
-        DocumentEntity documentEntity = getEntity();
-        Document id = documentEntity.find("name").get();
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        try {
-            entityManager.delete(deleteQuery);
-        } catch (Exception e) {
-            LOGGER.log(FINEST, "error on OrientDB setup", e);
-        }
-
     }
 
     @Test
@@ -296,8 +278,7 @@ public class OrientDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldQueryIn() {
-        List<DocumentEntity> entities = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false)
-                .collect(Collectors.toList());
+        entityManager.insert(getEntities());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("city").in(asList("Salvador", "Assis"))
@@ -388,5 +369,11 @@ public class OrientDBDocumentCollectionManagerTest {
         lucas.add(Document.of("city", "Assis"));
 
         return asList(getEntity(), otavio, lucas);
+    }
+
+    @AfterEach
+    void removePersons() {
+        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(query);
     }
 }
