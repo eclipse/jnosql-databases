@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class ArangoDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
-    private DocumentCollectionManagerAsync entityManagerAsync;
+    private ArangoDBDocumentCollectionManagerAsync entityManagerAsync;
     private DocumentCollectionManager entityManager;
     private Random random;
     private String KEY_NAME = "_key";
@@ -114,10 +115,41 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
             condition.set(true);
             references.set(l);
         });
+        await().untilTrue(condition);
 
         List<DocumentEntity> entities = references.get();
         assertFalse(entities.isEmpty());
     }
+
+    @Test
+    public void shouldRunAQL() {
+        DocumentEntity entity = getEntity();
+        AtomicReference<DocumentEntity> reference = new AtomicReference<>();
+        AtomicBoolean condition = new AtomicBoolean(false);
+
+
+        entityManagerAsync.insert(entity, d -> {
+            condition.set(true);
+            reference.set(d);
+        });
+
+        await().untilTrue(condition);
+
+        DocumentEntity entity1 = reference.get();
+        Document key = entity1.find("_key").get();
+
+        condition.set(false);
+        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        entityManagerAsync.aql("FOR p IN person FILTER  p._key == @key RETURN p", Collections.singletonMap("key", key.get()), l -> {
+            condition.set(true);
+            references.set(l);
+        });
+
+        await().untilTrue(condition);
+        List<DocumentEntity> entities = references.get();
+        assertFalse(entities.isEmpty());
+    }
+
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
