@@ -65,9 +65,7 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
         DocumentEntity entity = getEntity();
         AtomicBoolean condition = new AtomicBoolean();
 
-        entityManagerAsync.insert(entity, d -> {
-            condition.set(true);
-        });
+        entityManagerAsync.insert(entity, d -> condition.set(true));
 
         await().untilTrue(condition);
     }

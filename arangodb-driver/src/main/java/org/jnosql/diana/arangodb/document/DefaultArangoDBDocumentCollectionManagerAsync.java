@@ -80,9 +80,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         BaseDocument baseDocument = getBaseDocument(entity);
         CompletableFuture<DocumentCreateEntity<BaseDocument>> future = arangoDBAsync.db(database)
                 .collection(collectionName).insertDocument(baseDocument);
-        future.thenAccept(d -> {
-            createConsumer(entity, callBack, d.getKey(), d.getId(), d.getRev());
-        });
+        future.thenAccept(d -> createConsumer(entity, callBack, d.getKey(), d.getId(), d.getRev()));
     }
 
     @Override
@@ -107,9 +105,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         BaseDocument baseDocument = getBaseDocument(entity);
         CompletableFuture<DocumentUpdateEntity<BaseDocument>> future = arangoDBAsync.db(database).collection(collectionName)
                 .updateDocument(baseDocument.getKey(), baseDocument);
-        future.thenAccept(d -> {
-            createConsumer(entity, callBack, d.getKey(), d.getId(), d.getRev());
-        });
+        future.thenAccept(d -> createConsumer(entity, callBack, d.getKey(), d.getId(), d.getRev()));
     }
 
 
