@@ -65,11 +65,11 @@ final class AQLUtils {
         char entity = Character.toLowerCase(documentCollection.charAt(0));
         aql.append("FOR ").append(entity).append(" IN ").append(documentCollection);
 
-        if (documentCondition.isPresent()) {
+        documentCondition.ifPresent(documentCondition1 -> {
             aql.append(" FILTER ");
-            DocumentCondition condition = documentCondition.get();
+            DocumentCondition condition = documentCondition1;
             definesCondition(condition, aql, params, entity, 0);
-        }
+        });
         if (!sorts.isEmpty()) {
             sort(sorts, aql, entity);
         }
