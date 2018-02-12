@@ -44,7 +44,11 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.get;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrientDBDocumentCollectionManagerTest {
 
@@ -230,6 +234,24 @@ public class OrientDBDocumentCollectionManagerTest {
 
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
+    }
+
+    @Test
+    public void shouldQueryGreaterThan() {
+        DocumentEntity entity = getEntity();
+        entity.add("age", 25);
+        entityManager.insert(entity);
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gt(25)
+                .build();
+        assertTrue(entityManager.select(query).isEmpty());
+
+        DocumentQuery query2 = select().from(COLLECTION_NAME)
+                .where("age").gt(24)
+                .build();
+        List<DocumentEntity> entities = entityManager.select(query2);
+        assertTrue(entities.size() == 1);
     }
 
     @Test
