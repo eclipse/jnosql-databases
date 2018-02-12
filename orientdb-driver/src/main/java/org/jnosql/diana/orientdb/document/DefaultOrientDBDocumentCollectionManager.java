@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.orientdb.document;
 
+import com.orientechnologies.common.concur.ONeedRetryException;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.id.ORecordId;
@@ -44,14 +45,21 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             ODocument document = new ODocument(entity.getName());
-            Map<String, Object> entityValues = toMap(entity);
-            entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
-            ODocument save = tx.save(document);
-            updateEntity(entity, save);
+            toMap(entity).forEach(document::field);
+            try {
+                tx.save(document);
+            } catch (ONeedRetryException e) {
+                document = tx.reload(document);
+                Map<String, Object> entityValues = toMap(entity);
+                entityValues.put(OrientDBConverter.VERSION_FIELD, document.getVersion());
+                entityValues.forEach(document::field);
+                tx.save(document);
+            }
+            updateEntity(entity, document);
             return entity;
         }
     }
