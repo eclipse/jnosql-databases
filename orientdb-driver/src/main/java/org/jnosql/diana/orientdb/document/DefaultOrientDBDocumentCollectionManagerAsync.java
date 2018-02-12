@@ -38,6 +38,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.orientdb.document.OSQLQueryFactory.toAsync;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
+import static org.jnosql.diana.orientdb.document.OrientDBConverter.VERSION_FIELD;
 
 class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentCollectionManagerAsync {
 
@@ -76,6 +77,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         };
         ORecordCallback<Integer> updateCallback = (rid, version) -> {
             entity.add(Document.of(RID_FIELD, rid.toString()));
+            entity.add(Document.of(VERSION_FIELD, version));
             callBack.accept(entity);
         };
         tx.save(document, null, ASYNCHRONOUS, false, createCallBack, updateCallback);
