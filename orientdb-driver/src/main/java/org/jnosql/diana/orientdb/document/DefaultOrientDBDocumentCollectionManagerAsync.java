@@ -30,7 +30,6 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
