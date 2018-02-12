@@ -19,8 +19,18 @@ import com.arangodb.entity.LoadBalancingStrategy;
 
 interface ArangoDBBuilder {
 
+
+    /**
+     * @param host the host
+     * @deprecated use {@link ArangoDBBuilder#host(String, int)} instead
+     */
     void host(String host);
 
+    /**
+     * * @deprecated use {@link ArangoDBBuilder#host(String, int)} instead
+     *
+     * @param port the port
+     */
     void port(int port);
 
     void host(String host, int port);
@@ -33,13 +43,13 @@ interface ArangoDBBuilder {
 
     void useSsl(boolean useSsl);
 
-   void chunksize(int chunksize);
+    void chunksize(int chunksize);
 
     void maxConnections(int maxConnections);
 
-   void useProtocol(Protocol protocol);
+    void useProtocol(Protocol protocol);
 
-   void acquireHostList(boolean acquireHostList);
+    void acquireHostList(boolean acquireHostList);
 
     void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy);
 }
