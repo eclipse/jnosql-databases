@@ -81,7 +81,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
 
     @Override
     public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("There is support to ttl on OrientDB");
+        throw new UnsupportedOperationException("There is no support to ttl on OrientDB");
     }
 
     @Override
