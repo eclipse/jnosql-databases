@@ -34,6 +34,7 @@ import static java.util.stream.StreamSupport.stream;
 final class OrientDBConverter {
 
     static final String RID_FIELD = "@rid";
+    static final String VERSION_FIELD = "@version";
 
     private OrientDBConverter() {
     }
@@ -53,6 +54,7 @@ final class OrientDBConverter {
                 .map(f -> Document.of(f, convert((Object) document.field(f))))
                 .forEach(entity::add);
         entity.add(Document.of(RID_FIELD, document.field(RID_FIELD).toString()));
+        entity.add(Document.of(VERSION_FIELD, document.getVersion()));
         return entity;
     }
 
