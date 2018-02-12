@@ -35,12 +35,4 @@ class AQLQueryResult {
     }
 
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("AQLQueryResult{");
-        sb.append("query='").append(query).append('\'');
-        sb.append(", values=").append(values);
-        sb.append('}');
-        return sb.toString();
-    }
 }
