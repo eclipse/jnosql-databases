@@ -134,6 +134,19 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         assertTrue(entityManager.select(query).isEmpty());
     }
 
+    @Test
+    public void shouldRemoveEntityAsyncWithoutCallback() throws InterruptedException {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+
+        entityManagerAsync.delete(deleteQuery);
+        Thread.sleep(1000L);
+        assertTrue(entityManager.select(query).isEmpty());
+    }
+
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
