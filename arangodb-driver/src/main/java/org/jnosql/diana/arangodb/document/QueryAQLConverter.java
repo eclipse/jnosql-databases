@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-final class AQLUtils {
+final class QueryAQLConverter {
 
     private static final String FILTER = " FILTER ";
     private static final String LIMIT = " LIMIT ";
@@ -47,7 +47,7 @@ final class AQLUtils {
     private static final String NOT = " NOT ";
     private static final char PARAM_APPENDER = '@';
 
-    private AQLUtils() {
+    private QueryAQLConverter() {
     }
 
     public static AQLQueryResult delete(DocumentDeleteQuery query) throws NullPointerException {

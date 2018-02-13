@@ -124,7 +124,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
-        AQLQueryResult delete = AQLUtils.delete(query);
+        AQLQueryResult delete = QueryAQLConverter.delete(query);
         CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(delete.getQuery(), delete.getValues(),
                 null, BaseDocument.class);
         future.thenAccept(c -> callBack.accept(null));
@@ -138,7 +138,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
-        AQLQueryResult result = AQLUtils.select(query);
+        AQLQueryResult result = QueryAQLConverter.select(query);
         runAql(result.getQuery(), result.getValues(), callBack);
 
 

@@ -83,7 +83,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
             return;
         }
 
-        AQLQueryResult delete = AQLUtils.delete(query);
+        AQLQueryResult delete = QueryAQLConverter.delete(query);
         arangoDB.db(database).query(delete.getQuery(), delete.getValues(),
                 null, BaseDocument.class);
 
@@ -94,7 +94,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
 
-        AQLQueryResult result = AQLUtils.select(query);
+        AQLQueryResult result = QueryAQLConverter.select(query);
         ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.getQuery(),
                 result.getValues(), null, BaseDocument.class);
 
