@@ -16,14 +16,11 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import org.jnosql.diana.api.column.ColumnQuery;
-import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
-
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class QueryUtilsTest {
 
@@ -54,17 +51,15 @@ class QueryUtilsTest {
     }
 
     @Test
-    public void shouldRunEqualsQueryOr() {
+    public void shouldReturnErrorWhenUseOr() {
         ColumnQuery query = select().from("collection")
                 .where("name").eq("value")
                 .or("age").lte(10)
                 .build();
 
-        BuiltStatement select = QueryUtils.select(query, "keyspace");
-        String cql = select.toString();
-        assertEquals("value", select.getObject(0));
-        assertEquals("SELECT * FROM keyspace.collection WHERE name='value' OR age<=10;", cql);
-
+        assertThrows(UnsupportedOperationException.class, () -> {
+            QueryUtils.select(query, "keyspace");
+        });
     }
 
     @Test
@@ -77,7 +72,7 @@ class QueryUtilsTest {
         String cql = select.toString();
         assertEquals("value", select.getObject(0));
 
-        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC RETURN c", cql);
+        assertEquals("SELECT * FROM keyspace.collection WHERE name='value' ORDER BY name ASC;", cql);
     }
 
     @Test
@@ -90,7 +85,7 @@ class QueryUtilsTest {
         BuiltStatement select = QueryUtils.select(query, "keyspace");
         String cql = select.toString();
         assertEquals("value", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC , c.age DESC RETURN c", cql);
+        assertEquals("SELECT * FROM keyspace.collection WHERE name='value' ORDER BY name ASC,age DESC;", cql);
     }
 
 
@@ -103,31 +98,19 @@ class QueryUtilsTest {
         BuiltStatement select = QueryUtils.select(query, "keyspace");
         String cql = select.toString();
         assertEquals("value", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 5 RETURN c", cql);
+        assertEquals("SELECT * FROM keyspace.collection WHERE name='value' LIMIT 5;", cql);
 
     }
 
-    @Test
-    public void shouldRunEqualsQueryLimit2() {
-        ColumnQuery query = select().from("collection")
-                .where("name").eq("value")
-                .start(1).limit(5).build();
-
-        BuiltStatement select = QueryUtils.select(query, "keyspace");
-        String cql = select.toString();
-        assertEquals("value", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 1, 5 RETURN c", cql);
-    }
 
     @Test
-    public void shouldRunEqualsQueryNot() {
+    public void shouldReturnErrorWhenUseNotOperator() {
         ColumnQuery query = select().from("collection")
                 .where("name").not().eq("value").build();
 
-        BuiltStatement select = QueryUtils.select(query, "keyspace");
-        String cql = select.toString();
-        assertEquals("value", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  NOT  c.name == @name RETURN c", cql);
+        assertThrows(UnsupportedOperationException.class, () -> {
+            QueryUtils.select(query, "keyspace");
+        });
 
     }
 
@@ -135,17 +118,16 @@ class QueryUtilsTest {
     @Test
     public void shouldNegate() {
         ColumnQuery query = select().from("collection")
-                .where("city").not().eq("Assis")
+                .where("city").eq("Assis")
                 .and("name").eq("Otavio")
-                .or("name").not().eq("Lucas").build();
+                .and("name").eq("Lucas").build();
 
         BuiltStatement select = QueryUtils.select(query, "keyspace");
         String cql = select.toString();
-        assertEquals("value", select.getObject(0));
         assertEquals("Assis", select.getObject(0));
-        assertEquals("Otavio", select.getObject(0));
-        assertEquals("Lucas", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  NOT  c.city == @city AND  c.name == @name OR  NOT  c.name == @name_1 RETURN c", cql);
+        assertEquals("Otavio", select.getObject(1));
+        assertEquals("Lucas", select.getObject(2));
+        assertEquals("SELECT * FROM keyspace.collection WHERE city='Assis' AND name='Otavio' AND name='Lucas';", cql);
 
     }
 
