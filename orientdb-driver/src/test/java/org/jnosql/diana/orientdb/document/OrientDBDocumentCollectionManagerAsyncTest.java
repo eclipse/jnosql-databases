@@ -16,7 +16,6 @@ package org.jnosql.diana.orientdb.document;
 
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -49,7 +48,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
 
-    private DocumentCollectionManagerAsync entityManagerAsync;
+    private OrientDBDocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
 
