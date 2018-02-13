@@ -136,4 +136,20 @@ public class AQLUtilsTest {
     }
 
 
+    @Test
+    public void shouldNegate() {
+        DocumentQuery query = select().from("collection")
+                .where("city").not().eq("Assis")
+                .and("name").eq("Otavio")
+                .or("name").not().eq("Lucas").build();
+
+        AQLQueryResult convert = AQLUtils.select(query);
+        String aql = convert.getQuery();
+        Map<String, Object> values = convert.getValues();
+        assertEquals(3, values.size());
+        assertEquals("value", values.get("name"));
+        assertEquals("FOR c IN collection FILTER NOT c.city == @city AND  c.name == @name OR  NOT  c.name == @name RETURN c", aql);
+
+    }
+
 }
