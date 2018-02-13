@@ -83,6 +83,11 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     }
 
     @Test
+    public void ShouldThrowExceptionWhenInsertWithTTLAndCallback() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManagerAsync.insert(getEntity(), Duration.ZERO, (d) -> {}));
+    }
+
+    @Test
     public void shouldUpdateAsync() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
