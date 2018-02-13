@@ -159,6 +159,21 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         assertEquals(reference.get().get(0), entity);
     }
 
+    @Test
+    public void shouldFindAsyncWithNativeQuery() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+
+        AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
+        StringBuilder query = new StringBuilder().append("SELECT FROM ")
+                .append(COLLECTION_NAME)
+                .append(" WHERE name = \"Poliana\"");
+        entityManagerAsync.sql(query.toString(), reference::set);
+        await().until(reference::get, notNullValue(List.class));
+
+        assertFalse(reference.get().isEmpty());
+        assertEquals(reference.get().get(0), entity);
+    }
+
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
