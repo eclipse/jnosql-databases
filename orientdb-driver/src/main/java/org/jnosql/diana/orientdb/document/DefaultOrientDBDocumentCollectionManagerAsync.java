@@ -35,9 +35,9 @@ import java.util.function.Consumer;
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.orientdb.document.QueryOSQLFactory.toAsync;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.VERSION_FIELD;
+import static org.jnosql.diana.orientdb.document.QueryOSQLFactory.toAsync;
 
 class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentCollectionManagerAsync {
 
@@ -120,6 +120,8 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
 
     @Override
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
         ODatabaseDocumentTx tx = pool.acquire();
         QueryOSQLFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
