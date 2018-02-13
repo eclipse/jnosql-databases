@@ -166,8 +166,8 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
         StringBuilder query = new StringBuilder().append("SELECT FROM ")
                 .append(COLLECTION_NAME)
-                .append(" WHERE name = \"Poliana\"");
-        entityManagerAsync.sql(query.toString(), reference::set);
+                .append(" WHERE name = ?");
+        entityManagerAsync.sql(query.toString(), reference::set, "Poliana");
         await().until(reference::get, notNullValue(List.class));
 
         assertFalse(reference.get().isEmpty());
