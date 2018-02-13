@@ -14,101 +14,18 @@
  */
 package org.jnosql.diana.orientdb.document;
 
-
-import com.orientechnologies.orient.core.command.OCommandResultListener;
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.query.OLiveQuery;
-import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
-import com.orientechnologies.orient.core.sql.query.OSQLQuery;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-
-import static java.util.Arrays.asList;
 
 final class QueryOSQLConverter {
 
-    public static final String LIVE = "live ";
 
-    private QueryOSQLConverter() {
-    }
-
-    static QueryResult to(DocumentQuery documentQuery) {
-        Query query = getQuery(documentQuery);
-
-        return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
-        }, query.getParams());
-    }
-
-    static OSQLSynchQuery<ODocument> parse(String query) {
-        return new OSQLSynchQuery<ODocument>(query) {
-        };
-    }
-
-    static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
-        Query query = getQuery(documentQuery);
-        return new QueryResult(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
-            private List<ODocument> documents = new ArrayList<>();
-
-            @Override
-            public boolean result(Object iRecord) {
-                ODocument document = (ODocument) iRecord;
-                documents.add(document);
-                return true;
-            }
-
-            @Override
-            public void end() {
-                callBack.accept(documents);
-            }
-
-            @Override
-            public Object getResult() {
-                return null;
-            }
-        }), query.getParams());
-    }
-
-    static QueryResult toLive(DocumentQuery documentQuery, Consumer<DocumentEntity> callBack) {
-        Query query = getQuery(documentQuery);
-        OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(LIVE + query.getQuery(), new LiveQueryLIstener(callBack));
-        return new QueryResult(liveQuery, query.getParams());
-
-    }
-
-    static QueryResult toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {
-        return new QueryResult(new OSQLAsynchQuery<>(query, new OCommandResultListener() {
-            private List<ODocument> documents = new ArrayList<>();
-
-            @Override
-            public boolean result(Object iRecord) {
-                ODocument document = (ODocument) iRecord;
-                documents.add(document);
-                return true;
-            }
-
-            @Override
-            public void end() {
-                callBack.accept(documents);
-            }
-
-            @Override
-            public Object getResult() {
-                return null;
-            }
-        }), asList(params));
-    }
-
-
-    private static Query getQuery(DocumentQuery documentQuery) {
+    static Query select(DocumentQuery documentQuery) {
         StringBuilder query = new StringBuilder();
         List<Object> params = new java.util.ArrayList<>();
         query.append("SELECT FROM ");
@@ -197,22 +114,4 @@ final class QueryOSQLConverter {
         }
     }
 
-    static class QueryResult {
-
-        private final OSQLQuery<ODocument> query;
-        private final List<Object> params;
-
-        QueryResult(OSQLQuery<ODocument> query, List<Object> params) {
-            this.query = query;
-            this.params = params;
-        }
-
-        OSQLQuery<ODocument> getQuery() {
-            return query;
-        }
-
-        Object getParams() {
-            return params.toArray(new Object[params.size()]);
-        }
-    }
 }
