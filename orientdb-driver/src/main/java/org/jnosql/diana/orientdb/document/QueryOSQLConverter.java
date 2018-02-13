@@ -25,6 +25,18 @@ import java.util.List;
 
 final class QueryOSQLConverter {
 
+    private static final String WHERE = " WHERE ";
+    private static final String IN = " IN ";
+    private static final String AND = " AND ";
+    private static final String OR = " OR ";
+    private static final String EQUALS = " = ";
+    private static final String GREATER_EQUALS_THAN = " >= ";
+    private static final String GREATER_THAN = " > ";
+    private static final String LESSER_THAN = " < ";
+    private static final String LESSER_EQUALS_THAN = " <= ";
+    private static final String LIKE = " LIKE ";
+    private static final char PARAM_APPENDER = '?';
+
     private QueryOSQLConverter() {
     }
 
@@ -34,7 +46,7 @@ final class QueryOSQLConverter {
         query.append("SELECT FROM ");
         query.append(documentQuery.getDocumentCollection());
         if (documentQuery.getCondition().isPresent()) {
-            query.append(" WHERE ");
+            query.append(WHERE);
             definesCondition(documentQuery.getCondition().get(), query, params, 0);
         }
         return new Query(query.toString(), params);
@@ -44,32 +56,32 @@ final class QueryOSQLConverter {
         Document document = condition.getDocument();
         switch (condition.getCondition()) {
             case IN:
-                appendCondition(query, params, document, " IN ");
+                appendCondition(query, params, document, IN);
                 return;
             case EQUALS:
-                appendCondition(query, params, document, " = ");
+                appendCondition(query, params, document, EQUALS);
                 return;
             case GREATER_EQUALS_THAN:
-                appendCondition(query, params, document, " >= ");
+                appendCondition(query, params, document, GREATER_EQUALS_THAN);
                 return;
             case GREATER_THAN:
-                appendCondition(query, params, document, " > ");
+                appendCondition(query, params, document, GREATER_THAN);
                 return;
             case LESSER_THAN:
-                appendCondition(query, params, document, " < ");
+                appendCondition(query, params, document, LESSER_THAN);
                 return;
             case LESSER_EQUALS_THAN:
-                appendCondition(query, params, document, " <= ");
+                appendCondition(query, params, document, LESSER_EQUALS_THAN);
                 return;
             case LIKE:
-                appendCondition(query, params, document, " LIKE ");
+                appendCondition(query, params, document, LIKE);
                 return;
             case AND:
                 for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
                 })) {
 
                     if (isFirstCondition(query, counter)) {
-                        query.append(" AND ");
+                        query.append(AND);
                     }
                     definesCondition(dc, query, params, ++counter);
                 }
@@ -78,7 +90,7 @@ final class QueryOSQLConverter {
                 for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
                 })) {
                     if (isFirstCondition(query, counter)) {
-                        query.append(" OR ");
+                        query.append(OR);
                     }
                     definesCondition(dc, query, params, ++counter);
                 }
@@ -95,12 +107,12 @@ final class QueryOSQLConverter {
     }
 
     private static boolean isFirstCondition(StringBuilder query, int counter) {
-        return counter > 0 && !" WHERE ".equals(query.substring(query.length() - 7));
+        return counter > 0 && !WHERE.equals(query.substring(query.length() - 7));
     }
 
     private static void appendCondition(StringBuilder query, List<Object> params, Document document, String condition) {
         query.append(document.getName())
-                .append(condition).append("?");
+                .append(condition).append(PARAM_APPENDER);
         params.add(document.get());
     }
 
