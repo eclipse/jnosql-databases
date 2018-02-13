@@ -147,8 +147,10 @@ public class AQLUtilsTest {
         String aql = convert.getQuery();
         Map<String, Object> values = convert.getValues();
         assertEquals(3, values.size());
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER NOT c.city == @city AND  c.name == @name OR  NOT  c.name == @name RETURN c", aql);
+        assertEquals("Assis", values.get("city"));
+        assertEquals("Otavio", values.get("name"));
+        assertEquals("Lucas", values.get("name_1"));
+        assertEquals("FOR c IN collection FILTER  NOT  c.city == @city AND  c.name == @name OR  NOT  c.name == @name_1 RETURN c", aql);
 
     }
 
