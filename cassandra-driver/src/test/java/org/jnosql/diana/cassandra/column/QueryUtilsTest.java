@@ -14,10 +14,12 @@
  */
 package org.jnosql.diana.cassandra.column;
 
+import com.datastax.driver.core.querybuilder.BuiltStatement;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
@@ -30,11 +32,10 @@ class QueryUtilsTest {
         ColumnQuery query = select().from("collection")
                 .where("name").eq("value").build();
 
-        AQLQueryResult convert = QueryUtils.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  c.name == @name RETURN c", cql);
 
     }
 
@@ -45,11 +46,10 @@ class QueryUtilsTest {
                 .and("age").lte(10)
                 .build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name AND  c.age <= @age RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  c.name == @name AND  c.age <= @age RETURN c", cql);
 
     }
 
@@ -60,11 +60,10 @@ class QueryUtilsTest {
                 .or("age").lte(10)
                 .build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name OR  c.age <= @age RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  c.name == @name OR  c.age <= @age RETURN c", cql);
 
     }
 
@@ -74,11 +73,11 @@ class QueryUtilsTest {
                 .where("name").eq("value")
                 .orderBy("name").asc().build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+
+        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC RETURN c", cql);
     }
 
     @Test
@@ -88,11 +87,10 @@ class QueryUtilsTest {
                 .orderBy("name").asc()
                 .orderBy("age").desc().build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC , c.age DESC RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC , c.age DESC RETURN c", cql);
     }
 
 
@@ -102,11 +100,10 @@ class QueryUtilsTest {
                 .where("name").eq("value")
                 .limit(5).build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 5 RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 5 RETURN c", cql);
 
     }
 
@@ -116,11 +113,10 @@ class QueryUtilsTest {
                 .where("name").eq("value")
                 .start(1).limit(5).build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 1, 5 RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 1, 5 RETURN c", cql);
     }
 
     @Test
@@ -128,11 +124,10 @@ class QueryUtilsTest {
         ColumnQuery query = select().from("collection")
                 .where("name").not().eq("value").build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  NOT  c.name == @name RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  NOT  c.name == @name RETURN c", cql);
 
     }
 
@@ -144,14 +139,13 @@ class QueryUtilsTest {
                 .and("name").eq("Otavio")
                 .or("name").not().eq("Lucas").build();
 
-        AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
-        assertEquals(3, values.size());
-        assertEquals("Assis", values.get("city"));
-        assertEquals("Otavio", values.get("name"));
-        assertEquals("Lucas", values.get("name_1"));
-        assertEquals("FOR c IN collection FILTER  NOT  c.city == @city AND  c.name == @name OR  NOT  c.name == @name_1 RETURN c", aql);
+        BuiltStatement select = QueryUtils.select(query, "keyspace");
+        String cql = select.toString();
+        assertEquals("value", select.getObject(0));
+        assertEquals("Assis", select.getObject(0));
+        assertEquals("Otavio", select.getObject(0));
+        assertEquals("Lucas", select.getObject(0));
+        assertEquals("FOR c IN collection FILTER  NOT  c.city == @city AND  c.name == @name OR  NOT  c.name == @name_1 RETURN c", cql);
 
     }
 
