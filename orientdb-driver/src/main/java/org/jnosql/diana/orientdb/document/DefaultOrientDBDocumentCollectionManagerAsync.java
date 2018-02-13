@@ -88,22 +88,28 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
 
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        requireNonNull(entity, "entity is required");
         insert(entity);
     }
 
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "callBack is required");
         insert(entity, callBack);
     }
 
     @Override
     public void delete(DocumentDeleteQuery query) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        requireNonNull(query, "query is required");
         delete(query, v -> {
         });
     }
 
     @Override
     public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
         ODatabaseDocumentTx tx = pool.acquire();
         DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
 
