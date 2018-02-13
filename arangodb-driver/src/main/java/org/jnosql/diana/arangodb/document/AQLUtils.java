@@ -29,6 +29,8 @@ import java.util.Optional;
 
 final class AQLUtils {
 
+    private static final String FILTER = " FILTER ";
+
     private AQLUtils() {
     }
 
@@ -65,9 +67,8 @@ final class AQLUtils {
         char entity = Character.toLowerCase(documentCollection.charAt(0));
         aql.append("FOR ").append(entity).append(" IN ").append(documentCollection);
 
-        documentCondition.ifPresent(documentCondition1 -> {
-            aql.append(" FILTER ");
-            DocumentCondition condition = documentCondition1;
+        documentCondition.ifPresent(condition -> {
+            aql.append(FILTER);
             definesCondition(condition, aql, params, entity, 0);
         });
         if (!sorts.isEmpty()) {
@@ -132,7 +133,8 @@ final class AQLUtils {
 
                 for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
                 })) {
-                    if (count > 0) {
+
+                    if (isFirstCondition(aql, count)) {
                         aql.append(" AND ");
                     }
                     definesCondition(dc, aql, params, entity, ++count);
@@ -142,7 +144,7 @@ final class AQLUtils {
 
                 for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
                 })) {
-                    if (count > 0) {
+                    if (isFirstCondition(aql, count)) {
                         aql.append(" OR ");
                     }
                     definesCondition(dc, aql, params, entity, ++count);
@@ -156,6 +158,10 @@ final class AQLUtils {
             default:
                 throw new IllegalArgumentException("The condition does not support in AQL: " + condition.getCondition());
         }
+    }
+
+    private static boolean isFirstCondition(StringBuilder aql, int count) {
+        return count > 0 && !FILTER.equals(aql.substring(aql.length() - 8));
     }
 
     private static void appendCondtion(StringBuilder aql, Map<String, Object> params, char entity, Document document,
