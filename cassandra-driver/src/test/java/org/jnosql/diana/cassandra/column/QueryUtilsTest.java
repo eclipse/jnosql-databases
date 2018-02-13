@@ -35,7 +35,7 @@ class QueryUtilsTest {
         BuiltStatement select = QueryUtils.select(query, "keyspace");
         String cql = select.toString();
         assertEquals("value", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  c.name == @name RETURN c", cql);
+        assertEquals("SELECT * FROM keyspace.collection WHERE name='value';", cql);
 
     }
 
@@ -49,7 +49,7 @@ class QueryUtilsTest {
         BuiltStatement select = QueryUtils.select(query, "keyspace");
         String cql = select.toString();
         assertEquals("value", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  c.name == @name AND  c.age <= @age RETURN c", cql);
+        assertEquals("SELECT * FROM keyspace.collection WHERE name='value' AND age<=10;", cql);
 
     }
 
@@ -63,7 +63,7 @@ class QueryUtilsTest {
         BuiltStatement select = QueryUtils.select(query, "keyspace");
         String cql = select.toString();
         assertEquals("value", select.getObject(0));
-        assertEquals("FOR c IN collection FILTER  c.name == @name OR  c.age <= @age RETURN c", cql);
+        assertEquals("SELECT * FROM keyspace.collection WHERE name='value' OR age<=10;", cql);
 
     }
 
