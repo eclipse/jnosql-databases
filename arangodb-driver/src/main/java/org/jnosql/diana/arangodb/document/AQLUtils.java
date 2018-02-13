@@ -169,10 +169,22 @@ final class AQLUtils {
 
     private static void appendCondition(StringBuilder aql, Map<String, Object> params,
                                         char entity, Document document, String condition) {
-        String nameParam = getNameParam(document.getName());
+        String nameParam = getNameParam(document.getName(), params);
         aql.append(" ").append(entity).append('.').append(document.getName())
                 .append(condition).append('@').append(nameParam);
         params.put(nameParam, document.get());
+    }
+
+    private static String getNameParam(String name, Map<String, Object> params) {
+        String parameter = getNameParam(name);
+
+        String paramName = parameter;
+        int counter = 1;
+        while (params.containsKey(paramName)) {
+            paramName = parameter + '_' + counter;
+        }
+
+        return paramName;
     }
 
     private static String getNameParam(String name) {
