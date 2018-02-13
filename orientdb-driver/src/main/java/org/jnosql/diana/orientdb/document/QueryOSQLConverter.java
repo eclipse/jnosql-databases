@@ -34,11 +34,11 @@ import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 
-final class OSQLQueryFactory {
+final class QueryOSQLConverter {
 
     public static final String LIVE = "live ";
 
-    private OSQLQueryFactory() {
+    private QueryOSQLConverter() {
     }
 
     static QueryResult to(DocumentQuery documentQuery) {

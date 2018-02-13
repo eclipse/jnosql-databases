@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.orientdb.document.OSQLQueryFactory.toAsync;
+import static org.jnosql.diana.orientdb.document.QueryOSQLConverter.toAsync;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.VERSION_FIELD;
 
@@ -111,7 +111,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
 
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(selectQuery, l -> {
+        QueryOSQLConverter.QueryResult orientQuery = toAsync(selectQuery, l -> {
             l.forEach(ORecordAbstract::delete);
             callBack.accept(null);
         });
@@ -121,7 +121,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
     @Override
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+        QueryOSQLConverter.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())));
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
@@ -132,7 +132,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+        QueryOSQLConverter.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())), params);
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
@@ -145,7 +145,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         requireNonNull(params, "params is required");
 
         ODatabaseDocumentTx tx = pool.acquire();
-        OSQLQueryFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+        QueryOSQLConverter.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())), params);
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
