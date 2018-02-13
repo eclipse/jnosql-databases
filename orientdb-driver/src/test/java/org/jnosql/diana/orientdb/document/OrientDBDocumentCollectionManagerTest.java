@@ -309,6 +309,19 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldQueryNot() {
+        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("city").not().eq("Assis")
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.size() == 2);
+        assertThat(entities, containsInAnyOrder(entitiesSaved.get(0), entitiesSaved.get(1)));
+    }
+
+    @Test
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
         Consumer<DocumentEntity> callback = entities::add;
