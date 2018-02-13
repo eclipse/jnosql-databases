@@ -25,6 +25,10 @@ import java.util.List;
 final class QueryOSQLConverter {
 
 
+    private QueryOSQLConverter() {
+
+    }
+
     static Query select(DocumentQuery documentQuery) {
         StringBuilder query = new StringBuilder();
         List<Object> params = new java.util.ArrayList<>();
