@@ -21,6 +21,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,15 +58,6 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     public void setUp() {
         entityManagerAsync = getAsync().getAsync("database");
         entityManager = DocumentConfigurationUtils.get().get("database");
-        DocumentEntity documentEntity = getEntity();
-        Document id = documentEntity.find("name").get();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-
-        try {
-            entityManagerAsync.delete(deleteQuery);
-        } catch (Exception e) {
-            LOGGER.log(FINEST, "error on OrientDB setup", e);
-        }
     }
 
 
@@ -139,5 +131,11 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
+    }
+
+    @AfterEach
+    void removePersons() {
+        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(query);
     }
 }
