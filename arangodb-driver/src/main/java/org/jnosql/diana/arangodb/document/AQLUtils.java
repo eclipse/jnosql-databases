@@ -33,6 +33,19 @@ final class AQLUtils {
     private static final String LIMIT = " LIMIT ";
     private static final String IN = " IN ";
     private static final String SORT = " SORT ";
+    private static final String REMOVE = " REMOVE ";
+    private static final String RETURN = " RETURN ";
+    private static final String SEPARATOR = " ";
+    private static final String AND = " AND ";
+    private static final String OR = " OR ";
+    private static final String EQUALS = " == ";
+    private static final String GREATER_EQUALS_THAN = " >= ";
+    private static final String GREATER_THAN = " > ";
+    private static final String LESSER_THAN = " < ";
+    private static final String LESSER_EQUALS_THAN = " <= ";
+    private static final String LIKE = " LIKE ";
+    private static final String NOT = " NOT ";
+    private static final char PARAM_APPENDER = '@';
 
     private AQLUtils() {
     }
@@ -44,7 +57,7 @@ final class AQLUtils {
                 Collections.emptyList(),
                 0L,
                 0L,
-                " REMOVE ", true);
+                REMOVE, true);
     }
 
     public static AQLQueryResult select(DocumentQuery query) throws NullPointerException {
@@ -54,7 +67,7 @@ final class AQLUtils {
                 query.getSorts(),
                 query.getFirstResult(),
                 query.getMaxResults(),
-                " RETURN ", false);
+                RETURN, false);
 
     }
 
@@ -94,12 +107,12 @@ final class AQLUtils {
 
     private static void sort(List<Sort> sorts, StringBuilder aql, char entity) {
         aql.append(SORT);
-        String separator = " ";
+        String separator = SEPARATOR;
         for (Sort sort : sorts) {
             aql.append(separator)
                     .append(entity).append('.')
                     .append(sort.getName())
-                    .append(" ").append(sort.getType());
+                    .append(SEPARATOR).append(sort.getType());
             separator = " , ";
         }
     }
@@ -115,22 +128,22 @@ final class AQLUtils {
                 appendCondition(aql, params, entity, document, IN);
                 return;
             case EQUALS:
-                appendCondition(aql, params, entity, document, " == ");
+                appendCondition(aql, params, entity, document, EQUALS);
                 return;
             case GREATER_EQUALS_THAN:
-                appendCondition(aql, params, entity, document, " >= ");
+                appendCondition(aql, params, entity, document, GREATER_EQUALS_THAN);
                 return;
             case GREATER_THAN:
-                appendCondition(aql, params, entity, document, " > ");
+                appendCondition(aql, params, entity, document, GREATER_THAN);
                 return;
             case LESSER_THAN:
-                appendCondition(aql, params, entity, document, " < ");
+                appendCondition(aql, params, entity, document, LESSER_THAN);
                 return;
             case LESSER_EQUALS_THAN:
-                appendCondition(aql, params, entity, document, " <= ");
+                appendCondition(aql, params, entity, document, LESSER_EQUALS_THAN);
                 return;
             case LIKE:
-                appendCondition(aql, params, entity, document, " LIKE ");
+                appendCondition(aql, params, entity, document, LIKE);
                 return;
             case AND:
 
@@ -138,7 +151,7 @@ final class AQLUtils {
                 })) {
 
                     if (isFirstCondition(aql, counter)) {
-                        aql.append(" AND ");
+                        aql.append(AND);
                     }
                     definesCondition(dc, aql, params, entity, ++counter);
                 }
@@ -148,14 +161,14 @@ final class AQLUtils {
                 for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
                 })) {
                     if (isFirstCondition(aql, counter)) {
-                        aql.append(" OR ");
+                        aql.append(OR);
                     }
                     definesCondition(dc, aql, params, entity, ++counter);
                 }
                 return;
             case NOT:
                 DocumentCondition documentCondition = document.get(DocumentCondition.class);
-                aql.append(" NOT ");
+                aql.append(NOT);
                 definesCondition(documentCondition, aql, params, entity, ++counter);
                 return;
             default:
@@ -170,8 +183,8 @@ final class AQLUtils {
     private static void appendCondition(StringBuilder aql, Map<String, Object> params,
                                         char entity, Document document, String condition) {
         String nameParam = getNameParam(document.getName(), params);
-        aql.append(" ").append(entity).append('.').append(document.getName())
-                .append(condition).append('@').append(nameParam);
+        aql.append(SEPARATOR).append(entity).append('.').append(document.getName())
+                .append(condition).append(PARAM_APPENDER).append(nameParam);
         params.put(nameParam, document.get());
     }
 
