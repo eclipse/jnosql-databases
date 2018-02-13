@@ -84,7 +84,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
 
         try (ODatabaseDocumentTx tx = pool.acquire()) {
-            QueryOSQLConverter.QueryResult orientQuery = QueryOSQLConverter.to(selectQuery);
+            QueryOSQLConverter.QueryResult orientQuery = QueryOSQLConverter.select(selectQuery);
             List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
             result.forEach(tx::delete);
         }
@@ -96,7 +96,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
-            QueryOSQLConverter.QueryResult orientQuery = QueryOSQLConverter.to(query);
+            QueryOSQLConverter.QueryResult orientQuery = QueryOSQLConverter.select(query);
             List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
             return OrientDBConverter.convert(result);
         }

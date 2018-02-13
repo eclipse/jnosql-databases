@@ -37,11 +37,12 @@ import static java.util.Arrays.asList;
 final class QueryOSQLConverter {
 
     public static final String LIVE = "live ";
+    private static final char SPACE_CHAR = ' ';
 
     private QueryOSQLConverter() {
     }
 
-    static QueryResult to(DocumentQuery documentQuery) {
+    static QueryResult select(DocumentQuery documentQuery) {
         Query query = getQuery(documentQuery);
 
         return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
@@ -53,7 +54,7 @@ final class QueryOSQLConverter {
         };
     }
 
-    static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
+    static QueryResult select(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
         Query query = getQuery(documentQuery);
         return new QueryResult(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
@@ -140,12 +141,12 @@ final class QueryOSQLConverter {
 
         }
         if (counter > 0) {
-            query.append(' ').append(connector).append(' ');
+            query.append(SPACE_CHAR).append(connector).append(SPACE_CHAR);
         }
         query.append(document.getName())
-                .append(' ')
+                .append(SPACE_CHAR)
                 .append(toCondition(condition))
-                .append(' ')
+                .append(SPACE_CHAR)
                 .append('?');
         params.add(document.get());
         return aux + 1;
