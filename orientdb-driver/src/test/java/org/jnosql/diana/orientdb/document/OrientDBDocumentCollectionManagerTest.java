@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -291,6 +293,32 @@ public class OrientDBDocumentCollectionManagerTest {
         entityManager.delete(deleteQuery);
 
         assertTrue(entityManager.select(query).isEmpty());
+    }
+
+    @Test
+    public void shouldQueryLike() {
+        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("city").like("Sa%")
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.size() == 2);
+        assertThat(entities, containsInAnyOrder(entitiesSaved.get(0), entitiesSaved.get(1)));
+    }
+
+    @Test
+    public void shouldQueryNot() {
+        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("city").not().eq("Assis")
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.size() == 2);
+        assertThat(entities, containsInAnyOrder(entitiesSaved.get(0), entitiesSaved.get(1)));
     }
 
     @Test

@@ -16,14 +16,15 @@ package org.jnosql.diana.orientdb.document;
 
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
-import static java.util.logging.Level.FINEST;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
@@ -40,6 +40,7 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.getAsync;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -47,7 +48,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
 
-    private DocumentCollectionManagerAsync entityManagerAsync;
+    private OrientDBDocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
 
@@ -57,15 +58,6 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     public void setUp() {
         entityManagerAsync = getAsync().getAsync("database");
         entityManager = DocumentConfigurationUtils.get().get("database");
-        DocumentEntity documentEntity = getEntity();
-        Document id = documentEntity.find("name").get();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-
-        try {
-            entityManagerAsync.delete(deleteQuery);
-        } catch (Exception e) {
-            LOGGER.log(FINEST, "error on OrientDB setup", e);
-        }
     }
 
 
@@ -82,6 +74,16 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
 
+    }
+
+    @Test
+    public void ShouldThrowExceptionWhenInsertWithTTL() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManagerAsync.insert(getEntity(), Duration.ZERO));
+    }
+
+    @Test
+    public void ShouldThrowExceptionWhenInsertWithTTLAndCallback() {
+        assertThrows(UnsupportedOperationException.class, () -> entityManagerAsync.insert(getEntity(), Duration.ZERO, (d) -> {}));
     }
 
     @Test
@@ -131,6 +133,47 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         assertTrue(entityManager.select(query).isEmpty());
     }
 
+    @Test
+    public void shouldRemoveEntityAsyncWithoutCallback() throws InterruptedException {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+
+        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+
+        entityManagerAsync.delete(deleteQuery);
+        Thread.sleep(1000L);
+        assertTrue(entityManager.select(query).isEmpty());
+    }
+
+    @Test
+    public void shouldFindAsync() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+
+        AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        entityManagerAsync.select(query, reference::set);
+        await().until(reference::get, notNullValue(List.class));
+
+        assertFalse(reference.get().isEmpty());
+        assertEquals(reference.get().get(0), entity);
+    }
+
+    @Test
+    public void shouldFindAsyncWithNativeQuery() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+
+        AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
+        StringBuilder query = new StringBuilder().append("SELECT FROM ")
+                .append(COLLECTION_NAME)
+                .append(" WHERE name = ?");
+        entityManagerAsync.sql(query.toString(), reference::set, "Poliana");
+        await().until(reference::get, notNullValue(List.class));
+
+        assertFalse(reference.get().isEmpty());
+        assertEquals(reference.get().get(0), entity);
+    }
+
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
@@ -139,5 +182,11 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
+    }
+
+    @AfterEach
+    void removePersons() {
+        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(query);
     }
 }
