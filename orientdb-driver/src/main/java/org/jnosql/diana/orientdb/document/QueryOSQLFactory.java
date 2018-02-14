@@ -33,7 +33,7 @@ import static java.util.Arrays.asList;
 
 final class QueryOSQLFactory {
 
-    public static final String LIVE = "live ";
+    public static final String LIVE = "LIVE ";
 
     private QueryOSQLFactory() {
     }
@@ -118,7 +118,7 @@ final class QueryOSQLFactory {
             return query;
         }
 
-        Object getParams() {
+        Object[] getParams() {
             return params.toArray(new Object[params.size()]);
         }
     }
