@@ -126,4 +126,35 @@ public class QueryOSQLConverterTest {
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
         assertEquals("SELECT FROM collection SKIP 10 LIMIT 100", convert.getQuery());
     }
+
+    @Test
+    public void shouldSortAsc() {
+        DocumentQuery query = select().from("collection")
+                .orderBy("name").asc()
+                .build();
+
+        QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
+        assertEquals("SELECT FROM collection ORDER BY name ASC", convert.getQuery());
+    }
+
+    @Test
+    public void shouldSortDesc() {
+        DocumentQuery query = select().from("collection")
+                .orderBy("name").desc()
+                .build();
+
+        QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
+        assertEquals("SELECT FROM collection ORDER BY name DESC", convert.getQuery());
+    }
+
+    @Test
+    public void shouldMultipleSort() {
+        DocumentQuery query = select().from("collection")
+                .orderBy("name").asc()
+                .orderBy("age").desc()
+                .build();
+
+        QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
+        assertEquals("SELECT FROM collection ORDER BY name ASC, age DESC", convert.getQuery());
+    }
 }
