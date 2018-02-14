@@ -322,6 +322,30 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldQueryStart() {
+        entityManager.insert(getEntities());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .start(1)
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.size() == 2);
+    }
+
+    @Test
+    public void shouldQueryLimit() {
+        entityManager.insert(getEntities());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .limit(2)
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.size() == 2);
+    }
+
+    @Test
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
         Consumer<DocumentEntity> callback = entities::add;
