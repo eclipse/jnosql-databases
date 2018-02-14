@@ -33,14 +33,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.get;
@@ -397,6 +400,23 @@ public class OrientDBDocumentCollectionManagerTest {
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());
+    }
+
+    @Test
+    public void shouldLiveUpdateCallback() throws InterruptedException {
+        AtomicReference<DocumentEntity> reference = new AtomicReference<>();
+        OrientDBLiveUpdateCallback<DocumentEntity> callback = reference::set;
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+
+        entityManager.live(query, OrientDBLiveCallback.builder().onUpdate(callback).build());
+        Document newName = Document.of("name", "Lucas");
+        entity.add(newName);
+        entityManager.update(entity);
+        await().until(reference::get, notNullValue());
+
+        assertEquals("Lucas", reference.get().find("name").get().get());
     }
 
     @Test
