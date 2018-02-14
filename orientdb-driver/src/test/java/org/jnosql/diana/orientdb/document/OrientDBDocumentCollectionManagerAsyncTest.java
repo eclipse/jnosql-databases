@@ -174,6 +174,25 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         assertEquals(reference.get().get(0), entity);
     }
 
+    @Test
+    public void shouldFindAsyncWithNativeQueryMapParam() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find(OrientDBConverter.RID_FIELD);
+        Optional<Document> name = entity.find("name");
+
+        AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id.get().get());
+        params.put("name", name.get().get());
+
+        entityManagerAsync.sql("select * from person where @rid = :id and name = :name",
+                reference::set, params);
+        await().until(reference::get, notNullValue(List.class));
+
+        assertFalse(reference.get().isEmpty());
+        assertEquals(reference.get().get(0), entity);
+    }
+
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
