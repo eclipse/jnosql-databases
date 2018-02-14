@@ -322,6 +322,68 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldQueryStart() {
+        entityManager.insert(getEntities());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .start(1)
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.size() == 2);
+    }
+
+    @Test
+    public void shouldQueryLimit() {
+        entityManager.insert(getEntities());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .limit(2)
+                .build();
+
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.size() == 2);
+    }
+
+    @Test
+    public void shouldQueryOrderBy() {
+        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery queryAsc = select().from(COLLECTION_NAME)
+                .orderBy("name").asc()
+                .build();
+
+        List<DocumentEntity> entitiesAsc = entityManager.select(queryAsc);
+        assertThat(entitiesAsc, contains(entitiesSaved.get(2), entitiesSaved.get(1), entitiesSaved.get(0)));
+
+        DocumentQuery queryDesc = select().from(COLLECTION_NAME)
+                .orderBy("name").desc()
+                .build();
+
+        List<DocumentEntity> entitiesDesc = entityManager.select(queryDesc);
+        assertThat(entitiesDesc, contains(entitiesSaved.get(0), entitiesSaved.get(1), entitiesSaved.get(2)));
+    }
+
+    @Test
+    public void shouldQueryMultiOrderBy() {
+        List<DocumentEntity> entities = new ArrayList<>(getEntities());
+        DocumentEntity bruno = DocumentEntity.of(COLLECTION_NAME);
+        bruno.add(Document.of("name", "Bruno"));
+        bruno.add(Document.of("city", "Sao Paulo"));
+        entities.add(bruno);
+
+        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(entities).spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .orderBy("city").desc()
+                .orderBy("name").asc()
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertThat(entitiesFound, contains(entitiesSaved.get(3), entitiesSaved.get(1), entitiesSaved.get(0), entitiesSaved.get(2)));
+    }
+
+    @Test
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
         Consumer<DocumentEntity> callback = entities::add;

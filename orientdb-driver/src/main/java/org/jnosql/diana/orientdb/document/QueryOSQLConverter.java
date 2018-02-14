@@ -16,6 +16,7 @@
 package org.jnosql.diana.orientdb.document;
 
 
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -35,6 +36,10 @@ final class QueryOSQLConverter {
     private static final String LESSER_THAN = " < ";
     private static final String LESSER_EQUALS_THAN = " <= ";
     private static final String LIKE = " LIKE ";
+    private static final String SKIP = " SKIP ";
+    private static final String LIMIT = " LIMIT ";
+    private static final String SORT = " ORDER BY";
+    private static final String SPACE = " ";
     private static final char PARAM_APPENDER = '?';
 
     private QueryOSQLConverter() {
@@ -45,10 +50,17 @@ final class QueryOSQLConverter {
         List<Object> params = new java.util.ArrayList<>();
         query.append("SELECT FROM ");
         query.append(documentQuery.getDocumentCollection());
+
         if (documentQuery.getCondition().isPresent()) {
             query.append(WHERE);
             definesCondition(documentQuery.getCondition().get(), query, params, 0);
         }
+
+        if (!documentQuery.getSorts().isEmpty()) {
+            appendSort(documentQuery.getSorts(), query);
+        }
+
+        appendPagination(documentQuery, query);
         return new Query(query.toString(), params);
     }
 
@@ -114,6 +126,28 @@ final class QueryOSQLConverter {
         query.append(document.getName())
                 .append(condition).append(PARAM_APPENDER);
         params.add(document.get());
+    }
+
+    private static void appendSort(List<Sort> sorts, StringBuilder query) {
+        query.append(SORT);
+        String separator = SPACE;
+        for (Sort sort : sorts) {
+            query.append(separator)
+                    .append(sort.getName())
+                    .append(SPACE)
+                    .append(sort.getType());
+            separator = ", ";
+        }
+    }
+
+    private static void appendPagination(DocumentQuery documentQuery, StringBuilder query) {
+        if (documentQuery.getFirstResult() > 0) {
+            query.append(SKIP).append(documentQuery.getFirstResult());
+        }
+
+        if (documentQuery.getMaxResults() > 0) {
+            query.append(LIMIT).append(documentQuery.getMaxResults());
+        }
     }
 
     static class Query {
