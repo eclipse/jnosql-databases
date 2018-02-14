@@ -21,6 +21,10 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
 import org.jnosql.diana.api.document.DocumentEntity;
 
+import static com.orientechnologies.orient.core.db.record.ORecordOperation.CREATED;
+import static com.orientechnologies.orient.core.db.record.ORecordOperation.DELETED;
+import static com.orientechnologies.orient.core.db.record.ORecordOperation.UPDATED;
+
 class LiveQueryLIstener implements OLiveResultListener {
 
     private final OrientDBLiveCallback callbacks;
@@ -34,12 +38,17 @@ class LiveQueryLIstener implements OLiveResultListener {
         ODocument oDocument = (ODocument) iOp.getRecord();
         DocumentEntity entity = OrientDBConverter.convert(oDocument);
 
-        if (callbacks.getCreateCallback() != null && ORecordOperation.CREATED == iOp.type) {
-            callbacks.getCreateCallback().accept(entity);
-        } else if (callbacks.getUpdateCallback() != null && ORecordOperation.UPDATED == iOp.type) {
-            callbacks.getUpdateCallback().accept(entity);
-        } else if (callbacks.getDeleteCallback() != null && ORecordOperation.DELETED == iOp.type) {
-            callbacks.getDeleteCallback().accept(entity);
+        switch (iOp.type) {
+            case CREATED:
+                callbacks.getCreateCallback().ifPresent(callback -> callback.accept(entity));
+                return;
+            case UPDATED:
+                callbacks.getUpdateCallback().ifPresent(callback -> callback.accept(entity));
+                return;
+            case DELETED:
+                callbacks.getDeleteCallback().ifPresent(callback -> callback.accept(entity));
+                return;
+            default:
         }
     }
 
