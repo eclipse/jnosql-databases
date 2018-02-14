@@ -50,6 +50,13 @@ public final class OrientDBLiveCallbackBuilder {
     }
 
     public OrientDBLiveCallback build() {
+        validateNonNullCallbacks();
         return new OrientDBLiveCallback(createCallback, updateCallback, deleteCallback);
+    }
+
+    private void validateNonNullCallbacks() {
+        if (createCallback == null && updateCallback == null && deleteCallback == null) {
+            throw new IllegalArgumentException("At least one callback is required on OrientDB Live Query");
+        }
     }
 }
