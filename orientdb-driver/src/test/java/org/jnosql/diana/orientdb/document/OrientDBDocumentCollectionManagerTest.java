@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -403,7 +404,7 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldLiveUpdateCallback() throws InterruptedException {
+    public void shouldLiveUpdateCallback() {
         AtomicReference<DocumentEntity> reference = new AtomicReference<>();
         OrientDBLiveUpdateCallback<DocumentEntity> callback = reference::set;
         DocumentEntity entity = entityManager.insert(getEntity());
@@ -417,6 +418,20 @@ public class OrientDBDocumentCollectionManagerTest {
         await().until(reference::get, notNullValue());
 
         assertEquals("Lucas", reference.get().find("name").get().get());
+    }
+
+    @Test
+    public void shouldLiveDeleteCallback() {
+        AtomicBoolean condition = new AtomicBoolean(false);
+        OrientDBLiveDeleteCallback<DocumentEntity> callback = d -> condition.set(true);
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+
+        entityManager.live(query, OrientDBLiveCallback.builder().onDelete(callback).build());
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        entityManager.delete(deleteQuery);
+        await().untilTrue(condition);
     }
 
     @Test
