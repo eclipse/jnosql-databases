@@ -17,6 +17,8 @@ package org.jnosql.diana.orientdb.document;
 
 import org.jnosql.diana.api.document.DocumentEntity;
 
+import static java.util.Objects.requireNonNull;
+
 public final class OrientDBLiveCallbackBuilder {
     private OrientDBLiveCreateCallback<DocumentEntity> createCallback;
     private OrientDBLiveUpdateCallback<DocumentEntity> updateCallback;
@@ -30,16 +32,19 @@ public final class OrientDBLiveCallbackBuilder {
     }
 
     public OrientDBLiveCallbackBuilder onCreate(OrientDBLiveCreateCallback<DocumentEntity> createCallback) {
+        requireNonNull(createCallback, "createCallback is required");
         this.createCallback = createCallback;
         return this;
     }
 
     public OrientDBLiveCallbackBuilder onUpdate(OrientDBLiveUpdateCallback<DocumentEntity> updateCallback) {
+        requireNonNull(updateCallback, "updateCallback is required");
         this.updateCallback = updateCallback;
         return this;
     }
 
     public OrientDBLiveCallbackBuilder onDelete(OrientDBLiveDeleteCallback<DocumentEntity> deleteCallback) {
+        requireNonNull(deleteCallback, "deleteCallback is required");
         this.deleteCallback = deleteCallback;
         return this;
     }
