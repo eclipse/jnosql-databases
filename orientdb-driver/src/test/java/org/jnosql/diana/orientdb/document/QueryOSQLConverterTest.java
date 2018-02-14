@@ -95,4 +95,35 @@ public class QueryOSQLConverterTest {
         assertEquals("Lucas", values.get(2));
         assertEquals("SELECT FROM collection WHERE NOT (city = ?) AND name = ? OR NOT (name = ?)", sql);
     }
+
+    @Test
+    public void shouldPaginateWithStart() {
+        DocumentQuery query = select().from("collection")
+                .start(10)
+                .build();
+
+        QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
+        assertEquals("SELECT FROM collection SKIP 10", convert.getQuery());
+    }
+
+    @Test
+    public void shouldPaginateWithLimit() {
+        DocumentQuery query = select().from("collection")
+                .limit(100)
+                .build();
+
+        QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
+        assertEquals("SELECT FROM collection LIMIT 100", convert.getQuery());
+    }
+
+    @Test
+    public void shouldPaginateWithStartAndLimit() {
+        DocumentQuery query = select().from("collection")
+                .start(10)
+                .limit(100)
+                .build();
+
+        QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
+        assertEquals("SELECT FROM collection SKIP 10 LIMIT 100", convert.getQuery());
+    }
 }
