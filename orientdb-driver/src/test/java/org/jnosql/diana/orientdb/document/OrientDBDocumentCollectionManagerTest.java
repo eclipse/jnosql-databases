@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Lucas Furlaneto
  */
 package org.jnosql.diana.orientdb.document;
 
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -386,14 +386,14 @@ public class OrientDBDocumentCollectionManagerTest {
     @Test
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
-        Consumer<DocumentEntity> callback = entities::add;
+        OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;
 
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find("name").get();
 
         DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        entityManager.live(query, callback);
+        entityManager.live(query, OrientDBLiveCallback.builder().onCreate(callback).build());
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());
@@ -402,12 +402,12 @@ public class OrientDBDocumentCollectionManagerTest {
     @Test
     public void shouldLiveWithNativeQuery() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
-        Consumer<DocumentEntity> callback = entities::add;
+        OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;
 
         DocumentEntity entity = entityManager.insert(getEntity());
         Document name = entity.find("name").get();
 
-        entityManager.live("LIVE SELECT FROM person WHERE name = ?", callback, name.get());
+        entityManager.live("LIVE SELECT FROM person WHERE name = ?", OrientDBLiveCallback.builder().onCreate(callback).build(), name.get());
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());

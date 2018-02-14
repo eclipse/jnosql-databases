@@ -11,9 +11,9 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Lucas Furlaneto
  */
 package org.jnosql.diana.orientdb.document;
-
 
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.record.ORecordOperation;
@@ -21,22 +21,26 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
 import org.jnosql.diana.api.document.DocumentEntity;
 
-import java.util.function.Consumer;
-
 class LiveQueryLIstener implements OLiveResultListener {
 
-    private final Consumer<DocumentEntity> entityConsumer;
+    private final OrientDBLiveCallback callbacks;
 
-    LiveQueryLIstener(Consumer<DocumentEntity> entityConsumer) {
-        this.entityConsumer = entityConsumer;
+    LiveQueryLIstener(OrientDBLiveCallback callbacks) {
+        this.callbacks = callbacks;
     }
 
     @Override
     public void onLiveResult(int iLiveToken, ORecordOperation iOp) throws OException {
         ODocument oDocument = (ODocument) iOp.getRecord();
         DocumentEntity entity = OrientDBConverter.convert(oDocument);
-        entityConsumer.accept(entity);
 
+        if (callbacks.getCreateCallback() != null && ORecordOperation.CREATED == iOp.type) {
+            callbacks.getCreateCallback().accept(entity);
+        } else if (callbacks.getUpdateCallback() != null && ORecordOperation.UPDATED == iOp.type) {
+            callbacks.getUpdateCallback().accept(entity);
+        } else if (callbacks.getDeleteCallback() != null && ORecordOperation.DELETED == iOp.type) {
+            callbacks.getDeleteCallback().accept(entity);
+        }
     }
 
     @Override

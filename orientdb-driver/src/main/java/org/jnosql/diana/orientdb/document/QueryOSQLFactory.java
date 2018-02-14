@@ -21,7 +21,6 @@ import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.orientdb.document.QueryOSQLConverter.Query;
 
@@ -74,9 +73,10 @@ final class QueryOSQLFactory {
         }), query.getParams());
     }
 
-    static QueryResult toLive(DocumentQuery documentQuery, Consumer<DocumentEntity> callBack) {
+    static QueryResult toLive(DocumentQuery documentQuery, OrientDBLiveCallback callbacks) {
         Query query = QueryOSQLConverter.select(documentQuery);
-        OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(LIVE + query.getQuery(), new LiveQueryLIstener(callBack));
+        OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(LIVE + query.getQuery(),
+                new LiveQueryLIstener(callbacks));
         return new QueryResult(liveQuery, query.getParams());
 
     }

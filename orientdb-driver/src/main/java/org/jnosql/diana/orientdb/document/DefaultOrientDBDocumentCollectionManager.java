@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Lucas Furlaneto
  */
 package org.jnosql.diana.orientdb.document;
 
@@ -28,7 +29,6 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
@@ -90,7 +90,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
 
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
+    public List<DocumentEntity> select(DocumentQuery query) {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(query);
@@ -100,7 +100,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public List<DocumentEntity> sql(String query, Object... params) throws NullPointerException {
+    public List<DocumentEntity> sql(String query, Object... params) {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
             List<ODocument> result = tx.command(QueryOSQLFactory.parse(query)).execute(params);
@@ -110,7 +110,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public List<DocumentEntity> sql(String query, Map<String, Object> params) throws NullPointerException {
+    public List<DocumentEntity> sql(String query, Map<String, Object> params) {
         requireNonNull(query, "query is required");
         requireNonNull(params, "params is required");
 
@@ -121,24 +121,23 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public void live(DocumentQuery query, Consumer<DocumentEntity> callBack) throws NullPointerException {
+    public void live(DocumentQuery query, OrientDBLiveCallback callbacks) {
         requireNonNull(query, "query is required");
-        requireNonNull(callBack, "callback is required");
+        requireNonNull(callbacks, "callbacks is required");
         try (ODatabaseDocumentTx tx = pool.acquire();) {
-            QueryOSQLFactory.QueryResult queryResult = QueryOSQLFactory.toLive(query, callBack);
+            QueryOSQLFactory.QueryResult queryResult = QueryOSQLFactory.toLive(query, callbacks);
             tx.command(queryResult.getQuery()).execute(queryResult.getParams());
         }
     }
 
     @Override
-    public void live(String query, Consumer<DocumentEntity> callBack, Object... params) throws NullPointerException {
+    public void live(String query, OrientDBLiveCallback callbacks, Object... params) {
         requireNonNull(query, "query is required");
-        requireNonNull(callBack, "callback is required");
+        requireNonNull(callbacks, "callbacks is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
-            OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(query, new LiveQueryLIstener(callBack));
+            OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(query, new LiveQueryLIstener(callbacks));
             tx.command(liveQuery).execute(params);
         }
-
     }
 
     @Override
