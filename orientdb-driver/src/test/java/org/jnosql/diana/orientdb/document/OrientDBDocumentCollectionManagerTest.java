@@ -400,6 +400,20 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldLiveWithNativeQuery() throws InterruptedException {
+        List<DocumentEntity> entities = new ArrayList<>();
+        Consumer<DocumentEntity> callback = entities::add;
+
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document name = entity.find("name").get();
+
+        entityManager.live("LIVE SELECT FROM person WHERE name = ?", callback, name.get());
+        entityManager.insert(getEntity());
+        Thread.sleep(3_000L);
+        assertFalse(entities.isEmpty());
+    }
+
+    @Test
     public void shouldConvertFromListSubdocumentList() {
         DocumentEntity entity = createSubdocumentList();
         entityManager.insert(entity);
