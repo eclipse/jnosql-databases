@@ -118,7 +118,7 @@ final class QueryOSQLFactory {
             return query;
         }
 
-        Object getParams() {
+        Object[] getParams() {
             return params.toArray(new Object[params.size()]);
         }
     }
