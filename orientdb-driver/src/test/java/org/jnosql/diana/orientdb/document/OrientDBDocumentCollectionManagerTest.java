@@ -397,7 +397,7 @@ public class OrientDBDocumentCollectionManagerTest {
 
         DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        entityManager.live(query, OrientDBLiveCallback.builder().onCreate(callback).build());
+        entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onCreate(callback).build());
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());
@@ -411,7 +411,7 @@ public class OrientDBDocumentCollectionManagerTest {
         Document id = entity.find(OrientDBConverter.RID_FIELD).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        entityManager.live(query, OrientDBLiveCallback.builder().onUpdate(callback).build());
+        entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onUpdate(callback).build());
         Document newName = Document.of("name", "Lucas");
         entity.add(newName);
         entityManager.update(entity);
@@ -428,7 +428,7 @@ public class OrientDBDocumentCollectionManagerTest {
         Document id = entity.find(OrientDBConverter.RID_FIELD).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        entityManager.live(query, OrientDBLiveCallback.builder().onDelete(callback).build());
+        entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onDelete(callback).build());
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
         await().untilTrue(condition);
@@ -442,7 +442,7 @@ public class OrientDBDocumentCollectionManagerTest {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document name = entity.find("name").get();
 
-        entityManager.live("LIVE SELECT FROM person WHERE name = ?", OrientDBLiveCallback.builder().onCreate(callback).build(), name.get());
+        entityManager.live("LIVE SELECT FROM person WHERE name = ?", OrientDBLiveCallbackBuilder.builder().onCreate(callback).build(), name.get());
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());
