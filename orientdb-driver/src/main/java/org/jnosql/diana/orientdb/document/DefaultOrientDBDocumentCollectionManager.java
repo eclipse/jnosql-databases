@@ -121,7 +121,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public void live(DocumentQuery query, OrientDBLiveCallback callbacks) {
+    public void live(DocumentQuery query, OrientDBLiveCallback<DocumentEntity> callbacks) {
         requireNonNull(query, "query is required");
         requireNonNull(callbacks, "callbacks is required");
         try (ODatabaseDocumentTx tx = pool.acquire();) {
@@ -131,7 +131,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public void live(String query, OrientDBLiveCallback callbacks, Object... params) {
+    public void live(String query, OrientDBLiveCallback<DocumentEntity> callbacks, Object... params) {
         requireNonNull(query, "query is required");
         requireNonNull(callbacks, "callbacks is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {

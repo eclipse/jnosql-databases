@@ -57,7 +57,7 @@ public interface OrientDBDocumentCollectionManager extends DocumentCollectionMan
      * @param callbacks Callbacks for create, update and delete operations
      * @throws NullPointerException when both query and callBack are null
      */
-    void live(DocumentQuery query, OrientDBLiveCallback callbacks);
+    void live(DocumentQuery query, OrientDBLiveCallback<DocumentEntity> callbacks);
 
     /**
      * Execute live query
@@ -66,5 +66,5 @@ public interface OrientDBDocumentCollectionManager extends DocumentCollectionMan
      * @param callbacks Callbacks for create, update and delete operations
      * @throws NullPointerException when both query and callBack are null
      */
-    void live(String query, OrientDBLiveCallback callbacks, Object... params);
+    void live(String query, OrientDBLiveCallback<DocumentEntity> callbacks, Object... params);
 }

@@ -49,9 +49,9 @@ public final class OrientDBLiveCallbackBuilder {
         return this;
     }
 
-    public OrientDBLiveCallback build() {
+    public OrientDBLiveCallback<DocumentEntity> build() {
         validateNonNullCallbacks();
-        return new OrientDBLiveCallback(createCallback, updateCallback, deleteCallback);
+        return new OrientDBLiveCallback<>(createCallback, updateCallback, deleteCallback);
     }
 
     private void validateNonNullCallbacks() {

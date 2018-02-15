@@ -27,9 +27,9 @@ import static com.orientechnologies.orient.core.db.record.ORecordOperation.UPDAT
 
 class LiveQueryLIstener implements OLiveResultListener {
 
-    private final OrientDBLiveCallback callbacks;
+    private final OrientDBLiveCallback<DocumentEntity> callbacks;
 
-    LiveQueryLIstener(OrientDBLiveCallback callbacks) {
+    LiveQueryLIstener(OrientDBLiveCallback<DocumentEntity> callbacks) {
         this.callbacks = callbacks;
     }
 

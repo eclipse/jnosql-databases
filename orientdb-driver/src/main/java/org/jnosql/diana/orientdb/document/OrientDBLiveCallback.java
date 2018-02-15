@@ -15,35 +15,33 @@
  */
 package org.jnosql.diana.orientdb.document;
 
-import org.jnosql.diana.api.document.DocumentEntity;
-
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
-public class OrientDBLiveCallback {
+public class OrientDBLiveCallback<T> {
 
-    private final OrientDBLiveCreateCallback<DocumentEntity> createCallback;
-    private final OrientDBLiveUpdateCallback<DocumentEntity> updateCallback;
-    private final OrientDBLiveDeleteCallback<DocumentEntity> deleteCallback;
+    private final OrientDBLiveCreateCallback<T> createCallback;
+    private final OrientDBLiveUpdateCallback<T> updateCallback;
+    private final OrientDBLiveDeleteCallback<T> deleteCallback;
 
-    public OrientDBLiveCallback(OrientDBLiveCreateCallback<DocumentEntity> createCallback,
-                                OrientDBLiveUpdateCallback<DocumentEntity> updateCallback,
-                                OrientDBLiveDeleteCallback<DocumentEntity> deleteCallback) {
+    public OrientDBLiveCallback(OrientDBLiveCreateCallback<T> createCallback,
+                                OrientDBLiveUpdateCallback<T> updateCallback,
+                                OrientDBLiveDeleteCallback<T> deleteCallback) {
         this.createCallback = createCallback;
         this.updateCallback = updateCallback;
         this.deleteCallback = deleteCallback;
     }
 
-    public Optional<OrientDBLiveCreateCallback<DocumentEntity>> getCreateCallback() {
+    public Optional<OrientDBLiveCreateCallback<T>> getCreateCallback() {
         return ofNullable(createCallback);
     }
 
-    public Optional<OrientDBLiveUpdateCallback<DocumentEntity>> getUpdateCallback() {
+    public Optional<OrientDBLiveUpdateCallback<T>> getUpdateCallback() {
         return ofNullable(updateCallback);
     }
 
-    public Optional<OrientDBLiveDeleteCallback<DocumentEntity>> getDeleteCallback() {
+    public Optional<OrientDBLiveDeleteCallback<T>> getDeleteCallback() {
         return ofNullable(deleteCallback);
     }
 
