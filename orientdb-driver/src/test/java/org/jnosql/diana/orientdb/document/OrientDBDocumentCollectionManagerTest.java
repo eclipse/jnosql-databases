@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Lucas Furlaneto
  */
 package org.jnosql.diana.orientdb.document;
 
@@ -32,15 +33,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.get;
@@ -386,28 +390,59 @@ public class OrientDBDocumentCollectionManagerTest {
     @Test
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
-        Consumer<DocumentEntity> callback = entities::add;
+        OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;
 
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find("name").get();
 
         DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        entityManager.live(query, callback);
+        entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onCreate(callback).build());
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());
     }
 
     @Test
+    public void shouldLiveUpdateCallback() {
+        AtomicReference<DocumentEntity> reference = new AtomicReference<>();
+        OrientDBLiveUpdateCallback<DocumentEntity> callback = reference::set;
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+
+        entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onUpdate(callback).build());
+        Document newName = Document.of("name", "Lucas");
+        entity.add(newName);
+        entityManager.update(entity);
+        await().until(reference::get, notNullValue());
+
+        assertEquals("Lucas", reference.get().find("name").get().get());
+    }
+
+    @Test
+    public void shouldLiveDeleteCallback() {
+        AtomicBoolean condition = new AtomicBoolean(false);
+        OrientDBLiveDeleteCallback<DocumentEntity> callback = d -> condition.set(true);
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+
+        entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onDelete(callback).build());
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        entityManager.delete(deleteQuery);
+        await().untilTrue(condition);
+    }
+
+    @Test
     public void shouldLiveWithNativeQuery() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
-        Consumer<DocumentEntity> callback = entities::add;
+        OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;
 
         DocumentEntity entity = entityManager.insert(getEntity());
         Document name = entity.find("name").get();
 
-        entityManager.live("LIVE SELECT FROM person WHERE name = ?", callback, name.get());
+        entityManager.live("LIVE SELECT FROM person WHERE name = ?", OrientDBLiveCallbackBuilder.builder().onCreate(callback).build(), name.get());
         entityManager.insert(getEntity());
         Thread.sleep(3_000L);
         assertFalse(entities.isEmpty());
