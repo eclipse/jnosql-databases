@@ -153,6 +153,14 @@ public class CouchbaseListTest {
         assertEquals(fruits.get(1), orange);
     }
 
+    @Test
+    public void shouldReturnSubList() {
+        fruits.addAll(asList(banana, waterMelon, orange, melon));
+        List<ProductCart> subList = fruits.subList(1, 3);
+        assertTrue(subList.size() == 2);
+        assertThat(subList, contains(waterMelon, orange));
+    }
+
     @AfterEach
     public void end() {
         fruits.clear();
