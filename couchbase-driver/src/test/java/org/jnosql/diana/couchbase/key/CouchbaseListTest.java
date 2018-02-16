@@ -82,6 +82,13 @@ public class CouchbaseListTest {
     }
 
     @Test
+    public void shouldAddWithIndex() {
+        fruits.addAll(asList(banana, waterMelon));
+        fruits.add(0, orange);
+        assertThat(fruits, contains(orange, banana, waterMelon));
+    }
+
+    @Test
     public void shouldRemoveList() {
         fruits.add(banana);
     }
