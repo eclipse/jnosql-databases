@@ -21,18 +21,23 @@ import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseBucketManagerTest {
 
@@ -89,6 +94,20 @@ public class CouchbaseBucketManagerTest {
         assertTrue(soro.isPresent());
         assertEquals(userSoro, soro.get().get(User.class));
     }
+
+    @Test
+    @Disabled
+    public void shouldPutValueTtl() throws InterruptedException {
+
+        keyValueEntityManager.put(KeyValueEntity.of(KEY_OTAVIO, userOtavio), Duration.ofMillis(100L));
+
+        Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
+        assertTrue(otavio.isPresent());
+        Thread.sleep(5_000);
+        otavio = keyValueEntityManager.get(KEY_OTAVIO);
+        assertFalse(otavio.isPresent());
+    }
+
 
     @Test
     public void shouldPutKeyValue() {
