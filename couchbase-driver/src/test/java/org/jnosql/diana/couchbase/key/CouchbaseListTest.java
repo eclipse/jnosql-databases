@@ -29,6 +29,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -109,6 +110,14 @@ public class CouchbaseListTest {
         fruits.remove(1);
         assertTrue(fruits.size() == 1);
         assertEquals(fruits.get(0), banana);
+    }
+
+    @Test
+    public void shouldRemoveAll() {
+        fruits.addAll(asList(banana, waterMelon, orange, melon));
+        fruits.removeAll(asList(banana, melon));
+        assertTrue(fruits.size() == 2);
+        assertThat(fruits, containsInAnyOrder(waterMelon, orange));
     }
 
     @AfterEach
