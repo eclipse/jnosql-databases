@@ -103,6 +103,13 @@ public class CouchbaseListTest {
         assertEquals(fruits.get(0), waterMelon);
     }
 
+    @Test
+    public void shouldRemoveWithIndex() {
+        fruits.addAll(asList(banana, waterMelon));
+        fruits.remove(1);
+        assertTrue(fruits.size() == 1);
+        assertEquals(fruits.get(0), banana);
+    }
 
     @AfterEach
     public void end() {
