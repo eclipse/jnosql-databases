@@ -72,9 +72,9 @@ public class CouchbaseBucketManager implements BucketManager {
     public <K> void put(KeyValueEntity<K> entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
-        JsonObject jsonObject = JsonObject.create()
-                .put(VALUE_FIELD, entity.getValue().get());
 
+
+        JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.get());
         bucket.upsert(JsonDocument.create(entity.getKey().toString(), jsonObject), ttl.toMillis(), MILLISECONDS);
     }
 
