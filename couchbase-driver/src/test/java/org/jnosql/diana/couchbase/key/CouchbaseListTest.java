@@ -132,6 +132,18 @@ public class CouchbaseListTest {
         assertTrue(fruits.containsAll(asList(waterMelon, banana)));
     }
 
+    @Test
+    public void shouldReturnIndexOf() {
+        fruits.addAll(asList(banana, waterMelon, banana));
+        assertEquals(0, fruits.indexOf(banana));
+    }
+
+    @Test
+    public void shouldReturnLstIndexOf() {
+        fruits.addAll(asList(banana, waterMelon, banana));
+        assertEquals(2, fruits.lastIndexOf(banana));
+    }
+
     @AfterEach
     public void end() {
         fruits.clear();
