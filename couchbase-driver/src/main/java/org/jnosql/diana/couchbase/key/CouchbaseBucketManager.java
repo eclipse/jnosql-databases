@@ -25,7 +25,10 @@ import org.jnosql.diana.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -56,10 +59,7 @@ public class CouchbaseBucketManager implements BucketManager {
     public <K, V> void put(K key, V value) throws NullPointerException {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
-        JsonObject jsonObject = JsonObject.create()
-                .put("value", JSONB.toJson(value));
-
-        bucket.upsert(JsonDocument.create(key.toString(), jsonObject));
+        bucket.upsert(JsonDocument.create(key.toString(), JsonObjectCouchbaseUtil.toJson(JSONB, value)));
     }
 
     @Override
