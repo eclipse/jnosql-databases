@@ -23,6 +23,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,6 +72,22 @@ public class CouchbaseBucketManagerTest {
         Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
         assertEquals(userOtavio, otavio.get().get(User.class));
+    }
+
+    @Test
+    public void shouldPutValues() {
+
+        List<KeyValueEntity<String>> entities = asList(KeyValueEntity.of(KEY_OTAVIO, userOtavio),
+                KeyValueEntity.of(KEY_SORO, userSoro));
+
+        keyValueEntityManager.put(entities);
+        Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
+        assertTrue(otavio.isPresent());
+        assertEquals(userOtavio, otavio.get().get(User.class));
+
+        Optional<Value> soro = keyValueEntityManager.get(KEY_SORO);
+        assertTrue(soro.isPresent());
+        assertEquals(userSoro, soro.get().get(User.class));
     }
 
     @Test
