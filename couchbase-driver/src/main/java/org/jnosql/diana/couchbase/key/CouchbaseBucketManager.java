@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -38,8 +39,6 @@ import static org.jnosql.diana.driver.ValueUtil.convert;
  * The couchbase implementation to {@link BucketManager}
  */
 public class CouchbaseBucketManager implements BucketManager {
-
-    private static final String VALUE_FIELD = "value";
 
     private static final Jsonb JSONB = JsonbBuilder.create();
 
@@ -54,57 +53,56 @@ public class CouchbaseBucketManager implements BucketManager {
 
     @Override
     public <K, V> void put(K key, V value) throws NullPointerException {
-        Objects.requireNonNull(key, "key is required");
-        Objects.requireNonNull(value, "value is required");
-        JsonObject jsonObject = JsonObject.create()
-                .put("value", JSONB.toJson(value));
-
-        bucket.upsert(JsonDocument.create(key.toString(), jsonObject));
+        requireNonNull(key, "key is required");
+        requireNonNull(value, "value is required");
+        bucket.upsert(JsonDocument.create(key.toString(), JsonObjectCouchbaseUtil.toJson(JSONB, value)));
     }
 
     @Override
     public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         put(entity.getKey(), convert(entity.getValue()));
     }
 
     @Override
     public <K> void put(KeyValueEntity<K> entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(ttl, "ttl is required");
-        JsonObject jsonObject = JsonObject.create()
-                .put(VALUE_FIELD, entity.getValue().get());
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
 
-        bucket.upsert(JsonDocument.create(entity.getKey().toString(), jsonObject), ttl.toMillis(), MILLISECONDS);
+
+        JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.get());
+
+        JsonDocument jsonDocument = JsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(), jsonObject);
+        bucket.upsert(jsonDocument, ttl.toMillis(), MILLISECONDS);
     }
 
     @Override
     public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities) throws NullPointerException {
-        Objects.requireNonNull(keyValueEntities, "keyValueEntities is required");
+        requireNonNull(keyValueEntities, "keyValueEntities is required");
         keyValueEntities.forEach(this::put);
     }
 
     @Override
     public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
-        Objects.requireNonNull(keyValueEntities, "keyValueEntities is required");
-        Objects.requireNonNull(ttl, "ttl is required");
+        requireNonNull(keyValueEntities, "keyValueEntities is required");
+        requireNonNull(ttl, "ttl is required");
         keyValueEntities.forEach(k -> this.put(k, ttl));
     }
 
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
-        Objects.requireNonNull(key, "key is required");
+        requireNonNull(key, "key is required");
         JsonDocument jsonDocument = bucket.get(key.toString());
         if (Objects.isNull(jsonDocument)) {
             return Optional.empty();
         }
-        Object value = jsonDocument.content().get(VALUE_FIELD);
+        Object value = jsonDocument.content();
         return Optional.of(ValueJSON.of(value.toString()));
     }
 
     @Override
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
-        Objects.requireNonNull(keys, "keys is required");
+        requireNonNull(keys, "keys is required");
         return stream(keys.spliterator(), false)
                 .map(this::get)
                 .filter(Optional::isPresent)
@@ -114,13 +112,13 @@ public class CouchbaseBucketManager implements BucketManager {
 
     @Override
     public <K> void remove(K key) throws NullPointerException {
-        Objects.requireNonNull(key, "key is required");
+        requireNonNull(key, "key is required");
         bucket.remove(key.toString());
     }
 
     @Override
     public <K> void remove(Iterable<K> keys) throws NullPointerException {
-        Objects.requireNonNull(keys, "keys is required");
+        requireNonNull(keys, "keys is required");
         keys.forEach(this::remove);
     }
 
