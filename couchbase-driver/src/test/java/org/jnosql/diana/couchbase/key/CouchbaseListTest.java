@@ -120,6 +120,18 @@ public class CouchbaseListTest {
         assertThat(fruits, containsInAnyOrder(waterMelon, orange));
     }
 
+    @Test
+    public void shouldContainsValue() {
+        fruits.addAll(asList(banana, waterMelon));
+        assertTrue(fruits.contains(waterMelon));
+    }
+
+    @Test
+    public void shouldContainsAllValues() {
+        fruits.addAll(asList(banana, waterMelon));
+        assertTrue(fruits.containsAll(asList(waterMelon, banana)));
+    }
+
     @AfterEach
     public void end() {
         fruits.clear();
