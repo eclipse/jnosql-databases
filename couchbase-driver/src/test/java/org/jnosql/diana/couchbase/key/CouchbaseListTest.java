@@ -82,6 +82,13 @@ public class CouchbaseListTest {
     }
 
     @Test
+    public void shouldAddAllIterableWithIndex() {
+        fruits.addAll(asList(orange, melon));
+        fruits.addAll(1, asList(banana, waterMelon));
+        assertThat(fruits, contains(orange, banana, waterMelon, melon));
+    }
+
+    @Test
     public void shouldAddWithIndex() {
         fruits.addAll(asList(banana, waterMelon));
         fruits.add(0, orange);
