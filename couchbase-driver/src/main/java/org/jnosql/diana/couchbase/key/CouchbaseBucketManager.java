@@ -71,7 +71,8 @@ public class CouchbaseBucketManager implements BucketManager {
 
 
         JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.get());
-        JsonDocument jsonDocument = JsonDocument.create(entity.getKey().toString(), jsonObject);
+
+        JsonDocument jsonDocument = JsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(), jsonObject);
         bucket.upsert(jsonDocument, ttl.toMillis(), MILLISECONDS);
     }
 

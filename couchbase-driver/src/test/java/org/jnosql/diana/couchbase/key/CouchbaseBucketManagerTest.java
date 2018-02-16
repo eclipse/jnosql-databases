@@ -99,11 +99,11 @@ public class CouchbaseBucketManagerTest {
     @Disabled
     public void shouldPutValueTtl() throws InterruptedException {
 
-        keyValueEntityManager.put(KeyValueEntity.of(KEY_OTAVIO, userOtavio), Duration.ofMillis(100L));
+        keyValueEntityManager.put(KeyValueEntity.of(KEY_OTAVIO, userOtavio), Duration.ofSeconds(1L));
 
         Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
-        Thread.sleep(1_000);
+        Thread.sleep(5_000);
         otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertFalse(otavio.isPresent());
     }
@@ -112,10 +112,10 @@ public class CouchbaseBucketManagerTest {
     @Disabled
     public void shouldPutValuesTtl() throws InterruptedException {
 
-        keyValueEntityManager.put(singleton(KeyValueEntity.of(KEY_OTAVIO, userOtavio)), Duration.ofMillis(100L));
+        keyValueEntityManager.put(singleton(KeyValueEntity.of(KEY_OTAVIO, userOtavio)), Duration.ofSeconds(1L));
         Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
-        Thread.sleep(1_000);
+        Thread.sleep(5_000);
         otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertFalse(otavio.isPresent());
     }
