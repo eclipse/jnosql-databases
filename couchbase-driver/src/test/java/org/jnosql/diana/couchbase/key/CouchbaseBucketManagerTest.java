@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
-import static org.awaitility.Awaitility.await;
+import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -107,6 +107,19 @@ public class CouchbaseBucketManagerTest {
         otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertFalse(otavio.isPresent());
     }
+
+    @Test
+    @Disabled
+    public void shouldPutValuesTtl() throws InterruptedException {
+
+        keyValueEntityManager.put(singleton(KeyValueEntity.of(KEY_OTAVIO, userOtavio)), Duration.ofMillis(100L));
+        Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
+        assertTrue(otavio.isPresent());
+        Thread.sleep(5_000);
+        otavio = keyValueEntityManager.get(KEY_OTAVIO);
+        assertFalse(otavio.isPresent());
+    }
+
 
 
     @Test
