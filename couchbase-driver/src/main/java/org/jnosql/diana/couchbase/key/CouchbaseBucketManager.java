@@ -42,8 +42,6 @@ import static org.jnosql.diana.driver.ValueUtil.convert;
  */
 public class CouchbaseBucketManager implements BucketManager {
 
-    private static final String VALUE_FIELD = "value";
-
     private static final Jsonb JSONB = JsonbBuilder.create();
 
     private final Bucket bucket;
@@ -98,7 +96,7 @@ public class CouchbaseBucketManager implements BucketManager {
         if (Objects.isNull(jsonDocument)) {
             return Optional.empty();
         }
-        Object value = jsonDocument.content().get(VALUE_FIELD);
+        Object value = jsonDocument.content();
         return Optional.of(ValueJSON.of(value.toString()));
     }
 
