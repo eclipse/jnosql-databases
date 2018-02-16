@@ -96,8 +96,11 @@ public class CouchbaseListTest {
     }
 
     @Test
-    public void shouldRemoveList() {
-        fruits.add(banana);
+    public void shouldRemove() {
+        fruits.addAll(asList(banana, waterMelon));
+        fruits.remove(banana);
+        assertTrue(fruits.size() == 1);
+        assertEquals(fruits.get(0), waterMelon);
     }
 
 
