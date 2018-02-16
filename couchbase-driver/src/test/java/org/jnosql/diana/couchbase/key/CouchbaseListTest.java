@@ -144,6 +144,15 @@ public class CouchbaseListTest {
         assertEquals(2, fruits.lastIndexOf(banana));
     }
 
+    @Test
+    public void shouldSetValue() {
+        fruits.addAll(asList(banana, waterMelon));
+        assertEquals(fruits.get(1), waterMelon);
+        fruits.set(1, orange);
+        assertTrue(fruits.size() == 2);
+        assertEquals(fruits.get(1), orange);
+    }
+
     @AfterEach
     public void end() {
         fruits.clear();
