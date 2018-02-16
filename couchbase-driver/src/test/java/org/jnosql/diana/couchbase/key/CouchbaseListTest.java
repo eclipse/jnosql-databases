@@ -26,7 +26,13 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseListTest {
 
@@ -67,6 +73,12 @@ public class CouchbaseListTest {
         ProductCart banana = fruits.get(0);
         assertNotNull(banana);
         assertEquals(banana.getName(), "banana");
+    }
+
+    @Test
+    public void shouldAddAllIterable() {
+        fruits.addAll(asList(banana, waterMelon, orange, melon));
+        assertThat(fruits, contains(banana, waterMelon, orange, melon));
     }
 
     @Test
