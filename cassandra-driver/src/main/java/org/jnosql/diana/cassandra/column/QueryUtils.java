@@ -86,7 +86,7 @@ final class QueryUtils {
 
         Iterable elements = Iterable.class.cast(udt.get());
         Object udtValue = getUdtValue(userType, elements);
-        insert.value(udt.getName(), udtValue);
+        insert.value(getName(udt), udtValue);
     }
 
     private static Object getUdtValue(UserType userType, Iterable elements) {
@@ -98,7 +98,7 @@ final class QueryUtils {
                 Column column = Column.class.cast(object);
                 Object convert = ValueUtil.convert(column.getValue());
                 TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(convert);
-                udtValue.set(column.getName(), convert, objectTypeCodec);
+                udtValue.set(getName(column), convert, objectTypeCodec);
 
             } else if (Iterable.class.isInstance(object)) {
                 udtValues.add(getUdtValue(userType, Iterable.class.cast(Iterable.class.cast(object))));
@@ -115,9 +115,9 @@ final class QueryUtils {
         Object value = column.get();
         try {
             CodecRegistry.DEFAULT_INSTANCE.codecFor(value);
-            insert.value(column.getName(), value);
+            insert.value(getName(column), value);
         } catch (CodecNotFoundException exp) {
-            insert.value(column.getName(), ValueUtil.convert(column.getValue()));
+            insert.value(getName(column), ValueUtil.convert(column.getValue()));
         }
 
 
@@ -165,25 +165,25 @@ final class QueryUtils {
         Object value = column.getValue().get();
         switch (condition) {
             case EQUALS:
-                clauses.add(QueryBuilder.eq(column.getName(), value));
+                clauses.add(QueryBuilder.eq(getName(column), value));
                 return;
             case GREATER_THAN:
-                clauses.add(QueryBuilder.gt(column.getName(), value));
+                clauses.add(QueryBuilder.gt(getName(column), value));
                 return;
             case GREATER_EQUALS_THAN:
-                clauses.add(QueryBuilder.gte(column.getName(), value));
+                clauses.add(QueryBuilder.gte(getName(column), value));
                 return;
             case LESSER_THAN:
-                clauses.add(QueryBuilder.lt(column.getName(), value));
+                clauses.add(QueryBuilder.lt(getName(column), value));
                 return;
             case LESSER_EQUALS_THAN:
-                clauses.add(QueryBuilder.lte(column.getName(), value));
+                clauses.add(QueryBuilder.lte(getName(column), value));
                 return;
             case IN:
-                clauses.add(QueryBuilder.in(column.getName(), getIinValue(value)));
+                clauses.add(QueryBuilder.in(getName(column), getIinValue(value)));
                 return;
             case LIKE:
-                clauses.add(QueryBuilder.like(column.getName(), value));
+                clauses.add(QueryBuilder.like(getName(column), value));
                 return;
             case AND:
                 for (ColumnCondition cc : column.get(new TypeReference<List<ColumnCondition>>() {
@@ -196,6 +196,15 @@ final class QueryUtils {
                 throw new UnsupportedOperationException("The columnCondition " + condition +
                         " is not supported in cassandra column driver");
         }
+    }
+
+    private static String getName(Column column) {
+
+        String name = column.getName();
+        if (name.charAt(0) == '_') {
+            return "\"" + name + "\"";
+        }
+        return name;
     }
 
     private static Object[] getIinValue(Object value) {
