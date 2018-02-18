@@ -18,6 +18,7 @@ package org.jnosql.diana.couchbase.key;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
@@ -28,6 +29,7 @@ import javax.json.bind.JsonbBuilder;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -39,6 +41,8 @@ import static org.jnosql.diana.driver.ValueUtil.convert;
  * The couchbase implementation to {@link BucketManager}
  */
 public class CouchbaseBucketManager implements BucketManager {
+
+    private static final Logger LOGGER = Logger.getLogger(CouchbaseBucketManager.class.getName());
 
     private static final Jsonb JSONB = JsonbBuilder.create();
 
@@ -113,7 +117,11 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public <K> void remove(K key) throws NullPointerException {
         requireNonNull(key, "key is required");
-        bucket.remove(key.toString());
+        try {
+            bucket.remove(key.toString());
+        } catch (DocumentDoesNotExistException e) {
+            LOGGER.info("Not found any document with the key " + key);
+        }
     }
 
     @Override

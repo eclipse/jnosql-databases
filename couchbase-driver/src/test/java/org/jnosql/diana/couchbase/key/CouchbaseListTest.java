@@ -26,7 +26,14 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseListTest {
 
@@ -70,10 +77,89 @@ public class CouchbaseListTest {
     }
 
     @Test
-    public void shouldRemoveList() {
-        fruits.add(banana);
+    public void shouldAddAllIterable() {
+        fruits.addAll(asList(banana, waterMelon, orange, melon));
+        assertThat(fruits, contains(banana, waterMelon, orange, melon));
     }
 
+    @Test
+    public void shouldAddAllIterableWithIndex() {
+        fruits.addAll(asList(orange, melon));
+        fruits.addAll(1, asList(banana, waterMelon));
+        assertThat(fruits, contains(orange, banana, waterMelon, melon));
+    }
+
+    @Test
+    public void shouldAddWithIndex() {
+        fruits.addAll(asList(banana, waterMelon));
+        fruits.add(0, orange);
+        assertThat(fruits, contains(orange, banana, waterMelon));
+    }
+
+    @Test
+    public void shouldRemove() {
+        fruits.addAll(asList(banana, waterMelon));
+        fruits.remove(banana);
+        assertTrue(fruits.size() == 1);
+        assertEquals(fruits.get(0), waterMelon);
+    }
+
+    @Test
+    public void shouldRemoveWithIndex() {
+        fruits.addAll(asList(banana, waterMelon));
+        fruits.remove(1);
+        assertTrue(fruits.size() == 1);
+        assertEquals(fruits.get(0), banana);
+    }
+
+    @Test
+    public void shouldRemoveAll() {
+        fruits.addAll(asList(banana, waterMelon, orange, melon));
+        fruits.removeAll(asList(banana, melon));
+        assertTrue(fruits.size() == 2);
+        assertThat(fruits, containsInAnyOrder(waterMelon, orange));
+    }
+
+    @Test
+    public void shouldContainsValue() {
+        fruits.addAll(asList(banana, waterMelon));
+        assertTrue(fruits.contains(waterMelon));
+    }
+
+    @Test
+    public void shouldContainsAllValues() {
+        fruits.addAll(asList(banana, waterMelon));
+        assertTrue(fruits.containsAll(asList(waterMelon, banana)));
+    }
+
+    @Test
+    public void shouldReturnIndexOf() {
+        fruits.addAll(asList(banana, waterMelon, banana));
+        assertEquals(0, fruits.indexOf(banana));
+    }
+
+    @Test
+    public void shouldReturnLstIndexOf() {
+        fruits.addAll(asList(banana, waterMelon, banana));
+        assertEquals(2, fruits.lastIndexOf(banana));
+    }
+
+    @Test
+    public void shouldSetValue() {
+        fruits.addAll(asList(banana, waterMelon));
+        assertEquals(fruits.get(1), waterMelon);
+        fruits.set(1, orange);
+        assertTrue(fruits.size() == 2);
+        assertEquals(fruits.get(1), orange);
+    }
+
+    @Test
+    public void shouldReturnSubList() {
+        fruits.addAll(asList(banana, waterMelon, orange, melon));
+        List<ProductCart> subList = fruits.subList(1, 3);
+        assertTrue(subList.size() == 2);
+        assertThat(subList, contains(waterMelon, orange));
+    }
 
     @AfterEach
     public void end() {
