@@ -21,7 +21,6 @@ import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -96,7 +95,6 @@ public class CouchbaseBucketManagerTest {
     }
 
     @Test
-    @Disabled
     public void shouldPutValueTtl() throws InterruptedException {
 
         keyValueEntityManager.put(KeyValueEntity.of(KEY_OTAVIO, userOtavio), Duration.ofSeconds(1L));
@@ -109,7 +107,6 @@ public class CouchbaseBucketManagerTest {
     }
 
     @Test
-    @Disabled
     public void shouldPutValuesTtl() throws InterruptedException {
 
         keyValueEntityManager.put(singleton(KeyValueEntity.of(KEY_OTAVIO, userOtavio)), Duration.ofSeconds(1L));
