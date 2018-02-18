@@ -101,7 +101,7 @@ public class CouchbaseBucketManagerTest {
 
         Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
-        Thread.sleep(5_000);
+        Thread.sleep(2_000);
         otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertFalse(otavio.isPresent());
     }
@@ -112,7 +112,7 @@ public class CouchbaseBucketManagerTest {
         keyValueEntityManager.put(singleton(KeyValueEntity.of(KEY_OTAVIO, userOtavio)), Duration.ofSeconds(1L));
         Optional<Value> otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertTrue(otavio.isPresent());
-        Thread.sleep(5_000);
+        Thread.sleep(2_000);
         otavio = keyValueEntityManager.get(KEY_OTAVIO);
         assertFalse(otavio.isPresent());
     }
