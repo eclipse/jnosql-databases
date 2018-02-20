@@ -53,12 +53,17 @@ public class CouchbaseListTest {
         fruits = keyValueEntityManagerFactory.getList(CouchbaseUtil.BUCKET_NAME, ProductCart.class);
     }
 
-    @AfterAll
+    //@AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("jnosql:list");
+    }
+
+   // @AfterEach
+    public void end() {
+        fruits.clear();
     }
 
     @Test
@@ -161,8 +166,5 @@ public class CouchbaseListTest {
         assertThat(subList, contains(waterMelon, orange));
     }
 
-    @AfterEach
-    public void end() {
-        fruits.clear();
-    }
+
 }

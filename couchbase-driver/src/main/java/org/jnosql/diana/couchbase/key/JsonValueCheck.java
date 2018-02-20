@@ -11,7 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
- */ 
+ */
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.document.json.JsonArray;

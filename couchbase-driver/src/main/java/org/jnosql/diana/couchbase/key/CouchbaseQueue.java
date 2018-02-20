@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
+import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactory.QUEUE;
 
 /**
  * The couchbase implementation to {@link Queue}
@@ -41,7 +42,7 @@ class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T> {
 
     CouchbaseQueue(Bucket bucket, String bucketName, Class<T> clazz) {
         super(clazz);
-        this.bucketName = bucketName + ":queue";
+        this.bucketName = bucketName + QUEUE;
         queue = new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(this.bucketName, bucket);
     }
 

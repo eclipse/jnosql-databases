@@ -33,4 +33,5 @@ abstract class CouchbaseCollection<T> {
     protected Function<String, T> fromJSON() {
         return s -> JSONB.fromJson(s, clazz);
     }
+
 }

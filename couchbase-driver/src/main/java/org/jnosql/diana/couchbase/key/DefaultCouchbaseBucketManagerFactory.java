@@ -16,6 +16,8 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
+import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
 import org.jnosql.diana.couchbase.util.CouchbaseClusterUtil;
 
 import java.util.List;
@@ -37,6 +39,9 @@ import static java.util.Objects.requireNonNull;
  */
 class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFactory {
 
+    static final String QUEUE = ":queue";
+    static final String SET = ":set";
+    static final String LIST = ":list";
     private final CouchbaseCluster couchbaseCluster;
 
     private final String user;
@@ -78,21 +83,35 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
-        return new CouchbaseQueue<>(getBucket(bucketName), bucketName, clazz);
+        if (JsonValueCheck.checkType(clazz)) {
+            return new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(bucketName + QUEUE,
+                    getBucket(bucketName));
+        } else {
+            return new CouchbaseQueue<>(getBucket(bucketName), bucketName, clazz);
+        }
+
     }
 
     @Override
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
-        return new CouchbaseSet<>(getBucket(bucketName), bucketName, clazz);
+        if (JsonValueCheck.checkType(clazz)) {
+            return new CouchbaseArraySet<>(bucketName + SET, getBucket(bucketName));
+        } else {
+            return new CouchbaseSet<>(getBucket(bucketName), bucketName, clazz);
+        }
     }
 
     @Override
     public <T> List<T> getList(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
-        return new CouchbaseList<>(getBucket(bucketName), bucketName, clazz);
+        if (JsonValueCheck.checkType(clazz)) {
+            return new CouchbaseArrayList<>(bucketName + LIST, getBucket(bucketName));
+        } else {
+            return new CouchbaseList<>(getBucket(bucketName), bucketName, clazz);
+        }
     }
 
     @Override
@@ -100,7 +119,13 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
-        return new CouchbaseQueue<>(getBucket(bucketName), key, clazz);
+        if (JsonValueCheck.checkType(clazz)) {
+            return new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(bucketName + QUEUE,
+                    getBucket(bucketName));
+        } else {
+            return new CouchbaseQueue<>(getBucket(bucketName), key, clazz);
+        }
+
     }
 
     @Override
@@ -108,7 +133,12 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
-        return new CouchbaseSet<>(getBucket(key), bucketName, clazz);
+        if (JsonValueCheck.checkType(clazz)) {
+            return new CouchbaseArraySet<>(bucketName + SET, getBucket(key));
+        } else {
+            return new CouchbaseSet<>(getBucket(key), bucketName, clazz);
+        }
+
     }
 
     @Override
@@ -116,7 +146,11 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
-        return new CouchbaseList<>(getBucket(bucketName), key, clazz);
+        if (JsonValueCheck.checkType(clazz)) {
+            return new CouchbaseArrayList<>(bucketName + LIST, getBucket(key));
+        } else {
+            return new CouchbaseList<>(getBucket(bucketName), key, clazz);
+        }
     }
 
     private Bucket getBucket(String bucketName) {

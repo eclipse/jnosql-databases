@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
+import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactory.SET;
 
 
 /**
@@ -42,7 +43,7 @@ class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
 
     CouchbaseSet(Bucket bucket, String bucketName, Class<T> clazz) {
         super(clazz);
-        this.bucketName = bucketName + ":set";
+        this.bucketName = bucketName + SET;
         this.arraySet = new CouchbaseArraySet(this.bucketName, bucket);
     }
 
