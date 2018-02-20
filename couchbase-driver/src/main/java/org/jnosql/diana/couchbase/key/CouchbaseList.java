@@ -38,7 +38,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @param <T> the object to be stored.
  */
-public class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
+class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
 
     private final String bucketName;
     private final CouchbaseArrayList<String> arrayList;

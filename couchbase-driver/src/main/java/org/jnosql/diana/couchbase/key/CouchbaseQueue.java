@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> the object to be stored.
  */
-public class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T> {
+class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T> {
 
 
     private final String bucketName;

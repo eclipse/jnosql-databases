@@ -39,7 +39,7 @@ import static java.util.stream.Collectors.toSet;
  * @param <V> the object to be stored as value.
  * @param <K> the object to be stored as key.
  */
-public class CouchbaseMap<K, V> implements Map<K, V> {
+class CouchbaseMap<K, V> implements Map<K, V> {
 
     private static final Jsonb JSONB = JsonbBuilder.create();
 
