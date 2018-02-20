@@ -190,7 +190,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         assertFalse(entities.isEmpty());
 
     }
-    
+
     @Test
     public void shouldRunN1Ql() {
         DocumentEntity entity = getEntity();
@@ -204,8 +204,14 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRunN1QlParameters() {
         AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicBoolean condition = new AtomicBoolean(false);
+
         DocumentEntity entity = getEntity();
-        entityManager.insert(entity);
+        entityManagerAsync.insert(entity, d -> {
+            condition.set(true);
+        });
+        await().untilTrue(condition);
+
         JsonObject params = JsonObject.create().put("name", "Poliana");
         entityManagerAsync.n1qlQuery("select * from jnosql where name = $name", params, references::set);
         await().until(references::get, notNullValue());
