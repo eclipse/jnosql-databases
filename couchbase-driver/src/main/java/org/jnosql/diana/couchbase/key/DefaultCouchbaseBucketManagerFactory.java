@@ -121,7 +121,8 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
 
     private Bucket getBucket(String bucketName) {
         requireNonNull(bucketName, "bucket is required");
-        CouchbaseCluster couchbaseCluster = CouchbaseClusterUtil.getCouchbaseCluster(bucketName, this.couchbaseCluster, user, password);
+        CouchbaseCluster couchbaseCluster = CouchbaseClusterUtil.getCouchbaseCluster(bucketName,
+                this.couchbaseCluster, user, password);
         return couchbaseCluster.openBucket(bucketName);
     }
 

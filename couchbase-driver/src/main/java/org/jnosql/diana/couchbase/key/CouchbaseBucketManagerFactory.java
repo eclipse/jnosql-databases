@@ -44,8 +44,7 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory<Couc
      * @throws UnsupportedOperationException when the database does not have to it
      * @throws NullPointerException          when either bucketName or class are null
      */
-    <T> Queue<T> getQueue(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException,
-            NullPointerException;
+    <T> Queue<T> getQueue(String bucketName, String key, Class<T> clazz);
 
     /**
      * Creates a {@link Set} from bucket name
@@ -58,8 +57,7 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory<Couc
      * @throws UnsupportedOperationException when the database does not have to it
      * @throws NullPointerException          when either bucketName or class are null
      */
-    <T> Set<T> getSet(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException,
-            NullPointerException;
+    <T> Set<T> getSet(String bucketName, String key, Class<T> clazz);
 
 
     /**
@@ -73,8 +71,7 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory<Couc
      * @throws UnsupportedOperationException when the database does not have to it
      * @throws NullPointerException          when either bucketName or class are null
      */
-    <T> List<T> getList(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException,
-            NullPointerException;
+    <T> List<T> getList(String bucketName, String key, Class<T> clazz);
 
 
     /**
@@ -90,6 +87,5 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory<Couc
      * @throws UnsupportedOperationException when the database does not have to it
      * @throws NullPointerException          when either bucketName or class are null
      */
-    <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue) throws
-            UnsupportedOperationException, NullPointerException;
+    <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue);
 }

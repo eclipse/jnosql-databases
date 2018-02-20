@@ -125,7 +125,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(Iterable<K> keys) throws NullPointerException {
+    public <K> void remove(Iterable<K> keys) {
         requireNonNull(keys, "keys is required");
         keys.forEach(this::remove);
     }
