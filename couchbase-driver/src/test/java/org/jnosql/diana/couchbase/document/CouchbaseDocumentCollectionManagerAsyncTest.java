@@ -14,10 +14,11 @@
  */
 package org.jnosql.diana.couchbase.document;
 
-import org.hamcrest.Matchers;
+import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.query.Select;
+import com.couchbase.client.java.query.Statement;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -36,7 +37,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.couchbase.client.java.query.dsl.Expression.x;
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +50,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
 
-    private DocumentCollectionManagerAsync entityManagerAsync;
+    private CouchbaseDocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
 
@@ -132,7 +135,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         entityManagerAsync.update(entity, reference::set);
-        await().until(() -> reference.get(), Matchers.notNullValue());
+        await().until(() -> reference.get(), notNullValue());
 
         Document id = reference.get().find("_id").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
@@ -165,7 +168,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
 
         await().untilTrue(condition);
         entityManagerAsync.select(query, references::set);
-        await().until(() -> references.get(), Matchers.notNullValue());
+        await().until(() -> references.get(), notNullValue());
         assertFalse(references.get().isEmpty());
 
     }
@@ -178,15 +181,49 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
 
         entityManagerAsync.insert(entity, reference::set);
 
-        await().until(() -> reference.get(), Matchers.notNullValue());
+        await().until(() -> reference.get(), notNullValue());
         Document id = reference.get().find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManagerAsync.select(query, references::set);
-        await().until(() -> references.get(), Matchers.notNullValue());
+        await().until(() -> references.get(), notNullValue());
         List<DocumentEntity> entities = references.get();
         assertFalse(entities.isEmpty());
 
     }
+    
+    @Test
+    public void shouldRunN1Ql() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        entityManagerAsync.n1qlQuery("select * from jnosql", references::set);
+        await().until(references::get, notNullValue());
+        assertFalse(references.get().isEmpty());
+    }
+
+    @Test
+    public void shouldRunN1QlParameters() {
+        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        JsonObject params = JsonObject.create().put("name", "Poliana");
+        entityManagerAsync.n1qlQuery("select * from jnosql where name = $name", params, references::set);
+        await().until(references::get, notNullValue());
+        assertEquals(1, references.get().size());
+    }
+
+    @Test
+    public void shouldRunN1QlStatement() {
+        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+
+        Statement statement = Select.select("*").from("jnosql").where(x("name").eq("\"Poliana\""));
+        entityManagerAsync.n1qlQuery(statement, references::set);
+        assertFalse(references.get().isEmpty());
+        assertEquals(1, references.get().size());
+    }
+
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
