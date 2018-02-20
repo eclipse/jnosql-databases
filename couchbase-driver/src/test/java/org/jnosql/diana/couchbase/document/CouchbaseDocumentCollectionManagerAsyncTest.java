@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.couchbase.document;
 
+import org.awaitility.Awaitility;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
@@ -29,7 +30,9 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.awaitility.Awaitility.await;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -55,18 +58,21 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
         DocumentEntity documentEntity = getEntity();
         Document id = documentEntity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManagerAsync.delete(deleteQuery);
     }
 
 
     @Test
-    public void shouldSaveAsync() throws InterruptedException {
+    public void shouldSaveAsync()  {
         DocumentEntity entity = getEntity();
-        entityManagerAsync.insert(entity);
+        AtomicBoolean condition = new AtomicBoolean(false);
+        entityManagerAsync.insert(entity, d -> {
+            condition.set(true);
+        });
 
-        Thread.sleep(1_000L);
+        await().untilTrue(condition);
+
         Document id = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
