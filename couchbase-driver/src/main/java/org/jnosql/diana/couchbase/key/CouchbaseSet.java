@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  * objects are converted to Json {@link String} using {@link javax.json.bind.Jsonb#toJson(Object)}
  * @param <T> the object to be stored.
  */
-public class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
+class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
 
 
 
