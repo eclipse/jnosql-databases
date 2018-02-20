@@ -51,7 +51,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
 
 
     @Override
-    public CouchbaseBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
+    public CouchbaseBucketManager getBucketManager(String bucketName) {
         requireNonNull(bucketName, "bucket is required");
         return new CouchbaseBucketManager(getBucket(bucketName), bucketName);
     }
@@ -65,7 +65,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue)  {
+    public <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue) {
 
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(key, "key is required");
@@ -125,7 +125,6 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
                 this.couchbaseCluster, user, password);
         return couchbaseCluster.openBucket(bucketName);
     }
-
 
 
     @Override
