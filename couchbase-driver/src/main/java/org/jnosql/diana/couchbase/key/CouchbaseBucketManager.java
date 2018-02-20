@@ -56,7 +56,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K, V> void put(K key, V value) throws NullPointerException {
+    public <K, V> void put(K key, V value) {
         requireNonNull(key, "key is required");
         requireNonNull(value, "value is required");
         bucket.upsert(JsonDocument.create(key.toString(), JsonObjectCouchbaseUtil.toJson(JSONB, value)));
@@ -69,7 +69,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public <K> void put(KeyValueEntity<K> entity, Duration ttl){
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
 
@@ -81,13 +81,13 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities) throws NullPointerException {
+    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities){
         requireNonNull(keyValueEntities, "keyValueEntities is required");
         keyValueEntities.forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities, Duration ttl) {
         requireNonNull(keyValueEntities, "keyValueEntities is required");
         requireNonNull(ttl, "ttl is required");
         keyValueEntities.forEach(k -> this.put(k, ttl));
@@ -105,7 +105,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
+    public <K> Iterable<Value> get(Iterable<K> keys){
         requireNonNull(keys, "keys is required");
         return stream(keys.spliterator(), false)
                 .map(this::get)
@@ -115,7 +115,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(K key) throws NullPointerException {
+    public <K> void remove(K key){
         requireNonNull(key, "key is required");
         try {
             bucket.remove(key.toString());

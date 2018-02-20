@@ -57,8 +57,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) throws
-            UnsupportedOperationException {
+    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(valueValue, "valueValue is required");
         requireNonNull(keyValue, "keyValue is required");
@@ -66,8 +65,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue) throws
-            UnsupportedOperationException {
+    public <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue)  {
 
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(key, "key is required");
@@ -77,28 +75,28 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
+    public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         return new CouchbaseQueue<>(getBucket(bucketName), bucketName, clazz);
     }
 
     @Override
-    public <T> Set<T> getSet(String bucketName, Class<T> clazz) throws UnsupportedOperationException {
+    public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         return new CouchbaseSet<>(getBucket(bucketName), bucketName, clazz);
     }
 
     @Override
-    public <T> List<T> getList(String bucketName, Class<T> clazz) throws UnsupportedOperationException, NullPointerException {
+    public <T> List<T> getList(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         return new CouchbaseList<>(getBucket(bucketName), bucketName, clazz);
     }
 
     @Override
-    public <T> Queue<T> getQueue(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException, NullPointerException {
+    public <T> Queue<T> getQueue(String bucketName, String key, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
@@ -106,7 +104,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <T> Set<T> getSet(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException, NullPointerException {
+    public <T> Set<T> getSet(String bucketName, String key, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
@@ -114,7 +112,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <T> List<T> getList(String bucketName, String key, Class<T> clazz) throws UnsupportedOperationException, NullPointerException {
+    public <T> List<T> getList(String bucketName, String key, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
