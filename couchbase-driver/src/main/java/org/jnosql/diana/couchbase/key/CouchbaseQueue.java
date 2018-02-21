@@ -143,7 +143,12 @@ class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T> {
     @Override
     public boolean contains(Object o) {
         Objects.requireNonNull(o, "object is required");
-        return queue.contains(JSONB.toJson(o));
+        for (JsonObject jsonObject : queue) {
+            if(jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -171,13 +176,14 @@ class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T> {
     @Override
     public boolean retainAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return queue.retainAll(collection.stream().map(JSONB::toJson).collect(Collectors.toList()));
+        collection.removeIf(e -> !this.contains(e));
+        return true;
     }
 
     @Override
     public boolean containsAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return queue.containsAll(collection.stream().map(JSONB::toJson).collect(Collectors.toList()));
+        return collection.stream().allMatch(this::contains);
     }
 
 
