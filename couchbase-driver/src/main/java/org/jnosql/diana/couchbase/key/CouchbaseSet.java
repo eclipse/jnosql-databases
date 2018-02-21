@@ -118,7 +118,7 @@ public class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
     @Override
     public boolean retainAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        collection.removeIf(e -> arraySet.contains(JSONB.toJson(e)));
+        collection.removeIf(e -> !arraySet.contains(JSONB.toJson(e)));
         return true;
     }
 
