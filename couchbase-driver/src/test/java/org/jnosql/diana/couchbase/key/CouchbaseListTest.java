@@ -20,6 +20,7 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +54,7 @@ public class CouchbaseListTest {
         fruits = keyValueEntityManagerFactory.getList(CouchbaseUtil.BUCKET_NAME, ProductCart.class);
     }
 
-    //@AfterAll
+    @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
@@ -61,7 +62,7 @@ public class CouchbaseListTest {
         keyValueEntityManager.remove("jnosql:list");
     }
 
-   // @AfterEach
+    @AfterEach
     public void end() {
         fruits.clear();
     }
@@ -104,7 +105,8 @@ public class CouchbaseListTest {
     @Test
     public void shouldRemove() {
         fruits.addAll(asList(banana, waterMelon));
-        fruits.remove(banana);
+        boolean remove = fruits.remove(banana);
+        assertTrue(remove);
         assertTrue(fruits.size() == 1);
         assertEquals(fruits.get(0), waterMelon);
     }
