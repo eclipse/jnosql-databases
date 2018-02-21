@@ -153,13 +153,20 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
     @Override
     public int indexOf(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.indexOf(JsonObjectCouchbaseUtil.toJson(JSONB, o));
+        int index = 0;
+        for (JsonObject jsonObject : arrayList) {
+            if (jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
+                return index;
+            }
+            index++;
+        }
+        return NOT_FOUND;
     }
 
     @Override
     public int lastIndexOf(Object o) {
         requireNonNull(o, "object is required");
-        for (int index = arrayList.size() -1; index >= 0; index--) {
+        for (int index = arrayList.size() - 1; index >= 0; index--) {
             JsonObject jsonObject = arrayList.get(index);
             if (jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
                 return index;
@@ -194,7 +201,7 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
     @Override
     public boolean remove(Object o) {
         requireNonNull(o, "object is required");
-        int index = getIndex(o);
+        int index = indexOf(o);
         if (index >= 0) {
             arrayList.remove(index);
             return true;
@@ -223,16 +230,5 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
         return arrayList.addAll(i, objects);
     }
 
-    private int getIndex(Object o) {
-        int index = 0;
-        for (JsonObject jsonObject : arrayList) {
-            if (jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
-                return index;
-            }
-            index++;
-        }
-
-        return NOT_FOUND;
-    }
 
 }
