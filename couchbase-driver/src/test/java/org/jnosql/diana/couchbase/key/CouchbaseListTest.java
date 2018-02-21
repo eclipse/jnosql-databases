@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -143,6 +144,7 @@ public class CouchbaseListTest {
     public void shouldReturnIndexOf() {
         fruits.addAll(asList(banana, waterMelon, banana));
         assertEquals(0, fruits.indexOf(banana));
+        assertEquals(-1, fruits.indexOf(melon));
     }
 
     @Test
@@ -166,6 +168,17 @@ public class CouchbaseListTest {
         List<ProductCart> subList = fruits.subList(1, 3);
         assertTrue(subList.size() == 2);
         assertThat(subList, contains(waterMelon, orange));
+    }
+
+
+    @Test
+    public void shouldRetains(){
+        fruits.addAll(asList(banana, waterMelon));
+        List<ProductCart> carts = new ArrayList<>();
+        carts.add(orange);
+        carts.add(banana);
+        fruits.retainAll(carts);
+        assertEquals(1, carts.size());
     }
 
 

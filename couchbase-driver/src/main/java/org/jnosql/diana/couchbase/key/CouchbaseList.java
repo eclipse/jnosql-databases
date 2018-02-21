@@ -136,7 +136,8 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
     @Override
     public boolean retainAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return arrayList.retainAll(collection.stream().map(JSONB::toJson).collect(toList()));
+        collection.removeIf(e -> indexOf(e) == NOT_FOUND);
+        return true;
     }
 
     @Override
