@@ -16,7 +16,6 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
-import com.couchbase.client.java.document.json.JsonObject;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,9 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static java.lang.Boolean.TRUE;
 import static java.util.Objects.requireNonNull;
-import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactory.SET;
 
 
 /**
@@ -34,20 +31,18 @@ import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactor
  * that avoid null items, so if any null object will launch {@link NullPointerException}.
  * This class is a wrapper to {@link CouchbaseArraySet}. Once they only can save primitive type,
  * objects are converted to Json {@link String} using {@link javax.json.bind.Jsonb#toJson(Object)}
- *
  * @param <T> the object to be stored.
  */
-class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
+public class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
 
-    private static final int NOT_FOUND = -1;
 
 
     private final String bucketName;
-    private final CouchbaseArraySet<JsonObject> arraySet;
+    private final CouchbaseArraySet<String> arraySet;
 
     CouchbaseSet(Bucket bucket, String bucketName, Class<T> clazz) {
         super(clazz);
-        this.bucketName = bucketName + SET;
+        this.bucketName = bucketName + ":set";
         this.arraySet = new CouchbaseArraySet(this.bucketName, bucket);
     }
 
@@ -64,24 +59,19 @@ class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
     @Override
     public boolean add(T t) {
         requireNonNull(t, "object is required");
-        return arraySet.add(JsonObjectCouchbaseUtil.toJson(JSONB, t));
+        return arraySet.add(JSONB.toJson(t));
     }
 
     @Override
     public boolean remove(Object o) {
         requireNonNull(o, "object is required");
-        int index = indexOf(o);
-        if (index >= 0) {
-            arraySet.remove(index);
-            return true;
-        }
-        return false;
+        return arraySet.remove(JSONB.toJson(o));
     }
 
     @Override
     public boolean contains(Object o) {
         requireNonNull(o, "object is required");
-        return indexOf(o) != NOT_FOUND;
+        return arraySet.contains(JSONB.toJson(o));
     }
 
     @Override
@@ -99,20 +89,20 @@ class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
     @Override
     public boolean containsAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return collection.stream().map(this::contains).allMatch(TRUE::equals);
+        return collection.stream().allMatch(this::contains);
     }
 
     @Override
     public Iterator<T> iterator() {
         return StreamSupport.stream(arraySet.spliterator(), false)
-                .map(s -> JSONB.fromJson(s.toString(), clazz))
+                .map(fromJSON())
                 .collect(Collectors.toList()).iterator();
     }
 
     @Override
     public Object[] toArray() {
         return StreamSupport.stream(arraySet.spliterator(), false)
-                .map(s -> JSONB.fromJson(s.toString(), clazz))
+                .map(fromJSON())
                 .toArray(Object[]::new);
     }
 
@@ -120,7 +110,7 @@ class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
     public <T1> T1[] toArray(T1[] t1s) {
         requireNonNull(t1s, "arrys is required");
         return StreamSupport.stream(arraySet.spliterator(), false)
-                .map(s -> JSONB.fromJson(s.toString(), clazz))
+                .map(fromJSON())
                 .toArray(size -> t1s);
     }
 
@@ -128,32 +118,13 @@ class CouchbaseSet<T> extends CouchbaseCollection<T> implements Set<T> {
     @Override
     public boolean retainAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        collection.removeIf(e -> indexOf(e) == NOT_FOUND);
-        return true;
+        return arraySet.retainAll(collection.stream().map(JSONB::toJson).collect(Collectors.toList()));
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        boolean removeAll = true;
-        for (Object object : collection) {
-            if (!this.remove(object)) {
-                removeAll = false;
-            }
-        }
-        return removeAll;
-    }
-
-    private int indexOf(Object o) {
-        requireNonNull(o, "object is required");
-        int index = 0;
-        for (JsonObject jsonObject : arraySet) {
-            if (jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
-                return index;
-            }
-            index++;
-        }
-        return NOT_FOUND;
+        return arraySet.removeAll(collection.stream().map(JSONB::toJson).collect(Collectors.toList()));
     }
 
 
