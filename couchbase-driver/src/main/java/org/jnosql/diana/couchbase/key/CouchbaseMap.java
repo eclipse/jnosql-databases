@@ -15,17 +15,18 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.json.JsonObject;
 import org.jnosql.diana.api.Value;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 
@@ -47,7 +48,7 @@ class CouchbaseMap<K, V> implements Map<K, V> {
     private final String bucketName;
     private final Class<K> keyClass;
     private final Class<V> valueClass;
-    private final com.couchbase.client.java.datastructures.collections.CouchbaseMap<String> map;
+    private final com.couchbase.client.java.datastructures.collections.CouchbaseMap<JsonObject> map;
 
     CouchbaseMap(Bucket bucket, String bucketName, Class<K> keyClass, Class<V> valueClass) {
         this.bucketName = bucketName + ":map";
@@ -69,9 +70,9 @@ class CouchbaseMap<K, V> implements Map<K, V> {
     @Override
     public V get(Object key) {
         Objects.requireNonNull(key, "key is required");
-        String json = map.get(key.toString());
+        JsonObject json = map.get(key.toString());
         if (Objects.nonNull(json)) {
-            return JSONB.fromJson(json, valueClass);
+            return JSONB.fromJson(json.toString(), valueClass);
         }
         return null;
     }
@@ -80,9 +81,9 @@ class CouchbaseMap<K, V> implements Map<K, V> {
     public V put(K key, V value) {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
-        String json = map.put(key.toString(), JSONB.toJson(value));
+        JsonObject json = map.put(key.toString(), JsonObjectCouchbaseUtil.toJson(JSONB, value));
         if (Objects.nonNull(json)) {
-            return JSONB.fromJson(json, valueClass);
+            return JSONB.fromJson(json.toString(), valueClass);
         }
         return null;
     }
@@ -90,9 +91,9 @@ class CouchbaseMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         Objects.requireNonNull(key, "key is required");
-        String json = map.remove(key.toString());
+        JsonObject json = map.remove(key.toString());
         if (Objects.nonNull(json)) {
-            return JSONB.fromJson(json, valueClass);
+            return JSONB.fromJson(json.toString(), valueClass);
         }
         return null;
     }
@@ -119,7 +120,7 @@ class CouchbaseMap<K, V> implements Map<K, V> {
     @Override
     public boolean containsValue(Object value) {
         Objects.requireNonNull(value, "key is required");
-        return map.containsValue(JSONB.toJson(value));
+        return values().stream().anyMatch(value::equals);
     }
 
     @Override
@@ -131,20 +132,34 @@ class CouchbaseMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-        return map.values().stream()
-                .map(s -> JSONB.fromJson(s, valueClass))
-                .collect(toList());
+
+        Collection<V> values = new ArrayList<>();
+
+        for (Object object : map.values()) {
+            values.add(convertValue(object));
+        }
+        return values;
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
         Map<K, V> copy = new HashMap<>();
 
-        for (Entry<String, String> entry : map.entrySet()) {
+        for (Entry<String, JsonObject> entry : map.entrySet()) {
             String key = entry.getKey();
-            String value = entry.getValue();
-            copy.put(JSONB.fromJson(key, keyClass), JSONB.fromJson(value, valueClass));
+            V value = convertValue(entry.getValue());
+            copy.put((K) key, value);
         }
         return copy.entrySet();
+    }
+
+    private V convertValue(Object value) {
+        if(value instanceof Map) {
+            return JSONB.fromJson(JsonObject.from(Map.class.cast(value)).toString(), valueClass);
+        } else if(value instanceof JsonObject) {
+            return JSONB.fromJson(JsonObject.class.cast(value).toString(), valueClass);
+        }
+
+        throw new IllegalStateException("Couchbase does not support the structure value " + value.getClass().getName());
     }
 }
