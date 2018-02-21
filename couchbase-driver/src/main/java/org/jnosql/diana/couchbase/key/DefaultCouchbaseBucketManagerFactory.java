@@ -18,6 +18,7 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
+import com.couchbase.client.java.document.json.JsonValue;
 import org.jnosql.diana.couchbase.util.CouchbaseClusterUtil;
 
 import java.util.List;
@@ -96,7 +97,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
-        if (JsonValueCheck.checkType(clazz)) {
+        if (JsonValueCheck.checkType(clazz) && !JsonValue.class.isAssignableFrom(clazz)) {
             return new CouchbaseArraySet<>(bucketName + SET, getBucket(bucketName));
         } else {
             return new CouchbaseSet<>(getBucket(bucketName), bucketName, clazz);
@@ -133,7 +134,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
-        if (JsonValueCheck.checkType(clazz)) {
+        if (JsonValueCheck.checkType(clazz) && !JsonValue.class.isAssignableFrom(clazz)) {
             return new CouchbaseArraySet<>(bucketName + SET, getBucket(key));
         } else {
             return new CouchbaseSet<>(getBucket(key), bucketName, clazz);
