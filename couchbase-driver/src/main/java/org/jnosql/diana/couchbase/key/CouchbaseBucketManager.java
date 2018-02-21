@@ -17,7 +17,10 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonDocument;
+import com.couchbase.client.java.document.RawJsonDocument;
+import com.couchbase.client.java.document.json.JsonArray;
 import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.document.json.JsonValue;
 import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
@@ -59,7 +62,13 @@ public class CouchbaseBucketManager implements BucketManager {
     public <K, V> void put(K key, V value) {
         requireNonNull(key, "key is required");
         requireNonNull(value, "value is required");
-        bucket.upsert(JsonDocument.create(key.toString(), JsonObjectCouchbaseUtil.toJson(JSONB, value)));
+
+        if (JsonValue.checkType(value)) {
+            bucket.upsert(RawJsonDocument.create(key.toString(), JSONB.toJson(value.toString())));
+        } else {
+            bucket.upsert(JsonDocument.create(key.toString(), JsonObjectCouchbaseUtil.toJson(JSONB, value)));
+        }
+
     }
 
     @Override
@@ -69,19 +78,26 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl){
+    public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
 
 
-        JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.get());
+        if (JsonValue.checkType(entity.get())) {
+            RawJsonDocument jsonDocument = RawJsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(),
+                    JSONB.toJson(entity.get().toString()));
+            
+            bucket.upsert(jsonDocument);
+        } else {
+            JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.get());
+            JsonDocument jsonDocument = JsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(), jsonObject);
+            bucket.upsert(jsonDocument);
+        }
 
-        JsonDocument jsonDocument = JsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(), jsonObject);
-        bucket.upsert(jsonDocument, ttl.toMillis(), MILLISECONDS);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities){
+    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities) {
         requireNonNull(keyValueEntities, "keyValueEntities is required");
         keyValueEntities.forEach(this::put);
     }
@@ -96,7 +112,7 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
         requireNonNull(key, "key is required");
-        JsonDocument jsonDocument = bucket.get(key.toString());
+        RawJsonDocument jsonDocument = bucket.get(key.toString(), RawJsonDocument.class);
         if (Objects.isNull(jsonDocument)) {
             return Optional.empty();
         }
@@ -105,7 +121,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> Iterable<Value> get(Iterable<K> keys){
+    public <K> Iterable<Value> get(Iterable<K> keys) {
         requireNonNull(keys, "keys is required");
         return stream(keys.spliterator(), false)
                 .map(this::get)
@@ -115,7 +131,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(K key){
+    public <K> void remove(K key) {
         requireNonNull(key, "key is required");
         try {
             bucket.remove(key.toString());
