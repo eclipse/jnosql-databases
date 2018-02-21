@@ -136,11 +136,7 @@ class CouchbaseMap<K, V> implements Map<K, V> {
         Collection<V> values = new ArrayList<>();
 
         for (Object object : map.values()) {
-            if(object instanceof Map) {
-                values.add(JSONB.fromJson(JsonObject.from(Map.class.cast(object)).toString(), valueClass));
-            } else if(object instanceof JsonObject) {
-                values.add(JSONB.fromJson(JsonObject.class.cast(object).toString(), valueClass));
-            }
+            values.add(convertValue(object));
         }
         return values;
     }
@@ -151,9 +147,19 @@ class CouchbaseMap<K, V> implements Map<K, V> {
 
         for (Entry<String, JsonObject> entry : map.entrySet()) {
             String key = entry.getKey();
-            JsonObject value = entry.getValue();
-            copy.put((K) key, JSONB.fromJson(value.toString(), valueClass));
+            V value = convertValue(entry.getValue());
+            copy.put((K) key, value);
         }
         return copy.entrySet();
+    }
+
+    private V convertValue(Object value) {
+        if(value instanceof Map) {
+            return JSONB.fromJson(JsonObject.from(Map.class.cast(value)).toString(), valueClass);
+        } else if(value instanceof JsonObject) {
+            return JSONB.fromJson(JsonObject.class.cast(value).toString(), valueClass);
+        }
+
+        throw new IllegalStateException("Couchbase does not support the structure value " + value.getClass().getName());
     }
 }
