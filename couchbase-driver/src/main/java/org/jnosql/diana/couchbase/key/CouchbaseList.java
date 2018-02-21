@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.stream.StreamSupport;
 
+import static java.lang.Boolean.TRUE;
 import static java.util.Objects.requireNonNull;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
@@ -141,7 +142,14 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
     @Override
     public boolean removeAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return arrayList.removeAll(collection.stream().map(JSONB::toJson).collect(toList()));
+
+        boolean removeAll = true;
+        for (Object object : collection) {
+            if (!this.remove(object)) {
+                removeAll = false;
+            }
+        }
+        return removeAll;
     }
 
     @Override
@@ -212,15 +220,13 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
     @Override
     public boolean containsAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return arrayList.containsAll(collection.stream()
-                .map(s -> JsonObjectCouchbaseUtil.toJson(JSONB, s))
-                .collect(toList()));
+        return collection.stream().map(this::contains).allMatch(TRUE::equals);
     }
 
     @Override
     public boolean contains(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.contains(JsonObjectCouchbaseUtil.toJson(JSONB, o));
+        return indexOf(o) != NOT_FOUND;
     }
 
     @Override
