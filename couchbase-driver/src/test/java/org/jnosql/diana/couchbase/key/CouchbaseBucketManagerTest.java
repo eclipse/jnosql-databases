@@ -94,6 +94,15 @@ public class CouchbaseBucketManagerTest {
         assertEquals(userSoro, soro.get().get(User.class));
     }
 
+
+    @Test
+    public void shouldPutPrimitivesValues() {
+        keyValueEntityManager.put("integer", 1);
+        Optional<Value> integer = keyValueEntityManager.get("integer");
+        assertTrue(integer.isPresent());
+        assertEquals(Integer.valueOf(1), integer.get().get(Integer.class));
+    }
+
     @Test
     public void shouldPutValueTtl() throws InterruptedException {
 
