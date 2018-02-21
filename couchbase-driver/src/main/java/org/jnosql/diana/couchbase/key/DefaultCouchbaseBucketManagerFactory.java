@@ -67,6 +67,12 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(valueValue, "valueValue is required");
         requireNonNull(keyValue, "keyValue is required");
+
+        if(!String.class.isAssignableFrom(keyValue)) {
+            throw new UnsupportedOperationException("Couchbase Map does not support a not String key instead of: "
+            + keyValue);
+        }
+
         return new CouchbaseMap<>(getBucket(bucketName), bucketName, keyValue, valueValue);
     }
 
@@ -77,6 +83,17 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(key, "key is required");
         requireNonNull(valueValue, "valueValue is required");
         requireNonNull(keyValue, "keyValue is required");
+
+        if(!String.class.isAssignableFrom(keyValue)) {
+            throw new UnsupportedOperationException("Couchbase Map does not support a not String key instead of: "
+                    + keyValue);
+        }
+
+        if (JsonValueCheck.checkType(valueValue)) {
+            return (Map<K, V>)
+                    new com.couchbase.client.java.datastructures.collections.CouchbaseMap<V>(key, getBucket(bucketName));
+        }
+
         return new CouchbaseMap<>(getBucket(bucketName), key, keyValue, valueValue);
     }
 
@@ -121,7 +138,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
         if (JsonValueCheck.checkType(clazz)) {
-            return new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(bucketName + QUEUE,
+            return new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(key + QUEUE,
                     getBucket(bucketName));
         } else {
             return new CouchbaseQueue<>(getBucket(bucketName), key, clazz);
@@ -135,7 +152,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
         if (JsonValueCheck.checkType(clazz) && !JsonValue.class.isAssignableFrom(clazz)) {
-            return new CouchbaseArraySet<>(bucketName + SET, getBucket(key));
+            return new CouchbaseArraySet<>(key + SET, getBucket(key));
         } else {
             return new CouchbaseSet<>(getBucket(key), bucketName, clazz);
         }
@@ -148,7 +165,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
         if (JsonValueCheck.checkType(clazz)) {
-            return new CouchbaseArrayList<>(bucketName + LIST, getBucket(key));
+            return new CouchbaseArrayList<>(key + LIST, getBucket(key));
         } else {
             return new CouchbaseList<>(getBucket(bucketName), key, clazz);
         }
