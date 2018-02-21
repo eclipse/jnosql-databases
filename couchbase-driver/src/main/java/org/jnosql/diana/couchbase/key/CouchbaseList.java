@@ -42,6 +42,7 @@ import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactor
  */
 class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
 
+    private static final int NOT_FOUND = -1;
     private final String bucketName;
     private final CouchbaseArrayList<JsonObject> arrayList;
 
@@ -187,7 +188,12 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
     @Override
     public boolean remove(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.remove(JsonObjectCouchbaseUtil.toJson(JSONB, o));
+        int index = getIndex(o);
+        if (index >= 0) {
+            arrayList.remove(index);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -209,5 +215,17 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
         requireNonNull(collection, "collection is required");
         List<JsonObject> objects = collection.stream().map(s -> JsonObjectCouchbaseUtil.toJson(JSONB, s)).collect(toList());
         return arrayList.addAll(i, objects);
+    }
+
+    private int getIndex(Object o) {
+        int index = 0;
+        for (JsonObject jsonObject : arrayList) {
+            if (jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
+                return index;
+            }
+            index++;
+        }
+
+        return NOT_FOUND;
     }
 }
