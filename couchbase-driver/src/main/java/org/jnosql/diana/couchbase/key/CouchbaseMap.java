@@ -20,13 +20,13 @@ import org.jnosql.diana.api.Value;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 
@@ -54,7 +54,7 @@ class CouchbaseMap<K, V> implements Map<K, V> {
         this.bucketName = bucketName + ":map";
         this.valueClass = valueClass;
         this.keyClass = keyClass;
-        map = new com.couchbase.client.java.datastructures.collections.CouchbaseMap<JsonObject>(this.bucketName, bucket);
+        map = new com.couchbase.client.java.datastructures.collections.CouchbaseMap<>(this.bucketName, bucket);
     }
 
     @Override
@@ -120,7 +120,7 @@ class CouchbaseMap<K, V> implements Map<K, V> {
     @Override
     public boolean containsValue(Object value) {
         Objects.requireNonNull(value, "key is required");
-        return map.containsValue(JSONB.toJson(value));
+        return values().stream().anyMatch(value::equals);
     }
 
     @Override
@@ -132,9 +132,17 @@ class CouchbaseMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-        return map.values().stream()
-                .map(s -> JSONB.fromJson(s.toString(), valueClass))
-                .collect(toList());
+
+        Collection<V> values = new ArrayList<>();
+
+        for (Object object : map.values()) {
+            if(object instanceof Map) {
+                values.add(JSONB.fromJson(JsonObject.from(Map.class.cast(object)).toString(), valueClass));
+            } else if(object instanceof JsonObject) {
+                values.add(JSONB.fromJson(JsonObject.class.cast(object).toString(), valueClass));
+            }
+        }
+        return values;
     }
 
     @Override
