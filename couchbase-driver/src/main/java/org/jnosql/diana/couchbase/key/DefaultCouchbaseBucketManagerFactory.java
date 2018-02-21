@@ -72,8 +72,14 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
             throw new UnsupportedOperationException("Couchbase Map does not support a not String key instead of: "
             + keyValue);
         }
+        if (JsonValueCheck.checkType(valueValue)) {
+            return (Map<K, V>)
+                    new com.couchbase.client.java.datastructures.collections.
+                            CouchbaseMap<V>(bucketName + ":map", getBucket(bucketName));
+        } else {
+            return new CouchbaseMap<>(getBucket(bucketName), bucketName, keyValue, valueValue);
+        }
 
-        return new CouchbaseMap<>(getBucket(bucketName), bucketName, keyValue, valueValue);
     }
 
     @Override

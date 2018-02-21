@@ -80,6 +80,6 @@ public class DefaultCouchbaseBucketManagerFactoryTest {
         assertTrue(factory.getMap("jnosql", String.class, User.class) instanceof CouchbaseMap);
         assertTrue(factory.getMap("jnosql", "jnosql", String.class, String.class) instanceof
                 com.couchbase.client.java.datastructures.collections.CouchbaseMap);
-        assertTrue(factory.getMap("jnosql", "jnosql", String.class, User.class) instanceof CouchbaseArrayList);
+        assertTrue(factory.getMap("jnosql", "jnosql", String.class, User.class) instanceof CouchbaseMap);
     }
 }
