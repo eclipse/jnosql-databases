@@ -159,7 +159,13 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
     @Override
     public int lastIndexOf(Object o) {
         requireNonNull(o, "object is required");
-        return arrayList.lastIndexOf(JsonObjectCouchbaseUtil.toJson(JSONB, o));
+        for (int index = arrayList.size() -1; index >= 0; index--) {
+            JsonObject jsonObject = arrayList.get(index);
+            if (jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
+                return index;
+            }
+        }
+        return NOT_FOUND;
     }
 
     @Override
@@ -228,4 +234,5 @@ class CouchbaseList<T> extends CouchbaseCollection<T> implements List<T> {
 
         return NOT_FOUND;
     }
+
 }
