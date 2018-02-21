@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.couchbase.key;
 
+import org.hamcrest.Matchers;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
@@ -21,9 +22,16 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CouchbaseMapTest {
     private BucketManagerFactory entityManagerFactory;
@@ -70,5 +78,46 @@ public class CouchbaseMapTest {
         assertFalse(vertebrates.containsValue(fishes));
     }
 
+
+    @Test
+    public void shouldRemove() {
+        Map<String, User> vertebrates = entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class);
+        vertebrates.put("mammals", mammals);
+        assertNotNull(vertebrates.remove("mammals"));
+        assertNull(vertebrates.remove("mammals"));
+    }
+
+    @Test
+    public void shouldPutAll() {
+        Map<String, User> vertebrates = entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class);
+        Map<String, User> map = Collections.singletonMap("mammals", mammals);
+        vertebrates.putAll(map);
+
+        assertFalse(vertebrates.isEmpty());
+        assertTrue(vertebrates.containsKey("mammals"));
+    }
+
+    @Test
+    public void shouldKeySet() {
+        Map<String, User> vertebrates = entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class);
+        vertebrates.put("mammals", mammals);
+
+        Set<String> keys = vertebrates.keySet();
+        assertFalse(keys.isEmpty());
+        assertTrue(keys.stream().anyMatch(String.class::isInstance));
+    }
+
+    @Test
+    public void shouldEntrySet() {
+        Map<String, User> vertebrates = entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class);
+        vertebrates.put("mammals", mammals);
+
+        Set<Map.Entry<String, User>> entries = vertebrates.entrySet();
+        assertFalse(entries.isEmpty());
+        assertEquals(1, entries.size());
+        Map.Entry<String, User> entry = entries.stream().findFirst().get();
+        assertEquals("mammals", entry.getKey());
+        assertEquals(mammals, entry.getValue());
+    }
 
 }
