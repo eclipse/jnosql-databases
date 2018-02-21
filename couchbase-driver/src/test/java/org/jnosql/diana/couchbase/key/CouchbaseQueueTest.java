@@ -22,10 +22,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseQueueTest {
     private BucketManagerFactory keyValueEntityManagerFactory;
@@ -68,8 +77,34 @@ public class CouchbaseQueueTest {
         assertNotNull(users.peek());
         User otavio2 = users.remove();
         assertEquals(otavio.getNickName(), otavio2.getNickName());
-        boolean happendException = false;
         assertNull(users.remove());
+    }
+
+    @Test
+    public void shouldShouldAddAll() {
+        users.addAll(singleton(new User("Otavio")));
+        assertEquals(1, users.size());
+    }
+
+    @Test
+    public void shouldRemoveAll() {
+        users.addAll(singleton(new User("Otavio")));
+        assertTrue(users.removeAll(singleton(new User("Otavio"))));
+        assertTrue(users.isEmpty());
+    }
+
+    @Test
+    public void shouldContains() {
+        users.add(new User("Otavio"));
+        assertTrue(users.contains(new User("Otavio")));
+        assertFalse(users.contains(new User("Poliana")));
+    }
+
+    @Test
+    public void shouldContainsAll() {
+        users.add(new User("Otavio"));
+        assertTrue(users.containsAll(singleton(new User("Otavio"))));
+        assertFalse(users.containsAll(singleton(new User("Poliana"))));
     }
 
     @Test
@@ -85,6 +120,32 @@ public class CouchbaseQueueTest {
             happendException = true;
         }
         assertTrue(happendException);
+    }
+
+    @Test
+    public void shouldRetains(){
+        users.addAll(asList(new User("Otavio")));
+        List<User> newUsers = new ArrayList<>();
+        newUsers.add(new User("Otavio"));
+        newUsers.add(new User("gama"));
+        users.retainAll(newUsers);
+        assertEquals(1, newUsers.size());
+    }
+
+    @Test
+    public void shouldToArray() {
+        users.addAll(asList(new User("Otavio"), new User("felipe")));
+        Object[] objects = users.toArray();
+        assertEquals(2, objects.length);
+        assertTrue(Stream.of(objects).allMatch(User.class::isInstance));
+    }
+
+    @Test
+    public void shouldToArrayParams() {
+        users.addAll(asList(new User("Otavio"), new User("felipe")));
+        User[] objects = users.toArray(new User[2]);
+        assertEquals(2, objects.length);
+        assertTrue(Stream.of(objects).allMatch(User.class::isInstance));
     }
 
     @SuppressWarnings("unused")

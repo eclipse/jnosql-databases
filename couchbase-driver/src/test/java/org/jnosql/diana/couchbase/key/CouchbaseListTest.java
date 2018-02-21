@@ -20,11 +20,16 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,6 +64,11 @@ public class CouchbaseListTest {
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("jnosql:list");
+    }
+
+    @AfterEach
+    public void end() {
+        fruits.clear();
     }
 
     @Test
@@ -99,7 +109,8 @@ public class CouchbaseListTest {
     @Test
     public void shouldRemove() {
         fruits.addAll(asList(banana, waterMelon));
-        fruits.remove(banana);
+        boolean remove = fruits.remove(banana);
+        assertTrue(remove);
         assertTrue(fruits.size() == 1);
         assertEquals(fruits.get(0), waterMelon);
     }
@@ -136,6 +147,7 @@ public class CouchbaseListTest {
     public void shouldReturnIndexOf() {
         fruits.addAll(asList(banana, waterMelon, banana));
         assertEquals(0, fruits.indexOf(banana));
+        assertEquals(-1, fruits.indexOf(melon));
     }
 
     @Test
@@ -161,8 +173,53 @@ public class CouchbaseListTest {
         assertThat(subList, contains(waterMelon, orange));
     }
 
-    @AfterEach
-    public void end() {
-        fruits.clear();
+
+    @Test
+    public void shouldRetains(){
+        fruits.addAll(asList(banana, waterMelon));
+        List<ProductCart> carts = new ArrayList<>();
+        carts.add(orange);
+        carts.add(banana);
+        fruits.retainAll(carts);
+        assertEquals(1, carts.size());
     }
+
+    @Test
+    public void shouldListIterator() {
+        fruits.addAll(asList(banana, waterMelon));
+        ListIterator<ProductCart> iterator = fruits.listIterator();
+        Assertions.assertNotNull(iterator);
+        AtomicInteger counter = new AtomicInteger();
+        iterator.forEachRemaining(e -> counter.incrementAndGet());
+        assertEquals(2, counter.get());
+    }
+
+    @Test
+    public void shouldListIteratorIndex() {
+        fruits.addAll(asList(banana, waterMelon));
+        ListIterator<ProductCart> iterator = fruits.listIterator(1);
+        Assertions.assertNotNull(iterator);
+        AtomicInteger counter = new AtomicInteger();
+        iterator.forEachRemaining(e -> counter.incrementAndGet());
+        assertEquals(1, counter.get());
+    }
+
+
+    @Test
+    public void shouldToArray() {
+        fruits.addAll(asList(banana, waterMelon));
+        Object[] objects = fruits.toArray();
+        assertEquals(2, objects.length);
+        assertTrue(Stream.of(objects).allMatch(ProductCart.class::isInstance));
+    }
+
+    @Test
+    public void shouldToArrayParams() {
+        fruits.addAll(asList(banana, waterMelon));
+        ProductCart[] objects = fruits.toArray(new ProductCart[2]);
+        assertEquals(2, objects.length);
+        assertTrue(Stream.of(objects).allMatch(ProductCart.class::isInstance));
+    }
+
+
 }

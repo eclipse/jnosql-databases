@@ -15,6 +15,7 @@
 package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.document.json.JsonObject;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
+import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactory.QUEUE;
 
 /**
  * The couchbase implementation to {@link Queue}
@@ -33,15 +35,15 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> the object to be stored.
  */
-public class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T> {
+class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T> {
 
-
+    private static final int NOT_FOUND = -1;
     private final String bucketName;
-    private final com.couchbase.client.java.datastructures.collections.CouchbaseQueue<String> queue;
+    private final com.couchbase.client.java.datastructures.collections.CouchbaseQueue<JsonObject> queue;
 
     CouchbaseQueue(Bucket bucket, String bucketName, Class<T> clazz) {
         super(clazz);
-        this.bucketName = bucketName + ":queue";
+        this.bucketName = bucketName + QUEUE;
         queue = new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(this.bucketName, bucket);
     }
 
@@ -76,7 +78,7 @@ public class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T
     @Override
     public boolean offer(T t) {
         requireNonNull(t, "object is required");
-        return queue.offer(JSONB.toJson(t));
+        return queue.offer(JsonObjectCouchbaseUtil.toJson(JSONB, t));
     }
 
     @Override
@@ -86,22 +88,31 @@ public class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T
 
     @Override
     public T poll() {
-        String json = queue.poll();
-        return getT(json);
+        JsonObject json = queue.poll();
+        if (json == null) {
+            return null;
+        }
+        return getT(json.toString());
     }
 
 
     @Override
     public T peek() {
-        String json = queue.peek();
-        return getT(json);
+        JsonObject json = queue.peek();
+        if (json == null) {
+            return null;
+        }
+        return getT(json.toString());
     }
 
 
     @Override
     public T element() {
-        String json = queue.element();
-        return getT(json);
+        JsonObject json = queue.element();
+        if (json == null) {
+            return null;
+        }
+        return getT(json.toString());
     }
 
     private T getT(String json) {
@@ -114,32 +125,43 @@ public class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T
     @Override
     public boolean removeAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return queue.removeAll(collection.stream().map(JSONB::toJson).collect(Collectors.toList()));
+        boolean removeAll = true;
+        for (Object object : collection) {
+            if(!remove(object)) {
+                removeAll = false;
+            }
+        }
+        return removeAll;
     }
 
     @Override
     public boolean remove(Object o) {
         Objects.requireNonNull(o, "object is required");
-        return queue.remove(JSONB.toJson(o));
+        return queue.removeIf(e -> e.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString()));
     }
 
     @Override
     public boolean contains(Object o) {
         Objects.requireNonNull(o, "object is required");
-        return queue.contains(JSONB.toJson(o));
+        for (JsonObject jsonObject : queue) {
+            if(jsonObject.toString().equals(JsonObjectCouchbaseUtil.toJson(JSONB, o).toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public Iterator<T> iterator() {
         return StreamSupport.stream(queue.spliterator(), false)
-                .map(fromJSON())
+                .map(s -> JSONB.fromJson(s.toString(), clazz))
                 .collect(Collectors.toList()).iterator();
     }
 
     @Override
     public Object[] toArray() {
         return StreamSupport.stream(queue.spliterator(), false)
-                .map(fromJSON())
+                .map(s -> JSONB.fromJson(s.toString(), clazz))
                 .toArray(Object[]::new);
     }
 
@@ -147,20 +169,21 @@ public class CouchbaseQueue<T> extends CouchbaseCollection<T> implements Queue<T
     public <T1> T1[] toArray(T1[] t1s) {
         requireNonNull(t1s, "arrys is required");
         return StreamSupport.stream(queue.spliterator(), false)
-                .map(fromJSON())
+                .map(s -> JSONB.fromJson(s.toString(), clazz))
                 .toArray(size -> t1s);
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return queue.retainAll(collection.stream().map(JSONB::toJson).collect(Collectors.toList()));
+        collection.removeIf(e -> !this.contains(e));
+        return true;
     }
 
     @Override
     public boolean containsAll(Collection<?> collection) {
         requireNonNull(collection, "collection is required");
-        return queue.containsAll(collection.stream().map(JSONB::toJson).collect(Collectors.toList()));
+        return collection.stream().allMatch(this::contains);
     }
 
 

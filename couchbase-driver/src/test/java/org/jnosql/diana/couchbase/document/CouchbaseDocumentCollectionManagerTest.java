@@ -14,6 +14,11 @@
  */
 package org.jnosql.diana.couchbase.document;
 
+import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.query.Select;
+import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.query.dsl.Expression;
+import com.couchbase.client.java.query.dsl.path.GroupByPath;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -36,11 +41,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -195,6 +202,47 @@ public class CouchbaseDocumentCollectionManagerTest {
         return entity;
     }
 
+
+    @Test
+    public void shouldRunN1Ql() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql");
+        assertFalse(entities.isEmpty());
+    }
+
+    @Test
+    public void shouldRunN1QlParameters() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        JsonObject params = JsonObject.create().put("name", "Poliana");
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql where name = $name", params);
+        assertFalse(entities.isEmpty());
+        assertEquals(1, entities.size());
+    }
+
+    @Test
+    public void shouldRunN1QlStatement() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+
+        Statement statement = Select.select("*").from("jnosql").where(x("name").eq("\"Poliana\""));
+        List<DocumentEntity> entities = entityManager.n1qlQuery(statement);
+        assertFalse(entities.isEmpty());
+        assertEquals(1, entities.size());
+    }
+
+    @Test
+    public void shouldRunN1QlStatementParams() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+
+        Statement statement = Select.select("*").from("jnosql").where(x("name").eq("$name"));
+        JsonObject params = JsonObject.create().put("name", "Poliana");
+        List<DocumentEntity> entities = entityManager.n1qlQuery(statement, params);
+        assertFalse(entities.isEmpty());
+        assertEquals(1, entities.size());
+    }
 
 
     private DocumentEntity getEntity() {
