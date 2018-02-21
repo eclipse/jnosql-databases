@@ -18,7 +18,6 @@ package org.jnosql.diana.couchbase.key;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.RawJsonDocument;
-import com.couchbase.client.java.document.json.JsonArray;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.document.json.JsonValue;
 import com.couchbase.client.java.error.DocumentDoesNotExistException;
@@ -35,7 +34,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.jnosql.diana.driver.ValueUtil.convert;
@@ -86,7 +84,7 @@ public class CouchbaseBucketManager implements BucketManager {
         if (JsonValue.checkType(entity.get())) {
             RawJsonDocument jsonDocument = RawJsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(),
                     JSONB.toJson(entity.get().toString()));
-            
+
             bucket.upsert(jsonDocument);
         } else {
             JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.get());
