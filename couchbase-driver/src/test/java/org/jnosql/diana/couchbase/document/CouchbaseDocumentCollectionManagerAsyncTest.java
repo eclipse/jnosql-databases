@@ -98,7 +98,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         Document id = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
+        assertTrue(entities.isEmpty());
 
     }
 
@@ -115,7 +115,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         Document id = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
+        assertTrue(entities.isEmpty());
 
     }
 
