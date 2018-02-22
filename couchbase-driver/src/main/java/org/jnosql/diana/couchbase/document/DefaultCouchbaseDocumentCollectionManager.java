@@ -38,7 +38,6 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toSet;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
@@ -81,7 +80,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
         String prefix = getPrefix(id, entity.getName());
         jsonObject.put(KEY_FIELD, prefix);
-        bucket.upsert(JsonDocument.create(prefix, jsonObject), ttl.toMillis(), MILLISECONDS);
+        bucket.upsert(JsonDocument.create(prefix, (int) ttl.getSeconds(), jsonObject));
         return entity;
     }
 
