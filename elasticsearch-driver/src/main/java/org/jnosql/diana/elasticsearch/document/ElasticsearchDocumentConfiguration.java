@@ -15,6 +15,8 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -44,6 +47,8 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
 
     private List<HttpHost> httpHosts = new ArrayList<>();
 
+    private List<Header> headers = new ArrayList<>();
+
 
     public ElasticsearchDocumentConfiguration() {
 
@@ -59,8 +64,6 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .map(ElasticsearchAddress::toHttpHost)
                 .forEach(httpHosts::add);
     }
-
-
 
 
     @Override
@@ -99,8 +102,30 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
     }
 
 
+    /**
+     * returns an {@link ElasticsearchDocumentCollectionManagerFactory} instance
+     *
+     * @param builder the builder {@link RestClientBuilder}
+     * @return a manager factory instance
+     * @throws NullPointerException when builder is null
+     */
+    public ElasticsearchDocumentCollectionManagerFactory get(RestClientBuilder builder) {
+        Objects.requireNonNull(builder, "builder is required");
+        RestHighLevelClient client = new RestHighLevelClient(builder);
+        return new ElasticsearchDocumentCollectionManagerFactory(client);
+    }
 
 
-
+    /**
+     * returns an {@link ElasticsearchDocumentCollectionManagerFactory} instance
+     *
+     * @param client the client {@link RestHighLevelClient}
+     * @return a manager factory instance
+     * @throws NullPointerException when client is null
+     */
+    public ElasticsearchDocumentCollectionManagerFactory get(RestHighLevelClient client) {
+        Objects.requireNonNull(client, "client is required");
+        return new ElasticsearchDocumentCollectionManagerFactory(client);
+    }
 
 }
