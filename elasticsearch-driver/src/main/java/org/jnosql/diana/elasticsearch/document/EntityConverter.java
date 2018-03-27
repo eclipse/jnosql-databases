@@ -84,6 +84,7 @@ final class EntityConverter {
 
 
         SearchRequest searchRequest = new SearchRequest(index);
+        searchRequest.types(query.getDocumentCollection());
         if (select.hasQuery()) {
             setQueryBuilder(query, select, searchRequest);
         }
@@ -116,6 +117,7 @@ final class EntityConverter {
 
         if (select.hasStatement()) {
             SearchRequest searchRequest = new SearchRequest(index);
+            searchRequest.types(query.getDocumentCollection());
             if (select.hasQuery()) {
                 setQueryBuilder(query, select, searchRequest);
             }
