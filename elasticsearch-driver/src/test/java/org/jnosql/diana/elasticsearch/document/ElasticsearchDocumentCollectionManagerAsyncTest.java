@@ -25,6 +25,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,6 +37,7 @@ import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLL
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -138,4 +140,15 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
     }
 
 
+    @Test
+    public void shouldInsertTTL() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            entityManagerAsync.insert(getEntity(), Duration.ofSeconds(1L));
+        });
+
+        assertThrows(UnsupportedOperationException.class, () -> {
+            entityManagerAsync.insert(getEntity(), Duration.ofSeconds(1L), l -> {
+            });
+        });
+    }
 }
