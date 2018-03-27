@@ -40,7 +40,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
 
     private static final String FILE_CONFIGURATION = "diana-elasticsearch.properties";
     private static final String HOST_PREFIX = "elasticsearch-host-";
-    private static final int DEFAULT_PORT = 9300;
+    private static final int DEFAULT_PORT = 9200;
 
     private List<HttpHost> httpHosts = new ArrayList<>();
 
