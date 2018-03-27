@@ -15,22 +15,27 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -92,7 +97,7 @@ final class EntityConverter {
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
-    static List<DocumentEntity> query(DocumentQuery query, Client client, String index) {
+    static List<DocumentEntity> query(DocumentQuery query, RestHighLevelClient client, String index) {
         QueryConverter.QueryConverterResult select = QueryConverter.select(query);
 
 
@@ -132,20 +137,25 @@ final class EntityConverter {
                 .forEach(entities::add);
     }
 
-    private static void executeId(DocumentQuery query, Client client, String index,
+    private static void executeId(DocumentQuery query, RestHighLevelClient client, String index,
                                   QueryConverter.QueryConverterResult select,
-                                  List<DocumentEntity> entities) throws InterruptedException, ExecutionException {
+                                  List<DocumentEntity> entities) throws IOException {
 
-        MultiGetResponse multiGetItemResponses = client
-                .prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
-                .execute().get();
+        String type = query.getDocumentCollection();
+        MultiGetRequest multiGetRequest = new MultiGetRequest();
 
-        Stream.of(multiGetItemResponses.getResponses())
+        select.getIds().stream()
+                .map(id -> new MultiGetRequest.Item(index, type, id))
+                .forEach(multiGetRequest::add);
+
+        MultiGetResponse responses = client.multiGet(multiGetRequest);
+        Stream.of(responses.getResponses())
                 .map(MultiGetItemResponse::getResponse)
-                .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
+                .map(g -> new ElasticsearchEntry(g.getId(), g.getIndex(), g.getSourceAsMap()))
                 .filter(ElasticsearchEntry::isNotEmpty)
                 .map(ElasticsearchEntry::toEntity)
                 .forEach(entities::add);
+
     }
 
     static void queryAsync(DocumentQuery query, Client client, String index, Consumer<List<DocumentEntity>> callBack) {
