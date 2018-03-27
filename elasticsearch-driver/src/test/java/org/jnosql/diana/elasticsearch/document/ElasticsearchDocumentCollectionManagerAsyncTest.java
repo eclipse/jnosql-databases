@@ -35,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ElasticsearchDocumentCollectionManagerAsyncTest {
-    public static final String COLLECTION_NAME = "person";
+
+    private static final String COLLECTION_NAME = "person";
+    private static final String INDEX = "person";
 
     private DocumentCollectionManagerAsync entityManagerAsync;
 
@@ -46,7 +48,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         ElasticsearchDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManagerAsync = managerFactory.getAsync(COLLECTION_NAME);
-        entityManager = managerFactory.get(COLLECTION_NAME);
+        entityManager = managerFactory.get(INDEX);
         DocumentEntity documentEntity = getEntity();
         Document id = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
@@ -56,7 +58,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
 
     @Test
-    public void shouldSaveAsync() throws InterruptedException {
+    public void shouldInsertAsync() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entityManagerAsync.insert(entity);
 

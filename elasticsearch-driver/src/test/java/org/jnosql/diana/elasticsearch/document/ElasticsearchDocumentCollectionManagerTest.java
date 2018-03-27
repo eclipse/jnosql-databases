@@ -44,7 +44,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ElasticsearchDocumentCollectionManagerTest {
 
 
-    public static final String COLLECTION_NAME = "person";
+    private static final String COLLECTION_NAME = "person";
+    private static final String INDEX = "person";
 
     private DocumentCollectionManager entityManager;
 
@@ -52,7 +53,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     public void setUp() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManager = managerFactory.get(COLLECTION_NAME);
+        entityManager = managerFactory.get(INDEX);
 
     }
 
