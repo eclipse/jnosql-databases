@@ -123,17 +123,7 @@ final class EntityConverter {
 
         SearchRequest searchRequest = new SearchRequest(query.getDocumentCollection());
         if (select.hasQuery()) {
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.query(select.getStatement());
-            searchRequest.source(searchSourceBuilder);
-            int from = (int) query.getFirstResult();
-            int size = (int) query.getMaxResults();
-            if (from > 0) {
-                searchSourceBuilder.from(from);
-            }
-            if (size > 0) {
-                searchSourceBuilder.size(size);
-            }
+            setQueryBuilder(query, select, searchRequest);
         }
 
         SearchResponse response = client.search(searchRequest);
@@ -144,6 +134,20 @@ final class EntityConverter {
                 .filter(ElasticsearchEntry::isNotEmpty)
                 .map(ElasticsearchEntry::toEntity)
                 .forEach(entities::add);
+    }
+
+    private static void setQueryBuilder(DocumentQuery query, QueryConverterResult select, SearchRequest searchRequest) {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(select.getStatement());
+        searchRequest.source(searchSourceBuilder);
+        int from = (int) query.getFirstResult();
+        int size = (int) query.getMaxResults();
+        if (from > 0) {
+            searchSourceBuilder.from(from);
+        }
+        if (size > 0) {
+            searchSourceBuilder.size(size);
+        }
     }
 
     private static void executeId(DocumentQuery query, RestHighLevelClient client, String index,
