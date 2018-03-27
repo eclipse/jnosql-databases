@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,9 +66,16 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldInsertTTL() {
+        assertThrows(UnsupportedOperationException.class, () ->{
+            entityManager.insert(getEntity(), Duration.ofSeconds(1L));
+        });
+    }
+
+    @Test
     public void shouldReturnAll() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        entityManager.insert(entity);
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> result = entityManager.select(query);
         assertFalse(result.isEmpty());
@@ -76,7 +84,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     @Test
     public void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         DocumentEntity updated = entityManager.update(entity);
