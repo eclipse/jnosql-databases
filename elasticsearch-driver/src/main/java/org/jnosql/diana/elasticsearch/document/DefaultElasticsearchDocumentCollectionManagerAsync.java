@@ -29,6 +29,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +152,10 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
 
     @Override
     public void close() {
-
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error when close the client", e);
+        }
     }
 }
