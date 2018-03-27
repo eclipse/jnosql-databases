@@ -128,4 +128,6 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         return new ElasticsearchDocumentCollectionManagerFactory(client);
     }
 
+
+
 }
