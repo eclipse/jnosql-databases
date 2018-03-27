@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ElasticsearchDocumentCollectionManagerTest {
 
 
-    public static final String COLLECTION_NAME = "account";
+    public static final String COLLECTION_NAME = "person";
 
     private DocumentCollectionManager entityManager;
 
