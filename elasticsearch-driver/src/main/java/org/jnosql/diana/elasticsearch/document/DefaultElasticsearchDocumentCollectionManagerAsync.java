@@ -111,6 +111,10 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = EntityConverter.query(select, client, index);
+        if(entities.isEmpty()) {
+            callBack.accept(null);
+            return;
+        }
         BulkRequest bulk = new BulkRequest();
 
         entities.stream()
