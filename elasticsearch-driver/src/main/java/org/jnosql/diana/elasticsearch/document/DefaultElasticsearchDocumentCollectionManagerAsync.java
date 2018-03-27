@@ -16,8 +16,10 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -113,14 +115,15 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = EntityConverter.query(select, client, index);
+        BulkRequest bulk = new BulkRequest();
 
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
         entities.stream()
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))
-                .map(id -> client.prepareDelete(index, query.getDocumentCollection(), id))
-                .forEach(bulkRequest::add);
+                .map(id -> new DeleteRequest(index, query.getDocumentCollection(), id))
+                .forEach(bulk::add);
 
-        ActionListener<BulkResponse> s = new ActionListener<BulkResponse>() {
+
+        ActionListener<BulkResponse> listener = new ActionListener<BulkResponse>() {
             @Override
             public void onResponse(BulkResponse bulkItemResponses) {
                 callBack.accept(null);
@@ -131,7 +134,8 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
                 throw new ExecuteAsyncQueryException("An error when delete on elasticsearch", e);
             }
         };
-        bulkRequest.execute().addListener(s);
+        
+        client.bulkAsync(bulk, listener);
     }
 
     @Override
