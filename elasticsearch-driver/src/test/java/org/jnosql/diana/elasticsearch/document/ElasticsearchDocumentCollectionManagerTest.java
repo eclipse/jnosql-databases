@@ -189,7 +189,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of("account");
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         entity.add(Document.of("_id", "ids"));
         List<List<Document>> documents = new ArrayList<>();
 
