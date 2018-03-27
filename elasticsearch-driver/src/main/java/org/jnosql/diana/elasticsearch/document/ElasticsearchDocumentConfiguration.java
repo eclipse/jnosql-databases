@@ -15,9 +15,10 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -137,6 +138,8 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .collect(toMap(k -> k.replace(SETTINGS_PREFIX, ""), configurations::get))
                 .forEach(builder::put);
 
+
+        RestClient.builder()
         PreBuiltTransportClient transportClient = new PreBuiltTransportClient(builder.build());
         hosts.forEach(transportClient::addTransportAddress);
         return new ElasticsearchDocumentCollectionManagerFactory(transportClient);
@@ -153,23 +156,8 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         return get(settings);
     }
 
-    /**
-     * Returns an {@link ElasticsearchDocumentCollectionManagerFactory} instance from {@link Settings}
-     *
-     * @param settings the settins
-     * @return the ElasticsearchDocumentCollectionManagerFactory instance
-     * @throws NullPointerException when settins is null
-     */
-    public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
-        return getFactory(requireNonNull(settings, "settings is required"));
-    }
 
 
-    private ElasticsearchDocumentCollectionManagerFactory getFactory(Settings settings) {
-        PreBuiltTransportClient transportClient = new PreBuiltTransportClient(settings);
-        hosts.forEach(transportClient::addTransportAddress);
-        return new ElasticsearchDocumentCollectionManagerFactory(transportClient);
-    }
 
     private Settings getSettings() {
         Settings.Builder builder = Settings.builder();
