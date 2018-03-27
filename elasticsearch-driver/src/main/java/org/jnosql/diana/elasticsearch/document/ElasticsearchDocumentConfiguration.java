@@ -16,7 +16,6 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
@@ -63,8 +62,8 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         configurations.keySet().stream()
                 .filter(k -> k.startsWith(HOST_PREFIX))
                 .sorted()
-                .map(h -> ElastissearchAdress.of(configurations.get(h), DEFAULT_PORT))
-                .map(ElastissearchAdress::toTransportAddress)
+                .map(h -> ElasticsearchAddress.of(configurations.get(h), DEFAULT_PORT))
+                .map(ElasticsearchAddress::toTransportAddress)
                 .forEach(hosts::add);
 
         settings.putAll(configurations
@@ -127,8 +126,8 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         configurations.keySet().stream()
                 .filter(k -> k.startsWith(HOST_PREFIX))
                 .sorted()
-                .map(h -> ElastissearchAdress.of(configurations.get(h), DEFAULT_PORT))
-                .map(ElastissearchAdress::toTransportAddress)
+                .map(h -> ElasticsearchAddress.of(configurations.get(h), DEFAULT_PORT))
+                .map(ElasticsearchAddress::toTransportAddress)
                 .forEach(hosts::add);
 
         Settings.Builder builder = Settings.builder();

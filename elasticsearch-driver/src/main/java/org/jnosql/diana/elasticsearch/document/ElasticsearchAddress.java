@@ -14,43 +14,35 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.transport.TransportAddress;
+import org.apache.http.HttpHost;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-final class ElastissearchAdress {
+final class ElasticsearchAddress {
 
     private final String host;
 
     private final int port;
 
-    private ElastissearchAdress(String address, int defaultPort) {
+    private ElasticsearchAddress(String address, int defaultPort) {
         String[] values = address.split(":");
 
         this.host = values[0];
         this.port = values.length == 2 ? Integer.valueOf(values[1]) : defaultPort;
     }
 
-    public TransportAddress toTransportAddress() {
-        try {
-            return new InetSocketTransportAddress(InetAddress.getByName(host), port);
-        } catch (UnknownHostException e) {
-            throw new ElasticsearchException("An error when try to load the address: " + host, e);
-        }
+    public HttpHost toTransportAddress() {
+            return new HttpHost(host, port);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ElastissearchAdress{");
+        final StringBuilder sb = new StringBuilder("ElasticsearchAddress{");
         sb.append("host='").append(host).append('\'');
         sb.append(", port=").append(port);
         sb.append('}');
         return sb.toString();
     }
 
-    static ElastissearchAdress of(String address, int defaultPort) {
-        return new ElastissearchAdress(address, defaultPort);
+    static ElasticsearchAddress of(String address, int defaultPort) {
+        return new ElasticsearchAddress(address, defaultPort);
     }
 }
