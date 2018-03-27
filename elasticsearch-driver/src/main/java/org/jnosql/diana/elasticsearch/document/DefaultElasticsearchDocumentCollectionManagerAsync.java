@@ -18,6 +18,7 @@ package org.jnosql.diana.elasticsearch.document;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
@@ -55,12 +56,12 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void insert(DocumentEntity entity){
+    public void insert(DocumentEntity entity) {
         insert(entity, NOOP);
     }
 
     @Override
-    public void insert(DocumentEntity entity, Duration ttl){
+    public void insert(DocumentEntity entity, Duration ttl) {
         insert(entity, ttl, e -> {
         });
     }
@@ -72,11 +73,8 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
-        client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).execute()
-                .addListener(new SaveActionListener(callBack, entity));
-
-
+        IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
+        client.indexAsync(request, new SaveActionListener(callBack, entity));
     }
 
     @Override
@@ -100,7 +98,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack){
+    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
         insert(entity, callBack);
     }
 
