@@ -16,7 +16,7 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -47,11 +47,11 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
 
     protected static final Jsonb JSONB = JsonbBuilder.create();
 
-    private final Client client;
+    private final RestHighLevelClient client;
 
     private final String index;
 
-    DefaultElasticsearchDocumentCollectionManager(Client client, String index) {
+    DefaultElasticsearchDocumentCollectionManager(RestHighLevelClient client, String index) {
         this.client = client;
         this.index = index;
     }

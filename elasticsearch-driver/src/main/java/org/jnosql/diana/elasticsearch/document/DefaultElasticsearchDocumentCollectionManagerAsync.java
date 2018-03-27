@@ -18,7 +18,7 @@ package org.jnosql.diana.elasticsearch.document;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.Document;
@@ -46,10 +46,10 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     private static final Consumer<DocumentEntity> NOOP = e -> {
     };
 
-    private final Client client;
+    private final RestHighLevelClient client;
     private final String index;
 
-    DefaultElasticsearchDocumentCollectionManagerAsync(Client client, String index) {
+    DefaultElasticsearchDocumentCollectionManagerAsync(RestHighLevelClient client, String index) {
         this.client = client;
         this.index = index;
     }
