@@ -79,17 +79,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
 
     @Override
     public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) {
-        requireNonNull(entity, "entity is required");
-        requireNonNull(ttl, "ttl is required");
-        requireNonNull(callBack, "callBack is required");
-        Document id = entity.find(ID_FIELD)
-                .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
-        Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
-        client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).
-                setTTL(timeValueMillis(ttl.toMillis())).execute()
-                .addListener(new SaveActionListener(callBack, entity));
-
+        throw new UnsupportedOperationException("The insert with TTL does not support");
     }
 
     @Override
