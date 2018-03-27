@@ -91,7 +91,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
                     String mappging = getMappging(stream);
                     RestClient lowLevelClient = client.getLowLevelClient();
                     HttpEntity entity = new NStringEntity(mappging, ContentType.APPLICATION_JSON);
-                    lowLevelClient.performRequest("PUT", "database", Collections.emptyMap(), entity);
+                    lowLevelClient.performRequest("PUT", database, Collections.emptyMap(), entity);
                 } catch (Exception ex) {
                     throw new ElasticsearchException("Error when create a new mapping", ex);
                 }
