@@ -134,7 +134,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
                 throw new ExecuteAsyncQueryException("An error when delete on elasticsearch", e);
             }
         };
-        
+
         client.bulkAsync(bulk, listener);
     }
 
