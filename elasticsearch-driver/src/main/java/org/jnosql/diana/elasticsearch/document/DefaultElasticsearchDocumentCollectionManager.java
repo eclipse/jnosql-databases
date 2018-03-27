@@ -75,22 +75,8 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
 
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
-        requireNonNull(entity, "entity is required");
-        requireNonNull(ttl, "ttl is required");
-        Document id = entity.find(ID_FIELD)
-                .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
-        Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
-        try {
-            client.prepareIndex(index, entity.getName(), id.get(String.class))
-                    .setSource(bytes)
-                    .setTTL(timeValueMillis(ttl.toMillis()))
-                    .execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new ElasticsearchException("An error to try to save with TTL entity on elasticsearch", e);
-        }
-        return entity;
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl){
+      throw new UnsupportedOperationException("The insert with TTL does not support");
     }
 
     @Override
