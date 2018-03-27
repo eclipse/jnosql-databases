@@ -29,7 +29,7 @@ final class ElasticsearchAddress {
         this.port = values.length == 2 ? Integer.valueOf(values[1]) : defaultPort;
     }
 
-    public HttpHost toTransportAddress() {
+    public HttpHost toHttpHost() {
             return new HttpHost(host, port);
     }
 

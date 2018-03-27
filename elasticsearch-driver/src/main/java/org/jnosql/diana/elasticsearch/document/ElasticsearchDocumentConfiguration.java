@@ -56,7 +56,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .filter(k -> k.startsWith(HOST_PREFIX))
                 .sorted()
                 .map(h -> ElasticsearchAddress.of(configurations.get(h), DEFAULT_PORT))
-                .map(ElasticsearchAddress::toTransportAddress)
+                .map(ElasticsearchAddress::toHttpHost)
                 .forEach(httpHosts::add);
     }
 
@@ -79,7 +79,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .filter(k -> k.startsWith(HOST_PREFIX))
                 .sorted()
                 .map(h -> ElasticsearchAddress.of(configurations.get(h), DEFAULT_PORT))
-                .map(ElasticsearchAddress::toTransportAddress)
+                .map(ElasticsearchAddress::toHttpHost)
                 .forEach(httpHosts::add);
 
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
