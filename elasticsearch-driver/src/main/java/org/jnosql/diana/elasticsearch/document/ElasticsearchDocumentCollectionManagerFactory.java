@@ -112,7 +112,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
 
     private boolean isExists(String database) {
         try {
-            OpenIndexResponse open = client.indices().open(new OpenIndexRequest(database));
+            client.indices().open(new OpenIndexRequest(database));
             return true;
         } catch (IOException e) {
             throw new ElasticsearchException("And error on admin access to verify if the database exists", e);
