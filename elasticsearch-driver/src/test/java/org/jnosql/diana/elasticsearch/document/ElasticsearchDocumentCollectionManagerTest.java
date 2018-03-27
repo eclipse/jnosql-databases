@@ -75,15 +75,16 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntityByName() {
+    public void shouldRemoveEntityByName() throws InterruptedException {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Document name = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
 
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-
+        TimeUnit.MICROSECONDS.sleep(100L);
         entityManager.delete(deleteQuery);
+        TimeUnit.MICROSECONDS.sleep(100L);
         List<DocumentEntity> entities = entityManager.select(query);
         System.out.println(entities);
         assertTrue(entities.isEmpty());
