@@ -15,16 +15,25 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.client.Client;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
+import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 import static java.nio.file.Files.readAllBytes;
 
@@ -40,9 +49,9 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
         DocumentCollectionManagerAsyncFactory<ElasticsearchDocumentCollectionManagerAsync> {
 
 
-    private final Client client;
+    private final RestHighLevelClient client;
 
-    ElasticsearchDocumentCollectionManagerFactory(Client client) {
+    ElasticsearchDocumentCollectionManagerFactory(RestHighLevelClient client) {
         this.client = client;
     }
 
@@ -72,24 +81,51 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
     private void initDatabase(String database) {
         boolean exists = isExists(database);
         if (!exists) {
-            URL url = ElasticsearchDocumentCollectionManagerFactory.class.getResource('/' + database + ".json");
-            if (Objects.nonNull(url)) {
-                byte[] bytes = getBytes(url);
-                client.admin().indices().prepareCreate(database).setSource(bytes).get();
+            InputStream stream = ElasticsearchDocumentCollectionManagerFactory.class.getResourceAsStream('/' + database + ".json");
+            if (Objects.nonNull(stream)) {
+                try {
+                    String mappging = getMappging(stream);
+                    RestClient lowLevelClient = client.getLowLevelClient();
+                    HttpEntity entity = new NStringEntity(mappging, ContentType.APPLICATION_JSON);
+                    lowLevelClient.performRequest("PUT", database, Collections.emptyMap(), entity);
+                } catch (Exception ex) {
+                    throw new ElasticsearchException("Error when create a new mapping", ex);
+                }
             }
         }
     }
 
+    private String getMappging(InputStream stream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = stream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        buffer.flush();
+        byte[] byteArray = buffer.toByteArray();
+
+        return new String(byteArray, StandardCharsets.UTF_8);
+    }
+
     private boolean isExists(String database) {
         try {
-            return client.admin().indices().prepareExists(database).execute().get().isExists();
-        } catch (InterruptedException | ExecutionException e) {
+            client.indices().open(new OpenIndexRequest(database));
+            return true;
+        } catch (IOException e) {
             throw new ElasticsearchException("And error on admin access to verify if the database exists", e);
+        } catch (ElasticsearchStatusException e) {
+            return false;
         }
     }
 
     @Override
     public void close() {
-        client.close();
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error when close the RestHighLevelClient client", e);
+        }
     }
 }

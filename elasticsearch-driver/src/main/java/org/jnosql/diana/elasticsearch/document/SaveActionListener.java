@@ -20,7 +20,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 
 import java.util.function.Consumer;
 
-class SaveActionListener implements org.elasticsearch.action.ActionListener<IndexResponse> {
+final class SaveActionListener implements org.elasticsearch.action.ActionListener<IndexResponse> {
 
     private final Consumer<DocumentEntity> callBack;
 

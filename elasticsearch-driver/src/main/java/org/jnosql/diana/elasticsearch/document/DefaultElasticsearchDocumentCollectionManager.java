@@ -15,27 +15,28 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
-import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
 
@@ -45,52 +46,35 @@ import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
 class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocumentCollectionManager {
 
 
-    protected static final Jsonb JSONB = JsonbBuilder.create();
-
-    private final Client client;
+    private final RestHighLevelClient client;
 
     private final String index;
 
-    DefaultElasticsearchDocumentCollectionManager(Client client, String index) {
+    DefaultElasticsearchDocumentCollectionManager(RestHighLevelClient client, String index) {
         this.client = client;
         this.index = index;
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
+        IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
         try {
-            client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes)
-                    .execute().get();
-            return entity;
-        } catch (InterruptedException | ExecutionException e) {
-            throw new ElasticsearchException("An error to try to save/update entity on elasticsearch", e);
+            client.index(request);
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error to insert in Elastic search", e);
         }
 
+        return entity;
     }
 
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
-        requireNonNull(entity, "entity is required");
-        requireNonNull(ttl, "ttl is required");
-        Document id = entity.find(ID_FIELD)
-                .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
-        Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
-        try {
-            client.prepareIndex(index, entity.getName(), id.get(String.class))
-                    .setSource(bytes)
-                    .setTTL(timeValueMillis(ttl.toMillis()))
-                    .execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new ElasticsearchException("An error to try to save with TTL entity on elasticsearch", e);
-        }
-        return entity;
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+        throw new UnsupportedOperationException("The insert with TTL does not support");
     }
 
     @Override
@@ -102,21 +86,27 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     public void delete(DocumentDeleteQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
 
-       query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"));
-        DocumentQuery select  = new ElasticsearchDocumentQuery(query);
+        query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"));
+        DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = select(select);
 
+        if (entities.isEmpty()) {
+            return;
+        }
+
+        BulkRequest bulk = new BulkRequest();
+
         entities.stream()
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))
-                .forEach(id -> {
-                    try {
-                        client.prepareDelete(index, query.getDocumentCollection(), id).execute().get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
-                    }
-                });
+                .map(id -> new DeleteRequest(index, query.getDocumentCollection(), id))
+                .forEach(bulk::add);
 
+        try {
+            client.bulk(bulk);
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
+        }
     }
 
 
@@ -130,19 +120,19 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     public List<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
-        SearchResponse searchResponse = null;
         try {
-            searchResponse = client.prepareSearch(index)
-                    .setTypes(types)
-                    .setQuery(query)
-                    .execute().get();
+            SearchRequest searchRequest = new SearchRequest(index);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(query);
+            searchRequest.types(types);
+            SearchResponse search = client.search(searchRequest);
 
-            return stream(searchResponse.getHits().spliterator(), false)
-                    .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
+            return stream(search.getHits().spliterator(), false)
+                    .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
                     .filter(ElasticsearchEntry::isNotEmpty)
                     .map(ElasticsearchEntry::toEntity)
                     .collect(Collectors.toList());
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (IOException e) {
             throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
         }
 
@@ -151,6 +141,10 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
 
     @Override
     public void close() {
-
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error when close the client", e);
+        }
     }
 }

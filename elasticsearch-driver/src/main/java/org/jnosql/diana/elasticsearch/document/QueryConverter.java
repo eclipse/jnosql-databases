@@ -112,39 +112,4 @@ final class QueryConverter {
     }
 
 
-    static class QueryConverterResult {
-
-
-        private final QueryBuilder statement;
-
-        private final List<String> ids;
-
-        QueryConverterResult(QueryBuilder statement, List<String> ids) {
-            this.statement = statement;
-            this.ids = ids;
-        }
-
-
-        QueryBuilder getStatement() {
-            return statement;
-        }
-
-        List<String> getIds() {
-            return ids;
-        }
-
-        public boolean hasId() {
-            return !ids.isEmpty();
-        }
-
-        public boolean hasStatement() {
-            return statement != null || ids.isEmpty();
-        }
-
-        public boolean hasQuery() {
-            return statement != null;
-        }
-    }
-
-
 }

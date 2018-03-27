@@ -14,57 +14,84 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchDocumentCollectionManagerTest {
 
 
-    public static final String COLLECTION_NAME = "person";
-    private DocumentCollectionManager entityManager;
+
+    private ElasticsearchDocumentCollectionManager entityManager;
 
     @BeforeEach
     public void setUp() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManager = managerFactory.get(COLLECTION_NAME);
+        ElasticsearchDocumentCollectionManagerFactory managerFactory = configuration.get();
+        entityManager = managerFactory.get(INDEX);
 
     }
 
     @Test
-    public void shouldSave() {
+    public void shouldClose() {
+        entityManager.close();
+    }
+
+    @Test
+    public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
 
     @Test
+    public void shouldInsertTTL() {
+        assertThrows(UnsupportedOperationException.class, () ->{
+            entityManager.insert(getEntity(), Duration.ofSeconds(1L));
+        });
+    }
+
+    @Test
+    public void shouldReturnAll() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> result = entityManager.select(query);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
     public void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         DocumentEntity updated = entityManager.update(entity);
@@ -72,16 +99,25 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    @Disabled
-    public void shouldRemoveEntityByName() {
+    public void shouldUserSearchBuilder() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        TermQueryBuilder query = termQuery("name", "Poliana");
+        List<DocumentEntity> account = entityManager.search(query, "person");
+        assertFalse(account.isEmpty());
+    }
+
+    @Test
+    public void shouldRemoveEntityByName() throws InterruptedException {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Document name = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
 
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-
+        TimeUnit.SECONDS.sleep(1L);
         entityManager.delete(deleteQuery);
+        TimeUnit.SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         System.out.println(entities);
         assertTrue(entities.isEmpty());
@@ -101,11 +137,12 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentByName() {
+    public void shouldFindDocumentByName() throws InterruptedException {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        TimeUnit.SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -176,7 +213,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(key.getName()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
@@ -188,7 +225,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         entity.add(Document.of("_id", "ids"));
         List<List<Document>> documents = new ArrayList<>();
 
@@ -206,14 +243,4 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "Poliana");
-        map.put("city", "Salvador");
-        map.put("_id", "id");
-        List<Document> documents = Documents.of(map);
-        documents.forEach(entity::add);
-        return entity;
-    }
 }

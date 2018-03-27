@@ -14,9 +14,10 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
+import org.awaitility.Awaitility;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -24,20 +25,26 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
+import java.time.Duration;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ElasticsearchDocumentCollectionManagerAsyncTest {
-    public static final String COLLECTION_NAME = "person";
 
-    private DocumentCollectionManagerAsync entityManagerAsync;
+
+    private ElasticsearchDocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
 
@@ -46,7 +53,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         ElasticsearchDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManagerAsync = managerFactory.getAsync(COLLECTION_NAME);
-        entityManager = managerFactory.get(COLLECTION_NAME);
+        entityManager = managerFactory.get(INDEX);
         DocumentEntity documentEntity = getEntity();
         Document id = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
@@ -54,9 +61,14 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         entityManagerAsync.delete(deleteQuery);
     }
 
+    @Test
+    public void shouldClose() {
+        entityManager.close();
+    }
+
 
     @Test
-    public void shouldSaveAsync() throws InterruptedException {
+    public void shouldInsertAsync() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entityManagerAsync.insert(entity);
 
@@ -91,14 +103,52 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
     }
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "Poliana");
-        map.put("city", "Salvador");
-        map.put("_id", "id");
-        List<Document> documents = Documents.of(map);
-        documents.forEach(entity::add);
-        return entity;
+    @Test
+    public void shouldUserSearchBuilder() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        TermQueryBuilder query = termQuery("name", "Poliana");
+        AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
+        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
+        entityManagerAsync.search(query, l -> {
+            result.set(l);
+            atomicBoolean.set(true);
+        }, "person");
+
+        Awaitility.await().untilTrue(atomicBoolean);
+        List<DocumentEntity> account = result.get();
+        assertFalse(account.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnAll() {
+        DocumentEntity entity = getEntity();
+        entityManagerAsync.insert(entity);
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
+
+        entityManagerAsync.select(query, l -> {
+            condition.set(true);
+            result.set(l);
+        });
+        Awaitility.await().untilTrue(condition);
+        List<DocumentEntity> entities = result.get();
+        assertFalse(entities.isEmpty());
+
+    }
+
+
+    @Test
+    public void shouldInsertTTL() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            entityManagerAsync.insert(getEntity(), Duration.ofSeconds(1L));
+        });
+
+        assertThrows(UnsupportedOperationException.class, () -> {
+            entityManagerAsync.insert(getEntity(), Duration.ofSeconds(1L), l -> {
+            });
+        });
     }
 }

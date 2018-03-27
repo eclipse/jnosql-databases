@@ -16,10 +16,14 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -28,14 +32,13 @@ import org.jnosql.diana.api.document.DocumentQuery;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
-import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
 
@@ -46,62 +49,48 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     private static final Consumer<DocumentEntity> NOOP = e -> {
     };
 
-    private final Client client;
+    private final RestHighLevelClient client;
     private final String index;
 
-    DefaultElasticsearchDocumentCollectionManagerAsync(Client client, String index) {
+    DefaultElasticsearchDocumentCollectionManagerAsync(RestHighLevelClient client, String index) {
         this.client = client;
         this.index = index;
     }
 
     @Override
-    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity) {
         insert(entity, NOOP);
     }
 
     @Override
-    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity, Duration ttl) {
         insert(entity, ttl, e -> {
         });
     }
 
     @Override
-    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
         requireNonNull(entity, "entity is required");
         requireNonNull(callBack, "callBack is required");
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
-        client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).execute()
-                .addListener(new SaveActionListener(callBack, entity));
-
-
+        IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
+        client.indexAsync(request, new SaveActionListener(callBack, entity));
     }
 
     @Override
-    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException,
-            UnsupportedOperationException, NullPointerException {
-        requireNonNull(entity, "entity is required");
-        requireNonNull(ttl, "ttl is required");
-        requireNonNull(callBack, "callBack is required");
-        Document id = entity.find(ID_FIELD)
-                .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
-        Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
-        client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes).
-                setTTL(timeValueMillis(ttl.toMillis())).execute()
-                .addListener(new SaveActionListener(callBack, entity));
-
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) {
+        throw new UnsupportedOperationException("The insert with TTL does not support");
     }
 
     @Override
-    public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void update(DocumentEntity entity) {
         insert(entity);
     }
 
     @Override
-    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
         insert(entity, callBack);
     }
 
@@ -113,7 +102,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
@@ -122,14 +111,19 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = EntityConverter.query(select, client, index);
+        if(entities.isEmpty()) {
+            callBack.accept(null);
+            return;
+        }
+        BulkRequest bulk = new BulkRequest();
 
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
         entities.stream()
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))
-                .map(id -> client.prepareDelete(index, query.getDocumentCollection(), id))
-                .forEach(bulkRequest::add);
+                .map(id -> new DeleteRequest(index, query.getDocumentCollection(), id))
+                .forEach(bulk::add);
 
-        ActionListener<BulkResponse> s = new ActionListener<BulkResponse>() {
+
+        ActionListener<BulkResponse> listener = new ActionListener<BulkResponse>() {
             @Override
             public void onResponse(BulkResponse bulkItemResponses) {
                 callBack.accept(null);
@@ -140,11 +134,12 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
                 throw new ExecuteAsyncQueryException("An error when delete on elasticsearch", e);
             }
         };
-        bulkRequest.execute().addListener(s);
+
+        client.bulkAsync(bulk, listener);
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         EntityConverter.queryAsync(query, client, index, callBack);
@@ -152,18 +147,23 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
 
 
     @Override
-    public void search(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws NullPointerException, ExecuteAsyncQueryException {
+    public void search(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
-        client.prepareSearch(index)
-                .setTypes(types)
-                .setQuery(query)
-                .execute().addListener(new FindQueryBuilderListener(callBack));
+        SearchRequest searchRequest = new SearchRequest(index);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(query);
+        searchRequest.types(types);
+        client.searchAsync(searchRequest, new FindQueryBuilderListener(callBack));
     }
 
     @Override
     public void close() {
-
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error when close the client", e);
+        }
     }
 }
