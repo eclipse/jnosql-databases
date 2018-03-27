@@ -6,8 +6,14 @@
 
 ### How To Install
 
-1. Download the code: https://www.elastic.co/downloads/elasticsearch
-1. Follow the install and run steps: https://www.elastic.co/downloads/elasticsearch
+Once this a communication layer to Elasticsearch, we're using integration test, so you need to install Elasticsearch. The recommended way is using Docker.
+
+![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
+
+1. Install docker: https://www.docker.com/
+1. https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+1. Run docker command
+1. `docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.2.3`
 1. Execute the maven install `mvn clean install`
 
 
