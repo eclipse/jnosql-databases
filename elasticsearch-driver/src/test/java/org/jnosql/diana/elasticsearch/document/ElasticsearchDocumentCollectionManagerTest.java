@@ -44,6 +44,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
 
     public static final String COLLECTION_NAME = "account";
+
     private DocumentCollectionManager entityManager;
 
     @BeforeEach
@@ -176,7 +177,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(key.getName()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
@@ -188,7 +189,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        DocumentEntity entity = DocumentEntity.of("account");
         entity.add(Document.of("_id", "ids"));
         List<List<Document>> documents = new ArrayList<>();
 
