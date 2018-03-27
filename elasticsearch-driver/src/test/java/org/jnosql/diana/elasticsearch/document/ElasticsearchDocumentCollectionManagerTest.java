@@ -59,6 +59,11 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldClose() {
+        entityManager.close();
+    }
+
+    @Test
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
