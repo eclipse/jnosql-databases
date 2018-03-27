@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.synchronizedList;
 import static java.util.stream.StreamSupport.stream;
 
-class FindAsyncListener {
+final class FindAsyncListener {
 
     private final Consumer<List<DocumentEntity>> callBack;
 
@@ -79,7 +79,7 @@ class FindAsyncListener {
             public void onResponse(SearchResponse searchResponse) {
                 query.set(true);
                 stream(searchResponse.getHits().spliterator(), false)
-                        .map(h -> new ElasticsearchEntry(h.getId(), collection, h.sourceAsMap()))
+                        .map(h -> new ElasticsearchEntry(h.getId(), collection, h.getSourceAsMap()))
                         .filter(ElasticsearchEntry::isNotEmpty)
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);
