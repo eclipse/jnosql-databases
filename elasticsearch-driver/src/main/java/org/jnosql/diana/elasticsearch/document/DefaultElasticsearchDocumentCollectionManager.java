@@ -15,6 +15,7 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -89,17 +90,18 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = select(select);
+        BulkRequest bulk = new BulkRequest();
 
         entities.stream()
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))
-                .forEach(id -> {
-                    try {
-                        client.delete(new DeleteRequest(index, query.getDocumentCollection(), id));
-                    } catch (IOException e) {
-                        throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
-                    }
-                });
+                .map(id -> new DeleteRequest(index, query.getDocumentCollection(), id))
+                .forEach(bulk::add);
 
+        try {
+            client.bulk(bulk);
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
+        }
     }
 
 
