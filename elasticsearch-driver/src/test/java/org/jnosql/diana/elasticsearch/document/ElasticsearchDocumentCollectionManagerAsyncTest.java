@@ -14,6 +14,8 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
+import org.awaitility.Awaitility;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
@@ -25,7 +27,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
@@ -97,5 +101,17 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
     }
 
+    @Test
+    public void shouldUserSearchBuilder() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        TermQueryBuilder query = termQuery("name", "Poliana");
+        AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
+
+        entityManagerAsync.search(query, result::set, "person");
+        Awaitility.await().until(() -> result == null);
+        List<DocumentEntity> account = result.get();
+        assertFalse(account.isEmpty());
+    }
 
 }
