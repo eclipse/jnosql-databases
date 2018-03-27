@@ -15,7 +15,11 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.client.Client;
+import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
+import org.elasticsearch.action.admin.indices.open.OpenIndexResponse;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
@@ -40,9 +44,9 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
         DocumentCollectionManagerAsyncFactory<ElasticsearchDocumentCollectionManagerAsync> {
 
 
-    private final Client client;
+    private final RestHighLevelClient client;
 
-    ElasticsearchDocumentCollectionManagerFactory(Client client) {
+    ElasticsearchDocumentCollectionManagerFactory(RestHighLevelClient client) {
         this.client = client;
     }
 
@@ -74,7 +78,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
         if (!exists) {
             URL url = ElasticsearchDocumentCollectionManagerFactory.class.getResource('/' + database + ".json");
             if (Objects.nonNull(url)) {
-                byte[] bytes = getBytes(url);
+                client.getLowLevelClient().
                 client.admin().indices().prepareCreate(database).setSource(bytes).get();
             }
         }
@@ -82,14 +86,21 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
 
     private boolean isExists(String database) {
         try {
-            return client.admin().indices().prepareExists(database).execute().get().isExists();
-        } catch (InterruptedException | ExecutionException e) {
+            OpenIndexResponse open = client.indices().open(new OpenIndexRequest(database));
+            return true;
+        } catch (IOException e) {
             throw new ElasticsearchException("And error on admin access to verify if the database exists", e);
+        }catch (ElasticsearchStatusException e){
+            return false;
         }
     }
 
     @Override
     public void close() {
-        client.close();
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error when close the RestHighLevelClient client", e);
+        }
     }
 }
