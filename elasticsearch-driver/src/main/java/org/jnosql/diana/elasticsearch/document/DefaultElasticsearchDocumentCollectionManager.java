@@ -17,10 +17,11 @@ package org.jnosql.diana.elasticsearch.document;
 
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -31,7 +32,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -113,19 +113,19 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     public List<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
-        SearchResponse searchResponse = null;
         try {
-            searchResponse = client.prepareSearch(index)
-                    .setTypes(types)
-                    .setQuery(query)
-                    .execute().get();
+            SearchRequest searchRequest = new SearchRequest(index);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(query);
+            searchRequest.types(types);
+            SearchResponse search = client.search(searchRequest);
 
-            return stream(searchResponse.getHits().spliterator(), false)
-                    .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
+            return stream(search.getHits().spliterator(), false)
+                    .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
                     .filter(ElasticsearchEntry::isNotEmpty)
                     .map(ElasticsearchEntry::toEntity)
                     .collect(Collectors.toList());
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (IOException e) {
             throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
         }
 
@@ -134,6 +134,5 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
 
     @Override
     public void close() {
-
     }
 }
