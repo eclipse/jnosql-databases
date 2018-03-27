@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ElasticsearchDocumentCollectionManagerTest {
 
 
-    public static final String COLLECTION_NAME = "person";
+    public static final String COLLECTION_NAME = "account";
     private DocumentCollectionManager entityManager;
 
     @BeforeEach
@@ -55,7 +55,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldSave() {
+    public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
