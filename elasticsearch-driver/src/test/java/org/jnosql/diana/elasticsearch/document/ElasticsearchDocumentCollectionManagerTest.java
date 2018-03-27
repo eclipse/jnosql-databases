@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -102,11 +103,12 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentByName() {
+    public void shouldFindDocumentByName() throws InterruptedException {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        TimeUnit.SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
