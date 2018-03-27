@@ -19,8 +19,11 @@ import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -144,10 +147,11 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
-        client.prepareSearch(index)
-                .setTypes(types)
-                .setQuery(query)
-                .execute().addListener(new FindQueryBuilderListener(callBack));
+        SearchRequest searchRequest = new SearchRequest(index);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(query);
+        searchRequest.types(types);
+        client.searchAsync(searchRequest, new FindQueryBuilderListener(callBack));
     }
 
     @Override
