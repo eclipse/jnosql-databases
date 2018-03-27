@@ -15,7 +15,6 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -113,7 +111,7 @@ final class EntityConverter {
 
 
             return entities;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (IOException e) {
             throw new ElasticsearchException("An error to execute a query on elasticsearch", e);
         }
     }

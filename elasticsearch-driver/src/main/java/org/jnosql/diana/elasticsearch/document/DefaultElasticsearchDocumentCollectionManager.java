@@ -102,8 +102,8 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     public void delete(DocumentDeleteQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
 
-       query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"));
-        DocumentQuery select  = new ElasticsearchDocumentQuery(query);
+        query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"));
+        DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = select(select);
 
