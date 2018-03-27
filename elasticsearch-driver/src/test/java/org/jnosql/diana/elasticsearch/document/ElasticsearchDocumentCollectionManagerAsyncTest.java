@@ -119,4 +119,23 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         assertFalse(account.isEmpty());
     }
 
+    @Test
+    public void shouldReturnAll() {
+        DocumentEntity entity = getEntity();
+        entityManagerAsync.insert(entity);
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
+
+        entityManagerAsync.select(query, l -> {
+            condition.set(true);
+            result.set(l);
+        });
+        Awaitility.await().untilTrue(condition);
+        List<DocumentEntity> entities = result.get();
+        assertFalse(entities.isEmpty());
+
+    }
+
+
 }
