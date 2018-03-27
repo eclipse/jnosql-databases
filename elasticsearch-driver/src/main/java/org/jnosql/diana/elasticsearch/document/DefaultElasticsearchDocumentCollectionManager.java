@@ -134,5 +134,10 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
 
     @Override
     public void close() {
+        try {
+            client.close();
+        } catch (IOException e) {
+            throw new ElasticsearchException("An error when close the client", e);
+        }
     }
 }
