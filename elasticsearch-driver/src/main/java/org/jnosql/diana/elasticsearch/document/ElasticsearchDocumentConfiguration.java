@@ -16,7 +16,6 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
