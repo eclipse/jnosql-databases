@@ -90,6 +90,11 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = select(select);
+
+        if (entities.isEmpty()) {
+            return;
+        }
+        
         BulkRequest bulk = new BulkRequest();
 
         entities.stream()
