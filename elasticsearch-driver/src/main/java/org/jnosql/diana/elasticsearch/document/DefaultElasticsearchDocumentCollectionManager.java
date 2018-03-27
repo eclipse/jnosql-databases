@@ -15,6 +15,8 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -23,8 +25,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +33,8 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
-import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
 
@@ -44,8 +43,6 @@ import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
  */
 class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocumentCollectionManager {
 
-
-    protected static final Jsonb JSONB = JsonbBuilder.create();
 
     private final RestHighLevelClient client;
 
@@ -57,26 +54,25 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
+    public DocumentEntity insert(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = getMap(entity);
-        byte[] bytes = JSONB.toJson(jsonObject).getBytes(UTF_8);
+        IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
         try {
-            client.prepareIndex(index, entity.getName(), id.get(String.class)).setSource(bytes)
-                    .execute().get();
-            return entity;
-        } catch (InterruptedException | ExecutionException e) {
-            throw new ElasticsearchException("An error to try to save/update entity on elasticsearch", e);
+            IndexResponse index = client.index(request);
+            index.
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
 
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl){
-      throw new UnsupportedOperationException("The insert with TTL does not support");
+    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+        throw new UnsupportedOperationException("The insert with TTL does not support");
     }
 
     @Override
