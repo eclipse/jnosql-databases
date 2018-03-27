@@ -83,7 +83,7 @@ final class EntityConverter {
                                          List<DocumentEntity> entities) throws IOException {
 
 
-        SearchRequest searchRequest = new SearchRequest(query.getDocumentCollection());
+        SearchRequest searchRequest = new SearchRequest(index);
         if (select.hasQuery()) {
             setQueryBuilder(query, select, searchRequest);
         }
@@ -115,7 +115,7 @@ final class EntityConverter {
         }
 
         if (select.hasStatement()) {
-            SearchRequest searchRequest = new SearchRequest(query.getDocumentCollection());
+            SearchRequest searchRequest = new SearchRequest(index);
             if (select.hasQuery()) {
                 setQueryBuilder(query, select, searchRequest);
             }
