@@ -65,6 +65,26 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .forEach(httpHosts::add);
     }
 
+    /**
+     * Adds a host in the configuration
+     *
+     * @param host the host
+     * @throws NullPointerException when host is null
+     */
+    public void add(HttpHost host) {
+        this.httpHosts.add(Objects.requireNonNull(host, "host is required"));
+    }
+
+    /**
+     * Adds a header in the configuration
+     *
+     * @param header the header
+     * @throws NullPointerException when header is null
+     */
+    public void add(Header header) {
+        this.headers.add(Objects.requireNonNull(header, "header is required"));
+    }
+
 
     @Override
     public ElasticsearchDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
@@ -86,6 +106,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
                 .forEach(httpHosts::add);
 
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
+        builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
         RestHighLevelClient client = new RestHighLevelClient(builder);
         return new ElasticsearchDocumentCollectionManagerFactory(client);
     }
@@ -127,7 +148,6 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         Objects.requireNonNull(client, "client is required");
         return new ElasticsearchDocumentCollectionManagerFactory(client);
     }
-
 
 
 }
