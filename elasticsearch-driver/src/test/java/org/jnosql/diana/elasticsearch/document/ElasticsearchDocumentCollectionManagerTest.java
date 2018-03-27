@@ -14,6 +14,8 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
@@ -35,6 +37,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -48,12 +51,12 @@ public class ElasticsearchDocumentCollectionManagerTest {
     private static final String COLLECTION_NAME = "person";
     private static final String INDEX = "person";
 
-    private DocumentCollectionManager entityManager;
+    private ElasticsearchDocumentCollectionManager entityManager;
 
     @BeforeEach
     public void setUp() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        ElasticsearchDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get(INDEX);
 
     }
@@ -94,6 +97,15 @@ public class ElasticsearchDocumentCollectionManagerTest {
         entity.add(newField);
         DocumentEntity updated = entityManager.update(entity);
         assertEquals(newField, updated.find("newField").get());
+    }
+
+    @Test
+    public void shouldUserSearchBuilder() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        TermQueryBuilder query = termQuery("name", "Poliana");
+        List<DocumentEntity> account = entityManager.search(query, "person");
+        assertFalse(account.isEmpty());
     }
 
     @Test
