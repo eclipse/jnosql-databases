@@ -65,6 +65,15 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldReturnAll() {
+        DocumentEntity entity = getEntity();
+        DocumentEntity documentEntity = entityManager.insert(entity);
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> result = entityManager.select(query);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
     public void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
