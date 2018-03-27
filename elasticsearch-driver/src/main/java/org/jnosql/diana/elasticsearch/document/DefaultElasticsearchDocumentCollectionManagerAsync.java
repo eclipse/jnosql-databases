@@ -17,12 +17,10 @@ package org.jnosql.diana.elasticsearch.document;
 
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -40,9 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
-import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.getMap;
 
