@@ -82,9 +82,9 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
 
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        TimeUnit.MICROSECONDS.sleep(100L);
+        TimeUnit.SECONDS.sleep(1L);
         entityManager.delete(deleteQuery);
-        TimeUnit.MICROSECONDS.sleep(100L);
+        TimeUnit.SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         System.out.println(entities);
         assertTrue(entities.isEmpty());
