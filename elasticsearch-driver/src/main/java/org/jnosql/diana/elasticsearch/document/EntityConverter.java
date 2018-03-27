@@ -18,10 +18,11 @@ package org.jnosql.diana.elasticsearch.document;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -116,17 +116,19 @@ final class EntityConverter {
         }
     }
 
-    private static void executeStatement(DocumentQuery query, Client client, String index,
+    private static void executeStatement(DocumentQuery query, RestHighLevelClient client, String index,
                                          QueryConverter.QueryConverterResult select,
-                                         List<DocumentEntity> entities)
-            throws InterruptedException, ExecutionException {
+                                         List<DocumentEntity> entities) throws IOException {
 
-        SearchRequestBuilder searchRequestBuilder = client.prepareSearch(index)
-                .setTypes(query.getDocumentCollection());
+
+        SearchRequest searchRequest = new SearchRequest(query.getDocumentCollection());
         if (select.hasQuery()) {
-            searchRequestBuilder.setQuery(select.getStatement());
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(select.getStatement());
+            searchRequest.source(searchSourceBuilder);
         }
 
+        client.search(searchRequest);
         SearchResponse searchResponse = searchRequestBuilder.execute().get();
         stream(searchResponse.getHits().spliterator(), false)
                 .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
