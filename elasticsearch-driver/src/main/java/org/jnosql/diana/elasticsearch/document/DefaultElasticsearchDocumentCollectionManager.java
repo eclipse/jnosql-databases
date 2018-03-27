@@ -15,6 +15,7 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
@@ -93,8 +94,8 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
                 .map(entity -> entity.find(ID_FIELD).get().get(String.class))
                 .forEach(id -> {
                     try {
-                        client.prepareDelete(index, query.getDocumentCollection(), id).execute().get();
-                    } catch (InterruptedException | ExecutionException e) {
+                        client.delete(new DeleteRequest(index, query.getDocumentCollection(), id));
+                    } catch (IOException e) {
                         throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
                     }
                 });
