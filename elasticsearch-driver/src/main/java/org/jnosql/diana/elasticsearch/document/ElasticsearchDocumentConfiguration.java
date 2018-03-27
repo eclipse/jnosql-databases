@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
  * It tries to read the configuration properties from diana-elasticsearch.properties file. To get some information:
  * <p>elasticsearch-host-n: the host to client connection, if necessary to define a different port than default just
  * use colon, ':' eg: elasticsearch-host-1=172.17.0.2:1234</p>
- * <p>elasticsearch-maxRetryTimeoutMillis</p>
+ * <p>elasticsearch-maxRetryTimeoutMillis: maxRetry- the default value {@link RestClientBuilder#DEFAULT_MAX_RETRY_TIMEOUT_MILLIS}</p>
  */
 public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfiguration<ElasticsearchDocumentCollectionManagerFactory> {
 
