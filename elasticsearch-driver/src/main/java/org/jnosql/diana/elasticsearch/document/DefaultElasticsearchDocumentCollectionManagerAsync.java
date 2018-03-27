@@ -55,18 +55,18 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity){
         insert(entity, NOOP);
     }
 
     @Override
-    public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity, Duration ttl){
         insert(entity, ttl, e -> {
         });
     }
 
     @Override
-    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
         requireNonNull(entity, "entity is required");
         requireNonNull(callBack, "callBack is required");
         Document id = entity.find(ID_FIELD)
@@ -80,8 +80,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException,
-            UnsupportedOperationException, NullPointerException {
+    public void insert(DocumentEntity entity, Duration ttl, Consumer<DocumentEntity> callBack) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
         requireNonNull(callBack, "callBack is required");
@@ -96,12 +95,12 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void update(DocumentEntity entity) {
         insert(entity);
     }
 
     @Override
-    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack){
         insert(entity, callBack);
     }
 
@@ -113,7 +112,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
@@ -144,7 +143,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException {
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         EntityConverter.queryAsync(query, client, index, callBack);
@@ -152,7 +151,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
 
 
     @Override
-    public void search(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws NullPointerException, ExecuteAsyncQueryException {
+    public void search(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 
