@@ -50,12 +50,15 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
 
     private List<Header> headers = new ArrayList<>();
 
-    private int maxRetryTimoutMillis = 0;
+    private int maxRetryTimoutMillis = RestClientBuilder.DEFAULT_MAX_RETRY_TIMEOUT_MILLIS;
 
     public ElasticsearchDocumentConfiguration() {
 
         Map<String, String> configurations = ConfigurationReader.from(FILE_CONFIGURATION);
-
+        String maxRetry = configurations.get("elasticsearch-maxRetryTimeoutMillis");
+        if (maxRetry != null) {
+            maxRetryTimoutMillis = Integer.valueOf(maxRetry);
+        }
         if (configurations.isEmpty()) {
             return;
         }
@@ -110,8 +113,12 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
         builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
 
+        String maxRetry = configurations.get("elasticsearch-maxRetryTimeoutMillis");
+        if (maxRetry != null) {
+            maxRetryTimoutMillis = Integer.valueOf(maxRetry);
+        }
+
         builder.setMaxRetryTimeoutMillis(maxRetryTimoutMillis);
-        builder.set
         RestHighLevelClient client = new RestHighLevelClient(builder);
         return new ElasticsearchDocumentCollectionManagerFactory(client);
     }
