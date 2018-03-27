@@ -61,12 +61,12 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         Map<String, Object> jsonObject = getMap(entity);
         IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
         try {
-            IndexResponse index = client.index(request);
-            index.
+            client.index(request);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ElasticsearchException("An error to insert in Elastic search", e);
         }
 
+        return entity;
     }
 
 
