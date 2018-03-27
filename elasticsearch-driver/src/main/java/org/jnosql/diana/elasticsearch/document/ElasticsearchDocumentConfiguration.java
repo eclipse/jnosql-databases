@@ -39,10 +39,8 @@ import static java.util.Objects.requireNonNull;
 public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfiguration<ElasticsearchDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-elasticsearch.properties";
-    private static final String DEFAULT_CLUSTER_NAME = "elasticsearch";
     private static final String HOST_PREFIX = "elasticsearch-host-";
     private static final int DEFAULT_PORT = 9300;
-    private static final String SETTINGS_PREFIX = "elasticsearch-settings-";
 
     private List<HttpHost> httpHosts = new ArrayList<>();
 
