@@ -21,7 +21,7 @@
     }
   },
   "mappings": {
-    "account": {
+    "person": {
       "properties": {
         "username": {
           "type": "keyword"
