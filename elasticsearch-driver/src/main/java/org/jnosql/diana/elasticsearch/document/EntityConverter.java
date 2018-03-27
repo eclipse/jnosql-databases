@@ -96,7 +96,7 @@ final class EntityConverter {
     }
 
     static List<DocumentEntity> query(DocumentQuery query, RestHighLevelClient client, String index) {
-        QueryConverter.QueryConverterResult select = QueryConverter.select(query);
+        QueryConverterResult select = QueryConverter.select(query);
 
 
         try {
@@ -117,7 +117,7 @@ final class EntityConverter {
     }
 
     private static void executeStatement(DocumentQuery query, RestHighLevelClient client, String index,
-                                         QueryConverter.QueryConverterResult select,
+                                         QueryConverterResult select,
                                          List<DocumentEntity> entities) throws IOException {
 
 
@@ -128,7 +128,8 @@ final class EntityConverter {
             searchRequest.source(searchSourceBuilder);
         }
 
-        client.search(searchRequest);
+        SearchResponse response = client.search(searchRequest);
+
         SearchResponse searchResponse = searchRequestBuilder.execute().get();
         stream(searchResponse.getHits().spliterator(), false)
                 .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.sourceAsMap()))
@@ -138,7 +139,7 @@ final class EntityConverter {
     }
 
     private static void executeId(DocumentQuery query, RestHighLevelClient client, String index,
-                                  QueryConverter.QueryConverterResult select,
+                                  QueryConverterResult select,
                                   List<DocumentEntity> entities) throws IOException {
 
         String type = query.getDocumentCollection();
@@ -161,7 +162,7 @@ final class EntityConverter {
     static void queryAsync(DocumentQuery query, Client client, String index, Consumer<List<DocumentEntity>> callBack) {
 
         FindAsyncListener listener = new FindAsyncListener(callBack, query.getDocumentCollection());
-        QueryConverter.QueryConverterResult select = QueryConverter.select(query);
+        QueryConverterResult select = QueryConverter.select(query);
 
         if (!select.getIds().isEmpty()) {
             client.prepareMultiGet().add(index, query.getDocumentCollection(), select.getIds())
