@@ -14,26 +14,20 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
@@ -43,13 +37,18 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
+import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchDocumentCollectionManagerTest {
 
 
-    private static final String COLLECTION_NAME = "person";
-    private static final String INDEX = "person";
 
     private ElasticsearchDocumentCollectionManager entityManager;
 
@@ -244,14 +243,4 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "Poliana");
-        map.put("city", "Salvador");
-        map.put("_id", "id");
-        List<Document> documents = Documents.of(map);
-        documents.forEach(entity::add);
-        return entity;
-    }
 }
