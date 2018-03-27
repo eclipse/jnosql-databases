@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
 
-    private DocumentCollectionManagerAsync entityManagerAsync;
+    private ElasticsearchDocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
 
@@ -53,6 +53,11 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManagerAsync.delete(deleteQuery);
+    }
+
+    @Test
+    public void shouldClose() {
+        entityManager.close();
     }
 
 
