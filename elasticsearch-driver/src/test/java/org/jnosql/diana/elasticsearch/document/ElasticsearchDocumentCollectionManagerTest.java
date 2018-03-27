@@ -75,7 +75,6 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    @Disabled
     public void shouldRemoveEntityByName() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 

@@ -94,7 +94,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         if (entities.isEmpty()) {
             return;
         }
-        
+
         BulkRequest bulk = new BulkRequest();
 
         entities.stream()
