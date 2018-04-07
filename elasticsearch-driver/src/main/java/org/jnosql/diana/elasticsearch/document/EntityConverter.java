@@ -175,7 +175,7 @@ final class EntityConverter {
         MultiGetResponse responses = client.multiGet(multiGetRequest);
         Stream.of(responses.getResponses())
                 .map(MultiGetItemResponse::getResponse)
-                .map(g -> new ElasticsearchEntry(g.getId(), g.getIndex(), g.getSourceAsMap()))
+                .map(g -> new ElasticsearchEntry(g.getId(), g.getType(), g.getSourceAsMap()))
                 .filter(ElasticsearchEntry::isNotEmpty)
                 .map(ElasticsearchEntry::toEntity)
                 .forEach(entities::add);
