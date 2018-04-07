@@ -15,6 +15,7 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.search.SearchHit;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -100,4 +101,9 @@ class ElasticsearchEntry {
                 searchHit.getSourceAsMap());
     }
 
+    static ElasticsearchEntry of(GetResponse searchHit) {
+        return new ElasticsearchEntry(searchHit.getId(),
+                searchHit.getType(),
+                searchHit.getSourceAsMap());
+    }
 }
