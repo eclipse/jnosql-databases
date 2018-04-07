@@ -41,7 +41,7 @@ class ElasticsearchEntry {
             Document.of(entry.getKey().toString(), entry.getValue());
 
 
-    ElasticsearchEntry(String id, String collection, Map<String, Object> map) {
+    private ElasticsearchEntry(String id, String collection, Map<String, Object> map) {
         this.id = id;
         this.collection = collection;
         this.map = map;
