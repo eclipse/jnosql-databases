@@ -3,6 +3,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jnosql.diana</groupId>
+        <artifactId>diana-driver</artifactId>
+        <version>0.0.5</version>
+    </parent>
+
     <artifactId>infinispan-driver</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The Eclipse JNoSQL communication layer, Diana, implementation for Infinispan</description>
@@ -26,11 +32,6 @@
         <url>https://github.com/eclipse/jnosql-diana-driver</url>
     </scm>
 
-    <parent>
-        <groupId>org.jnosql.diana</groupId>
-        <artifactId>diana-driver</artifactId>
-        <version>0.0.5-SNAPSHOT</version>
-    </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
