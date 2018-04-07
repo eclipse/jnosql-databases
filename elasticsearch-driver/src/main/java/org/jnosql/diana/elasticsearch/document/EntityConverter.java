@@ -92,7 +92,7 @@ final class EntityConverter {
         SearchResponse response = client.search(searchRequest);
         Stream.of(response.getHits())
                 .flatMap(h -> Stream.of(h.getHits()))
-                .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
+                .map(ElasticsearchEntry::of)
                 .filter(ElasticsearchEntry::isNotEmpty)
                 .map(ElasticsearchEntry::toEntity)
                 .forEach(entities::add);

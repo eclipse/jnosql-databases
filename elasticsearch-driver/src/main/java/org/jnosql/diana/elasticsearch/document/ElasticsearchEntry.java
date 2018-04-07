@@ -15,6 +15,7 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import org.elasticsearch.search.SearchHit;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 
@@ -90,6 +91,13 @@ class ElasticsearchEntry {
         return Iterable.class.isInstance(value) &&
                 stream(Iterable.class.cast(value).spliterator(), false)
                         .allMatch(Map.class::isInstance);
+    }
+
+
+    static ElasticsearchEntry of(SearchHit searchHit) {
+        return new ElasticsearchEntry(searchHit.getId(),
+                searchHit.getType(),
+                searchHit.getSourceAsMap());
     }
 
 }
