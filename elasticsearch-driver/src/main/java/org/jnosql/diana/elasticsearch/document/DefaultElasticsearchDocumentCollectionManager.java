@@ -128,7 +128,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
             SearchResponse search = client.search(searchRequest);
 
             return stream(search.getHits().spliterator(), false)
-                    .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
+                    .map(ElasticsearchEntry::of)
                     .filter(ElasticsearchEntry::isNotEmpty)
                     .map(ElasticsearchEntry::toEntity)
                     .collect(Collectors.toList());

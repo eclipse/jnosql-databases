@@ -56,7 +56,7 @@ final class FindAsyncListener {
 
                 Stream.of(multiGetItemResponses.getResponses())
                         .map(MultiGetItemResponse::getResponse)
-                        .map(h -> new ElasticsearchEntry(h.getId(), collection, h.getSourceAsMap()))
+                        .map(ElasticsearchEntry::of)
                         .filter(ElasticsearchEntry::isNotEmpty)
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);
@@ -79,7 +79,7 @@ final class FindAsyncListener {
             public void onResponse(SearchResponse searchResponse) {
                 query.set(true);
                 stream(searchResponse.getHits().spliterator(), false)
-                        .map(h -> new ElasticsearchEntry(h.getId(), collection, h.getSourceAsMap()))
+                        .map(ElasticsearchEntry::of)
                         .filter(ElasticsearchEntry::isNotEmpty)
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);

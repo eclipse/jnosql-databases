@@ -37,7 +37,7 @@ class FindQueryBuilderListener implements ActionListener<SearchResponse> {
     @Override
     public void onResponse(SearchResponse searchResponse) {
         List<DocumentEntity> entities = stream(searchResponse.getHits().spliterator(), false)
-                .map(h -> new ElasticsearchEntry(h.getId(), h.getIndex(), h.getSourceAsMap()))
+                .map(ElasticsearchEntry::of)
                 .filter(ElasticsearchEntry::isNotEmpty)
                 .map(ElasticsearchEntry::toEntity)
                 .collect(Collectors.toList());
