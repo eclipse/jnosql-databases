@@ -16,12 +16,12 @@ package org.jnosql.diana.orientdb.document;
 
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import org.apache.commons.collections.map.HashedMap;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -73,7 +73,7 @@ final class OrientDBConverter {
 
 
     public static Map<String, Object> toMap(DocumentEntity entity) {
-        Map<String, Object> entityValues = new HashedMap();
+        Map<String, Object> entityValues = new HashMap<>();
         for (Document document : entity.getDocuments()) {
             toDocument(entityValues, document);
         }
