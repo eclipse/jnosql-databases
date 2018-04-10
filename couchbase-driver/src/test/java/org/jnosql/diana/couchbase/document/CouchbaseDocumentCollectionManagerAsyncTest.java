@@ -162,7 +162,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         Document id = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        entityManagerAsync.delete(deleteQuery, d ->{
+        entityManagerAsync.delete(deleteQuery, d -> {
             condition.set(true);
         });
 
@@ -221,11 +221,18 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRunN1QlStatement() {
         AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicBoolean condition = new AtomicBoolean(false);
+
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
 
         Statement statement = Select.select("*").from("jnosql").where(x("name").eq("\"Poliana\""));
-        entityManagerAsync.n1qlQuery(statement, references::set);
+        entityManagerAsync.n1qlQuery(statement, d -> {
+            references.set(d);
+            condition.set(true);
+        });
+
+        await().untilTrue(condition);
         assertFalse(references.get().isEmpty());
         assertEquals(1, references.get().size());
     }
