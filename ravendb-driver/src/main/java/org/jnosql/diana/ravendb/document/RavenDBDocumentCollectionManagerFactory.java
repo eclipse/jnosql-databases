@@ -15,35 +15,40 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import com.mongodb.MongoClient;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManagerFactory}
  */
 public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager> {
 
-    private final MongoClient mongoClient;
+    private final List<String> hosts;
 
-    RavenDBDocumentCollectionManagerFactory(MongoClient mongoClient) {
-        this.mongoClient = mongoClient;
+
+
+    RavenDBDocumentCollectionManagerFactory(List<String> hosts) {
+        this.hosts = hosts;
     }
 
     @Override
     public MongoDBDocumentCollectionManager get(String database) {
+        Objects.requireNonNull(database, "database is required");
         return new MongoDBDocumentCollectionManager(mongoClient.getDatabase(database));
     }
 
 
     @Override
     public void close() {
-        mongoClient.close();
+
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("RavenDBDocumentCollectionManagerFactory{");
-        sb.append("mongoClient=").append(mongoClient);
+        sb.append("hosts=").append(hosts);
         sb.append('}');
         return sb.toString();
     }
