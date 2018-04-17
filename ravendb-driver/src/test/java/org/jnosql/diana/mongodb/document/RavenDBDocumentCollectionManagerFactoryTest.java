@@ -18,7 +18,7 @@ package org.jnosql.diana.mongodb.document;
 import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerAsyncFactory;
-import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerFactory;
+import org.jnosql.diana.ravendb.document.RavenDBDocumentCollectionManagerFactory;
 import org.jnosql.diana.ravendb.document.RavenDBDocumentConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,7 +30,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDBDocumentCollectionManagerFactoryTest {
+public class RavenDBDocumentCollectionManagerFactoryTest {
 
     private static RavenDBDocumentConfiguration configuration;
 
@@ -42,7 +42,7 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
+        RavenDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
         assertNotNull(mongoDBFactory.get("database"));
     }
 

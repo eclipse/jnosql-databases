@@ -21,11 +21,11 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 /**
  * The mongodb implementation to {@link DocumentCollectionManagerFactory}
  */
-public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager> {
+public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager> {
 
     private final MongoClient mongoClient;
 
-    MongoDBDocumentCollectionManagerFactory(MongoClient mongoClient) {
+    RavenDBDocumentCollectionManagerFactory(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
     }
 
@@ -42,7 +42,7 @@ public class MongoDBDocumentCollectionManagerFactory implements DocumentCollecti
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MongoDBDocumentCollectionManagerFactory{");
+        final StringBuilder sb = new StringBuilder("RavenDBDocumentCollectionManagerFactory{");
         sb.append("mongoClient=").append(mongoClient);
         sb.append('}');
         return sb.toString();

@@ -30,24 +30,24 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The RavenDB implementation to both {@link DocumentConfiguration}
- * that returns  {@link MongoDBDocumentCollectionManagerFactory}
+ * that returns  {@link RavenDBDocumentCollectionManagerFactory}
  * It tries to read the diana-ravendb.properties file whose has the following properties
  * <p>ravendb-server-host-: as prefix to add host client, eg: ravendb-server-host-1=host1, ravendb-server-host-2= host2</p>
  */
-public class RavenDBDocumentConfiguration implements DocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
+public class RavenDBDocumentConfiguration implements DocumentConfiguration<RavenDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-ravendb.properties";
 
     private List<String> hosts = new ArrayList<>();
 
     @Override
-    public MongoDBDocumentCollectionManagerFactory get() {
+    public RavenDBDocumentCollectionManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
         return get(configuration);
     }
 
     @Override
-    public MongoDBDocumentCollectionManagerFactory get(Settings settings) {
+    public RavenDBDocumentCollectionManagerFactory get(Settings settings) {
         requireNonNull(settings, "configurations is required");
         Map<String, String> configurations = new HashMap<>();
         settings.forEach((key, value) -> configurations.put(key, value.toString()));
@@ -55,14 +55,14 @@ public class RavenDBDocumentConfiguration implements DocumentConfiguration<Mongo
     }
 
 
-    private MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
+    private RavenDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         requireNonNull(configurations, "configurations is required");
         List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("ravendb-server-host-"))
                 .map(configurations::get).collect(Collectors.toList());
         if (servers.isEmpty()) {
-            return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
+            return new RavenDBDocumentCollectionManagerFactory(new MongoClient());
         }
 
-        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers));
+        return new RavenDBDocumentCollectionManagerFactory(new MongoClient(servers));
     }
 }
