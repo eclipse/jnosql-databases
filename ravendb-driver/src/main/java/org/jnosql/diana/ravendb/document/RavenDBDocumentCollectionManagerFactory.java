@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.ravendb.document;
 
+import net.ravendb.client.documents.DocumentStore;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 import java.util.List;
@@ -25,18 +26,18 @@ import java.util.Objects;
  */
 public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager> {
 
-    private final List<String> hosts;
+    private final String[] hosts;
 
 
 
-    RavenDBDocumentCollectionManagerFactory(List<String> hosts) {
+    RavenDBDocumentCollectionManagerFactory(String[] hosts) {
         this.hosts = hosts;
     }
 
     @Override
     public MongoDBDocumentCollectionManager get(String database) {
         Objects.requireNonNull(database, "database is required");
-        return new MongoDBDocumentCollectionManager(mongoClient.getDatabase(database));
+        return new MongoDBDocumentCollectionManager(new DocumentStore(hosts, database));
     }
 
 
