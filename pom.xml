@@ -86,6 +86,7 @@
         <module>infinispan-driver</module>
         <module>mongodb-driver</module>
         <module>orientdb-driver</module>
+        <module>ravendb-driver</module>
         <module>redis-driver</module>
         <module>riak-driver</module>
     </modules>
