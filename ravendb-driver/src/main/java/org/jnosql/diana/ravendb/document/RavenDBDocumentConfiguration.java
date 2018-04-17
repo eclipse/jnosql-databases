@@ -15,33 +15,50 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import net.ravendb.client.documents.DocumentStore;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.DocumentConfiguration;
-import org.jnosql.diana.api.document.DocumentConfigurationAsync;
+import org.jnosql.diana.driver.ConfigurationReader;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
- * The MongoDB implementation to both {@link DocumentConfiguration} and {@link DocumentConfigurationAsync}
- * that returns  {@link MongoDBDocumentCollectionManagerFactory} {@link MongoDBDocumentCollectionManagerAsyncFactory}.
- * It tries to read the diana-mongodb.properties file whose has the following properties
- * <p>mongodb-server-host-: as prefix to add host client, eg: mongodb-server-host-1=host1, mongodb-server-host-2= host2</p>
+ * The RavenDB implementation to both {@link DocumentConfiguration}
+ * that returns  {@link MongoDBDocumentCollectionManagerFactory}
+ * It tries to read the diana-ravendb.properties file whose has the following properties
+ * <p>ravendb-server-host-: as prefix to add host client, eg: ravendb-server-host-1=host1, ravendb-server-host-2= host2</p>
  */
 public class RavenDBDocumentConfiguration implements DocumentConfiguration<MongoDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-ravendb.properties";
 
-    static final int DEFAULT_PORT = 27017;
-
+    private List<String> hosts = new ArrayList<>();
 
     @Override
     public MongoDBDocumentCollectionManagerFactory get() {
-        DocumentStore
-        return null;
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
+        return get(configuration);
     }
 
     @Override
     public MongoDBDocumentCollectionManagerFactory get(Settings settings) {
         return null;
+    }
+
+
+    private MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
+        requireNonNull(configurations, "configurations is required");
+        List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("ravendb-server-host-"))
+                .map(configurations::get).collect(Collectors.toList());
+        if (servers.isEmpty()) {
+            return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
+        }
+
+        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers));
     }
 }
