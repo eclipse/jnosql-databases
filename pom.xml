@@ -77,17 +77,17 @@
 
     <modules>
         <module>diana-driver-commons</module>
+        <module>arangodb-driver</module>
         <module>cassandra-driver</module>
+        <module>couchbase-driver</module>
+        <module>elasticsearch-driver</module>
         <module>hazelcast-driver</module>
         <module>hbase-driver</module>
         <module>infinispan-driver</module>
         <module>mongodb-driver</module>
-        <module>arangodb-driver</module>
+        <module>orientdb-driver</module>
         <module>redis-driver</module>
         <module>riak-driver</module>
-        <module>orientdb-driver</module>
-        <module>couchbase-driver</module>
-        <module>elasticsearch-driver</module>
     </modules>
 
     <dependencies>
