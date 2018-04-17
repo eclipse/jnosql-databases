@@ -79,19 +79,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>${monbodb.driver}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-async</artifactId>
-            <version>${monbodb.driver}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>2.0.3</version>
+            <groupId>net.ravendb</groupId>
+            <artifactId>ravendb-client</artifactId>
+            <version>4.0.0-rc1</version>
         </dependency>
     </dependencies>
     <build>
