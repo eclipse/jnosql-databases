@@ -15,18 +15,10 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import net.ravendb.client.documents.IDocumentStore;
+import net.ravendb.client.documents.DocumentStore;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.api.document.DocumentConfigurationAsync;
-import org.jnosql.diana.driver.ConfigurationReader;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -44,6 +36,7 @@ public class RavenDBDocumentConfiguration implements DocumentConfiguration<Mongo
 
     @Override
     public MongoDBDocumentCollectionManagerFactory get() {
+        DocumentStore
         return null;
     }
 
