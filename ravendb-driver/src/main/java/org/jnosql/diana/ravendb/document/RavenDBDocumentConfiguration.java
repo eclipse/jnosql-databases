@@ -20,6 +20,7 @@ import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +48,10 @@ public class RavenDBDocumentConfiguration implements DocumentConfiguration<Mongo
 
     @Override
     public MongoDBDocumentCollectionManagerFactory get(Settings settings) {
-        return null;
+        requireNonNull(settings, "configurations is required");
+        Map<String, String> configurations = new HashMap<>();
+        settings.forEach((key, value) -> configurations.put(key, value.toString()));
+        return get(configurations);
     }
 
 
