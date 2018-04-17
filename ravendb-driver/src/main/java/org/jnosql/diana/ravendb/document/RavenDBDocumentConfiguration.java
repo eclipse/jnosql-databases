@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -54,15 +53,10 @@ public class RavenDBDocumentConfiguration implements DocumentConfiguration<Raven
         return get(configurations);
     }
 
-
     private RavenDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         requireNonNull(configurations, "configurations is required");
-        List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("ravendb-server-host-"))
-                .map(configurations::get).collect(Collectors.toList());
-        if (servers.isEmpty()) {
-            return new RavenDBDocumentCollectionManagerFactory(new MongoClient());
-        }
-
-        return new RavenDBDocumentCollectionManagerFactory(new MongoClient(servers));
+        String[] servers = configurations.keySet().stream().filter(s -> s.startsWith("ravendb-server-host-"))
+                .map(configurations::get).toArray(String[]::new);
+        return new RavenDBDocumentCollectionManagerFactory(servers);
     }
 }
