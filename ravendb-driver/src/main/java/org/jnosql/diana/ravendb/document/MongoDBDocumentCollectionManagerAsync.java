@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;
 
 
 import com.mongodb.Block;
@@ -35,9 +35,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
-
-import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
-import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
 /**
  * The mongodb implementation of {@link DocumentCollectionManagerAsync} whose does not support the TTL methods:
@@ -125,7 +122,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         String collectionName = entity.getName();
         com.mongodb.async.client.MongoCollection<Document> collectionAsync =
                 asyncMongoDatabase.getCollection(collectionName);
-        Document document = getDocument(entity);
+        Document document = MongoDBUtils.getDocument(entity);
         collectionAsync.insertOne(document, callBack);
     }
 
@@ -133,11 +130,11 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         String collectionName = entity.getName();
         com.mongodb.async.client.MongoCollection<Document> asyncCollection =
                 asyncMongoDatabase.getCollection(collectionName);
-        Document id = entity.find(ID_FIELD).map(d -> new Document(d.getName(), d.getValue().get()))
+        Document id = entity.find(MongoDBUtils.ID_FIELD).map(d -> new Document(d.getName(), d.getValue().get()))
                 .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
                         "the field `_id` is required"));
 
-        asyncCollection.findOneAndReplace(id, getDocument(entity), callBack);
+        asyncCollection.findOneAndReplace(id, MongoDBUtils.getDocument(entity), callBack);
     }
 
     private void delete(DocumentDeleteQuery query, SingleResultCallback<DeleteResult> callBack) {

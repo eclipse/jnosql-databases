@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;
 
 import org.bson.Document;
 import org.jnosql.diana.api.Value;

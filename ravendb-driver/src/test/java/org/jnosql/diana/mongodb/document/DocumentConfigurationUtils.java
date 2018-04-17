@@ -18,18 +18,20 @@ package org.jnosql.diana.mongodb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentConfiguration;
+import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerAsyncFactory;
+import org.jnosql.diana.ravendb.document.RavenDBDocumentConfiguration;
 
 public final class DocumentConfigurationUtils {
 
     private DocumentConfigurationUtils() {}
 
     public static DocumentCollectionManagerFactory get() {
-        DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
         return configuration.get();
     }
 
     public static MongoDBDocumentCollectionManagerAsyncFactory getAsync() {
-        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();
         return configuration.getAsync();
     }
 }

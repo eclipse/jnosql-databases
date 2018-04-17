@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;
 
 import com.mongodb.ServerAddress;
 
@@ -31,7 +31,7 @@ class HostPortConfiguration {
             port = Integer.valueOf(values[1]);
         } else {
             host = values[0];
-            port = MongoDBDocumentConfiguration.DEFAULT_PORT;
+            port = RavenDBDocumentConfiguration.DEFAULT_PORT;
         }
     }
 

@@ -16,4 +16,4 @@
 /**
  * The mongodb document implementation
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;

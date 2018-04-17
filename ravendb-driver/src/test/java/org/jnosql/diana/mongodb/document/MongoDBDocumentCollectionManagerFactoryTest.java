@@ -17,6 +17,9 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerAsyncFactory;
+import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerFactory;
+import org.jnosql.diana.ravendb.document.RavenDBDocumentConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,11 +32,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDBDocumentCollectionManagerFactoryTest {
 
-    private static MongoDBDocumentConfiguration configuration;
+    private static RavenDBDocumentConfiguration configuration;
 
     @BeforeAll
     public static void setUp() throws IOException {
-        configuration = new MongoDBDocumentConfiguration();
+        configuration = new RavenDBDocumentConfiguration();
         MongoDbHelper.startMongoDb();
     }
 

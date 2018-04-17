@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;
 
 import com.mongodb.async.client.MongoClient;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;

@@ -19,4 +19,4 @@
  * MongoDB is developed by MongoDB Inc. and is free and open-source, published under
  * a combination of the GNU Affero General Public License and the Apache License.
  */
-package org.jnosql.diana.mongodb;
+package org.jnosql.diana.ravendb;
