@@ -23,9 +23,9 @@
         <version>0.0.6-SNAPSHOT</version>
     </parent>
 
-    <artifactId>mongodb-driver</artifactId>
+    <artifactId>ravendb-driver</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>The Eclipse JNoSQL communication layer, Diana, implementation to MongoDB</description>
+    <description>The Eclipse JNoSQL communication layer, Diana, implementation to RavenDB</description>
     <url>http://jnosql.org/</url>
 
     <licenses>
