@@ -47,7 +47,7 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MongoDBDocumentCollectionManagerTest {
+public class RavenDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     private static DocumentCollectionManager entityManager;

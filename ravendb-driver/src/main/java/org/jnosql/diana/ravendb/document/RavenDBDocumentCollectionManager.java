@@ -18,6 +18,8 @@ package org.jnosql.diana.ravendb.document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
+import net.ravendb.client.documents.DocumentStore;
+import net.ravendb.client.documents.session.IDocumentSession;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -37,24 +39,28 @@ import static org.jnosql.diana.ravendb.document.MongoDBUtils.getDocument;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
- * <p>{@link MongoDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
+ * <p>{@link RavenDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
  */
-public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
-
-    private static final BsonDocument EMPTY = new BsonDocument();
-
-    private final MongoDatabase mongoDatabase;
+public class RavenDBDocumentCollectionManager implements DocumentCollectionManager {
 
 
-    MongoDBDocumentCollectionManager(MongoDatabase mongoDatabase) {
-        this.mongoDatabase = mongoDatabase;
+    private final DocumentStore documentStore;
+
+
+    RavenDBDocumentCollectionManager(DocumentStore documentStore) {
+        this.documentStore = documentStore;
     }
 
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
+
+        try (IDocumentSession session = documentStore.openSession()) {
+            session.load()
+            session.saveChanges();
+        }
         String collectionName = entity.getName();
-        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
         Document document = getDocument(entity);
         collection.insertOne(document);
         boolean hasNotId = entity.getDocuments().stream()
@@ -76,7 +82,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     public DocumentEntity update(DocumentEntity entity) {
         DocumentEntity copy = entity.copy();
         String collectionName = entity.getName();
-        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
         Document id = copy.find(ID_FIELD)
                 .map(d -> new Document(d.getName(), d.getValue().get()))
                 .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
@@ -90,7 +96,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     @Override
     public void delete(DocumentDeleteQuery query) {
         String collectionName = query.getDocumentCollection();
-        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("condition is required")));
         DeleteResult deleteResult = collection.deleteMany(mongoDBQuery);
@@ -100,7 +106,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
         String collectionName = query.getDocumentCollection();
-        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
         Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
         return stream(collection.find(mongoDBQuery).spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
@@ -109,7 +115,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public void close() {
-
+        documentStore.close();
     }
 
 

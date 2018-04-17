@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class MongoDBDocumentCollectionManagerAsyncTest {
+public class RavenDBDocumentCollectionManagerAsyncTest {
 
     public static final String COLLECTION_NAME = "person";
 
