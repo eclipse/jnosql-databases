@@ -49,7 +49,9 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     }
 
-
+    //https://ravendb.net/docs/article-page/4.0/csharp/start/getting-started#client
+    //https://github.com/ravendb/ravendb-jvm-client/issues/4
+    //http://4.demo.ravendb.net/
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
 
