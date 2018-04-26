@@ -18,8 +18,6 @@ package org.jnosql.diana.ravendb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentConfiguration;
-import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerAsyncFactory;
-import org.jnosql.diana.ravendb.document.RavenDBDocumentConfiguration;
 
 public final class DocumentConfigurationUtils {
 
@@ -30,8 +28,4 @@ public final class DocumentConfigurationUtils {
         return configuration.get();
     }
 
-    public static MongoDBDocumentCollectionManagerAsyncFactory getAsync() {
-        RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        return configuration.getAsync();
-    }
 }
