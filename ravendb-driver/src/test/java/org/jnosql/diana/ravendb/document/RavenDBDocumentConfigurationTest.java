@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.ravendb.document;
 
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,10 @@ public class RavenDBDocumentConfigurationTest {
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("mongodb-server-host-1", "172.17.0.2:27017");
         RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get(map);
+        DocumentCollectionManagerFactory managerFactory = configuration.get(Settings.of(map));
         assertNotNull(managerFactory);
     }
 
@@ -50,10 +51,5 @@ public class RavenDBDocumentConfigurationTest {
         assertThrows(NullPointerException.class, () -> configuration.get(null));
     }
 
-    @Test
-    public void shouldReturnErrorWhendMapSettingsIsNull() {
-        RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
-    }
 
 }

@@ -22,7 +22,6 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +44,11 @@ import static org.hamcrest.Matchers.not;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.ravendb.document.DocumentConfigurationUtils.get;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RavenDBDocumentCollectionManagerTest {
 
@@ -54,7 +57,6 @@ public class RavenDBDocumentCollectionManagerTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        MongoDbHelper.startMongoDb();
         entityManager = get().get("database");
     }
 
@@ -359,8 +361,4 @@ public class RavenDBDocumentCollectionManagerTest {
         return asList(lucas, otavio, luna);
     }
 
-    @AfterAll
-    public static void end() {
-        MongoDbHelper.stopMongoDb();
-    }
 }
