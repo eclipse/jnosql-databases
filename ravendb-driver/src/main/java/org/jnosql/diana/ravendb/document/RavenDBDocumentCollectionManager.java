@@ -30,12 +30,15 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jnosql.diana.ravendb.document.MongoDBUtils.ID_FIELD;
-import static org.jnosql.diana.ravendb.document.MongoDBUtils.getDocument;
+import static org.jnosql.diana.ravendb.document.EntityConverter.ID_FIELD;
+import static org.jnosql.diana.ravendb.document.EntityConverter.getDocument;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
@@ -56,7 +59,12 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     public DocumentEntity insert(DocumentEntity entity) {
 
         try (IDocumentSession session = documentStore.openSession()) {
-            session.load()
+            Map<String, Object> map = new HashMap<>();
+            map.put("age", 23);
+            map.put("name", "Ada Lovelace");
+            map.put("subdocument", Collections.singletonMap("doc", "map"));
+            //https://github.com/ravendb/ravendb-jvm-client/issues/4#event-1580591042
+            session.store(map);
             session.saveChanges();
         }
         String collectionName = entity.getName();
@@ -108,7 +116,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = documentStore.getCollection(collectionName);
         Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
-        return stream(collection.find(mongoDBQuery).spliterator(), false).map(MongoDBUtils::of)
+        return stream(collection.find(mongoDBQuery).spliterator(), false).map(EntityConverter::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
 
     }
