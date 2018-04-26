@@ -15,14 +15,11 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +31,6 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
     @BeforeAll
     public static void setUp() throws IOException {
         configuration = new RavenDBDocumentConfiguration();
-        MongoDbHelper.startMongoDb();
     }
 
     @Test
@@ -50,17 +46,10 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldReturnNPEWhenMapSettingsIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.get((Map<String, String>) null));
     }
 
     @Test
     public void shouldReturnNPEWhenMongoClientIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.get((MongoClient) null));
     }
 
-
-    @AfterAll
-    public static void end() {
-        MongoDbHelper.stopMongoDb();
-    }
 }
