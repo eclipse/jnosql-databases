@@ -14,36 +14,26 @@
  */
 package org.jnosql.diana.ravendb.document;
 
-import org.bson.Document;
-import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.StreamSupport.stream;
 
 final class EntityConverter {
+    
     static final String ID_FIELD = "_id";
-
-    private static final Function<Map.Entry<?, ?>, org.jnosql.diana.api.document.Document> ENTRY_DOCUMENT = entry ->
-            org.jnosql.diana.api.document.Document.of(entry.getKey().toString(), entry.getValue());
 
 
     private EntityConverter() {
     }
+
 
     static Map<String, Object> getMap(DocumentEntity entity) {
         Map<String, Object> jsonObject = new HashMap<>();
@@ -53,6 +43,7 @@ final class EntityConverter {
                 .forEach(feedJSON(jsonObject));
         return jsonObject;
     }
+
 
     private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
         return d -> {
@@ -72,6 +63,12 @@ final class EntityConverter {
         };
     }
 
+    private static Map<String, Object> getMap(Object value) {
+        Map<String, Object> subDocument = new HashMap<>();
+        StreamSupport.stream(Iterable.class.cast(value).spliterator(),
+                false).forEach(feedJSON(subDocument));
+        return subDocument;
+    }
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
@@ -82,5 +79,6 @@ final class EntityConverter {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
+
 
 }
