@@ -17,7 +17,6 @@ package org.jnosql.diana.ravendb.document;
 
 import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerAsyncFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -59,22 +58,6 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
         assertThrows(NullPointerException.class, () -> configuration.get((MongoClient) null));
     }
 
-
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerAsyncFactory mongoDBFactory = configuration.getAsync();
-        assertNotNull(mongoDBFactory.getAsync("database"));
-    }
-
-    @Test
-    public void shouldReturnNPEWhenSettingOnAsyncsIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.getAsync((Settings) null));
-    }
-
-    @Test
-    public void shouldReturnNPEWhenMongoClientAsyncIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.getAsync((com.mongodb.async.client.MongoClient) null));
-    }
 
     @AfterAll
     public static void end() {
