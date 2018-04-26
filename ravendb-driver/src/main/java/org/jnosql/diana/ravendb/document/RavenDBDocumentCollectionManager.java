@@ -15,31 +15,17 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.DeleteResult;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
-import org.bson.BsonDocument;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.StreamSupport.stream;
-import static org.jnosql.diana.ravendb.document.EntityConverter.ID_FIELD;
-import static org.jnosql.diana.ravendb.document.EntityConverter.getDocument;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
@@ -76,37 +62,18 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        DocumentEntity copy = entity.copy();
-        String collectionName = entity.getName();
-        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
-        Document id = copy.find(ID_FIELD)
-                .map(d -> new Document(d.getName(), d.getValue().get()))
-                .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
-                        "the field `id` is required"));
-        copy.remove(ID_FIELD);
-        collection.findOneAndReplace(id, getDocument(entity));
-        return entity;
+        return null;
     }
 
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-        String collectionName = query.getDocumentCollection();
-        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
-        Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("condition is required")));
-        DeleteResult deleteResult = collection.deleteMany(mongoDBQuery);
     }
 
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
-        String collectionName = query.getDocumentCollection();
-        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
-        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
-        return stream(collection.find(mongoDBQuery).spliterator(), false).map(EntityConverter::of)
-                .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
-
+        return null;
     }
 
     @Override
