@@ -35,8 +35,8 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        RavenDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
-        assertNotNull(mongoDBFactory.get("database"));
+        RavenDBDocumentCollectionManagerFactory ravenDBFactory = configuration.get();
+        assertNotNull(ravenDBFactory.get("database"));
     }
 
     @Test
@@ -48,8 +48,5 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
     public void shouldReturnNPEWhenMapSettingsIsNull() {
     }
 
-    @Test
-    public void shouldReturnNPEWhenMongoClientIsNull() {
-    }
 
 }
