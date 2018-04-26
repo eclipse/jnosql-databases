@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -58,23 +59,10 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
 
+        Objects.requireNonNull(entity, "entity is required");
+
         try (IDocumentSession session = documentStore.openSession()) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("age", 23);
-            map.put("name", "Ada Lovelace");
-            map.put("subdocument", Collections.singletonMap("doc", "map"));
-            //https://github.com/ravendb/ravendb-jvm-client/issues/4#event-1580591042
-            session.store(map);
-            session.saveChanges();
-        }
-        String collectionName = entity.getName();
-        MongoCollection<Document> collection = documentStore.getCollection(collectionName);
-        Document document = getDocument(entity);
-        collection.insertOne(document);
-        boolean hasNotId = entity.getDocuments().stream()
-                .map(org.jnosql.diana.api.document.Document::getName).noneMatch(k -> k.equals(ID_FIELD));
-        if (hasNotId) {
-            entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
+            Map<String, Object> map = EntityConverter.getMap(entity);
         }
         return entity;
     }

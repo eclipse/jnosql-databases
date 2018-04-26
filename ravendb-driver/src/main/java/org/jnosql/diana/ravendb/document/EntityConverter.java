@@ -27,7 +27,7 @@ import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
 final class EntityConverter {
-    
+
     static final String ID_FIELD = "_id";
 
 
