@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;
 
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
@@ -44,7 +44,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
+import static org.jnosql.diana.ravendb.document.DocumentConfigurationUtils.get;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RavenDBDocumentCollectionManagerTest {

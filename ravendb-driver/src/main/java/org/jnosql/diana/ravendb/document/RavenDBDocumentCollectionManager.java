@@ -15,7 +15,6 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import net.ravendb.client.Constants;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;
@@ -32,6 +31,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
+import static net.ravendb.client.Constants.Documents.Metadata.ID;
+import static org.jnosql.diana.ravendb.document.EntityConverter.ID_FIELD;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
@@ -46,10 +47,6 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     RavenDBDocumentCollectionManager(DocumentStore documentStore) {
         this.documentStore = documentStore;
 
-        documentStore.getConventions().registerIdConvention(Map.class, (String dbName, Map entity) -> {
-            // concat with '/' to automatically generate document id postfix
-            return entity.get("collection") + "/";
-        });
     }
 
 
@@ -60,12 +57,10 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
         try (IDocumentSession session = documentStore.openSession()) {
             IMetadataDictionary metadata = session.advanced().getMetadataFor(EntityConverter.getMap(entity));
-            Optional<Document> id = entity.find(EntityConverter.ID_FIELD);
+            Optional<Document> id = entity.find(ID_FIELD);
             String collection = entity.getName();
             metadata.put(COLLECTION, collection);
-            id.ifPresent(i -> metadata.put(Constants.Documents.Metadata.ID, collection + "/" + i.get(String.class)));
-
-
+            id.ifPresent(i -> metadata.put(ID, collection + "/" + i.get(String.class)));
         }
         return entity;
     }

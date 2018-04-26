@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;
 
 public enum ContactType {
     EMAIL, MOBILE, PHONE

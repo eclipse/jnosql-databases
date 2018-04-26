@@ -13,13 +13,11 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.ravendb.document;
 
 import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.ravendb.document.MongoDBDocumentCollectionManagerAsyncFactory;
-import org.jnosql.diana.ravendb.document.RavenDBDocumentCollectionManagerFactory;
-import org.jnosql.diana.ravendb.document.RavenDBDocumentConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
