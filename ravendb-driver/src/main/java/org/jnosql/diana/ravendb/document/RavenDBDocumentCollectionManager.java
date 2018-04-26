@@ -15,8 +15,11 @@
 
 package org.jnosql.diana.ravendb.document;
 
+import net.ravendb.client.Constants;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
+import net.ravendb.client.documents.session.IMetadataDictionary;
+import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -26,6 +29,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+
+import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
@@ -39,6 +45,11 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     RavenDBDocumentCollectionManager(DocumentStore documentStore) {
         this.documentStore = documentStore;
+
+        documentStore.getConventions().registerIdConvention(Map.class, (String dbName, Map entity) -> {
+            // concat with '/' to automatically generate document id postfix
+            return entity.get("collection") + "/";
+        });
     }
 
 
@@ -48,7 +59,13 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Objects.requireNonNull(entity, "entity is required");
 
         try (IDocumentSession session = documentStore.openSession()) {
-            Map<String, Object> map = EntityConverter.getMap(entity);
+            IMetadataDictionary metadata = session.advanced().getMetadataFor(EntityConverter.getMap(entity));
+            Optional<Document> id = entity.find(EntityConverter.ID_FIELD);
+            String collection = entity.getName();
+            metadata.put(COLLECTION, collection);
+            id.ifPresent(i -> metadata.put(Constants.Documents.Metadata.ID, collection + "/" + i.get(String.class)));
+
+
         }
         return entity;
     }
