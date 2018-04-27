@@ -18,6 +18,7 @@ package org.jnosql.diana.ravendb.document;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;
+import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -29,7 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
-import static net.ravendb.client.Constants.Documents.Metadata.ID;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
@@ -57,11 +57,14 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
             String collection = entity.getName();
 
             Map<String, Object> entityMap = EntityConverter.getMap(entity);
-            session.store(entityMap, collection + "/1231231");
+            String id = entity.find(EntityConverter.ID_FIELD)
+                    .map(d -> d.get(String.class))
+                    .orElse(collection + '/');
+            session.store(entityMap, id);
             IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
             metadata.put(COLLECTION, collection);
-            metadata.put(ID, collection + "/");
             session.saveChanges();
+            entity.add(EntityConverter.ID_FIELD, id);
         }
         return entity;
     }
