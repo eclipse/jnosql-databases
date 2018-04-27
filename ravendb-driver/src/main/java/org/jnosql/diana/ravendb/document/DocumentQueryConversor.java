@@ -18,7 +18,6 @@ package org.jnosql.diana.ravendb.document;
 import net.ravendb.client.documents.queries.Query;
 import net.ravendb.client.documents.session.IDocumentQuery;
 import net.ravendb.client.documents.session.IDocumentSession;
-import net.ravendb.client.documents.session.OrderingType;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
@@ -28,7 +27,6 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 class DocumentQueryConversor {
 
