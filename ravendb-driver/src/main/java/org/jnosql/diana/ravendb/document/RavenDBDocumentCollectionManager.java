@@ -18,7 +18,6 @@ package org.jnosql.diana.ravendb.document;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;
-import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -28,11 +27,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
 import static net.ravendb.client.Constants.Documents.Metadata.ID;
-import static org.jnosql.diana.ravendb.document.EntityConverter.ID_FIELD;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
@@ -41,16 +38,12 @@ import static org.jnosql.diana.ravendb.document.EntityConverter.ID_FIELD;
 public class RavenDBDocumentCollectionManager implements DocumentCollectionManager {
 
 
-    private final DocumentStore documentStore;
+    private final DocumentStore store;
 
 
     RavenDBDocumentCollectionManager(DocumentStore store) {
-        this.documentStore = store;
-
-        store.getConventions().registerIdConvention(Map.class, (String dbName, Map entity) -> {
-            return (String) entity.get("collection") + "/";
-        });
-        this.documentStore.initialize();
+        this.store = store;
+        this.store.initialize();
 
     }
 
@@ -60,12 +53,11 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Objects.requireNonNull(entity, "entity is required");
 
 
-        try (IDocumentSession session = documentStore.openSession()) {
+        try (IDocumentSession session = store.openSession()) {
             String collection = entity.getName();
 
             Map<String, Object> entityMap = EntityConverter.getMap(entity);
-            entityMap.put("id", "person/123");
-            session.store(entityMap);
+            session.store(entityMap, collection + "/1231231");
             IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
             metadata.put(COLLECTION, collection);
             metadata.put(ID, collection + "/");
@@ -99,7 +91,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public void close() {
-        documentStore.close();
+        store.close();
     }
 
 
