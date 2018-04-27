@@ -61,8 +61,9 @@ class DocumentQueryConversor {
         Object value = document.get();
         String name = document.getName();
 
-        if(EntityConverter.ID_FIELD.equals(name)) {
+        if (EntityConverter.ID_FIELD.equals(name)) {
             ids.add(value.toString());
+            return;
         }
 
         switch (condition.getCondition()) {
@@ -101,7 +102,7 @@ class DocumentQueryConversor {
                 return;
             default:
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
-                        + " is not supported from mongoDB diana driver");
+                        + " is not supported from ravendb diana driver");
         }
     }
 
