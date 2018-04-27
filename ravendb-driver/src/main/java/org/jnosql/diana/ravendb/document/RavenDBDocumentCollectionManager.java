@@ -16,6 +16,8 @@
 package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.documents.DocumentStore;
+import net.ravendb.client.documents.queries.Query;
+import net.ravendb.client.documents.session.IDocumentQuery;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;
 import net.ravendb.client.exceptions.RavenException;
@@ -98,6 +100,11 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
+        try (IDocumentSession session = store.openSession()) {
+            IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(query.getDocumentCollection()));
+
+        }
+
         return null;
     }
 
