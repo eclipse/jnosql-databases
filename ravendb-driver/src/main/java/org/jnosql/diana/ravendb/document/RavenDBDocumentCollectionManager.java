@@ -44,11 +44,12 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     private final DocumentStore documentStore;
 
 
-    RavenDBDocumentCollectionManager(DocumentStore documentStore) {
-        this.documentStore = documentStore;
-        documentStore.getConventions().registerIdConvention(Map.class, (dbName, map) ->
-                map.get("collection") + "/" + map.getOrDefault(EntityConverter.ID_FIELD, "")
-        );
+    RavenDBDocumentCollectionManager(DocumentStore store) {
+        this.documentStore = store;
+
+        store.getConventions().registerIdConvention(Map.class, (String dbName, Map entity) -> {
+            return (String) entity.get("collection") + "/";
+        });
         this.documentStore.initialize();
 
     }
@@ -60,11 +61,15 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
 
         try (IDocumentSession session = documentStore.openSession()) {
-            IMetadataDictionary metadata = session.advanced().getMetadataFor(EntityConverter.getMap(entity));
-            Optional<Document> id = entity.find(ID_FIELD);
             String collection = entity.getName();
+
+            Map<String, Object> entityMap = EntityConverter.getMap(entity);
+            entityMap.put("id", "person/123");
+            session.store(entityMap);
+            IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
             metadata.put(COLLECTION, collection);
-            id.ifPresent(i -> metadata.put(ID, collection + "/" + i.get(String.class)));
+            metadata.put(ID, collection + "/");
+            session.saveChanges();
         }
         return entity;
     }

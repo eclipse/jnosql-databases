@@ -20,13 +20,11 @@ import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
-import static net.ravendb.client.Constants.Documents.Metadata.ID;
 
 final class EntityConverter {
 
@@ -39,18 +37,11 @@ final class EntityConverter {
 
     static Map<String, Object> getMap(DocumentEntity entity) {
 
-        String collection = entity.getName();
         Map<String, Object> entityMap = new HashMap<>();
 
         entity.getDocuments().stream()
+                .filter(d -> !ID_FIELD.equals(d.getName()))
                 .forEach(feedJSON(entityMap));
-
-        Optional<Document> id = entity.find(ID_FIELD);
-        if (id.isPresent()) {
-            id.ifPresent(i -> entityMap.put(ID, collection + "/" + i.get(String.class)));
-        } else {
-            id.ifPresent(i -> entityMap.put(ID, collection + "/"));
-        }
         return entityMap;
     }
 
