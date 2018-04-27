@@ -18,12 +18,15 @@ package org.jnosql.diana.ravendb.document;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;
+import net.ravendb.client.exceptions.RavenException;
+import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,10 +51,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
-
         Objects.requireNonNull(entity, "entity is required");
-
-
         try (IDocumentSession session = store.openSession()) {
             String collection = entity.getName();
 
@@ -77,7 +77,17 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        return null;
+        Objects.requireNonNull(entity, "entity is required");
+
+        try (IDocumentSession session = store.openSession()) {
+            Document id = entity.find(EntityConverter.ID_FIELD)
+                    .orElseThrow(() -> new RavenException("Id is required to Raven Update operation"));
+
+            HashMap<String, Object> map = session.load(HashMap.class, id.get(String.class));
+            map.putAll(EntityConverter.getMap(entity));
+            session.saveChanges();
+        }
+        return entity;
     }
 
 
