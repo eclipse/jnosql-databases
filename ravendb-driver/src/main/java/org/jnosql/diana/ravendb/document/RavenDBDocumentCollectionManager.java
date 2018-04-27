@@ -16,8 +16,6 @@
 package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.documents.DocumentStore;
-import net.ravendb.client.documents.queries.Query;
-import net.ravendb.client.documents.session.IDocumentQuery;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;
 import net.ravendb.client.exceptions.RavenException;
@@ -30,13 +28,12 @@ import org.jnosql.diana.ravendb.document.DocumentQueryConversor.QueryResult;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
 
 /**
@@ -107,18 +104,17 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Objects.requireNonNull(query, "query is required");
 
         try (IDocumentSession session = store.openSession()) {
-            List<DocumentEntity> entities = new ArrayList<>();
+            List<HashMap> entities = new ArrayList<>();
             QueryResult queryResult = DocumentQueryConversor.createQuery(session, query);
 
-            List<HashMap> maps = queryResult.getIds().stream()
-                    .map(i -> session.load(HashMap.class, i)).collect(Collectors.toList());
+            queryResult.getIds().stream()
+                    .map(i -> session.load(HashMap.class, i))
+                    .forEach(entities::add);
 
-            System.out.println(maps);
-
-
+            queryResult.getRavenQuery().map(q -> q.toList()).ifPresent(entities::addAll);
+            return entities.stream().map(EntityConverter::getEntity).collect(toList());
         }
 
-        return Collections.emptyList();
     }
 
     @Override
