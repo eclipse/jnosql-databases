@@ -14,6 +14,6 @@
  */
 
 /**
- * The mongodb document implementation
+ * The raven document implementation
  */
 package org.jnosql.diana.ravendb.document;
