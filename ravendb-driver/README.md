@@ -12,6 +12,7 @@
 
 ### Install without testing
 
+`sudo docker run -d -p 8080:8080 -p 38888:38888 ravendb/ravendb`
 
 If you won't run the tests the database is not required, so just run the maven skipping the tests.
 
