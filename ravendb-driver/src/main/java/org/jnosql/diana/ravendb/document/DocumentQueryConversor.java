@@ -104,6 +104,10 @@ class DocumentQueryConversor {
                 ravenQuery.whereIn(name, document.get(new TypeReference<List<Object>>() {
                 }));
                 return;
+            case NOT:
+                ravenQuery.negateNext();
+                feedQuery(ravenQuery, document.get(DocumentCondition.class), ids);
+                return;
             case LIKE:
                 throw new UnsupportedOperationException("Raven does not support LIKE Operator");
             case AND:
