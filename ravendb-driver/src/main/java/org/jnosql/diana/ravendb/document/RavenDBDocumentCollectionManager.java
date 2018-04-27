@@ -65,7 +65,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
             IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
             metadata.put(COLLECTION, collection);
             session.saveChanges();
-            entity.add(EntityConverter.ID_FIELD, id);
+            entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
         }
         return entity;
     }
