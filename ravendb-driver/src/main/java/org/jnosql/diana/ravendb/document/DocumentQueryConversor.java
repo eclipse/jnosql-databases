@@ -27,6 +27,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 class DocumentQueryConversor {
@@ -42,6 +43,15 @@ class DocumentQueryConversor {
         query.getCondition().ifPresent(c -> feedQuery(ravenQuery, c, ids));
 
 
+        if (!ids.isEmpty() && query.getCondition().isPresent()) {
+            return new QueryResult(ids, null);
+        } else {
+            return appendRavenQuery(query, ids, ravenQuery);
+        }
+
+    }
+
+    private static QueryResult appendRavenQuery(DocumentQuery query, List<String> ids, IDocumentQuery<HashMap> ravenQuery) {
         Consumer<Sort> sortConsumer = s -> {
             switch (s.getType()) {
                 case DESC:
@@ -53,6 +63,14 @@ class DocumentQueryConversor {
             }
         };
         query.getSorts().forEach(sortConsumer);
+
+        if (query.getFirstResult() > 0) {
+            ravenQuery.skip((int) query.getFirstResult());
+        }
+
+        if (query.getMaxResults() > 0) {
+            ravenQuery.take((int) query.getMaxResults());
+        }
         return new QueryResult(ids, ravenQuery);
     }
 
@@ -122,8 +140,8 @@ class DocumentQueryConversor {
             return ids;
         }
 
-        public IDocumentQuery<HashMap> getRavenQuery() {
-            return ravenQuery;
+        public Optional<IDocumentQuery<HashMap>> getRavenQuery() {
+            return Optional.ofNullable(ravenQuery);
         }
     }
 }
