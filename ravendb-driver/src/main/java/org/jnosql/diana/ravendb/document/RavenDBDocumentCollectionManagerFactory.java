@@ -37,7 +37,6 @@ public class RavenDBDocumentCollectionManagerFactory implements DocumentCollecti
     public RavenDBDocumentCollectionManager get(String database) {
         Objects.requireNonNull(database, "database is required");
         DocumentStore documentStore = new DocumentStore(hosts, database);
-        documentStore.initialize();
         return new RavenDBDocumentCollectionManager(documentStore);
     }
 

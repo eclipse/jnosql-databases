@@ -46,10 +46,10 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     RavenDBDocumentCollectionManager(DocumentStore documentStore) {
         this.documentStore = documentStore;
-        documentStore.getConventions().registerIdConvention(Map.class, (dbName, map) -> {
-
-            return (String) map.get("collection") + "/" + map.getOrDefault(EntityConverter.ID_FIELD, "");
-        });
+        documentStore.getConventions().registerIdConvention(Map.class, (dbName, map) ->
+                map.get("collection") + "/" + map.getOrDefault(EntityConverter.ID_FIELD, "")
+        );
+        this.documentStore.initialize();
 
     }
 
@@ -57,7 +57,6 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     public DocumentEntity insert(DocumentEntity entity) {
 
         Objects.requireNonNull(entity, "entity is required");
-
 
 
         try (IDocumentSession session = documentStore.openSession()) {
