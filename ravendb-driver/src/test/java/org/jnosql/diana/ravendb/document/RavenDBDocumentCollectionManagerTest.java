@@ -75,6 +75,7 @@ public class RavenDBDocumentCollectionManagerTest {
     @Test
     public void shouldUpdate() {
         DocumentEntity entity = getEntity();
+        entity.add(Document.of(EntityConverter.ID_FIELD, "person/123"));
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
@@ -84,7 +85,9 @@ public class RavenDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldRemoveEntity() {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
+        DocumentEntity entity = getEntity();
+        entity.add(Document.of(EntityConverter.ID_FIELD, "person/"+ new Random().nextInt(100)));
+        DocumentEntity documentEntity = entityManager.insert(entity);
 
         Optional<Document> id = documentEntity.find("_id");
         DocumentQuery query = select().from(COLLECTION_NAME)
