@@ -35,6 +35,11 @@ final class EntityConverter {
     }
 
 
+    static DocumentEntity getEntity(Map<String, Object> map) {
+
+
+    }
+
     static Map<String, Object> getMap(DocumentEntity entity) {
 
         Map<String, Object> entityMap = new HashMap<>();
@@ -46,20 +51,20 @@ final class EntityConverter {
     }
 
 
-    private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
+    private static Consumer<Document> feedJSON(Map<String, Object> map) {
         return d -> {
             Object value = ValueUtil.convert(d.getValue());
             if (value instanceof Document) {
                 Document subDocument = Document.class.cast(value);
-                jsonObject.put(d.getName(), singletonMap(subDocument.getName(), subDocument.get()));
+                map.put(d.getName(), singletonMap(subDocument.getName(), subDocument.get()));
             } else if (isSudDocument(value)) {
                 Map<String, Object> subDocument = getMap(value);
-                jsonObject.put(d.getName(), subDocument);
+                map.put(d.getName(), subDocument);
             } else if (isSudDocumentList(value)) {
-                jsonObject.put(d.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
+                map.put(d.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
                         .map(EntityConverter::getMap).collect(toList()));
             } else {
-                jsonObject.put(d.getName(), value);
+                map.put(d.getName(), value);
             }
         };
     }
