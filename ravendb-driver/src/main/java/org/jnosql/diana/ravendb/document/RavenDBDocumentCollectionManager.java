@@ -26,12 +26,16 @@ import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.ravendb.document.DocumentQueryConversor.QueryResult;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
 
@@ -100,12 +104,21 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
+        Objects.requireNonNull(query, "query is required");
+
         try (IDocumentSession session = store.openSession()) {
-            IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(query.getDocumentCollection()));
+            List<DocumentEntity> entities = new ArrayList<>();
+            QueryResult queryResult = DocumentQueryConversor.createQuery(session, query);
+
+            List<HashMap> maps = queryResult.getIds().stream()
+                    .map(i -> session.load(HashMap.class, i)).collect(Collectors.toList());
+
+            System.out.println(maps);
+
 
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

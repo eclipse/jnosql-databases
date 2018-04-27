@@ -24,6 +24,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -34,10 +35,12 @@ class DocumentQueryConversor {
     }
 
 
-    public static IDocumentQuery<HashMap> createQuery(IDocumentSession session, DocumentQuery query) {
+    public static QueryResult createQuery(IDocumentSession session, DocumentQuery query) {
 
+        List<String> ids = new ArrayList<>();
         IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(query.getDocumentCollection()));
-        query.getCondition().ifPresent(c -> feedQuery(ravenQuery, c));
+        query.getCondition().ifPresent(c -> feedQuery(ravenQuery, c, ids));
+
 
         Consumer<Sort> sortConsumer = s -> {
             switch (s.getType()) {
@@ -50,13 +53,17 @@ class DocumentQueryConversor {
             }
         };
         query.getSorts().forEach(sortConsumer);
-        return ravenQuery;
+        return new QueryResult(ids, ravenQuery);
     }
 
-    private static void feedQuery(IDocumentQuery<HashMap> ravenQuery, DocumentCondition condition) {
+    private static void feedQuery(IDocumentQuery<HashMap> ravenQuery, DocumentCondition condition, List<String> ids) {
         Document document = condition.getDocument();
         Object value = document.get();
         String name = document.getName();
+
+        if(EntityConverter.ID_FIELD.equals(name)) {
+            ids.add(value.toString());
+        }
 
         switch (condition.getCondition()) {
             case EQUALS:
@@ -84,17 +91,38 @@ class DocumentQueryConversor {
                 condition.getDocument().getValue()
                         .get(new TypeReference<List<DocumentCondition>>() {
                         })
-                        .forEach(c -> feedQuery(ravenQuery.andAlso(), c));
+                        .forEach(c -> feedQuery(ravenQuery.andAlso(), c, ids));
                 return;
             case OR:
                 condition.getDocument().getValue()
                         .get(new TypeReference<List<DocumentCondition>>() {
                         })
-                        .forEach(c -> feedQuery(ravenQuery.orElse(), c));
+                        .forEach(c -> feedQuery(ravenQuery.orElse(), c, ids));
                 return;
             default:
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
                         + " is not supported from mongoDB diana driver");
+        }
+    }
+
+
+    static class QueryResult {
+
+        private final List<String> ids;
+
+        private final IDocumentQuery<HashMap> ravenQuery;
+
+        private QueryResult(List<String> ids, IDocumentQuery<HashMap> ravenQuery) {
+            this.ids = ids;
+            this.ravenQuery = ravenQuery;
+        }
+
+        public List<String> getIds() {
+            return ids;
+        }
+
+        public IDocumentQuery<HashMap> getRavenQuery() {
+            return ravenQuery;
         }
     }
 }
