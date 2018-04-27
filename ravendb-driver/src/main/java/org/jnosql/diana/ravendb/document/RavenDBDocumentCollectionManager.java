@@ -46,16 +46,19 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     RavenDBDocumentCollectionManager(DocumentStore documentStore) {
         this.documentStore = documentStore;
+        documentStore.getConventions().registerIdConvention(Map.class, (dbName, map) -> {
+
+            return (String) map.get("collection") + "/" + map.getOrDefault(EntityConverter.ID_FIELD, "");
+        });
 
     }
 
-    //https://ravendb.net/docs/article-page/4.0/csharp/start/getting-started#client
-    //https://github.com/ravendb/ravendb-jvm-client/issues/4
-    //http://4.demo.ravendb.net/
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
 
         Objects.requireNonNull(entity, "entity is required");
+
+
 
         try (IDocumentSession session = documentStore.openSession()) {
             IMetadataDictionary metadata = session.advanced().getMetadataFor(EntityConverter.getMap(entity));
