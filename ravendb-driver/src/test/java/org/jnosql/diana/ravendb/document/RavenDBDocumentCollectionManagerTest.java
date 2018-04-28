@@ -22,6 +22,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RavenDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
+    private static final long TIME_LIMIT = 500L;
     private static DocumentCollectionManager entityManager;
 
     @BeforeAll
@@ -63,6 +65,11 @@ public class RavenDBDocumentCollectionManagerTest {
 
     @BeforeEach
     public void before() {
+        entityManager.delete(delete().from(COLLECTION_NAME).build());
+    }
+
+    @AfterEach
+    public void after() {
         entityManager.delete(delete().from(COLLECTION_NAME).build());
     }
 
@@ -118,6 +125,7 @@ public class RavenDBDocumentCollectionManagerTest {
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
+
     @Test
     public void shouldRunSingleResult() {
         DocumentEntity entity = entityManager.insert(getEntity());
@@ -163,7 +171,7 @@ public class RavenDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentGreaterThan() {
+    public void shouldFindDocumentGreaterThan() throws InterruptedException {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -174,13 +182,14 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
+        Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query);
         assertTrue(entitiesFound.size() == 2);
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
 
     @Test
-    public void shouldFindDocumentGreaterEqualsThan() {
+    public void shouldFindDocumentGreaterEqualsThan() throws InterruptedException {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -191,6 +200,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
+        Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query);
         assertTrue(entitiesFound.size() == 2);
         assertThat(entitiesFound, not(contains(entities.get(0))));
@@ -214,7 +224,7 @@ public class RavenDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLesserEqualsThan() {
+    public void shouldFindDocumentLesserEqualsThan() throws InterruptedException {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -225,14 +235,16 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
+        Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 2);
+        System.out.println(entitiesFound);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
     }
 
 
     @Test
-    public void shouldFindDocumentIn() {
+    public void shouldFindDocumentIn() throws InterruptedException {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -242,7 +254,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .where("location").in(asList("BR", "US"))
                 .and("type").eq("V")
                 .build();
-
+        Thread.sleep(TIME_LIMIT);
         assertEquals(entities, entityManager.select(query));
     }
 
