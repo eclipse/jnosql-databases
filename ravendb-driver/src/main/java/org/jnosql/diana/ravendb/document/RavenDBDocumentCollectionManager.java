@@ -101,9 +101,10 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
         try (IDocumentSession session = store.openSession()) {
             List<Map> entities = getQueryMaps(new RavenDeleteQuery(query), session);
-            entities.stream().map(m -> session.advanced().getDocumentId(m)).forEach(session::delete);
+            entities.stream().map(EntityConverter::getId).forEach(session::delete);
+            session.saveChanges();
         }
-        
+
     }
 
 
@@ -113,7 +114,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
         try (IDocumentSession session = store.openSession()) {
             List<Map> entities = getQueryMaps(query, session);
-            return entities.stream().map(EntityConverter::getEntity)
+            return entities.stream().filter(Objects::nonNull).map(EntityConverter::getEntity)
                     .collect(Collectors.toList());
         }
 

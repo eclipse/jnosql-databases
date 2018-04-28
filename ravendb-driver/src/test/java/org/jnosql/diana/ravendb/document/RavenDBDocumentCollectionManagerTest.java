@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -60,6 +61,11 @@ public class RavenDBDocumentCollectionManagerTest {
         entityManager = get().get("database");
     }
 
+    @BeforeEach
+    public void before() {
+        entityManager.delete(delete().from(COLLECTION_NAME).build());
+    }
+
     @Test
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
@@ -83,7 +89,7 @@ public class RavenDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    public void shouldRemoveEntity() throws InterruptedException {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
 
