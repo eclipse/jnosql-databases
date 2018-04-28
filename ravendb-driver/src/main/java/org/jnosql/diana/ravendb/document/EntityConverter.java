@@ -39,7 +39,7 @@ final class EntityConverter {
     }
 
 
-    public static  String getId(Map entity) {
+    public static String getId(Map entity) {
         Map<String, Object> metadata = (Map<String, Object>) entity.remove(Constants.Documents.Metadata.KEY);
         return (String) metadata.get(Constants.Documents.Metadata.ID);
     }
@@ -49,9 +49,9 @@ final class EntityConverter {
         Map<String, Object> entity = new HashMap<>();
         entity.putAll(map);
         Map<String, Object> metadata = (Map<String, Object>) entity.remove(Constants.Documents.Metadata.KEY);
-        List<Document> documents = new ArrayList<>(Documents.of(entity));
-        documents.add(Document.of(ID_FIELD, metadata.get(Constants.Documents.Metadata.ID)));
-        return DocumentEntity.of(metadata.get(Constants.Documents.Metadata.COLLECTION).toString(), documents);
+        String id = metadata.get(Constants.Documents.Metadata.ID).toString();
+        String collection = metadata.get(Constants.Documents.Metadata.COLLECTION).toString();
+        return new RavenDBEntry(id, collection, entity).toEntity();
     }
 
     static Map<String, Object> getMap(DocumentEntity entity) {
