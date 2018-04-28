@@ -1,8 +1,8 @@
-![RavenDB Project](https://jnosql.github.io/img/logos/couchbase.svg)
+![RavenDB Project](https://ravendb.net/Content/images/logo/ravendb_logo_small.jpg)
 
 
 
-**Couchbase**: Couchbase Server, originally known as Membase, is an open-source, distributed multi-model NoSQL document-oriented database software package that is optimized for interactive applications.
+**RavenDB**: The Original Fully Transactional Open Source NoSQL Document Database. Easy to use, rapidly scalable, offers high availability, and takes your Business into the Next Generation of Data Performance.
 
 
 ### How To test
