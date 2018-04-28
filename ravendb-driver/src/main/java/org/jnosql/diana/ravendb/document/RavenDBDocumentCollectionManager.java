@@ -15,7 +15,6 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import net.ravendb.client.Constants;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;

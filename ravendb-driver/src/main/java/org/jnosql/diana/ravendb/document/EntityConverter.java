@@ -17,12 +17,9 @@ package org.jnosql.diana.ravendb.document;
 import net.ravendb.client.Constants;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.driver.ValueUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
