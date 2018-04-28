@@ -97,6 +97,13 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public void delete(DocumentDeleteQuery query) {
+        Objects.requireNonNull(query, "query is required");
+
+        try (IDocumentSession session = store.openSession()) {
+            List<Map> entities = getQueryMaps(new RavenDeleteQuery(query), session);
+            entities.stream().map(m -> session.advanced().getDocumentId(m)).forEach(session::delete);
+        }
+        
     }
 
 
@@ -105,14 +112,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Objects.requireNonNull(query, "query is required");
 
         try (IDocumentSession session = store.openSession()) {
-            List<Map> entities = new ArrayList<>();
-            QueryResult queryResult = DocumentQueryConversor.createQuery(session, query);
-
-            queryResult.getIds().stream()
-                    .map(i -> session.load(HashMap.class, i))
-                    .forEach(entities::add);
-
-            queryResult.getRavenQuery().map(q -> q.toList()).ifPresent(entities::addAll);
+            List<Map> entities = getQueryMaps(query, session);
             return entities.stream().map(EntityConverter::getEntity)
                     .collect(Collectors.toList());
         }
@@ -122,6 +122,18 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     @Override
     public void close() {
         store.close();
+    }
+
+    private List<Map> getQueryMaps(DocumentQuery query, IDocumentSession session) {
+        List<Map> entities = new ArrayList<>();
+        QueryResult queryResult = DocumentQueryConversor.createQuery(session, query);
+
+        queryResult.getIds().stream()
+                .map(i -> session.load(HashMap.class, i))
+                .forEach(entities::add);
+
+        queryResult.getRavenQuery().map(q -> q.toList()).ifPresent(entities::addAll);
+        return entities;
     }
 
 
