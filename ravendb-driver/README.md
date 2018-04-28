@@ -18,6 +18,7 @@ Once this a communication layer to Couchbase, we're using integration test, so y
 1. `sudo docker run -d -p 8080:8080 -p 38888:38888 ravendb/ravendb`
 1. Go to: http://localhost:8080/
 1. Create a database `database`
+1. Enables the expires to TTL tests: https://ravendb.net/docs/article-page/4.0/Csharp/studio/database/settings/document-expiration
 1. Execute the test `mvn clean install`
 
 
