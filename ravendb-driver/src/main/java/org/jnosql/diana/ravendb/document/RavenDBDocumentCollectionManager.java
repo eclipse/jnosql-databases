@@ -60,17 +60,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     public DocumentEntity insert(DocumentEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         try (IDocumentSession session = store.openSession()) {
-            String collection = entity.getName();
-
-            Map<String, Object> entityMap = EntityConverter.getMap(entity);
-            String id = entity.find(EntityConverter.ID_FIELD)
-                    .map(d -> d.get(String.class))
-                    .orElse(collection + '/');
-            session.store(entityMap, id);
-            IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
-            metadata.put(COLLECTION, collection);
-            entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
-            session.saveChanges();
+            insert(entity, null, session);
         }
         return entity;
     }
@@ -81,25 +71,13 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
 
-        LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
-        now.plus(ttl);
-        try (IDocumentSession session = store.openSession()) {
-            String collection = entity.getName();
+        LocalDateTime time = LocalDateTime.now(Clock.systemUTC()).plus(ttl);
 
-            Map<String, Object> entityMap = EntityConverter.getMap(entity);
-            String id = entity.find(EntityConverter.ID_FIELD)
-                    .map(d -> d.get(String.class))
-                    .orElse(collection + '/');
-            session.store(entityMap, id);
-            IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
-            metadata.put(COLLECTION, collection);
-            metadata.put(EXPIRES, now.toString());
-            entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
-            session.saveChanges();
+        try (IDocumentSession session = store.openSession()) {
+            insert(entity, time, session);
         }
         return entity;
     }
-
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
@@ -146,6 +124,26 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     public void close() {
         store.close();
     }
+
+
+    private void insert(DocumentEntity entity, LocalDateTime time, IDocumentSession session) {
+        String collection = entity.getName();
+
+        Map<String, Object> entityMap = EntityConverter.getMap(entity);
+        String id = entity.find(EntityConverter.ID_FIELD)
+                .map(d -> d.get(String.class))
+                .orElse(collection + '/');
+        session.store(entityMap, id);
+        IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
+        metadata.put(COLLECTION, collection);
+
+        if(Objects.nonNull(time)) {
+            metadata.put(EXPIRES, time.toString());
+        }
+        entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
+        session.saveChanges();
+    }
+
 
     private List<Map> getQueryMaps(DocumentQuery query, IDocumentSession session) {
         List<Map> entities = new ArrayList<>();
