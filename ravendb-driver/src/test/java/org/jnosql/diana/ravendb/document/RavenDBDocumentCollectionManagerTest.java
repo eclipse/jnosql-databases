@@ -224,22 +224,6 @@ public class RavenDBDocumentCollectionManagerTest {
         assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
     }
 
-    @Test
-    public void shouldFindDocumentLike() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
-        entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
-
-        DocumentQuery query = select().from(COLLECTION_NAME)
-                .where("name").like("Lu")
-                .and("type").eq("V")
-                .build();
-
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 2);
-        assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
-    }
 
     @Test
     public void shouldFindDocumentIn() {
