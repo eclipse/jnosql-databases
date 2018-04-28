@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
@@ -104,7 +105,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Objects.requireNonNull(query, "query is required");
 
         try (IDocumentSession session = store.openSession()) {
-            List<HashMap> entities = new ArrayList<>();
+            List<Map> entities = new ArrayList<>();
             QueryResult queryResult = DocumentQueryConversor.createQuery(session, query);
 
             queryResult.getIds().stream()
@@ -112,7 +113,8 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
                     .forEach(entities::add);
 
             queryResult.getRavenQuery().map(q -> q.toList()).ifPresent(entities::addAll);
-            return entities.stream().map(EntityConverter::getEntity).collect(toList());
+            return entities.stream().map(EntityConverter::getEntity)
+                    .collect(Collectors.toList());
         }
 
     }

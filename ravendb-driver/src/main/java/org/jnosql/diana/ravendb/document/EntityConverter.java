@@ -14,11 +14,15 @@
  */
 package org.jnosql.diana.ravendb.document;
 
+import net.ravendb.client.Constants;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.driver.ValueUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
@@ -35,9 +39,14 @@ final class EntityConverter {
     }
 
 
-    static DocumentEntity getEntity(Map<String, Object> map) {
+    static DocumentEntity getEntity(Map map) {
 
-
+        Map<String, Object> entity = new HashMap<>();
+        entity.putAll(map);
+        Map<String, Object> metadata = (Map<String, Object>) entity.remove(Constants.Documents.Metadata.KEY);
+        List<Document> documents = new ArrayList<>(Documents.of(entity));
+        documents.add(Document.of(ID_FIELD, metadata.get(Constants.Documents.Metadata.ID)));
+        return DocumentEntity.of(metadata.get(Constants.Documents.Metadata.COLLECTION).toString(), documents);
     }
 
     static Map<String, Object> getMap(DocumentEntity entity) {
