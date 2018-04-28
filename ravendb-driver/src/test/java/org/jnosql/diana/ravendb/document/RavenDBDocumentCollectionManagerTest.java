@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -56,6 +57,7 @@ public class RavenDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     private static final long TIME_LIMIT = 100L;
+    private static final String APPOINTMENT_BOOK = "AppointmentBook";
     private static DocumentCollectionManager entityManager;
 
     @BeforeAll
@@ -66,12 +68,15 @@ public class RavenDBDocumentCollectionManagerTest {
     @BeforeEach
     public void before() {
         entityManager.delete(delete().from(COLLECTION_NAME).build());
+        entityManager.delete(delete().from(APPOINTMENT_BOOK).build());
     }
 
     @AfterEach
     public void after() {
         entityManager.delete(delete().from(COLLECTION_NAME).build());
+        entityManager.delete(delete().from(APPOINTMENT_BOOK).build());
     }
+
 
     @Test
     public void shouldInsert() {
@@ -81,8 +86,15 @@ public class RavenDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenInsertWithTTL() {
-        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10)));
+    public void shouldThrowExceptionWhenInsertWithTTL() throws InterruptedException {
+        DocumentEntity entity = entityManager.insert(getEntity(), Duration.ofSeconds(1));
+        Optional<Document> id = entity.find("_id");
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("_id").eq(id.get().get())
+                .build();
+
+        TimeUnit.SECONDS.sleep(2L);
+        assertTrue(entityManager.select(query).isEmpty());
     }
 
     @Test
@@ -312,7 +324,7 @@ public class RavenDBDocumentCollectionManagerTest {
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook")
+        DocumentQuery query = select().from(APPOINTMENT_BOOK)
                 .where(key.getName())
                 .eq(key.get()).build();
 
@@ -326,7 +338,7 @@ public class RavenDBDocumentCollectionManagerTest {
     }
 
     private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        DocumentEntity entity = DocumentEntity.of(APPOINTMENT_BOOK);
         entity.add(Document.of("_id", new Random().nextInt()));
         List<List<Document>> documents = new ArrayList<>();
 
