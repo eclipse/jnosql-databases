@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.ravendb.document;
 
+import net.ravendb.client.Constants;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IMetadataDictionary;
@@ -26,7 +27,9 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.ravendb.document.DocumentQueryConversor.QueryResult;
 
+import java.time.Clock;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +38,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
+import static net.ravendb.client.Constants.Documents.Metadata.EXPIRES;
 
 /**
  * The RavenDB implementation to {@link DocumentCollectionManager} that does not support TTL methods
@@ -65,8 +69,8 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
             session.store(entityMap, id);
             IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
             metadata.put(COLLECTION, collection);
-            session.saveChanges();
             entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
+            session.saveChanges();
         }
         return entity;
     }
@@ -74,7 +78,26 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
-        throw new UnsupportedOperationException("MongoDB does not support save with TTL");
+        Objects.requireNonNull(entity, "entity is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+
+        LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
+        now.plus(ttl);
+        try (IDocumentSession session = store.openSession()) {
+            String collection = entity.getName();
+
+            Map<String, Object> entityMap = EntityConverter.getMap(entity);
+            String id = entity.find(EntityConverter.ID_FIELD)
+                    .map(d -> d.get(String.class))
+                    .orElse(collection + '/');
+            session.store(entityMap, id);
+            IMetadataDictionary metadata = session.advanced().getMetadataFor(entityMap);
+            metadata.put(COLLECTION, collection);
+            metadata.put(EXPIRES, now.toString());
+            entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
+            session.saveChanges();
+        }
+        return entity;
     }
 
 
