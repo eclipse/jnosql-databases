@@ -31,7 +31,7 @@ public class RavenDBDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("ravendb-server-host-1", "172.17.0.2:27017");
+        map.put("ravendb-server-host-1", "172.17.0.2:8080");
         RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get(Settings.of(map));
         assertNotNull(managerFactory);
