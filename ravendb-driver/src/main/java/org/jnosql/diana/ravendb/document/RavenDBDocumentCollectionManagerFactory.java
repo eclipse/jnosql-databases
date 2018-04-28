@@ -21,7 +21,7 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import java.util.Objects;
 
 /**
- * The mongodb implementation to {@link DocumentCollectionManagerFactory}
+ * The RavenDB implementation to {@link DocumentCollectionManagerFactory}
  */
 public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<RavenDBDocumentCollectionManager> {
 

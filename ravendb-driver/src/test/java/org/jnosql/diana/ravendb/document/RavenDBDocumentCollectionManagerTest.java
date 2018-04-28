@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RavenDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static final long TIME_LIMIT = 500L;
+    private static final long TIME_LIMIT = 100L;
     private static DocumentCollectionManager entityManager;
 
     @BeforeAll

@@ -34,11 +34,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
 
 /**
- * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
+ * The RavenDB implementation to {@link DocumentCollectionManager} that does not support TTL methods
  * <p>{@link RavenDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
  */
 public class RavenDBDocumentCollectionManager implements DocumentCollectionManager {
