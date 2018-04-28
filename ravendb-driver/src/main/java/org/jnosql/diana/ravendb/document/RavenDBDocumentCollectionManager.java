@@ -140,8 +140,8 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         if(Objects.nonNull(time)) {
             metadata.put(EXPIRES, time.toString());
         }
-        entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
         session.saveChanges();
+        entity.add(EntityConverter.ID_FIELD, session.advanced().getDocumentId(entityMap));
     }
 
 
