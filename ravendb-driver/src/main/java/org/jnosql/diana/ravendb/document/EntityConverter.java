@@ -39,6 +39,11 @@ final class EntityConverter {
     }
 
 
+    public static  String getId(Map entity) {
+        Map<String, Object> metadata = (Map<String, Object>) entity.remove(Constants.Documents.Metadata.KEY);
+        return (String) metadata.get(Constants.Documents.Metadata.ID);
+    }
+
     static DocumentEntity getEntity(Map map) {
 
         Map<String, Object> entity = new HashMap<>();
