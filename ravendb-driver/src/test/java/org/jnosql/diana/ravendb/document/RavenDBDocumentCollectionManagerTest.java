@@ -112,7 +112,19 @@ public class RavenDBDocumentCollectionManagerTest {
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
+    @Test
+    public void shouldRunSingleResult() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("_id");
 
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("_id").eq(id.get().get())
+                .build();
+
+        Optional<DocumentEntity> result = entityManager.singleResult(query);
+        assertTrue(result.isPresent());
+        assertEquals(entity, result.get());
+    }
 
     @Test
     public void shouldFindDocument2() {
