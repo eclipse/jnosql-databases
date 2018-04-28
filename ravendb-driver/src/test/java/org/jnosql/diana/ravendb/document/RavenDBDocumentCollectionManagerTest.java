@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -50,7 +49,6 @@ import static org.jnosql.diana.ravendb.document.DocumentConfigurationUtils.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RavenDBDocumentCollectionManagerTest {
@@ -86,15 +84,13 @@ public class RavenDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenInsertWithTTL() throws InterruptedException {
+    public void shouldThrowExceptionWhenInsertWithTTL() {
         DocumentEntity entity = entityManager.insert(getEntity(), Duration.ofMillis(1));
         Optional<Document> id = entity.find("_id");
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("_id").eq(id.get().get())
                 .build();
 
-        TimeUnit.SECONDS.sleep(15L);
-        assertTrue(entityManager.select(query).isEmpty());
     }
 
     @Test
