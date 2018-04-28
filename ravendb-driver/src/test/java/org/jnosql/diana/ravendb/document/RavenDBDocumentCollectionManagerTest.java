@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RavenDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static final long TIME_LIMIT = 100L;
+    private static final long TIME_LIMIT = 500L;
     private static final String APPOINTMENT_BOOK = "AppointmentBook";
     private static DocumentCollectionManager entityManager;
 
@@ -87,13 +87,13 @@ public class RavenDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldThrowExceptionWhenInsertWithTTL() throws InterruptedException {
-        DocumentEntity entity = entityManager.insert(getEntity(), Duration.ofSeconds(1));
+        DocumentEntity entity = entityManager.insert(getEntity(), Duration.ofMillis(1));
         Optional<Document> id = entity.find("_id");
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("_id").eq(id.get().get())
                 .build();
 
-        TimeUnit.SECONDS.sleep(2L);
+        TimeUnit.SECONDS.sleep(15L);
         assertTrue(entityManager.select(query).isEmpty());
     }
 
