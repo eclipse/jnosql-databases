@@ -48,6 +48,8 @@ final class DocumentQueryConversor {
                 List<Object> inList = document.get(new TypeReference<List<Object>>() {
                 });
                 return Filters.in(document.getName(), inList.toArray());
+            case NOT:
+                return Filters.not(convert(document.get(DocumentCondition.class)));
             case LIKE:
                 return Filters.regex(document.getName(), value.toString());
             case AND:

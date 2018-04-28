@@ -29,6 +29,7 @@ import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -53,6 +54,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
+        Objects.requireNonNull(entity, "entity is required");
         String collectionName = entity.getName();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document document = getDocument(entity);
@@ -74,6 +76,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
+        Objects.requireNonNull(entity, "entity is required");
+
         DocumentEntity copy = entity.copy();
         String collectionName = entity.getName();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
@@ -89,6 +93,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public void delete(DocumentDeleteQuery query) {
+        Objects.requireNonNull(query, "query is required");
+
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
@@ -99,6 +105,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
+        Objects.requireNonNull(query, "query is required");
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
