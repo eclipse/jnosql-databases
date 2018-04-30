@@ -18,6 +18,7 @@ package org.jnosql.diana.ravendb.document;
 import net.ravendb.client.documents.DocumentStore;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -49,7 +50,7 @@ public class RavenDBDocumentCollectionManagerFactory implements DocumentCollecti
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("RavenDBDocumentCollectionManagerFactory{");
-        sb.append("hosts=").append(hosts);
+        sb.append("hosts=").append(Arrays.toString(hosts));
         sb.append('}');
         return sb.toString();
     }
