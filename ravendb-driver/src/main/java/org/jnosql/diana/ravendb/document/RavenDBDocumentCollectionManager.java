@@ -17,6 +17,7 @@ package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.session.IDocumentSession;
+import net.ravendb.client.documents.session.IEnumerableQuery;
 import net.ravendb.client.documents.session.IMetadataDictionary;
 import net.ravendb.client.exceptions.RavenException;
 import org.jnosql.diana.api.document.Document;
@@ -152,7 +153,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
                 .map(i -> session.load(HashMap.class, i))
                 .forEach(entities::add);
 
-        queryResult.getRavenQuery().map(q -> q.toList()).ifPresent(entities::addAll);
+        queryResult.getRavenQuery().map(IEnumerableQuery::toList).ifPresent(entities::addAll);
         return entities;
     }
 
