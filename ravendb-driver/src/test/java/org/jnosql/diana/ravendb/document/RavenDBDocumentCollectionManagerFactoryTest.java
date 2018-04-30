@@ -44,9 +44,5 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
         assertThrows(NullPointerException.class, () -> configuration.get((Settings) null));
     }
 
-    @Test
-    public void shouldReturnNPEWhenMapSettingsIsNull() {
-    }
-
 
 }
