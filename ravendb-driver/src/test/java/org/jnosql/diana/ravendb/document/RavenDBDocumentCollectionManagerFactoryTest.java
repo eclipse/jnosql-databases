@@ -41,7 +41,7 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldReturnNPEWhenSettingsIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.get((Settings) null));
+        assertThrows(NullPointerException.class, () -> configuration.get(null));
     }
 
 
