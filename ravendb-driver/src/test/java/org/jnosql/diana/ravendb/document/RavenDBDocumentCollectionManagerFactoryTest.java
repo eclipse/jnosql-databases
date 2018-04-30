@@ -15,7 +15,6 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import org.jnosql.diana.api.Settings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
