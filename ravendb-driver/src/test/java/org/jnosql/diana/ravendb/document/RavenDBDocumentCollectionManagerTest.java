@@ -192,7 +192,7 @@ public class RavenDBDocumentCollectionManagerTest {
 
         Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
 
@@ -210,7 +210,7 @@ public class RavenDBDocumentCollectionManagerTest {
 
         Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
 
@@ -227,7 +227,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 1);
+        assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound, contains(entities.get(0)));
     }
 
