@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.mongodb.document;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
@@ -109,7 +110,18 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
-        return stream(collection.find(mongoDBQuery).spliterator(), false).map(MongoDBUtils::of)
+
+        FindIterable<Document> documents = collection.find(mongoDBQuery);
+
+        if(query.getFirstResult() > 0) {
+            documents.skip((int) query.getFirstResult());
+        }
+
+        if(query.getMaxResults() > 0) {
+            documents.limit((int) query.getMaxResults());
+        }
+        
+        return stream(documents.spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
 
     }
