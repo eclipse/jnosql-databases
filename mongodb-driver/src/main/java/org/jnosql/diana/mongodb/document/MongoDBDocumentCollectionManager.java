@@ -19,9 +19,11 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
+import org.bson.BSONObject;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -31,6 +33,7 @@ import org.jnosql.diana.api.document.Documents;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -113,17 +116,24 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
         FindIterable<Document> documents = collection.find(mongoDBQuery);
 
-        if(query.getFirstResult() > 0) {
+        if (query.getFirstResult() > 0) {
             documents.skip((int) query.getFirstResult());
         }
 
-        if(query.getMaxResults() > 0) {
+        if (query.getMaxResults() > 0) {
             documents.limit((int) query.getMaxResults());
         }
-        
+
+        query.getSorts().stream().map(this::getSort).forEach(documents::sort);
+
         return stream(documents.spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
 
+    }
+
+    private Document getSort(Sort sort) {
+        boolean isAscending = Sort.SortType.ASC.equals(sort.getType());
+        return new Document(sort.getName(), isAscending ? 1 : -1);
     }
 
     @Override
