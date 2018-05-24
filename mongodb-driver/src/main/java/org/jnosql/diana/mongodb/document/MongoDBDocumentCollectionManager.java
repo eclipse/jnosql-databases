@@ -19,7 +19,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
-import org.bson.BSONObject;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -33,7 +32,6 @@ import org.jnosql.diana.api.document.Documents;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
