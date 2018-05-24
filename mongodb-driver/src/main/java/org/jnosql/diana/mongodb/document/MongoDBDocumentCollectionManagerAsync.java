@@ -25,6 +25,7 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -128,6 +129,16 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
         List<DocumentEntity> entities = new CopyOnWriteArrayList<>();
         FindIterable<Document> result = collection.find(mongoDBQuery);
+
+        if (query.getFirstResult() > 0) {
+            result.skip((int) query.getFirstResult());
+        }
+
+        if (query.getMaxResults() > 0) {
+            result.limit((int) query.getMaxResults());
+        }
+
+        query.getSorts().stream().map(this::getSort).forEach(result::sort);
         Block<Document> documentBlock = d -> entities.add(createEntity(collectionName, d));
         SingleResultCallback<Void> voidSingleResultCallback = (v, e) -> callBack.accept(entities);
         result.forEach(documentBlock, voidSingleResultCallback);
@@ -169,6 +180,11 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     @Override
     public void close() {
 
+    }
+
+    private Document getSort(Sort sort) {
+        boolean isAscending = Sort.SortType.ASC.equals(sort.getType());
+        return new Document(sort.getName(), isAscending ? 1 : -1);
     }
 
 }
