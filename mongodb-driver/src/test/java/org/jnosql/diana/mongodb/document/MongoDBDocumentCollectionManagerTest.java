@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -294,6 +295,39 @@ public class MongoDBDocumentCollectionManagerTest {
 
         entitiesFound = entityManager.select(query);
         assertEquals(2, entitiesFound.size());
+
+    }
+
+    @Test
+    public void shouldFindDocumentSort() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .orderBy("age").asc()
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertEquals(2, entitiesFound.size());
+        List<Integer> ages = entities.stream()
+                .map(e -> e.find("age").get().get(Integer.class))
+                .collect(Collectors.toList());
+
+        assertThat(ages, contains(22, 23, 25));
+
+        query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .orderBy("age").desc()
+                .build();
+
+        entitiesFound = entityManager.select(query);
+        assertEquals(2, entitiesFound.size());
+        assertThat(ages, contains(25, 23, 22));
 
     }
 
