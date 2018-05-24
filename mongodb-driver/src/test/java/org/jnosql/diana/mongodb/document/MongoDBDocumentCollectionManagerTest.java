@@ -242,6 +242,62 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldFindDocumentStart() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .start(1L)
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertEquals(1, entitiesFound.size());
+        assertThat(entitiesFound, not(contains(entities.get(0))));
+
+        query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .start(2L)
+                .build();
+
+        entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.isEmpty());
+
+    }
+
+    @Test
+    public void shouldFindDocumentLimit() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .limit(1L)
+                .build();
+
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertEquals(1, entitiesFound.size());
+        assertThat(entitiesFound, not(contains(entities.get(0))));
+
+        query = select().from(COLLECTION_NAME)
+                .where("age").gt(22)
+                .and("type").eq("V")
+                .limit(2L)
+                .build();
+
+        entitiesFound = entityManager.select(query);
+        assertEquals(2, entitiesFound.size());
+
+    }
+
+    @Test
     public void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
