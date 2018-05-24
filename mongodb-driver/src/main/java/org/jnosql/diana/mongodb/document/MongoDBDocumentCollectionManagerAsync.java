@@ -20,6 +20,7 @@ import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.FindIterable;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -182,9 +183,9 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
 
     }
 
-    private Document getSort(Sort sort) {
+    private Bson getSort(Sort sort) {
         boolean isAscending = Sort.SortType.ASC.equals(sort.getType());
-        return new Document(sort.getName(), isAscending ? 1 : -1);
+        return isAscending?Sorts.ascending(sort.getName()): Sorts.descending(sort.getName());
     }
 
 }
