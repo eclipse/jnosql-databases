@@ -32,12 +32,12 @@ class OrientDBDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public long getMaxResults() {
+    public long getLimit() {
         return 0;
     }
 
     @Override
-    public long getFirstResult() {
+    public long getSkip() {
         return 0;
     }
 

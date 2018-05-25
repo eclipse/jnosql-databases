@@ -141,12 +141,12 @@ final class QueryOSQLConverter {
     }
 
     private static void appendPagination(DocumentQuery documentQuery, StringBuilder query) {
-        if (documentQuery.getFirstResult() > 0) {
-            query.append(SKIP).append(documentQuery.getFirstResult());
+        if (documentQuery.getSkip() > 0) {
+            query.append(SKIP).append(documentQuery.getSkip());
         }
 
-        if (documentQuery.getMaxResults() > 0) {
-            query.append(LIMIT).append(documentQuery.getMaxResults());
+        if (documentQuery.getLimit() > 0) {
+            query.append(LIMIT).append(documentQuery.getLimit());
         }
     }
 
