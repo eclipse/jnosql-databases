@@ -68,8 +68,8 @@ final class QueryConverter {
         }
 
         Statement statement = null;
-        int firstResult = (int) query.getFirstResult();
-        int maxResult = (int) query.getMaxResults();
+        int start = (int) query.getStart();
+        int limit = (int) query.getLimit();
 
         com.couchbase.client.java.query.dsl.Sort[] sorts = query.getSorts().stream().map(SORT_MAP).
                 toArray(com.couchbase.client.java.query.dsl.Sort[]::new);
@@ -77,12 +77,12 @@ final class QueryConverter {
         if (query.getCondition().isPresent()) {
             Expression condition = getCondition(query.getCondition().get(), params, keys, query.getDocumentCollection());
             if (nonNull(condition)) {
-                statement = create(bucket, documents, firstResult, maxResult, sorts, condition);
+                statement = create(bucket, documents, start, limit, sorts, condition);
             } else {
                 statement = null;
             }
         } else {
-            statement = create(bucket, documents, firstResult, maxResult, sorts);
+            statement = create(bucket, documents, start, limit, sorts);
         }
         return new QueryConverterResult(params, statement, keys);
     }
