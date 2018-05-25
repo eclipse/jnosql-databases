@@ -65,8 +65,8 @@ final class QueryAQLConverter {
         return convert(query.getDocumentCollection(),
                 query.getCondition(),
                 query.getSorts(),
-                query.getFirstResult(),
-                query.getMaxResults(),
+                query.getStart(),
+                query.getLimit(),
                 RETURN, false);
 
     }
