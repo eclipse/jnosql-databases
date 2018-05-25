@@ -115,12 +115,12 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
         FindIterable<Document> documents = collection.find(mongoDBQuery);
 
-        if (query.getFirstResult() > 0) {
-            documents.skip((int) query.getFirstResult());
+        if (query.getStart() > 0) {
+            documents.skip((int) query.getStart());
         }
 
-        if (query.getMaxResults() > 0) {
-            documents.limit((int) query.getMaxResults());
+        if (query.getLimit() > 0) {
+            documents.limit((int) query.getLimit());
         }
 
         query.getSorts().stream().map(this::getSort).forEach(documents::sort);
