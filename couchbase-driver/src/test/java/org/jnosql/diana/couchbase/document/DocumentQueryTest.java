@@ -109,7 +109,7 @@ public class DocumentQueryTest {
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where(name.getName()).eq(name.get())
-                .start(1L)
+                .skip(1L)
                 .build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertEquals(2, entities.size());
@@ -125,7 +125,7 @@ public class DocumentQueryTest {
         Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where(name.getName()).eq(name.get())
-                .start(2L)
+                .skip(2L)
                 .limit(2L)
                 .build();
 

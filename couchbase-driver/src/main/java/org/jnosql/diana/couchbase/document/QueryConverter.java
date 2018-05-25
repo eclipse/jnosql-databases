@@ -68,7 +68,7 @@ final class QueryConverter {
         }
 
         Statement statement = null;
-        int start = (int) query.getStart();
+        int skip = (int) query.getSkip();
         int limit = (int) query.getLimit();
 
         com.couchbase.client.java.query.dsl.Sort[] sorts = query.getSorts().stream().map(SORT_MAP).
@@ -77,12 +77,12 @@ final class QueryConverter {
         if (query.getCondition().isPresent()) {
             Expression condition = getCondition(query.getCondition().get(), params, keys, query.getDocumentCollection());
             if (nonNull(condition)) {
-                statement = create(bucket, documents, start, limit, sorts, condition);
+                statement = create(bucket, documents, skip, limit, sorts, condition);
             } else {
                 statement = null;
             }
         } else {
-            statement = create(bucket, documents, start, limit, sorts);
+            statement = create(bucket, documents, skip, limit, sorts);
         }
         return new QueryConverterResult(params, statement, keys);
     }

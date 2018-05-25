@@ -113,7 +113,7 @@ public class QueryAQLConverterTest {
     public void shouldRunEqualsQueryLimit2() {
         DocumentQuery query = select().from("collection")
                 .where("name").eq("value")
-                .start(1).limit(5).build();
+                .skip(1).limit(5).build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
         String aql = convert.getQuery();
