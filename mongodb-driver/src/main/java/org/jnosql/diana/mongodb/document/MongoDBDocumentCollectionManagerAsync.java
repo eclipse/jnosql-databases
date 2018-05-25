@@ -131,12 +131,12 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         List<DocumentEntity> entities = new CopyOnWriteArrayList<>();
         FindIterable<Document> result = collection.find(mongoDBQuery);
 
-        if (query.getFirstResult() > 0) {
-            result.skip((int) query.getFirstResult());
+        if (query.getSkip() > 0) {
+            result.skip((int) query.getSkip());
         }
 
-        if (query.getMaxResults() > 0) {
-            result.limit((int) query.getMaxResults());
+        if (query.getLimit() > 0) {
+            result.limit((int) query.getLimit());
         }
 
         query.getSorts().stream().map(this::getSort).forEach(result::sort);

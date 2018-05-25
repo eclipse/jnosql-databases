@@ -115,8 +115,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
         FindIterable<Document> documents = collection.find(mongoDBQuery);
 
-        if (query.getStart() > 0) {
-            documents.skip((int) query.getStart());
+        if (query.getSkip() > 0) {
+            documents.skip((int) query.getSkip());
         }
 
         if (query.getLimit() > 0) {
