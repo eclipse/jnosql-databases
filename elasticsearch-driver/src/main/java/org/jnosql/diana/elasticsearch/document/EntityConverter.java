@@ -186,7 +186,7 @@ final class EntityConverter {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(select.getStatement());
         searchRequest.source(searchSourceBuilder);
-        int from = (int) query.getStart();
+        int from = (int) query.getSkip();
         int size = (int) query.getLimit();
         if (from > 0) {
             searchSourceBuilder.from(from);

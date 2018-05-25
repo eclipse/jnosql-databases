@@ -37,7 +37,7 @@ class ElasticsearchDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public long getStart() {
+    public long getSkip() {
         return 0;
     }
 

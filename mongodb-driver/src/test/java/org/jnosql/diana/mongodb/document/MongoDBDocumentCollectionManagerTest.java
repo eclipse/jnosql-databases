@@ -255,7 +255,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
                 .and("type").eq("V")
-                .start(1L)
+                .skip(1L)
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query);
@@ -265,7 +265,7 @@ public class MongoDBDocumentCollectionManagerTest {
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
                 .and("type").eq("V")
-                .start(2L)
+                .skip(2L)
                 .build();
 
         entitiesFound = entityManager.select(query);
