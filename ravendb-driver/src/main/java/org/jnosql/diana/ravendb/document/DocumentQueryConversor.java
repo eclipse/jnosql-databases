@@ -64,12 +64,12 @@ class DocumentQueryConversor {
         };
         query.getSorts().forEach(sortConsumer);
 
-        if (query.getFirstResult() > 0) {
-            ravenQuery.skip((int) query.getFirstResult());
+        if (query.getSkip() > 0) {
+            ravenQuery.skip((int) query.getSkip());
         }
 
-        if (query.getMaxResults() > 0) {
-            ravenQuery.take((int) query.getMaxResults());
+        if (query.getLimit() > 0) {
+            ravenQuery.take((int) query.getLimit());
         }
         return new QueryResult(ids, ravenQuery);
     }

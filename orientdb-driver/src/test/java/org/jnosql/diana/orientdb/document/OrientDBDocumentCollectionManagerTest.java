@@ -330,7 +330,7 @@ public class OrientDBDocumentCollectionManagerTest {
         entityManager.insert(getEntities());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .start(1)
+                .skip(1)
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);

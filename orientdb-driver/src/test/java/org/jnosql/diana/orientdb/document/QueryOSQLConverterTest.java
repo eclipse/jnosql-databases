@@ -99,7 +99,7 @@ public class QueryOSQLConverterTest {
     @Test
     public void shouldPaginateWithStart() {
         DocumentQuery query = select().from("collection")
-                .start(10)
+                .skip(10)
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
@@ -119,7 +119,7 @@ public class QueryOSQLConverterTest {
     @Test
     public void shouldPaginateWithStartAndLimit() {
         DocumentQuery query = select().from("collection")
-                .start(10)
+                .skip(10)
                 .limit(100)
                 .build();
 
