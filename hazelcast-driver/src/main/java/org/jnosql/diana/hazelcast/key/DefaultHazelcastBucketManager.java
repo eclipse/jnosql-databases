@@ -99,14 +99,14 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
     }
 
     @Override
-    public Collection<Value> query(String query) throws NullPointerException {
-        requireNonNull(query, "query is required");
-        return query(new SqlPredicate(query));
+    public Collection<Value> sql(String query) throws NullPointerException {
+        requireNonNull(query, "sql is required");
+        return sql(new SqlPredicate(query));
     }
 
     @Override
-    public Collection<Value> query(String query, Map<String, Object> params) throws NullPointerException {
-        requireNonNull(query, "query is required");
+    public Collection<Value> sql(String query, Map<String, Object> params) throws NullPointerException {
+        requireNonNull(query, "sql is required");
         requireNonNull(params, "params is required");
         final StringBuilder finalQuery = new StringBuilder(query);
         final Consumer<Map.Entry<String, Object>> consumer = e -> {
@@ -115,11 +115,11 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
             finalQuery.replace(indexOf, indexOf + key.length(), e.getValue().toString());
         };
         params.entrySet().forEach(consumer);
-        return query(new SqlPredicate(finalQuery.toString()));
+        return sql(new SqlPredicate(finalQuery.toString()));
     }
 
     @Override
-    public <K, V> Collection<Value> query(Predicate<K, V> predicate) throws NullPointerException {
+    public <K, V> Collection<Value> sql(Predicate<K, V> predicate) throws NullPointerException {
         requireNonNull(predicate, "predicate is required");
         Collection<V> values = map.values(predicate);
         return values.stream().map(Value::of).collect(toList());

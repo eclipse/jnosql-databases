@@ -20,7 +20,7 @@
  * scaling of processing and available storage. Backups are also distributed among nodes to protect against failure
  * of any single node. Hazelcast provides central, predictable scaling of applications through in-memory
  * access to frequently used data and across an elastically scalable data grid. These techniques reduce
- * the query load on databases and improve speed.
+ * the sql load on databases and improve speed.
  * Hazelcast can run on-premise, in the cloud (Amazon Web Services,
  * Microsoft Azure, Cloud Foundry, OpenShift), virtually (VMWare),
  * and in Docker containers. Hazelcast offers technology integrations for multiple cloud configuration and deployment

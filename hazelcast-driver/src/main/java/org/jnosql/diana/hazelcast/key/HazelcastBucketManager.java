@@ -29,34 +29,34 @@ public interface HazelcastBucketManager extends BucketManager {
 
 
     /**
-     * Executes hazelcast query
+     * Executes hazelcast sql
      *
-     * @param query the query
-     * @return the result query
-     * @throws NullPointerException when there is null query
+     * @param query the sql
+     * @return the result sql
+     * @throws NullPointerException when there is null sql
      */
-    Collection<Value> query(String query);
+    Collection<Value> sql(String query);
 
     /**
-     * Executes hazelcast query with named query.
-     * E.g.:  bucketManager.query("name = :name", singletonMap("name", "Matrix"))
+     * Executes hazelcast sql with named sql.
+     * E.g.:  bucketManager.sql("name = :name", singletonMap("name", "Matrix"))
      *
-     * @param query  the query
+     * @param query  the sql
      * @param params the params to bind
-     * @return the result query
-     * @throws NullPointerException when there is null query
+     * @return the result sql
+     * @throws NullPointerException when there is null sql
      */
-    Collection<Value> query(String query, Map<String, Object> params);
+    Collection<Value> sql(String query, Map<String, Object> params);
 
     /**
-     * Executes hazelcast query
+     * Executes hazelcast sql
      *
      * @param predicate the hazelcast predicate
      * @param <K>       the key type
      * @param <V>       the value type
-     * @return the result query
+     * @return the result sql
      * @throws NullPointerException when there is null predicate
      */
-    <K, V> Collection<Value> query(Predicate<K, V> predicate);
+    <K, V> Collection<Value> sql(Predicate<K, V> predicate);
 
 }
