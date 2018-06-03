@@ -133,6 +133,11 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         return Stream.of(findById(condition)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
     }
 
+    @Override
+    public long count(String columnFamily) {
+        throw new UnsupportedOperationException("Hbase does not have support to count method");
+    }
+
 
     @Override
     public void close() {
