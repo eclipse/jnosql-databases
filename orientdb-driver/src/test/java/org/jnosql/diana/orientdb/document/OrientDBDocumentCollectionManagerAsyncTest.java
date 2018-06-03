@@ -30,8 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
+import java.util.function.Consumer;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.notNullValue;
@@ -52,8 +53,6 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     private DocumentCollectionManager entityManager;
 
-    private static final Logger LOGGER = Logger.getLogger(OrientDBDocumentCollectionManagerTest.class.getName());
-
     @BeforeEach
     public void setUp() {
         entityManagerAsync = getAsync().getAsync("database");
@@ -62,7 +61,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
 
     @Test
-    public void shouldSaveAsync() throws InterruptedException {
+    public void shouldInsertAsync() throws InterruptedException {
         AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
         entityManagerAsync.insert(getEntity(), entityAtomic::set);
         await().until(entityAtomic::get, notNullValue(DocumentEntity.class));
@@ -70,7 +69,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         DocumentEntity entity = entityAtomic.get();
         Document id = entity.find("name").get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
 
@@ -83,7 +82,8 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void ShouldThrowExceptionWhenInsertWithTTLAndCallback() {
-        assertThrows(UnsupportedOperationException.class, () -> entityManagerAsync.insert(getEntity(), Duration.ZERO, (d) -> {}));
+        assertThrows(UnsupportedOperationException.class, () -> entityManagerAsync.insert(getEntity(), Duration.ZERO, (d) -> {
+        }));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
         Document id = documentEntity.find("name").get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         AtomicBoolean condition = new AtomicBoolean(false);
@@ -138,7 +138,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find(OrientDBConverter.RID_FIELD).get();
 
-        DocumentQuery query =  select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         entityManagerAsync.delete(deleteQuery);
@@ -191,6 +191,26 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
         assertFalse(reference.get().isEmpty());
         assertEquals(reference.get().get(0), entity);
+    }
+
+
+    @Test
+    public void shouldCount()  {
+        AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicLong value = new AtomicLong(0L);
+
+        entityManagerAsync.insert(getEntity(), entityAtomic::set);
+        await().until(entityAtomic::get, notNullValue(DocumentEntity.class));
+
+        Consumer<Long> callback = l -> {
+            value.set(l);
+            condition.set(true);
+
+        };
+        entityManagerAsync.count(COLLECTION_NAME, callback);
+        await().untilTrue(condition);
+        assertTrue(value.get() > 0);
     }
 
     private DocumentEntity getEntity() {

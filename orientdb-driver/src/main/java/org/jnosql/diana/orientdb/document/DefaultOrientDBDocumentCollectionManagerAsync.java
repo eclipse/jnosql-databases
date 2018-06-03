@@ -132,6 +132,24 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
     }
 
     @Override
+    public void count(String documentCollection, Consumer<Long> callback) {
+        requireNonNull(documentCollection, "query is required");
+        requireNonNull(callback, "callBack is required");
+
+        ODatabaseDocumentTx tx = pool.acquire();
+
+        String query = "select count(*) from ".concat(documentCollection);
+        Consumer<List<ODocument>> orientCallback = l ->
+                callback.accept(l.stream()
+                        .findFirst()
+                        .map(e -> e.field("count"))
+                        .map(n -> Number.class.cast(n).longValue())
+                        .orElse(0L));
+        QueryOSQLFactory.QueryResult orientQuery = toAsync(query, orientCallback);
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+    }
+
+    @Override
     public void sql(String query, Consumer<List<DocumentEntity>> callBack, Object... params) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");

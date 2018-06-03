@@ -100,6 +100,21 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
+    public long count(String documentCollection) {
+        requireNonNull(documentCollection, "query is required");
+        try (ODatabaseDocumentTx tx = pool.acquire()) {
+            String query = "select count(*) from ".concat(documentCollection);
+            List<ODocument> result = tx.command(QueryOSQLFactory.parse(query)).execute();
+            return result.stream()
+                    .findFirst()
+                    .map(e -> e.field("count"))
+                    .map(n -> Number.class.cast(n).longValue())
+                    .orElse(0L);
+
+        }
+    }
+
+    @Override
     public List<DocumentEntity> sql(String query, Object... params) {
         requireNonNull(query, "query is required");
         try (ODatabaseDocumentTx tx = pool.acquire()) {
