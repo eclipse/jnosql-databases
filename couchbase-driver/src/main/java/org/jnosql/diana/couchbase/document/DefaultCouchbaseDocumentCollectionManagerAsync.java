@@ -103,6 +103,11 @@ class DefaultCouchbaseDocumentCollectionManagerAsync implements CouchbaseDocumen
         just(query).map(manager::select).subscribe(callBack::accept, ERROR_FIND);
     }
 
+    @Override
+    public void count(String documentCollection, Consumer<Long> callback) {
+        throw new UnsupportedOperationException("Couchbase does not support count method by document collection");
+    }
+
 
     @Override
     public void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {

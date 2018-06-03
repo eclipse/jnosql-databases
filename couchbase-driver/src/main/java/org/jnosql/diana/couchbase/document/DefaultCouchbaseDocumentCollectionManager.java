@@ -122,6 +122,11 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         return entities;
     }
 
+    @Override
+    public long count(String documentCollection) {
+       throw new UnsupportedOperationException("Couchbase does not support count method by document collection");
+    }
+
 
     @Override
     public List<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException {
