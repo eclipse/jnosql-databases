@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -306,6 +307,23 @@ public class CassandraColumnFamilyManagerAsyncTest {
         ColumnEntity columnEntity = getColumnFamily();
         columnEntityManager.save(columnEntity, CONSISTENCY_LEVEL);
     }
+
+    @Test
+    public void shouldCount() {
+        ColumnEntity entity = getColumnFamily();
+        columnEntityManager.insert(entity);
+        AtomicLong counter = new AtomicLong(0);
+        AtomicBoolean condition = new AtomicBoolean(false);
+
+        Consumer<Long> callback = (l) ->{
+            condition.set(true);
+            counter.set(l);
+        };
+        columnEntityManager.count(COLUMN_FAMILY, callback);
+        await().untilTrue(condition);
+        assertTrue(counter.get() > 0);
+    }
+
 
     private ColumnEntity getColumnFamily() {
         Map<String, Object> fields = new HashMap<>();

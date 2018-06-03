@@ -15,6 +15,7 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
@@ -29,6 +30,7 @@ import org.jnosql.diana.api.column.ColumnQuery;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
@@ -223,6 +225,16 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     public void count(String columnFamily, Consumer<Long> callback) {
         requireNonNull(columnFamily, "columnFamily is required");
         requireNonNull(callback, "callback is required");
+        ResultSetFuture resultSet = session.executeAsync(QueryUtils.count(columnFamily, keyspace));
+        Runnable counter = () -> {
+            try {
+                Object object = resultSet.get().one().getObject(0);
+                callback.accept(Number.class.cast(object).longValue());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new ExecuteAsyncQueryException(e);
+            }
+        };
+        resultSet.addListener(counter, executor);
     }
 
     @Override
