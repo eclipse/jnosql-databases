@@ -14,7 +14,6 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoCursorAsync;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
