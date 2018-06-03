@@ -28,8 +28,10 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -101,6 +103,14 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         return StreamSupport.stream(documents.spliterator(), false)
                 .map(ArangoDBUtil::toEntity)
                 .collect(toList());
+    }
+
+    @Override
+    public long count(String documentCollection) {
+        Objects.requireNonNull(documentCollection, "document collection is required");
+        String aql = "RETURN LENGTH(" + documentCollection + ")";
+        ArangoCursor<Object> query = arangoDB.db(database).query(aql, Collections.emptyMap(), null, Object.class);
+        return StreamSupport.stream(query.spliterator(), false).findFirst().map(Long.class::cast).orElse(0L);
     }
 
 

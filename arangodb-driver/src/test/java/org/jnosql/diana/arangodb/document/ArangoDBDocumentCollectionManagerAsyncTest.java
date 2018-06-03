@@ -28,13 +28,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import static org.awaitility.Awaitility.await;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ArangoDBDocumentCollectionManagerAsyncTest {
@@ -147,6 +151,24 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
         assertFalse(entities.isEmpty());
     }
 
+    @Test
+    public void shouldCount() {
+        DocumentEntity entity = getEntity();
+        AtomicBoolean condition = new AtomicBoolean();
+        AtomicLong value = new AtomicLong(0L);
+        entityManagerAsync.insert(entity, d -> condition.set(true));
+
+        await().untilTrue(condition);
+        condition.set(false);
+        Consumer<Long> callback = l -> {
+            condition.set(true);
+            value.set(l);
+        };
+        entityManagerAsync.count(COLLECTION_NAME, callback);
+        await().untilTrue(condition);
+        assertTrue(value.get() > 0);
+
+    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

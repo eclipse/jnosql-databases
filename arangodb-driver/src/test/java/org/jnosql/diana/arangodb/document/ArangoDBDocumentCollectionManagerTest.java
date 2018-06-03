@@ -188,6 +188,14 @@ public class ArangoDBDocumentCollectionManagerTest {
         return entity;
     }
 
+    @Test
+    public void shouldCount() {
+        DocumentEntity entity = getEntity();
+        DocumentEntity entitySaved = entityManager.insert(entity);
+
+        assertTrue(entityManager.count(COLLECTION_NAME) > 0);
+    }
+
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

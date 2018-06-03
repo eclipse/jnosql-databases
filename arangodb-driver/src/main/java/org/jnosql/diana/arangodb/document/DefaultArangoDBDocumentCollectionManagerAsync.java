@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.arangodb.document;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoCursorAsync;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
@@ -27,8 +28,10 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
@@ -144,6 +147,20 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
 
     }
 
+    @Override
+    public void count(String documentCollection, Consumer<Long> callback) {
+        Objects.requireNonNull(documentCollection, "document collection is required");
+        Objects.requireNonNull(callback, "callback is required");
+        String aql = "RETURN LENGTH(" + documentCollection + ")";
+        CompletableFuture<ArangoCursorAsync<Object>> query = arangoDBAsync.db(database).query(aql, Collections.emptyMap(),
+                null, Object.class);
+        query.thenAccept(r -> {
+            long count = StreamSupport.stream(r.spliterator(), false).findFirst().map(Long.class::cast).orElse(0L);
+            callback.accept(count);
+        });
+
+    }
+
 
     @Override
     public void aql(String query, Map<String, Object> values, Consumer<List<DocumentEntity>> callBack)
@@ -184,7 +201,6 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         entity.add(Document.of(REV, rev));
         callBack.accept(entity);
     }
-
 
 
 }
