@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ElasticsearchDocumentCollectionManagerTest {
 
 
-
     private ElasticsearchDocumentCollectionManager entityManager;
 
     @BeforeEach
@@ -74,7 +73,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
     @Test
     public void shouldInsertTTL() {
-        assertThrows(UnsupportedOperationException.class, () ->{
+        assertThrows(UnsupportedOperationException.class, () -> {
             entityManager.insert(getEntity(), Duration.ofSeconds(1L));
         });
     }
@@ -170,7 +169,6 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
 
-
     @Test
     public void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
@@ -223,6 +221,17 @@ public class ElasticsearchDocumentCollectionManagerTest {
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
     }
+
+    @Test
+    public void shouldCount() {
+        DocumentEntity entity = getEntity();
+        DocumentEntity entity2 = getEntity();
+        entity2.add(Document.of("_id", "test"));
+        entityManager.insert(entity);
+        entityManager.insert(entity2);
+        assertTrue(entityManager.count(COLLECTION_NAME) > 0);
+    }
+
 
     private DocumentEntity createSubdocumentList() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

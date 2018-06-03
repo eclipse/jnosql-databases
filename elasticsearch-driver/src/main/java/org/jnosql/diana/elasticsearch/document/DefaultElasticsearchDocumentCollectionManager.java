@@ -22,7 +22,9 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.jnosql.diana.api.JNoSQLException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -114,6 +116,21 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         return EntityConverter.query(query, client, index);
+    }
+
+    @Override
+    public long count(String documentCollection) {
+        Objects.requireNonNull(documentCollection, "query is required");
+        SearchRequest searchRequest = new SearchRequest(index);
+        searchRequest.types(documentCollection);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.size(0);
+        try {
+            SearchResponse search = client.search(searchRequest);
+            return search.getHits().getTotalHits();
+        } catch (IOException e) {
+           throw new JNoSQLException("Error on ES when try to execute count to document collection:" + documentCollection, e);
+        }
     }
 
     @Override

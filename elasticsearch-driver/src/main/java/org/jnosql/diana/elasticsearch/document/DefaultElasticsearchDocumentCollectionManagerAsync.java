@@ -21,10 +21,12 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import org.jnosql.diana.api.JNoSQLException;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -111,7 +113,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
         List<DocumentEntity> entities = EntityConverter.query(select, client, index);
-        if(entities.isEmpty()) {
+        if (entities.isEmpty()) {
             callBack.accept(null);
             return;
         }
@@ -139,10 +141,22 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) {
+    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callback) {
         requireNonNull(query, "query is required");
-        requireNonNull(callBack, "callBack is required");
-        EntityConverter.queryAsync(query, client, index, callBack);
+        requireNonNull(callback, "callback is required");
+        EntityConverter.queryAsync(query, client, index, callback);
+    }
+
+    @Override
+    public void count(String documentCollection, Consumer<Long> callback) {
+        requireNonNull(documentCollection, "documentCollection is required");
+        requireNonNull(callback, "callback is required");
+        SearchRequest searchRequest = new SearchRequest(index);
+        searchRequest.types(documentCollection);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.size(0);
+        ActionListener<SearchResponse> listener = new CountActionListener(callback, documentCollection);
+        client.searchAsync(searchRequest, listener);
     }
 
 

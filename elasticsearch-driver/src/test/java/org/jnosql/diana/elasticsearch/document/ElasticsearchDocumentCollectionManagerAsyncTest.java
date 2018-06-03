@@ -28,7 +28,9 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
@@ -36,6 +38,7 @@ import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -104,9 +107,10 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
     }
 
     @Test
-    public void shouldUserSearchBuilder() {
+    public void shouldUserSearchBuilder() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
+        Thread.sleep(1_000L);
         TermQueryBuilder query = termQuery("name", "Poliana");
         AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
         AtomicBoolean atomicBoolean = new AtomicBoolean(false);
@@ -122,9 +126,10 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
     }
 
     @Test
-    public void shouldReturnAll() {
+    public void shouldReturnAll() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entityManagerAsync.insert(entity);
+        Thread.sleep(1_000L);
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         AtomicBoolean condition = new AtomicBoolean(false);
         AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
@@ -139,6 +144,23 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
     }
 
+    @Test
+    public void shouldCount() throws InterruptedException {
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicLong value = new AtomicLong(0L);
+        DocumentEntity entity = getEntity();
+        entityManagerAsync.insert(entity);
+
+        Thread.sleep(1_000L);
+        Consumer<Long> callback = l -> {
+            condition.set(true);
+            value.set(l);
+        };
+        entityManagerAsync.count(DocumentEntityGerator.COLLECTION_NAME, callback);
+        Awaitility.await().untilTrue(condition);
+        assertTrue(value.get() > 0);
+
+    }
 
     @Test
     public void shouldInsertTTL() {
