@@ -16,6 +16,8 @@
 package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.documents.DocumentStore;
+import net.ravendb.client.documents.queries.Query;
+import net.ravendb.client.documents.session.IDocumentQuery;
 import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IEnumerableQuery;
 import net.ravendb.client.documents.session.IMetadataDictionary;
@@ -118,6 +120,15 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
                     .collect(Collectors.toList());
         }
 
+    }
+
+    @Override
+    public long count(String documentCollection) {
+        Objects.requireNonNull(documentCollection, "documentCollection is required");
+        try (IDocumentSession session = store.openSession()) {
+            IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(documentCollection));
+            return ravenQuery.count();
+        }
     }
 
     @Override

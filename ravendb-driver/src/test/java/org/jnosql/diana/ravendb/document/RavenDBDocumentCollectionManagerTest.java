@@ -352,6 +352,14 @@ public class RavenDBDocumentCollectionManagerTest {
     }
 
 
+    @Test
+    public void shouldCount() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        assertTrue(entityManager.count(COLLECTION_NAME) > 0);
+    }
+
+
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
