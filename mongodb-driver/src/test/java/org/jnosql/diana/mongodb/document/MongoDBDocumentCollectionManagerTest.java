@@ -404,6 +404,12 @@ public class MongoDBDocumentCollectionManagerTest {
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
     }
 
+    @Test
+    public void shouldCount() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        assertTrue(entityManager.count(COLLECTION_NAME) > 0);
+    }
+
     private DocumentEntity createSubdocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         entity.add(Document.of("_id", new Random().nextInt()));

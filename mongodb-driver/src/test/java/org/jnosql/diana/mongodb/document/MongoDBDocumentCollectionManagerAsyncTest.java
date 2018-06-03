@@ -32,7 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.notNullValue;
@@ -80,7 +82,8 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldThrowExceptionWhenInsertWithTTLWithCallback() {
-        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10), r -> {}));
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10), r -> {
+        }));
     }
 
     @Test
@@ -88,7 +91,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
 
         Random random = new Random();
         long id = random.nextLong();
-        
+
         AtomicBoolean condition = new AtomicBoolean(false);
         AtomicReference<DocumentEntity> reference = new AtomicReference<>();
         DocumentEntity entity = getEntity();
@@ -190,6 +193,23 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
                 .where(document.getName()).eq(document.get())
                 .build();
         entityManager.delete(deleteQuery);
+    }
+
+    @Test
+    public void shouldCount() throws InterruptedException {
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicLong value = new AtomicLong(0);
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity, c -> condition.set(true));
+        await().untilTrue(condition);
+        condition.set(false);
+        Consumer<Long> callback = l -> {
+            condition.set(true);
+            value.set(l);
+        };
+        entityManager.count(COLLECTION_NAME, callback);
+        await().untilTrue(condition);
+        assertTrue(value.get() > 0);
     }
 
     private DocumentEntity getEntity() {
