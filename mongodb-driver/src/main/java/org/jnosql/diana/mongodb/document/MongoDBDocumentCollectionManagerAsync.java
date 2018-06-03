@@ -35,10 +35,10 @@ import org.jnosql.diana.api.document.Documents;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
@@ -60,7 +60,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
 
     @Override
     public void insert(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         insert(entity, v -> {
         });
     }
@@ -74,8 +74,8 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "callBack is required");
         insert(entity, (aVoid, throwable) -> callBack.accept(entity));
     }
 
@@ -87,7 +87,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     @Override
     public void update(DocumentEntity entity)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         update(entity, (d, throwable) -> {
         });
     }
@@ -96,14 +96,14 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "callBack is required");
         update(entity, (d, throwable) -> callBack.accept(DocumentEntity.of(entity.getName(), Documents.of(d))));
     }
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         delete(query, (deleteResult, throwable) -> {
         });
     }
@@ -112,8 +112,8 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     public void delete(DocumentDeleteQuery query, Consumer<Void> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
         delete(query, (deleteResult, throwable) -> callBack.accept(null));
 
     }
@@ -122,8 +122,8 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
 
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = asyncMongoDatabase.getCollection(collectionName);
@@ -143,6 +143,14 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         Block<Document> documentBlock = d -> entities.add(createEntity(collectionName, d));
         SingleResultCallback<Void> voidSingleResultCallback = (v, e) -> callBack.accept(entities);
         result.forEach(documentBlock, voidSingleResultCallback);
+    }
+
+    @Override
+    public void count(String documentCollection, Consumer<Long> callback) {
+        requireNonNull(documentCollection, "documentCollection is required");
+        requireNonNull(callback, "callback is required");
+        MongoCollection<Document> collection = asyncMongoDatabase.getCollection(documentCollection);
+        collection.count((l, e) -> callback.accept(l));
     }
 
     private DocumentEntity createEntity(String collectionName, Document document) {

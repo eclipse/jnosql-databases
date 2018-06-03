@@ -130,6 +130,13 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     }
 
+    @Override
+    public long count(String documentCollection) {
+        Objects.requireNonNull(documentCollection, "documentCollection is required");
+        MongoCollection<Document> collection = mongoDatabase.getCollection(documentCollection);
+        return collection.count();
+    }
+
     private Bson getSort(Sort sort) {
         boolean isAscending = Sort.SortType.ASC.equals(sort.getType());
         return isAscending?Sorts.ascending(sort.getName()): Sorts.descending(sort.getName());
