@@ -220,6 +220,12 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     }
 
     @Override
+    public void count(String columnFamily, Consumer<Long> callback) {
+        requireNonNull(columnFamily, "columnFamily is required");
+        requireNonNull(callback, "callback is required");
+    }
+
+    @Override
     public void select(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException {
 

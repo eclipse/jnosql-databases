@@ -204,30 +204,30 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldReturnErrorWhenSaveHasNullElement() {
-        assertThrows(NullPointerException.class, () ->{
-           entityManager.save((ColumnEntity) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL);
+        assertThrows(NullPointerException.class, () -> {
+            entityManager.save((ColumnEntity) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL);
         });
 
-        assertThrows(NullPointerException.class, () ->{
+        assertThrows(NullPointerException.class, () -> {
             entityManager.save(getColumnFamily(), null, ConsistencyLevel.ALL);
         });
 
-        assertThrows(NullPointerException.class, () ->{
+        assertThrows(NullPointerException.class, () -> {
             entityManager.save(getColumnFamily(), Duration.ofSeconds(1L), null);
         });
     }
 
     @Test
     public void shouldReturnErrorWhenSaveIterableHasNullElement() {
-        assertThrows(NullPointerException.class, () ->{
+        assertThrows(NullPointerException.class, () -> {
             entityManager.save((List<ColumnEntity>) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL);
         });
 
-        assertThrows(NullPointerException.class, () ->{
+        assertThrows(NullPointerException.class, () -> {
             entityManager.save(getEntities(), null, ConsistencyLevel.ALL);
         });
 
-        assertThrows(NullPointerException.class, () ->{
+        assertThrows(NullPointerException.class, () -> {
             entityManager.save(getEntities(), Duration.ofSeconds(1L), null);
         });
     }
@@ -468,7 +468,6 @@ public class CassandraColumnFamilyManagerTest {
         entityManager.insert(entity);
     }
 
-
     @Test
     public void shouldReturnListUDT() {
         ColumnEntity entity = createEntityWithIterable();
@@ -479,6 +478,14 @@ public class CassandraColumnFamilyManagerTest {
         List<List<Column>> names = (List<List<Column>>) columnEntity.find("names").get().get();
         assertEquals(3, names.size());
         assertTrue(names.stream().allMatch(n -> n.size() == 2));
+    }
+
+    @Test
+    public void shouldCount() {
+        ColumnEntity entity = createEntityWithIterable();
+        entityManager.insert(entity);
+        long contacts = entityManager.count("contacts");
+        assertTrue(contacts > 0);
     }
 
     private ColumnEntity createEntityWithIterable() {

@@ -22,6 +22,7 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -90,6 +91,15 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
         ResultSet resultSet = session.execute(select);
         return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public long count(String columnFamily) {
+        requireNonNull(columnFamily, "columnFamily is required");
+        String cql = QueryUtils.count(columnFamily, keyspace);
+        ResultSet resultSet = session.execute(cql);
+        Object object = resultSet.one().getObject(0);
+        return Number.class.cast(object).longValue();
     }
 
     @Override

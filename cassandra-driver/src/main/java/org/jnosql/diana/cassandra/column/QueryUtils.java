@@ -155,6 +155,10 @@ final class QueryUtils {
         return where;
     }
 
+    public static String count(String columnFamily, String keyspace) {
+        return String.format("select count(*) from %s.%s", keyspace, columnFamily);
+    }
+
     private static void createClause(Optional<ColumnCondition> columnConditionOptional, List<Clause> clauses) {
         if (!columnConditionOptional.isPresent()) {
             return;
@@ -214,6 +218,7 @@ final class QueryUtils {
         }
         return new Object[]{value};
     }
+
 
 
 }
