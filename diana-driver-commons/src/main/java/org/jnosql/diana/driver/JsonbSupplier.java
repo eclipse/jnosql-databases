@@ -29,6 +29,6 @@ public interface JsonbSupplier extends Supplier<Jsonb> {
      * @return {@link JsonbSupplier} instance
      */
     static JsonbSupplier getInstance() {
-        return null;
+        return JsonbSupplierServiceLoader.getInstance();
     }
 }
