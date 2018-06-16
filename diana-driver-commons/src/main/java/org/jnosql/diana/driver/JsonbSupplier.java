@@ -17,5 +17,18 @@ package org.jnosql.diana.driver;
 import javax.json.bind.Jsonb;
 import java.util.function.Supplier;
 
+/**
+ * Defines a supplier to {@link Jsonb} already configured and ready to use in the drivers whose need a JSON processor.
+ */
 public interface JsonbSupplier extends Supplier<Jsonb> {
+
+    /**
+     * It returns a {@link JsonbSupplier} from {@link java.util.ServiceLoader} otherwise,
+     * it will return the default JsonbSupplier that reads from the field instead of the method.
+     *
+     * @return {@link JsonbSupplier} instance
+     */
+    static JsonbSupplier getInstance() {
+        return null;
+    }
 }
