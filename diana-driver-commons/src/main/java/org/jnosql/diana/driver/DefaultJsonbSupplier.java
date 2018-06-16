@@ -16,15 +16,39 @@ package org.jnosql.diana.driver;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import javax.json.bind.config.PropertyVisibilityStrategy;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 enum DefaultJsonbSupplier implements JsonbSupplier {
 
     INSTANCE;
 
-    private Jsonb json = JsonbBuilder.create();
+    {
+        JsonbConfig config = new JsonbConfig().withPropertyVisibilityStrategy(new PrivateVisibilityStrategy());
+        this.json = JsonbBuilder.newBuilder().withConfig(config).build();
+    }
+
+    private final Jsonb json;
 
     @Override
     public Jsonb get() {
         return json;
+    }
+
+
+    class PrivateVisibilityStrategy implements PropertyVisibilityStrategy {
+
+        @Override
+        public boolean isVisible(Field field) {
+            return true;
+        }
+
+        @Override
+        public boolean isVisible(Method method) {
+            return false;
+        }
+
     }
 }

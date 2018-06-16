@@ -14,7 +14,6 @@
  */
 package org.jnosql.diana.driver;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.json.bind.Jsonb;
@@ -42,6 +41,6 @@ public class DefaultJsonBSupplierTest {
         User user = new User("Ada", 32);
         String json = jsonb.toJson(user);
         assertNotNull(json);
-        assertEquals(user, jsonb.toJson(json));
+        assertEquals(user, jsonb.fromJson(json, User.class));
     }
 }
