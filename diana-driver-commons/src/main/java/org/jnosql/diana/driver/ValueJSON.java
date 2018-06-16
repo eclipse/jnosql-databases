@@ -18,7 +18,6 @@ import org.jnosql.diana.api.TypeSupplier;
 import org.jnosql.diana.api.Value;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.Objects;
 
 

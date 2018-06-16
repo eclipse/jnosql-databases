@@ -24,7 +24,6 @@ import org.jnosql.diana.driver.JsonbSupplier;
 import org.jnosql.diana.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;

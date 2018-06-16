@@ -19,7 +19,6 @@ import org.jnosql.diana.driver.JsonbSupplier;
 import redis.clients.jedis.Jedis;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
