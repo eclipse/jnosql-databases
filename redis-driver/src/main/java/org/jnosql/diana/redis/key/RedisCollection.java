@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.redis.key;
 
+import org.jnosql.diana.driver.JsonbSupplier;
 import redis.clients.jedis.Jedis;
 
 import javax.json.bind.Jsonb;
@@ -27,7 +28,7 @@ import java.util.Objects;
 
 abstract class RedisCollection<T> implements Collection<T> {
 
-    protected static final  Jsonb JSONB = JsonbBuilder.create();
+    protected static final  Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     protected final Class<T> clazz;
 

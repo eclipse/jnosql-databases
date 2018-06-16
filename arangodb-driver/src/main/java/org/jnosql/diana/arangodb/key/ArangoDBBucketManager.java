@@ -20,6 +20,7 @@ import com.arangodb.entity.BaseDocument;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.JsonbSupplier;
 import org.jnosql.diana.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
@@ -43,7 +44,7 @@ public class ArangoDBBucketManager implements BucketManager {
 
     private static final String VALUE = "_value";
     private static final Function<BaseDocument, String> TO_JSON = e -> e.getAttribute(VALUE).toString();
-    private static final Jsonb JSONB = JsonbBuilder.create();
+    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private final ArangoDB arangoDB;
 
