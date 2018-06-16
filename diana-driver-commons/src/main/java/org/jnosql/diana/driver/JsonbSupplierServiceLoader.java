@@ -13,8 +13,6 @@ final class JsonbSupplierServiceLoader {
 
     static final Optional<JsonbSupplier> INSTANCE;
 
-    private static final String MESSAGE = "Could not found an implementation of JsonbSupplier in service loader.";
-
     static {
         ServiceLoader<JsonbSupplier> serviceLoader = ServiceLoader.load(JsonbSupplier.class);
         LOADERS = StreamSupport.stream(serviceLoader.spliterator(), false).collect(toList());
@@ -25,6 +23,6 @@ final class JsonbSupplierServiceLoader {
     }
 
     static JsonbSupplier getInstance() {
-        return INSTANCE.orElseThrow(() -> new IllegalStateException(MESSAGE));
+        return INSTANCE.orElse(DefaultJsonbSupplier.INSTANCE);
     }
 }
