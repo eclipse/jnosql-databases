@@ -18,7 +18,6 @@ import org.jnosql.diana.api.TypeSupplier;
 import org.jnosql.diana.api.Value;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.Objects;
 
 
@@ -27,7 +26,7 @@ import java.util.Objects;
  */
 public class ValueJSON implements Value {
 
-    private static final Jsonb JSONB = JsonbBuilder.create();
+    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private final String json;
 

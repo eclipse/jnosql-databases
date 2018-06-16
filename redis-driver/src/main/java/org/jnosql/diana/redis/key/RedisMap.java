@@ -15,10 +15,10 @@
 
 package org.jnosql.diana.redis.key;
 
+import org.jnosql.diana.driver.JsonbSupplier;
 import redis.clients.jedis.Jedis;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
 class RedisMap<K, V> implements Map<K, V> {
 
 
-    protected static final Jsonb JSONB = JsonbBuilder.create();
+    protected static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private final Class<K> keyClass;
 
