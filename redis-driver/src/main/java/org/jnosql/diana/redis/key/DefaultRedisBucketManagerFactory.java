@@ -14,10 +14,10 @@
  */
 package org.jnosql.diana.redis.key;
 
+import org.jnosql.diana.driver.JsonbSupplier;
 import redis.clients.jedis.JedisPool;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 
 class DefaultRedisBucketManagerFactory implements RedisBucketManagerFactory {
 
-    private static final Jsonb JSON = JsonbBuilder.create();
+    private static final Jsonb JSON = JsonbSupplier.getInstance().get();
 
     private final JedisPool jedisPool;
 

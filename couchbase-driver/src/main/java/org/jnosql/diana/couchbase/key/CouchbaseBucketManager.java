@@ -24,6 +24,7 @@ import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.driver.JsonbSupplier;
 import org.jnosql.diana.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
@@ -45,7 +46,7 @@ public class CouchbaseBucketManager implements BucketManager {
 
     private static final Logger LOGGER = Logger.getLogger(CouchbaseBucketManager.class.getName());
 
-    private static final Jsonb JSONB = JsonbBuilder.create();
+    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private final Bucket bucket;
 

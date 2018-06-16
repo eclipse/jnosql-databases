@@ -27,7 +27,7 @@ import java.util.Objects;
  */
 public class ValueJSON implements Value {
 
-    private static final Jsonb JSONB = JsonbBuilder.create();
+    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private final String json;
 

@@ -15,13 +15,14 @@
 package org.jnosql.diana.couchbase.key;
 
 
+import org.jnosql.diana.driver.JsonbSupplier;
+
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.function.Function;
 
 abstract class CouchbaseCollection<T> {
 
-    protected static final Jsonb JSONB = JsonbBuilder.create();
+    protected static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     protected final Class<T> clazz;
 

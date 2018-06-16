@@ -17,9 +17,9 @@ package org.jnosql.diana.couchbase.key;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonObject;
 import org.jnosql.diana.api.Value;
+import org.jnosql.diana.driver.JsonbSupplier;
 
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toSet;
  */
 class CouchbaseMap<K, V> implements Map<K, V> {
 
-    private static final Jsonb JSONB = JsonbBuilder.create();
+    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
 
     private final String bucketName;
