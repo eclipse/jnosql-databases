@@ -22,7 +22,7 @@ public final class ArangoDBTestUtils {
 
     public static BucketManagerFactory get() {
         ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
-        configuration.setHost("172.17.0.2");
+        configuration.addHost("localhost", 8529);
         return configuration.get();
     }
 }

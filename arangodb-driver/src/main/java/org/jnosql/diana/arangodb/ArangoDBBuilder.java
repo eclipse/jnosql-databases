@@ -20,19 +20,6 @@ import com.arangodb.entity.LoadBalancingStrategy;
 interface ArangoDBBuilder {
 
 
-    /**
-     * @param host the host
-     * @deprecated use {@link ArangoDBBuilder#host(String, int)} instead
-     */
-    void host(String host);
-
-    /**
-     * * @deprecated use {@link ArangoDBBuilder#host(String, int)} instead
-     *
-     * @param port the port
-     */
-    void port(int port);
-
     void host(String host, int port);
 
     void timeout(int timeout);

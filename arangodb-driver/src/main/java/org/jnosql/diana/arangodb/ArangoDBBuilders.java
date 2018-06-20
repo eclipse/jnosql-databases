@@ -25,11 +25,8 @@ import static java.util.Optional.ofNullable;
 
 final class ArangoDBBuilders {
 
-    private static final String HOST = "arangodb-host";
     private static final String USER = "arangodb-user";
     private static final String PASSWORD = "arangodb-password";
-    private static final String PORT = "arangodb-port";
-    private static final String CHUCK_SIZE = "arangodb-chuckSize";
     private static final String TIMEOUT = "arangodb-timeout";
     private static final String USER_SSL = "arangodb-userSsl";
     private static final String LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
@@ -44,11 +41,8 @@ final class ArangoDBBuilders {
 
     static void load(Settings settings, ArangoDBBuilder arangoDB) {
 
-        ofNullable(settings.get(HOST)).map(Object::toString).ifPresent(arangoDB::host);
         ofNullable(settings.get(USER)).map(Object::toString).ifPresent(arangoDB::user);
         ofNullable(settings.get(PASSWORD)).map(Object::toString).ifPresent(arangoDB::password);
-        ofNullable(settings.get(PORT)).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
-        ofNullable(settings.get(CHUCK_SIZE)).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::port);
         ofNullable(settings.get(TIMEOUT)).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
 
         ofNullable(settings.get(CHUNK_CONTENT_SIZE)).map(Object::toString).map(Integer::valueOf)

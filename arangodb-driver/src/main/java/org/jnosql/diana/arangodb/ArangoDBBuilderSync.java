@@ -23,16 +23,6 @@ public class ArangoDBBuilderSync implements ArangoDBBuilder {
     private final ArangoDB.Builder arangoDB = new ArangoDB.Builder();
 
     @Override
-    public void host(String host) {
-        arangoDB.host(host);
-    }
-
-    @Override
-    public void port(int port) {
-        arangoDB.port(port);
-    }
-
-    @Override
     public void host(String host, int port) {
         arangoDB.host(host, port);
     }

@@ -18,11 +18,12 @@ package org.jnosql.diana.arangodb.document;
 
 public final class DocumentConfigurationUtils {
 
-    private DocumentConfigurationUtils() {}
+    private DocumentConfigurationUtils() {
+    }
 
     public static ArangoDBDocumentCollectionManagerFactory getConfiguration() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
-        configuration.setHost("localhost");
+        configuration.addHost("localhost", 8529);
         return configuration.get();
     }
 }

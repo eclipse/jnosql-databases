@@ -34,31 +34,6 @@ public abstract class ArangoDBConfiguration {
 
     protected ArangoDBAsync.Builder builderAsync = new ArangoDBAsync.Builder();
 
-
-    /**
-     * set the setHost
-     *
-     * @param host the setHost
-     * @deprecated use ArangoDBConfiguration{@link #addHost(String, int)}
-     */
-    @Deprecated
-    public void setHost(String host) {
-        builder.host(host);
-        builderAsync.host(host);
-    }
-
-    /**
-     * set the setPort
-     *
-     * @param port the setPort
-     * @deprecated use ArangoDBConfiguration{@link #addHost(String, int)}
-     */
-    @Deprecated
-    public void setPort(int port) {
-        builder.port(port);
-        builderAsync.port(port);
-    }
-
     /**
      * Adds a host in the arangodb builder
      *
