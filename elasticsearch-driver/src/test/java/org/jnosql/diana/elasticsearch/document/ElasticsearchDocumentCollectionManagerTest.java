@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
@@ -144,7 +145,9 @@ public class ElasticsearchDocumentCollectionManagerTest {
         TimeUnit.SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        List<Document> names = entities.stream().map(e -> e.find("name").get())
+                .distinct().collect(Collectors.toList());
+        assertThat(names, contains(name));
     }
 
     @Test

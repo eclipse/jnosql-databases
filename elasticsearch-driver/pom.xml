@@ -68,7 +68,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
-        <es.version>6.2.3</es.version>
+        <es.version>6.3.0</es.version>
     </properties>
     <dependencies>
         <dependency>
