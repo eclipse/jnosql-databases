@@ -32,7 +32,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
-        <arango.driver>4.3.4</arango.driver>
+        <arango.driver>4.5.0</arango.driver>
     </properties>
     <dependencies>
         <dependency>
