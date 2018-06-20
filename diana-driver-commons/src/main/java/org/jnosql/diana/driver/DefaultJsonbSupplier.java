@@ -47,7 +47,7 @@ enum DefaultJsonbSupplier implements JsonbSupplier {
 
         @Override
         public boolean isVisible(Method method) {
-            return false;
+            return true;
         }
 
     }
