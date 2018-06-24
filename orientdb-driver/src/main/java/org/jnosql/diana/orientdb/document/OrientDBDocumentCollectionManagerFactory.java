@@ -48,10 +48,10 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
         this.user = user;
         this.password = password;
         this.storageType = ofNullable(storageType)
-                .map(String::toString)
+                .map(String::toUpperCase)
                 .map(ODatabaseType::valueOf)
                 .orElse(ODatabaseType.PLOCAL);
-        this.orient = new OrientDB("remote:" + host, OrientDBConfig.defaultConfig());
+        this.orient = new OrientDB("remote:" + host, user, password, OrientDBConfig.defaultConfig());
 
     }
 
