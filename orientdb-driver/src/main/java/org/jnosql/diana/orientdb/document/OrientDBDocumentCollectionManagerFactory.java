@@ -17,10 +17,13 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.client.remote.OServerAdmin;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
+import com.orientechnologies.orient.core.db.OrientDB;
+import com.orientechnologies.orient.core.db.OrientDBConfig;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static java.util.Optional.ofNullable;
 
@@ -47,14 +50,17 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
 
     @Override
     public OrientDBDocumentCollectionManager get(String database) {
+        Objects.requireNonNull(database, "database is required");
         try {
+            String url = "remote:" + host + '/' + database;
+            OrientDB orient = new OrientDB("remote:localhost", OrientDBConfig.defaultConfig());
             OServerAdmin serverAdmin = new OServerAdmin(host)
                     .connect(user, password);
 
             if (!serverAdmin.existsDatabase(database, storageType)) {
                 serverAdmin.createDatabase(database, DATABASE_TYPE, storageType);
             }
-            OPartitionedDatabasePool pool = new OPartitionedDatabasePool("remote:" + host + '/' + database, user, password);
+            OPartitionedDatabasePool pool = new OPartitionedDatabasePool(url, user, password);
             return new DefaultOrientDBDocumentCollectionManager(pool);
         } catch (IOException e) {
             throw new OrientDBException("Error when getDocumentEntityManager", e);
@@ -63,6 +69,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
 
     @Override
     public OrientDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
+        Objects.requireNonNull(database, "database is required");
         try {
             OServerAdmin serverAdmin = new OServerAdmin(host)
                     .connect(user, password);
