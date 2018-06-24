@@ -16,6 +16,8 @@ package org.jnosql.diana.orientdb.document;
 
 
 import com.orientechnologies.orient.client.remote.OServerAdmin;
+import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
@@ -34,34 +36,34 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
         DocumentCollectionManagerAsyncFactory<OrientDBDocumentCollectionManagerAsync> {
 
     private static final String DATABASE_TYPE = "document";
-    private static final String STORAGE_TYPE = "plocal";
 
     private final String host;
     private final String user;
     private final String password;
-    private final String storageType;
+    private final ODatabaseType storageType;
+    private final OrientDB orient;
 
     OrientDBDocumentCollectionManagerFactory(String host, String user, String password, String storageType) {
         this.host = host;
         this.user = user;
         this.password = password;
-        this.storageType = ofNullable(storageType).orElse(STORAGE_TYPE);
+        this.storageType = ofNullable(storageType)
+                .map(String::toString)
+                .map(ODatabaseType::valueOf)
+                .orElse(ODatabaseType.PLOCAL);
+        this.orient = new OrientDB("remote:" + host, OrientDBConfig.defaultConfig());
+
     }
 
     @Override
     public OrientDBDocumentCollectionManager get(String database) {
         Objects.requireNonNull(database, "database is required");
         try {
-            String url = "remote:" + host + '/' + database;
-            OrientDB orient = new OrientDB(url, OrientDBConfig.defaultConfig());
-            OServerAdmin serverAdmin = new OServerAdmin(host)
-                    .connect(user, password);
 
-            if (!serverAdmin.existsDatabase(database, storageType)) {
-                serverAdmin.createDatabase(database, DATABASE_TYPE, storageType);
-            }
-            OPartitionedDatabasePool pool = new OPartitionedDatabasePool(url, user, password);
-            return new DefaultOrientDBDocumentCollectionManager(pool);
+            orient.createIfNotExists(database, storageType);
+            ODatabaseSession session = orient.open(database, user, password);
+
+            return new DefaultOrientDBDocumentCollectionManager(session);
         } catch (IOException e) {
             throw new OrientDBException("Error when getDocumentEntityManager", e);
         }
@@ -86,6 +88,6 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
 
     @Override
     public void close() {
-
+        orient.close();
     }
 }
