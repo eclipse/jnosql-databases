@@ -16,7 +16,7 @@ package org.jnosql.diana.orientdb.document;
 
 
 import com.orientechnologies.orient.client.remote.OServerAdmin;
-import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.OrientDB;
@@ -25,8 +25,8 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 import java.io.IOException;
-import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -57,33 +57,18 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
 
     @Override
     public OrientDBDocumentCollectionManager get(String database) {
-        Objects.requireNonNull(database, "database is required");
-        try {
+        requireNonNull(database, "database is required");
 
-            orient.createIfNotExists(database, storageType);
-            ODatabaseSession session = orient.open(database, user, password);
+        orient.createIfNotExists(database, storageType);
+        ODatabasePool pool = new ODatabasePool(orient, database, user, password);
+        return new DefaultOrientDBDocumentCollectionManager(pool);
 
-            return new DefaultOrientDBDocumentCollectionManager(session);
-        } catch (IOException e) {
-            throw new OrientDBException("Error when getDocumentEntityManager", e);
-        }
     }
 
     @Override
     public OrientDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        Objects.requireNonNull(database, "database is required");
-        try {
-            OServerAdmin serverAdmin = new OServerAdmin(host)
-                    .connect(user, password);
-
-            if (!serverAdmin.existsDatabase(database, storageType)) {
-                serverAdmin.createDatabase(database, DATABASE_TYPE, storageType);
-            }
-            OPartitionedDatabasePool pool = new OPartitionedDatabasePool("remote:" + host + '/' + database, user, password);
-            return new DefaultOrientDBDocumentCollectionManagerAsync(pool);
-        } catch (IOException e) {
-            throw new OrientDBException("Error when getDocumentEntityManager", e);
-        }
+        requireNonNull(database, "database is required");
+       return null;
     }
 
     @Override
