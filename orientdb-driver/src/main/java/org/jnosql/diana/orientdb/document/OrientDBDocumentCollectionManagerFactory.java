@@ -53,7 +53,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
         Objects.requireNonNull(database, "database is required");
         try {
             String url = "remote:" + host + '/' + database;
-            OrientDB orient = new OrientDB("remote:localhost", OrientDBConfig.defaultConfig());
+            OrientDB orient = new OrientDB(url, OrientDBConfig.defaultConfig());
             OServerAdmin serverAdmin = new OServerAdmin(host)
                     .connect(user, password);
 

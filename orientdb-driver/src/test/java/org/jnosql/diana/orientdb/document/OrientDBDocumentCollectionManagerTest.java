@@ -62,7 +62,7 @@ public class OrientDBDocumentCollectionManagerTest {
 
     @BeforeEach
     public void setUp() {
-        entityManager = get().get("database");
+        entityManager = get().get(Database.DATABASE);
     }
 
     @Test

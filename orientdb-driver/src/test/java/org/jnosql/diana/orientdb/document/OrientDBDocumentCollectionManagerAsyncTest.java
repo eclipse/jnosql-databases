@@ -55,8 +55,8 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     @BeforeEach
     public void setUp() {
-        entityManagerAsync = getAsync().getAsync("database");
-        entityManager = DocumentConfigurationUtils.get().get("database");
+        entityManagerAsync = getAsync().getAsync(Database.DATABASE);
+        entityManager = DocumentConfigurationUtils.get().get(Database.DATABASE);
     }
 
 
