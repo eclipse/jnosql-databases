@@ -17,11 +17,11 @@ package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.orientdb.document.QueryOSQLConverter.Query;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -69,10 +69,7 @@ final class QueryOSQLFactory {
 
     static QueryResult toLive(DocumentQuery documentQuery, OrientDBLiveCallback callbacks) {
         Query query = QueryOSQLConverter.select(documentQuery);
-        OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(LIVE + query.getQuery(),
-                new LiveQueryLIstener(callbacks));
-        //return new QueryResult(liveQuery, query.getParams());
-        return null;
+        return new QueryResult(LIVE + query.getQuery(), query.getParams(), Collections.emptyList());
     }
 
     static QueryResult toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {

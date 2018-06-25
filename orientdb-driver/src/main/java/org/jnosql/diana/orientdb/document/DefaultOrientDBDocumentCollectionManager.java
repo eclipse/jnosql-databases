@@ -31,11 +31,8 @@ import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
@@ -111,7 +108,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
                     entities.addAll(OrientDBConverter.convert(resultSet));
                 }
             }
-            if(orientQuery.isLoad()) {
+            if (orientQuery.isLoad()) {
                 orientQuery.getIds().stream().map(tx::load)
                         .map(o -> OrientDBConverter.convert((ODocument) o))
                         .forEach(entities::add);
@@ -159,10 +156,9 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     public void live(DocumentQuery query, OrientDBLiveCallback<DocumentEntity> callbacks) {
         requireNonNull(query, "query is required");
         requireNonNull(callbacks, "callbacks is required");
-        try (ODatabaseSession tx = pool.acquire();) {
-            QueryOSQLFactory.QueryResult queryResult = QueryOSQLFactory.toLive(query, callbacks);
-//            tx.command(queryResult.getQuery()).execute(queryResult.getParams());
-        }
+        ODatabaseSession tx = pool.acquire();
+        QueryOSQLFactory.QueryResult queryResult = QueryOSQLFactory.toLive(query, callbacks);
+        tx.live(queryResult.getQuery(), new LiveQueryListener(callbacks));
     }
 
     @Override
@@ -170,8 +166,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(query, "query is required");
         requireNonNull(callbacks, "callbacks is required");
         try (ODatabaseSession tx = pool.acquire()) {
-            OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(query, new LiveQueryLIstener(callbacks));
-//            tx.command(liveQuery).execute(params);
+            tx.live(query, new LiveQueryListener(callbacks));
         }
     }
 

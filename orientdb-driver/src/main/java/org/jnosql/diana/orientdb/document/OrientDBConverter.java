@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -75,15 +73,6 @@ final class OrientDBConverter {
         return entity;
     }
 
-
-    static List<DocumentEntity> convert(List<ODocument> result) {
-        List<DocumentEntity> entities = new ArrayList<>();
-        for (ODocument document : result) {
-            DocumentEntity entity = convert(document);
-            entities.add(entity);
-        }
-        return entities;
-    }
 
     static DocumentEntity convert(ODocument document) {
         DocumentEntity entity = DocumentEntity.of(document.getClassName());
