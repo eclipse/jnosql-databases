@@ -30,6 +30,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -103,9 +104,19 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(query, "query is required");
         QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(query);
 
-        try (ODatabaseSession tx = pool.acquire();
-             OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
-            return OrientDBConverter.convert(resultSet);
+        try (ODatabaseSession tx = pool.acquire()) {
+            List<DocumentEntity> entities = new ArrayList<>();
+            if (orientQuery.isRunQuery()) {
+                try (OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
+                    entities.addAll(OrientDBConverter.convert(resultSet));
+                }
+            }
+            if(orientQuery.isLoad()) {
+                orientQuery.getIds().stream().map(tx::load)
+                        .map(o -> OrientDBConverter.convert((ODocument) o))
+                        .forEach(entities::add);
+            }
+            return entities;
         }
     }
 

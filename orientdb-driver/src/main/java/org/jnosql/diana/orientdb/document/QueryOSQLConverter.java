@@ -16,12 +16,14 @@
 package org.jnosql.diana.orientdb.document;
 
 
+import com.orientechnologies.orient.core.id.ORecordId;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 final class QueryOSQLConverter {
@@ -48,12 +50,13 @@ final class QueryOSQLConverter {
     static Query select(DocumentQuery documentQuery) {
         StringBuilder query = new StringBuilder();
         List<Object> params = new java.util.ArrayList<>();
+        List<ORecordId> ids = new ArrayList<>();
         query.append("SELECT FROM ");
         query.append(documentQuery.getDocumentCollection());
 
         if (documentQuery.getCondition().isPresent()) {
             query.append(WHERE);
-            definesCondition(documentQuery.getCondition().get(), query, params, 0);
+            definesCondition(documentQuery.getCondition().get(), query, params, 0, ids);
         }
 
         if (!documentQuery.getSorts().isEmpty()) {
@@ -61,32 +64,34 @@ final class QueryOSQLConverter {
         }
 
         appendPagination(documentQuery, query);
-        return new Query(query.toString(), params);
+        return new Query(query.toString(), params, ids);
     }
 
-    private static void definesCondition(DocumentCondition condition, StringBuilder query, List<Object> params, int counter) {
+    private static void definesCondition(DocumentCondition condition, StringBuilder query, List<Object> params,
+                                         int counter, List<ORecordId> ids) {
+
         Document document = condition.getDocument();
         switch (condition.getCondition()) {
             case IN:
-                appendCondition(query, params, document, IN);
+                appendCondition(query, params, document, IN, ids);
                 return;
             case EQUALS:
-                appendCondition(query, params, document, EQUALS);
+                appendCondition(query, params, document, EQUALS, ids);
                 return;
             case GREATER_EQUALS_THAN:
-                appendCondition(query, params, document, GREATER_EQUALS_THAN);
+                appendCondition(query, params, document, GREATER_EQUALS_THAN, ids);
                 return;
             case GREATER_THAN:
-                appendCondition(query, params, document, GREATER_THAN);
+                appendCondition(query, params, document, GREATER_THAN, ids);
                 return;
             case LESSER_THAN:
-                appendCondition(query, params, document, LESSER_THAN);
+                appendCondition(query, params, document, LESSER_THAN, ids);
                 return;
             case LESSER_EQUALS_THAN:
-                appendCondition(query, params, document, LESSER_EQUALS_THAN);
+                appendCondition(query, params, document, LESSER_EQUALS_THAN, ids);
                 return;
             case LIKE:
-                appendCondition(query, params, document, LIKE);
+                appendCondition(query, params, document, LIKE, ids);
                 return;
             case AND:
                 for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
@@ -95,7 +100,7 @@ final class QueryOSQLConverter {
                     if (isFirstCondition(query, counter)) {
                         query.append(AND);
                     }
-                    definesCondition(dc, query, params, ++counter);
+                    definesCondition(dc, query, params, ++counter, ids);
                 }
                 return;
             case OR:
@@ -104,13 +109,13 @@ final class QueryOSQLConverter {
                     if (isFirstCondition(query, counter)) {
                         query.append(OR);
                     }
-                    definesCondition(dc, query, params, ++counter);
+                    definesCondition(dc, query, params, ++counter, ids);
                 }
                 return;
             case NOT:
                 DocumentCondition documentCondition = document.get(DocumentCondition.class);
                 query.append("NOT (");
-                definesCondition(documentCondition, query, params, ++counter);
+                definesCondition(documentCondition, query, params, ++counter, ids);
                 query.append(")");
                 return;
             default:
@@ -122,7 +127,13 @@ final class QueryOSQLConverter {
         return counter > 0 && !WHERE.equals(query.substring(query.length() - 7));
     }
 
-    private static void appendCondition(StringBuilder query, List<Object> params, Document document, String condition) {
+    private static void appendCondition(StringBuilder query, List<Object> params,
+                                        Document document, String condition, List<ORecordId> ids) {
+
+        if(OrientDBConverter.RID_FIELD.equals(document.getName())) {
+            ids.add(new ORecordId(document.get(String.class)));
+            return;
+        }
         query.append(document.getName())
                 .append(condition).append(PARAM_APPENDER);
         params.add(document.get());
@@ -153,14 +164,20 @@ final class QueryOSQLConverter {
     static class Query {
         private final String query;
         private final List<Object> params;
+        private List<ORecordId> ids;
 
-        Query(String query, List<Object> params) {
+        Query(String query, List<Object> params,List<ORecordId> ids) {
             this.query = query;
             this.params = params;
+            this.ids = ids;
         }
 
         String getQuery() {
             return query;
+        }
+
+        List<ORecordId> getIds() {
+            return ids;
         }
 
         List<Object> getParams() {

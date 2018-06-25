@@ -15,19 +15,15 @@
  */
 package org.jnosql.diana.orientdb.document;
 
-import com.orientechnologies.orient.core.command.OCommandResultListener;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OLiveQuery;
-import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.orientdb.document.QueryOSQLConverter.Query;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import static java.util.Arrays.asList;
 
 final class QueryOSQLFactory {
 
@@ -38,7 +34,7 @@ final class QueryOSQLFactory {
 
     static QueryResult to(DocumentQuery documentQuery) {
         Query query = QueryOSQLConverter.select(documentQuery);
-        return new QueryResult(query.getQuery(), query.getParams());
+        return new QueryResult(query.getQuery(), query.getParams(), query.getIds());
     }
 
     static OSQLSynchQuery<ODocument> parse(String query) {
@@ -107,10 +103,12 @@ final class QueryOSQLFactory {
 
         private final String query;
         private final List<Object> params;
+        private final List<ORecordId> ids;
 
-        QueryResult(String query, List<Object> params) {
+        QueryResult(String query, List<Object> params, List<ORecordId> ids) {
             this.query = query;
             this.params = params;
+            this.ids = ids;
         }
 
         String getQuery() {
@@ -119,6 +117,18 @@ final class QueryOSQLFactory {
 
         Object[] getParams() {
             return params.toArray(new Object[params.size()]);
+        }
+
+        public List<ORecordId> getIds() {
+            return ids;
+        }
+
+        public boolean isRunQuery() {
+            return ids.isEmpty() || (!ids.isEmpty() && !params.isEmpty());
+        }
+
+        public boolean isLoad() {
+            return !ids.isEmpty();
         }
     }
 }
