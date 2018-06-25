@@ -21,6 +21,8 @@ import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.fetch.OFetchHelper;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.executor.OResult;
+import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -28,8 +30,11 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
@@ -105,12 +110,10 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(documentCollection, "query is required");
         try (ODatabaseSession tx = pool.acquire()) {
             String query = "select count(*) from ".concat(documentCollection);
-            List<ODocument> result = tx.command(QueryOSQLFactory.parse(query)).execute();
-            return result.stream()
-                    .findFirst()
-                    .map(e -> e.field("count"))
-                    .map(n -> Number.class.cast(n).longValue())
-                    .orElse(0L);
+            OResultSet command = tx.command(query);
+            OResult next = command.next();
+            Object count = next.getProperty("count(*)");
+            return Number.class.cast(count).longValue();
 
         }
     }
