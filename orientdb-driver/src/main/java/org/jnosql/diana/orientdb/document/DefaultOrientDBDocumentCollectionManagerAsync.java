@@ -115,11 +115,11 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         ODatabaseSession tx = pool.acquire();
         DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
 
-        QueryOSQLFactory.QueryResult orientQuery = toAsync(selectQuery, l -> {
+        QueryOSQLFactory.QueryResultAsync orientQuery = toAsync(selectQuery, l -> {
             l.forEach(ORecordAbstract::delete);
             callBack.accept(null);
         });
-     //   tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -127,10 +127,10 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         ODatabaseSession tx = pool.acquire();
-        QueryOSQLFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+        QueryOSQLFactory.QueryResultAsync orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())));
-//        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -147,8 +147,8 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
                         .map(e -> e.field("count"))
                         .map(n -> Number.class.cast(n).longValue())
                         .orElse(0L));
-        QueryOSQLFactory.QueryResult orientQuery = toAsync(query, orientCallback);
-//        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+        QueryOSQLFactory.QueryResultAsync orientQuery = toAsync(query, orientCallback);
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -156,10 +156,10 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         ODatabaseSession tx = pool.acquire();
-        QueryOSQLFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+        QueryOSQLFactory.QueryResultAsync orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())), params);
-//        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -169,7 +169,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         requireNonNull(params, "params is required");
 
         ODatabaseSession tx = pool.acquire();
-        QueryOSQLFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
+        QueryOSQLFactory.QueryResultAsync orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())), params);
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());

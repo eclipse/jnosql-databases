@@ -66,9 +66,12 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
     }
 
     @Override
-    public OrientDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
+    public OrientDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException,
+            NullPointerException {
         requireNonNull(database, "database is required");
-       return null;
+        orient.createIfNotExists(database, storageType);
+        ODatabasePool pool = new ODatabasePool(orient, database, user, password);
+        return new DefaultOrientDBDocumentCollectionManagerAsync(pool);
     }
 
     @Override
