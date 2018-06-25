@@ -85,11 +85,14 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     public void delete(DocumentDeleteQuery query) {
         requireNonNull(query, "query is required");
         DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
+        QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(selectQuery);
 
-        try (ODatabaseSession tx = pool.acquire()) {
-            QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(selectQuery);
-            List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-            result.forEach(tx::delete);
+        try (ODatabaseSession tx = pool.acquire();
+             OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
+            while (resultSet.hasNext()) {
+                OResult next = resultSet.next();
+                tx.delete(next.toElement().getIdentity());
+            }
         }
 
     }
@@ -98,10 +101,11 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
         requireNonNull(query, "query is required");
-        try (ODatabaseSession tx = pool.acquire()) {
-            QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(query);
-            List<ODocument> result = tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
-            return OrientDBConverter.convert(result);
+        QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(query);
+
+        try (ODatabaseSession tx = pool.acquire();
+             OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
+            return OrientDBConverter.convert(resultSet);
         }
     }
 
@@ -121,9 +125,9 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     @Override
     public List<DocumentEntity> sql(String query, Object... params) {
         requireNonNull(query, "query is required");
-        try (ODatabaseSession tx = pool.acquire()) {
-            List<ODocument> result = tx.command(QueryOSQLFactory.parse(query)).execute(params);
-            return OrientDBConverter.convert(result);
+        try (ODatabaseSession tx = pool.acquire();
+             OResultSet resultSet = tx.command(query, params)) {
+            return OrientDBConverter.convert(resultSet);
         }
 
     }
@@ -133,9 +137,10 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(query, "query is required");
         requireNonNull(params, "params is required");
 
-        try (ODatabaseSession tx = pool.acquire()) {
-            List<ODocument> result = tx.command(QueryOSQLFactory.parse(query)).execute(params);
-            return OrientDBConverter.convert(result);
+        try (ODatabaseSession tx = pool.acquire();
+             OResultSet resultSet = tx.command(query, params)) {
+            return OrientDBConverter.convert(resultSet);
+
         }
     }
 
@@ -145,7 +150,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(callbacks, "callbacks is required");
         try (ODatabaseSession tx = pool.acquire();) {
             QueryOSQLFactory.QueryResult queryResult = QueryOSQLFactory.toLive(query, callbacks);
-            tx.command(queryResult.getQuery()).execute(queryResult.getParams());
+//            tx.command(queryResult.getQuery()).execute(queryResult.getParams());
         }
     }
 
@@ -155,7 +160,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(callbacks, "callbacks is required");
         try (ODatabaseSession tx = pool.acquire()) {
             OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(query, new LiveQueryLIstener(callbacks));
-            tx.command(liveQuery).execute(params);
+//            tx.command(liveQuery).execute(params);
         }
     }
 

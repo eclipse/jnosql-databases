@@ -117,7 +117,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
             l.forEach(ORecordAbstract::delete);
             callBack.accept(null);
         });
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+     //   tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -128,7 +128,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         QueryOSQLFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())));
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+//        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -146,7 +146,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
                         .map(n -> Number.class.cast(n).longValue())
                         .orElse(0L));
         QueryOSQLFactory.QueryResult orientQuery = toAsync(query, orientCallback);
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+//        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -157,7 +157,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         QueryOSQLFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())), params);
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+//        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
     @Override
@@ -170,7 +170,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         QueryOSQLFactory.QueryResult orientQuery = toAsync(query, l -> callBack.accept(l.stream()
                 .map(OrientDBConverter::convert)
                 .collect(toList())), params);
-        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
+//        tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 
 
