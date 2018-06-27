@@ -389,24 +389,26 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    @Disabled
-    public void shouldLive() throws InterruptedException {
+    public void shouldLive() {
+        AtomicBoolean condition = new AtomicBoolean(false);
         List<DocumentEntity> entities = new ArrayList<>();
-        OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;
+        OrientDBLiveCreateCallback<DocumentEntity> callback = d -> {
+            entities.add(d);
+            condition.set(true);
+        };
 
         DocumentEntity entity = entityManager.insert(getEntity());
-        Document id = entity.find("name").get();
+        Document name = entity.find("name").get();
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
 
         entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onCreate(callback).build());
         entityManager.insert(getEntity());
-        Thread.sleep(3_000L);
+        await().untilTrue(condition);
         assertFalse(entities.isEmpty());
     }
 
     @Test
-    @Disabled
     public void shouldLiveUpdateCallback() {
         AtomicReference<DocumentEntity> reference = new AtomicReference<>();
         OrientDBLiveUpdateCallback<DocumentEntity> callback = reference::set;
@@ -424,16 +426,15 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    @Disabled
     public void shouldLiveDeleteCallback() {
         AtomicBoolean condition = new AtomicBoolean(false);
         OrientDBLiveDeleteCallback<DocumentEntity> callback = d -> condition.set(true);
         DocumentEntity entity = entityManager.insert(getEntity());
-        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        Document name = entity.find("name").get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
 
         entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onDelete(callback).build());
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
         await().untilTrue(condition);
     }

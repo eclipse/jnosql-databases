@@ -33,7 +33,6 @@ import static java.util.Arrays.asList;
 
 final class QueryOSQLFactory {
 
-    public static final String LIVE = "LIVE ";
 
     private QueryOSQLFactory() {
     }
@@ -43,14 +42,9 @@ final class QueryOSQLFactory {
         return new QueryResult(query.getQuery(), query.getParams(), query.getIds());
     }
 
-    static OSQLSynchQuery<ODocument> parse(String query) {
-        return new OSQLSynchQuery<ODocument>(query) {
-        };
-    }
-
     static QueryResultAsync toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
         Query query = QueryOSQLConverter.select(documentQuery);
-     return new QueryResultAsync(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
+        return new QueryResultAsync(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
 
             @Override
@@ -74,7 +68,7 @@ final class QueryOSQLFactory {
 
     static QueryResult toLive(DocumentQuery documentQuery, OrientDBLiveCallback callbacks) {
         Query query = QueryOSQLConverter.select(documentQuery);
-        return new QueryResult(LIVE + query.getQuery(), query.getParams(), Collections.emptyList());
+        return new QueryResult(query.getQuery(), query.getParams(), Collections.emptyList());
     }
 
     static QueryResultAsync toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {
