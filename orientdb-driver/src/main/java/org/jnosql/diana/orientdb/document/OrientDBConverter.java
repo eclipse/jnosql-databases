@@ -15,7 +15,12 @@
 package org.jnosql.diana.orientdb.document;
 
 
+import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.executor.OResult;
+import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
@@ -39,14 +44,35 @@ final class OrientDBConverter {
     private OrientDBConverter() {
     }
 
-    static List<DocumentEntity> convert(List<ODocument> result) {
+    static List<DocumentEntity> convert(OResultSet resultSet) {
         List<DocumentEntity> entities = new ArrayList<>();
-        for (ODocument document : result) {
-            DocumentEntity entity = convert(document);
-            entities.add(entity);
+
+        while (resultSet.hasNext()) {
+            entities.add(convert(resultSet.next()));
         }
         return entities;
     }
+
+    static DocumentEntity convert(OResult row) {
+        OElement element = row.toElement();
+        String name = element.getSchemaType()
+                .map(OClass::getName)
+                .orElseThrow(() -> new IllegalArgumentException("SchemaType is required in a row"));
+
+        DocumentEntity entity = DocumentEntity.of(name);
+        for (String propertyName : element.getPropertyNames()) {
+            Object property = element.getProperty(propertyName);
+            entity.add(propertyName, convert(property));
+
+        }
+        ORID identity = element.getIdentity();
+        int clusterId = identity.getClusterId();
+        long clusterPosition = identity.getClusterPosition();
+        entity.add(VERSION_FIELD, element.getVersion());
+        entity.add(RID_FIELD, "#" + clusterId + ":" + clusterPosition);
+        return entity;
+    }
+
 
     static DocumentEntity convert(ODocument document) {
         DocumentEntity entity = DocumentEntity.of(document.getClassName());
@@ -58,14 +84,15 @@ final class OrientDBConverter {
         return entity;
     }
 
+
     private static Object convert(Object object) {
         if (Map.class.isInstance(object)) {
             Map map = Map.class.cast(object);
             return map.keySet().stream()
                     .map(k -> Document.of(k.toString(), map.get(k)))
                     .collect(toList());
-        } else if(List.class.isInstance(object)) {
-            return StreamSupport.stream( List.class.cast(object).spliterator(), false)
+        } else if (List.class.isInstance(object)) {
+            return StreamSupport.stream(List.class.cast(object).spliterator(), false)
                     .map(OrientDBConverter::convert).collect(toList());
         }
         return object;

@@ -16,8 +16,8 @@
 package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.orient.core.command.OCommandResultListener;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
@@ -25,6 +25,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.orientdb.document.QueryOSQLConverter.Query;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -32,26 +33,18 @@ import static java.util.Arrays.asList;
 
 final class QueryOSQLFactory {
 
-    public static final String LIVE = "LIVE ";
 
     private QueryOSQLFactory() {
     }
 
     static QueryResult to(DocumentQuery documentQuery) {
         Query query = QueryOSQLConverter.select(documentQuery);
-
-        return new QueryResult(new OSQLSynchQuery<ODocument>(query.getQuery()) {
-        }, query.getParams());
+        return new QueryResult(query.getQuery(), query.getParams(), query.getIds());
     }
 
-    static OSQLSynchQuery<ODocument> parse(String query) {
-        return new OSQLSynchQuery<ODocument>(query) {
-        };
-    }
-
-    static QueryResult toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
+    static QueryResultAsync toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
         Query query = QueryOSQLConverter.select(documentQuery);
-        return new QueryResult(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
+        return new QueryResultAsync(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
 
             @Override
@@ -75,14 +68,11 @@ final class QueryOSQLFactory {
 
     static QueryResult toLive(DocumentQuery documentQuery, OrientDBLiveCallback callbacks) {
         Query query = QueryOSQLConverter.select(documentQuery);
-        OLiveQuery<ODocument> liveQuery = new OLiveQuery<>(LIVE + query.getQuery(),
-                new LiveQueryLIstener(callbacks));
-        return new QueryResult(liveQuery, query.getParams());
-
+        return new QueryResult(query.getQuery(), query.getParams(), Collections.emptyList());
     }
 
-    static QueryResult toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {
-        return new QueryResult(new OSQLAsynchQuery<>(query, new OCommandResultListener() {
+    static QueryResultAsync toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {
+        return new QueryResultAsync(new OSQLAsynchQuery<>(query, new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
 
             @Override
@@ -106,10 +96,43 @@ final class QueryOSQLFactory {
 
     static class QueryResult {
 
+        private final String query;
+        private final List<Object> params;
+        private final List<ORecordId> ids;
+
+        QueryResult(String query, List<Object> params, List<ORecordId> ids) {
+            this.query = query;
+            this.params = params;
+            this.ids = ids;
+        }
+
+        String getQuery() {
+            return query;
+        }
+
+        Object[] getParams() {
+            return params.toArray(new Object[params.size()]);
+        }
+
+        public List<ORecordId> getIds() {
+            return ids;
+        }
+
+        public boolean isRunQuery() {
+            return ids.isEmpty() || (!ids.isEmpty() && !params.isEmpty());
+        }
+
+        public boolean isLoad() {
+            return !ids.isEmpty();
+        }
+    }
+
+    static class QueryResultAsync {
+
         private final OSQLQuery<ODocument> query;
         private final List<Object> params;
 
-        QueryResult(OSQLQuery<ODocument> query, List<Object> params) {
+        QueryResultAsync(OSQLQuery<ODocument> query, List<Object> params) {
             this.query = query;
             this.params = params;
         }
@@ -122,4 +145,5 @@ final class QueryOSQLFactory {
             return params.toArray(new Object[params.size()]);
         }
     }
+
 }

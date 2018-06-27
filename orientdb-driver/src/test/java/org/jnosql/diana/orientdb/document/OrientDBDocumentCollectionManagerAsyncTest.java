@@ -55,8 +55,8 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     @BeforeEach
     public void setUp() {
-        entityManagerAsync = getAsync().getAsync("database");
-        entityManager = DocumentConfigurationUtils.get().get("database");
+        entityManagerAsync = getAsync().getAsync(Database.DATABASE);
+        entityManager = DocumentConfigurationUtils.get().get(Database.DATABASE);
     }
 
 
@@ -136,7 +136,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRemoveEntityAsyncWithoutCallback() throws InterruptedException {
         DocumentEntity entity = entityManager.insert(getEntity());
-        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
+        Document id = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();

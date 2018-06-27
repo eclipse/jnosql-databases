@@ -44,4 +44,5 @@ public class OrientDBLiveCallback<T> {
     public Optional<OrientDBLiveDeleteCallback<T>> getDeleteCallback() {
         return ofNullable(deleteCallback);
     }
+
 }
