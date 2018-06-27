@@ -23,7 +23,6 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -158,16 +157,16 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         requireNonNull(callbacks, "callbacks is required");
         ODatabaseSession tx = pool.acquire();
         QueryOSQLFactory.QueryResult queryResult = QueryOSQLFactory.toLive(query, callbacks);
-        tx.live(queryResult.getQuery(), new LiveQueryListener(callbacks));
+        tx.live(queryResult.getQuery(), new LiveQueryListener(callbacks, tx));
     }
 
     @Override
     public void live(String query, OrientDBLiveCallback<DocumentEntity> callbacks, Object... params) {
         requireNonNull(query, "query is required");
         requireNonNull(callbacks, "callbacks is required");
-        try (ODatabaseSession tx = pool.acquire()) {
-            tx.live(query, new LiveQueryListener(callbacks));
-        }
+        ODatabaseSession tx = pool.acquire();
+        tx.live(query, new LiveQueryListener(callbacks, tx));
+
     }
 
     @Override

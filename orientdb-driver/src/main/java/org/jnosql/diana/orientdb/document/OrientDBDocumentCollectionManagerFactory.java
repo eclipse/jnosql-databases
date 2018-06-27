@@ -15,16 +15,12 @@
 package org.jnosql.diana.orientdb.document;
 
 
-import com.orientechnologies.orient.client.remote.OServerAdmin;
 import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseType;
-import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
-
-import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;

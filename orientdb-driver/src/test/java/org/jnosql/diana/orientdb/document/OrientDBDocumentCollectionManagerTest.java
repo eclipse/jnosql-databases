@@ -15,6 +15,7 @@
  */
 package org.jnosql.diana.orientdb.document;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -23,6 +24,7 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -387,6 +389,7 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    @Disabled
     public void shouldLive() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
         OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;
@@ -403,6 +406,7 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    @Disabled
     public void shouldLiveUpdateCallback() {
         AtomicReference<DocumentEntity> reference = new AtomicReference<>();
         OrientDBLiveUpdateCallback<DocumentEntity> callback = reference::set;
@@ -420,6 +424,7 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    @Disabled
     public void shouldLiveDeleteCallback() {
         AtomicBoolean condition = new AtomicBoolean(false);
         OrientDBLiveDeleteCallback<DocumentEntity> callback = d -> condition.set(true);
@@ -434,6 +439,7 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
+    @Disabled
     public void shouldLiveWithNativeQuery() throws InterruptedException {
         List<DocumentEntity> entities = new ArrayList<>();
         OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;

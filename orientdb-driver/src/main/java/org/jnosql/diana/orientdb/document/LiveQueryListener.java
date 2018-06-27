@@ -16,6 +16,7 @@
 package org.jnosql.diana.orientdb.document;
 
 import com.orientechnologies.common.exception.OException;
+import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
@@ -24,9 +25,11 @@ import org.jnosql.diana.api.document.DocumentEntity;
 class LiveQueryListener implements OLiveQueryResultListener {
 
     private final OrientDBLiveCallback<DocumentEntity> callbacks;
+    private final ODatabaseSession tx;
 
-    LiveQueryListener(OrientDBLiveCallback<DocumentEntity> callbacks) {
+    LiveQueryListener(OrientDBLiveCallback<DocumentEntity> callbacks, ODatabaseSession tx) {
         this.callbacks = callbacks;
+        this.tx = tx;
     }
 
     @Override
@@ -54,6 +57,6 @@ class LiveQueryListener implements OLiveQueryResultListener {
 
     @Override
     public void onEnd(ODatabaseDocument database) {
-        System.out.printf("error");
+        tx.close();
     }
 }
