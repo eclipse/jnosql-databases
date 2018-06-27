@@ -439,17 +439,19 @@ public class OrientDBDocumentCollectionManagerTest {
     }
 
     @Test
-    @Disabled
-    public void shouldLiveWithNativeQuery() throws InterruptedException {
+    public void shouldLiveWithNativeQuery() {
+        AtomicBoolean condition = new AtomicBoolean(false);
         List<DocumentEntity> entities = new ArrayList<>();
-        OrientDBLiveCreateCallback<DocumentEntity> callback = entities::add;
+        OrientDBLiveCreateCallback<DocumentEntity> callback = d -> {
+            entities.add(d);
+            condition.set(true);
+        };
 
         DocumentEntity entity = entityManager.insert(getEntity());
-        Document name = entity.find("name").get();
 
-        entityManager.live("LIVE SELECT FROM person WHERE name = ?", OrientDBLiveCallbackBuilder.builder().onCreate(callback).build(), name.get());
+        entityManager.live("SELECT FROM person", OrientDBLiveCallbackBuilder.builder().onCreate(callback).build());
         entityManager.insert(getEntity());
-        Thread.sleep(3_000L);
+        await().untilTrue(condition);
         assertFalse(entities.isEmpty());
     }
 
