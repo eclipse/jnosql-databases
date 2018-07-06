@@ -14,6 +14,9 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.ektorp.http.HttpClient;
+import org.ektorp.http.StdHttpClient;
+
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -121,6 +124,28 @@ public class CouchDBHttpConfiguration {
     public CouchDBHttpConfiguration withCompression(boolean compression) {
         this.compression = Optional.of(compression);
         return this;
+    }
+
+    public HttpClient build() {
+        StdHttpClient.Builder builder = new StdHttpClient.Builder();
+        port.ifPresent(builder::port);
+        maxConnections.ifPresent(builder::maxConnections);
+        connectionTimeout.ifPresent(builder::connectionTimeout);
+        socketTimeout.ifPresent(builder::socketTimeout);
+        proxyPort.ifPresent(builder::proxyPort);
+        maxObjectSizeBytes.ifPresent(builder::maxObjectSizeBytes);
+        maxCacheEntries.ifPresent(builder::maxCacheEntries);
+        proxy.ifPresent(builder::proxy);
+        host.ifPresent(builder::host);
+        username.ifPresent(builder::username);
+        password.ifPresent(builder::password);
+        cleanupIdleConnections.ifPresent(builder::cleanupIdleConnections);
+        relaxedSSLSettings.ifPresent(builder::relaxedSSLSettings);
+        useExpectContinue.ifPresent(builder::useExpectContinue);
+        enableSSL.ifPresent(builder::enableSSL);
+        caching.ifPresent(builder::caching);
+        compression.ifPresent(builder::compression);
+        return builder.build();
     }
 
     @Override
