@@ -12,13 +12,11 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.document;
+package org.jnosql.diana.couchdb.document;
 
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.Statement;
-import com.couchbase.client.java.query.dsl.Expression;
-import com.couchbase.client.java.query.dsl.path.GroupByPath;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -28,8 +26,8 @@ import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
+import org.jnosql.diana.couchdb.CouchbaseUtil;
+import org.jnosql.diana.couchdb.key.CouchbaseKeyValueConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 

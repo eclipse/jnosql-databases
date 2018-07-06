@@ -12,27 +12,12 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.key;
+package org.jnosql.diana.couchdb;
 
+public final class CouchbaseUtil {
 
-import org.jnosql.diana.driver.JsonbSupplier;
+    public static final String BUCKET_NAME = "jnosql";
 
-import javax.json.bind.Jsonb;
-import java.util.function.Function;
-
-abstract class CouchbaseCollection<T> {
-
-    protected static final Jsonb JSONB = JsonbSupplier.getInstance().get();
-
-    protected final Class<T> clazz;
-
-    CouchbaseCollection(Class<T> clazz) {
-        this.clazz = clazz;
+    private CouchbaseUtil() {
     }
-
-
-    protected Function<String, T> fromJSON() {
-        return s -> JSONB.fromJson(s, clazz);
-    }
-
 }

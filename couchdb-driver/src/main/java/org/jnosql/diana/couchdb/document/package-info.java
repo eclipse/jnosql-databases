@@ -12,16 +12,8 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.document;
-
 
 /**
- * An exception when {@link CouchbaseDocumentCollectionManager} tries to both update and insert, but it does not found
- * The column with the name "_id".
+ * This package has the Apache Couchdb document implementation
  */
-public class CouchbaseNoKeyFoundException extends RuntimeException {
-
-    CouchbaseNoKeyFoundException(String message) {
-        super("The entity was not found at: " + message);
-    }
-}
+package org.jnosql.diana.couchdb.document;

@@ -12,9 +12,9 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.document;
+package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.couchbase.CouchbaseUtil;
+import org.jnosql.diana.couchdb.CouchbaseUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

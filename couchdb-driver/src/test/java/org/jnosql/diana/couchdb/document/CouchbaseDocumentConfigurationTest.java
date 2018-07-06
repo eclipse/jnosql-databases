@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.document;
+package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.junit.jupiter.api.Test;

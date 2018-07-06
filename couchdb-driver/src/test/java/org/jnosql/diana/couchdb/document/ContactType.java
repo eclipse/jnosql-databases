@@ -12,12 +12,8 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase;
+package org.jnosql.diana.couchdb.document;
 
-public final class CouchbaseUtil {
-
-    public static final String BUCKET_NAME = "jnosql";
-
-    private CouchbaseUtil() {
-    }
+public enum ContactType {
+    EMAIL, MOBILE, PHONE
 }
