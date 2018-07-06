@@ -1,8 +1,8 @@
-![Couchbase Project](https://jnosql.github.io/img/logos/couchbase.svg)
+![CouchDB Project](https://jnosql.github.io/img/logos/couchbase.svg)
 
 
 
-**Couchbase**: Couchbase Server, originally known as Membase, is an open-source, distributed multi-model NoSQL document-oriented database software package that is optimized for interactive applications.
+**Apache CouchDB** is open source database software that focuses on ease of use and having a scalable architecture. It has a document-oriented NoSQL database architecture and is implemented in the concurrency-oriented language Erlang; it uses JSON to store data, JavaScript as its query language using MapReduce, and HTTP for an API.[1]
 
 
 ### How To test
@@ -13,13 +13,9 @@ Once this a communication layer to Couchbase, we're using integration test, so y
 
 
 1. Install docker: https://www.docker.com/
-1. https://hub.docker.com/r/couchbase/server/
+1. https://hub.docker.com/_/couchdb/
 1. Run docker command
-1. `docker run -d --name couchbase-instance -p 8091-8094:8091-8094 -p 11210:11210 couchbase`
-1. Follow the instructions: https://hub.docker.com/r/couchbase/server/
-1. Create a **jnosql** bucket name
-1. create an index running the query `CREATE PRIMARY INDEX index_jnosql on jnosql;`
-1. Follow the instructions: https://developer.couchbase.com/documentation/server/current/fts/full-text-intro.html to create a index-diana full text index
+1. `docker run --name couchdb_instance -p 5984:5984 -d couchdb`
 1. Execute the test `mvn clean install`
 
 
@@ -29,27 +25,3 @@ Once this a communication layer to Couchbase, we're using integration test, so y
 If you won't run the tests the database is not required, so just run the maven skipping the tests.
 
 1. Execute the test `mvn clean install -DskipTests`
-
-### Adding dependencies
-
-If you are not using a Java EE application server, you must add the following dependencies:
-
-Maven
-```xml
-<dependency>
-    <groupId>org.eclipse</groupId>
-    <artifactId>yasson</artifactId>
-    <version>1.0</version>
-</dependency>
-
-<dependency>
-    <groupId>org.glassfish</groupId>
-    <artifactId>javax.json</artifactId>
-    <version>1.1</version>
-</dependency>
-```
-Gradle
-```groovy
-compile('org.eclipse:yasson:1.0')
-compile('org.glassfish:javax.json:1.1')
-```
