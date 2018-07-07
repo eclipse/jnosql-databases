@@ -16,8 +16,24 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CouchDBDocumentConfigurationTest {
 
+    @Test
+    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
+        CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
+        CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
+        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        assertNotNull(managerFactory);
+    }
 }
