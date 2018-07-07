@@ -33,24 +33,24 @@ import java.util.Objects;
  */
 public class CouchDBDocumentConfiguration implements DocumentConfiguration<CouchDBDocumentCollectionManagerFactory> {
 
-    public static final String PORT = "couchdb-port";
-    public static final String MAX_CONNECTIONS = "couchdb-MAX_CONNECTIONS";
-    public static final String CONNECTION_TIMEOUT = "couchdb-CONNECTION_TIMEOUT";
-    public static final String SOCKET_TIMEOUT = "couchdb-SOCKET_TIMEOUT";
-    public static final String PROXY_PORT = "couchdb-PROXY_PORT";
-    public static final String MAX_OBJECT_SIZE_BYTES = "couchdb-MAX_OBJECT_SIZE_BYTES";
-    public static final String MAX_CACHE_ENTRIES = "couchdb-MAX_CACHE_ENTRIES";
-    public static final String PROXY = "couchdb-PROXY";
-    public static final String HOST = "couchdb-HOST";
-    public static final String USERNAME = "couchdb-USERNAME";
-    public static final String PASSWORD = "couchdb-PASSWORD";
+    public static final String PORT = "couchdb.port";
+    public static final String MAX_CONNECTIONS = "couchdb.max.connections";
+    public static final String CONNECTION_TIMEOUT = "couchdb.connection.timeout";
+    public static final String SOCKET_TIMEOUT = "couchdb.socket.timeout";
+    public static final String PROXY_PORT = "couchdb.proxy.port";
+    public static final String MAX_OBJECT_SIZE_BYTES = "couchdb.max.object.size.bytes";
+    public static final String MAX_CACHE_ENTRIES = "couchdb.max.cache.entries";
+    public static final String PROXY = "couchdb.proxy";
+    public static final String HOST = "couchdb.host";
+    public static final String USERNAME = "couchdb.username";
+    public static final String PASSWORD = "couchdb.password";
 
-    public static final String CLEANUP_IDLE_CONNECTIONS = "couchdb-CLEANUP_IDLE_CONNECTIONS";
-    public static final String RELAXED_SSL_SETTINGS = "couchdb-RELAXED_SSL_SETTINGS";
-    public static final String USE_EXPECT_CONTINUE = "couchdb-USE_EXPECT_CONTINUE";
-    public static final String ENABLE_SSL = "couchdb-ENABLE_SSL";
-    public static final String CACHING = "couchdb-CACHING";
-    public static final String COMPRESSION = "couchdb-COMPRESSION";
+    public static final String CLEANUP_IDLE_CONNECTIONS = "couchdb.cleanup.idle.connections";
+    public static final String RELAXED_SSL_SETTINGS = "couchdb.relaxed.ssl.settings";
+    public static final String USE_EXPECT_CONTINUE = "couchdb.user.expect.continue";
+    public static final String ENABLE_SSL = "couchdb.enable.ssl";
+    public static final String CACHING = "couchdb.caching";
+    public static final String COMPRESSION = "couchdb.compression";
 
     private static final String FILE_CONFIGURATION = "diana-couchdb.properties";
 
