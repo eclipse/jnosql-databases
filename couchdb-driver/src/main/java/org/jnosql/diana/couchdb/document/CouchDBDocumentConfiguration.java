@@ -26,10 +26,24 @@ import java.util.Objects;
 
 /**
  * The CouchDB implementation of {@link DocumentConfiguration} that returns
- * {@link CouchDBDocumentCollectionManagerFactory}.
- * <p>couchdb-port: the port</p>
- * <p>couchbase-user: the user</p>
- * <p>couchbase-PASSWORD: the PASSWORD</p>
+ * {@link CouchDBDocumentCollectionManagerFactory}, settings:
+ * <p>couchdb.port: </p>
+ * <p>couchdb.max.connections: </p>
+ * <p>couchdb.connection.timeout: </p>
+ * <p>couchdb.socket.timeout: </p>
+ * <p>couchdb.proxy.port: </p>
+ * <p>couchdb.max.object.size.bytes: </p>
+ * <p>couchdb.max.cache.entries: </p>
+ * <p>couchdb.proxy: </p>
+ * <p>couchdb.host: </p>
+ * <p>couchdb.username: </p>
+ * <p>couchdb.password: </p>
+ * <p>couchdb.cleanup.idle.connections: </p>
+ * <p>couchdb.relaxed.ssl.settings: </p>
+ * <p>couchdb.user.expect.continue: </p>
+ * <p>couchdb.enable.ssl: </p>
+ * <p>couchdb.caching: </p>
+ * <p>couchdb.compression: </p>
  */
 public class CouchDBDocumentConfiguration implements DocumentConfiguration<CouchDBDocumentCollectionManagerFactory> {
 
@@ -66,23 +80,23 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration<Couch
     public CouchDBDocumentCollectionManagerFactory get(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
         CouchDBHttpConfiguration configuration = new CouchDBHttpConfiguration();
-        settings.computeIfPresent(PORT, (k,v) -> configuration.withPort(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(MAX_CONNECTIONS, (k,v) -> configuration.withMaxConnections(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CONNECTION_TIMEOUT, (k,v) -> configuration.withConnectionTimeout(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(SOCKET_TIMEOUT, (k,v) -> configuration.withSocketTimeout(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(PROXY_PORT, (k,v) -> configuration.withProxyPort(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(MAX_OBJECT_SIZE_BYTES, (k,v) -> configuration.withMaxObjectSizeBytes(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(MAX_CACHE_ENTRIES, (k,v) -> configuration.withMaxCacheEntries(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(PROXY, (k,v) -> configuration.withProxy(v.toString()));
-        settings.computeIfPresent(HOST, (k,v) -> configuration.withHost(v.toString()));
-        settings.computeIfPresent(USERNAME, (k,v) -> configuration.withUsername(v.toString()));
-        settings.computeIfPresent(PASSWORD, (k,v) -> configuration.withPassword(v.toString()));
-        settings.computeIfPresent(CLEANUP_IDLE_CONNECTIONS, (k,v) -> configuration.withCleanupIdleConnections(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(RELAXED_SSL_SETTINGS, (k,v) -> configuration.withRelaxedSSLSettings(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(USE_EXPECT_CONTINUE, (k,v) -> configuration.withUseExpectContinue(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(ENABLE_SSL, (k,v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(CACHING, (k,v) -> configuration.withCaching(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(COMPRESSION, (k,v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(PORT, (k, v) -> configuration.withPort(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(MAX_CONNECTIONS, (k, v) -> configuration.withMaxConnections(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(CONNECTION_TIMEOUT, (k, v) -> configuration.withConnectionTimeout(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(SOCKET_TIMEOUT, (k, v) -> configuration.withSocketTimeout(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(PROXY_PORT, (k, v) -> configuration.withProxyPort(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(MAX_OBJECT_SIZE_BYTES, (k, v) -> configuration.withMaxObjectSizeBytes(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(MAX_CACHE_ENTRIES, (k, v) -> configuration.withMaxCacheEntries(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(PROXY, (k, v) -> configuration.withProxy(v.toString()));
+        settings.computeIfPresent(HOST, (k, v) -> configuration.withHost(v.toString()));
+        settings.computeIfPresent(USERNAME, (k, v) -> configuration.withUsername(v.toString()));
+        settings.computeIfPresent(PASSWORD, (k, v) -> configuration.withPassword(v.toString()));
+        settings.computeIfPresent(CLEANUP_IDLE_CONNECTIONS, (k, v) -> configuration.withCleanupIdleConnections(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(RELAXED_SSL_SETTINGS, (k, v) -> configuration.withRelaxedSSLSettings(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(USE_EXPECT_CONTINUE, (k, v) -> configuration.withUseExpectContinue(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(ENABLE_SSL, (k, v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(CACHING, (k, v) -> configuration.withCaching(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(COMPRESSION, (k, v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
         return new CouchDBDocumentCollectionManagerFactory(configuration.build());
     }
 }
