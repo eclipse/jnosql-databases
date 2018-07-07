@@ -16,10 +16,20 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManager;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 
-public class CouchDBDocumentConfiguration implements DocumentConfiguration<CouchDBDocumentCollectionManager> {
+public class CouchDBDocumentConfiguration implements DocumentConfiguration<CouchDBDocumentCollectionManagerFactory> {
     
     private static final String FILE_CONFIGURATION = "diana-couchdb.properties";
+
+    @Override
+    public CouchDBDocumentCollectionManagerFactory get() {
+        return null;
+    }
+
+    @Override
+    public CouchDBDocumentCollectionManagerFactory get(Settings settings) {
+        return null;
+    }
 }
