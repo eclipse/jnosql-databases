@@ -72,14 +72,14 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldSave() {
+    public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
 
     @Test
-    public void shouldSaveWithKey() {
+    public void shouldInsertWithKey() {
         DocumentEntity entity = getEntity();
         entity.add("_key", "anyvalue");
         DocumentEntity documentEntity = entityManager.insert(entity);
