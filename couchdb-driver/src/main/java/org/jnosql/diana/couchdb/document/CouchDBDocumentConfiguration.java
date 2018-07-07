@@ -83,6 +83,6 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration<Couch
         settings.computeIfPresent(ENABLE_SSL, (k,v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
         settings.computeIfPresent(CACHING, (k,v) -> configuration.withCaching(Boolean.valueOf(v.toString())));
         settings.computeIfPresent(COMPRESSION, (k,v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
-        return null;
+        return new CouchDBDocumentCollectionManagerFactory(configuration.build());
     }
 }

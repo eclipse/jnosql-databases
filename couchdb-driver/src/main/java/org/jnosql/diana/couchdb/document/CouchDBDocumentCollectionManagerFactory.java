@@ -16,16 +16,35 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.ektorp.CouchDbConnector;
+import org.ektorp.CouchDbInstance;
+import org.ektorp.http.HttpClient;
+import org.ektorp.impl.StdCouchDbConnector;
+import org.ektorp.impl.StdCouchDbInstance;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
+import java.util.Objects;
+
 public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchDBDocumentCollectionManager> {
+
+
+    private final HttpClient client;
+
+    CouchDBDocumentCollectionManagerFactory(HttpClient client) {
+        this.client = client;
+    }
+
     @Override
     public CouchDBDocumentCollectionManager get(String database) {
+        Objects.requireNonNull(database, "database is required");
+
+        CouchDbInstance instance = new StdCouchDbInstance(client);
+        CouchDbConnector connector = new StdCouchDbConnector(database, instance);
+        connector.createDatabaseIfNotExists();
         return null;
     }
 
     @Override
     public void close() {
-
     }
 }
