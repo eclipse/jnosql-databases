@@ -89,7 +89,7 @@ public class CouchbaseDocumentCollectionManagerTest {
 
 
     @Test
-    public void shouldUpdateSave() {
+    public void shouldUpdate() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
