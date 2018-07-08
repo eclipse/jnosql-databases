@@ -20,7 +20,7 @@ import org.ektorp.http.StdHttpClient;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-public class CouchDBHttpConfiguration {
+class CouchDBHttpConfiguration {
 
     private OptionalInt port = OptionalInt.empty();
     private OptionalInt maxConnections = OptionalInt.empty();

@@ -6,6 +6,7 @@ import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbConnector;
 import org.ektorp.impl.StdCouchDbInstance;
+import org.ektorp.support.CouchDbDocument;
 
 import java.net.MalformedURLException;
 
@@ -18,7 +19,6 @@ public class App {
 
         CouchDbInstance dbInstance = new StdCouchDbInstance(httpClient);
         CouchDbConnector db = new StdCouchDbConnector("mydatabase", dbInstance);
-
         db.createDatabaseIfNotExists();
     }
 }

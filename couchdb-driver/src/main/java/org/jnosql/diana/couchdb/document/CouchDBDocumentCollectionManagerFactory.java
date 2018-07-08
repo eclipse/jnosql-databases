@@ -41,7 +41,7 @@ public class CouchDBDocumentCollectionManagerFactory implements DocumentCollecti
         CouchDbInstance instance = new StdCouchDbInstance(client);
         CouchDbConnector connector = new StdCouchDbConnector(database, instance);
         connector.createDatabaseIfNotExists();
-        return null;
+        return new DefaultCouchDBDocumentCollectionManager(connector);
     }
 
     @Override
