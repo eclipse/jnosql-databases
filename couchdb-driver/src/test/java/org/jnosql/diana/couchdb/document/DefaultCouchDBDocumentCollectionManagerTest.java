@@ -54,6 +54,17 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         assertTrue(documentEntity.find("_id").isPresent());
     }
 
+    @Test
+    public void shouldUpdate() {
+        DocumentEntity entity = getEntity();
+        entity.remove("_id");
+        DocumentEntity documentEntity = entityManager.insert(entity);
+        Document newField = Documents.of("newField", "10");
+        entity.add(newField);
+        DocumentEntity updated = entityManager.update(entity);
+        assertEquals(newField, updated.find("newField").get());
+    }
+
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
