@@ -16,7 +16,6 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ektorp.CouchDbConnector;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -28,10 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollectionManager {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final String ENTITY = "@entity";
 
     private final CouchDbConnector connector;
 
@@ -41,12 +42,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
-        Objects.requireNonNull(entity, "entity is required");
-        Map<String, Object> data = new HashMap<>(entity.toMap());
-        data.put("@entity", entity.getName());
-        connector.create(data);
-
-        return entity;
+        return save(entity, connector::create);
     }
 
     @Override
@@ -56,7 +52,16 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        return null;
+        return save(entity, connector::update);
+    }
+
+    private DocumentEntity save(DocumentEntity entity, Consumer<Map<String, Object>> consumer) {
+        Objects.requireNonNull(entity, "entity is required");
+        Map<String, Object> data = new HashMap<>(entity.toMap());
+        data.put(ENTITY, entity.getName());
+        consumer.accept(data);
+        data.entrySet().forEach(e -> entity.add(e.getKey(), e.getValue()));
+        return entity;
     }
 
     @Override

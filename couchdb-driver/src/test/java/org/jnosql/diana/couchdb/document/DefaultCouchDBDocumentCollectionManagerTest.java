@@ -47,10 +47,11 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldInsert() {
+    public void shouldInsertNotId() {
         DocumentEntity entity = getEntity();
+        entity.remove("_id");
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertEquals(entity, documentEntity);
+        assertTrue(documentEntity.find("_id").isPresent());
     }
 
 
