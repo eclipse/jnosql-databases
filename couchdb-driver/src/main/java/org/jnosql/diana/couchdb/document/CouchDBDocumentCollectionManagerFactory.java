@@ -18,7 +18,6 @@ package org.jnosql.diana.couchdb.document;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
-import org.ektorp.http.HttpClient;
 import org.ektorp.impl.StdCouchDbConnector;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
@@ -28,9 +27,9 @@ import java.util.Objects;
 public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchDBDocumentCollectionManager> {
 
 
-    private final HttpClient client;
+    private final CouchDBHttpConfiguration client;
 
-    CouchDBDocumentCollectionManagerFactory(HttpClient client) {
+    CouchDBDocumentCollectionManagerFactory(CouchDBHttpConfiguration client) {
         this.client = client;
     }
 

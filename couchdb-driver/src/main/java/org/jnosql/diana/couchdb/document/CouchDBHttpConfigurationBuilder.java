@@ -97,7 +97,7 @@ class CouchDBHttpConfigurationBuilder {
     }
 
     public CouchDBHttpConfigurationBuilder withRelaxedSSLSettings(boolean relaxedSSLSettings) {
-        this.relaxedSSLSettings =relaxedSSLSettings;
+        this.relaxedSSLSettings = relaxedSSLSettings;
         return this;
     }
 
@@ -121,27 +121,10 @@ class CouchDBHttpConfigurationBuilder {
         return this;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CouchDBHttpConfigurationBuilder{");
-        sb.append("port=").append(port);
-        sb.append(", maxConnections=").append(maxConnections);
-        sb.append(", connectionTimeout=").append(connectionTimeout);
-        sb.append(", socketTimeout=").append(socketTimeout);
-        sb.append(", proxyPort=").append(proxyPort);
-        sb.append(", maxObjectSizeBytes=").append(maxObjectSizeBytes);
-        sb.append(", maxCacheEntries=").append(maxCacheEntries);
-        sb.append(", proxy=").append(proxy);
-        sb.append(", host=").append(host);
-        sb.append(", username=").append(username);
-        sb.append(", password=").append(password);
-        sb.append(", cleanupIdleConnections=").append(cleanupIdleConnections);
-        sb.append(", relaxedSSLSettings=").append(relaxedSSLSettings);
-        sb.append(", useExpectContinue=").append(useExpectContinue);
-        sb.append(", enableSSL=").append(enableSSL);
-        sb.append(", caching=").append(caching);
-        sb.append(", compression=").append(compression);
-        sb.append('}');
-        return sb.toString();
+    public CouchDBHttpConfiguration build() {
+        return new CouchDBHttpConfiguration(host, port, maxConnections, connectionTimeout,
+                socketTimeout, proxyPort, proxy, enableSSL, username, password,
+                relaxedSSLSettings, cleanupIdleConnections, useExpectContinue, caching, compression,
+                maxObjectSizeBytes, maxCacheEntries);
     }
 }
