@@ -34,4 +34,14 @@ public class Sofa {
     public String getColor() {
         return color;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Sofa{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", revision='").append(revision).append('\'');
+        sb.append(", color='").append(color).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

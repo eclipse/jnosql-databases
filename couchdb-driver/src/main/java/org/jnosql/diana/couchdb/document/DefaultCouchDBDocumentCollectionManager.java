@@ -18,6 +18,7 @@ package org.jnosql.diana.couchdb.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ektorp.CouchDbConnector;
+import org.ektorp.ViewQuery;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -32,7 +33,7 @@ import java.util.function.Consumer;
 class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollectionManager {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String ENTITY = "@entity";
+    private static final String ENTITY = "_entity/person";
 
     private final CouchDbConnector connector;
 
@@ -55,14 +56,6 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
         return save(entity, connector::update);
     }
 
-    private DocumentEntity save(DocumentEntity entity, Consumer<Map<String, Object>> consumer) {
-        Objects.requireNonNull(entity, "entity is required");
-        Map<String, Object> data = new HashMap<>(entity.toMap());
-        data.put(ENTITY, entity.getName());
-        consumer.accept(data);
-        data.entrySet().forEach(e -> entity.add(e.getKey(), e.getValue()));
-        return entity;
-    }
 
     @Override
     public void delete(DocumentDeleteQuery query) {
@@ -71,6 +64,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
+        Objects.requireNonNull(query, "query is required");
         return null;
     }
 
@@ -81,5 +75,14 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public void close() {
+    }
+
+    private DocumentEntity save(DocumentEntity entity, Consumer<Map<String, Object>> consumer) {
+        Objects.requireNonNull(entity, "entity is required");
+        Map<String, Object> data = new HashMap<>(entity.toMap());
+        data.put(ENTITY, entity.getName());
+        consumer.accept(data);
+        data.entrySet().forEach(e -> entity.add(e.getKey(), e.getValue()));
+        return entity;
     }
 }

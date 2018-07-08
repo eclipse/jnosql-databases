@@ -2,6 +2,8 @@ package org.jnosql.diana.couchdb.document.test;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
+import org.ektorp.ViewQuery;
+import org.ektorp.ViewResult;
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbConnector;
@@ -21,8 +23,9 @@ public class App {
         db.createDatabaseIfNotExists();
         Sofa sofa = new Sofa();
         sofa.setColor("blue");
-        SofaRepository repository = new SofaRepository(db);
-        repository.add(sofa);
+        ViewQuery viewQuery = new ViewQuery().queryParam("color", "blue");
+        ViewResult rows = db.queryView(viewQuery);
+        System.out.println(rows);
     }
 
 
