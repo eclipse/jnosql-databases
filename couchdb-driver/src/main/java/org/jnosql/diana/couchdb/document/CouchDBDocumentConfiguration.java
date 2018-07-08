@@ -79,7 +79,7 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration<Couch
     @Override
     public CouchDBDocumentCollectionManagerFactory get(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
-        CouchDBHttpConfiguration configuration = new CouchDBHttpConfiguration();
+        CouchDBHttpConfigurationBuilder configuration = new CouchDBHttpConfigurationBuilder();
         settings.computeIfPresent(PORT, (k, v) -> configuration.withPort(Integer.valueOf(v.toString())));
         settings.computeIfPresent(MAX_CONNECTIONS, (k, v) -> configuration.withMaxConnections(Integer.valueOf(v.toString())));
         settings.computeIfPresent(CONNECTION_TIMEOUT, (k, v) -> configuration.withConnectionTimeout(Integer.valueOf(v.toString())));
