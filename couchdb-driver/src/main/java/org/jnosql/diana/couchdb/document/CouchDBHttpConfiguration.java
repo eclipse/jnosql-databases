@@ -69,11 +69,11 @@ class CouchDBHttpConfiguration {
     private String createUrl() {
         StringBuilder url = new StringBuilder();
         if (enableSSL) {
-            url.append("https;//");
+            url.append("https://");
         } else {
-            url.append("http;//");
+            url.append("http://");
         }
-        url.append(':').append(port).append('/');
+        url.append(host).append(':').append(port).append('/');
         return url.toString();
     }
 

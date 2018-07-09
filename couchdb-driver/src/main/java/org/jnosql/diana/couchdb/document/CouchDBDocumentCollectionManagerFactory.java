@@ -34,7 +34,7 @@ public class CouchDBDocumentCollectionManagerFactory implements DocumentCollecti
         Objects.requireNonNull(database, "database is required");
 
         CouchDBHttpClient client = configuration.getClient(database);
-        client.createDatabaseIfNotExist();
+        client.createDatabase();
         return new DefaultCouchDBDocumentCollectionManager(client);
     }
 

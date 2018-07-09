@@ -15,14 +15,25 @@
 package org.jnosql.diana.couchdb.document;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jnosql.diana.api.JNoSQLException;
+import org.jnosql.diana.driver.JsonbSupplier;
 
+import javax.json.bind.Jsonb;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 final class CouchDBHttpClient {
+
+    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
+    public static final Type LIST_STRING = new ArrayList<String>() {
+    }.getClass().getGenericSuperclass();
 
     private final CouchDBHttpConfiguration configuration;
 
@@ -31,11 +42,29 @@ final class CouchDBHttpClient {
     private final String database;
 
 
-
     CouchDBHttpClient(CouchDBHttpConfiguration configuration, CloseableHttpClient client, String database) {
         this.configuration = configuration;
         this.client = client;
         this.database = database;
+    }
+
+    void createDatabase() {
+        HttpGet httpget = new HttpGet(Commands.ALL_DBS.getUrl(configuration.getUrl()));
+        try (CloseableHttpResponse result = client.execute(httpget)) {
+            if (result.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new CouchDBHttpClientException("There is an error when load the database status");
+            }
+            HttpEntity entity = result.getEntity();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            entity.writeTo(stream);
+            List<String> databases = JSONB.fromJson(new String(stream.toByteArray()), LIST_STRING);
+            if (databases.contains(database)) {
+                return;
+            }
+            System.out.println(database);
+        } catch (Exception ex) {
+            throw new CouchDBHttpClientException("An error when load the databases", ex);
+        }
     }
 
     public void close() {
@@ -44,12 +73,5 @@ final class CouchDBHttpClient {
         } catch (IOException e) {
             throw new JNoSQLException("An error when try to close the http client", e);
         }
-    }
-
-    public void createDatabaseIfNotExist() throws IOException {
-        HttpGet httpget = new HttpGet(Commands.ALL_DBS.getUrl(configuration.getUrl()));
-        CloseableHttpResponse result = client.execute(httpget);
-        HttpEntity entity = result.getEntity();
-
     }
 }

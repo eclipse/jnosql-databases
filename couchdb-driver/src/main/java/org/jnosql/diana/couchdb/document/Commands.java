@@ -11,6 +11,6 @@ enum Commands {
     }
 
     public String getUrl(String host) {
-        return host.concat("/").concat(command);
+        return host.concat(command);
     }
 }
