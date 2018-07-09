@@ -38,11 +38,12 @@ class CouchDBHttpConfiguration {
     private final int maxObjectSizeBytes;
     private final int maxCacheEntries;
 
-    public CouchDBHttpConfiguration(String host, int port, int maxConnections,
-                                    int connectionTimeout, int socketTimeout, int proxyPort,
-                                    String proxy, boolean enableSSL, String username, String password,
-                                    boolean compression, int maxObjectSizeBytes,
-                                    int maxCacheEntries) {
+
+    CouchDBHttpConfiguration(String host, int port, int maxConnections,
+                             int connectionTimeout, int socketTimeout, int proxyPort,
+                             String proxy, boolean enableSSL, String username, String password,
+                             boolean compression, int maxObjectSizeBytes,
+                             int maxCacheEntries) {
         this.host = host;
         this.port = port;
         this.maxConnections = maxConnections;
@@ -59,7 +60,11 @@ class CouchDBHttpConfiguration {
     }
 
 
-    public CloseableHttpClient getClient() {
+    public CouchDBHttpClient getClient() {
+        return new CouchDBHttpClient(this, getHttpClient());
+    }
+
+    private CloseableHttpClient getHttpClient() {
         CacheConfig cacheConfig = CacheConfig.custom()
                 .setMaxCacheEntries(maxCacheEntries)
                 .setMaxObjectSize(maxObjectSizeBytes)
@@ -74,5 +79,6 @@ class CouchDBHttpConfiguration {
                 .setDefaultRequestConfig(requestConfig)
                 .build();
     }
+
 
 }

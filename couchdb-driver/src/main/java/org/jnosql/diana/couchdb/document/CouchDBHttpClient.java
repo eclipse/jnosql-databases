@@ -1,5 +1,4 @@
 /*
- *
  *  Copyright (c) 2017 Otávio Santana and others
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
@@ -12,32 +11,31 @@
  *   Contributors:
  *
  *   Otavio Santana
- *
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.jnosql.diana.api.JNoSQLException;
 
-import java.util.Objects;
+import java.io.IOException;
 
-public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchDBDocumentCollectionManager> {
-
+final class CouchDBHttpClient {
 
     private final CouchDBHttpConfiguration configuration;
 
-    CouchDBDocumentCollectionManagerFactory(CouchDBHttpConfiguration configuration) {
+    private final CloseableHttpClient client;
+
+
+    CouchDBHttpClient(CouchDBHttpConfiguration configuration, CloseableHttpClient client) {
         this.configuration = configuration;
+        this.client = client;
     }
 
-    @Override
-    public CouchDBDocumentCollectionManager get(String database) {
-        Objects.requireNonNull(database, "database is required");
-
-
-        return new DefaultCouchDBDocumentCollectionManager(configuration.getClient());
-    }
-
-    @Override
     public void close() {
+        try {
+            this.client.close();
+        } catch (IOException e) {
+            throw new JNoSQLException("An error when try to close the http client", e);
+        }
     }
 }

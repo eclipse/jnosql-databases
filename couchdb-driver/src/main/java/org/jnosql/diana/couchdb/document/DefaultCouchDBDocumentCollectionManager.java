@@ -16,9 +16,6 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ektorp.CouchDbConnector;
-import org.ektorp.ViewQuery;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -32,18 +29,18 @@ import java.util.function.Consumer;
 
 class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollectionManager {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String ENTITY = "_entity/person";
+    private static final String ENTITY = "_entity";
 
-    private final CouchDbConnector connector;
+    private final CouchDBHttpClient connector;
 
-    DefaultCouchDBDocumentCollectionManager(CouchDbConnector connector) {
+    DefaultCouchDBDocumentCollectionManager(CouchDBHttpClient connector) {
         this.connector = connector;
     }
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
-        return save(entity, connector::create);
+       // return save(entity, connector::create);
+        return null;
     }
 
     @Override
@@ -53,7 +50,8 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        return save(entity, connector::update);
+      //  return save(entity, connector::update);
+        return null;
     }
 
 
@@ -75,6 +73,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public void close() {
+        connector.close();
     }
 
     private DocumentEntity save(DocumentEntity entity, Consumer<Map<String, Object>> consumer) {
