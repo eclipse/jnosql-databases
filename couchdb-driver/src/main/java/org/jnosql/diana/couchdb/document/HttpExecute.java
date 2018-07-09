@@ -19,6 +19,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jnosql.diana.driver.JsonbSupplier;
 
@@ -51,30 +52,26 @@ class HttpExecute {
 
     public List<String> getDatabases() {
         HttpGet httpget = new HttpGet(configuration.getUrl().concat("_all_dbs"));
-        try (CloseableHttpResponse result = client.execute(httpget)) {
-            if (result.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new CouchDBHttpClientException("There is an error when load the database status");
-            }
-            HttpEntity entity = result.getEntity();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            entity.writeTo(stream);
-            return JSONB.fromJson(new String(stream.toByteArray()), LIST_STRING);
-        } catch (Exception ex) {
-            throw new CouchDBHttpClientException("An error when load the databases", ex);
+        return execute(httpget, LIST_STRING);
+    }
+
+    public void createDatabase(String database) {
+        HttpPut httpPut = new HttpPut(configuration.getUrl().concat(database));
+        Map<String, Object> json = execute(httpPut, JSON);
+        if (!json.getOrDefault("get", "false").toString().equals("true")) {
+            throw new CouchDBHttpClientException("There is an error to create database: " + database);
         }
     }
 
-    private void createDatabase(String database) {
-        HttpPut httpPut = new HttpPut(configuration.getUrl().concat(database));
-
-        try (CloseableHttpResponse result = client.execute(httpPut)) {
+    private <T> T execute(HttpUriRequest request, Type type) {
+        try (CloseableHttpResponse result = client.execute(request)) {
             if (result.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                 throw new CouchDBHttpClientException("There is an error when load the database status");
             }
             HttpEntity entity = result.getEntity();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             entity.writeTo(stream);
-            Map<String, Object> json = JSONB.fromJson(new String(stream.toByteArray()), JSON);
+            return JSONB.fromJson(new String(stream.toByteArray()), type);
         } catch (Exception ex) {
             throw new CouchDBHttpClientException("An error when load the databases", ex);
         }

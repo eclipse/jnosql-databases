@@ -42,7 +42,7 @@ final class CouchDBHttpClient {
     void createDatabase() {
         List<String> databases = httpExecute.getDatabases();
         if (!databases.contains(database)) {
-
+            httpExecute.createDatabase(database);
         }
         return;
     }
