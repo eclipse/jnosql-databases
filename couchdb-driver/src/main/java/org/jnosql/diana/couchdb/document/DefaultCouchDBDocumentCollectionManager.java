@@ -21,15 +21,11 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollectionManager {
 
-    private static final String ENTITY = "_entity";
 
     private final CouchDBHttpClient connector;
 
@@ -39,8 +35,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
-       // return save(entity, connector::create);
-        return null;
+        return connector.insert(entity);
     }
 
     @Override
@@ -50,7 +45,6 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-      //  return save(entity, connector::update);
         return null;
     }
 
@@ -76,12 +70,4 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
         connector.close();
     }
 
-    private DocumentEntity save(DocumentEntity entity, Consumer<Map<String, Object>> consumer) {
-        Objects.requireNonNull(entity, "entity is required");
-        Map<String, Object> data = new HashMap<>(entity.toMap());
-        data.put(ENTITY, entity.getName());
-        consumer.accept(data);
-        data.entrySet().forEach(e -> entity.add(e.getKey(), e.getValue()));
-        return entity;
-    }
 }

@@ -14,18 +14,23 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.JsonbSupplier;
 
 import javax.json.bind.Jsonb;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +40,15 @@ class HttpExecute {
 
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
-    public static final Type LIST_STRING = new ArrayList<String>() {
+    private static final String ENTITY = "@entity";
+
+    private static final Type LIST_STRING = new ArrayList<String>() {
     }.getClass().getGenericSuperclass();
 
-    public static final Type JSON = new HashMap<String, Object>() {
+    private static final Type JSON = new HashMap<String, Object>() {
     }.getClass().getGenericSuperclass();
+
+    private static final URLCodec CODEC = new URLCodec();
 
     private final CouchDBHttpConfiguration configuration;
 
@@ -63,17 +72,51 @@ class HttpExecute {
         }
     }
 
+    public DocumentEntity insert(String database, DocumentEntity entity) {
+        Map<String, Object> map = new HashMap<>(entity.toMap());
+        String id = map.getOrDefault("_id", "").toString();
+        map.put(ENTITY, entity.getName());
+        try {
+            if (id.isEmpty()) {
+
+            } else {
+                id = CODEC.encode(id);
+                HttpPut httpPut = new HttpPut(configuration.getUrl().concat(database).concat("/").concat(id));
+                httpPut.setHeader("Accept", "application/json");
+                httpPut.setHeader("Content-type", "application/json");
+                StringEntity jsonEntity = new StringEntity(JSONB.toJson(map), ContentType.APPLICATION_JSON);
+                httpPut.setEntity(jsonEntity);
+                Map<String, Object> json = execute(httpPut, JSON, HttpStatus.SC_CREATED);
+                entity.add("_id", json.get("id"));
+                entity.add("_rev", json.get("rev"));
+                return entity;
+            }
+        } catch (CouchDBHttpClientException ex) {
+            throw ex;
+        } catch (Exception exp) {
+            throw new CouchDBHttpClientException("There is an error when try to insert an entity at database", exp);
+        }
+        return entity;
+    }
+
     private <T> T execute(HttpUriRequest request, Type type, int expectedStatus) {
         try (CloseableHttpResponse result = client.execute(request)) {
             if (result.getStatusLine().getStatusCode() != expectedStatus) {
-                throw new CouchDBHttpClientException("There is an error when load the database status");
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                result.getEntity().writeTo(stream);
+                String response = new String(stream.toByteArray(), StandardCharsets.UTF_8);
+                throw new CouchDBHttpClientException("There is an error when load the database status: " +
+                        result.getStatusLine().getStatusCode()
+                        + " error: " + response);
             }
             HttpEntity entity = result.getEntity();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             entity.writeTo(stream);
             return JSONB.fromJson(new String(stream.toByteArray()), type);
+        } catch (CouchDBHttpClientException ex) {
+            throw ex;
         } catch (Exception ex) {
-            throw new CouchDBHttpClientException("An error when load the databases", ex);
+            throw new CouchDBHttpClientException("An error to access the database", ex);
         }
     }
 }

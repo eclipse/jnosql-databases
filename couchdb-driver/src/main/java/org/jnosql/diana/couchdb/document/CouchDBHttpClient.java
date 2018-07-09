@@ -16,6 +16,7 @@ package org.jnosql.diana.couchdb.document;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jnosql.diana.api.JNoSQLException;
+import org.jnosql.diana.api.document.DocumentEntity;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,6 +46,10 @@ final class CouchDBHttpClient {
             httpExecute.createDatabase(database);
         }
         return;
+    }
+
+    public DocumentEntity insert(DocumentEntity entity) {
+        return this.httpExecute.insert(database, entity);
     }
 
 
