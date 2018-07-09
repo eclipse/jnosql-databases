@@ -52,20 +52,20 @@ class HttpExecute {
 
     public List<String> getDatabases() {
         HttpGet httpget = new HttpGet(configuration.getUrl().concat("_all_dbs"));
-        return execute(httpget, LIST_STRING);
+        return execute(httpget, LIST_STRING, HttpStatus.SC_OK);
     }
 
     public void createDatabase(String database) {
         HttpPut httpPut = new HttpPut(configuration.getUrl().concat(database));
-        Map<String, Object> json = execute(httpPut, JSON);
-        if (!json.getOrDefault("get", "false").toString().equals("true")) {
+        Map<String, Object> json = execute(httpPut, JSON, HttpStatus.SC_CREATED);
+        if (!json.getOrDefault("ok", "false").toString().equals("true")) {
             throw new CouchDBHttpClientException("There is an error to create database: " + database);
         }
     }
 
-    private <T> T execute(HttpUriRequest request, Type type) {
+    private <T> T execute(HttpUriRequest request, Type type, int expectedStatus) {
         try (CloseableHttpResponse result = client.execute(request)) {
-            if (result.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            if (result.getStatusLine().getStatusCode() != expectedStatus) {
                 throw new CouchDBHttpClientException("There is an error when load the database status");
             }
             HttpEntity entity = result.getEntity();
