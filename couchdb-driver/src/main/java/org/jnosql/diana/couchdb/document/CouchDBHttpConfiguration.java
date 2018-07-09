@@ -14,8 +14,13 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClients;
 
@@ -58,10 +63,10 @@ class CouchDBHttpConfiguration {
         this.compression = compression;
         this.maxObjectSizeBytes = maxObjectSizeBytes;
         this.maxCacheEntries = maxCacheEntries;
-        this.url = getUrl();
+        this.url = createUrl();
     }
 
-    private String getUrl() {
+    private String createUrl() {
         StringBuilder url = new StringBuilder();
         if (enableSSL) {
             url.append("https;//");
@@ -76,6 +81,10 @@ class CouchDBHttpConfiguration {
         return new CouchDBHttpClient(this, getHttpClient(), database);
     }
 
+    public String getUrl() {
+        return url;
+    }
+
 
     private CloseableHttpClient getHttpClient() {
         CacheConfig cacheConfig = CacheConfig.custom()
@@ -87,10 +96,20 @@ class CouchDBHttpConfiguration {
                 .setSocketTimeout(socketTimeout)
                 .setContentCompressionEnabled(compression)
                 .build();
-        return CachingHttpClients.custom()
+        HttpClientBuilder builder = CachingHttpClients.custom()
                 .setCacheConfig(cacheConfig)
-                .setDefaultRequestConfig(requestConfig)
-                .build();
+                .setDefaultRequestConfig(requestConfig);
+
+        if (username != null) {
+            CredentialsProvider provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials
+                    = new UsernamePasswordCredentials(username, password);
+            provider.setCredentials(AuthScope.ANY, credentials);
+            builder.setDefaultCredentialsProvider(provider);
+        }
+
+        return builder.build();
+
     }
 
 

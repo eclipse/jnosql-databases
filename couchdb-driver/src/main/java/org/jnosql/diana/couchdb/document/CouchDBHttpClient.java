@@ -14,6 +14,8 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jnosql.diana.api.JNoSQLException;
@@ -44,8 +46,10 @@ final class CouchDBHttpClient {
         }
     }
 
-    public void createDatabaseIfNotExist() {
+    public void createDatabaseIfNotExist() throws IOException {
         HttpGet httpget = new HttpGet(Commands.ALL_DBS.getUrl(configuration.getUrl()));
+        CloseableHttpResponse result = client.execute(httpget);
+        HttpEntity entity = result.getEntity();
 
     }
 }
