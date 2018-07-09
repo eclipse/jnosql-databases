@@ -33,10 +33,6 @@ class CouchDBHttpConfigurationBuilder {
     private String username;
     private String password;
 
-    private boolean relaxedSSLSettings = false;
-    private boolean cleanupIdleConnections = true;
-    private boolean useExpectContinue = true;
-    private boolean caching = true;
     private boolean compression = false;
     private int maxObjectSizeBytes = 8192;
     private int maxCacheEntries = 1000;
@@ -114,40 +110,15 @@ class CouchDBHttpConfigurationBuilder {
         return this;
     }
 
-    public CouchDBHttpConfigurationBuilder withCleanupIdleConnections(boolean cleanupIdleConnections) {
-        this.cleanupIdleConnections = cleanupIdleConnections;
-        return this;
-    }
-
-    public CouchDBHttpConfigurationBuilder withRelaxedSSLSettings(boolean relaxedSSLSettings) {
-        this.relaxedSSLSettings = relaxedSSLSettings;
-        return this;
-    }
-
-    public CouchDBHttpConfigurationBuilder withUseExpectContinue(boolean useExpectContinue) {
-        this.useExpectContinue = useExpectContinue;
-        return this;
-    }
-
     public CouchDBHttpConfigurationBuilder withEnableSSL(boolean enableSSL) {
         this.enableSSL = enableSSL;
-        return this;
-    }
-
-    public CouchDBHttpConfigurationBuilder withCaching(boolean caching) {
-        this.caching = caching;
-        return this;
-    }
-
-    public CouchDBHttpConfigurationBuilder withCompression(boolean compression) {
-        this.compression = compression;
         return this;
     }
 
     public CouchDBHttpConfiguration build() {
         return new CouchDBHttpConfiguration(host, port, maxConnections, connectionTimeout,
                 socketTimeout, proxyPort, proxy, enableSSL, username, password,
-                relaxedSSLSettings, cleanupIdleConnections, useExpectContinue, caching, compression,
+                compression,
                 maxObjectSizeBytes, maxCacheEntries);
     }
 

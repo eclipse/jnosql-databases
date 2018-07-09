@@ -72,7 +72,6 @@ class CouchDBHttpConfiguration {
         return CachingHttpClients.custom()
                 .setCacheConfig(cacheConfig)
                 .setDefaultRequestConfig(requestConfig)
-                .setConnectionManager()
                 .build();
     }
 
