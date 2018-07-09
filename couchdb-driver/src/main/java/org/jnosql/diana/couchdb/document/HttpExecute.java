@@ -18,10 +18,11 @@ import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jnosql.diana.api.document.DocumentEntity;
@@ -35,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 class HttpExecute {
 
@@ -77,26 +80,27 @@ class HttpExecute {
         String id = map.getOrDefault("_id", "").toString();
         map.put(ENTITY, entity.getName());
         try {
+            HttpEntityEnclosingRequestBase request;
             if (id.isEmpty()) {
-
+                request = new HttpPost(configuration.getUrl().concat(database).concat("/"));
             } else {
                 id = CODEC.encode(id);
-                HttpPut httpPut = new HttpPut(configuration.getUrl().concat(database).concat("/").concat(id));
-                httpPut.setHeader("Accept", "application/json");
-                httpPut.setHeader("Content-type", "application/json");
-                StringEntity jsonEntity = new StringEntity(JSONB.toJson(map), ContentType.APPLICATION_JSON);
-                httpPut.setEntity(jsonEntity);
-                Map<String, Object> json = execute(httpPut, JSON, HttpStatus.SC_CREATED);
-                entity.add("_id", json.get("id"));
-                entity.add("_rev", json.get("rev"));
-                return entity;
+                request = new HttpPut(configuration.getUrl().concat(database).concat("/").concat(id));
             }
+
+            request.setHeader("Accept", APPLICATION_JSON.getMimeType());
+            request.setHeader("Content-type", APPLICATION_JSON.getMimeType());
+            StringEntity jsonEntity = new StringEntity(JSONB.toJson(map), APPLICATION_JSON);
+            request.setEntity(jsonEntity);
+            Map<String, Object> json = execute(request, JSON, HttpStatus.SC_CREATED);
+            entity.add("_id", json.get("id"));
+            entity.add("_rev", json.get("rev"));
+            return entity;
         } catch (CouchDBHttpClientException ex) {
             throw ex;
         } catch (Exception exp) {
             throw new CouchDBHttpClientException("There is an error when try to insert an entity at database", exp);
         }
-        return entity;
     }
 
     private <T> T execute(HttpUriRequest request, Type type, int expectedStatus) {
