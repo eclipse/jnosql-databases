@@ -37,6 +37,7 @@ class CouchDBHttpConfiguration {
     private final boolean compression;
     private final int maxObjectSizeBytes;
     private final int maxCacheEntries;
+    private final String url;
 
 
     CouchDBHttpConfiguration(String host, int port, int maxConnections,
@@ -57,12 +58,24 @@ class CouchDBHttpConfiguration {
         this.compression = compression;
         this.maxObjectSizeBytes = maxObjectSizeBytes;
         this.maxCacheEntries = maxCacheEntries;
+        this.url = getUrl();
     }
 
-
-    public CouchDBHttpClient getClient() {
-        return new CouchDBHttpClient(this, getHttpClient());
+    private String getUrl() {
+        StringBuilder url = new StringBuilder();
+        if (enableSSL) {
+            url.append("https;//");
+        } else {
+            url.append("http;//");
+        }
+        url.append(':').append(port).append('/');
+        return url.toString();
     }
+
+    public CouchDBHttpClient getClient(String database) {
+        return new CouchDBHttpClient(this, getHttpClient(), database);
+    }
+
 
     private CloseableHttpClient getHttpClient() {
         CacheConfig cacheConfig = CacheConfig.custom()

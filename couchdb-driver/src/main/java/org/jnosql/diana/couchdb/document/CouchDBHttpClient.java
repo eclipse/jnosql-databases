@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jnosql.diana.api.JNoSQLException;
 
@@ -25,10 +26,14 @@ final class CouchDBHttpClient {
 
     private final CloseableHttpClient client;
 
+    private final String database;
 
-    CouchDBHttpClient(CouchDBHttpConfiguration configuration, CloseableHttpClient client) {
+
+
+    CouchDBHttpClient(CouchDBHttpConfiguration configuration, CloseableHttpClient client, String database) {
         this.configuration = configuration;
         this.client = client;
+        this.database = database;
     }
 
     public void close() {
@@ -37,5 +42,10 @@ final class CouchDBHttpClient {
         } catch (IOException e) {
             throw new JNoSQLException("An error when try to close the http client", e);
         }
+    }
+
+    public void createDatabaseIfNotExist() {
+        HttpGet httpget = new HttpGet(Commands.ALL_DBS.getUrl(configuration.getUrl()));
+
     }
 }
