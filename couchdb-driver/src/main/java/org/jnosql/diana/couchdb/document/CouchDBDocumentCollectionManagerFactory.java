@@ -37,6 +37,7 @@ public class CouchDBDocumentCollectionManagerFactory implements DocumentCollecti
     public CouchDBDocumentCollectionManager get(String database) {
         Objects.requireNonNull(database, "database is required");
 
+
         CouchDbInstance instance = new StdCouchDbInstance(client);
         CouchDbConnector connector = new StdCouchDbConnector(database, instance);
         connector.createDatabaseIfNotExists();

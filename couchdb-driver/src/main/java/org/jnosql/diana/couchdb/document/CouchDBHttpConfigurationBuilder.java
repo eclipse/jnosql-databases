@@ -14,6 +14,11 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.jnosql.diana.api.JNoSQLException;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 class CouchDBHttpConfigurationBuilder {
 
     private String host = "localhost";
@@ -77,7 +82,25 @@ class CouchDBHttpConfigurationBuilder {
     }
 
     public CouchDBHttpConfigurationBuilder withHost(String host) {
-        this.host = host;
+        URL url = getUrl(host);
+        this.host = url.getHost();
+        this.port = url.getPort();
+        if (url.getUserInfo() != null) {
+            String[] userInfoParts = url.getUserInfo().split(":");
+            if (userInfoParts.length == 2) {
+                this.username = userInfoParts[0];
+                this.password = userInfoParts[1];
+            }
+        }
+        withEnableSSL("https".equals(url.getProtocol()));
+
+        if (this.port == -1) {
+            if (this.enableSSL) {
+                this.port = 443;
+            } else {
+                this.port = 80;
+            }
+        }
         return this;
     }
 
@@ -126,5 +149,15 @@ class CouchDBHttpConfigurationBuilder {
                 socketTimeout, proxyPort, proxy, enableSSL, username, password,
                 relaxedSSLSettings, cleanupIdleConnections, useExpectContinue, caching, compression,
                 maxObjectSizeBytes, maxCacheEntries);
+    }
+
+
+    private URL getUrl(String host) {
+        try {
+            return new URL(host);
+        } catch (MalformedURLException exp) {
+            throw new JNoSQLException("There is an error when load the host at couchDB", exp);
+        }
+
     }
 }

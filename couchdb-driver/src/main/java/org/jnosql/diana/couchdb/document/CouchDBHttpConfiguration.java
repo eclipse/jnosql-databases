@@ -14,6 +14,11 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.cache.CacheConfig;
+import org.apache.http.impl.client.cache.CachingHttpClients;
+
 class CouchDBHttpConfiguration {
 
     private final String host;
@@ -28,10 +33,7 @@ class CouchDBHttpConfiguration {
     private final String username;
     private final String password;
 
-    private final boolean relaxedSSLSettings;
-    private final boolean cleanupIdleConnections;
-    private final boolean useExpectContinue;
-    private final boolean caching;
+
     private final boolean compression;
     private final int maxObjectSizeBytes;
     private final int maxCacheEntries;
@@ -39,9 +41,7 @@ class CouchDBHttpConfiguration {
     public CouchDBHttpConfiguration(String host, int port, int maxConnections,
                                     int connectionTimeout, int socketTimeout, int proxyPort,
                                     String proxy, boolean enableSSL, String username, String password,
-                                    boolean relaxedSSLSettings, boolean cleanupIdleConnections,
-                                    boolean useExpectContinue,
-                                    boolean caching, boolean compression, int maxObjectSizeBytes,
+                                    boolean compression, int maxObjectSizeBytes,
                                     int maxCacheEntries) {
         this.host = host;
         this.port = port;
@@ -53,104 +53,26 @@ class CouchDBHttpConfiguration {
         this.enableSSL = enableSSL;
         this.username = username;
         this.password = password;
-        this.relaxedSSLSettings = relaxedSSLSettings;
-        this.cleanupIdleConnections = cleanupIdleConnections;
-        this.useExpectContinue = useExpectContinue;
-        this.caching = caching;
         this.compression = compression;
         this.maxObjectSizeBytes = maxObjectSizeBytes;
         this.maxCacheEntries = maxCacheEntries;
     }
 
-    public String getHost() {
-        return host;
+
+    public CloseableHttpClient getClient() {
+        CacheConfig cacheConfig = CacheConfig.custom()
+                .setMaxCacheEntries(maxCacheEntries)
+                .setMaxObjectSize(maxObjectSizeBytes)
+                .build();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(connectionTimeout)
+                .setSocketTimeout(socketTimeout)
+                .setContentCompressionEnabled(compression)
+                .build();
+        return CachingHttpClients.custom()
+                .setCacheConfig(cacheConfig)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public int getMaxConnections() {
-        return maxConnections;
-    }
-
-    public int getConnectionTimeout() {
-        return connectionTimeout;
-    }
-
-    public int getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    public String getProxy() {
-        return proxy;
-    }
-
-    public boolean isEnableSSL() {
-        return enableSSL;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public boolean isRelaxedSSLSettings() {
-        return relaxedSSLSettings;
-    }
-
-    public boolean isCleanupIdleConnections() {
-        return cleanupIdleConnections;
-    }
-
-    public boolean isUseExpectContinue() {
-        return useExpectContinue;
-    }
-
-    public boolean isCaching() {
-        return caching;
-    }
-
-    public boolean isCompression() {
-        return compression;
-    }
-
-    public int getMaxObjectSizeBytes() {
-        return maxObjectSizeBytes;
-    }
-
-    public int getMaxCacheEntries() {
-        return maxCacheEntries;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CouchDBHttpConfiguration{");
-        sb.append("host='").append(host).append('\'');
-        sb.append(", port=").append(port);
-        sb.append(", maxConnections=").append(maxConnections);
-        sb.append(", connectionTimeout=").append(connectionTimeout);
-        sb.append(", socketTimeout=").append(socketTimeout);
-        sb.append(", proxyPort=").append(proxyPort);
-        sb.append(", proxy='").append(proxy).append('\'');
-        sb.append(", enableSSL=").append(enableSSL);
-        sb.append(", username='").append(username).append('\'');
-        sb.append(", password='").append(password).append('\'');
-        sb.append(", relaxedSSLSettings=").append(relaxedSSLSettings);
-        sb.append(", cleanupIdleConnections=").append(cleanupIdleConnections);
-        sb.append(", useExpectContinue=").append(useExpectContinue);
-        sb.append(", caching=").append(caching);
-        sb.append(", compression=").append(compression);
-        sb.append(", maxObjectSizeBytes=").append(maxObjectSizeBytes);
-        sb.append(", maxCacheEntries=").append(maxCacheEntries);
-        sb.append('}');
-        return sb.toString();
-    }
 }
