@@ -77,6 +77,11 @@ class CouchDBHttpConfigurationBuilder {
         return this;
     }
 
+    public CouchDBHttpConfigurationBuilder withCompression(boolean compression) {
+        this.compression = compression;
+        return this;
+    }
+
     public CouchDBHttpConfigurationBuilder withHost(String host) {
         URL url = getUrl(host);
         this.host = url.getHost();

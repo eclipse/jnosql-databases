@@ -38,11 +38,7 @@ import java.util.Objects;
  * <p>couchdb.host: </p>
  * <p>couchdb.username: </p>
  * <p>couchdb.password: </p>
- * <p>couchdb.cleanup.idle.connections: </p>
- * <p>couchdb.relaxed.ssl.settings: </p>
- * <p>couchdb.user.expect.continue: </p>
  * <p>couchdb.enable.ssl: </p>
- * <p>couchdb.caching: </p>
  * <p>couchdb.compression: </p>
  */
 public class CouchDBDocumentConfiguration implements DocumentConfiguration<CouchDBDocumentCollectionManagerFactory> {
@@ -59,11 +55,7 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration<Couch
     public static final String USERNAME = "couchdb.username";
     public static final String PASSWORD = "couchdb.password";
 
-    public static final String CLEANUP_IDLE_CONNECTIONS = "couchdb.cleanup.idle.connections";
-    public static final String RELAXED_SSL_SETTINGS = "couchdb.relaxed.ssl.settings";
-    public static final String USE_EXPECT_CONTINUE = "couchdb.user.expect.continue";
     public static final String ENABLE_SSL = "couchdb.enable.ssl";
-    public static final String CACHING = "couchdb.caching";
     public static final String COMPRESSION = "couchdb.compression";
 
     private static final String FILE_CONFIGURATION = "diana-couchdb.properties";
@@ -91,11 +83,7 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration<Couch
         settings.computeIfPresent(HOST, (k, v) -> configuration.withHost(v.toString()));
         settings.computeIfPresent(USERNAME, (k, v) -> configuration.withUsername(v.toString()));
         settings.computeIfPresent(PASSWORD, (k, v) -> configuration.withPassword(v.toString()));
-        settings.computeIfPresent(CLEANUP_IDLE_CONNECTIONS, (k, v) -> configuration.withCleanupIdleConnections(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(RELAXED_SSL_SETTINGS, (k, v) -> configuration.withRelaxedSSLSettings(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(USE_EXPECT_CONTINUE, (k, v) -> configuration.withUseExpectContinue(Boolean.valueOf(v.toString())));
         settings.computeIfPresent(ENABLE_SSL, (k, v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(CACHING, (k, v) -> configuration.withCaching(Boolean.valueOf(v.toString())));
         settings.computeIfPresent(COMPRESSION, (k, v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
         return new CouchDBDocumentCollectionManagerFactory(configuration.build());
     }
