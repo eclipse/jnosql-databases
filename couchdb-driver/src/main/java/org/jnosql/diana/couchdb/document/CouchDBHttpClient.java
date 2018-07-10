@@ -52,6 +52,9 @@ final class CouchDBHttpClient {
         return this.httpExecute.insert(database, entity);
     }
 
+    public DocumentEntity update(DocumentEntity entity) {
+        return this.httpExecute.update(database, entity);
+    }
 
 
 
@@ -62,4 +65,6 @@ final class CouchDBHttpClient {
             throw new JNoSQLException("An error when try to close the http client", e);
         }
     }
+
+
 }

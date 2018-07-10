@@ -35,6 +35,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
+        Objects.requireNonNull(entity, "entity is required");
         return connector.insert(entity);
     }
 
@@ -45,7 +46,8 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        return null;
+        Objects.requireNonNull(entity, "entity is required");
+        return connector.update(entity);
     }
 
 

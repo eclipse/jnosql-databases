@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.JsonbSupplier;
 
@@ -36,7 +37,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 class HttpExecute {
@@ -52,6 +55,7 @@ class HttpExecute {
     }.getClass().getGenericSuperclass();
 
     private static final URLCodec CODEC = new URLCodec();
+    public static final String ID = "_id";
 
     private final CouchDBHttpConfiguration configuration;
 
@@ -77,7 +81,7 @@ class HttpExecute {
 
     public DocumentEntity insert(String database, DocumentEntity entity) {
         Map<String, Object> map = new HashMap<>(entity.toMap());
-        String id = map.getOrDefault("_id", "").toString();
+        String id = map.getOrDefault(ID, "").toString();
         map.put(ENTITY, entity.getName());
         try {
             HttpEntityEnclosingRequestBase request;
@@ -93,7 +97,7 @@ class HttpExecute {
             StringEntity jsonEntity = new StringEntity(JSONB.toJson(map), APPLICATION_JSON);
             request.setEntity(jsonEntity);
             Map<String, Object> json = execute(request, JSON, HttpStatus.SC_CREATED);
-            entity.add("_id", json.get("id"));
+            entity.add(ID, json.get("id"));
             entity.add("_rev", json.get("rev"));
             return entity;
         } catch (CouchDBHttpClientException ex) {
@@ -103,12 +107,40 @@ class HttpExecute {
         }
     }
 
+    public DocumentEntity update(String database, DocumentEntity entity) {
+        String id = getId(entity);
+        Map<String, Object> json = findById(database, id);
+        if (isEntityNotFound(json)) {
+            throw new CouchDBHttpClientException(String.format("Entity does not found to id %s at the database: %s ", id, database));
+        }
+
+        return null;
+    }
+
+    private boolean isEntityNotFound(Map<String, Object> json) {
+        return "not_found".equals(json.get("error"))
+                && "missing".equals(json.get("reason"))
+                && Objects.isNull(json.get(ENTITY));
+    }
+
+    private Map<String, Object> findById(String database, String id) {
+        HttpGet request = new HttpGet(configuration.getUrl().concat(database).concat("/").concat(id));
+        return execute(request, JSON, HttpStatus.SC_CREATED);
+    }
+
+    private String getId(DocumentEntity entity) {
+        return entity.find(ID)
+                .orElseThrow(() -> new CouchDBHttpClientException(
+                        String.format("To update the entity %s the id field is required", entity.toString())))
+                .get(String.class);
+    }
+
     private <T> T execute(HttpUriRequest request, Type type, int expectedStatus) {
         try (CloseableHttpResponse result = client.execute(request)) {
             if (result.getStatusLine().getStatusCode() != expectedStatus) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 result.getEntity().writeTo(stream);
-                String response = new String(stream.toByteArray(), StandardCharsets.UTF_8);
+                String response = new String(stream.toByteArray(), UTF_8);
                 throw new CouchDBHttpClientException("There is an error when load the database status: " +
                         result.getStatusLine().getStatusCode()
                         + " error: " + response);
@@ -116,11 +148,13 @@ class HttpExecute {
             HttpEntity entity = result.getEntity();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             entity.writeTo(stream);
-            return JSONB.fromJson(new String(stream.toByteArray()), type);
+            return JSONB.fromJson(new String(stream.toByteArray(), UTF_8), type);
         } catch (CouchDBHttpClientException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new CouchDBHttpClientException("An error to access the database", ex);
         }
     }
+
+
 }
