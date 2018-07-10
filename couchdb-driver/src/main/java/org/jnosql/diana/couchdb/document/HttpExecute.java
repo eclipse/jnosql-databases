@@ -110,22 +110,13 @@ class HttpExecute {
     public DocumentEntity update(String database, DocumentEntity entity) {
         String id = getId(entity);
         Map<String, Object> json = findById(database, id);
-        if (isEntityNotFound(json)) {
-            throw new CouchDBHttpClientException(String.format("Entity does not found to id %s at the database: %s ", id, database));
-        }
 
         return null;
     }
 
-    private boolean isEntityNotFound(Map<String, Object> json) {
-        return "not_found".equals(json.get("error"))
-                && "missing".equals(json.get("reason"))
-                && Objects.isNull(json.get(ENTITY));
-    }
-
     private Map<String, Object> findById(String database, String id) {
         HttpGet request = new HttpGet(configuration.getUrl().concat(database).concat("/").concat(id));
-        return execute(request, JSON, HttpStatus.SC_CREATED);
+        return execute(request, JSON, HttpStatus.SC_OK);
     }
 
     private String getId(DocumentEntity entity) {
