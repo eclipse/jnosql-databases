@@ -26,7 +26,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.util.function.Function;
 
-final class SelectorConverter implements Function<DocumentQuery, JsonObject> {
+final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
 
 
     @Override
