@@ -43,7 +43,7 @@ class HttpExecute {
 
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
-    private static final String ENTITY = "@entity";
+    static final String ENTITY = "@entity";
 
     private static final Type LIST_STRING = new ArrayList<String>() {
     }.getClass().getGenericSuperclass();
