@@ -65,6 +65,24 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         assertEquals(newField, updated.find("newField").get());
     }
 
+    @Test
+    public void shouldReturnErrorOnUpdate() {
+        assertThrows(NullPointerException.class, () -> entityManager.update((DocumentEntity) null));
+        assertThrows(CouchDBHttpClientException.class, () -> {
+            DocumentEntity entity = getEntity();
+            entity.remove("_id");
+            entityManager.update(entity);
+
+        });
+
+        assertThrows(CouchDBHttpClientException.class, () -> {
+            DocumentEntity entity = getEntity();
+            entity.add("_id", "not_found");
+            entityManager.update(entity);
+
+        });
+    }
+
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
