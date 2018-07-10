@@ -25,19 +25,16 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.JsonbSupplier;
 
 import javax.json.bind.Jsonb;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
@@ -55,7 +52,10 @@ class HttpExecute {
     }.getClass().getGenericSuperclass();
 
     private static final URLCodec CODEC = new URLCodec();
-    public static final String ID = "_id";
+    private static final String ID = "_id";
+    private static final String REV = "_rev";
+    private static final String REV_RESPONSE = "rev";
+    private static final String ID_RESPONSE = "id";
 
     private final CouchDBHttpConfiguration configuration;
 
@@ -97,8 +97,8 @@ class HttpExecute {
             StringEntity jsonEntity = new StringEntity(JSONB.toJson(map), APPLICATION_JSON);
             request.setEntity(jsonEntity);
             Map<String, Object> json = execute(request, JSON, HttpStatus.SC_CREATED);
-            entity.add(ID, json.get("id"));
-            entity.add("_rev", json.get("rev"));
+            entity.add(ID, json.get(ID_RESPONSE));
+            entity.add(REV, json.get(REV_RESPONSE));
             return entity;
         } catch (CouchDBHttpClientException ex) {
             throw ex;
@@ -110,8 +110,8 @@ class HttpExecute {
     public DocumentEntity update(String database, DocumentEntity entity) {
         String id = getId(entity);
         Map<String, Object> json = findById(database, id);
-
-        return null;
+        entity.add(REV, json.get(REV));
+        return insert(database, entity);
     }
 
     private Map<String, Object> findById(String database, String id) {
