@@ -39,7 +39,7 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
         JsonObjectBuilder selector = Json.createObjectBuilder();
         selector.add(HttpExecute.ENTITY, documentQuery.getDocumentCollection());
         documentQuery.getCondition().ifPresent(d -> getSelector(d, selector));
-        return null;
+        return selector.build();
     }
 
     private void getSelector(DocumentCondition condition, JsonObjectBuilder selector) {
