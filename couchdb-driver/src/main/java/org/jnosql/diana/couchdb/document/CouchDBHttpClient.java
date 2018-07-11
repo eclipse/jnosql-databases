@@ -25,9 +25,6 @@ import java.util.List;
 
 final class CouchDBHttpClient {
 
-
-    private final CouchDBHttpConfiguration configuration;
-
     private final CloseableHttpClient client;
 
     private final String database;
@@ -35,7 +32,6 @@ final class CouchDBHttpClient {
     private final HttpExecute httpExecute;
 
     CouchDBHttpClient(CouchDBHttpConfiguration configuration, CloseableHttpClient client, String database) {
-        this.configuration = configuration;
         this.client = client;
         this.database = database;
         this.httpExecute = new HttpExecute(configuration, client);
