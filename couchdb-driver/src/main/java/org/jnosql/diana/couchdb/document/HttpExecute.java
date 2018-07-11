@@ -134,7 +134,10 @@ class HttpExecute {
     public void delete(String database, DocumentDeleteQuery query) {
         CouchDBDocumentQuery documentQuery = CouchDBDocumentQuery.of(new DeleteQuery(query));
         List<Map<String, Object>> entities = executeQuery(database, documentQuery);
-        entities.stream().map(DeleteElement::new).forEach(id -> this.delete(database, id));
+        while (!entities.isEmpty()) {
+            entities.stream().map(DeleteElement::new).forEach(id -> this.delete(database, id));
+            entities = executeQuery(database, documentQuery);
+        }
     }
 
     private void delete(String database, DeleteElement id) {
