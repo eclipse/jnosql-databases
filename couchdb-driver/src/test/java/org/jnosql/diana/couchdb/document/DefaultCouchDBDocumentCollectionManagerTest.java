@@ -18,6 +18,7 @@ package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DefaultCouchDBDocumentCollectionManagerTest {
 
@@ -83,6 +87,17 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         });
     }
 
+
+    @Test
+    public void shouldSelect() {
+        DocumentEntity entity = getEntity();
+        entity.remove("_id");
+        entity = entityManager.insert(entity);
+        Object id = entity.find("_id").map(Document::get).get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where("_id").eq(id).build();
+        DocumentEntity documentFound = entityManager.singleResult(query).get();
+        assertEquals(entity, documentFound);
+    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

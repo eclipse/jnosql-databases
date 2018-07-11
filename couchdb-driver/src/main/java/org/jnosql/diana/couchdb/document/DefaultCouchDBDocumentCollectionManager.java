@@ -53,13 +53,13 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-
+        Objects.requireNonNull(query, "query is required");
     }
 
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
-        return null;
+        return connector.select(query);
     }
 
     @Override

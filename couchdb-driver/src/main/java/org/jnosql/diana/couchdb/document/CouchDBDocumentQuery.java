@@ -21,6 +21,7 @@ import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -54,6 +55,9 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
         return Optional.ofNullable(bookmark);
     }
 
+    void setBookmark(Map<String, Object> json) {
+        json.computeIfPresent("bookmark", (k, v) -> this.bookmark = v.toString());
+    }
 
     @Override
     public long getLimit() {
