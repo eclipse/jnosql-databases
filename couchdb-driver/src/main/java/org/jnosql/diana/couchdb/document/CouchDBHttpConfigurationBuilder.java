@@ -14,11 +14,6 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.JNoSQLException;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
 class CouchDBHttpConfigurationBuilder {
 
     private String host = "localhost";
