@@ -16,7 +16,23 @@ final class CouchDBConstant {
     static final String DOCS_RESPONSE = "docs";
 
     static final String COUNT = "/_all_docs?limit=0";
-    public static final String BOOKMARK = "bookmark";
+    static final String BOOKMARK = "bookmark";
+    static final String OR_CONDITION = "$or";
+    static final String AND_CONDITION = "$and";
+
+
+    static final String IN_CONDITION = "$in";
+    static final String LTE_CONDITION = "$lte";
+    static final String LT_CONDITION = "$lt";
+    static final String GTE_CONDITION = "$gte";
+    static final String GT_CONDITION = "$gt";
+
+
+    static final String SELECTOR_QUERY = "selector";
+    static final String SORT_QUERY = "sort";
+    static final String SKIP_QUERY = "skip";
+    static final String LIMIT_QUERY = "limit";
+    static final String FIELDS_QUERY = "fields";
 
     private CouchDBConstant() {
     }

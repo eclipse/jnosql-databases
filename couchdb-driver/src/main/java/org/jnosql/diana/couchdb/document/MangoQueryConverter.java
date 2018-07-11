@@ -34,7 +34,21 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.BOOKMARK;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ENTITY;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.FIELDS_QUERY;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.GTE_CONDITION;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.GT_CONDITION;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.IN_CONDITION;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.LIMIT_QUERY;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.LTE_CONDITION;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.LT_CONDITION;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.SELECTOR_QUERY;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.SKIP_QUERY;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.SORT_QUERY;
+
 final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
+
 
 
     @Override
@@ -42,20 +56,20 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
         JsonObjectBuilder select = Json.createObjectBuilder();
 
         if (!documentQuery.getDocuments().isEmpty()) {
-            select.add("fields", Json.createArrayBuilder(documentQuery.getDocuments()).build());
+            select.add(FIELDS_QUERY, Json.createArrayBuilder(documentQuery.getDocuments()).build());
         }
         if (documentQuery.getLimit() > 0) {
-            select.add("limit", documentQuery.getLimit());
+            select.add(LIMIT_QUERY, documentQuery.getLimit());
         }
 
         if (documentQuery.getSkip() > 0) {
-            select.add("skip", documentQuery.getSkip());
+            select.add(SKIP_QUERY, documentQuery.getSkip());
         }
 
         if (!documentQuery.getSorts().isEmpty()) {
             JsonArrayBuilder sorts = Json.createArrayBuilder();
             documentQuery.getSorts().stream().map(this::createSortObject).forEach(sorts::add);
-            select.add("sort", sorts.build());
+            select.add(SORT_QUERY, sorts.build());
         }
 
         if (documentQuery instanceof CouchDBDocumentQuery) {
@@ -64,11 +78,11 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
         }
 
         JsonObject selector = getSelector(documentQuery);
-        return select.add("selector", selector).build();
+        return select.add(SELECTOR_QUERY, selector).build();
     }
 
     private void bookmark(String bookmark, JsonObjectBuilder select) {
-        select.add("bookmark", bookmark);
+        select.add(BOOKMARK, bookmark);
     }
 
     private JsonObject createSortObject(Sort sort) {
@@ -77,7 +91,7 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
 
     private JsonObject getSelector(DocumentQuery documentQuery) {
         JsonObjectBuilder selector = Json.createObjectBuilder();
-        selector.add(HttpExecute.ENTITY, documentQuery.getDocumentCollection());
+        selector.add(ENTITY, documentQuery.getDocumentCollection());
         documentQuery.getCondition().ifPresent(d -> appendCondition(d, selector));
         return selector.build();
     }
@@ -92,28 +106,28 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 appendCondition(selector, name, value);
                 return;
             case GREATER_THAN:
-                appendCondition("$gt", name, value, selector);
+                appendCondition(GT_CONDITION, name, value, selector);
                 return;
             case GREATER_EQUALS_THAN:
-                appendCondition("$gte", name, value, selector);
+                appendCondition(GTE_CONDITION, name, value, selector);
                 return;
             case LESSER_THAN:
-                appendCondition("$lt", name, value, selector);
+                appendCondition(LT_CONDITION, name, value, selector);
                 return;
             case LESSER_EQUALS_THAN:
-                appendCondition("$lte", name, value, selector);
+                appendCondition(LTE_CONDITION, name, value, selector);
                 return;
             case IN:
-                appendCondition("$in", name, getArray(value), selector);
+                appendCondition(IN_CONDITION, name, getArray(value), selector);
                 return;
             case NOT:
                 appendNot(selector, value);
                 return;
             case AND:
-                appendCombination(selector, value, "$and");
+                appendCombination(selector, value, CouchDBConstant.AND_CONDITION);
                 return;
             case OR:
-                appendCombination(selector, value, "$or");
+                appendCombination(selector, value, CouchDBConstant.OR_CONDITION);
                 return;
             default:
                 throw new UnsupportedOperationException("This operation is not supported at couchdb: " + condition.getCondition());
