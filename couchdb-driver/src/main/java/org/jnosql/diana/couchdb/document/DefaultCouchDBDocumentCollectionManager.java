@@ -54,6 +54,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
     @Override
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
+        connector.delete(query);
     }
 
     @Override
@@ -64,6 +65,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
 
     @Override
     public long count(String documentCollection) {
+        Objects.requireNonNull(documentCollection, "documentCollection is required");
         return 0;
     }
 

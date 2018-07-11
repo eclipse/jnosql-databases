@@ -18,6 +18,7 @@ import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -25,6 +26,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
@@ -38,6 +40,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
@@ -122,19 +126,38 @@ class HttpExecute {
     }
 
     public List<DocumentEntity> select(String database, DocumentQuery query) {
+        List<Map<String, Object>> entities = executeQuery(database, query);
+        return entities.stream().map(this::toEntity).collect(toList());
+    }
+
+
+    public void delete(String database, DocumentDeleteQuery query) {
+        CouchDBDocumentQuery documentQuery = CouchDBDocumentQuery.of(new DeleteQuery(query));
+        List<Map<String, Object>> entities = executeQuery(database, documentQuery);
+        entities.stream().map(DeleteElement::new).forEach(id -> this.delete(database, id));
+    }
+
+    private void delete(String database, DeleteElement id) {
+        HttpDelete request = new HttpDelete(configuration.getUrl().concat(database).concat("/").concat(id.getId()));
+        request.addHeader("If-Match", id.getRev());
+        execute(request, null, HttpStatus.SC_OK, true);
+    }
+
+
+    private List<Map<String, Object>> executeQuery(String database, DocumentQuery query) {
         HttpPost request = new HttpPost(configuration.getUrl().concat(database).concat("/_find"));
         setHeader(request);
         JsonObject mangoQuery = converter.apply(query);
         request.setEntity(new StringEntity(mangoQuery.toString(), APPLICATION_JSON));
         Map<String, Object> json = execute(request, JSON, HttpStatus.SC_OK);
-        if(query instanceof CouchDBDocumentQuery) {
+        if (query instanceof CouchDBDocumentQuery) {
             CouchDBDocumentQuery.class.cast(query).setBookmark(json);
         }
-        List<Map<String, Object>> entities = (List<Map<String, Object>>) json.getOrDefault("docs", emptyList());
-        return entities.stream().map(this::toEntity).collect(toList());
+        return (List<Map<String, Object>>) json.getOrDefault("docs", emptyList());
     }
 
-    private DocumentEntity toEntity(Map<String,Object> jsonEntity) {
+
+    private DocumentEntity toEntity(Map<String, Object> jsonEntity) {
         DocumentEntity entity = DocumentEntity.of(jsonEntity.get(ENTITY).toString());
         entity.addAll(Documents.of(jsonEntity));
         entity.remove(ENTITY);
@@ -154,14 +177,21 @@ class HttpExecute {
     }
 
     private <T> T execute(HttpUriRequest request, Type type, int expectedStatus) {
+        return execute(request, type, expectedStatus, false);
+    }
+
+    private <T> T execute(HttpUriRequest request, Type type, int expectedStatus, boolean ignoreStatus) {
         try (CloseableHttpResponse result = client.execute(request)) {
-            if (result.getStatusLine().getStatusCode() != expectedStatus) {
+            if (!ignoreStatus && result.getStatusLine().getStatusCode() != expectedStatus) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 result.getEntity().writeTo(stream);
                 String response = new String(stream.toByteArray(), UTF_8);
                 throw new CouchDBHttpClientException("There is an error when load the database status: " +
                         result.getStatusLine().getStatusCode()
                         + " error: " + response);
+            }
+            if (Objects.isNull(type)) {
+                return null;
             }
             HttpEntity entity = result.getEntity();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -178,7 +208,6 @@ class HttpExecute {
         request.setHeader("Accept", APPLICATION_JSON.getMimeType());
         request.setHeader("Content-type", APPLICATION_JSON.getMimeType());
     }
-
 
 
 }

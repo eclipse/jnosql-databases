@@ -17,9 +17,11 @@
 package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.document.Document;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -111,6 +113,21 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where("no_field").eq("not_found").build();
         List<DocumentEntity> entities = entityManager.select(query);
         assertTrue(entities.isEmpty());
+    }
+
+
+    @Test
+    public void shouldRemoveEntityByName() {
+        DocumentEntity entity = getEntity();
+        entity.remove("_id");
+        entity = entityManager.insert(entity);
+
+        Document name = entity.find("name").get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentDeleteQuery deleteQuery = DocumentQueryBuilder.delete().from(COLLECTION_NAME)
+                .where(name.getName()).eq(name.get()).build();
+        entityManager.delete(deleteQuery);
+        assertTrue(entityManager.select(query).isEmpty());
     }
 
     @Test

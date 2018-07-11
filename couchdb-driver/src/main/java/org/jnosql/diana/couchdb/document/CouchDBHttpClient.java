@@ -16,6 +16,7 @@ package org.jnosql.diana.couchdb.document;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jnosql.diana.api.JNoSQLException;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.util.List;
 
 final class CouchDBHttpClient {
-
 
 
     private final CouchDBHttpConfiguration configuration;
@@ -61,6 +61,12 @@ final class CouchDBHttpClient {
         return this.httpExecute.select(database, query);
     }
 
+
+    public void delete(DocumentDeleteQuery query) {
+        this.httpExecute.delete(database, query);
+    }
+
+
     public void close() {
         try {
             this.client.close();
@@ -68,7 +74,6 @@ final class CouchDBHttpClient {
             throw new JNoSQLException("An error when try to close the http client", e);
         }
     }
-
 
 
 }
