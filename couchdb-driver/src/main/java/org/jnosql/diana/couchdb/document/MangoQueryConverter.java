@@ -68,11 +68,11 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
     private JsonObject getSelector(DocumentQuery documentQuery) {
         JsonObjectBuilder selector = Json.createObjectBuilder();
         selector.add(HttpExecute.ENTITY, documentQuery.getDocumentCollection());
-        documentQuery.getCondition().ifPresent(d -> getSelector(d, selector));
+        documentQuery.getCondition().ifPresent(d -> appendCondition(d, selector));
         return selector.build();
     }
 
-    private void getSelector(DocumentCondition condition, JsonObjectBuilder selector) {
+    private void appendCondition(DocumentCondition condition, JsonObjectBuilder selector) {
         Document document = condition.getDocument();
         String name = document.getName();
         Object value = ValueUtil.convert(document.getValue());
@@ -98,7 +98,7 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 return;
             case NOT:
                 JsonObjectBuilder not = Json.createObjectBuilder();
-                getSelector(DocumentCondition.class.cast(value), not);
+                appendCondition(DocumentCondition.class.cast(value), not);
                 selector.add("$not", not.build());
                 return;
             case AND:
