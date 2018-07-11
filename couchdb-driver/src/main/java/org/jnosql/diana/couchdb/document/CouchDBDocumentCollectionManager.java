@@ -19,4 +19,12 @@ package org.jnosql.diana.couchdb.document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 
 public interface CouchDBDocumentCollectionManager extends DocumentCollectionManager {
+
+    /**
+     * Returns the number of elements of database
+     *
+     * @return the number of elements
+     * @throws UnsupportedOperationException when the database dot not have support
+     */
+    long count();
 }
