@@ -136,8 +136,8 @@ class HttpExecute {
 
     private DocumentEntity toEntity(Map<String,Object> jsonEntity) {
         DocumentEntity entity = DocumentEntity.of(jsonEntity.get(ENTITY).toString());
-        entity.remove(ENTITY);
         entity.addAll(Documents.of(jsonEntity));
+        entity.remove(ENTITY);
         return entity;
     }
 
