@@ -29,7 +29,7 @@ import static java.util.Arrays.asList;
 
 final class DeleteQuery implements DocumentQuery {
 
-    public static final List<String> DOCUMENTS = asList("_id", "_rev");
+    private static final List<String> DOCUMENTS = asList("_id", "_rev");
     private final DocumentDeleteQuery query;
 
     DeleteQuery(DocumentDeleteQuery query) {
