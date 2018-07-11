@@ -107,6 +107,13 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldSelectEmptyResult() {
+        DocumentQuery query = select().from(COLLECTION_NAME).where("no_field").eq("not_found").build();
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertTrue(entities.isEmpty());
+    }
+
+    @Test
     public void shouldSelectWithCouchDBDocumentQuery() {
 
         for (int index = 0; index < 4; index++) {
