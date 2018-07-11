@@ -16,14 +16,27 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.jnosql.diana.api.Sort;
+import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * A CouchDB specialization of DocumentQuery that allows query with bookmark which can do pagination.
  */
-public interface CouchDBDocumentQuery extends DocumentQuery {
+public final class CouchDBDocumentQuery implements DocumentQuery {
+
+
+    private final DocumentQuery query;
+
+    private String bookmark;
+
+
+    CouchDBDocumentQuery(DocumentQuery query) {
+        this.query = query;
+    }
 
     /**
      * The A string that enables you to specify which page of results you require. Used for paging
@@ -33,5 +46,38 @@ public interface CouchDBDocumentQuery extends DocumentQuery {
      *
      * @return the bookmark
      */
-    Optional<String> getBookmark();
+    public Optional<String> getBookmark() {
+        return Optional.ofNullable(bookmark);
+    }
+
+
+    @Override
+    public long getLimit() {
+        return query.getLimit();
+    }
+
+    @Override
+    public long getSkip() {
+        return query.getSkip();
+    }
+
+    @Override
+    public String getDocumentCollection() {
+        return query.getDocumentCollection();
+    }
+
+    @Override
+    public Optional<DocumentCondition> getCondition() {
+        return query.getCondition();
+    }
+
+    @Override
+    public List<Sort> getSorts() {
+        return query.getSorts();
+    }
+
+    @Override
+    public List<String> getDocuments() {
+        return query.getDocuments();
+    }
 }
