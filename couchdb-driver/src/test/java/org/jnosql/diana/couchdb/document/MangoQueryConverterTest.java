@@ -22,6 +22,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 import javax.json.JsonObject;
 
+import java.util.Arrays;
+
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 
 class MangoQueryConverterTest {
@@ -89,6 +91,22 @@ class MangoQueryConverterTest {
     @JsonSource("select_from_lte_order.json")
     public void shouldSelectFromLteAge(JsonObject expected) {
         DocumentQuery query = select().from("person").where("age").lte(10).build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
+
+    @ParameterizedTest
+    @JsonSource("select_from_in_order.json")
+    public void shouldSelectFromInAge(JsonObject expected) {
+        DocumentQuery query = select().from("person").where("age").in(Arrays.asList(10, 12)).build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
+
+    @ParameterizedTest
+    @JsonSource("select_from_not_order.json")
+    public void shouldSelectFromNotAge(JsonObject expected) {
+        DocumentQuery query = select().from("person").where("age").not().lt(10).build();
         JsonObject jsonObject = converter.apply(query);
         Assertions.assertEquals(expected, jsonObject);
     }

@@ -1,0 +1,11 @@
+{
+  "selector": {
+    "@entity": "person",
+    "age": {
+      "$in": [
+        10,
+        12
+      ]
+    }
+  }
+}

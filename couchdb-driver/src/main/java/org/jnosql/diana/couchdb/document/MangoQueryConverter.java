@@ -17,6 +17,7 @@
 package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.Sort;
+import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -24,9 +25,11 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
@@ -91,9 +94,17 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 appendCondition("$lte", name, value, selector);
                 return;
             case IN:
-            case AND:
-            case OR:
+                appendCondition("$in", name, getArray(value), selector);
+                return;
             case NOT:
+                JsonObjectBuilder not = Json.createObjectBuilder();
+                getSelector(DocumentCondition.class.cast(value), not);
+                selector.add("$not", not.build());
+                return;
+            case AND:
+                return;
+            case OR:
+                return;
             default:
                 throw new UnsupportedOperationException("This operation is not supported at couchdb: " + condition.getCondition());
 
@@ -119,7 +130,17 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
             condition.add(name, Number.class.cast(value).doubleValue());
             return;
         }
+        if (value instanceof JsonArray) {
+            condition.add(name, JsonArray.class.cast(value));
+            return;
+        }
         condition.add(name, Value.of(value).get(String.class));
+    }
+
+    private JsonArray getArray(Object value) {
+        List<Object> items = Value.of(value).get(new TypeReference<List<Object>>() {
+        });
+        return Json.createArrayBuilder(items).build();
     }
 
 }

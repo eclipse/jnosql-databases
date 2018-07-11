@@ -1,0 +1,10 @@
+{
+  "selector": {
+    "@entity": "person",
+    "$not": {
+      "age": {
+        "$lt": 10.0
+      }
+    }
+  }
+}
