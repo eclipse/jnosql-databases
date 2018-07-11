@@ -1,0 +1,7 @@
+{
+  "fields": ["_id", "_rev"],
+  "selector": {
+    "@entity": "person"
+  }
+
+}

@@ -35,4 +35,29 @@ class MangoQueryConverterTest {
         JsonObject jsonObject = converter.apply(query);
         Assertions.assertEquals(expected, jsonObject);
     }
+
+    @ParameterizedTest
+    @JsonSource("select_fields.json")
+    public void shouldReturnSelectFieldsFromAll(JsonObject expected) {
+        DocumentQuery query = select("_id", "_rev").from("person").build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
+
+    @ParameterizedTest
+    @JsonSource("select_fields_skip_start.json")
+    public void shouldReturnSelectFieldsLimitSkip(JsonObject expected) {
+        DocumentQuery query = select("_id", "_rev").from("person").limit(10).skip(2).build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
+
+    @ParameterizedTest
+    @JsonSource("select_from_order.json")
+    public void shouldReturnSelectFromOrder(JsonObject expected) {
+        DocumentQuery query = select().from("person").orderBy("year").asc()
+                .orderBy("name").desc().build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
 }

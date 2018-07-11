@@ -16,14 +16,17 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.Locale;
 import java.util.function.Function;
 
 final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
@@ -31,8 +34,31 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
 
     @Override
     public JsonObject apply(DocumentQuery documentQuery) {
+        JsonObjectBuilder select = Json.createObjectBuilder();
+
+        if (!documentQuery.getDocuments().isEmpty()) {
+            select.add("fields", Json.createArrayBuilder(documentQuery.getDocuments()).build());
+        }
+        if (documentQuery.getLimit() > 0) {
+            select.add("limit", documentQuery.getLimit());
+        }
+
+        if (documentQuery.getSkip() > 0) {
+            select.add("skip", documentQuery.getSkip());
+        }
+
+        if (!documentQuery.getSorts().isEmpty()) {
+            JsonArrayBuilder sorts = Json.createArrayBuilder();
+            documentQuery.getSorts().stream().map(this::createSortObject).forEach(sorts::add);
+            select.add("sort", sorts.build());
+        }
+
         JsonObject selector = getSelector(documentQuery);
-        return Json.createObjectBuilder().add("selector", selector).build();
+        return select.add("selector", selector).build();
+    }
+
+    private JsonObject createSortObject(Sort sort) {
+        return Json.createObjectBuilder().add(sort.getName(), sort.getType().name().toLowerCase(Locale.US)).build();
     }
 
     private JsonObject getSelector(DocumentQuery documentQuery) {
