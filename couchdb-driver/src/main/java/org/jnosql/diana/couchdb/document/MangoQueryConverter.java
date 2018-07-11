@@ -97,18 +97,35 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 appendCondition("$in", name, getArray(value), selector);
                 return;
             case NOT:
-                JsonObjectBuilder not = Json.createObjectBuilder();
-                appendCondition(DocumentCondition.class.cast(value), not);
-                selector.add("$not", not.build());
+                appendNot(selector, value);
                 return;
             case AND:
+                appendCombination(selector, value, "$and");
                 return;
             case OR:
+                appendCombination(selector, value, "$or");
                 return;
             default:
                 throw new UnsupportedOperationException("This operation is not supported at couchdb: " + condition.getCondition());
 
         }
+    }
+
+    private void appendCombination(JsonObjectBuilder selector, Object value, String combination) {
+        List<DocumentCondition> conditions = List.class.cast(value);
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (DocumentCondition documentCondition : conditions) {
+            JsonObjectBuilder builder = Json.createObjectBuilder();
+            appendCondition(documentCondition, builder);
+            arrayBuilder.add(builder.build());
+        }
+        selector.add(combination, arrayBuilder.build());
+    }
+
+    private void appendNot(JsonObjectBuilder selector, Object value) {
+        JsonObjectBuilder not = Json.createObjectBuilder();
+        appendCondition(DocumentCondition.class.cast(value), not);
+        selector.add("$not", not.build());
     }
 
     private void appendCondition(String operator, String name, Object value, JsonObjectBuilder selector) {

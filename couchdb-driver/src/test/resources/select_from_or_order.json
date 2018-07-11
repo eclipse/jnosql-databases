@@ -1,0 +1,13 @@
+{
+  "selector": {
+    "@entity": "person",
+    "$or": [
+      {
+        "name": "Poliana"
+      },
+      {
+        "name": "Ada"
+      }
+    ]
+  }
+}

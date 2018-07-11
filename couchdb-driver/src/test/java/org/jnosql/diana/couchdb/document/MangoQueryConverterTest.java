@@ -119,4 +119,14 @@ class MangoQueryConverterTest {
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
+
+    @ParameterizedTest
+    @JsonSource("select_from_or_order.json")
+    public void shouldSelectFromOrAge(JsonObject expected) {
+        DocumentQuery query = select().from("person")
+                .where("name").eq("Poliana")
+                .or("name").eq("Ada").build();
+        JsonObject jsonObject = converter.apply(query);
+        assertEquals(expected, jsonObject);
+    }
 }
