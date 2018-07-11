@@ -17,7 +17,8 @@
 package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import javax.json.JsonObject;
 
@@ -27,10 +28,11 @@ class MangoQueryConverterTest {
 
     private MangoQueryConverter converter = new MangoQueryConverter();
 
-    @Test
-    public void shouldReturnSelectFromAll() {
-        DocumentQuery query = select().from("Person").build();
+    @ParameterizedTest
+    @JsonSource("select_all.json")
+    public void shouldReturnSelectFromAll(JsonObject expected) {
+        DocumentQuery query = select().from("person").build();
         JsonObject jsonObject = converter.apply(query);
-        System.out.println(jsonObject);
+        Assertions.assertEquals(expected, jsonObject);
     }
 }
