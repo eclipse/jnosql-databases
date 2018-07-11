@@ -131,6 +131,15 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldCount() {
+        DocumentEntity entity = getEntity();
+        entity.remove("_id");
+        entityManager.insert(entity);
+        long count = entityManager.count();
+        assertTrue(count > 0);
+    }
+
+    @Test
     public void shouldSelectWithCouchDBDocumentQuery() {
 
         for (int index = 0; index < 4; index++) {

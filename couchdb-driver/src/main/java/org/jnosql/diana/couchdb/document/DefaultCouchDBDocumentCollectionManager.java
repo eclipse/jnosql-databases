@@ -64,15 +64,17 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
     }
 
     @Override
+    public long count() {
+        return connector.count();
+    }
+
+
+    @Override
     public long count(String documentCollection) {
        throw new UnsupportedOperationException("CouchDB does not have support to count by document Collection," +
                " to total of elments at database use CouchDBDocumentCollectionManager#count");
     }
 
-    @Override
-    public long count() {
-        return 0;
-    }
 
     @Override
     public void close() {

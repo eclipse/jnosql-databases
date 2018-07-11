@@ -62,6 +62,10 @@ final class CouchDBHttpClient {
         this.httpExecute.delete(database, query);
     }
 
+    public long count() {
+        return httpExecute.count(database);
+    }
+
 
     public void close() {
         try {
@@ -70,6 +74,5 @@ final class CouchDBHttpClient {
             throw new JNoSQLException("An error when try to close the http client", e);
         }
     }
-
 
 }

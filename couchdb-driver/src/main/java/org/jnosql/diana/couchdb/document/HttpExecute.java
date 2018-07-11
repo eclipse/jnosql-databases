@@ -140,6 +140,14 @@ class HttpExecute {
         }
     }
 
+    public long count(String database) {
+        HttpGet request = new HttpGet(configuration.getUrl().concat(database).concat("/_all_docs?limit=0"));
+        Map<String, Object> json = execute(request, JSON, HttpStatus.SC_OK);
+        String total = json.get("total_rows").toString();
+        return Long.valueOf(total);
+    }
+
+
     private void delete(String database, DeleteElement id) {
         HttpDelete request = new HttpDelete(configuration.getUrl().concat(database).concat("/").concat(id.getId()));
         request.addHeader("If-Match", id.getRev());
@@ -211,6 +219,5 @@ class HttpExecute {
         request.setHeader("Accept", APPLICATION_JSON.getMimeType());
         request.setHeader("Content-type", APPLICATION_JSON.getMimeType());
     }
-
 
 }
