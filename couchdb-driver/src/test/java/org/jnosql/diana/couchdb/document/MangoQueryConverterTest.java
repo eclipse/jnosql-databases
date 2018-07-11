@@ -129,4 +129,22 @@ class MangoQueryConverterTest {
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
+
+    @ParameterizedTest
+    @JsonSource("select_all.json")
+    public void shouldReturnSelectFromAllBookmark(JsonObject expected) {
+        DocumentQuery query = select().from("person").build();
+        JsonObject jsonObject = converter.apply(CouchDBDocumentQuery.of(query));
+        assertEquals(expected, jsonObject);
+    }
+
+    @ParameterizedTest
+    @JsonSource("select_all_bookmark.json")
+    public void shouldReturnSelectFromAllBookmark2(JsonObject expected) {
+        DocumentQuery query = select().from("person").build();
+        JsonObject jsonObject = converter.apply(CouchDBDocumentQuery.of(query, "bookmark"));
+        assertEquals(expected, jsonObject);
+    }
+
+
 }

@@ -31,6 +31,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Function;
 
 final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
@@ -57,8 +58,17 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
             select.add("sort", sorts.build());
         }
 
+        if (documentQuery instanceof CouchDBDocumentQuery) {
+            Optional<String> bookmark = CouchDBDocumentQuery.class.cast(documentQuery).getBookmark();
+            bookmark.ifPresent(b -> bookmark(b, select));
+        }
+
         JsonObject selector = getSelector(documentQuery);
         return select.add("selector", selector).build();
+    }
+
+    private void bookmark(String bookmark, JsonObjectBuilder select) {
+        select.add("bookmark", bookmark);
     }
 
     private JsonObject createSortObject(Sort sort) {
