@@ -89,6 +89,33 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
         return query.getDocuments();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CouchDBDocumentQuery that = (CouchDBDocumentQuery) o;
+        return Objects.equals(query, that.query) &&
+                Objects.equals(bookmark, that.bookmark);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(query, bookmark);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CouchDBDocumentQuery{");
+        sb.append("query=").append(query);
+        sb.append(", bookmark='").append(bookmark).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
     /**
      * returns a new instance of {@link CouchDBDocumentQuery}
      *
