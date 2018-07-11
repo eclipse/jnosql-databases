@@ -21,6 +21,7 @@ import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,7 +35,7 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
     private String bookmark;
 
 
-    CouchDBDocumentQuery(DocumentQuery query) {
+    private CouchDBDocumentQuery(DocumentQuery query) {
         this.query = query;
     }
 
@@ -80,4 +81,34 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
     public List<String> getDocuments() {
         return query.getDocuments();
     }
+
+    /**
+     * returns a new instance of {@link CouchDBDocumentQuery}
+     *
+     * @param query the {@link DocumentQuery}
+     * @return a new instance
+     * @throws NullPointerException when query is null
+     */
+    public static CouchDBDocumentQuery of(DocumentQuery query) {
+        Objects.requireNonNull(query, "query is required ");
+        return new CouchDBDocumentQuery(query);
+    }
+
+    /**
+     * returns a new instance of {@link CouchDBDocumentQuery}
+     *
+     * @param query    the {@link DocumentQuery}
+     * @param bookmark {@link CouchDBDocumentQuery#bookmark}
+     * @return a new instance
+     * @throws NullPointerException when there is null parameter
+     */
+    public static CouchDBDocumentQuery of(DocumentQuery query, String bookmark) {
+        Objects.requireNonNull(query, "query is required ");
+        Objects.requireNonNull(bookmark, "bookmark is required ");
+        CouchDBDocumentQuery couchDBDocumentQuery = new CouchDBDocumentQuery(query);
+        couchDBDocumentQuery.bookmark = bookmark;
+        return couchDBDocumentQuery;
+    }
+
+
 }
