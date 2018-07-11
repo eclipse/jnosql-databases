@@ -17,14 +17,13 @@
 package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.document.DocumentQuery;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 
 import javax.json.JsonObject;
-
 import java.util.Arrays;
 
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MangoQueryConverterTest {
 
@@ -35,7 +34,7 @@ class MangoQueryConverterTest {
     public void shouldReturnSelectFromAll(JsonObject expected) {
         DocumentQuery query = select().from("person").build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -43,7 +42,7 @@ class MangoQueryConverterTest {
     public void shouldReturnSelectFieldsFromAll(JsonObject expected) {
         DocumentQuery query = select("_id", "_rev").from("person").build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -51,7 +50,7 @@ class MangoQueryConverterTest {
     public void shouldReturnSelectFieldsLimitSkip(JsonObject expected) {
         DocumentQuery query = select("_id", "_rev").from("person").limit(10).skip(2).build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -60,7 +59,7 @@ class MangoQueryConverterTest {
         DocumentQuery query = select().from("person").orderBy("year").asc()
                 .orderBy("name").desc().build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -68,7 +67,7 @@ class MangoQueryConverterTest {
     public void shouldSelectFromGtAge(JsonObject expected) {
         DocumentQuery query = select().from("person").where("age").gt(10).build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -76,7 +75,7 @@ class MangoQueryConverterTest {
     public void shouldSelectFromGteAge(JsonObject expected) {
         DocumentQuery query = select().from("person").where("age").gte(10).build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -84,7 +83,7 @@ class MangoQueryConverterTest {
     public void shouldSelectFromLtAge(JsonObject expected) {
         DocumentQuery query = select().from("person").where("age").lt(10).build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -92,7 +91,7 @@ class MangoQueryConverterTest {
     public void shouldSelectFromLteAge(JsonObject expected) {
         DocumentQuery query = select().from("person").where("age").lte(10).build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -100,7 +99,7 @@ class MangoQueryConverterTest {
     public void shouldSelectFromInAge(JsonObject expected) {
         DocumentQuery query = select().from("person").where("age").in(Arrays.asList(10, 12)).build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 
     @ParameterizedTest
@@ -108,6 +107,6 @@ class MangoQueryConverterTest {
     public void shouldSelectFromNotAge(JsonObject expected) {
         DocumentQuery query = select().from("person").where("age").not().lt(10).build();
         JsonObject jsonObject = converter.apply(query);
-        Assertions.assertEquals(expected, jsonObject);
+        assertEquals(expected, jsonObject);
     }
 }
