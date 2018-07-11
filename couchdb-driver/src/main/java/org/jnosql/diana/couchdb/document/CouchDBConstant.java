@@ -16,6 +16,7 @@ final class CouchDBConstant {
     static final String DOCS_RESPONSE = "docs";
 
     static final String COUNT = "/_all_docs?limit=0";
+    public static final String BOOKMARK = "bookmark";
 
     private CouchDBConstant() {
     }

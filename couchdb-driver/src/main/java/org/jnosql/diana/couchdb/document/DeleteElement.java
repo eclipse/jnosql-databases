@@ -17,6 +17,9 @@ package org.jnosql.diana.couchdb.document;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ID;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.REV;
+
 final class DeleteElement {
 
     private final String id;
@@ -24,8 +27,8 @@ final class DeleteElement {
     private final String rev;
 
     DeleteElement(Map<String, Object> json) {
-        this.id = json.get("_id").toString();
-        this.rev = json.get("_rev").toString();
+        this.id = json.get(ID).toString();
+        this.rev = json.get(REV).toString();
     }
 
     public String getId() {

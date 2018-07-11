@@ -26,10 +26,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ID;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.REV;
 
 final class DeleteQuery implements DocumentQuery {
 
-    private static final List<String> DOCUMENTS = asList("_id", "_rev");
+    private static final List<String> DOCUMENTS = asList(ID, REV);
     private final DocumentDeleteQuery query;
 
     DeleteQuery(DocumentDeleteQuery query) {

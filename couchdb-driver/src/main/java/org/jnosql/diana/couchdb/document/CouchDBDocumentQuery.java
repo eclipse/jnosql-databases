@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.BOOKMARK;
+
 /**
  * A CouchDB specialization of {@link DocumentQuery} that allows query with bookmark which can do pagination.
  *
@@ -56,7 +58,7 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
     }
 
     void setBookmark(Map<String, Object> json) {
-        json.computeIfPresent("bookmark", (k, v) -> this.bookmark = v.toString());
+        json.computeIfPresent(BOOKMARK, (k, v) -> this.bookmark = v.toString());
     }
 
     @Override
