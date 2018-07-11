@@ -17,6 +17,7 @@
 package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.Sort;
+import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
@@ -75,21 +76,50 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
 
         switch (condition.getCondition()) {
             case EQUALS:
-                selector.add(name, value.toString());
+                appendCondition(selector, name, value);
                 return;
             case GREATER_THAN:
+                appendCondition("$gt", name, value, selector);
+                return;
             case GREATER_EQUALS_THAN:
+                appendCondition("$gte", name, value, selector);
+                return;
             case LESSER_THAN:
+                appendCondition("lt", name, value, selector);
+                return;
             case LESSER_EQUALS_THAN:
+                appendCondition("lte", name, value, selector);
+                return;
             case IN:
-            case LIKE:
             case AND:
             case OR:
             case NOT:
-            case BETWEEN:
             default:
                 throw new UnsupportedOperationException("This operation is not supported at couchdb: " + condition.getCondition());
 
         }
     }
+
+    private void appendCondition(String operator, String name, Object value, JsonObjectBuilder selector) {
+        JsonObjectBuilder condition = Json.createObjectBuilder();
+        appendCondition(condition, operator, value);
+        selector.add(name, condition.build());
+    }
+
+    private void appendCondition(JsonObjectBuilder condition, String name, Object value) {
+        if (value instanceof String) {
+            condition.add(name, value.toString());
+            return;
+        }
+        if (value instanceof Boolean) {
+            condition.add(name, Boolean.class.cast(value));
+            return;
+        }
+        if (value instanceof Number) {
+            condition.add(name, Number.class.cast(value).doubleValue());
+            return;
+        }
+        condition.add(name, Value.of(value).get(String.class));
+    }
+
 }
