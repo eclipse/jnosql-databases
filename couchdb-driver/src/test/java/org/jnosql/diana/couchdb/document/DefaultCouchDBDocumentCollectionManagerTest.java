@@ -23,8 +23,10 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.parsers.DocumentBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,6 +52,12 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
         CouchDBDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get("people");
+    }
+
+    @BeforeEach
+    public void setUp() {
+        DocumentDeleteQuery query = DocumentQueryBuilder.delete().from(COLLECTION_NAME).build();
+        entityManager.delete(query);
     }
 
     @Test
