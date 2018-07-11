@@ -20,14 +20,19 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -97,6 +102,35 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where("_id").eq(id).build();
         DocumentEntity documentFound = entityManager.singleResult(query).get();
         assertEquals(entity, documentFound);
+    }
+
+    @Test
+    public void shouldSelectWithCouchDBDocumentQuery() {
+
+        for (int index = 0; index < 4; index++) {
+            DocumentEntity entity = getEntity();
+            entity.remove("_id");
+            entity.add("index", index);
+            entityManager.insert(entity);
+        }
+        CouchDBDocumentQuery query = CouchDBDocumentQuery.of(select().from(COLLECTION_NAME)
+                .where("index").in(asList(0, 1, 2, 3, 4)).limit(2).build());
+
+        assertFalse(query.getBookmark().isPresent());
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertEquals(2, entities.size());
+        assertTrue(query.getBookmark().isPresent());
+        String bookmark = query.getBookmark().get();
+
+        entities = entityManager.select(query);
+        assertEquals(2, entities.size());
+        assertTrue(query.getBookmark().isPresent());
+        assertNotEquals(bookmark, query.getBookmark().get());
+        bookmark = query.getBookmark().get();
+        entities = entityManager.select(query);
+        assertTrue(entities.isEmpty());
+
+
     }
 
     private DocumentEntity getEntity() {
