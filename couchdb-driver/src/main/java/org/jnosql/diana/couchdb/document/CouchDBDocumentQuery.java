@@ -25,7 +25,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * A CouchDB specialization of DocumentQuery that allows query with bookmark which can do pagination.
+ * A CouchDB specialization of {@link DocumentQuery} that allows query with bookmark which can do pagination.
+ *
+ * @see CouchDBDocumentQuery#of(DocumentQuery)
+ * @see CouchDBDocumentQuery#of(DocumentQuery, String)
  */
 public final class CouchDBDocumentQuery implements DocumentQuery {
 
