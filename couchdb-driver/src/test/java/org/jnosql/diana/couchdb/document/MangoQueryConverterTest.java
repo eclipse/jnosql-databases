@@ -68,4 +68,28 @@ class MangoQueryConverterTest {
         JsonObject jsonObject = converter.apply(query);
         Assertions.assertEquals(expected, jsonObject);
     }
+
+    @ParameterizedTest
+    @JsonSource("select_from_gte_order.json")
+    public void shouldSelectFromGteAge(JsonObject expected) {
+        DocumentQuery query = select().from("person").where("age").gte(10).build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
+
+    @ParameterizedTest
+    @JsonSource("select_from_lt_order.json")
+    public void shouldSelectFromLtAge(JsonObject expected) {
+        DocumentQuery query = select().from("person").where("age").lt(10).build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
+
+    @ParameterizedTest
+    @JsonSource("select_from_lte_order.json")
+    public void shouldSelectFromLteAge(JsonObject expected) {
+        DocumentQuery query = select().from("person").where("age").lte(10).build();
+        JsonObject jsonObject = converter.apply(query);
+        Assertions.assertEquals(expected, jsonObject);
+    }
 }

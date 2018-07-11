@@ -85,10 +85,10 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 appendCondition("$gte", name, value, selector);
                 return;
             case LESSER_THAN:
-                appendCondition("lt", name, value, selector);
+                appendCondition("$lt", name, value, selector);
                 return;
             case LESSER_EQUALS_THAN:
-                appendCondition("lte", name, value, selector);
+                appendCondition("$lte", name, value, selector);
                 return;
             case IN:
             case AND:
