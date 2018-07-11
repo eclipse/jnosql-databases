@@ -22,19 +22,17 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.parsers.DocumentBuilder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -70,15 +68,15 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     @Test
     public void shouldInsertNotId() {
         DocumentEntity entity = getEntity();
-        entity.remove("_id");
+        entity.remove(ID);
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.find("_id").isPresent());
+        assertTrue(documentEntity.find(ID).isPresent());
     }
 
     @Test
     public void shouldUpdate() {
         DocumentEntity entity = getEntity();
-        entity.remove("_id");
+        entity.remove(ID);
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
@@ -91,14 +89,14 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         assertThrows(NullPointerException.class, () -> entityManager.update((DocumentEntity) null));
         assertThrows(CouchDBHttpClientException.class, () -> {
             DocumentEntity entity = getEntity();
-            entity.remove("_id");
+            entity.remove(ID);
             entityManager.update(entity);
 
         });
 
         assertThrows(CouchDBHttpClientException.class, () -> {
             DocumentEntity entity = getEntity();
-            entity.add("_id", "not_found");
+            entity.add(ID, "not_found");
             entityManager.update(entity);
 
         });
@@ -108,10 +106,10 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     @Test
     public void shouldSelect() {
         DocumentEntity entity = getEntity();
-        entity.remove("_id");
+        entity.remove(ID);
         entity = entityManager.insert(entity);
-        Object id = entity.find("_id").map(Document::get).get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where("_id").eq(id).build();
+        Object id = entity.find(ID).map(Document::get).get();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(ID).eq(id).build();
         DocumentEntity documentFound = entityManager.singleResult(query).get();
         assertEquals(entity, documentFound);
     }
@@ -127,7 +125,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     @Test
     public void shouldRemoveEntityByName() {
         DocumentEntity entity = getEntity();
-        entity.remove("_id");
+        entity.remove(ID);
         entity = entityManager.insert(entity);
 
         Document name = entity.find("name").get();
@@ -141,7 +139,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     @Test
     public void shouldCount() {
         DocumentEntity entity = getEntity();
-        entity.remove("_id");
+        entity.remove(ID);
         entityManager.insert(entity);
         long count = entityManager.count();
         assertTrue(count > 0);
@@ -152,7 +150,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
         for (int index = 0; index < 4; index++) {
             DocumentEntity entity = getEntity();
-            entity.remove("_id");
+            entity.remove(ID);
             entity.add("index", index);
             entityManager.insert(entity);
         }
@@ -185,7 +183,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     @Test
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
-        Document key = entity.find("_id").get();
+        Document key = entity.find(ID).get();
         DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
@@ -219,7 +217,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        map.put("_id", "id");
+        map.put(ID, "id");
 
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);

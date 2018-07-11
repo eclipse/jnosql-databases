@@ -41,18 +41,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ALL_DBS;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.COUNT;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.DOCS_RESPONSE;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ENTITY;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.FIND;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ID;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.ID_RESPONSE;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.REV;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.REV_HEADER;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.REV_RESPONSE;
+import static org.jnosql.diana.couchdb.document.CouchDBConstant.TOTAL_ROWS_RESPONSE;
 
 class HttpExecute {
 
+
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
-    static final String ENTITY = "@entity";
+    private static final URLCodec CODEC = new URLCodec();
 
     private static final Type LIST_STRING = new ArrayList<String>() {
     }.getClass().getGenericSuperclass();
@@ -60,11 +71,7 @@ class HttpExecute {
     private static final Type JSON = new HashMap<String, Object>() {
     }.getClass().getGenericSuperclass();
 
-    private static final URLCodec CODEC = new URLCodec();
-    private static final String ID = "_id";
-    private static final String REV = "_rev";
-    private static final String REV_RESPONSE = "rev";
-    private static final String ID_RESPONSE = "id";
+
 
     private final CouchDBHttpConfiguration configuration;
 
@@ -79,7 +86,7 @@ class HttpExecute {
     }
 
     public List<String> getDatabases() {
-        HttpGet httpget = new HttpGet(configuration.getUrl().concat("_all_dbs"));
+        HttpGet httpget = new HttpGet(configuration.getUrl().concat(ALL_DBS));
         return execute(httpget, LIST_STRING, HttpStatus.SC_OK);
     }
 
@@ -141,22 +148,22 @@ class HttpExecute {
     }
 
     public long count(String database) {
-        HttpGet request = new HttpGet(configuration.getUrl().concat(database).concat("/_all_docs?limit=0"));
+        HttpGet request = new HttpGet(configuration.getUrl().concat(database).concat(COUNT));
         Map<String, Object> json = execute(request, JSON, HttpStatus.SC_OK);
-        String total = json.get("total_rows").toString();
+        String total = json.get(TOTAL_ROWS_RESPONSE).toString();
         return Long.valueOf(total);
     }
 
 
     private void delete(String database, DeleteElement id) {
         HttpDelete request = new HttpDelete(configuration.getUrl().concat(database).concat("/").concat(id.getId()));
-        request.addHeader("If-Match", id.getRev());
+        request.addHeader(REV_HEADER, id.getRev());
         execute(request, null, HttpStatus.SC_OK, true);
     }
 
 
     private List<Map<String, Object>> executeQuery(String database, DocumentQuery query) {
-        HttpPost request = new HttpPost(configuration.getUrl().concat(database).concat("/_find"));
+        HttpPost request = new HttpPost(configuration.getUrl().concat(database).concat(FIND));
         setHeader(request);
         JsonObject mangoQuery = converter.apply(query);
         request.setEntity(new StringEntity(mangoQuery.toString(), APPLICATION_JSON));
@@ -164,7 +171,7 @@ class HttpExecute {
         if (query instanceof CouchDBDocumentQuery) {
             CouchDBDocumentQuery.class.cast(query).setBookmark(json);
         }
-        return (List<Map<String, Object>>) json.getOrDefault("docs", emptyList());
+        return (List<Map<String, Object>>) json.getOrDefault(DOCS_RESPONSE, emptyList());
     }
 
 
