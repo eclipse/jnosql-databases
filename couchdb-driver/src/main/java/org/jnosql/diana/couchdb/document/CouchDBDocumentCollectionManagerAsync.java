@@ -26,8 +26,7 @@ public interface CouchDBDocumentCollectionManagerAsync extends DocumentCollectio
      * Returns the number of elements of database
      *
      * @param callback the callback with the response
-     * @return the number of elements
      * @throws NullPointerException when there is null parameter
      */
-    long count(Consumer<Long> callback);
+    void count(Consumer<Long> callback);
 }
