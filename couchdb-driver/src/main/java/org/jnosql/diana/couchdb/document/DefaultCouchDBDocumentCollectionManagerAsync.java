@@ -16,17 +16,16 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -36,7 +35,7 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
 
     @Override
     public void insert(DocumentEntity entity) {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         supplyAsync(() -> manager.insert(entity));
     }
 
@@ -47,8 +46,8 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
 
     @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "callBack is required");
         CompletableFuture<DocumentEntity> async = supplyAsync(() -> manager.insert(entity));
         async.thenAccept(callBack::accept);
     }
@@ -60,28 +59,28 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
 
     @Override
     public void update(DocumentEntity entity) {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         CompletableFuture<DocumentEntity> async = supplyAsync(() -> manager.update(entity));
     }
 
     @Override
     public void update(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
-        Objects.requireNonNull(entity, "entity is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(entity, "entity is required");
+        requireNonNull(callBack, "callBack is required");
         CompletableFuture<DocumentEntity> async = supplyAsync(() -> manager.update(entity));
         async.thenAccept(callBack::accept);
     }
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-        Objects.requireNonNull(query, "query is required");
+        requireNonNull(query, "query is required");
         runAsync(() -> manager.delete(query));
     }
 
     @Override
     public void delete(DocumentDeleteQuery query, Consumer<Void> callBack) {
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
         CompletableFuture<Void> async = runAsync(() -> manager.delete(query));
         async.thenAccept(callBack::accept);
 
@@ -89,8 +88,8 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
 
     @Override
     public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) {
-        Objects.requireNonNull(query, "query is required");
-        Objects.requireNonNull(callBack, "callBack is required");
+        requireNonNull(query, "query is required");
+        requireNonNull(callBack, "callBack is required");
         CompletableFuture<List<DocumentEntity>> async = supplyAsync(() -> manager.select(query));
         async.thenAccept(callBack::accept);
     }
@@ -107,7 +106,7 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
 
     @Override
     public void count(Consumer<Long> callback) {
-        Objects.requireNonNull(callback, "callback is required");
+        requireNonNull(callback, "callback is required");
         CompletableFuture<Long> async = supplyAsync(() -> manager.count());
         async.thenAccept(callback::accept);
     }
