@@ -16,7 +16,6 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 
 import java.util.function.Consumer;
