@@ -21,8 +21,6 @@ class CouchDBHttpConfigurationBuilder {
     private int maxConnections = 20;
     private int connectionTimeout = 1000;
     private int socketTimeout = 10000;
-    private int proxyPort = -1;
-    private String proxy = null;
     private boolean enableSSL = false;
 
     private String username;
@@ -52,11 +50,6 @@ class CouchDBHttpConfigurationBuilder {
         return this;
     }
 
-    public CouchDBHttpConfigurationBuilder withProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-        return this;
-    }
-
     public CouchDBHttpConfigurationBuilder withMaxObjectSizeBytes(int maxObjectSizeBytes) {
         this.maxObjectSizeBytes = maxObjectSizeBytes;
         return this;
@@ -67,10 +60,6 @@ class CouchDBHttpConfigurationBuilder {
         return this;
     }
 
-    public CouchDBHttpConfigurationBuilder withProxy(String proxy) {
-        this.proxy = proxy;
-        return this;
-    }
 
     public CouchDBHttpConfigurationBuilder withCompression(boolean compression) {
         this.compression = compression;
@@ -99,7 +88,7 @@ class CouchDBHttpConfigurationBuilder {
 
     public CouchDBHttpConfiguration build() {
         return new CouchDBHttpConfiguration(host, port, maxConnections, connectionTimeout,
-                socketTimeout, proxyPort, proxy, enableSSL, username, password,
+                socketTimeout, enableSSL, username, password,
                 compression,
                 maxObjectSizeBytes, maxCacheEntries);
     }

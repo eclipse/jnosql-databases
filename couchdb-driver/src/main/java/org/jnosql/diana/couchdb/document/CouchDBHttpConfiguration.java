@@ -23,6 +23,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 class CouchDBHttpConfiguration {
 
@@ -31,8 +32,6 @@ class CouchDBHttpConfiguration {
     private final int maxConnections;
     private final int connectionTimeout;
     private final int socketTimeout;
-    private final int proxyPort;
-    private final String proxy;
     private final boolean enableSSL;
 
     private final String username;
@@ -46,8 +45,8 @@ class CouchDBHttpConfiguration {
 
 
     CouchDBHttpConfiguration(String host, int port, int maxConnections,
-                             int connectionTimeout, int socketTimeout, int proxyPort,
-                             String proxy, boolean enableSSL, String username, String password,
+                             int connectionTimeout, int socketTimeout,
+                             boolean enableSSL, String username, String password,
                              boolean compression, int maxObjectSizeBytes,
                              int maxCacheEntries) {
         this.host = host;
@@ -55,8 +54,6 @@ class CouchDBHttpConfiguration {
         this.maxConnections = maxConnections;
         this.connectionTimeout = connectionTimeout;
         this.socketTimeout = socketTimeout;
-        this.proxyPort = proxyPort;
-        this.proxy = proxy;
         this.enableSSL = enableSSL;
         this.username = username;
         this.password = password;
@@ -96,8 +93,13 @@ class CouchDBHttpConfiguration {
                 .setSocketTimeout(socketTimeout)
                 .setContentCompressionEnabled(compression)
                 .build();
+
+        PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager();
+        pool.setMaxTotal(maxConnections);
+
         HttpClientBuilder builder = CachingHttpClients.custom()
                 .setCacheConfig(cacheConfig)
+                .setConnectionManager(pool)
                 .setDefaultRequestConfig(requestConfig);
 
         if (username != null) {
