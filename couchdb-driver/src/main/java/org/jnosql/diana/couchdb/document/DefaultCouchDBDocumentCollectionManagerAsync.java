@@ -31,7 +31,12 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocumentCollectionManagerAsync {
 
-    private CouchDBDocumentCollectionManager manager;
+    private final CouchDBDocumentCollectionManager manager;
+
+    DefaultCouchDBDocumentCollectionManagerAsync(CouchDBDocumentCollectionManager manager) {
+        this.manager = manager;
+    }
+
 
     @Override
     public void insert(DocumentEntity entity) {

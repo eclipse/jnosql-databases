@@ -16,11 +16,13 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 
 import java.util.Objects;
 
-public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchDBDocumentCollectionManager> {
+public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchDBDocumentCollectionManager>,
+        DocumentCollectionManagerAsyncFactory<CouchDBDocumentCollectionManagerAsync> {
 
 
     private final CouchDBHttpConfiguration configuration;
@@ -36,6 +38,13 @@ public class CouchDBDocumentCollectionManagerFactory implements DocumentCollecti
         CouchDBHttpClient client = configuration.getClient(database);
         client.createDatabase();
         return new DefaultCouchDBDocumentCollectionManager(client);
+    }
+
+    @Override
+    public CouchDBDocumentCollectionManagerAsync getAsync(String database) {
+        Objects.requireNonNull(database, "database is required");
+        CouchDBDocumentCollectionManager manager = get(database);
+        return new DefaultCouchDBDocumentCollectionManagerAsync(manager);
     }
 
     @Override
