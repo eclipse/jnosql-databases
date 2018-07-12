@@ -18,7 +18,6 @@ package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -26,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * The CouchDB implementation of {@link DocumentConfiguration} that returns
+ * The CouchDB implementation of {@link org.jnosql.diana.api.document.DocumentConfiguration} that returns
  * {@link CouchDBDocumentCollectionManagerFactory}, settings:
  * <p>couchdb.port: </p>
  * <p>couchdb.max.connections: </p>
