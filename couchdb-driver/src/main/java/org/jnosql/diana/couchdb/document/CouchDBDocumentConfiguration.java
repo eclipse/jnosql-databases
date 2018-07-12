@@ -31,10 +31,8 @@ import java.util.Objects;
  * <p>couchdb.max.connections: </p>
  * <p>couchdb.connection.timeout: </p>
  * <p>couchdb.socket.timeout: </p>
- * <p>couchdb.proxy.port: </p>
  * <p>couchdb.max.object.size.bytes: </p>
  * <p>couchdb.max.cache.entries: </p>
- * <p>couchdb.proxy: </p>
  * <p>couchdb.host: </p>
  * <p>couchdb.username: </p>
  * <p>couchdb.password: </p>
@@ -47,10 +45,8 @@ public class CouchDBDocumentConfiguration implements UnaryDocumentConfiguration<
     public static final String MAX_CONNECTIONS = "couchdb.max.connections";
     public static final String CONNECTION_TIMEOUT = "couchdb.connection.timeout";
     public static final String SOCKET_TIMEOUT = "couchdb.socket.timeout";
-    public static final String PROXY_PORT = "couchdb.proxy.port";
     public static final String MAX_OBJECT_SIZE_BYTES = "couchdb.max.object.size.bytes";
     public static final String MAX_CACHE_ENTRIES = "couchdb.max.cache.entries";
-    public static final String PROXY = "couchdb.proxy";
     public static final String HOST = "couchdb.host";
     public static final String USERNAME = "couchdb.username";
     public static final String PASSWORD = "couchdb.password";
@@ -76,10 +72,8 @@ public class CouchDBDocumentConfiguration implements UnaryDocumentConfiguration<
         settings.computeIfPresent(MAX_CONNECTIONS, (k, v) -> configuration.withMaxConnections(Integer.valueOf(v.toString())));
         settings.computeIfPresent(CONNECTION_TIMEOUT, (k, v) -> configuration.withConnectionTimeout(Integer.valueOf(v.toString())));
         settings.computeIfPresent(SOCKET_TIMEOUT, (k, v) -> configuration.withSocketTimeout(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(PROXY_PORT, (k, v) -> configuration.withProxyPort(Integer.valueOf(v.toString())));
         settings.computeIfPresent(MAX_OBJECT_SIZE_BYTES, (k, v) -> configuration.withMaxObjectSizeBytes(Integer.valueOf(v.toString())));
         settings.computeIfPresent(MAX_CACHE_ENTRIES, (k, v) -> configuration.withMaxCacheEntries(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(PROXY, (k, v) -> configuration.withProxy(v.toString()));
         settings.computeIfPresent(HOST, (k, v) -> configuration.withHost(v.toString()));
         settings.computeIfPresent(USERNAME, (k, v) -> configuration.withUsername(v.toString()));
         settings.computeIfPresent(PASSWORD, (k, v) -> configuration.withPassword(v.toString()));
