@@ -1,0 +1,13 @@
+{
+  "selector": {
+    "@entity": "person",
+    "$and": [
+      {
+        "name": "Poliana"
+      },
+      {
+        "name": "Ada"
+      }
+    ]
+  }
+}

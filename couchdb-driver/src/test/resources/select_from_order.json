@@ -1,0 +1,13 @@
+{
+  "sort": [
+    {
+      "year": "asc"
+    },
+    {
+      "name": "desc"
+    }
+  ],
+  "selector": {
+    "@entity": "person"
+  }
+}

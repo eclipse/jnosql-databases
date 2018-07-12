@@ -1,0 +1,8 @@
+{
+  "selector": {
+    "@entity": "person",
+    "age": {
+      "$lte": 10.0
+    }
+  }
+}

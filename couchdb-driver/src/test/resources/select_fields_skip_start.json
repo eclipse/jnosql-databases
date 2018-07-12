@@ -1,0 +1,11 @@
+{
+  "fields": [
+    "_id",
+    "_rev"
+  ],
+  "limit": 10,
+  "skip": 2,
+  "selector": {
+    "@entity": "person"
+  }
+}

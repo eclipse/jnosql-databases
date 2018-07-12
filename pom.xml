@@ -80,6 +80,7 @@
         <module>arangodb-driver</module>
         <module>cassandra-driver</module>
         <module>couchbase-driver</module>
+        <module>couchdb-driver</module>
         <module>elasticsearch-driver</module>
         <module>hazelcast-driver</module>
         <module>hbase-driver</module>
