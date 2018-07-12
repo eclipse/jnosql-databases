@@ -1,4 +1,4 @@
-![CouchDB Project](http://couchdb.apache.org/image/couch@2x.png)
+![CouchDB Project](http://couchdb.apache.org/image/couch@2x.pngio)
 
 
 
