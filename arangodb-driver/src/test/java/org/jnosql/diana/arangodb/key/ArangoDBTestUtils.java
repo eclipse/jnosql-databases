@@ -16,13 +16,23 @@ package org.jnosql.diana.arangodb.key;
 
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 public final class ArangoDBTestUtils {
 
+    private static GenericContainer arangodb =
+            new GenericContainer("arangodb/arangodb:latest")
+                    .withExposedPorts(8529)
+                    .withEnv("ARANGO_NO_AUTH", "1")
+                    .waitingFor(Wait.forHttp("/")
+                            .forStatusCode(200));
+
 
     public static BucketManagerFactory get() {
+        arangodb.start();
         ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
-        configuration.addHost("localhost", 8529);
+        configuration.addHost("localhost", arangodb.getFirstMappedPort());
         return configuration.get();
     }
 }
