@@ -16,14 +16,25 @@
 package org.jnosql.diana.arangodb.document;
 
 
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+
 public final class DocumentConfigurationUtils {
+
+    private static GenericContainer arangodb =
+            new GenericContainer("arangodb/arangodb:latest")
+                    .withExposedPorts(8529)
+                    .withEnv("ARANGO_NO_AUTH", "1")
+                    .waitingFor(Wait.forHttp("/")
+                            .forStatusCode(200));
 
     private DocumentConfigurationUtils() {
     }
 
     public static ArangoDBDocumentCollectionManagerFactory getConfiguration() {
+        arangodb.start();
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
-        configuration.addHost("localhost", 8529);
+        configuration.addHost("localhost", arangodb.getFirstMappedPort());
         return configuration.get();
     }
 }
