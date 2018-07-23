@@ -30,8 +30,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compile.targetLevel>1.8</maven.compile.targetLevel>
-        <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
     </properties>
     <dependencies>
         <dependency>
@@ -49,13 +47,6 @@
             <artifactId>httpclient-cache</artifactId>
             <version>4.5.5</version>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>5.0.3</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
     <build>
         <plugins>
@@ -64,8 +55,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compile.version}</version>
                 <configuration>
-                    <target>1.8</target>
-                    <source>1.8</source>
+                    <target>${maven.compile.targetLevel}</target>
+                    <source>${maven.compile.sourceLevel}</source>
                 </configuration>
             </plugin>
             <plugin>

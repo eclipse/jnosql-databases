@@ -66,12 +66,6 @@
     </developers>
 
     <properties>
-        <junit.jupiter.version>5.0.3</junit.jupiter.version>
-        <junit.platform.version>1.0.3</junit.platform.version>
-        <hamcrest-all.version>1.3</hamcrest-all.version>
-        <json.b.version>1.0.1</json.b.version>
-        <javax.json.bind.version>1.0</javax.json.bind.version>
-        <javax.json.version>1.1.2</javax.json.version>
         <sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
 
@@ -128,13 +122,19 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>3.0.0</version>
+            <version>${org.awaitility.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -161,24 +161,24 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>${maven.surefire.plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.junit.platform</groupId>
                         <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>${junit.platform.version}</version>
+                        <version>${junit.platform.surefire}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.junit.jupiter</groupId>
                         <artifactId>junit-jupiter-engine</artifactId>
-                        <version>${junit.jupiter.version}</version>
+                        <version>${junit.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
+                <version>${jacoco.maven.version}</version>
                 <executions>
                     <execution>
                         <id>pre-test</id>
@@ -198,7 +198,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.3.0.603</version>
+                    <version>${sonar.maven.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
