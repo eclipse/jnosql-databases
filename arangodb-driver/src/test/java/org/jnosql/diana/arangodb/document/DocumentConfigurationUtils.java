@@ -34,7 +34,7 @@ public final class DocumentConfigurationUtils {
     public static ArangoDBDocumentCollectionManagerFactory getConfiguration() {
         arangodb.start();
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
-        configuration.addHost("localhost", arangodb.getFirstMappedPort());
+        configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());
         return configuration.get();
     }
 }

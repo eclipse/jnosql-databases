@@ -32,7 +32,7 @@ public final class ArangoDBTestUtils {
     public static BucketManagerFactory get() {
         arangodb.start();
         ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
-        configuration.addHost("localhost", arangodb.getFirstMappedPort());
+        configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());
         return configuration.get();
     }
 }
