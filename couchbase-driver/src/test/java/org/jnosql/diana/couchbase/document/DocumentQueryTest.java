@@ -20,6 +20,8 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseDocumentTcConfiguration;
+import org.jnosql.diana.couchbase.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.jupiter.api.AfterAll;
@@ -43,16 +45,16 @@ public class DocumentQueryTest {
 
     public static final String COLLECTION_NAME = "person";
     private CouchbaseDocumentCollectionManager entityManager;
+    private static CouchbaseDocumentConfiguration configuration;
 
     {
-        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("person:id");
@@ -63,7 +65,7 @@ public class DocumentQueryTest {
 
     @BeforeAll
     public static void beforeClass() throws InterruptedException {
-        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        configuration = CouchbaseDocumentTcConfiguration.getTcConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
 

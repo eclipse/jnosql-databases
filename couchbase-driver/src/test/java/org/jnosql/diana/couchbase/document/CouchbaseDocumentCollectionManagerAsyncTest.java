@@ -23,6 +23,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.couchbase.CouchbaseDocumentTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +62,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
 
     @BeforeEach
     public void setUp() {
-        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        CouchbaseDocumentConfiguration configuration = CouchbaseDocumentTcConfiguration.getTcConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManagerAsync = managerFactory.getAsync(CouchbaseUtil.BUCKET_NAME);
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
@@ -195,6 +196,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     public void shouldRunN1Ql() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
+        await().atLeast(org.awaitility.Duration.ONE_SECOND);
         AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
         entityManagerAsync.n1qlQuery("select * from jnosql", references::set);
         await().until(references::get, notNullValue());
@@ -231,7 +233,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
             references.set(d);
             condition.set(true);
         });
-
+        await().atLeast(org.awaitility.Duration.ONE_SECOND);
         await().untilTrue(condition);
         assertFalse(references.get().isEmpty());
         assertEquals(1, references.get().size());

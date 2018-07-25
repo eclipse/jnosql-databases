@@ -17,6 +17,7 @@ package org.jnosql.diana.couchbase.key;
 
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -53,14 +54,14 @@ public class CouchbaseListTest {
 
     @BeforeEach
     public void init() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         keyValueEntityManagerFactory = configuration.get();
         fruits = keyValueEntityManagerFactory.getList(CouchbaseUtil.BUCKET_NAME, ProductCart.class);
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("jnosql:list");

@@ -15,41 +15,43 @@
 package org.jnosql.diana.couchbase.document;
 
 
-import com.couchbase.client.java.search.SearchQuery;
-import com.couchbase.client.java.search.queries.MatchQuery;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseDocumentTcConfiguration;
+import org.jnosql.diana.couchbase.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.couchbase.client.java.search.SearchQuery;
+import com.couchbase.client.java.search.queries.MatchQuery;
 
 public class SearchQueryTest {
 
-    public static final String COLLECTION_NAME = "person";
+    private static CouchbaseDocumentConfiguration configuration;
     private CouchbaseDocumentCollectionManager entityManager;
 
     {
-        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("city:salvador");
@@ -60,7 +62,7 @@ public class SearchQueryTest {
 
     @BeforeAll
     public static void beforeClass() throws InterruptedException {
-        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        configuration = CouchbaseDocumentTcConfiguration.getTcConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
 
