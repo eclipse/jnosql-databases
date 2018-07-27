@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase;
+package org.jnosql.diana.couchbase.configuration;
 
 import org.jnosql.diana.couchbase.document.CouchbaseDocumentConfiguration;
 
