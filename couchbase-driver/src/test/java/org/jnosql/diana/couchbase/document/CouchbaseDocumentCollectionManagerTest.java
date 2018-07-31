@@ -14,33 +14,6 @@
  */
 package org.jnosql.diana.couchbase.document;
 
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.Select;
-import com.couchbase.client.java.query.Statement;
-import com.couchbase.client.java.query.dsl.Expression;
-import com.couchbase.client.java.query.dsl.path.GroupByPath;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,6 +24,34 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import org.jnosql.diana.api.TypeReference;
+import org.jnosql.diana.api.document.Document;
+import org.jnosql.diana.api.document.DocumentDeleteQuery;
+import org.jnosql.diana.api.document.DocumentEntity;
+import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
+import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
+import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
+
+import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.query.Select;
+import com.couchbase.client.java.query.Statement;
+
 
 public class CouchbaseDocumentCollectionManagerTest {
 
@@ -58,14 +59,14 @@ public class CouchbaseDocumentCollectionManagerTest {
     private CouchbaseDocumentCollectionManager entityManager;
 
     {
-        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        CouchbaseDocumentConfiguration configuration = CouchbaseDocumentTcConfiguration.getTcConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("person:id");
@@ -85,7 +86,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
-
 
 
     @Test
@@ -117,8 +117,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Thread.sleep(5_00L);
         Document id = entitySaved.find("_id").get();
-
-
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).get(0);

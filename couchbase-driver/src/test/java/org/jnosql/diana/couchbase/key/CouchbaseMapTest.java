@@ -14,9 +14,9 @@
  */
 package org.jnosql.diana.couchbase.key;
 
-import org.hamcrest.Matchers;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,14 +41,14 @@ public class CouchbaseMapTest {
 
     @BeforeEach
     public void init() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         entityManagerFactory = configuration.get();
         entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class).clear();
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove("jnosql:map");

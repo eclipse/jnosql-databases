@@ -18,6 +18,7 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseBucketManagerTest {
 
-
     private static final String KEY_SORO = "soro";
     private static final String KEY_OTAVIO = "otavio";
     private BucketManager keyValueEntityManager;
@@ -55,14 +55,14 @@ public class CouchbaseBucketManagerTest {
 
     @BeforeEach
     public void init() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         keyValueEntityManagerFactory = configuration.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.remove(KEY_OTAVIO);
