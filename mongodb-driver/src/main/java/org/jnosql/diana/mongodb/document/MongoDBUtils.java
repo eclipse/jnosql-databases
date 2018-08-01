@@ -35,7 +35,7 @@ final class MongoDBUtils {
     static final String ID_FIELD = "_id";
 
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> ValueUtil.convert(cast(d).getValue());
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> MongoDBUtils.convert(cast(d).getValue());
 
     private static final Function<Map.Entry<?, ?>, org.jnosql.diana.api.document.Document> ENTRY_DOCUMENT = entry ->
             org.jnosql.diana.api.document.Document.of(entry.getKey().toString(), entry.getValue());
