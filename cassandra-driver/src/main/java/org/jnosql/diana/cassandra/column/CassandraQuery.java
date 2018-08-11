@@ -16,6 +16,7 @@
  */
 package org.jnosql.diana.cassandra.column;
 
+import com.datastax.driver.core.PagingState;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.column.ColumnCondition;
 import org.jnosql.diana.api.column.ColumnQuery;
@@ -45,6 +46,15 @@ public final class CassandraQuery implements ColumnQuery {
 
     public Optional<String> getPagingState() {
         return Optional.ofNullable(pagingState);
+    }
+
+    Optional<PagingState> toPatingState() {
+        return getPagingState().map(PagingState::fromString);
+    }
+
+
+    void setPagingState(PagingState pagingState) {
+        this.pagingState = pagingState.toString();
     }
 
     @Override
@@ -119,7 +129,7 @@ public final class CassandraQuery implements ColumnQuery {
     /**
      * returns a new instance of {@link CassandraQuery}
      *
-     * @param query    the {@link ColumnQuery}
+     * @param query       the {@link ColumnQuery}
      * @param pagingState {@link CassandraQuery#pagingState}
      * @return a new instance
      * @throws NullPointerException when there is null parameter
@@ -127,9 +137,9 @@ public final class CassandraQuery implements ColumnQuery {
     public static CassandraQuery of(ColumnQuery query, String pagingState) {
         Objects.requireNonNull(query, "query is required ");
         Objects.requireNonNull(pagingState, "pagingState is required ");
-        CassandraQuery couchDBDocumentQuery = new CassandraQuery(query);
-        couchDBDocumentQuery.pagingState = pagingState;
-        return couchDBDocumentQuery;
+        CassandraQuery cassandraQuery = new CassandraQuery(query);
+        cassandraQuery.pagingState = pagingState;
+        return cassandraQuery;
     }
 
 }
