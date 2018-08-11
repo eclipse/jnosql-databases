@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * A CouchDB specialization of {@link ColumnQuery} that allows query with bookmark which can do pagination.
+ * A Cassandra specialization of {@link ColumnQuery} that allows query with paging state which can do pagination.
  *
  * @see CassandraQuery#of(ColumnQuery)
  * @see CassandraQuery#of(ColumnQuery, String)
@@ -35,7 +35,7 @@ public final class CassandraQuery implements ColumnQuery {
 
     private final ColumnQuery query;
 
-    private String bookmark;
+    private String pagingState;
 
 
     private CassandraQuery(ColumnQuery query) {
@@ -43,8 +43,8 @@ public final class CassandraQuery implements ColumnQuery {
     }
 
 
-    public Optional<String> getBookmark() {
-        return Optional.ofNullable(bookmark);
+    public Optional<String> getPagingState() {
+        return Optional.ofNullable(pagingState);
     }
 
     @Override
@@ -87,19 +87,19 @@ public final class CassandraQuery implements ColumnQuery {
         }
         CassandraQuery that = (CassandraQuery) o;
         return Objects.equals(query, that.query) &&
-                Objects.equals(bookmark, that.bookmark);
+                Objects.equals(pagingState, that.pagingState);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(query, bookmark);
+        return Objects.hash(query, pagingState);
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CouchDBDocumentQuery{");
         sb.append("query=").append(query);
-        sb.append(", bookmark='").append(bookmark).append('\'');
+        sb.append(", pagingState='").append(pagingState).append('\'');
         sb.append('}');
         return sb.toString();
     }
@@ -120,15 +120,15 @@ public final class CassandraQuery implements ColumnQuery {
      * returns a new instance of {@link CassandraQuery}
      *
      * @param query    the {@link ColumnQuery}
-     * @param bookmark {@link CassandraQuery#bookmark}
+     * @param pagingState {@link CassandraQuery#pagingState}
      * @return a new instance
      * @throws NullPointerException when there is null parameter
      */
-    public static CassandraQuery of(ColumnQuery query, String bookmark) {
+    public static CassandraQuery of(ColumnQuery query, String pagingState) {
         Objects.requireNonNull(query, "query is required ");
-        Objects.requireNonNull(bookmark, "bookmark is required ");
+        Objects.requireNonNull(pagingState, "pagingState is required ");
         CassandraQuery couchDBDocumentQuery = new CassandraQuery(query);
-        couchDBDocumentQuery.bookmark = bookmark;
+        couchDBDocumentQuery.pagingState = pagingState;
         return couchDBDocumentQuery;
     }
 
