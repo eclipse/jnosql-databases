@@ -16,7 +16,9 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.PagingState;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
@@ -27,6 +29,7 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -87,8 +90,19 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     public List<ColumnEntity> select(ColumnQuery query) {
         requireNonNull(query, "query is required");
         BuiltStatement select = QueryUtils.select(query, keyspace);
+        boolean isCassandraQuery = CassandraQuery.class.isInstance(query);
+        if (isCassandraQuery) {
+            CassandraQuery.class.cast(query).toPatingState().ifPresent(select::setPagingState);
+        }
         ResultSet resultSet = session.execute(select);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
+
+        if (isCassandraQuery) {
+            PagingState pagingState = resultSet.getExecutionInfo().getPagingState();
+            CassandraQuery.class.cast(query).setPagingState(pagingState);
+        }
+
+        return StreamSupport.stream(resultSet.spliterator(), false)
+                .map(CassandraConverter::toDocumentEntity)
                 .collect(Collectors.toList());
     }
 
