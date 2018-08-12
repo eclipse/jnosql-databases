@@ -21,5 +21,12 @@ import java.util.List;
 
 interface QueryExecutor {
 
+    static QueryExecutor of(ColumnQuery query) {
+        if (CassandraQuery.class.isInstance(query)) {
+            return QueryExecutorType.PAGING_STATE;
+        }
+        return QueryExecutorType.DEFAULT;
+    }
+
     List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager);
 }

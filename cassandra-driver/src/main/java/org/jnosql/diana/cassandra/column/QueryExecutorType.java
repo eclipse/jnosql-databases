@@ -24,6 +24,9 @@ import org.jnosql.diana.api.column.ColumnQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+
 enum QueryExecutorType implements QueryExecutor {
 
     PAGING_STATE {
@@ -31,6 +34,10 @@ enum QueryExecutorType implements QueryExecutor {
         public List<ColumnEntity> execute(String keyspace, ColumnQuery q, DefaultCassandraColumnFamilyManager manager) {
 
             CassandraQuery query = CassandraQuery.class.cast(q);
+
+            if (query.isExhausted()) {
+                return emptyList();
+            }
             BuiltStatement select = QueryUtils.select(query, keyspace);
             query.toPatingState().ifPresent(select::setPagingState);
             ResultSet resultSet = manager.getSession().execute(select);
@@ -51,7 +58,10 @@ enum QueryExecutorType implements QueryExecutor {
     }, DEFAULT {
         @Override
         public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
-            return null;
+            BuiltStatement select = QueryUtils.select(query, keyspace);
+            ResultSet resultSet = manager.getSession().execute(select);
+            return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
+                    .collect(toList());
         }
     };
 

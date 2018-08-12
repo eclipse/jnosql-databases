@@ -70,6 +70,11 @@ public final class CassandraQuery implements ColumnQuery {
         }
     }
 
+
+    boolean isExhausted() {
+        return EXHAUSTED.equals(pagingState);
+    }
+
     @Override
     public long getLimit() {
         return query.getLimit();
