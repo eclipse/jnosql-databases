@@ -28,6 +28,7 @@ import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
+import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -488,6 +489,37 @@ public class CassandraColumnFamilyManagerTest {
         assertTrue(contacts > 0);
     }
 
+    @Test
+    public void shouldPagingState() {
+        for (long index = 1; index < 10; index++) {
+            ColumnEntity columnFamily = getColumnFamily();
+            columnFamily.add("id", index);
+            entityManager.insert(columnFamily);
+        }
+
+        ColumnQuery query = ColumnQueryBuilder.select().from(COLUMN_FAMILY).limit(6).build();
+        CassandraQuery cassandraQuery = CassandraQuery.of(query);
+
+        assertFalse(cassandraQuery.getPagingState().isPresent());
+
+        List<ColumnEntity> entities = entityManager.select(cassandraQuery);
+        assertEquals(6, entities.size());
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+        entities = entityManager.select(cassandraQuery);
+        assertEquals(4, entities.size());
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+        entities = entityManager.select(cassandraQuery);
+        assertTrue(entities.isEmpty());
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+        entities = entityManager.select(cassandraQuery);
+        assertTrue(entities.isEmpty());
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+
+    }
     private ColumnEntity createEntityWithIterable() {
         ColumnEntity entity = ColumnEntity.of("contacts");
         entity.add(Column.of("user", "otaviojava"));
