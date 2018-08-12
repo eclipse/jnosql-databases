@@ -103,14 +103,14 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
         List<ColumnEntity> entities = new ArrayList<>();
         for (Row row : resultSet) {
-            System.out.println("isFullyFetched " + resultSet.isFullyFetched());
-            System.out.println("getAvailableWithoutFetching " + resultSet.getAvailableWithoutFetching());
-            if (resultSet.isFullyFetched()) {
+            entities.add(CassandraConverter.toDocumentEntity(row));
+            if (resultSet.getAvailableWithoutFetching() == 0) {
+                if (isCassandraQuery) {
+                    CassandraQuery.class.cast(query).setPagingState(resultSet.isExhausted());
+                }
                 break;
             }
-            entities.add(CassandraConverter.toDocumentEntity(row));
         }
-
         return entities;
     }
 

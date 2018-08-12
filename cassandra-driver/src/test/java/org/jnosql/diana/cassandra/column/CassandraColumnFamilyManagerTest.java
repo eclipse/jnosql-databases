@@ -506,11 +506,11 @@ public class CassandraColumnFamilyManagerTest {
         assertEquals(6, entities.size());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
-        entities = entityManager.select(cassandraQuery);
-        assertEquals(4, entities.size());
+        entities.addAll(entityManager.select(cassandraQuery));
+        assertEquals(9, entities.size());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
-        entities = entityManager.select(cassandraQuery);
+        entities.addAll(entityManager.select(cassandraQuery));
         assertTrue(entities.isEmpty());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
