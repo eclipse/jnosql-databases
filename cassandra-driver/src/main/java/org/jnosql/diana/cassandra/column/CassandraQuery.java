@@ -22,9 +22,9 @@ import org.jnosql.diana.api.column.ColumnCondition;
 import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * A Cassandra specialization of {@link ColumnQuery} that allows query with paging state which can do pagination.
@@ -33,6 +33,10 @@ import java.util.Optional;
  * @see CassandraQuery#of(ColumnQuery, String)
  */
 public final class CassandraQuery implements ColumnQuery {
+
+    private static final String EXHAUSTED = "EXHAUSTED";
+    private static final Predicate<String> EQUALS = EXHAUSTED::equals;
+    private static final Predicate<String> NOT_EQUALS = EQUALS.negate();
 
     private final ColumnQuery query;
 
@@ -49,13 +53,20 @@ public final class CassandraQuery implements ColumnQuery {
     }
 
     Optional<PagingState> toPatingState() {
-        return getPagingState().map(PagingState::fromString);
+        return getPagingState().filter(NOT_EQUALS).map(PagingState::fromString);
     }
 
 
     void setPagingState(PagingState pagingState) {
         if (pagingState != null) {
             this.pagingState = pagingState.toString();
+        }
+    }
+
+
+    void setExhausted(boolean exhausted) {
+        if (exhausted) {
+            this.pagingState = EXHAUSTED;
         }
     }
 
@@ -143,5 +154,4 @@ public final class CassandraQuery implements ColumnQuery {
         cassandraQuery.pagingState = pagingState;
         return cassandraQuery;
     }
-
 }
