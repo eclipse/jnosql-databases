@@ -54,7 +54,9 @@ public final class CassandraQuery implements ColumnQuery {
 
 
     void setPagingState(PagingState pagingState) {
-        this.pagingState = pagingState.toString();
+        if (pagingState != null) {
+            this.pagingState = pagingState.toString();
+        }
     }
 
     @Override
