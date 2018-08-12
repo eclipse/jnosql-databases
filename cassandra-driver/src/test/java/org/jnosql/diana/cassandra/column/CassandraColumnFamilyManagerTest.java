@@ -520,6 +520,7 @@ public class CassandraColumnFamilyManagerTest {
 
 
     }
+
     private ColumnEntity createEntityWithIterable() {
         ColumnEntity entity = ColumnEntity.of("contacts");
         entity.add(Column.of("user", "otaviojava"));

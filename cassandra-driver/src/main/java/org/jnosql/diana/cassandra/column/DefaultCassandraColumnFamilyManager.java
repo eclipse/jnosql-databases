@@ -16,9 +16,7 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.PagingState;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
@@ -29,7 +27,6 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
