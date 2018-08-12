@@ -50,8 +50,8 @@ enum QueryExecutorType implements QueryExecutor {
                 entities.add(CassandraConverter.toDocumentEntity(row));
                 if (resultSet.getAvailableWithoutFetching() == 0) {
                     query.setExhausted(resultSet.isExhausted());
+                    break;
                 }
-                break;
             }
             return entities;
         }
