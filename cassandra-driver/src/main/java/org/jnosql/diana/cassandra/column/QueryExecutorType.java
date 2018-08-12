@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.cassandra.column;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PagingState;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -23,6 +24,7 @@ import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -31,7 +33,13 @@ enum QueryExecutorType implements QueryExecutor {
 
     PAGING_STATE {
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery q, DefaultCassandraColumnFamilyManager manager) {
+        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
+            return execute(keyspace, query, manager, null);
+        }
+
+        @Override
+        public List<ColumnEntity> execute(String keyspace, ColumnQuery q, DefaultCassandraColumnFamilyManager manager,
+                                          ConsistencyLevel level) {
 
             CassandraQuery query = CassandraQuery.class.cast(q);
 
@@ -39,6 +47,11 @@ enum QueryExecutorType implements QueryExecutor {
                 return emptyList();
             }
             BuiltStatement select = QueryUtils.select(query, keyspace);
+
+            if (Objects.nonNull(level)) {
+                select.setConsistencyLevel(level);
+            }
+
             query.toPatingState().ifPresent(select::setPagingState);
             ResultSet resultSet = manager.getSession().execute(select);
 
@@ -58,7 +71,17 @@ enum QueryExecutorType implements QueryExecutor {
     }, DEFAULT {
         @Override
         public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
+            return execute(keyspace, query, manager, null);
+        }
+
+        @Override
+        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager,
+                                          ConsistencyLevel level) {
             BuiltStatement select = QueryUtils.select(query, keyspace);
+
+            if (Objects.nonNull(level)) {
+                select.setConsistencyLevel(level);
+            }
             ResultSet resultSet = manager.getSession().execute(select);
             return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                     .collect(toList());

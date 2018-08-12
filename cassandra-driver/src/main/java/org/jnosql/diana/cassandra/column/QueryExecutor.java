@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.cassandra.column;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 
@@ -29,4 +30,7 @@ interface QueryExecutor {
     }
 
     List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager);
+
+    List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager,
+                               ConsistencyLevel level);
 }
