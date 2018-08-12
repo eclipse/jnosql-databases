@@ -89,29 +89,8 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     @Override
     public List<ColumnEntity> select(ColumnQuery query) {
         requireNonNull(query, "query is required");
-        BuiltStatement select = QueryUtils.select(query, keyspace);
-        boolean isCassandraQuery = CassandraQuery.class.isInstance(query);
-        if (isCassandraQuery) {
-            CassandraQuery.class.cast(query).toPatingState().ifPresent(select::setPagingState);
-        }
-        ResultSet resultSet = session.execute(select);
-
-        if (isCassandraQuery) {
-            PagingState pagingState = resultSet.getExecutionInfo().getPagingState();
-            CassandraQuery.class.cast(query).setPagingState(pagingState);
-        }
-
-        List<ColumnEntity> entities = new ArrayList<>();
-        for (Row row : resultSet) {
-            entities.add(CassandraConverter.toDocumentEntity(row));
-            if (resultSet.getAvailableWithoutFetching() == 0) {
-                if (isCassandraQuery) {
-                    CassandraQuery.class.cast(query).setPagingState(resultSet.isExhausted());
-                }
-                break;
-            }
-        }
-        return entities;
+        QueryExecutor executor = QueryExecutor.of(query);
+        return executor.execute(keyspace, query, this);
     }
 
     @Override
