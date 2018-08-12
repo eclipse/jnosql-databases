@@ -101,9 +101,17 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
             CassandraQuery.class.cast(query).setPagingState(pagingState);
         }
 
-        return StreamSupport.stream(resultSet.spliterator(), false)
-                .map(CassandraConverter::toDocumentEntity)
-                .collect(Collectors.toList());
+        List<ColumnEntity> entities = new ArrayList<>();
+        for (Row row : resultSet) {
+            System.out.println("isFullyFetched " + resultSet.isFullyFetched());
+            System.out.println("getAvailableWithoutFetching " + resultSet.getAvailableWithoutFetching());
+            if (resultSet.isFullyFetched()) {
+                break;
+            }
+            entities.add(CassandraConverter.toDocumentEntity(row));
+        }
+
+        return entities;
     }
 
     @Override
