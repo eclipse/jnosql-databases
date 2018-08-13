@@ -17,6 +17,7 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PagingState;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import org.jnosql.diana.api.column.ColumnEntity;
@@ -25,8 +26,10 @@ import org.jnosql.diana.api.column.ColumnQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 enum QueryExecutorType implements QueryExecutor {
@@ -68,15 +71,26 @@ enum QueryExecutorType implements QueryExecutor {
             }
             return entities;
         }
-    }, DEFAULT {
+
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
-            return execute(keyspace, query, manager, null);
+        public void execute(String keyspace, ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+
         }
 
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager,
-                                          ConsistencyLevel level) {
+        public void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+
+        }
+
+
+    }, DEFAULT {
+        @Override
+        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
+            return execute(keyspace, query, null, manager);
+        }
+
+        @Override
+        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level, DefaultCassandraColumnFamilyManager manager) {
             BuiltStatement select = QueryUtils.select(query, keyspace);
 
             if (Objects.nonNull(level)) {
@@ -85,6 +99,26 @@ enum QueryExecutorType implements QueryExecutor {
             ResultSet resultSet = manager.getSession().execute(select);
             return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
                     .collect(toList());
+        }
+
+        @Override
+        public void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+            execute(keyspace, query, null, consumer, manager);
+        }
+
+        @Override
+        public void execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
+                            Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+
+            BuiltStatement select = QueryUtils.select(query, keyspace);
+
+            if (Objects.nonNull(level)) {
+                select.setConsistencyLevel(level);
+            }
+            ResultSetFuture resultSet = manager.getSession().executeAsync(select);
+            CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
+            resultSet.addListener(executeAsync, manager.getExecutor());
+
         }
     };
 

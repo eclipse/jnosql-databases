@@ -293,4 +293,12 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     public void close() {
         session.close();
     }
+
+    Session getSession() {
+        return session;
+    }
+
+    Executor getExecutor() {
+        return executor;
+    }
 }
