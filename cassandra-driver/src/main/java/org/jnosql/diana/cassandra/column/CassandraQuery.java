@@ -40,6 +40,10 @@ public final class CassandraQuery implements ColumnQuery {
 
     private final ColumnQuery query;
 
+    /**
+     * This object represents the next page to be fetched if the query is multi page.
+     * It can be saved and reused later on the same statement.
+     */
     private String pagingState;
 
 
@@ -48,6 +52,11 @@ public final class CassandraQuery implements ColumnQuery {
     }
 
 
+    /**
+     * {@link CassandraQuery#pagingState}
+     *
+     * @return the {@link CassandraQuery#pagingState}
+     */
     public Optional<String> getPagingState() {
         return Optional.ofNullable(pagingState);
     }
