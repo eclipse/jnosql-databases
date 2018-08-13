@@ -34,12 +34,12 @@ enum QueryExecutorType implements QueryExecutor {
     PAGING_STATE {
         @Override
         public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
-            return execute(keyspace, query, manager, null);
+            return execute(keyspace, query, null, manager);
         }
 
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery q, DefaultCassandraColumnFamilyManager manager,
-                                          ConsistencyLevel level) {
+        public List<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
+                                          DefaultCassandraColumnFamilyManager manager) {
 
             CassandraQuery query = CassandraQuery.class.cast(q);
 

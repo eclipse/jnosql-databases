@@ -157,7 +157,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
         requireNonNull(query, "query is required");
         requireNonNull(level, "level is required");
         QueryExecutor executor = QueryExecutor.of(query);
-        return executor.execute(keyspace, query, this, level);
+        return executor.execute(keyspace, query, level, this);
 
     }
 

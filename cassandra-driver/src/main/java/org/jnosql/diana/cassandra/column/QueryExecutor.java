@@ -19,6 +19,7 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 interface QueryExecutor {
 
@@ -31,6 +32,12 @@ interface QueryExecutor {
 
     List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager);
 
-    List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager,
-                               ConsistencyLevel level);
+    List<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
+                               DefaultCassandraColumnFamilyManager manager);
+
+    void execute(String keyspace, ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer,
+                 DefaultCassandraColumnFamilyManagerAsync manager);
+
+    void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer,
+                 DefaultCassandraColumnFamilyManagerAsync manager);
 }
