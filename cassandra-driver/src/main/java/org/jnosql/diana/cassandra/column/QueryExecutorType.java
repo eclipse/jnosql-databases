@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 enum QueryExecutorType implements QueryExecutor {
@@ -73,13 +72,27 @@ enum QueryExecutorType implements QueryExecutor {
         }
 
         @Override
-        public void execute(String keyspace, ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
-
+        public void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+            execute(keyspace, query, null, consumer, manager);
         }
 
         @Override
-        public void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+        public void execute(String keyspace, ColumnQuery q, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer,
+                            DefaultCassandraColumnFamilyManagerAsync manager) {
 
+            CassandraQuery query = CassandraQuery.class.cast(q);
+
+            if (query.isExhausted()) {
+                consumer.accept(emptyList());
+            }
+
+            BuiltStatement select = QueryUtils.select(query, keyspace);
+            if (Objects.nonNull(level)) {
+                select.setConsistencyLevel(level);
+            }
+            ResultSetFuture resultSet = manager.getSession().executeAsync(select);
+            Runnable executeAsync = new CassandraReturnQueryPagingStateAsync(resultSet, consumer, query);
+            resultSet.addListener(executeAsync, manager.getExecutor());
         }
 
 
@@ -116,7 +129,7 @@ enum QueryExecutorType implements QueryExecutor {
                 select.setConsistencyLevel(level);
             }
             ResultSetFuture resultSet = manager.getSession().executeAsync(select);
-            CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
+            Runnable executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
             resultSet.addListener(executeAsync, manager.getExecutor());
 
         }
