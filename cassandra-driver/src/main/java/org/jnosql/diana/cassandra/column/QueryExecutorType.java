@@ -90,6 +90,7 @@ enum QueryExecutorType implements QueryExecutor {
             if (Objects.nonNull(level)) {
                 select.setConsistencyLevel(level);
             }
+            query.toPatingState().ifPresent(select::setPagingState);
             ResultSetFuture resultSet = manager.getSession().executeAsync(select);
             Runnable executeAsync = new CassandraReturnQueryPagingStateAsync(resultSet, consumer, query);
             resultSet.addListener(executeAsync, manager.getExecutor());

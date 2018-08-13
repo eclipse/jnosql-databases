@@ -50,6 +50,7 @@ final class CassandraReturnQueryPagingStateAsync implements Runnable {
                 PagingState pagingState = resultSet.getExecutionInfo().getPagingState();
                 query.setPagingState(pagingState);
             }
+
             List<ColumnEntity> entities = new ArrayList<>();
             for (Row row : resultSet) {
                 entities.add(CassandraConverter.toDocumentEntity(row));

@@ -65,8 +65,10 @@ public final class CassandraQuery implements ColumnQuery {
 
 
     void setExhausted(boolean exhausted) {
-        if (exhausted) {
-            this.pagingState = EXHAUSTED;
+        synchronized (this) {
+            if (exhausted) {
+                this.pagingState = EXHAUSTED;
+            }
         }
     }
 
