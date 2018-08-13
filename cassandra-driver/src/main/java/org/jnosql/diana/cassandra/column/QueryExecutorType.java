@@ -84,6 +84,7 @@ enum QueryExecutorType implements QueryExecutor {
 
             if (query.isExhausted()) {
                 consumer.accept(emptyList());
+                return;
             }
 
             BuiltStatement select = QueryUtils.select(query, keyspace);
