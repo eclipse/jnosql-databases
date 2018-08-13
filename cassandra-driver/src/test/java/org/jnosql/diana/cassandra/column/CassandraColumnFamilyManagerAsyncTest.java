@@ -15,6 +15,7 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.Session;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.Column;
@@ -22,7 +23,9 @@ import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
+import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +44,7 @@ import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -51,6 +55,8 @@ import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
 import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,7 +64,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CassandraColumnFamilyManagerAsyncTest {
 
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
-    private CassandraColumnFamilyManagerAsync columnEntityManager;
+
+    private CassandraColumnFamilyManagerAsync entityManager;
 
     @BeforeAll
     public static void before() throws InterruptedException, IOException, TTransportException {
@@ -71,11 +78,20 @@ public class CassandraColumnFamilyManagerAsyncTest {
     }
 
     @BeforeEach
-    public void setUp() throws InterruptedException, IOException, TTransportException {
+    public void setUp()  {
 
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
-        columnEntityManager = entityManagerFactory.getAsync(KEY_SPACE);
+        entityManager = entityManagerFactory.getAsync(KEY_SPACE);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        DefaultCassandraColumnFamilyManagerAsync managerAsync = DefaultCassandraColumnFamilyManagerAsync.class.cast(entityManager);
+        Session session = managerAsync.getSession();
+        if (!session.isClosed()) {
+            session.execute("DROP TABLE IF EXISTS " + Constants.KEY_SPACE + '.' + Constants.COLUMN_FAMILY);
+        }
     }
 
     @Test
@@ -83,13 +99,13 @@ public class CassandraColumnFamilyManagerAsyncTest {
         Column key = Columns.of("id", 10L);
         ColumnEntity columnEntity = ColumnEntity.of(COLUMN_FAMILY);
         columnEntity.add(key);
-        columnEntityManager.insert(columnEntity);
+        entityManager.insert(columnEntity);
     }
 
     @Test
     public void shouldReturnErrorWhenInsertColumnFamilyIsNull() {
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert((ColumnEntity) null);
+            entityManager.insert((ColumnEntity) null);
         });
     }
 
@@ -99,15 +115,15 @@ public class CassandraColumnFamilyManagerAsyncTest {
         };
 
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert(null, Duration.ofSeconds(1L), callBack);
+            entityManager.insert(null, Duration.ofSeconds(1L), callBack);
         });
 
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert(getColumnFamily(), null, callBack);
+            entityManager.insert(getColumnFamily(), null, callBack);
         });
 
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert(getColumnFamily(), Duration.ofSeconds(1L), null);
+            entityManager.insert(getColumnFamily(), Duration.ofSeconds(1L), null);
         });
     }
 
@@ -116,7 +132,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         AtomicBoolean callBack = new AtomicBoolean(false);
 
-        columnEntityManager.insert(getColumnFamily(), Duration.ofSeconds(1L), c -> {
+        entityManager.insert(getColumnFamily(), Duration.ofSeconds(1L), c -> {
             callBack.set(true);
         });
         await().untilTrue(callBack);
@@ -125,7 +141,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
         callBack.set(false);
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
         AtomicReference<List<ColumnEntity>> references = new AtomicReference<>();
-        columnEntityManager.select(query, l -> {
+        entityManager.select(query, l -> {
             references.set(l);
         });
 
@@ -137,21 +153,21 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldReturnErrorWhenInsertIterableColumnFamilyIsNull() {
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert((Iterable<ColumnEntity>) null);
+            entityManager.insert((Iterable<ColumnEntity>) null);
         });
     }
 
     @Test
     public void shouldReturnErrorWhenUpdateColumnFamilyIsNull() {
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert((ColumnEntity) null);
+            entityManager.insert((ColumnEntity) null);
         });
     }
 
     @Test
     public void shouldReturnErrorWhenUpdateIterableColumnFamilyIsNull() {
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert((Iterable<ColumnEntity>) null);
+            entityManager.insert((Iterable<ColumnEntity>) null);
         });
     }
 
@@ -160,10 +176,10 @@ public class CassandraColumnFamilyManagerAsyncTest {
         ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
 
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert(entity, (Duration) null);
+            entityManager.insert(entity, (Duration) null);
         });
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert(singletonList(entity), (Duration) null);
+            entityManager.insert(singletonList(entity), (Duration) null);
         });
     }
 
@@ -172,7 +188,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     public void shouldReturnErrorWhenInsertWithCallbackNull() {
         ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.insert(entity, (Consumer<ColumnEntity>) null);
+            entityManager.insert(entity, (Consumer<ColumnEntity>) null);
         });
     }
 
@@ -180,7 +196,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     public void shouldReturnErrorWhenSaveWithCallbackNull() {
         ColumnEntity entity = ColumnEntity.of(COLUMN_FAMILY);
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.update(entity, (Consumer<ColumnEntity>) null);
+            entityManager.update(entity, (Consumer<ColumnEntity>) null);
         });
     }
 
@@ -188,20 +204,20 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldInsertColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.insert(columnEntity);
+        entityManager.insert(columnEntity);
     }
 
     @Test
     public void shouldInsertIterableColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.insert(singletonList(columnEntity));
+        entityManager.insert(singletonList(columnEntity));
     }
 
     @Test
     public void shouldInsertColumnsAsyncWithCallBack() {
         ColumnEntity columnEntity = getColumnFamily();
         AtomicBoolean callBack = new AtomicBoolean(false);
-        columnEntityManager.insert(columnEntity, c -> callBack.set(true));
+        entityManager.insert(columnEntity, c -> callBack.set(true));
 
         await().untilTrue(callBack);
 
@@ -209,7 +225,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
 
-        columnEntityManager.select(query, entities::set);
+        entityManager.select(query, entities::set);
         await().until(() -> entities.get().size(), not(equalTo(0)));
         assertThat(entities.get(), contains(columnEntity));
 
@@ -220,20 +236,20 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldUpdateColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.update(columnEntity);
+        entityManager.update(columnEntity);
     }
 
     @Test
     public void shouldUpdateIterableColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.update(singletonList(columnEntity));
+        entityManager.update(singletonList(columnEntity));
     }
 
     @Test
     public void shouldUpdateColumnsAsyncWithCallBack() {
         ColumnEntity columnEntity = getColumnFamily();
         AtomicBoolean callBack = new AtomicBoolean(false);
-        columnEntityManager.update(columnEntity, c -> callBack.set(true));
+        entityManager.update(columnEntity, c -> callBack.set(true));
 
         await().untilTrue(callBack);
 
@@ -241,7 +257,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
 
-        columnEntityManager.select(query, entities::set);
+        entityManager.select(query, entities::set);
         await().until(() -> entities.get().size(), not(equalTo(0)));
         assertThat(entities.get(), contains(columnEntity));
 
@@ -252,7 +268,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldReturnErrorWhenDeleteIsNull() {
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.delete(null);
+            entityManager.delete(null);
         });
     }
 
@@ -260,7 +276,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     public void shouldReturnErrorWhenCallBackIsNull() {
         ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).build();
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.delete(query, (Consumer<Void>) null);
+            entityManager.delete(query, (Consumer<Void>) null);
         });
 
     }
@@ -269,7 +285,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
     public void shouldReturnErrorWhenConsistencyIsNull() {
         ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).build();
         assertThrows(NullPointerException.class, () -> {
-            columnEntityManager.delete(query, (ConsistencyLevel) null);
+            entityManager.delete(query, (ConsistencyLevel) null);
         });
 
     }
@@ -277,14 +293,14 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldDelete() {
         ColumnDeleteQuery query = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
-        columnEntityManager.delete(query);
+        entityManager.delete(query);
     }
 
     @Test
     public void shouldDeleteWithCallBack() {
         AtomicBoolean callback = new AtomicBoolean(false);
         ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
-        columnEntityManager.delete(deleteQuery, v -> callback.set(true));
+        entityManager.delete(deleteQuery, v -> callback.set(true));
 
         await().untilTrue(callback);
 
@@ -296,7 +312,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
             callback.set(true);
             entities.set(l);
         };
-        columnEntityManager.select(query, result);
+        entityManager.select(query, result);
         await().untilTrue(callback);
 
         assertTrue(entities.get().isEmpty());
@@ -305,13 +321,13 @@ public class CassandraColumnFamilyManagerAsyncTest {
     @Test
     public void shouldInsertColumnsAsyncWithConsistenceLevel() {
         ColumnEntity columnEntity = getColumnFamily();
-        columnEntityManager.save(columnEntity, CONSISTENCY_LEVEL);
+        entityManager.save(columnEntity, CONSISTENCY_LEVEL);
     }
 
     @Test
     public void shouldCount() {
         ColumnEntity entity = getColumnFamily();
-        columnEntityManager.insert(entity);
+        entityManager.insert(entity);
         AtomicLong counter = new AtomicLong(0);
         AtomicBoolean condition = new AtomicBoolean(false);
 
@@ -319,11 +335,64 @@ public class CassandraColumnFamilyManagerAsyncTest {
             condition.set(true);
             counter.set(l);
         };
-        columnEntityManager.count(COLUMN_FAMILY, callback);
+        entityManager.count(COLUMN_FAMILY, callback);
         await().untilTrue(condition);
         assertTrue(counter.get() > 0);
     }
 
+    @Test
+    public void shouldPagingState() throws InterruptedException {
+
+        for (long index = 1; index < 10; index++) {
+            ColumnEntity columnFamily = getColumnFamily();
+            columnFamily.add("id", index);
+            entityManager.insert(columnFamily);
+        }
+
+        MILLISECONDS.sleep(500L);
+
+        ColumnQuery query = ColumnQueryBuilder.select().from(COLUMN_FAMILY).limit(6).build();
+        CassandraQuery cassandraQuery = CassandraQuery.of(query);
+
+        assertFalse(cassandraQuery.getPagingState().isPresent());
+
+        AtomicReference<List<ColumnEntity>> reference = new AtomicReference<>();
+
+        entityManager.select(cassandraQuery, reference::set);
+
+        await().untilAtomic(reference, notNullValue());
+
+        List<ColumnEntity> entities = reference.get();
+        assertEquals(6, entities.size());
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+        reference.set(null);
+        entityManager.select(cassandraQuery, reference::set);
+
+        await().untilAtomic(reference, notNullValue());
+        entities = reference.get();
+        assertEquals(3, entities.size());
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+        reference.set(null);
+        entityManager.select(cassandraQuery, reference::set);
+
+        await().untilAtomic(reference, notNullValue());
+        entities = reference.get();
+        assertTrue(entities.isEmpty());
+
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+        reference.set(null);
+        entityManager.select(cassandraQuery, reference::set);
+
+        await().untilAtomic(reference, notNullValue());
+        entities = reference.get();
+        assertTrue(entities.isEmpty());
+        assertTrue(cassandraQuery.getPagingState().isPresent());
+
+
+    }
 
     private ColumnEntity getColumnFamily() {
         Map<String, Object> fields = new HashMap<>();
