@@ -15,6 +15,7 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.Session;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.column.Column;
@@ -24,6 +25,7 @@ import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
 import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,11 +78,20 @@ public class CassandraColumnFamilyManagerAsyncTest {
     }
 
     @BeforeEach
-    public void setUp() throws InterruptedException, IOException, TTransportException {
+    public void setUp()  {
 
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         CassandraColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
         entityManager = entityManagerFactory.getAsync(KEY_SPACE);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        DefaultCassandraColumnFamilyManagerAsync managerAsync = DefaultCassandraColumnFamilyManagerAsync.class.cast(entityManager);
+        Session session = managerAsync.getSession();
+        if (!session.isClosed()) {
+            session.execute("DROP TABLE IF EXISTS " + Constants.KEY_SPACE + '.' + Constants.COLUMN_FAMILY);
+        }
     }
 
     @Test
