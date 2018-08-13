@@ -214,10 +214,8 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
         requireNonNull(query, "query is required");
         requireNonNull(consumer, "consumer is required");
 
-        BuiltStatement select = QueryUtils.select(query, keyspace);
-        ResultSetFuture resultSet = session.executeAsync(select);
-        CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
-        resultSet.addListener(executeAsync, executor);
+        QueryExecutor executor = QueryExecutor.of(query);
+        executor.execute(keyspace, query, consumer, this);
     }
 
     @Override
@@ -243,11 +241,8 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
         requireNonNull(level, "level is required");
         requireNonNull(consumer, "consumer is required");
 
-        BuiltStatement select = QueryUtils.select(query, keyspace);
-        select.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
-        ResultSetFuture resultSet = session.executeAsync(select);
-        CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
-        resultSet.addListener(executeAsync, executor);
+        QueryExecutor executor = QueryExecutor.of(query);
+        executor.execute(keyspace, query, level, consumer, this);
     }
 
     @Override
