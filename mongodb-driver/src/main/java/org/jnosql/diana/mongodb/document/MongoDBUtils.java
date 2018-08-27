@@ -35,11 +35,7 @@ final class MongoDBUtils {
     static final String ID_FIELD = "_id";
 
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> ValueUtil.convert(cast(d).getValue());
-
-    private static final Function<Map.Entry<?, ?>, org.jnosql.diana.api.document.Document> ENTRY_DOCUMENT = entry ->
-            org.jnosql.diana.api.document.Document.of(entry.getKey().toString(), entry.getValue());
-
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> MongoDBUtils.convert(cast(d).getValue());
 
     private MongoDBUtils() {
     }
@@ -72,19 +68,23 @@ final class MongoDBUtils {
         Predicate<String> isNotNull = s -> values.get(s) != null;
         Function<String, org.jnosql.diana.api.document.Document> documentMap = key -> {
             Object value = values.get(key);
-            if (value instanceof Document) {
-                return org.jnosql.diana.api.document.Document.of(key, of(Document.class.cast(value)));
-            } else if (isDocumentIterable(value)) {
-                List<List<org.jnosql.diana.api.document.Document>> documents = new ArrayList<>();
-                for (Object object : Iterable.class.cast(value)) {
-                    Map<?, ?> map = Map.class.cast(object);
-                    documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
-                }
-                return org.jnosql.diana.api.document.Document.of(key, documents);
-            }
-            return org.jnosql.diana.api.document.Document.of(key, Value.of(value));
+            return getDocument(key, value);
         };
         return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
+    }
+
+    private static org.jnosql.diana.api.document.Document getDocument(String key, Object value) {
+        if (value instanceof Document) {
+            return org.jnosql.diana.api.document.Document.of(key, of(Document.class.cast(value)));
+        } else if (isDocumentIterable(value)) {
+            List<List<org.jnosql.diana.api.document.Document>> documents = new ArrayList<>();
+            for (Object object : Iterable.class.cast(value)) {
+                Map<?, ?> map = Map.class.cast(object);
+                documents.add(map.entrySet().stream().map(e -> getDocument(e.getKey().toString(), e.getValue())).collect(toList()));
+            }
+            return org.jnosql.diana.api.document.Document.of(key, documents);
+        }
+        return org.jnosql.diana.api.document.Document.of(key, Value.of(value));
     }
 
     private static boolean isDocumentIterable(Object value) {

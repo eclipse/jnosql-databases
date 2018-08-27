@@ -86,10 +86,8 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     @Override
     public List<ColumnEntity> select(ColumnQuery query) {
         requireNonNull(query, "query is required");
-        BuiltStatement select = QueryUtils.select(query, keyspace);
-        ResultSet resultSet = session.execute(select);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
-                .collect(Collectors.toList());
+        QueryExecutor executor = QueryExecutor.of(query);
+        return executor.execute(keyspace, query, this);
     }
 
     @Override
@@ -158,11 +156,9 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     public List<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(level, "level is required");
-        BuiltStatement select = QueryUtils.select(query, keyspace);
-        select.setConsistencyLevel(requireNonNull(level, "ConsistencyLevel is required"));
-        ResultSet resultSet = session.execute(select);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
-                .collect(Collectors.toList());
+        QueryExecutor executor = QueryExecutor.of(query);
+        return executor.execute(keyspace, query, level, this);
+
     }
 
     @Override
