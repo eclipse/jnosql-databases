@@ -1,4 +1,4 @@
-![CouchDB Project](http://couchdb.apache.org/image/couch@2x.pngio)
+![CouchDB Project](http://couchdb.apache.org/image/logo@2x.png)
 
 
 
@@ -7,15 +7,11 @@
 
 ### How To test
 
-Once this a communication layer to Couchbase, we're using integration test, so you need to install Couchbase. The recommended way is using Docker.
+Once this a communication layer to CouchDB, we're using integration test from [testcontainers](https://www.testcontainers.org/), so you need to install Docker.
 
 ![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
 
-
 1. Install docker: https://www.docker.com/
-1. https://hub.docker.com/_/couchdb/
-1. Run docker command
-1. `docker run --name couchdb_instance -p 5984:5984 -d couchdb`
 1. Execute the test `mvn clean install`
 
 

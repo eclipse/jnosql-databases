@@ -22,7 +22,9 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.couchdb.document.configuration.CouchDBDocumentTcConfiguration;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,6 +51,13 @@ class CouchDBDocumentCollectionManagerAsyncTest {
 
     private DocumentCollectionManager entityManager;
 
+    private static CouchDBDocumentConfiguration configuration;
+
+    @BeforeAll
+    public static void setupContainer() {
+        configuration = CouchDBDocumentTcConfiguration.getTcConfiguration();
+    }
+
     @AfterAll
     public static void afterClass() throws InterruptedException {
         Thread.sleep(1_00L);
@@ -56,7 +65,6 @@ class CouchDBDocumentCollectionManagerAsyncTest {
 
     @BeforeEach
     public void setUp() {
-        CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
         CouchDBDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManagerAsync = managerFactory.getAsync("people");
         entityManager = managerFactory.get("people");

@@ -22,6 +22,7 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
+import org.jnosql.diana.couchdb.document.configuration.CouchDBDocumentTcConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     private CouchDBDocumentCollectionManager entityManager;
 
     {
-        CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
+        CouchDBDocumentConfiguration configuration =  CouchDBDocumentTcConfiguration.getTcConfiguration();
         CouchDBDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get("people");
     }

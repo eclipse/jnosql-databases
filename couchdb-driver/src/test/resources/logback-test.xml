@@ -1,0 +1,42 @@
+<!--
+   Copyright (c) 2017 Otávio Santana and others
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    and Apache License v2.0 which accompanies this distribution.
+    The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+    and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
+
+    You may elect to redistribute this code under either of these licenses.
+
+    Contributors:
+
+    Otavio Santana
+-->
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="org.apache.http" level="WARN"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
+    <logger name="org.zeroturnaround.exec" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+    <logger name="org.rnorth.tcpunixsocketproxy" level="INFO" />
+    <logger name="io.netty" level="WARN" />
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+        <Marker>PROFILER</Marker>
+        <OnMatch>DENY</OnMatch>
+    </turboFilter>
+</configuration>
