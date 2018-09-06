@@ -18,18 +18,14 @@ package org.jnosql.diana.redis.key;
 
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisBucketManagerFactory}.
@@ -47,7 +43,7 @@ import java.util.stream.Collectors;
  */
 public final class RedisConfiguration implements KeyValueConfiguration<RedisBucketManagerFactory> {
 
-    private static final String REDIS_FILE_CONFIGURATION = "diana-redis.properties";
+    private static final String FILE_CONFIGURATION = "diana-redis.properties";
 
     private static final Logger LOGGER = Logger.getLogger(RedisConfiguration.class.getName());
 
@@ -87,18 +83,8 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisBuck
 
     @Override
     public RedisBucketManagerFactory get() {
-        try {
-            Properties properties = new Properties();
-            InputStream stream = RedisConfiguration.class.getClassLoader()
-                    .getResourceAsStream(REDIS_FILE_CONFIGURATION);
-            properties.load(stream);
-            Map<String, String> collect = properties.keySet().stream()
-                    .collect(Collectors.toMap(Object::toString, s -> properties.get(s).toString()));
-            return getManagerFactory(collect);
-        } catch (IOException e) {
-            LOGGER.info("File does not found using default configuration");
-            return getManagerFactory(Collections.emptyMap());
-        }
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
+        return getManagerFactory(configuration);
     }
 
     @Override
