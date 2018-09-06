@@ -25,7 +25,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 /**
  * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisBucketManagerFactory}.
@@ -44,8 +43,6 @@ import java.util.logging.Logger;
 public final class RedisConfiguration implements KeyValueConfiguration<RedisBucketManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-redis.properties";
-
-    private static final Logger LOGGER = Logger.getLogger(RedisConfiguration.class.getName());
 
     /**
      * Creates a {@link RedisConfiguration} from map configuration
