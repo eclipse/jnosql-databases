@@ -17,7 +17,6 @@
 package org.jnosql.diana.couchdb.document;
 
 import org.jnosql.diana.api.Sort;
-import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
