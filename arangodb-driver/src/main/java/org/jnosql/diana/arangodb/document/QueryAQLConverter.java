@@ -20,6 +20,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -185,7 +186,11 @@ final class QueryAQLConverter {
         String nameParam = getNameParam(document.getName(), params);
         aql.append(SEPARATOR).append(entity).append('.').append(document.getName())
                 .append(condition).append(PARAM_APPENDER).append(nameParam);
-        params.put(nameParam, document.get());
+        if(IN.equals(condition)) {
+            params.put(nameParam, ValueUtil.convertToList(document.getValue()));
+        } else {
+            params.put(nameParam, document.get());
+        }
     }
 
     private static String getNameParam(String name, Map<String, Object> params) {

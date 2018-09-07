@@ -32,6 +32,7 @@ import com.datastax.driver.core.querybuilder.Select;
 import org.jnosql.diana.api.Condition;
 import org.jnosql.diana.api.Sort;
 import org.jnosql.diana.api.TypeReference;
+import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnCondition;
 import org.jnosql.diana.api.column.ColumnDeleteQuery;
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.StreamSupport;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.asc;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.desc;
@@ -188,7 +188,7 @@ final class QueryUtils {
                 clauses.add(QueryBuilder.lte(getName(column), value));
                 return;
             case IN:
-                clauses.add(QueryBuilder.in(getName(column), getIinValue(value)));
+                clauses.add(QueryBuilder.in(getName(column), getIinValue(column.getValue())));
                 return;
             case LIKE:
                 clauses.add(QueryBuilder.like(getName(column), value));
@@ -215,12 +215,8 @@ final class QueryUtils {
         return name;
     }
 
-    private static Object[] getIinValue(Object value) {
-        if (Iterable.class.isInstance(value)) {
-            Iterable values = Iterable.class.cast(value);
-            return StreamSupport.stream(values.spliterator(), false).toArray(Object[]::new);
-        }
-        return new Object[]{value};
+    private static Object[] getIinValue(Value value) {
+        return ValueUtil.convertToList(value).toArray();
     }
 
 

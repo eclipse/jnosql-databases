@@ -21,6 +21,7 @@ import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -69,19 +70,19 @@ final class QueryConverter {
 
         switch (condition.getCondition()) {
             case EQUALS:
-                return termQuery(document.getName(), document.get());
+                return termQuery(document.getName(), ValueUtil.convert(document.getValue()));
             case LESSER_THAN:
-                return rangeQuery(document.getName()).lt(document.get());
+                return rangeQuery(document.getName()).lt(ValueUtil.convert(document.getValue()));
             case LESSER_EQUALS_THAN:
-                return rangeQuery(document.getName()).lte(document.get());
+                return rangeQuery(document.getName()).lte(ValueUtil.convert(document.getValue()));
             case GREATER_THAN:
-                return rangeQuery(document.getName()).gt(document.get());
+                return rangeQuery(document.getName()).gt(ValueUtil.convert(document.getValue()));
             case GREATER_EQUALS_THAN:
-                return rangeQuery(document.getName()).gte(document.get());
+                return rangeQuery(document.getName()).gte(ValueUtil.convert(document.getValue()));
             case LIKE:
-                return matchQuery(document.getName(), document.get());
+                return matchQuery(document.getName(), ValueUtil.convert(document.getValue()));
             case IN:
-                return termsQuery(document.getName(), document.get());
+                return termsQuery(document.getName(), ValueUtil.convertToList(document.getValue()));
             case AND:
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                 })

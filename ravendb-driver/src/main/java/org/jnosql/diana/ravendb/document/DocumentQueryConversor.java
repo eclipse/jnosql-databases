@@ -23,6 +23,7 @@ import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,8 +102,7 @@ class DocumentQueryConversor {
                 ravenQuery.whereLessThanOrEqual(name, value);
                 return;
             case IN:
-                ravenQuery.whereIn(name, document.get(new TypeReference<List<Object>>() {
-                }));
+                ravenQuery.whereIn(name, ValueUtil.convertToList(document.getValue()));
                 return;
             case NOT:
                 ravenQuery.negateNext();

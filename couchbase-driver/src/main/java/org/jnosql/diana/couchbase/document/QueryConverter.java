@@ -26,6 +26,7 @@ import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -117,7 +118,11 @@ final class QueryConverter {
             return null;
         }
         if (!NOT_APPENDABLE.contains(condition.getCondition())) {
-            params.put(document.getName(), document.get());
+            if(Condition.BETWEEN.equals(condition.getCondition()) || Condition.IN.equals(condition.getCondition())) {
+                params.put(document.getName(), ValueUtil.convertToList(document.getValue()));
+            } else {
+                params.put(document.getName(), ValueUtil.convert(document.getValue()));
+            }
         }
 
         switch (condition.getCondition()) {
@@ -134,7 +139,9 @@ final class QueryConverter {
             case LIKE:
                 return x(document.getName()).like(x(PARAM_PREFIX + document.getName()));
             case IN:
-                return x(document.getName()).like(x(PARAM_PREFIX + document.getName()));
+                return x(document.getName()).in(x(PARAM_PREFIX + document.getName()));
+            case BETWEEN:
+                return x(document.getName()).between(x(PARAM_PREFIX + document.getName()));
             case AND:
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                 })

@@ -21,6 +21,7 @@ import org.bson.conversions.Bson;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ final class DocumentQueryConversor {
 
     public static Bson convert(DocumentCondition condition) {
         Document document = condition.getDocument();
-        Object value = document.get();
+        Object value = ValueUtil.convert(document.getValue());
         switch (condition.getCondition()) {
             case EQUALS:
                 return Filters.eq(document.getName(), value);
@@ -45,8 +46,7 @@ final class DocumentQueryConversor {
             case LESSER_EQUALS_THAN:
                 return Filters.lte(document.getName(), value);
             case IN:
-                List<Object> inList = document.get(new TypeReference<List<Object>>() {
-                });
+                List<Object> inList = ValueUtil.convertToList(document.getValue());
                 return Filters.in(document.getName(), inList.toArray());
             case NOT:
                 return Filters.not(convert(document.get(DocumentCondition.class)));

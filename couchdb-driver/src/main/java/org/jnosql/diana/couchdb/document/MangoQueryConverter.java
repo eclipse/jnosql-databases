@@ -118,7 +118,7 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 appendCondition(LTE_CONDITION, name, value, selector);
                 return;
             case IN:
-                appendCondition(IN_CONDITION, name, getArray(value), selector);
+                appendCondition(IN_CONDITION, name, getArray(document.getValue()), selector);
                 return;
             case NOT:
                 appendNot(selector, value);
@@ -178,9 +178,8 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
         condition.add(name, Value.of(value).get(String.class));
     }
 
-    private JsonArray getArray(Object value) {
-        List<Object> items = Value.of(value).get(new TypeReference<List<Object>>() {
-        });
+    private JsonArray getArray(Value value) {
+        List<Object> items = ValueUtil.convertToList(value);
         return Json.createArrayBuilder(items).build();
     }
 

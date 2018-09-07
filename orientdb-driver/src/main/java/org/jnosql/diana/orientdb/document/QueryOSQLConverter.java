@@ -22,6 +22,7 @@ import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentQuery;
+import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +137,11 @@ final class QueryOSQLConverter {
         }
         query.append(document.getName())
                 .append(condition).append(PARAM_APPENDER);
-        params.add(document.get());
+        if(IN.equals(condition)) {
+            params.add(ValueUtil.convertToList(document.getValue()));
+        } else {
+            params.add(document.get());
+        }
     }
 
     private static void appendSort(List<Sort> sorts, StringBuilder query) {
