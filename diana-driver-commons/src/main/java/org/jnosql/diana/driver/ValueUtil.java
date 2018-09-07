@@ -53,6 +53,9 @@ public final class ValueUtil {
     public static Object convert(Value value) {
         Objects.requireNonNull(value, "value is required");
         Object val = value.get();
+        if(val instanceof Iterable) {
+            return getObjects(val);
+        }
         return getObject(val);
     }
 
@@ -67,11 +70,15 @@ public final class ValueUtil {
         Objects.requireNonNull(value, "value is required");
         Object val = value.get();
         if(val instanceof Iterable) {
-            return (List<Object>) StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .map(CONVERT).collect(toList());
+            return getObjects(val);
 
         }
         return Collections.singletonList(getObject(val));
+    }
+
+    private static List<Object> getObjects(Object val) {
+        return (List<Object>) StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+                .map(CONVERT).collect(toList());
     }
 
     private static Object getObject(Object val) {

@@ -31,6 +31,18 @@ class ValueUtilTest {
     }
 
     @Test
+    public void shouldConvert2() {
+        Value value = Value.of(Arrays.asList(10, 20));
+        assertEquals(Arrays.asList(10, 20), ValueUtil.convert(value));
+    }
+
+    @Test
+    public void shouldConvert3() {
+        Value value = Value.of(Arrays.asList(Value.of(10), Value.of(20)));
+        assertEquals(Arrays.asList(10, 20), ValueUtil.convert(value));
+    }
+
+    @Test
     public void shouldConvertList() {
         Value value = Value.of(10);
         assertEquals(Collections.singletonList(10), ValueUtil.convertToList(value));
