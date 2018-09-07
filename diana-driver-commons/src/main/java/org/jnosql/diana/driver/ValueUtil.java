@@ -19,8 +19,12 @@ import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
+import java.util.List;
 import java.util.Objects;
 
+/**
+ * Utilitarian class to {@link Value}
+ */
 public final class ValueUtil {
 
     private static final ValueWriter VALUE_WRITER = ValueWriterDecorator.getInstance();
@@ -28,6 +32,12 @@ public final class ValueUtil {
     private ValueUtil() {
     }
 
+    /**
+     * converter a {@link Value} to Object
+     *
+     * @param value the value
+     * @return a object converted
+     */
     public static Object convert(Value value) {
         Objects.requireNonNull(value, "value is required");
         Object val = value.get();
@@ -35,6 +45,16 @@ public final class ValueUtil {
             return VALUE_WRITER.write(val);
         }
         return val;
+    }
+
+    /**
+     * Converts the {@link Value} to {@link List}
+     *
+     * @param value the value
+     * @return a list object
+     */
+    public static List<Object> convertToList(Value value) {
+
     }
 
 }
