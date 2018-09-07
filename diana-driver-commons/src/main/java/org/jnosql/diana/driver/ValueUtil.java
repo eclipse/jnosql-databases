@@ -64,6 +64,7 @@ public final class ValueUtil {
      * @return a list object
      */
     public static List<Object> convertToList(Value value) {
+        Objects.requireNonNull(value, "value is required");
         Object val = value.get();
         if(val instanceof Iterable) {
             return (List<Object>) StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
