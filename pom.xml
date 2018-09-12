@@ -88,14 +88,12 @@
 
     <dependencies>
 
-
         <dependency>
             <groupId>javax.json</groupId>
             <artifactId>javax.json-api</artifactId>
             <version>${javax.json.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.json.bind</groupId>
             <artifactId>javax.json.bind-api</artifactId>
@@ -103,9 +101,7 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!-- TEST DEPENDENCIES -->
-
         <dependency>
             <groupId>org.eclipse</groupId>
             <artifactId>yasson</artifactId>
@@ -156,52 +152,4 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>${junit.platform.surefire}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>${junit.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.maven.version}</version>
-                <executions>
-                    <execution>
-                        <id>pre-test</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${sonar.jacoco.reportPath}</destFile>
-                            <append>true</append>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${sonar.maven.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
 </project>
