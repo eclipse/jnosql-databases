@@ -118,8 +118,7 @@ public class RiakBucketManager implements BucketManager {
         return StreamSupport.stream(keys.spliterator(), false)
                 .map(k -> RiakUtils.createLocation(nameSpace, k))
                 .map(l -> new FetchValue.Builder(l).build())
-                .map(f ->
-                        {
+                .map(f -> {
                             try {
                                 return client.execute(f);
                             } catch (ExecutionException | InterruptedException e) {
