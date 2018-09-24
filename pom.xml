@@ -84,6 +84,7 @@
         <module>ravendb-driver</module>
         <module>redis-driver</module>
         <module>riak-driver</module>
+        <module>dynamodb-driver</module>
     </modules>
 
     <dependencies>
