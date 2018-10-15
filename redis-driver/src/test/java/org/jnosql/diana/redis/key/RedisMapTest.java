@@ -42,7 +42,7 @@ public class RedisMapTest {
 
     @BeforeEach
     public void init() {
-        entityManagerFactory = RedisTestUtils.get();
+        entityManagerFactory = RedisTestUtils.INSTANCE.get();
         vertebrates = entityManagerFactory.getMap("vertebrates", String.class, Species.class);
     }
 

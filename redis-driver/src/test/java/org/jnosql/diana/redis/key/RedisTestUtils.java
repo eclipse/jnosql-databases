@@ -16,11 +16,32 @@
 package org.jnosql.diana.redis.key;
 
 
-public class RedisTestUtils {
+import org.jnosql.diana.api.Settings;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
-    public static RedisBucketManagerFactory get() {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+public enum RedisTestUtils implements Supplier<RedisBucketManagerFactory> {
+    INSTANCE;
+
+    private GenericContainer redis =
+            new GenericContainer("redis:latest")
+                    .withExposedPorts(6379)
+                    .waitingFor(Wait.defaultWaitStrategy());
+
+    {
+        redis.start();
+    }
+
+    @Override
+    public RedisBucketManagerFactory get() {
         RedisConfiguration configuration = new RedisConfiguration();
-        RedisBucketManagerFactory managerFactory = configuration.get();
-        return managerFactory;
+        Map<String, Object> settings = new HashMap<>();
+        settings.put("redis-master-host", redis.getContainerIpAddress());
+        settings.put("redis-master-port", redis.getFirstMappedPort());
+        return configuration.get(Settings.of(settings));
     }
 }
