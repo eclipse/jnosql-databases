@@ -45,7 +45,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.jnosql.diana.ravendb.document.DocumentConfigurationUtils.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,7 +59,7 @@ public class RavenDBDocumentCollectionManagerTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        entityManager = get().get("database");
+        entityManager = DocumentConfigurationUtils.INSTANCE.get().get("database");
     }
 
     @BeforeEach

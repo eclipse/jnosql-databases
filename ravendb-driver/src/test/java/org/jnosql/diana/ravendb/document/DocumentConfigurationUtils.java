@@ -19,11 +19,13 @@ package org.jnosql.diana.ravendb.document;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 
-public final class DocumentConfigurationUtils {
+import java.util.function.Supplier;
 
-    private DocumentConfigurationUtils() {}
+public enum  DocumentConfigurationUtils implements Supplier<DocumentCollectionManagerFactory> {
 
-    public static DocumentCollectionManagerFactory get() {
+INSTANCE;
+
+    public DocumentCollectionManagerFactory get() {
         DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
         return configuration.get();
     }
