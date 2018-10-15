@@ -24,6 +24,7 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -98,10 +100,11 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldUserSearchBuilder() {
+    public void shouldUserSearchBuilder() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         TermQueryBuilder query = termQuery("name", "Poliana");
+        SECONDS.sleep(1L);
         List<DocumentEntity> account = entityManager.search(query, "person");
         assertFalse(account.isEmpty());
     }
@@ -114,9 +117,9 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
 
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        TimeUnit.SECONDS.sleep(1L);
+        SECONDS.sleep(1L);
         entityManager.delete(deleteQuery);
-        TimeUnit.SECONDS.sleep(1L);
+        SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         System.out.println(entities);
         assertTrue(entities.isEmpty());
@@ -141,7 +144,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        TimeUnit.SECONDS.sleep(1L);
+        SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
         List<Document> names = entities.stream().map(e -> e.find("name").get())
@@ -162,10 +165,11 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldFindAll() {
+    public void shouldFindAll() throws InterruptedException {
         entityManager.insert(getEntity());
 
         DocumentQuery query = select().from(COLLECTION_NAME).build();
+        SECONDS.sleep(1L);
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
     }
@@ -225,12 +229,13 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldCount() {
+    public void shouldCount() throws InterruptedException {
         DocumentEntity entity = getEntity();
         DocumentEntity entity2 = getEntity();
         entity2.add(Document.of("_id", "test"));
         entityManager.insert(entity);
         entityManager.insert(entity2);
+        SECONDS.sleep(1L);
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
     }
 
