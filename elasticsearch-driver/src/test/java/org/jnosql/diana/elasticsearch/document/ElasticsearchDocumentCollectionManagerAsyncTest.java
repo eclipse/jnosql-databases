@@ -14,7 +14,6 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.awaitility.Awaitility;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
@@ -32,13 +31,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,8 +52,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
     @BeforeEach
     public void setUp() {
-        ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
-        ElasticsearchDocumentCollectionManagerFactory managerFactory = configuration.get();
+        ElasticsearchDocumentCollectionManagerFactory managerFactory = DocumentConfigurationUtils.getFactory();
         entityManagerAsync = managerFactory.getAsync(COLLECTION_NAME);
         entityManager = managerFactory.get(INDEX);
         DocumentEntity documentEntity = getEntity();
@@ -101,9 +99,15 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManagerAsync.delete(deleteQuery);
 
-        Thread.sleep(1_000L);
-        assertTrue(entityManager.select(query).isEmpty());
+        AtomicBoolean condition = new AtomicBoolean(false);
+        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        entityManagerAsync.select(query, l -> {
+            condition.set(true);
+            entities.set(l);
 
+        });
+        await().untilTrue(condition);
+        assertTrue(entities.get().isEmpty());
     }
 
     @Test
@@ -120,7 +124,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
             atomicBoolean.set(true);
         }, "person");
 
-        Awaitility.await().untilTrue(atomicBoolean);
+        await().untilTrue(atomicBoolean);
         List<DocumentEntity> account = result.get();
         assertFalse(account.isEmpty());
     }
@@ -138,7 +142,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
             condition.set(true);
             result.set(l);
         });
-        Awaitility.await().untilTrue(condition);
+        await().untilTrue(condition);
         List<DocumentEntity> entities = result.get();
         assertFalse(entities.isEmpty());
 
@@ -157,7 +161,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
             value.set(l);
         };
         entityManagerAsync.count(DocumentEntityGerator.COLLECTION_NAME, callback);
-        Awaitility.await().untilTrue(condition);
+        await().untilTrue(condition);
         assertTrue(value.get() > 0);
 
     }

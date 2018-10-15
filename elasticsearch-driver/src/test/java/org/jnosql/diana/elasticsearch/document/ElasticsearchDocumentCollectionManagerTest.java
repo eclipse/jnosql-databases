@@ -24,12 +24,10 @@ import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -56,7 +54,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
     @BeforeEach
     public void setUp() {
-        ElasticsearchDocumentCollectionManagerFactory managerFactory = DocumentConfigurationUtils.getConfiguration();
+        ElasticsearchDocumentCollectionManagerFactory managerFactory = DocumentConfigurationUtils.getFactory();
         entityManager = managerFactory.get(INDEX);
 
     }

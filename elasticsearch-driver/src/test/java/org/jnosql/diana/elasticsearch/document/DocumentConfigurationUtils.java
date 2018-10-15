@@ -34,7 +34,7 @@ final class DocumentConfigurationUtils {
     private DocumentConfigurationUtils() {
     }
 
-    public static ElasticsearchDocumentCollectionManagerFactory getConfiguration() {
+    public static ElasticsearchDocumentCollectionManagerFactory getFactory() {
         es.start();
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         Map<String, Object> settings = new HashMap<>();
