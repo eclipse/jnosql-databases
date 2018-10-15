@@ -20,29 +20,27 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.couchdb.document.CouchDBDocumentCollectionManagerFactory;
 import org.jnosql.diana.couchdb.document.CouchDBDocumentConfiguration;
+import org.testcontainers.containers.GenericContainer;
 
-public class CouchDBDocumentTcConfiguration extends CouchDBDocumentConfiguration {
+import java.util.function.Supplier;
 
-	private static CouchDBDocumentTcConfiguration tcConfiguration;
-	private CouchDBContainer couchDB;
+public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentCollectionManagerFactory> {
 
-	private CouchDBDocumentTcConfiguration() {
-		couchDB = new CouchDBContainer();
-		couchDB.start();
-	}
+    INSTANCE;
 
-	public static CouchDBDocumentTcConfiguration getTcConfiguration() {
-		if (tcConfiguration == null) {
-			tcConfiguration = new CouchDBDocumentTcConfiguration();
-		}
-		return tcConfiguration;
-	}
 
-	@Override
-	public CouchDBDocumentCollectionManagerFactory get() {
-		SettingsBuilder builder = Settings.builder();
-		builder.put(CouchDBDocumentConfiguration.PORT, couchDB.getFirstMappedPort());
-		return super.get(builder.build());
-	}
+    private GenericContainer couchDB = new CouchDBContainer();
+
+    {
+        couchDB.start();
+    }
+
+    @Override
+    public CouchDBDocumentCollectionManagerFactory get() {
+        CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
+        SettingsBuilder builder = Settings.builder();
+        builder.put(CouchDBDocumentConfiguration.PORT, couchDB.getFirstMappedPort());
+        return configuration.get(builder.build());
+    }
 
 }
