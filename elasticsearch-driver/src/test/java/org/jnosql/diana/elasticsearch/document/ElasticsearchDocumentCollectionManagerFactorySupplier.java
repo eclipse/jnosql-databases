@@ -20,22 +20,26 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
-final class DocumentConfigurationUtils {
+enum ElasticsearchDocumentCollectionManagerFactorySupplier implements Supplier<ElasticsearchDocumentCollectionManagerFactory> {
 
-    private static GenericContainer es =
+INSTACE;
+
+    private GenericContainer es =
             new GenericContainer("docker.elastic.co/elasticsearch/elasticsearch:6.4.1")
                     .withExposedPorts(9200, 9300)
                     .withEnv("discovery.type", "single-node")
                     .waitingFor(Wait.forHttp("/")
                             .forPort(9200)
                             .forStatusCode(200));
-
-    private DocumentConfigurationUtils() {
+    {
+        es.start();
     }
 
-    public static ElasticsearchDocumentCollectionManagerFactory getFactory() {
-        es.start();
+
+    @Override
+    public ElasticsearchDocumentCollectionManagerFactory get() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         Map<String, Object> settings = new HashMap<>();
         settings.put("elasticsearch-host-1", es.getContainerIpAddress() + ':' + es.getFirstMappedPort());
@@ -43,12 +47,4 @@ final class DocumentConfigurationUtils {
         return configuration.get(Settings.of(settings));
     }
 
-    public static ElasticsearchDocumentCollectionManagerFactory getFactoryAsync() {
-        es.start();
-        ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
-        Map<String, Object> settings = new HashMap<>();
-        settings.put("elasticsearch-host-1", es.getContainerIpAddress() + ':' + es.getFirstMappedPort());
-        settings.put("elasticsearch-cluster-name", "elasticsearch");
-        return configuration.getAsync(Settings.of(settings));
-    }
 }

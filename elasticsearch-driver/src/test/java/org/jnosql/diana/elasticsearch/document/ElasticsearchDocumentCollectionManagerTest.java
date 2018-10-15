@@ -54,7 +54,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
     @BeforeEach
     public void setUp() {
-        ElasticsearchDocumentCollectionManagerFactory managerFactory = DocumentConfigurationUtils.getFactory();
+        ElasticsearchDocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTACE.get();
         entityManager = managerFactory.get(INDEX);
 
     }
