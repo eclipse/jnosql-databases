@@ -58,12 +58,6 @@
             <artifactId>arangodb-java-driver-async</artifactId>
             <version>${arango.driver}</version>
         </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>${testcontainers.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
