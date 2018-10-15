@@ -35,8 +35,7 @@ import java.util.function.Consumer;
 import static org.awaitility.Awaitility.await;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.jnosql.diana.arangodb.document.ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,8 +51,8 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
     @BeforeEach
     public void setUp() {
         random = new Random();
-        entityManagerAsync = getConfiguration().getAsync("database");
-        entityManager = getConfiguration().get("database");
+        entityManagerAsync = INSTANCE.get().getAsync("database");
+        entityManager = INSTANCE.get().get("database");
     }
 
 

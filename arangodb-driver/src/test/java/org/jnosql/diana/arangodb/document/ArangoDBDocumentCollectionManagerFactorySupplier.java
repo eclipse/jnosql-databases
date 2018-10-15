@@ -19,19 +19,21 @@ package org.jnosql.diana.arangodb.document;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public final class DocumentConfigurationUtils {
+import java.util.function.Supplier;
 
-    private static GenericContainer arangodb =
+enum  ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<ArangoDBDocumentCollectionManagerFactory> {
+
+    INSTANCE;
+
+    private GenericContainer arangodb =
             new GenericContainer("arangodb/arangodb:latest")
                     .withExposedPorts(8529)
                     .withEnv("ARANGO_NO_AUTH", "1")
                     .waitingFor(Wait.forHttp("/")
                             .forStatusCode(200));
 
-    private DocumentConfigurationUtils() {
-    }
-
-    public static ArangoDBDocumentCollectionManagerFactory getConfiguration() {
+    @Override
+    public ArangoDBDocumentCollectionManagerFactory get() {
         arangodb.start();
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());

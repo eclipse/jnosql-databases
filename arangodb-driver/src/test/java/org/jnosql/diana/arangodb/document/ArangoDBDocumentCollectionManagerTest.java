@@ -38,8 +38,11 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.jnosql.diana.arangodb.document.DocumentConfigurationUtils.getConfiguration;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.jnosql.diana.arangodb.document.ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ArangoDBDocumentCollectionManagerTest {
 
@@ -51,7 +54,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     @BeforeEach
     public void setUp() {
         random = new Random();
-        entityManager = getConfiguration().get("database");
+        entityManager = INSTANCE.get().get("database");
     }
 
     @Test

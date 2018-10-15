@@ -20,6 +20,7 @@ import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.jnosql.diana.arangodb.document.ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ArangoDBDocumentCollectionManagerFactoryTest {
@@ -28,7 +29,7 @@ public class ArangoDBDocumentCollectionManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        managerFactory = DocumentConfigurationUtils.getConfiguration();
+        managerFactory = INSTANCE.get();
     }
 
     @Test

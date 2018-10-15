@@ -19,9 +19,13 @@ import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public final class ArangoDBTestUtils {
+import java.util.function.Supplier;
 
-    private static GenericContainer arangodb =
+enum BucketManagerFactorySupplier implements Supplier<BucketManagerFactory> {
+
+    INSTANCE;
+
+    private GenericContainer arangodb =
             new GenericContainer("arangodb/arangodb:latest")
                     .withExposedPorts(8529)
                     .withEnv("ARANGO_NO_AUTH", "1")
@@ -29,7 +33,8 @@ public final class ArangoDBTestUtils {
                             .forStatusCode(200));
 
 
-    public static BucketManagerFactory get() {
+    @Override
+    public BucketManagerFactory get() {
         arangodb.start();
         ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
         configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());
