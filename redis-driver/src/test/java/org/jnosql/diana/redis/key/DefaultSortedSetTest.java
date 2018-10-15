@@ -38,7 +38,7 @@ public class DefaultSortedSetTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisTestUtils.INSTANCE.get();
+        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
         sortedSet = keyValueEntityManagerFactory.getSortedSet("world-cup-2018");
         sortedSet.clear();
     }

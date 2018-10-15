@@ -30,7 +30,7 @@ public class DefaultCounterTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisTestUtils.INSTANCE.get();
+        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
         counter = keyValueEntityManagerFactory.getCounter("counter-redis");
         counter.delete();
     }

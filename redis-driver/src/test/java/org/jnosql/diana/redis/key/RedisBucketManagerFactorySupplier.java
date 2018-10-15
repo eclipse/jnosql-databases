@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public enum RedisTestUtils implements Supplier<RedisBucketManagerFactory> {
+public enum RedisBucketManagerFactorySupplier implements Supplier<RedisBucketManagerFactory> {
     INSTANCE;
 
     private GenericContainer redis =

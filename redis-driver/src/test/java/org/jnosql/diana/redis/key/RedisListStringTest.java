@@ -39,7 +39,7 @@ public class RedisListStringTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisTestUtils.INSTANCE.get();
+        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
         fruits = keyValueEntityManagerFactory.getList(FRUITS, String.class);
     }
 

@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class RedisMapStringTest {
 
     @BeforeEach
     public void init() {
-        entityManagerFactory = RedisTestUtils.INSTANCE.get();
+        entityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
         vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
     }
 
