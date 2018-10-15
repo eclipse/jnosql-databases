@@ -42,4 +42,13 @@ final class DocumentConfigurationUtils {
         settings.put("elasticsearch-cluster-name", "elasticsearch");
         return configuration.get(Settings.of(settings));
     }
+
+    public static ElasticsearchDocumentCollectionManagerFactory getFactoryAsync() {
+        es.start();
+        ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
+        Map<String, Object> settings = new HashMap<>();
+        settings.put("elasticsearch-host-1", es.getContainerIpAddress() + ':' + es.getFirstMappedPort());
+        settings.put("elasticsearch-cluster-name", "elasticsearch");
+        return configuration.getAsync(Settings.of(settings));
+    }
 }

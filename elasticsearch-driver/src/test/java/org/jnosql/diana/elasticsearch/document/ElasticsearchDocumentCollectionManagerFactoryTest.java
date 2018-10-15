@@ -14,30 +14,22 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ElasticsearchDocumentCollectionManagerFactoryTest {
 
-    private ElasticsearchDocumentConfiguration configuration;
-
-    @BeforeEach
-    public void setUp() {
-        configuration = new ElasticsearchDocumentConfiguration();
-
-    }
 
     @Test
     public void shouldCreateEntityManager() {
-        ElasticsearchDocumentCollectionManagerFactory factory = configuration.get();
+        ElasticsearchDocumentCollectionManagerFactory factory = DocumentConfigurationUtils.getFactory();
         assertNotNull(factory.get("database"));
     }
 
     @Test
     public void shouldCreateEntityManagerAsync() {
-        ElasticsearchDocumentCollectionManagerFactory factory = configuration.getAsync();
+        ElasticsearchDocumentCollectionManagerFactory factory = DocumentConfigurationUtils.getFactoryAsync();
         assertNotNull(factory.getAsync("database"));
     }
 }
