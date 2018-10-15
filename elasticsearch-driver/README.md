@@ -10,10 +10,6 @@ Once this a communication layer to Elasticsearch, we're using integration test, 
 
 ![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
 
-1. Install docker: https://www.docker.com/
-1. https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
-1. Run docker command
-1. `docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.4.1`
 1. Execute the maven install `mvn clean install`
 
 

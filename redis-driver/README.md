@@ -12,10 +12,6 @@ Once this is a communication layer to Redis, we're using integration test, so yo
 ![Docker](https://www.docker.com/sites/default/files/horizontal_large.png)
 
 
-1. Install docker: https://www.docker.com/
-1. https://store.docker.com/images/redis
-1. Run docker command
-1. `docker run --name redis-instance -p 6379:6379 -d redis`
 1. Execute the maven install `mvn clean install`
 
 
