@@ -34,7 +34,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <infinispan.version>9.2.5.Final</infinispan.version>
+        <infinispan.version>9.4.0.Final</infinispan.version>
     </properties>
     <dependencies>
         <dependency>
@@ -56,6 +56,11 @@
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
             <version>${infinispan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-embedded</artifactId>
+            <version>9.1.7.Final</version>
         </dependency>
     </dependencies>
 </project>
