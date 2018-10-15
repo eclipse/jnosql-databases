@@ -30,7 +30,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <arango.driver>4.5.0</arango.driver>
+        <arango.driver>5.0.1</arango.driver>
     </properties>
     <dependencies>
         <dependency>
