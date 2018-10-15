@@ -63,7 +63,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <monbodb.driver>3.7.1</monbodb.driver>
+        <monbodb.driver>3.8.2</monbodb.driver>
+        <flapdoodle.embed.mongo>2.1.1</flapdoodle.embed.mongo>
     </properties>
     <dependencies>
         <dependency>
@@ -89,7 +90,7 @@
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>2.0.3</version>
+            <version>${flapdoodle.embed.mongo}</version>
         </dependency>
     </dependencies>
     <repositories>
