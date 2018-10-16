@@ -50,7 +50,7 @@ public class DynamoTableUtils {
 		return attributeDefinitionBuilder.build();
 	}
 	
-	public static ProvisionedThroughput createProvisionedThroughput(Long readCapacityUnits , Long writeCapacityUnit  ) {
+	public static ProvisionedThroughput createProvisionedThroughput(Long readCapacityUnits , Long writeCapacityUnit) {
 		
 		ProvisionedThroughput.Builder provisionedThroughputBuilder = ProvisionedThroughput.builder();
 		
@@ -76,7 +76,7 @@ public class DynamoTableUtils {
 		return Collections.singletonMap(KEY, ScalarAttributeType.S);
 	}
 
-	public static void manageTables(String tableName, DynamoDbClient client) {
+	public static void manageTables(String tableName, DynamoDbClient client, Long readCapacityUnits , Long writeCapacityUnit) {
 
 		boolean more_tables = true;
 		String last_name = null;
@@ -95,7 +95,7 @@ public class DynamoTableUtils {
 				List<String> table_names = response.tableNames();
 
 				if (table_names.size() == 0) {
-					createTable(tableName, client);
+					createTable(tableName, client,readCapacityUnits ,writeCapacityUnit);
 				} else {
 					last_name = response.lastEvaluatedTableName();
 					if (last_name == null) {
@@ -108,13 +108,10 @@ public class DynamoTableUtils {
 		}
 	}
 
-	private static void createTable(String tableName, DynamoDbClient client) {
+	private static void createTable(String tableName, DynamoDbClient client , Long readCapacityUnits , Long writeCapacityUnit) {
 		
 		Map<String, KeyType> keyDefinition = createKeyDefinition();
 		Map<String, ScalarAttributeType> attributeDefinition = createAttributesType();
-		
-		Long readCapacityUnits = null;
-		Long writeCapacityUnit = null;
 		
 		client.createTable(CreateTableRequest.builder()
 				.tableName(tableName)

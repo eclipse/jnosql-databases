@@ -38,12 +38,12 @@ public class DynamoDBBucketManagerFactory implements BucketManagerFactory<Dynamo
 		return getBucketManager(bucketName, null, null);
 	}
 	
-	public DynamoDBBucketManager getBucketManager(String bucketName, Long readCapacityUnits , Long writeCapacityUnit) {
+	public DynamoDBBucketManager getBucketManager(String bucketName,Long readCapacityUnits , Long writeCapacityUnit) {
 		
-		DynamoTableUtils.manageTables(bucketName, client);
+		DynamoTableUtils.manageTables(bucketName, client,readCapacityUnits,writeCapacityUnit);
 		return new DynamoDBBucketManager(client, bucketName);
 	}
-
+	
 	@Override
 	public <T> List<T> getList(String bucketName, Class<T> clazz) {
 		throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
