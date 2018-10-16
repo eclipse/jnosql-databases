@@ -33,9 +33,13 @@ enum BucketManagerFactorySupplier implements Supplier<BucketManagerFactory> {
                             .forStatusCode(200));
 
 
+    {
+        arangodb.start();
+    }
+
     @Override
     public BucketManagerFactory get() {
-        arangodb.start();
+
         ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
         configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());
         return configuration.get();
