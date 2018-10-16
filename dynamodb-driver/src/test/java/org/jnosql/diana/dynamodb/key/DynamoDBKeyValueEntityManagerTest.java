@@ -1,0 +1,118 @@
+package org.jnosql.diana.dynamodb.key;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.dynamodb.DynamoDBTestUtils;
+import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class DynamoDBKeyValueEntityManagerTest {
+	
+	private BucketManager keyValueEntityManager;
+
+    private BucketManagerFactory keyValueEntityManagerFactory;
+    
+    private DynamoDBKeyValueConfiguration configuration;
+
+    private User userOtavio = new User("otavio");
+    private KeyValueEntity keyValueOtavio = KeyValueEntity.of("otavio", Value.of(userOtavio));
+
+    private User userSoro = new User("soro");
+    private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
+
+    @BeforeEach
+    public void init() {
+        keyValueEntityManagerFactory = DynamoDBTestUtils.get();
+        keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
+    }
+
+
+    @Test
+    public void shouldPutValue() {
+        keyValueEntityManager.put("otavio", userOtavio);
+        Optional<Value> otavio = keyValueEntityManager.get("otavio");
+        assertTrue(otavio.isPresent());
+        assertEquals(userOtavio, otavio.get().get(User.class));
+    }
+
+    @Test
+    public void shouldPutKeyValue() {
+        keyValueEntityManager.put(keyValueOtavio);
+        Optional<Value> otavio = keyValueEntityManager.get("otavio");
+        assertTrue(otavio.isPresent());
+        assertEquals(userOtavio, otavio.get().get(User.class));
+    }
+
+    @Test
+    public void shouldPutIterableKeyValue() {
+
+
+        keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
+        Optional<Value> otavio = keyValueEntityManager.get("otavio");
+        assertTrue(otavio.isPresent());
+        assertEquals(userOtavio, otavio.get().get(User.class));
+
+        Optional<Value> soro = keyValueEntityManager.get("soro");
+        assertTrue(soro.isPresent());
+        assertEquals(userSoro, soro.get().get(User.class));
+    }
+
+    @Test
+    public void shouldMultiGet() {
+        User user = new User("otavio");
+        KeyValueEntity keyValue = KeyValueEntity.of("otavio", Value.of(user));
+        keyValueEntityManager.put(keyValue);
+        assertNotNull(keyValueEntityManager.get("otavio"));
+
+
+    }
+
+    @Test
+    public void shouldRemoveKey() {
+
+        keyValueEntityManager.put(keyValueOtavio);
+        assertTrue(keyValueEntityManager.get("otavio").isPresent());
+        keyValueEntityManager.remove("otavio");
+        assertFalse(keyValueEntityManager.get("otavio").isPresent());
+    }
+
+    @Test
+    public void shouldRemoveMultiKey() {
+
+        keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
+        List<String> keys = asList("otavio", "soro");
+        Iterable<Value> values = keyValueEntityManager.get(keys);
+        assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), containsInAnyOrder(userOtavio, userSoro));
+        keyValueEntityManager.remove(keys);
+        Iterable<Value> users = values;
+        assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
+    }
+    
+    @AfterAll
+    public static void shutDown() {
+    	DynamoDBTestUtils.shutDown();
+    }
+
+}
