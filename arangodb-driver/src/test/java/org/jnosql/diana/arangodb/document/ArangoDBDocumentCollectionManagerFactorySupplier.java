@@ -25,7 +25,7 @@ enum  ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<Arang
 
     INSTANCE;
 
-    private GenericContainer arangodb =
+    private final GenericContainer arangodb =
             new GenericContainer("arangodb/arangodb:latest")
                     .withExposedPorts(8529)
                     .withEnv("ARANGO_NO_AUTH", "1")

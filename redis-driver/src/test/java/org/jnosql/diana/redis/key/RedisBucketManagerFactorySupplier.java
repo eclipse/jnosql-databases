@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 public enum RedisBucketManagerFactorySupplier implements Supplier<RedisBucketManagerFactory> {
     INSTANCE;
 
-    private GenericContainer redis =
+    private final GenericContainer redis =
             new GenericContainer("redis:latest")
                     .withExposedPorts(6379)
                     .waitingFor(Wait.defaultWaitStrategy());

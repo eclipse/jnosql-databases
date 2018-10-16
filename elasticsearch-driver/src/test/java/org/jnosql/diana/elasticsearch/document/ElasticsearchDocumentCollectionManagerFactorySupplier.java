@@ -26,7 +26,7 @@ enum ElasticsearchDocumentCollectionManagerFactorySupplier implements Supplier<E
 
 INSTACE;
 
-    private GenericContainer es =
+    private final GenericContainer es =
             new GenericContainer("docker.elastic.co/elasticsearch/elasticsearch:6.4.1")
                     .withExposedPorts(9200, 9300)
                     .withEnv("discovery.type", "single-node")
