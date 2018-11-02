@@ -17,6 +17,7 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.CodecRegistry;
+import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.core.UDTValue;
@@ -97,7 +98,8 @@ final class QueryUtils {
             if (Column.class.isInstance(object)) {
                 Column column = Column.class.cast(object);
                 Object convert = ValueUtil.convert(column.getValue());
-                TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(convert);
+                DataType fieldType = userType.getFieldType(column.getName());
+                TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(fieldType);
                 udtValue.set(getName(column), convert, objectTypeCodec);
 
             } else if (Iterable.class.isInstance(object)) {
