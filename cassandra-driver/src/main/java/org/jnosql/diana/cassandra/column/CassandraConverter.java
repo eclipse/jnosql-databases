@@ -30,6 +30,7 @@ import org.jnosql.diana.api.column.ColumnEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -49,8 +50,9 @@ final class CassandraConverter {
             DataType type = definition.getType();
             columnFamily = definition.getTable();
             Object result = CassandraConverter.get(definition, row);
-            columns.add(getColumn(definition, result));
-
+            if (Objects.nonNull(result)) {
+                columns.add(getColumn(definition, result));
+            }
         }
         return ColumnEntity.of(columnFamily, columns);
     }
