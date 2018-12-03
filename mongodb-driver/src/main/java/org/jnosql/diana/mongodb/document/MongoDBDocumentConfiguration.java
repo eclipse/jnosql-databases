@@ -44,7 +44,10 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
 
     private static final String FILE_CONFIGURATION = "diana-mongodb.properties";
 
+    private static final String PREFIX_SERVER_HOST = "mongodb-server-host-";
+
     static final int DEFAULT_PORT = 27017;
+
 
     /**
      * Creates a {@link MongoDBDocumentCollectionManagerFactory} from map configurations
@@ -55,7 +58,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
      */
     public MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         requireNonNull(configurations, "configurations is required");
-        List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith("mongodb-server-host-"))
+        List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith(PREFIX_SERVER_HOST))
                 .map(configurations::get).map(HostPortConfiguration::new)
                 .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
         if (servers.isEmpty()) {
@@ -101,6 +104,16 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
     }
 
     @Override
+    public MongoDBDocumentCollectionManagerFactory get(String pathFileConfig) throws NullPointerException {
+        requireNonNull(pathFileConfig, "settings is required");
+
+        Map<String, String> configuration = ConfigurationReader.from(pathFileConfig);
+        return get(configurations);
+    }
+
+
+
+    @Override
     public MongoDBDocumentCollectionManagerAsyncFactory getAsync() {
         Map<String, String> configurations = ConfigurationReader.from(FILE_CONFIGURATION);
         return getAsync(configurations);
@@ -131,7 +144,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
 
 
     private MongoDBDocumentCollectionManagerAsyncFactory getAsync(Map<String, String> configurations) {
-        List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith("mongodb-server-host-"))
+        List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith(PREFIX_SERVER_HOST))
                 .map(configurations::get).map(HostPortConfiguration::new)
                 .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
         if (servers.isEmpty()) {
