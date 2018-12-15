@@ -18,7 +18,6 @@ package org.jnosql.diana.mongodb.document;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.api.document.DocumentConfiguration;
-import org.jnosql.diana.driver.ConfigurationReader;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -47,16 +46,8 @@ public class MongoDBDocumentConfigurationTest {
         assertNotNull(configuration.getAsync(settings));
     }
 
-
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
-        DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = ((MongoDBDocumentConfiguration)configuration).get("mongodb-conf.properties");
-        assertNotNull(managerFactory);
-    }
-
-    @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByDefaultFile() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);

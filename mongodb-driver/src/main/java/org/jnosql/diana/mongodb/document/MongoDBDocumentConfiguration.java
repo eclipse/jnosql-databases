@@ -105,34 +105,20 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
 
     /**
      * Reads configuration from file configuration that is in the path and then creates a
-     * {@link MongoDBDocumentCollectionManagerFactory} instance.
+     * {@link DocumentCollectionManagerFactory} instance.
      *
-     * @param path he path to file configuration
+     * @param paththe path to file configuration
      *
-     * @return a {@link MongoDBDocumentCollectionManagerFactory} instance
+     * @return a {@link DocumentCollectionManagerFactory} instance
      */
 
     public MongoDBDocumentCollectionManagerFactory get(String path) throws NullPointerException {
-        requireNonNull(path, "settings is required");
+        requireNonNull(pathFileConfig, "settings is required");
 
-        Map<String, String> configurations = ConfigurationReader.from(path);
+        Map<String, String> configuration = ConfigurationReader.from(path);
         return get(configurations);
     }
 
-    /**
-     * Reads configuration from file configuration that is in the path and then creates a
-     * {@link MongoDBDocumentCollectionManagerAsyncFactory} instance.
-     *
-     * @param path the path to file configuration
-     *
-     * @return a {@link MongoDBDocumentCollectionManagerAsyncFactory} instance
-     */
-    public MongoDBDocumentCollectionManagerAsyncFactory getAsync(String path) throws NullPointerException {
-        requireNonNull(path, "settings is required");
-
-        Map<String, String> configurations = ConfigurationReader.from(path);
-        return getAsync(configurations);
-    }
 
 
     @Override
