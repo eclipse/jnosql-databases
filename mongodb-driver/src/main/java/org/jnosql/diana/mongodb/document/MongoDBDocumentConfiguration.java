@@ -103,12 +103,11 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
         return get(configurations);
     }
 
-    @Override
     public MongoDBDocumentCollectionManagerFactory get(String pathFileConfig) throws NullPointerException {
         requireNonNull(pathFileConfig, "settings is required");
 
         Map<String, String> configuration = ConfigurationReader.from(pathFileConfig);
-        return get(configurations);
+        return get(configuration);
     }
 
 
