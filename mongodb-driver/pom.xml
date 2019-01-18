@@ -64,7 +64,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <monbodb.driver>3.9.1</monbodb.driver>
-        <flapdoodle.embed.mongo>2.1.1</flapdoodle.embed.mongo>
+        <flapdoodle.embed.mongo>2.2.0</flapdoodle.embed.mongo>
     </properties>
     <dependencies>
         <dependency>
