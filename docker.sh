@@ -4,3 +4,4 @@ docker run --name elasticsearch-instance -p 9300:9300 -p 9200:9200 -d elasticsea
 docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb
 docker run --name redis-instance -p 6379:6379 -d redis
 docker run --name riak-instance -d -p 8087:8087 -p 8098:8098 basho/riak-ts
+./dynamodb-driver/dynamoDockerRun.sh
