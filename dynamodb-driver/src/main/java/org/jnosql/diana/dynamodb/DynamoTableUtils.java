@@ -95,17 +95,17 @@ public final class DynamoTableUtils {
 
     public static void manageTables(String tableName, DynamoDbClient client, Long readCapacityUnits, Long writeCapacityUnit) {
 
-        boolean more_tables = true;
-        String last_name = null;
+        boolean hasTable = true;
+        String lastName = null;
 
-        while (more_tables) {
+        while (hasTable) {
             try {
                 ListTablesResponse response = null;
-                if (last_name == null) {
+                if (lastName == null) {
                     ListTablesRequest request = ListTablesRequest.builder().build();
                     response = client.listTables(request);
                 } else {
-                    ListTablesRequest request = ListTablesRequest.builder().exclusiveStartTableName(last_name).build();
+                    ListTablesRequest request = ListTablesRequest.builder().exclusiveStartTableName(lastName).build();
                     response = client.listTables(request);
                 }
 
@@ -114,9 +114,9 @@ public final class DynamoTableUtils {
                 if (table_names.size() == 0) {
                     createTable(tableName, client, readCapacityUnits, writeCapacityUnit);
                 } else {
-                    last_name = response.lastEvaluatedTableName();
-                    if (last_name == null) {
-                        more_tables = false;
+                    lastName = response.lastEvaluatedTableName();
+                    if (lastName == null) {
+                        hasTable = false;
                     }
                 }
             } catch (DynamoDbException e) {
