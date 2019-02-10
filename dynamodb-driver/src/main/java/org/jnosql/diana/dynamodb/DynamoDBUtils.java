@@ -45,6 +45,8 @@ public class DynamoDBUtils {
     private static final AttributeValue.Builder attributeValueBuilder = AttributeValue.builder();
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
+    private DynamoDBUtils() {
+    }
 
     public static <K, V> Map<String, AttributeValue> createAttributeValues(K key, V value) {
 
