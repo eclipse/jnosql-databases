@@ -14,8 +14,8 @@
  */
 package org.jnosql.diana.dynamodb;
 
-import static org.jnosql.diana.api.key.KeyValueEntity.KEY;
-import static org.jnosql.diana.api.key.KeyValueEntity.VALUE;
+import static org.jnosql.diana.driver.ConfigurationAmazonEntity.KEY;
+import static org.jnosql.diana.driver.ConfigurationAmazonEntity.VALUE;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +31,6 @@ import javax.json.bind.Jsonb;
 
 import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.driver.JsonbSupplier;
-import org.jnosql.diana.driver.ValueJSON;
 
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;

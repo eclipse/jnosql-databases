@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2018 Otávio Santana and others
+ *  Copyright (c) 2017 Otávio Santana and others
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -12,14 +12,11 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.dynamodb;
+package org.jnosql.diana.driver;
 
-public interface DynamoDBBuilder {
+public class ConfigurationAmazonEntity {
 	
-	void endpoint(String endpoint);
-	void region(String region);
-	void profile(String profile);
-	void awsAccessKey(String awsAccessKey);
-	void awsSecretAccess(String awsSecretAccess);
-    
+	public static final String KEY = "key";
+	public static final String VALUE = "value";
+
 }

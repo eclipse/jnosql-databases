@@ -15,14 +15,11 @@
 package org.jnosql.diana.dynamodb;
 
 import java.net.URI;
-import java.time.Duration;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
@@ -31,7 +28,6 @@ public class DynamoDBBuilderSync implements DynamoDBBuilder{
 
 	
 	private final DynamoDbClientBuilder dynamoDB = DynamoDbClient.builder();
-	private final ApacheSdkHttpClientFactory.Builder apacheClientFactory =  ApacheSdkHttpClientFactory.builder();
 	
 	private String awsAccessKey;
 	private String awsSecretAccess;
@@ -57,9 +53,6 @@ public class DynamoDBBuilderSync implements DynamoDBBuilder{
 
 	public DynamoDbClient build() {
 		
-		SdkHttpClient createHttpClient = apacheClientFactory.build().createHttpClient();
-		dynamoDB.httpClient(createHttpClient);
-		
 		boolean accessKey = awsAccessKey != null && !awsAccessKey.equals("");
 		boolean secretAccess = awsSecretAccess != null && !awsSecretAccess.equals("");
 		
@@ -72,17 +65,6 @@ public class DynamoDBBuilderSync implements DynamoDBBuilder{
 		}
 		
 		return dynamoDB.build();
-	}
-
-	@Override
-	public void maxConnections(int maxConnections) {
-		apacheClientFactory.maxConnections(maxConnections);
-		
-	}
-
-	@Override
-	public void timeout(int timeout) {
-		apacheClientFactory.connectionTimeout(Duration.ofMillis(timeout));
 	}
 
 	@Override
