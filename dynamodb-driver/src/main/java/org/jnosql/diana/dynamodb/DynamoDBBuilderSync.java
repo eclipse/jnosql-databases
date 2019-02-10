@@ -14,8 +14,6 @@
  */
 package org.jnosql.diana.dynamodb;
 
-import java.net.URI;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -24,56 +22,58 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
 
-public class DynamoDBBuilderSync implements DynamoDBBuilder{
+import java.net.URI;
 
-	
-	private final DynamoDbClientBuilder dynamoDB = DynamoDbClient.builder();
-	
-	private String awsAccessKey;
-	private String awsSecretAccess;
-		                          
-	
-	@Override
-	public void endpoint(String endpoint) {
-		dynamoDB.endpointOverride(URI.create(endpoint));
-	}
+public class DynamoDBBuilderSync implements DynamoDBBuilder {
 
-	@Override
-	public void region(String region) {
-		dynamoDB.region(Region.of(region));
-	}
 
-	@Override
-	public void profile(String profile) {
-		dynamoDB.credentialsProvider(ProfileCredentialsProvider.builder()
+    private final DynamoDbClientBuilder dynamoDB = DynamoDbClient.builder();
+
+    private String awsAccessKey;
+    private String awsSecretAccess;
+
+
+    @Override
+    public void endpoint(String endpoint) {
+        dynamoDB.endpointOverride(URI.create(endpoint));
+    }
+
+    @Override
+    public void region(String region) {
+        dynamoDB.region(Region.of(region));
+    }
+
+    @Override
+    public void profile(String profile) {
+        dynamoDB.credentialsProvider(ProfileCredentialsProvider.builder()
                 .profileName(profile)
                 .build());
-		
-	}
 
-	public DynamoDbClient build() {
-		
-		boolean accessKey = awsAccessKey != null && !awsAccessKey.equals("");
-		boolean secretAccess = awsSecretAccess != null && !awsSecretAccess.equals("");
-		
-		
-		if(accessKey && secretAccess){
-			
-			AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(awsAccessKey,awsSecretAccess);
-	        AwsCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider.create(awsBasicCredentials);
-	        dynamoDB.credentialsProvider(staticCredentialsProvider);
-		}
-		
-		return dynamoDB.build();
-	}
+    }
 
-	@Override
-	public void awsAccessKey(String awsAccessKey) {
-		this.awsAccessKey = awsAccessKey;
-	}
+    public DynamoDbClient build() {
 
-	@Override
-	public void awsSecretAccess(String awsSecretAccess) {
-		this.awsSecretAccess = awsSecretAccess;
-	}
+        boolean accessKey = awsAccessKey != null && !awsAccessKey.equals("");
+        boolean secretAccess = awsSecretAccess != null && !awsSecretAccess.equals("");
+
+
+        if (accessKey && secretAccess) {
+
+            AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(awsAccessKey, awsSecretAccess);
+            AwsCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider.create(awsBasicCredentials);
+            dynamoDB.credentialsProvider(staticCredentialsProvider);
+        }
+
+        return dynamoDB.build();
+    }
+
+    @Override
+    public void awsAccessKey(String awsAccessKey) {
+        this.awsAccessKey = awsAccessKey;
+    }
+
+    @Override
+    public void awsSecretAccess(String awsSecretAccess) {
+        this.awsSecretAccess = awsSecretAccess;
+    }
 }
