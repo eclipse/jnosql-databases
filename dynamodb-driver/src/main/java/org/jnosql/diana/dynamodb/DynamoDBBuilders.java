@@ -25,8 +25,6 @@ final class DynamoDBBuilders {
 	 private static final String ENDPOINT = "dynamodb.endpoint";
 	 private static final String REGION = "dynamodb.region";
 	 private static final String PROFILE = "dynamodb.profile";
-	 private static final String TIMEOUT = "dynamodb.timeout";
-	 private static final String MAXCONNECTIONS = "dynamodb.maxconnections";
 	 private static final String AWS_ACCESSKEY = "dynamodb.awsaccesskey";
 	 private static final String AWS_SECRETACCESS = "dynamodb.secretaccess";
 	 
@@ -37,8 +35,6 @@ final class DynamoDBBuilders {
 		 ofNullable(settings.get(ENDPOINT)).map(Object::toString).ifPresent(dynamoDB::endpoint);
 	     ofNullable(settings.get(REGION)).map(Object::toString).ifPresent(dynamoDB::region);
 	     ofNullable(settings.get(PROFILE)).map(Object::toString).ifPresent(dynamoDB::profile);
-	     ofNullable(settings.get(TIMEOUT)).map(Object::toString).map(Integer::valueOf).ifPresent(dynamoDB::maxConnections);
-	     ofNullable(settings.get(MAXCONNECTIONS)).map(Object::toString).map(Integer::valueOf).ifPresent(dynamoDB::maxConnections);
 	     ofNullable(settings.get(AWS_ACCESSKEY)).map(Object::toString).ifPresent(dynamoDB::awsAccessKey);
 	     ofNullable(settings.get(AWS_SECRETACCESS)).map(Object::toString).ifPresent(dynamoDB::awsSecretAccess);
 	 }
