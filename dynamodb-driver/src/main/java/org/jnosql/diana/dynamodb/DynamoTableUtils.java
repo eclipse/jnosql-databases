@@ -33,6 +33,8 @@ import static org.jnosql.diana.dynamodb.ConfigurationAmazonEntity.KEY;
 
 public final class DynamoTableUtils {
 
+    private static final long READ_CAPACITY_UNITS = 5L;
+
     private DynamoTableUtils() {
     }
 
@@ -73,14 +75,17 @@ public final class DynamoTableUtils {
 
         if (readCapacityUnits != null && readCapacityUnits.longValue() > 0)
             provisionedThroughputBuilder.readCapacityUnits(readCapacityUnits);
-        else
-            provisionedThroughputBuilder.readCapacityUnits(5l);
+        else {
+            provisionedThroughputBuilder.readCapacityUnits(READ_CAPACITY_UNITS);
+        }
 
 
         if (writeCapacityUnit != null && writeCapacityUnit.longValue() > 0)
             provisionedThroughputBuilder.writeCapacityUnits(writeCapacityUnit);
-        else
-            provisionedThroughputBuilder.writeCapacityUnits(5l);
+        else {
+            provisionedThroughputBuilder.writeCapacityUnits(READ_CAPACITY_UNITS);
+        }
+
 
         return provisionedThroughputBuilder.build();
     }
@@ -109,9 +114,9 @@ public final class DynamoTableUtils {
                     response = client.listTables(request);
                 }
 
-                List<String> table_names = response.tableNames();
+                List<String> tableNames = response.tableNames();
 
-                if (table_names.size() == 0) {
+                if (tableNames.size() == 0) {
                     createTable(tableName, client, readCapacityUnits, writeCapacityUnit);
                 } else {
                     lastName = response.lastEvaluatedTableName();
