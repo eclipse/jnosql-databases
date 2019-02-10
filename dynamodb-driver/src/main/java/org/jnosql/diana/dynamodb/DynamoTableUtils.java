@@ -14,12 +14,6 @@
  */
 package org.jnosql.diana.dynamodb;
 
-import static org.jnosql.diana.api.key.KeyValueEntity.KEY;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -31,7 +25,16 @@ import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
-public class DynamoTableUtils {
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.jnosql.diana.dynamodb.ConfigurationAmazonEntity.KEY;
+
+public final class DynamoTableUtils {
+
+	private DynamoTableUtils() {
+	}
 
 	public static KeySchemaElement createKeyElementSchema(Map<String,KeyType> keys) {
 		
