@@ -26,46 +26,46 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 public class DynamoDBBucketManagerFactory implements BucketManagerFactory<DynamoDBBucketManager> {
 
-	private DynamoDbClient client;
-	
-	public DynamoDBBucketManagerFactory(DynamoDbClient client) {
-		this.client = client;
-	}
+    private DynamoDbClient client;
 
-	@Override
-	public DynamoDBBucketManager getBucketManager(String bucketName) {
-		
-		return getBucketManager(bucketName, null, null);
-	}
-	
-	public DynamoDBBucketManager getBucketManager(String bucketName,Long readCapacityUnits , Long writeCapacityUnit) {
-		
-		DynamoTableUtils.manageTables(bucketName, client,readCapacityUnits,writeCapacityUnit);
-		return new DynamoDBBucketManager(client, bucketName);
-	}
-	
-	@Override
-	public <T> List<T> getList(String bucketName, Class<T> clazz) {
-		throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
-	}
+    public DynamoDBBucketManagerFactory(DynamoDbClient client) {
+        this.client = client;
+    }
 
-	@Override
-	public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
-		throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
-	}
+    @Override
+    public DynamoDBBucketManager getBucketManager(String bucketName) {
 
-	@Override
-	public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
-		throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
-	}
+        return getBucketManager(bucketName, null, null);
+    }
 
-	@Override
-	public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
-		throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
-	}
+    public DynamoDBBucketManager getBucketManager(String bucketName, Long readCapacityUnits, Long writeCapacityUnit) {
 
-	@Override
-	public void close() {
-		client.close();
-	}
+        DynamoTableUtils.manageTables(bucketName, client, readCapacityUnits, writeCapacityUnit);
+        return new DynamoDBBucketManager(client, bucketName);
+    }
+
+    @Override
+    public <T> List<T> getList(String bucketName, Class<T> clazz) {
+        throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
+    }
+
+    @Override
+    public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
+        throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
+    }
+
+    @Override
+    public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
+        throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
+    }
+
+    @Override
+    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
+        throw new UnsupportedOperationException("The DynamoDB does not support getMap method");
+    }
+
+    @Override
+    public void close() {
+        client.close();
+    }
 }
