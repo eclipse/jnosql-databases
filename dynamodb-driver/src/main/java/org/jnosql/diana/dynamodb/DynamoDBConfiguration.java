@@ -32,12 +32,12 @@ public class DynamoDBConfiguration {
     protected DynamoDbAsyncClientBuilder builderAsync = DynamoDbAsyncClient.builder();
 
 
-    public void syncBuilder(DynamoDbClientBuilder builder) throws NullPointerException {
+    public void syncBuilder(DynamoDbClientBuilder builder)  {
         requireNonNull(builder, "builder is required");
         this.builder = builder;
     }
 
-    public void asyncBuilder(DynamoDbAsyncClientBuilder builderAsync) throws NullPointerException {
+    public void asyncBuilder(DynamoDbAsyncClientBuilder builderAsync)  {
         requireNonNull(builderAsync, "asyncBuilder is required");
         this.builderAsync = builderAsync;
     }
