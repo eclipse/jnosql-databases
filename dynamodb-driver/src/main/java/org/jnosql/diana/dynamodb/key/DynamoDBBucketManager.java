@@ -14,7 +14,7 @@
  */
 package org.jnosql.diana.dynamodb.key;
 
-import static org.jnosql.diana.api.key.KeyValueEntity.VALUE;
+import static org.jnosql.diana.dynamodb.ConfigurationAmazonEntity.VALUE;
 import static org.jnosql.diana.dynamodb.DynamoDBUtils.createAttributeValues;
 import static org.jnosql.diana.dynamodb.DynamoDBUtils.createMapWriteRequest;
 import static org.jnosql.diana.dynamodb.DynamoDBUtils.createBatchGetItemRequest;
@@ -33,6 +33,7 @@ import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.driver.ValueJSON;
 
+import org.jnosql.diana.dynamodb.ConfigurationAmazonEntity;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
