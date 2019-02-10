@@ -14,8 +14,6 @@
  */
 package org.jnosql.diana.dynamodb;
 
-import static org.jnosql.diana.driver.ConfigurationAmazonEntity.KEY;
-import static org.jnosql.diana.driver.ConfigurationAmazonEntity.VALUE;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +36,9 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
+
+import static org.jnosql.diana.dynamodb.ConfigurationAmazonEntity.VALUE;
+import static org.jnosql.diana.dynamodb.ConfigurationAmazonEntity.KEY;
 
 public class DynamoDBUtils {
 	
