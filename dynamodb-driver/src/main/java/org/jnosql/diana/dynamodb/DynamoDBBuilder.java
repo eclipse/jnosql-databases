@@ -15,11 +15,15 @@
 package org.jnosql.diana.dynamodb;
 
 public interface DynamoDBBuilder {
-	
-	void endpoint(String endpoint);
-	void region(String region);
-	void profile(String profile);
-	void awsAccessKey(String awsAccessKey);
-	void awsSecretAccess(String awsSecretAccess);
-    
+
+    void endpoint(String endpoint);
+
+    void region(String region);
+
+    void profile(String profile);
+
+    void awsAccessKey(String awsAccessKey);
+
+    void awsSecretAccess(String awsSecretAccess);
+
 }
