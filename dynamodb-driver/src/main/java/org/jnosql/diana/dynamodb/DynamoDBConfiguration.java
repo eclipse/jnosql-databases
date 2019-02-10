@@ -27,35 +27,35 @@ import static java.util.Objects.requireNonNull;
 
 
 public class DynamoDBConfiguration {
-	
-	 protected  DynamoDbClientBuilder builder = DynamoDbClient.builder();
-	 protected  DynamoDbAsyncClientBuilder builderAsync = DynamoDbAsyncClient.builder();
-	 
-	 
-	 public void syncBuilder(DynamoDbClientBuilder builder) throws NullPointerException {
-		 requireNonNull(builder, "builder is required");
-		 this.builder = builder;
-	 }
-	 
-	 public void asyncBuilder(DynamoDbAsyncClientBuilder builderAsync) throws NullPointerException{
-	        requireNonNull(builderAsync, "asyncBuilder is required");
-	        this.builderAsync = builderAsync;
-	 }
-	 
-	 public void setEndPoint(String endpoint) {
-		 builder.endpointOverride(URI.create(endpoint));
-		 builderAsync.endpointOverride(URI.create(endpoint));
-	 }
-	 
-	 protected DynamoDbClient getDynamoDB(Settings settings) {
-		 DynamoDBBuilderSync dynamoDB = new DynamoDBBuilderSync();
-		 DynamoDBBuilders.load(settings, dynamoDB);
-		 return dynamoDB.build();
-	 }
-	 
-	 protected DynamoDbAsyncClient getDynamoDBAsync(Settings settings) {
-		 DynamoDBBuilderASync dynamoDB = new DynamoDBBuilderASync();
-		 DynamoDBBuilders.load(settings, dynamoDB);
-		 return dynamoDB.build();
-	 }
+
+    protected DynamoDbClientBuilder builder = DynamoDbClient.builder();
+    protected DynamoDbAsyncClientBuilder builderAsync = DynamoDbAsyncClient.builder();
+
+
+    public void syncBuilder(DynamoDbClientBuilder builder) throws NullPointerException {
+        requireNonNull(builder, "builder is required");
+        this.builder = builder;
+    }
+
+    public void asyncBuilder(DynamoDbAsyncClientBuilder builderAsync) throws NullPointerException {
+        requireNonNull(builderAsync, "asyncBuilder is required");
+        this.builderAsync = builderAsync;
+    }
+
+    public void setEndPoint(String endpoint) {
+        builder.endpointOverride(URI.create(endpoint));
+        builderAsync.endpointOverride(URI.create(endpoint));
+    }
+
+    protected DynamoDbClient getDynamoDB(Settings settings) {
+        DynamoDBBuilderSync dynamoDB = new DynamoDBBuilderSync();
+        DynamoDBBuilders.load(settings, dynamoDB);
+        return dynamoDB.build();
+    }
+
+    protected DynamoDbAsyncClient getDynamoDBAsync(Settings settings) {
+        DynamoDBBuilderASync dynamoDB = new DynamoDBBuilderASync();
+        DynamoDBBuilders.load(settings, dynamoDB);
+        return dynamoDB.build();
+    }
 }
