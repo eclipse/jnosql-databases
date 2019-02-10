@@ -28,7 +28,7 @@ public class DynamoDBBucketManagerFactory implements BucketManagerFactory<Dynamo
 
     private DynamoDbClient client;
 
-    public DynamoDBBucketManagerFactory(DynamoDbClient client) {
+    DynamoDBBucketManagerFactory(DynamoDbClient client) {
         this.client = client;
     }
 
