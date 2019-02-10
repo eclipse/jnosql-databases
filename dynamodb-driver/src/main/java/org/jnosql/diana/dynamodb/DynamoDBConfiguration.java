@@ -15,17 +15,15 @@
 
 package org.jnosql.diana.dynamodb;
 
-import static java.util.Objects.requireNonNull;
-
-import java.net.URI;
-
 import org.jnosql.diana.api.Settings;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClientBuilder;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
-import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+
+import java.net.URI;
+
+import static java.util.Objects.requireNonNull;
 
 
 public class DynamoDBConfiguration {
