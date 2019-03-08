@@ -1,7 +1,7 @@
-**Diana Commons**
+*Diana Commons*
 
 The first project to be compiled
 
-## How To Install
+== How To Install
 
 1. Execute the test mvn clean install
