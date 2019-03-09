@@ -381,6 +381,16 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldCreateEntityArray() {
+        byte[] contents = {1, 2, 3, 4, 5, 6};
+
+        DocumentEntity entity = DocumentEntity.of("download");
+        entity.add("_id", 1L);
+        entity.add("contents", contents);
+
+    }
+
+    @Test
     public void shouldConvertFromListSubdocumentList() {
         DocumentEntity entity = createSubdocumentList();
         entityManager.insert(entity);
