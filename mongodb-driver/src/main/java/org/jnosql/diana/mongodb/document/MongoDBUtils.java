@@ -92,12 +92,8 @@ final class MongoDBUtils {
     }
 
     private static Object convertValue(Object value) {
-        if(value instanceof Binary) {
+        if (value instanceof Binary) {
             return Binary.class.cast(value).getData();
-        } else if(value instanceof ObjectId) {
-            return ObjectId.class.cast(value).toString();
-        } else if(value instanceof BSONTimestamp){
-            return null;
         }
         return value;
     }
