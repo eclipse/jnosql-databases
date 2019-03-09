@@ -23,17 +23,20 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -381,12 +384,25 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldCreateEntityArray() {
+    public void shouldCreateEntityByteArray() {
         byte[] contents = {1, 2, 3, 4, 5, 6};
 
         DocumentEntity entity = DocumentEntity.of("download");
-        entity.add("_id", 1L);
+        long id = ThreadLocalRandom.current().nextLong();
+        entity.add("_id", id);
         entity.add("contents", contents);
+
+        entityManager.insert(entity);
+
+        List<DocumentEntity> entities = entityManager.select(select().from("download")
+                .where("_id").eq(id).build());
+
+        Assertions.assertEquals(1, entities.size());
+        DocumentEntity documentEntity = entities.get(0);
+        Assertions.assertEquals(id, documentEntity.find("_id").get().get());
+
+        assertTrue(Arrays.equals(contents, (byte[]) documentEntity.find("contents").get().get()));
+
 
     }
 
