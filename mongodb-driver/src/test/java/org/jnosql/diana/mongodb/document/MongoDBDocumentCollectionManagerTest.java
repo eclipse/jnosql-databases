@@ -29,8 +29,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -397,11 +399,35 @@ public class MongoDBDocumentCollectionManagerTest {
         List<DocumentEntity> entities = entityManager.select(select().from("download")
                 .where("_id").eq(id).build());
 
-        Assertions.assertEquals(1, entities.size());
+        assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);
-        Assertions.assertEquals(id, documentEntity.find("_id").get().get());
+        assertEquals(id, documentEntity.find("_id").get().get());
 
         assertTrue(Arrays.equals(contents, (byte[]) documentEntity.find("contents").get().get()));
+
+    }
+
+    @Test
+    public void shouldCreateDate() {
+        Date date = new Date();
+        LocalDate now = LocalDate.now();
+
+        DocumentEntity entity = DocumentEntity.of("download");
+        long id = ThreadLocalRandom.current().nextLong();
+        entity.add("_id", id);
+        entity.add("date", date);
+        entity.add("now", now);
+
+        entityManager.insert(entity);
+
+        List<DocumentEntity> entities = entityManager.select(select().from("download")
+                .where("_id").eq(id).build());
+
+        assertEquals(1, entities.size());
+        DocumentEntity documentEntity = entities.get(0);
+        assertEquals(id, documentEntity.find("_id").get().get());
+        assertEquals(date, documentEntity.find("date").get().get(Date.class));
+        assertEquals(now, documentEntity.find("date").get().get(LocalDate.class));
 
 
     }
