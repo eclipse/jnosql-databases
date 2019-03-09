@@ -15,6 +15,9 @@
 package org.jnosql.diana.mongodb.document;
 
 import org.bson.Document;
+import org.bson.types.BSONTimestamp;
+import org.bson.types.Binary;
+import org.bson.types.ObjectId;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
@@ -84,7 +87,15 @@ final class MongoDBUtils {
             }
             return org.jnosql.diana.api.document.Document.of(key, documents);
         }
-        return org.jnosql.diana.api.document.Document.of(key, Value.of(value));
+
+        return org.jnosql.diana.api.document.Document.of(key, Value.of(convertValue(value)));
+    }
+
+    private static Object convertValue(Object value) {
+        if (value instanceof Binary) {
+            return Binary.class.cast(value).getData();
+        }
+        return value;
     }
 
     private static boolean isDocumentIterable(Object value) {

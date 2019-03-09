@@ -23,17 +23,22 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -378,6 +383,53 @@ public class MongoDBDocumentCollectionManagerTest {
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
         assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+    }
+
+    @Test
+    public void shouldCreateEntityByteArray() {
+        byte[] contents = {1, 2, 3, 4, 5, 6};
+
+        DocumentEntity entity = DocumentEntity.of("download");
+        long id = ThreadLocalRandom.current().nextLong();
+        entity.add("_id", id);
+        entity.add("contents", contents);
+
+        entityManager.insert(entity);
+
+        List<DocumentEntity> entities = entityManager.select(select().from("download")
+                .where("_id").eq(id).build());
+
+        assertEquals(1, entities.size());
+        DocumentEntity documentEntity = entities.get(0);
+        assertEquals(id, documentEntity.find("_id").get().get());
+
+        assertTrue(Arrays.equals(contents, (byte[]) documentEntity.find("contents").get().get()));
+
+    }
+
+    @Test
+    public void shouldCreateDate() {
+        Date date = new Date();
+        LocalDate now = LocalDate.now();
+
+        DocumentEntity entity = DocumentEntity.of("download");
+        long id = ThreadLocalRandom.current().nextLong();
+        entity.add("_id", id);
+        entity.add("date", date);
+        entity.add("now", now);
+
+        entityManager.insert(entity);
+
+        List<DocumentEntity> entities = entityManager.select(select().from("download")
+                .where("_id").eq(id).build());
+
+        assertEquals(1, entities.size());
+        DocumentEntity documentEntity = entities.get(0);
+        assertEquals(id, documentEntity.find("_id").get().get());
+        assertEquals(date, documentEntity.find("date").get().get(Date.class));
+        assertEquals(now, documentEntity.find("date").get().get(LocalDate.class));
+
+
     }
 
     @Test
