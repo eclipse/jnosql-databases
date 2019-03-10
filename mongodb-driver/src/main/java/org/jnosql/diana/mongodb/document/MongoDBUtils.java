@@ -15,9 +15,7 @@
 package org.jnosql.diana.mongodb.document;
 
 import org.bson.Document;
-import org.bson.types.BSONTimestamp;
 import org.bson.types.Binary;
-import org.bson.types.ObjectId;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
