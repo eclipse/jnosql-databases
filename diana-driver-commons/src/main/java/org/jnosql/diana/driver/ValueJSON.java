@@ -52,6 +52,12 @@ public class ValueJSON implements Value {
         return JSONB.fromJson(json, typeSupplier.get());
     }
 
+    @Override
+    public boolean isInstanceOf(Class<?> typeClass) {
+        Objects.requireNonNull(typeClass, "typeClass is requried");
+        return typeClass.isInstance(json);
+    }
+
     /**
      * Returns a new instance of {@link Value} keeping the value as JSON
      *
