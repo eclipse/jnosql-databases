@@ -11,6 +11,6 @@ test-output/
 .classpath
 -project
 /.resourceCache
-/.project
+.project
 /.idea
 .settings/
