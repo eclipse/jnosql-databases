@@ -88,10 +88,6 @@ public final class ArangoDBUtil {
     }
 
 
-    public static boolean checkCondition(Optional<DocumentCondition> query) {
-        return query.isPresent();
-    }
-
     static DocumentEntity toEntity(BaseDocument document) {
         Map<String, Object> properties = document.getProperties();
         List<Document> documents = properties.keySet().stream()
