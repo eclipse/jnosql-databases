@@ -36,6 +36,6 @@ public interface ArangoDBDocumentCollectionManager extends DocumentCollectionMan
      * @return the query result
      * @throws NullPointerException when either query or values are null
      */
-    List<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException;
+    List<DocumentEntity> aql(String query, Map<String, Object> values);
 
 }
