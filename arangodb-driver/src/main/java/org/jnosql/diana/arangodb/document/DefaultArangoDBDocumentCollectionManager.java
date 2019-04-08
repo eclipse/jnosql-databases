@@ -19,8 +19,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackSlice;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -30,13 +28,13 @@ import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.writer.ValueWriterDecorator;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
@@ -112,7 +110,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     public long count(String documentCollection) {
         Objects.requireNonNull(documentCollection, "document collection is required");
         String aql = "RETURN LENGTH(" + documentCollection + ")";
-        ArangoCursor<Object> query = arangoDB.db(database).query(aql, Collections.emptyMap(), null, Object.class);
+        ArangoCursor<Object> query = arangoDB.db(database).query(aql, emptyMap(), null, Object.class);
         return StreamSupport.stream(query.spliterator(), false).findFirst().map(Long.class::cast).orElse(0L);
     }
 
@@ -126,6 +124,23 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
                 .map(ArangoDBUtil::toEntity)
                 .collect(toList());
 
+    }
+
+    @Override
+    public <T> List<T> aql(String query, Map<String, Object> values, Class<T> typeClass) {
+        requireNonNull(query, "query is required");
+        requireNonNull(values, "values is required");
+        requireNonNull(typeClass, "typeClass is required");
+        ArangoCursor<T> result = arangoDB.db(database).query(query, values, null, typeClass);
+        return result.asListRemaining();
+    }
+
+    @Override
+    public <T> List<T> aql(String query, Class<T> typeClass) {
+        requireNonNull(query, "query is required");
+        requireNonNull(typeClass, "typeClass is required");
+        ArangoCursor<T> result = arangoDB.db(database).query(query, emptyMap(), null, typeClass);
+        return result.asListRemaining();
     }
 
 
