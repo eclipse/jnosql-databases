@@ -22,6 +22,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void setUp() {
         random = new Random();
         entityManager = INSTANCE.get().get(DATABASE);
+        entityManager.delete(DocumentQueryBuilder.delete().from(COLLECTION_NAME).build());
     }
 
     @Test
@@ -197,16 +199,29 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Test
     public void shouldCount() {
         DocumentEntity entity = getEntity();
-        DocumentEntity entitySaved = entityManager.insert(entity);
+        entityManager.insert(entity);
 
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
     }
 
     @Test
-    public void shouldReadFromDifferentBaseDocument() {
+    public void shouldReadFromDifferentBaseDocumentUsingInstance() {
         entityManager.insert(getEntity());
         ArangoDB arangoDB = DefaultArangoDBDocumentCollectionManager.class.cast(entityManager).getArangoDB();
         arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(new Person());
+        DocumentQuery select = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(select);
+        Assertions.assertFalse(entities.isEmpty());
+    }
+
+    @Test
+    public void shouldReadFromDifferentBaseDocumentUsingMap() {
+        entityManager.insert(getEntity());
+        ArangoDB arangoDB = DefaultArangoDBDocumentCollectionManager.class.cast(entityManager).getArangoDB();
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "Poliana");
+        map.put("city", "Salvador");
+        arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(map);
         DocumentQuery select = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(select);
         Assertions.assertFalse(entities.isEmpty());
