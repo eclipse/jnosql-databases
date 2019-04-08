@@ -193,10 +193,11 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     }
 
     @Test
-    public void shouldRunN1Ql() {
+    public void shouldRunN1Ql() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
-        await().atLeast(org.awaitility.Duration.ONE_SECOND);
+        TimeUnit.SECONDS.sleep(2L);
+        await().atLeast(org.awaitility.Duration.TEN_SECONDS);
         AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
         entityManagerAsync.n1qlQuery("select * from jnosql", references::set);
         await().until(references::get, notNullValue());
