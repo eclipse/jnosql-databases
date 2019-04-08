@@ -20,7 +20,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
@@ -30,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,10 +85,6 @@ public final class ArangoDBUtil {
         }
     }
 
-
-    public static boolean checkCondition(Optional<DocumentCondition> query) {
-        return query.isPresent();
-    }
 
     static DocumentEntity toEntity(BaseDocument document) {
         Map<String, Object> properties = document.getProperties();

@@ -38,4 +38,28 @@ public interface ArangoDBDocumentCollectionManager extends DocumentCollectionMan
      */
     List<DocumentEntity> aql(String query, Map<String, Object> values);
 
+    /**
+     * Executes ArangoDB query language, AQL.
+     * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
+     *
+     * @param query     the query
+     * @param values    named query
+     * @param typeClass The type of the result
+     * @param <T>       the type
+     * @return the query result
+     * @throws NullPointerException when either query or values are null
+     */
+    <T> List<T> aql(String query, Map<String, Object> values, Class<T> typeClass);
+
+    /**
+     * Executes ArangoDB query language, AQL.
+     * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
+     *
+     * @param query     the query
+     * @param typeClass The type of the result
+     * @param <T>       the type
+     * @return the query result
+     * @throws NullPointerException when either query or values are null
+     */
+    <T> List<T> aql(String query, Class<T> typeClass);
 }
