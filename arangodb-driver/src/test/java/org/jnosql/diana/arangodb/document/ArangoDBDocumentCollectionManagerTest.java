@@ -15,12 +15,14 @@
 
 package org.jnosql.diana.arangodb.document;
 
+import com.arangodb.ArangoDB;
 import org.jnosql.diana.api.TypeReference;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ArangoDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
+    private static final String DATABASE = "database";
     private ArangoDBDocumentCollectionManager entityManager;
     private Random random;
     private String KEY_NAME = "_key";
@@ -54,7 +57,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     @BeforeEach
     public void setUp() {
         random = new Random();
-        entityManager = INSTANCE.get().get("database");
+        entityManager = INSTANCE.get().get(DATABASE);
     }
 
     @Test
@@ -199,6 +202,15 @@ public class ArangoDBDocumentCollectionManagerTest {
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
     }
 
+    @Test
+    public void shouldReadFromDifferentBaseDocument() {
+        entityManager.insert(getEntity());
+        ArangoDB arangoDB = DefaultArangoDBDocumentCollectionManager.class.cast(entityManager).getArangoDB();
+        arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(new Person());
+        DocumentQuery select = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(select);
+        Assertions.assertFalse(entities.isEmpty());
+    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

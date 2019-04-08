@@ -19,6 +19,8 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
+import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackSlice;
 import org.jnosql.diana.api.ValueWriter;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCondition;
@@ -45,6 +47,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     public static final String KEY = "_key";
     public static final String ID = "_id";
     public static final String REV = "_rev";
+
     private final String database;
 
     private final ArangoDB arangoDB;
@@ -118,7 +121,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     public List<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
-
         ArangoCursor<BaseDocument> result = arangoDB.db(database).query(query, values, null, BaseDocument.class);
         return StreamSupport.stream(result.spliterator(), false)
                 .map(ArangoDBUtil::toEntity)
@@ -153,5 +155,8 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         entity.add(Document.of(REV, rev));
     }
 
+    ArangoDB getArangoDB() {
+        return arangoDB;
+    }
 
 }
