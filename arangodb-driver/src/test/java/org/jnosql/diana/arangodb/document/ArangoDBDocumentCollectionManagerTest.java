@@ -23,10 +23,12 @@ import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,6 +61,11 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void setUp() {
         random = new Random();
         entityManager = INSTANCE.get().get(DATABASE);
+        entityManager.delete(DocumentQueryBuilder.delete().from(COLLECTION_NAME).build());
+    }
+
+    @AfterEach
+    public void after() {
         entityManager.delete(DocumentQueryBuilder.delete().from(COLLECTION_NAME).build());
     }
 
@@ -225,6 +232,17 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentQuery select = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(select);
         Assertions.assertFalse(entities.isEmpty());
+    }
+
+    @Test
+    public void shouldCreateType() {
+        entityManager.insert(getEntity());
+        ArangoDB arangoDB = DefaultArangoDBDocumentCollectionManager.class.cast(entityManager).getArangoDB();
+        arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(BigDecimal.TEN);
+        DocumentQuery select = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(select);
+        Assertions.assertFalse(entities.isEmpty());
+
     }
 
     private DocumentEntity getEntity() {
