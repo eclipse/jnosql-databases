@@ -22,7 +22,6 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -510,8 +509,4 @@ public class MongoDBDocumentCollectionManagerTest {
         return asList(lucas, otavio, luna);
     }
 
-    @AfterAll
-    public static void end() {
-        MongoDbHelper.stopMongoDb();
-    }
 }
