@@ -15,16 +15,18 @@
 package org.jnosql.diana.hbase.column;
 
 
+import org.jnosql.diana.api.JNoSQLException;
+
 /**
  * The Hbase exception to diana implementation
  */
-public class DianaHBaseException extends RuntimeException {
+public class HBaseException extends JNoSQLException {
 
-    DianaHBaseException(String message, Throwable cause) {
+    HBaseException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    DianaHBaseException(String message) {
+    HBaseException(String message) {
         super(message);
     }
 }

@@ -63,7 +63,7 @@ public class HBaseColumnFamilyManagerTest {
         entity.add(Column.of("id", "otaviojava"));
         entity.add(Column.of("age", 26));
         entity.add(Column.of("country", "Brazil"));
-        assertThrows(DianaHBaseException.class, () -> columnFamilyManager.insert(entity));
+        assertThrows(HBaseException.class, () -> columnFamilyManager.insert(entity));
     }
 
     @Test

@@ -55,7 +55,7 @@ public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFacto
             Table table = connection.getTable(tableName);
             return new HBaseColumnFamilyManager(connection, table);
         } catch (IOException e) {
-            throw new DianaHBaseException("A error happened when try to create ColumnFamilyManager", e);
+            throw new HBaseException("A error happened when try to create ColumnFamilyManager", e);
         }
     }
 

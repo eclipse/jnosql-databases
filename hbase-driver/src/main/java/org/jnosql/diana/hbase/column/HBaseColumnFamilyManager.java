@@ -75,7 +75,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         if (columns.isEmpty()) {
             return entity;
         }
-        Column columnID = entity.find(KEY_COLUMN).orElseThrow(() -> new DianaHBaseException(KEY_REQUIRED_ERROR));
+        Column columnID = entity.find(KEY_COLUMN).orElseThrow(() -> new HBaseException(KEY_REQUIRED_ERROR));
 
         Put put = new Put(Bytes.toBytes(valueToString(columnID.getValue())));
         columns.stream().filter(Predicate.isEqual(columnID).negate()).forEach(column ->
@@ -85,7 +85,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         try {
             table.put(put);
         } catch (IOException e) {
-            throw new DianaHBaseException("An error happened when try to save an entity", e);
+            throw new HBaseException("An error happened when try to save an entity", e);
         }
         return entity;
     }
@@ -118,7 +118,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         try {
             table.delete(deletes);
         } catch (IOException e) {
-            throw new DianaHBaseException("An error when try to delete columns", e);
+            throw new HBaseException("An error when try to delete columns", e);
         }
 
     }
@@ -168,7 +168,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
         try {
             return table.get(gets);
         } catch (IOException e) {
-            throw new DianaHBaseException("An error when try to find by id", e);
+            throw new HBaseException("An error when try to find by id", e);
         }
     }
 
