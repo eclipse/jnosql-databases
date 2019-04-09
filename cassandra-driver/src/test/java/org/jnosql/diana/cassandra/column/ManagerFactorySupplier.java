@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 
 import static org.jnosql.diana.cassandra.column.CassandraConfiguration.CASSANDRA_FILE_CONFIGURATION;
 
-public enum CassandraColumnFamilyManagerFactorySupplier implements Supplier<CassandraColumnFamilyManagerFactory> {
+public enum ManagerFactorySupplier implements Supplier<CassandraColumnFamilyManagerFactory> {
 
     INSTANCE;
 
@@ -41,12 +41,15 @@ public enum CassandraColumnFamilyManagerFactorySupplier implements Supplier<Cass
 
     @Override
     public CassandraColumnFamilyManagerFactory get() {
+        Settings settings = getSettings();
+        CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
+        return cassandraConfiguration.get(settings);
+    }
 
+    Settings getSettings() {
         Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION));
         configuration.put("cassandra-host-1", cassandra.getContainerIpAddress());
         configuration.put("cassandra-port", cassandra.getFirstMappedPort());
-        Settings settings = Settings.of(configuration);
-        CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        return cassandraConfiguration.get(settings);
+        return Settings.of(configuration);
     }
 }
