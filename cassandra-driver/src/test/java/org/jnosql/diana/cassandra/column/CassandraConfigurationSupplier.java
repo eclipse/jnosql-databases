@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 import static org.jnosql.diana.cassandra.column.CassandraConfiguration.CASSANDRA_FILE_CONFIGURATION;
 
-public enum  CassandraManagerFactorySupplier implements Supplier<CassandraConfiguration> {
+public enum CassandraConfigurationSupplier implements Supplier<CassandraConfiguration> {
     INSTANCE;
 
     private final GenericContainer cassandra =
