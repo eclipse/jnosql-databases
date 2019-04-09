@@ -42,7 +42,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory> {
 
-    private static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
+    static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 
     public CassandraColumnFamilyManagerFactory getManagerFactory(Map<String, String> configurations) {
         requireNonNull(configurations);
