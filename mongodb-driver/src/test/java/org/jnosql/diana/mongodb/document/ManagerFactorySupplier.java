@@ -37,16 +37,18 @@ public enum ManagerFactorySupplier  {
         mongodb.start();
     }
 
-    public MongoDBDocumentCollectionManagerFactory get() {
+    public MongoDBDocumentCollectionManager get(String database) {
         Settings settings = getSettings();
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        return configuration.get(settings);
+        MongoDBDocumentCollectionManagerFactory factory = configuration.get(settings);
+        return factory.get(database);
     }
 
-    public MongoDBDocumentCollectionManagerAsyncFactory getAsync() {
+    public MongoDBDocumentCollectionManagerAsync getAsync(String database) {
         Settings settings = getSettings();
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        return configuration.getAsync(settings);
+        MongoDBDocumentCollectionManagerAsyncFactory factory = configuration.getAsync(settings);
+        return factory.getAsync(database);
     }
 
     private Settings getSettings() {
