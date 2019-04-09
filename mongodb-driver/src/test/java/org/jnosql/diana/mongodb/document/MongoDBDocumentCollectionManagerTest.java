@@ -48,7 +48,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -62,8 +61,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        MongoDbHelper.startMongoDb();
-        entityManager = get().get("database");
+        entityManager = ManagerFactorySupplier.INSTANCE.get("database");
     }
 
     @Test
