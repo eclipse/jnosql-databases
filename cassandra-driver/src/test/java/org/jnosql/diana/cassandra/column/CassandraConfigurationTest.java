@@ -16,15 +16,10 @@
 package org.jnosql.diana.cassandra.column;
 
 
-import org.apache.thrift.transport.TTransportException;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,31 +28,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CassandraConfigurationTest {
 
-    @BeforeAll
-    public static void before() throws InterruptedException, IOException, TTransportException {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-    }
-
-    @AfterAll
-    public static void end() {
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    }
 
     @Test
     public void shoudlCreateDocumentEntityManagerFactory() {
-        Map<String, String> configurations = new HashMap<>();
-        configurations.put("cassandra-hoster-1", "localhost");
-        configurations.put("cassandra-port", "9142");
+        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
+
+        Map<String, String> map = new HashMap<>();
+        settings.forEach((k,v) -> map.put(k, v.toString()));
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory(configurations);
+        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory(map);
         assertNotNull(entityManagerFactory);
     }
 
     @Test
     public void shoudlCreateDocumentEntityManagerFactoryFromSettings() {
-
-        Settings settings = Settings.builder().put("cassandra-hoster-1", "localhost").
-                put("cassandra-port", "9142").build();
+        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
         assertNotNull(entityManagerFactory);
@@ -66,8 +51,9 @@ public class CassandraConfigurationTest {
 
     @Test
     public void shoudlCreateDocumentEntityManagerFactoryFromFile() {
+        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
+        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
         assertNotNull(entityManagerFactory);
     }
 
