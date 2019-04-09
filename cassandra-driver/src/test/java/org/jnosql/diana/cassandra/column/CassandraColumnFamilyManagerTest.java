@@ -18,8 +18,6 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.Session;
-import org.apache.thrift.transport.TTransportException;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.hamcrest.Matchers;
 import org.jnosql.diana.api.NonUniqueResultException;
 import org.jnosql.diana.api.Value;
@@ -29,13 +27,10 @@ import org.jnosql.diana.api.column.ColumnEntity;
 import org.jnosql.diana.api.column.ColumnQuery;
 import org.jnosql.diana.api.column.Columns;
 import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.Month;
 import java.time.ZoneId;
@@ -70,21 +65,10 @@ public class CassandraColumnFamilyManagerTest {
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnFamilyManager entityManager;
 
-    @BeforeAll
-    public static void before() throws InterruptedException, IOException, TTransportException {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-    }
-
-    @AfterAll
-    public static void end() {
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    }
-
     @BeforeEach
     public void setUp() {
-        CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        CassandraColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get();
-        entityManager = entityManagerFactory.get(KEY_SPACE);
+        CassandraColumnFamilyManagerFactory managerFactory = ManagerFactorySupplier.INSTANCE.get();
+        entityManager = managerFactory.get(KEY_SPACE);
     }
 
     @AfterEach
