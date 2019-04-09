@@ -16,12 +16,9 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
-import org.apache.thrift.transport.TTransportException;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,21 +34,13 @@ public class CassandraColumnFamilyManagerFactoryTest {
 
     private CassandraColumnFamilyManagerFactory subject;
 
-    @BeforeAll
-    public static void before() throws InterruptedException, IOException, TTransportException {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-    }
-
-    @AfterAll
-    public static void end() {
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    }
 
     @BeforeEach
-    public void setUp() throws InterruptedException, IOException, TTransportException {
+    public void setUp() throws InterruptedException, IOException {
+        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         Map<String, String> configurations = new HashMap<>();
-        configurations.put("cassandra-hoster-1", "localhost");
-        configurations.put("cassandra-port", "9142");
+        configurations.put("cassandra-host-1", settings.get("cassandra-host-1").toString());
+        configurations.put("cassandra-port", settings.get("cassandra-port").toString());
         configurations.put("cassandra-query-1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         subject = cassandraConfiguration.getManagerFactory(configurations);
