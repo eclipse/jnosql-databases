@@ -17,7 +17,6 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
 import org.jnosql.diana.api.Settings;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +33,6 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
     @BeforeAll
     public static void setUp() throws IOException {
         configuration = new MongoDBDocumentConfiguration();
-        MongoDbHelper.startMongoDb();
     }
 
     @Test
@@ -75,8 +73,4 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
         assertThrows(NullPointerException.class, () -> configuration.getAsync((com.mongodb.async.client.MongoClient) null));
     }
 
-    @AfterAll
-    public static void end() {
-        MongoDbHelper.stopMongoDb();
-    }
 }

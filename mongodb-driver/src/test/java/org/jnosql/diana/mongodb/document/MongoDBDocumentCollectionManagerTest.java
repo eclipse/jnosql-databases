@@ -22,8 +22,6 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +47,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,8 +60,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        MongoDbHelper.startMongoDb();
-        entityManager = get().get("database");
+        entityManager = ManagerFactorySupplier.INSTANCE.get("database");
     }
 
     @Test
@@ -513,8 +509,4 @@ public class MongoDBDocumentCollectionManagerTest {
         return asList(lucas, otavio, luna);
     }
 
-    @AfterAll
-    public static void end() {
-        MongoDbHelper.stopMongoDb();
-    }
 }

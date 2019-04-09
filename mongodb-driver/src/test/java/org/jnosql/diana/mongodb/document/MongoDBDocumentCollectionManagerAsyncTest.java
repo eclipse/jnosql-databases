@@ -20,7 +20,6 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +39,6 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
 import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
-import static org.jnosql.diana.mongodb.document.DocumentConfigurationUtils.getAsync;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,8 +53,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
 
     @BeforeAll
     public static void setUp() throws IOException, InterruptedException {
-        MongoDbHelper.startMongoDb();
-        entityManager = getAsync().getAsync("database");
+        entityManager =ManagerFactorySupplier.INSTANCE.getAsync("database");;
     }
 
 
@@ -222,8 +219,4 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         return entity;
     }
 
-    @AfterAll
-    public static void end() {
-        MongoDbHelper.stopMongoDb();
-    }
 }
