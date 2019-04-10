@@ -63,7 +63,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <monbodb.driver>3.9.1</monbodb.driver>
+        <monbodb.driver>3.10.1</monbodb.driver>
     </properties>
     <dependencies>
         <dependency>
