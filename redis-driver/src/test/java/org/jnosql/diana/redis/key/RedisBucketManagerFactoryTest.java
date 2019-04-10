@@ -17,7 +17,6 @@ package org.jnosql.diana.redis.key;
 
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +35,7 @@ public class RedisBucketManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        KeyValueConfiguration configuration = new RedisConfiguration();
-        managerFactory = configuration.get();
+        managerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();;
     }
 
     @Test
