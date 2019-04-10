@@ -15,8 +15,8 @@
 
 package org.jnosql.diana.redis.key;
 
-import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ListPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,9 +71,9 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         } else {
             String previewValue = jedis.lindex(keyWithNameSpace, index - 1);
             if(isString) {
-                jedis.linsert(keyWithNameSpace, LIST_POSITION.AFTER, previewValue, e.toString());
+                jedis.linsert(keyWithNameSpace, ListPosition.AFTER, previewValue, e.toString());
             }else {
-                jedis.linsert(keyWithNameSpace, LIST_POSITION.AFTER, previewValue,
+                jedis.linsert(keyWithNameSpace, ListPosition.AFTER, previewValue,
                         JSONB.toJson(e));
             }
         }
@@ -117,9 +117,9 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
         String previewValue = jedis.lindex(keyWithNameSpace, index);
         if (previewValue != null && !previewValue.isEmpty()) {
             if(isString) {
-                jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, element.toString());
+                jedis.linsert(keyWithNameSpace, ListPosition.BEFORE, previewValue, element.toString());
             } else {
-                jedis.linsert(keyWithNameSpace, LIST_POSITION.BEFORE, previewValue, JSONB.toJson(element));
+                jedis.linsert(keyWithNameSpace, ListPosition.BEFORE, previewValue, JSONB.toJson(element));
             }
 
         } else {
