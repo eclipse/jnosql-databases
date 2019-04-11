@@ -17,13 +17,13 @@ package org.jnosql.diana.memcached.key.util;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.jnosql.diana.memcached.key.HazelcastKeyValueConfiguration;
+import org.jnosql.diana.memcached.key.MemcachedKeyValueConfiguration;
 
 
 public class KeyValueEntityManagerFactoryUtils {
 
     public static BucketManagerFactory get() {
-        KeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
+        KeyValueConfiguration configuration = new MemcachedKeyValueConfiguration();
         BucketManagerFactory managerFactory = configuration.get();
         return managerFactory;
     }

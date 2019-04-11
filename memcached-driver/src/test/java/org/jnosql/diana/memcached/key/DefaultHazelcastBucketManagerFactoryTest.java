@@ -31,7 +31,7 @@ public class DefaultHazelcastBucketManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        HazelcastKeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
+        MemcachedKeyValueConfiguration configuration = new MemcachedKeyValueConfiguration();
         managerFactory = configuration.get();
     }
 

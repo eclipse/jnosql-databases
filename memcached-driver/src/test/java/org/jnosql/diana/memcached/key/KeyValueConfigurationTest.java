@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KeyValueConfigurationTest {
 
-    private HazelcastKeyValueConfiguration configuration;
+    private MemcachedKeyValueConfiguration configuration;
 
     @BeforeEach
     public void setUp() {
-        configuration = new HazelcastKeyValueConfiguration();
+        configuration = new MemcachedKeyValueConfiguration();
     }
 
     @Test

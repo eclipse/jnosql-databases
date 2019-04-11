@@ -35,7 +35,7 @@ public class KeyValueEntityManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        KeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
+        KeyValueConfiguration configuration = new MemcachedKeyValueConfiguration();
         managerFactory = configuration.get();
     }
 
