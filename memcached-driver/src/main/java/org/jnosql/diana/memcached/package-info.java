@@ -14,17 +14,12 @@
  */
 
 /**
- * In computing, Hazelcast is an open source in-memory data grid based on Java. It is also the name of the company
- * developing the product. The Hazelcast company is funded by venture capital.
- * In a Hazelcast grid, data is evenly distributed among the nodes of a computer cluster, allowing for horizontal
- * scaling of processing and available storage. Backups are also distributed among nodes to protect against failure
- * of any single node. Hazelcast provides central, predictable scaling of applications through in-memory
- * access to frequently used data and across an elastically scalable data grid. These techniques reduce
- * the sql load on databases and improve speed.
- * Hazelcast can run on-premise, in the cloud (Amazon Web Services,
- * Microsoft Azure, Cloud Foundry, OpenShift), virtually (VMWare),
- * and in Docker containers. Hazelcast offers technology integrations for multiple cloud configuration and deployment
- * technologies, including Apache jclouds, Consul, etcd, Eureka, Kubernetes, and Zookeeper. The Hazelcast Cloud Discovery
- * Service Provider Interface (SPI) enables cloud-based or on-premise nodes to auto-discover each other.
+ * Memcached (pronunciation: mem-cashed, mem-cash-dee) is a general-purpose distributed memory caching system.
+ * It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce
+ * the number of times an external data source (such as a database or API) must be read. Memcached is free and
+ * open-source software, licensed under the Revised BSD license. Memcached runs on Unix-like operating systems
+ * (at least Linux and OS X) and on Microsoft Windows. It depends on the libevent library.
+ * Memcached's APIs provide a very large hash table distributed across multiple machines.
+ * When the table is full, subsequent inserts cause older data to be purged in least recently used (LRU) order.
  */
 package org.jnosql.diana.memcached;
