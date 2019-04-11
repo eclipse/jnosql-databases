@@ -79,6 +79,7 @@
         <module>hazelcast-driver</module>
         <module>hbase-driver</module>
         <module>infinispan-driver</module>
+        <module>memcached</module> 
         <module>mongodb-driver</module>
         <module>orientdb-driver</module>
         <module>ravendb-driver</module>
