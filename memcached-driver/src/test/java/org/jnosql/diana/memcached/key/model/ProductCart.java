@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key.model;
+package org.jnosql.diana.memcached.key.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key;
+package org.jnosql.diana.memcached.key;
 
 
 import com.hazelcast.core.IAtomicLong;
@@ -25,7 +25,7 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * The hazelcast implementation of {@link BucketManagerFactory}
+ * The memcached implementation of {@link BucketManagerFactory}
  */
 public interface HazelcastBucketManagerFactory extends BucketManagerFactory<HazelcastBucketManager> {
 

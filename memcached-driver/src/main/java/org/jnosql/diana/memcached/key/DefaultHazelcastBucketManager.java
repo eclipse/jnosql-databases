@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.hazelcast.key;
+package org.jnosql.diana.memcached.key;
 
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.Predicate;
@@ -34,7 +34,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
- * The default implementation of hazelcast bucket manager
+ * The default implementation of memcached bucket manager
  */
 class DefaultHazelcastBucketManager implements HazelcastBucketManager {
 

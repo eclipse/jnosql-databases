@@ -13,11 +13,11 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key;
+package org.jnosql.diana.memcached.key;
 
 import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.hazelcast.key.model.ProductCart;
-import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
+import org.jnosql.diana.memcached.key.model.ProductCart;
+import org.jnosql.diana.memcached.key.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

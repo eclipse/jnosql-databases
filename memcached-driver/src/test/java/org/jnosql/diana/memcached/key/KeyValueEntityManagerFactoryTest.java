@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key;
+package org.jnosql.diana.memcached.key;
 
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;

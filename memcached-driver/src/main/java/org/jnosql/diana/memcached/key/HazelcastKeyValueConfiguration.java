@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key;
+package org.jnosql.diana.memcached.key;
 
 
 import com.hazelcast.config.Config;
@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The hazelcast implementation of {@link KeyValueConfiguration} that returns
- * {@link HazelcastBucketManagerFactory}. It tries to read the diana-hazelcast.properties file
+ * The memcached implementation of {@link KeyValueConfiguration} that returns
+ * {@link HazelcastBucketManagerFactory}. It tries to read the diana-memcached.properties file
  * that has the properties:
- * <p>hazelcast-instanceName: the instance name</p>
- * <p>hazelcast-host-: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
+ * <p>memcached-instanceName: the instance name</p>
+ * <p>memcached-host-: as prefix to n host where n is the number of host, eg: memcached-host-1: host </p>
  *
  */
 public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<HazelcastBucketManagerFactory> {
@@ -51,7 +51,7 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<Haz
      */
     public HazelcastBucketManagerFactory get(Map<String, String> configurations) throws NullPointerException {
 
-        List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("hazelcast-hoster-"))
+        List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("memcached-hoster-"))
                 .collect(Collectors.toList());
         Config config = new Config(configurations.getOrDefault("hazelcast-instanceName", "hazelcast-instanceName"));
 
@@ -60,7 +60,7 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<Haz
     }
 
     /**
-     * Creates a {@link HazelcastBucketManagerFactory} from hazelcast config
+     * Creates a {@link HazelcastBucketManagerFactory} from memcached config
      * @param config the {@link Config}
      * @return the HazelCastBucketManagerFactory instance
      * @throws NullPointerException when config is null

@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.hazelcast.key;
+package org.jnosql.diana.memcached.key;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

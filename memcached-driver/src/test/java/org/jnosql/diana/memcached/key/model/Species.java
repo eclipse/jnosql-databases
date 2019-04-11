@@ -13,43 +13,48 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key.model;
-
+package org.jnosql.diana.memcached.key.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
-public class LineBank implements Serializable {
+public class Species implements Serializable {
 
+    private static final long serialVersionUID = -1493508757572337719L;
 
-    private final Person person;
+    private final List<String> animals;
 
-    public Person getPerson() {
-        return person;
+    public Species(String... animals) {
+        this.animals = Arrays.asList(animals);
     }
 
-    public LineBank(String name, Integer age) {
-        this.person = new Person(name, age);
-
+    public List<String> getAnimals() {
+        return animals;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LineBank lineBank = (LineBank) o;
-        return Objects.equals(person, lineBank.person);
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Species species = (Species) o;
+        return Objects.equals(animals, species.animals);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(person);
+        return Objects.hashCode(animals);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("LineBank{");
-        sb.append("person=").append(person);
+        final StringBuilder sb = new StringBuilder("Species{");
+        sb.append("animals=").append(animals);
         sb.append('}');
         return sb.toString();
     }

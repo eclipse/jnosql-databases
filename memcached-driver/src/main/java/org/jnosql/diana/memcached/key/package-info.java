@@ -13,18 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key.util;
-
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
-import org.jnosql.diana.hazelcast.key.HazelcastKeyValueConfiguration;
-
-
-public class KeyValueEntityManagerFactoryUtils {
-
-    public static BucketManagerFactory get() {
-        KeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
-        BucketManagerFactory managerFactory = configuration.get();
-        return managerFactory;
-    }
-}
+/**
+ * The key-value implementation to memcached
+ */
+package org.jnosql.diana.memcached.key;

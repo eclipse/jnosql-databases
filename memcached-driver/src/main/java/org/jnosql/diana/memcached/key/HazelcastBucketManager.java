@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.hazelcast.key;
+package org.jnosql.diana.memcached.key;
 
 import com.hazelcast.query.Predicate;
 import org.jnosql.diana.api.Value;
@@ -23,13 +23,13 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * The hazelcast implementation of {@link BucketManager}
+ * The memcached implementation of {@link BucketManager}
  */
 public interface HazelcastBucketManager extends BucketManager {
 
 
     /**
-     * Executes hazelcast sql
+     * Executes memcached sql
      *
      * @param query the sql
      * @return the result sql
@@ -38,7 +38,7 @@ public interface HazelcastBucketManager extends BucketManager {
     Collection<Value> sql(String query);
 
     /**
-     * Executes hazelcast sql with named sql.
+     * Executes memcached sql with named sql.
      * E.g.:  bucketManager.sql("name = :name", singletonMap("name", "Matrix"))
      *
      * @param query  the sql
@@ -49,9 +49,9 @@ public interface HazelcastBucketManager extends BucketManager {
     Collection<Value> sql(String query, Map<String, Object> params);
 
     /**
-     * Executes hazelcast sql
+     * Executes memcached sql
      *
-     * @param predicate the hazelcast predicate
+     * @param predicate the memcached predicate
      * @param <K>       the key type
      * @param <V>       the value type
      * @return the result sql

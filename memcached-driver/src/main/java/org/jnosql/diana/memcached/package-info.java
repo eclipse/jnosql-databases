@@ -27,4 +27,4 @@
  * technologies, including Apache jclouds, Consul, etcd, Eureka, Kubernetes, and Zookeeper. The Hazelcast Cloud Discovery
  * Service Provider Interface (SPI) enables cloud-based or on-premise nodes to auto-discover each other.
  */
-package org.jnosql.diana.hazelcast;
+package org.jnosql.diana.memcached;
