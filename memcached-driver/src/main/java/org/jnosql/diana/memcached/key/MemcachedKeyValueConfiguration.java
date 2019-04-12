@@ -34,26 +34,32 @@ import static java.util.Optional.ofNullable;
  * The memcached implementation of {@link KeyValueConfiguration} that returns
  * {@link MemcachedBucketManagerFactory}. It tries to read the diana-memcached.properties file
  * that has the properties:
- * <p>memcached.instanceName: the instance name</p>
- * <p>memcached.host-: as prefix to n host where n is the number of host, eg: memcached-host-1: host </p>
- *
+ * <p>memcached.daemon: {@link ConnectionFactoryBuilder#setDaemon(boolean)}</p>
+ * <p>memcached.reconnect.delay: {@link ConnectionFactoryBuilder#setMaxReconnectDelay(long)}</p>
+ * <p>memcached.protocol: {@link ConnectionFactoryBuilder#setProtocol(Protocol)}</p>
+ * <p>memcached.locator: {@link ConnectionFactoryBuilder#setLocatorType(Locator)}</p>
+ * <p>memcached.auth.wait.time: {@link ConnectionFactoryBuilder#setAuthWaitTime(long)}</p>
+ * <p>memcached.max.block.time: {@link ConnectionFactoryBuilder#setOpQueueMaxBlockTime(long)}</p>
+ * <p>memcached.timeout: {@link ConnectionFactoryBuilder#setOpTimeout(long)}</p>
+ * <p>memcached.read.buffer.size: {@link ConnectionFactoryBuilder#setReadBufferSize(int)}</p>
+ * <p>memcached.should.optimize: {@link ConnectionFactoryBuilder#setShouldOptimize(boolean)}</p>
+ * <p>memcached.timeout.threshold: {@link ConnectionFactoryBuilder#setTimeoutExceptionThreshold(int)}</p>
+ * <p>memcached.nagle.algorithm: {@link ConnectionFactoryBuilder#setUseNagleAlgorithm(boolean)}</p>
  */
 public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<MemcachedBucketManagerFactory> {
 
-    private static final String FILE_CONFIGURATION = "diana-memcached.properties";
-    private static final String DAEMON = "memcached.daemon";
-    private static final String MAX_RECONNECT_DELAY = "memcached.reconnect.delay";
-
-    private static final String PROTOCOL = "memcached.protocol";
-    private static final String LOCATOR = "memcached.locator";
-    private static final String AUTH_WAIT_TIME = "memcached.auth.wait.time";
-    private static final String MAX_BLOCK_TIME = "memcached.max.block.time";
-    private static final String TIMEOUT = "memcached.timeout";
-
-    private static final String READ_BUFFER_SIZE = "memcached.read.buffer.size";
-    private static final String SHOULD_OPTIMIZE = "memcached.should.optimize";
-    private static final String TIMEOUT_THRESHOLD = "memcached.timeout.threshold";
-    private static final String USE_NAGLE_ALGORITHM = "memcached.nagle.algorithm";
+    public static final String FILE_CONFIGURATION = "diana-memcached.properties";
+    public static final String DAEMON = "memcached.daemon";
+    public static final String MAX_RECONNECT_DELAY = "memcached.reconnect.delay";
+    public static final String PROTOCOL = "memcached.protocol";
+    public static final String LOCATOR = "memcached.locator";
+    public static final String AUTH_WAIT_TIME = "memcached.auth.wait.time";
+    public static final String MAX_BLOCK_TIME = "memcached.max.block.time";
+    public static final String TIMEOUT = "memcached.timeout";
+    public static final String READ_BUFFER_SIZE = "memcached.read.buffer.size";
+    public static final String SHOULD_OPTIMIZE = "memcached.should.optimize";
+    public static final String TIMEOUT_THRESHOLD = "memcached.timeout.threshold";
+    public static final String USE_NAGLE_ALGORITHM = "memcached.nagle.algorithm";
 
 
     @Override
