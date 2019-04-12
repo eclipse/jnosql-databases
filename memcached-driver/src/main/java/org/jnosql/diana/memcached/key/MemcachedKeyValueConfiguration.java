@@ -19,6 +19,8 @@ import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
+import net.spy.memcached.auth.AuthDescriptor;
+import net.spy.memcached.auth.PlainCallbackHandler;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
@@ -45,6 +47,8 @@ import static java.util.Optional.ofNullable;
  * <p>memcached.should.optimize: {@link ConnectionFactoryBuilder#setShouldOptimize(boolean)}</p>
  * <p>memcached.timeout.threshold: {@link ConnectionFactoryBuilder#setTimeoutExceptionThreshold(int)}</p>
  * <p>memcached.nagle.algorithm: {@link ConnectionFactoryBuilder#setUseNagleAlgorithm(boolean)}</p>
+ * <p>memcached.user: the user</p>
+ * <p>memcached.password: the password</p>
  */
 public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<MemcachedBucketManagerFactory> {
 
@@ -60,6 +64,8 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
     public static final String SHOULD_OPTIMIZE = "memcached.should.optimize";
     public static final String TIMEOUT_THRESHOLD = "memcached.timeout.threshold";
     public static final String USE_NAGLE_ALGORITHM = "memcached.nagle.algorithm";
+    public static final String USER = "memcached.user";
+    public static final String PASSWORD = "memcached.password";
 
 
     @Override
@@ -73,49 +79,45 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
         requireNonNull(settings, "settings is required");
         ConnectionFactoryBuilder factoryBuilder = new ConnectionFactoryBuilder();
 
-        ofNullable(settings.get(DAEMON)).map(Objects::toString)
-                .map(Boolean::parseBoolean)
+        ofNullable(settings.get(DAEMON, Boolean.class))
                 .ifPresent(factoryBuilder::setDaemon);
 
-        ofNullable(settings.get(MAX_RECONNECT_DELAY))
-                .map(Objects::toString).map(Long::parseLong)
+        ofNullable(settings.get(MAX_RECONNECT_DELAY, Long.class))
                 .ifPresent(factoryBuilder::setMaxReconnectDelay);
 
-        ofNullable(settings.get(PROTOCOL))
-                .map(Objects::toString).map(Protocol::valueOf)
+        ofNullable(settings.get(PROTOCOL, Protocol.class))
                 .ifPresent(factoryBuilder::setProtocol);
 
-        ofNullable(settings.get(LOCATOR))
-                .map(Objects::toString).map(Locator::valueOf)
+        ofNullable(settings.get(LOCATOR, Locator.class))
                 .ifPresent(factoryBuilder::setLocatorType);
 
-        ofNullable(settings.get(AUTH_WAIT_TIME))
-                .map(Objects::toString).map(Long::parseLong)
+        ofNullable(settings.get(AUTH_WAIT_TIME, Long.class))
                 .ifPresent(factoryBuilder::setAuthWaitTime);
 
-        ofNullable(settings.get(MAX_BLOCK_TIME))
-                .map(Objects::toString).map(Long::parseLong)
+        ofNullable(settings.get(MAX_BLOCK_TIME, Long.class))
                 .ifPresent(factoryBuilder::setOpQueueMaxBlockTime);
 
-        ofNullable(settings.get(TIMEOUT))
-                .map(Objects::toString).map(Long::parseLong)
+        ofNullable(settings.get(TIMEOUT, Long.class))
                 .ifPresent(factoryBuilder::setOpTimeout);
 
-        ofNullable(settings.get(READ_BUFFER_SIZE))
-                .map(Objects::toString).map(Integer::parseInt)
+        ofNullable(settings.get(READ_BUFFER_SIZE, Integer.class))
                 .ifPresent(factoryBuilder::setReadBufferSize);
 
-        ofNullable(settings.get(SHOULD_OPTIMIZE))
-                .map(Objects::toString).map(Boolean::parseBoolean)
+        ofNullable(settings.get(SHOULD_OPTIMIZE, Boolean.class))
                 .ifPresent(factoryBuilder::setShouldOptimize);
 
-        ofNullable(settings.get(TIMEOUT_THRESHOLD))
-                .map(Objects::toString).map(Integer::parseInt)
+        ofNullable(settings.get(TIMEOUT_THRESHOLD, Integer.class))
                 .ifPresent(factoryBuilder::setTimeoutExceptionThreshold);
 
-        ofNullable(settings.get(USE_NAGLE_ALGORITHM))
-                .map(Objects::toString).map(Boolean::parseBoolean)
+        ofNullable(settings.get(USE_NAGLE_ALGORITHM, Boolean.class))
                 .ifPresent(factoryBuilder::setUseNagleAlgorithm);
+
+        ofNullable(settings.get(USER, String.class))
+                .ifPresent(u -> {
+                    String password = ofNullable(settings.get(PASSWORD))
+                            .map(Object::toString).orElse(null);
+                    factoryBuilder.setAuthDescriptor(AuthDescriptor.typical(u, password));
+                });
 
 
         ConnectionFactory connectionFactory = factoryBuilder.build();
