@@ -45,11 +45,11 @@ public class MemcachedBucketManagerTest {
 
     private BucketManagerFactory keyValueEntityManagerFactory;
 
-    private User userOtavio = new User("otavio");
-    private KeyValueEntity keyValueOtavio = KeyValueEntity.of("otavio", Value.of(userOtavio));
+    private User otavio = new User("otavio");
+    private KeyValueEntity<String> entityOtavio = KeyValueEntity.of("otavio", Value.of(otavio));
 
-    private User userSoro = new User("soro");
-    private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
+    private User soro = new User("soro");
+    private KeyValueEntity<String> entitySoro = KeyValueEntity.of("soro", Value.of(soro));
 
     @BeforeEach
     public void init() {
@@ -60,23 +60,23 @@ public class MemcachedBucketManagerTest {
 
     @Test
     public void shouldPutValue() {
-        keyValueEntityManager.put("otavio", userOtavio);
+        keyValueEntityManager.put("otavio", otavio);
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
-        assertEquals(userOtavio, otavio.get().get(User.class));
+        assertEquals(this.otavio, otavio.get().get(User.class));
     }
 
     @Test
     public void shouldPutKeyValue() {
-        keyValueEntityManager.put(keyValueOtavio);
+        keyValueEntityManager.put(entityOtavio);
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
-        assertEquals(userOtavio, otavio.get().get(User.class));
+        assertEquals(this.otavio, otavio.get().get(User.class));
     }
 
     @Test
     public void shouldPutValueDuration() throws InterruptedException {
-        keyValueEntityManager.put(keyValueOtavio, Duration.ofSeconds(1L));
+        keyValueEntityManager.put(entityOtavio, Duration.ofSeconds(1L));
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
         TimeUnit.SECONDS.sleep(3L);
@@ -88,14 +88,14 @@ public class MemcachedBucketManagerTest {
     @Test
     public void shouldPutIterableKeyValue() {
 
-        keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
+        keyValueEntityManager.put(asList(entitySoro, entityOtavio));
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
-        assertEquals(userOtavio, otavio.get().get(User.class));
+        assertEquals(this.otavio, otavio.get().get(User.class));
 
         Optional<Value> soro = keyValueEntityManager.get("soro");
         assertTrue(soro.isPresent());
-        assertEquals(userSoro, soro.get().get(User.class));
+        assertEquals(this.soro, soro.get().get(User.class));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class MemcachedBucketManagerTest {
     @Test
     public void shouldRemoveKey() {
 
-        keyValueEntityManager.put(keyValueOtavio);
+        keyValueEntityManager.put(entityOtavio);
         assertTrue(keyValueEntityManager.get("otavio").isPresent());
         keyValueEntityManager.remove("otavio");
         assertFalse(keyValueEntityManager.get("otavio").isPresent());
@@ -120,10 +120,10 @@ public class MemcachedBucketManagerTest {
     @Test
     public void shouldRemoveMultiKey() {
 
-        keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
+        keyValueEntityManager.put(asList(entitySoro, entityOtavio));
         List<String> keys = asList("otavio", "soro");
         Iterable<Value> values = keyValueEntityManager.get(keys);
-        assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), containsInAnyOrder(userOtavio, userSoro));
+        assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), containsInAnyOrder(otavio, soro));
         keyValueEntityManager.remove(keys);
         Iterable<Value> users = values;
         assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
