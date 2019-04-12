@@ -15,16 +15,18 @@
 package org.jnosql.diana.memcached.key;
 
 import net.spy.memcached.ConnectionFactory;
-import org.jnosql.diana.api.key.BucketManager;
+import net.spy.memcached.MemcachedClient;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
-final class MemcachedBucketManagerFactory implements BucketManagerFactory {
+final class MemcachedBucketManagerFactory implements BucketManagerFactory<MemcachedBucketManager> {
 
     private final ConnectionFactory factory;
 
@@ -36,8 +38,14 @@ final class MemcachedBucketManagerFactory implements BucketManagerFactory {
     }
 
     @Override
-    public BucketManager getBucketManager(String bucketName) {
-        return null;
+    public MemcachedBucketManager getBucketManager(String bucketName) {
+        Objects.requireNonNull(bucketName, "bucketName is required");
+        try {
+            MemcachedClient client = new MemcachedClient(factory, addresses);
+            return new MemcachedBucketManager(client, bucketName);
+        } catch (IOException e) {
+            throw new MemcachedException("There is an error when try to create da BucketManager", e);
+        }
     }
 
     @Override
@@ -46,21 +54,21 @@ final class MemcachedBucketManagerFactory implements BucketManagerFactory {
 
     @Override
     public Map getMap(String bucketName, Class keyValue, Class valueValue) {
-        return null;
+        throw new UnsupportedOperationException("This method is not supported");
     }
 
     @Override
     public Queue getQueue(String bucketName, Class clazz) {
-        return null;
+        throw new UnsupportedOperationException("This method is not supported");
     }
 
     @Override
     public Set getSet(String bucketName, Class clazz) {
-        return null;
+        throw new UnsupportedOperationException("This method is not supported");
     }
 
     @Override
     public List getList(String bucketName, Class clazz) {
-        return null;
+        throw new UnsupportedOperationException("This method is not supported");
     }
 }
