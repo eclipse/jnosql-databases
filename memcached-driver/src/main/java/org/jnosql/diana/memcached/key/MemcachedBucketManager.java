@@ -22,7 +22,6 @@ import org.jnosql.diana.api.key.KeyValueEntity;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
