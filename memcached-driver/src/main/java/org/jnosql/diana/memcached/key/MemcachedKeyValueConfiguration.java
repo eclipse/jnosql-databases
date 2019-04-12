@@ -15,6 +15,7 @@
 package org.jnosql.diana.memcached.key;
 
 
+import net.spy.memcached.AddrUtil;
 import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Locator;
@@ -25,9 +26,12 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -49,6 +53,7 @@ import static java.util.Optional.ofNullable;
  * <p>memcached.nagle.algorithm: {@link ConnectionFactoryBuilder#setUseNagleAlgorithm(boolean)}</p>
  * <p>memcached.user: the user</p>
  * <p>memcached.password: the password</p>
+ * <p>memcached.host-: define the host to connect defined to n hots, e.g.: memcached.host-1: localhost:11211</p>
  */
 public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<MemcachedBucketManagerFactory> {
 
@@ -66,7 +71,7 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
     public static final String USE_NAGLE_ALGORITHM = "memcached.nagle.algorithm";
     public static final String USER = "memcached.user";
     public static final String PASSWORD = "memcached.password";
-
+    public static final String HOST = "memcached.host";
 
     @Override
     public MemcachedBucketManagerFactory get() {
@@ -120,8 +125,16 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
                 });
 
 
+        List<String> hots = settings.keySet().stream()
+                .filter(s -> s.startsWith(HOST))
+                .sorted()
+                .map(settings::get).map(Object::toString)
+                .collect(Collectors.toList());
+
+        List<InetSocketAddress> addresses = AddrUtil.getAddresses(hots);
         ConnectionFactory connectionFactory = factoryBuilder.build();
-        return new MemcachedBucketManagerFactory(connectionFactory);
+        return new MemcachedBucketManagerFactory(connectionFactory, addresses);
     }
 
 }
+
