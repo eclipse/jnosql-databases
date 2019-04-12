@@ -18,6 +18,7 @@ import net.spy.memcached.ConnectionFactory;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -27,8 +28,11 @@ final class MemcachedBucketManagerFactory implements BucketManagerFactory {
 
     private final ConnectionFactory factory;
 
-    MemcachedBucketManagerFactory(ConnectionFactory factory) {
+    private final List<InetSocketAddress> addresses;
+
+    MemcachedBucketManagerFactory(ConnectionFactory factory, List<InetSocketAddress> addresses) {
         this.factory = factory;
+        this.addresses = addresses;
     }
 
     @Override
