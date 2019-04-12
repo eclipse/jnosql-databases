@@ -16,25 +16,28 @@
 package org.jnosql.diana.memcached.key;
 
 
+import org.jnosql.diana.api.Value;
+import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.BucketManagerFactory;
+import org.jnosql.diana.api.key.KeyValueEntity;
+import org.jnosql.diana.memcached.key.model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueEntity;
-import org.jnosql.diana.memcached.key.model.User;
-import org.jnosql.diana.memcached.key.util.KeyValueEntityManagerFactoryUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MemcachedBucketManagerTest {
 
@@ -50,7 +53,7 @@ public class MemcachedBucketManagerTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = KeyValueEntityManagerFactoryUtils.get();
+        keyValueEntityManagerFactory = BucketManagerFactorySupplier.INSTANCE.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
     }
 
