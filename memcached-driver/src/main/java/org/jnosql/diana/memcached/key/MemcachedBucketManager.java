@@ -49,7 +49,7 @@ final class MemcachedBucketManager implements BucketManager {
     @Override
     public <K> void put(KeyValueEntity<K> entity) {
         requireNonNull(entity, "entity is required");
-        put(entity.getKey(), entity.get());
+        put(getKey(entity.getKey()), entity.get());
     }
 
     @Override
@@ -84,7 +84,7 @@ final class MemcachedBucketManager implements BucketManager {
 
         return stream(keys.spliterator(), false)
                 .map(this::get)
-                .filter(o -> !o.isPresent())
+                .filter(o -> o.isPresent())
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }

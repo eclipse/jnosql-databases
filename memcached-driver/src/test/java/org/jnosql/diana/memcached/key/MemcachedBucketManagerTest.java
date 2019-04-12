@@ -72,7 +72,6 @@ public class MemcachedBucketManagerTest {
     @Test
     public void shouldPutIterableKeyValue() {
 
-
         keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
