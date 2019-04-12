@@ -29,6 +29,7 @@ import static java.util.stream.StreamSupport.stream;
 
 final class MemcachedBucketManager implements BucketManager {
 
+    private static final int NO_EXP = 0;
     private final MemcachedClient client;
     private final String bucketName;
 
@@ -37,25 +38,27 @@ final class MemcachedBucketManager implements BucketManager {
         this.bucketName = bucketName;
     }
 
-    @Override
-    public <K, V> void put(K key, V value) {
-        requireNonNull(key, "key is required");
-        requireNonNull(value, "value is required");
-        client.set(getKey(key), 0, value);
-
-    }
 
     @Override
     public <K> void put(KeyValueEntity<K> entity) {
         requireNonNull(entity, "entity is required");
-        put(getKey(entity.getKey()), entity.get());
+        put(entity.getKey(), entity.get());
+    }
+
+
+    @Override
+    public <K, V> void put(K key, V value) {
+        requireNonNull(key, "key is required");
+        requireNonNull(value, "value is required");
+        set(key, value, NO_EXP);
+
     }
 
     @Override
     public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        client.set(getKey(entity.get()), (int) ttl.getSeconds(), entity.get());
+        set(entity.getKey(), entity.get(), (int) ttl.getSeconds());
     }
 
     @Override
@@ -107,5 +110,9 @@ final class MemcachedBucketManager implements BucketManager {
 
     private <K> String getKey(K key) {
         return bucketName + ':' + key.toString();
+    }
+
+    private void set(Object key, Object value, int exp) {
+        client.set(getKey(key), exp, value);
     }
 }
