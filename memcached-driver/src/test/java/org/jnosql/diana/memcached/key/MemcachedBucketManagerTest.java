@@ -16,8 +16,10 @@
 package org.jnosql.diana.memcached.key;
 
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.jnosql.diana.api.Value;
@@ -68,6 +70,17 @@ public class MemcachedBucketManagerTest {
         assertTrue(otavio.isPresent());
         assertEquals(userOtavio, otavio.get().get(User.class));
     }
+
+    @Test
+    public void shouldPutValueDuration() throws InterruptedException {
+        keyValueEntityManager.put(keyValueOtavio, Duration.ofSeconds(1L));
+        Optional<Value> otavio = keyValueEntityManager.get("otavio");
+        assertTrue(otavio.isPresent());
+        TimeUnit.SECONDS.sleep(3L);
+        otavio = keyValueEntityManager.get("otavio");
+        assertFalse(otavio.isPresent());
+    }
+
 
     @Test
     public void shouldPutIterableKeyValue() {
