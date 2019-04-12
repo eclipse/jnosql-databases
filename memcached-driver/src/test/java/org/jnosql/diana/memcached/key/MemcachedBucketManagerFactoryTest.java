@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Otávio Santana and others
+ *  Copyright (c) 2019 Otávio Santana and others
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -25,9 +25,9 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DefaultHazelcastBucketManagerFactoryTest {
+public class MemcachedBucketManagerFactoryTest {
 
-    private HazelcastBucketManagerFactory managerFactory;
+    private MemcachedBucketManagerFactory managerFactory;
 
     @BeforeEach
     public void setUp() {
@@ -79,52 +79,6 @@ public class DefaultHazelcastBucketManagerFactoryTest {
     @Test
     public void shouldReturnErrorWhenNullParameterMap() {
         assertThrows(NullPointerException.class, () -> managerFactory.getMap(null, String.class, String.class));
-    }
-
-    //
-    @Test
-    public void shouldReturnListHazelcast() {
-        List<String> list = managerFactory.getList("list_sample");
-        assertNotNull(list);
-    }
-
-    @Test
-    public void shouldReturnSetHazelcast() {
-        Set<String> set = managerFactory.getSet("set_sample");
-        assertNotNull(set);
-    }
-
-    @Test
-    public void shouldReturnQueueHazelcast() {
-        Queue<String> queue = managerFactory.getQueue("queue_sample");
-        assertNotNull(queue);
-    }
-
-    @Test
-    public void shouldReturnMapHazelcast() {
-        Map<String, String> map = managerFactory.getMap("map_sample");
-        assertNotNull(map);
-    }
-
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterListHazelcast() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getList(null));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterSetHazelcast() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getSet(null));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterQueueHazelcast() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getQueue(null));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterMapHazelcast() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getMap(null));
     }
 
 }

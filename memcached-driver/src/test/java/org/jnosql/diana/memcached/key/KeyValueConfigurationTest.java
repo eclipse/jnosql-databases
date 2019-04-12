@@ -15,6 +15,7 @@
 
 package org.jnosql.diana.memcached.key;
 
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,8 +36,8 @@ public class KeyValueConfigurationTest {
 
     @Test
     public void shouldCreateKeyValueFactory() {
-        Map<String, String> map = new HashMap<>();
-        BucketManagerFactory managerFactory = configuration.get(map);
+        Map<String, Object> map = new HashMap<>();
+        BucketManagerFactory managerFactory = configuration.get(Settings.of(map));
         assertNotNull(managerFactory);
     }
 
