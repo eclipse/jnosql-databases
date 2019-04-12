@@ -17,12 +17,6 @@ package org.jnosql.diana.memcached.key;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MemcachedBucketManagerFactoryTest {
@@ -37,48 +31,23 @@ public class MemcachedBucketManagerFactoryTest {
 
 
     @Test
-    public void shouldReturnList() {
-        List<String> list = managerFactory.getList("list_sample", String.class);
-        assertNotNull(list);
+    public void shouldReturnErrorList() {
+        assertThrows(UnsupportedOperationException.class, () -> managerFactory.getList(null, String.class));
     }
 
     @Test
-    public void shouldReturnSet() {
-        Set<String> set = managerFactory.getSet("set_sample", String.class);
-        assertNotNull(set);
+    public void shouldReturnErrorSet() {
+        assertThrows(UnsupportedOperationException.class, () -> managerFactory.getSet(null, String.class));
     }
 
     @Test
-    public void shouldReturnQueue() {
-        Queue<String> queue = managerFactory.getQueue("queue_sample", String.class);
-        assertNotNull(queue);
+    public void shouldReturnErrorQueue() {
+        assertThrows(UnsupportedOperationException.class, () -> managerFactory.getQueue(null, String.class));
     }
 
     @Test
-    public void shouldReturnMap() {
-        Map<String, String> map = managerFactory.getMap("map_sample", String.class, String.class);
-        assertNotNull(map);
-    }
-
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterList() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getList(null, String.class));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterSet() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getSet(null, String.class));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterQueue() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getQueue(null, String.class));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenNullParameterMap() {
-        assertThrows(NullPointerException.class, () -> managerFactory.getMap(null, String.class, String.class));
+    public void shouldReturnErrorMap() {
+        assertThrows(UnsupportedOperationException.class, () -> managerFactory.getMap(null, String.class, String.class));
     }
 
 }

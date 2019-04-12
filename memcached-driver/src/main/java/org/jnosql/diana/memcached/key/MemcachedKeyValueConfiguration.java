@@ -27,6 +27,7 @@ import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.net.InetSocketAddress;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +132,7 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
                 .map(settings::get).map(Object::toString)
                 .collect(Collectors.toList());
 
-        List<InetSocketAddress> addresses = AddrUtil.getAddresses(hots);
+        List<InetSocketAddress> addresses = hots.isEmpty() ? Collections.emptyList() : AddrUtil.getAddresses(hots);
         ConnectionFactory connectionFactory = factoryBuilder.build();
         return new MemcachedBucketManagerFactory(connectionFactory, addresses);
     }
