@@ -12,7 +12,6 @@
  *
  *   Otavio Santana
  */
-
 package org.jnosql.diana.memcached.key;
 
 import org.jnosql.diana.api.Settings;
