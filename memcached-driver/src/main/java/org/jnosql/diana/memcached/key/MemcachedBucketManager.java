@@ -15,7 +15,18 @@
 package org.jnosql.diana.memcached.key;
 
 import net.spy.memcached.MemcachedClient;
+import org.jnosql.diana.api.Value;
 import org.jnosql.diana.api.key.BucketManager;
+import org.jnosql.diana.api.key.KeyValueEntity;
+
+import java.time.Duration;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.StreamSupport.stream;
 
 final class MemcachedBucketManager implements BucketManager {
 
@@ -25,5 +36,77 @@ final class MemcachedBucketManager implements BucketManager {
     MemcachedBucketManager(MemcachedClient client, String bucketName) {
         this.client = client;
         this.bucketName = bucketName;
+    }
+
+    @Override
+    public <K, V> void put(K key, V value) {
+        requireNonNull(key, "key is required");
+        requireNonNull(value, "value is required");
+        client.set(getKey(key), 0, value);
+
+    }
+
+    @Override
+    public <K> void put(KeyValueEntity<K> entity) {
+        requireNonNull(entity, "entity is required");
+        put(entity.getKey(), entity.get());
+    }
+
+    @Override
+    public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
+        requireNonNull(entity, "entity is required");
+        requireNonNull(ttl, "ttl is required");
+        client.set(getKey(entity.get()), (int) ttl.getSeconds(), entity.get());
+    }
+
+    @Override
+    public <K> void put(Iterable<KeyValueEntity<K>> entities) {
+        requireNonNull(entities, "entities is required");
+        entities.forEach(this::put);
+    }
+
+    @Override
+    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl) {
+        requireNonNull(entities, "entities is required");
+        requireNonNull(ttl, "ttl is required");
+        entities.forEach(e -> this.put(e, ttl));
+    }
+
+    @Override
+    public <K> Optional<Value> get(K key) {
+        requireNonNull(key, "key is required");
+        return ofNullable(client.get(getKey(key))).map(Value::of);
+    }
+
+    @Override
+    public <K> Iterable<Value> get(Iterable<K> keys) {
+        requireNonNull(keys, "keys is required");
+
+        return stream(keys.spliterator(), false)
+                .map(this::get)
+                .filter(o -> !o.isPresent())
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public <K> void remove(K key) {
+        requireNonNull(key, "key is required");
+        client.delete(getKey(key));
+    }
+
+    @Override
+    public <K> void remove(Iterable<K> keys) {
+        requireNonNull(keys, "keys is required");
+        stream(keys.spliterator(), false).forEach(this::remove);
+    }
+
+    @Override
+    public void close() {
+    }
+
+
+    private <K> String getKey(K key) {
+        return bucketName + ':' + key.toString();
     }
 }
