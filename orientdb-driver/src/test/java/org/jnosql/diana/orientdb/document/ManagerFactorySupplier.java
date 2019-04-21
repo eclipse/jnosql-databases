@@ -18,18 +18,22 @@ import com.orientechnologies.orient.core.db.ODatabaseType;
 
 import java.util.function.Supplier;
 
-public enum  ManagerFactorySupplier implements Supplier<OrientDBDocumentCollectionManagerFactory> {
+public enum ManagerFactorySupplier implements Supplier<OrientDBDocumentCollectionManagerFactory> {
 
     INSTANCE;
 
+    private final OrientDBDocumentConfiguration configuration;
 
-    @Override
-    public OrientDBDocumentCollectionManagerFactory get() {
-        OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
+    {
+        configuration = new OrientDBDocumentConfiguration();
         configuration.setHost("/tmp/db/");
         configuration.setUser("admin");
         configuration.setPassword("admin");
         configuration.setStorageType(ODatabaseType.MEMORY.toString());
+    }
+
+    @Override
+    public OrientDBDocumentCollectionManagerFactory get() {
         return configuration.get();
     }
 }
