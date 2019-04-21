@@ -39,6 +39,8 @@ import static java.util.Objects.requireNonNull;
  * <p>cassandra.ssl: Define ssl, the default value is false</p>
  * <p>cassandra.metrics: enable metrics, the default value is true</p>
  * <p>cassandra.jmx: enable JMX, the default value is true</p>
+ * @see CassandraConfigurations
+ * @see OldCassandraConfigurations
  */
 public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory> {
 
