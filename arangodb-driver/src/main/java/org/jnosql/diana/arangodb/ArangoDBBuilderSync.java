@@ -20,7 +20,11 @@ import com.arangodb.entity.LoadBalancingStrategy;
 
 public class ArangoDBBuilderSync implements ArangoDBBuilder {
 
-    private final ArangoDB.Builder arangoDB = new ArangoDB.Builder();
+    private final ArangoDB.Builder arangoDB;
+
+    ArangoDBBuilderSync(ArangoDB.Builder arangoDB) {
+        this.arangoDB = arangoDB;
+    }
 
     @Override
     public void host(String host, int port) {
