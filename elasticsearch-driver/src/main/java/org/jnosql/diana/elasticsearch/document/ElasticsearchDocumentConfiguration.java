@@ -20,11 +20,15 @@ import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
+import org.jnosql.diana.elasticsearch.ElasticsearchConfigurations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +39,13 @@ import static java.util.Objects.requireNonNull;
 /**
  * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ElasticsearchDocumentCollectionManagerFactory}.
  * It tries to read the configuration properties from diana-elasticsearch.properties file. To get some information:
- * <p>elasticsearch-host-n: the host to client connection, if necessary to define a different port than default just
+ * <p>elasticsearch.host.n: the host to client connection, if necessary to define a different port than default just
  * use colon, ':' eg: elasticsearch-host-1=172.17.0.2:1234</p>
  * <p>elasticsearch-maxRetryTimeoutMillis: maxRetry- the default value {@link RestClientBuilder#DEFAULT_MAX_RETRY_TIMEOUT_MILLIS}</p>
  */
 public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfiguration<ElasticsearchDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-elasticsearch.properties";
-    private static final String HOST_PREFIX = "elasticsearch-host-";
     private static final int DEFAULT_PORT = 9200;
 
     private List<HttpHost> httpHosts = new ArrayList<>();
@@ -54,17 +57,22 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
     public ElasticsearchDocumentConfiguration() {
 
         Map<String, String> configurations = ConfigurationReader.from(FILE_CONFIGURATION);
-        String maxRetry = configurations.get("elasticsearch-maxRetryTimeoutMillis");
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        Settings settings = builder.build();
+
+        String maxRetry = configurations.get(OldElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get());
         if (maxRetry != null) {
             maxRetryTimoutMillis = Integer.valueOf(maxRetry);
         }
         if (configurations.isEmpty()) {
             return;
         }
-        configurations.keySet().stream()
-                .filter(k -> k.startsWith(HOST_PREFIX))
-                .sorted()
-                .map(h -> ElasticsearchAddress.of(configurations.get(h), DEFAULT_PORT))
+        settings.prefix(Arrays.asList(OldElasticsearchConfigurations.HOST.get(),
+                ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
+                .stream()
+                .map(Object::toString)
+                .map(h -> ElasticsearchAddress.of(h, DEFAULT_PORT))
                 .map(ElasticsearchAddress::toHttpHost)
                 .forEach(httpHosts::add);
     }
@@ -99,20 +107,21 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
     public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
 
-        configurations.keySet().stream()
-                .filter(k -> k.startsWith(HOST_PREFIX))
-                .sorted()
-                .map(h -> ElasticsearchAddress.of(configurations.get(h), DEFAULT_PORT))
+        settings.prefix(Arrays.asList(OldElasticsearchConfigurations.HOST.get(),
+                ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
+                .stream()
+                .map(Object::toString)
+                .map(h -> ElasticsearchAddress.of(h, DEFAULT_PORT))
                 .map(ElasticsearchAddress::toHttpHost)
                 .forEach(httpHosts::add);
 
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
         builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
 
-        String maxRetry = configurations.get("elasticsearch-maxRetryTimeoutMillis");
+        String maxRetry = settings.get(Arrays.asList(OldElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get(),
+                ElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get())).map(Object::toString)
+                .orElse(null);
         if (maxRetry != null) {
             maxRetryTimoutMillis = Integer.valueOf(maxRetry);
         }
