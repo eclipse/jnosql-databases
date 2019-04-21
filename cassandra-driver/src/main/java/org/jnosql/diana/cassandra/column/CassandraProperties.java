@@ -96,7 +96,7 @@ class CassandraProperties {
         settings.prefix(Arrays.asList(OldCassandraConfigurations.HOST.get(),
                 CassandraConfigurations.HOST.get(),
                 Configurations.HOST.get())).stream()
-                .map(configurations::get).forEach(cp::addNodes);
+                .map(Object::toString).forEach(cp::addNodes);
 
         settings.prefix(Arrays.asList(OldCassandraConfigurations.QUERY.get(), CassandraConfigurations.QUERY.get()))
                 .stream().map(Object::toString).sorted().forEach(cp::addQuery);
