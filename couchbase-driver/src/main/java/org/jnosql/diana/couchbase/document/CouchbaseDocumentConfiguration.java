@@ -20,7 +20,6 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
