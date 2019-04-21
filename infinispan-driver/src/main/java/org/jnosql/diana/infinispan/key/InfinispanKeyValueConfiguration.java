@@ -18,15 +18,20 @@ package org.jnosql.diana.infinispan.key;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.ObjLongConsumer;
 import java.util.stream.Collectors;
 
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -34,8 +39,8 @@ import org.jnosql.diana.driver.ConfigurationReader;
  * The Infinispan implementation of {@link KeyValueConfiguration} that returns
  * {@link InfinispanBucketManagerFactory}. It tries to read the diana-infinispan.properties file
  * that has the properties:
- * <p>infinispan-config: the optional path to an Infinispan configuration file</p>
- * <p>infinispan-host-: as prefix to n host where n is the number of host, eg: infinispan-host-1: host </p>
+ * <p>infinispan.config: the optional path to an Infinispan configuration file</p>
+ * <p>infinispan.host-: as prefix to n host where n is the number of host, eg: infinispan-host-1: host </p>
  *
  */
 public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<InfinispanBucketManagerFactory> {
@@ -50,25 +55,9 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<In
      */
     public InfinispanBucketManagerFactory get(Map<String, String> configurations) {
         requireNonNull(configurations, "configurations is required");
-        List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("infinispan-server-"))
-              .collect(Collectors.toList());
-        if (!servers.isEmpty()) {
-            org.infinispan.client.hotrod.configuration.ConfigurationBuilder builder = new org.infinispan.client.hotrod.configuration.ConfigurationBuilder();
-            for(String server : servers) {
-                builder.addServer().host(server);
-            }
-            return  new InfinispanBucketManagerFactory(new RemoteCacheManager(builder.build()));
-        } else if (configurations.containsKey("infinispan-config")) {
-            try {
-                return new InfinispanBucketManagerFactory(new DefaultCacheManager(configurations.get("infinispan-config")));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            GlobalConfigurationBuilder builder = new GlobalConfigurationBuilder();
-            builder.globalJmxStatistics().allowDuplicateDomains(true);
-            return new InfinispanBucketManagerFactory(new DefaultCacheManager(builder.build()));
-        }
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 
     /**
@@ -93,8 +82,29 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<In
     public InfinispanBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-        return get(configurations);
+        List<String> servers = settings.prefix(Arrays.asList(OldInfinispanConfigurations.HOST.get(),
+                InfinispanConfigurations.HOST.get(), Configurations.HOST.get()))
+                .stream().map(Object::toString).collect(Collectors.toList());
+
+        Optional<String> config = settings.get(Arrays.asList(OldInfinispanConfigurations.CONFIG.get(),
+                InfinispanConfigurations.CONFIG.get()))
+                .map(Object::toString);
+        if (!servers.isEmpty()) {
+            org.infinispan.client.hotrod.configuration.ConfigurationBuilder builder = new org.infinispan.client.hotrod.configuration.ConfigurationBuilder();
+            for(String server : servers) {
+                builder.addServer().host(server);
+            }
+            return  new InfinispanBucketManagerFactory(new RemoteCacheManager(builder.build()));
+        } else if (config.isPresent()) {
+            try {
+                return new InfinispanBucketManagerFactory(new DefaultCacheManager(config.get()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            GlobalConfigurationBuilder builder = new GlobalConfigurationBuilder();
+            builder.globalJmxStatistics().allowDuplicateDomains(true);
+            return new InfinispanBucketManagerFactory(new DefaultCacheManager(builder.build()));
+        }
     }
 }
