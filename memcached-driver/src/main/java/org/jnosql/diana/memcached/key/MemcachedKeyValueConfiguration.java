@@ -21,17 +21,20 @@ import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.auth.AuthDescriptor;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
@@ -52,25 +55,13 @@ import static java.util.Optional.ofNullable;
  * <p>memcached.nagle.algorithm: {@link ConnectionFactoryBuilder#setUseNagleAlgorithm(boolean)}</p>
  * <p>memcached.user: the user</p>
  * <p>memcached.password: the password</p>
- * <p>memcached.host-: define the host to connect defined to n hots, e.g.: memcached.host-1: localhost:11211</p>
+ * <p>memcached.host.: define the host to connect defined to n hots, e.g.: memcached.host.1: localhost:11211</p>
+ *
+ * @see MemcachedConfigurations
  */
 public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<MemcachedBucketManagerFactory> {
 
     public static final String FILE_CONFIGURATION = "diana-memcached.properties";
-    public static final String DAEMON = "memcached.daemon";
-    public static final String MAX_RECONNECT_DELAY = "memcached.reconnect.delay";
-    public static final String PROTOCOL = "memcached.protocol";
-    public static final String LOCATOR = "memcached.locator";
-    public static final String AUTH_WAIT_TIME = "memcached.auth.wait.time";
-    public static final String MAX_BLOCK_TIME = "memcached.max.block.time";
-    public static final String TIMEOUT = "memcached.timeout";
-    public static final String READ_BUFFER_SIZE = "memcached.read.buffer.size";
-    public static final String SHOULD_OPTIMIZE = "memcached.should.optimize";
-    public static final String TIMEOUT_THRESHOLD = "memcached.timeout.threshold";
-    public static final String USE_NAGLE_ALGORITHM = "memcached.nagle.algorithm";
-    public static final String USER = "memcached.user";
-    public static final String PASSWORD = "memcached.password";
-    public static final String HOST = "memcached.host";
 
     @Override
     public MemcachedBucketManagerFactory get() {
@@ -83,51 +74,52 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
         requireNonNull(settings, "settings is required");
         ConnectionFactoryBuilder factoryBuilder = new ConnectionFactoryBuilder();
 
-        settings.get(DAEMON, Boolean.class)
+        settings.get(MemcachedConfigurations.DAEMON.get(), Boolean.class)
                 .ifPresent(factoryBuilder::setDaemon);
 
-        settings.get(MAX_RECONNECT_DELAY, Long.class)
+        settings.get(MemcachedConfigurations.MAX_RECONNECT_DELAY.get(), Long.class)
                 .ifPresent(factoryBuilder::setMaxReconnectDelay);
 
-        settings.get(PROTOCOL, Protocol.class)
+        settings.get(MemcachedConfigurations.PROTOCOL.get(), Protocol.class)
                 .ifPresent(factoryBuilder::setProtocol);
 
-        settings.get(LOCATOR, Locator.class)
+        settings.get(MemcachedConfigurations.LOCATOR.get(), Locator.class)
                 .ifPresent(factoryBuilder::setLocatorType);
 
-        settings.get(AUTH_WAIT_TIME, Long.class)
+        settings.get(MemcachedConfigurations.AUTH_WAIT_TIME.get(), Long.class)
                 .ifPresent(factoryBuilder::setAuthWaitTime);
 
-        settings.get(MAX_BLOCK_TIME, Long.class)
+        settings.get(MemcachedConfigurations.MAX_BLOCK_TIME.get(), Long.class)
                 .ifPresent(factoryBuilder::setOpQueueMaxBlockTime);
 
-        settings.get(TIMEOUT, Long.class)
+        settings.get(MemcachedConfigurations.TIMEOUT.get(), Long.class)
                 .ifPresent(factoryBuilder::setOpTimeout);
 
-        settings.get(READ_BUFFER_SIZE, Integer.class)
+        settings.get(MemcachedConfigurations.READ_BUFFER_SIZE.get(), Integer.class)
                 .ifPresent(factoryBuilder::setReadBufferSize);
 
-        settings.get(SHOULD_OPTIMIZE, Boolean.class)
+        settings.get(MemcachedConfigurations.SHOULD_OPTIMIZE.get(), Boolean.class)
                 .ifPresent(factoryBuilder::setShouldOptimize);
 
-        settings.get(TIMEOUT_THRESHOLD, Integer.class)
+        settings.get(MemcachedConfigurations.TIMEOUT_THRESHOLD.get(), Integer.class)
                 .ifPresent(factoryBuilder::setTimeoutExceptionThreshold);
 
-        settings.get(USE_NAGLE_ALGORITHM, Boolean.class)
+        settings.get(MemcachedConfigurations.USE_NAGLE_ALGORITHM.get(), Boolean.class)
                 .ifPresent(factoryBuilder::setUseNagleAlgorithm);
 
-        settings.get(USER, String.class)
+        settings.get(asList(MemcachedConfigurations.USER.get(), Configurations.USER.get()))
+                .map(Object::toString)
                 .ifPresent(u -> {
-                    String password = ofNullable(settings.get(PASSWORD))
+                    String password = ofNullable(settings.get(asList(MemcachedConfigurations.PASSWORD.get()
+                    ,Configurations.PASSWORD.get())))
                             .map(Object::toString).orElse(null);
                     factoryBuilder.setAuthDescriptor(AuthDescriptor.typical(u, password));
                 });
 
 
-        List<String> hots = settings.keySet().stream()
-                .filter(s -> s.startsWith(HOST))
-                .sorted()
-                .map(settings::get).map(Object::toString)
+        List<String> hots = settings.prefix(asList(MemcachedConfigurations.HOST.get(), Configurations.HOST.get()))
+                .stream()
+                .map(Object::toString)
                 .collect(Collectors.toList());
 
         List<InetSocketAddress> addresses = hots.isEmpty() ? Collections.emptyList() : AddrUtil.getAddresses(hots);
