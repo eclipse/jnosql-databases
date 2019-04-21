@@ -16,7 +16,6 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.Cluster;
-import com.sun.xml.internal.ws.spi.db.OldBridge;
 import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.SettingsBuilder;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
