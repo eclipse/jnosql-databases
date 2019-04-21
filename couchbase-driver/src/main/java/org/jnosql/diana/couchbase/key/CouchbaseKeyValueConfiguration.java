@@ -17,9 +17,13 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
+import org.jnosql.diana.couchbase.CouchbaseConfigurations;
+import org.jnosql.diana.couchbase.OldCouchbaseConfigurations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -61,21 +66,7 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
     @Override
     public CouchbaseBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
-
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-
-        List<String> hosts = new ArrayList<>();
-
-        configurations.keySet()
-                .stream()
-                .filter(k -> k.startsWith(COUCHBASE_HOST))
-                .sorted()
-                .map(configurations::get)
-                .forEach(this::add);
-
-        String user = configurations.get(COUCHBASE_USER);
-        String password = configurations.get(COUCHBASE_PASSWORD);
-        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
+        update(settings);
+        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(nodes), user, password);
     }
 }
