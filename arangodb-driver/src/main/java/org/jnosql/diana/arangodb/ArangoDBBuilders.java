@@ -19,12 +19,10 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static java.util.Optional.ofNullable;
 import static org.jnosql.diana.arangodb.ArangoDBConfigurations.CHUCK_SIZE;
 import static org.jnosql.diana.arangodb.ArangoDBConfigurations.HOST;
 import static org.jnosql.diana.arangodb.ArangoDBConfigurations.LOADBALANCING;
