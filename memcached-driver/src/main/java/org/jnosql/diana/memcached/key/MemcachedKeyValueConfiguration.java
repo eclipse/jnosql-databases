@@ -116,7 +116,7 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
         settings.get(USE_NAGLE_ALGORITHM, Boolean.class)
                 .ifPresent(factoryBuilder::setUseNagleAlgorithm);
 
-        ofNullable(settings.get(USER, String.class))
+        settings.get(USER, String.class)
                 .ifPresent(u -> {
                     String password = ofNullable(settings.get(PASSWORD))
                             .map(Object::toString).orElse(null);
