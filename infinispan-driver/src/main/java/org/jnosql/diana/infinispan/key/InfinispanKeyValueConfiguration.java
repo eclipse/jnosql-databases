@@ -15,17 +15,6 @@
 
 package org.jnosql.diana.infinispan.key;
 
-import static java.util.Objects.requireNonNull;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.ObjLongConsumer;
-import java.util.stream.Collectors;
-
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
@@ -34,6 +23,15 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * The Infinispan implementation of {@link KeyValueConfiguration} that returns
