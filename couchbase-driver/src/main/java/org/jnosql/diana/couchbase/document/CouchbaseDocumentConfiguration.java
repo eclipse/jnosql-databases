@@ -23,6 +23,7 @@ import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -49,8 +50,8 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         Map<String, String> configurations = new HashMap<>();
         settings.forEach((key, value) -> configurations.put(key, value.toString()));
 
-        String user = getUser(settings);
-        String password = getPassword(settings);
+        String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
+        String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
         List<String> hosts = getHosts(settings);
 
         return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(hosts), user, password);

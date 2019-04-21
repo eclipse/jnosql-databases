@@ -23,6 +23,7 @@ import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -60,8 +61,8 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
     @Override
     public CouchbaseBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
-        String user = getUser(settings);
-        String password = getPassword(settings);
+        String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
+        String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
         List<String> hosts = getHosts(settings);
         return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }

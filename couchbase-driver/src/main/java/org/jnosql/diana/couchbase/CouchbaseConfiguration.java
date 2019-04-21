@@ -53,7 +53,7 @@ public abstract class CouchbaseConfiguration {
     protected void update(Settings settings) {
         getHosts(settings).forEach(this::add);
         this.user = getUser(settings);
-        this.password = getUser(settings);
+        this.password = getPassword(settings);
     }
 
     protected String getUser(Settings settings) {
