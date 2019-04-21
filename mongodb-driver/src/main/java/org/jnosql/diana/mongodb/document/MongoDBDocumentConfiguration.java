@@ -28,7 +28,6 @@ import org.jnosql.diana.api.document.DocumentConfigurationAsync;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,8 +46,6 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
         DocumentConfigurationAsync<MongoDBDocumentCollectionManagerAsyncFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-mongodb.properties";
-
-    private static final String PREFIX_SERVER_HOST = "mongodb-server-host-";
 
     static final int DEFAULT_PORT = 27017;
 
