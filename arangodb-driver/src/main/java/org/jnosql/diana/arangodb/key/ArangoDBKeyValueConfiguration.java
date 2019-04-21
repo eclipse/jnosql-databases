@@ -17,8 +17,14 @@ package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
+
+import java.util.Map;
+
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATION;
 
 /**
  * The ArangoDB implementation to {@link KeyValueConfiguration}
@@ -31,7 +37,10 @@ public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
 
     @Override
     public ArangoDBBucketManagerFactory get() {
-        return new ArangoDBBucketManagerFactory(builder.build());
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
+        SettingsBuilder builder = Settings.builder();
+        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 
     @Override

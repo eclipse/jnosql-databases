@@ -26,6 +26,7 @@ import org.jnosql.diana.driver.ConfigurationReader;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATION;
 
 /**
  * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
@@ -38,11 +39,10 @@ import static java.util.Objects.requireNonNull;
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
 
-    static final String FILE_CONFIGURATION = "diana-arangodb.properties";
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
         SettingsBuilder builder = Settings.builder();
         configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
         return get(builder.build());
@@ -59,7 +59,7 @@ public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
         SettingsBuilder builder = Settings.builder();
         configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
         return getAsync(builder.build());

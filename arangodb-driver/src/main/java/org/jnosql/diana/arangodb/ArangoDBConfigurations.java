@@ -30,7 +30,8 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     LOADBALANCING("arangodb.loadBalancingStrategy"),
     PROTOCOL("arangodb.protocol"),
     MAX_CONNECTIONS("arangodb.connections.max"),
-    HOST_LIST("arangodb.acquireHostList");
+    HOST_LIST("arangodb.acquireHostList"),
+    FILE_CONFIGURATION("diana-arangodb.properties");
 
 
     private final String configuration;
