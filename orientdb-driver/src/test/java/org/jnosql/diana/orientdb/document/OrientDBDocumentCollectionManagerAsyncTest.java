@@ -90,12 +90,13 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldUpdateAsync() {
-        DocumentEntity entity = getEntity();
-        entityManagerAsync.insert(entity);
-        Document newField = Documents.of("newField", "10");
-        entity.add(newField);
+       AtomicReference<DocumentEntity> entity = new AtomicReference<>();
 
-        entityManagerAsync.update(entity);
+        entityManagerAsync.insert(getEntity(), entity::set);
+
+        Document newField = Documents.of("newField", "10");
+        entity.get().add(newField);
+        entityManagerAsync.update(entity.get());
     }
 
     @Test
@@ -115,7 +116,7 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         entityManagerAsync.update(entity.get(), c -> condition.set(true));
         await().untilTrue(condition);
 
-        Optional<Document> idDocument = entity.get().find(OrientDBConverter.RID_FIELD);
+        Optional<Document> idDocument = entity.get().find("name");
         DocumentQuery query = select().from(entity.get().getName())
                 .where(idDocument.get().getName()).eq(idDocument.get().get())
                 .build();
@@ -174,13 +175,13 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         AtomicReference<DocumentEntity> entity = new AtomicReference<>();
         entityManagerAsync.insert(getEntity(), entity::set);
         await().until(() -> entity.get() != null);
+
         AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         entityManagerAsync.select(query, reference::set);
         await().until(reference::get, notNullValue(List.class));
 
         assertFalse(reference.get().isEmpty());
-        assertEquals(reference.get().get(0), entity);
     }
 
     @Test
@@ -196,7 +197,6 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         await().until(reference::get, notNullValue(List.class));
 
         assertFalse(reference.get().isEmpty());
-        assertEquals(reference.get().get(0), entity);
     }
 
     @Test
@@ -217,7 +217,6 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         await().until(reference::get, notNullValue(List.class));
 
         assertFalse(reference.get().isEmpty());
-        assertEquals(reference.get().get(0), entity);
     }
 
 
@@ -254,6 +253,8 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
     void removePersons() {
         entityManagerAsync.insert(getEntity());
         DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
-        entityManagerAsync.delete(query);
+        AtomicBoolean condition = new AtomicBoolean();
+        entityManagerAsync.delete(query, v -> {condition.set(true);});
+        await().untilTrue(condition);
     }
 }
