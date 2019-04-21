@@ -16,7 +16,6 @@ package org.jnosql.diana.elasticsearch;
 
 import java.util.function.Supplier;
 
-@Deprecated
 public enum ElasticsearchConfigurations implements Supplier<String> {
 
     HOST("elasticsearch.host"),
