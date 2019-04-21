@@ -42,8 +42,8 @@ INSTACE;
     public ElasticsearchDocumentCollectionManagerFactory get() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         Map<String, Object> settings = new HashMap<>();
-        settings.put("elasticsearch-host-1", es.getContainerIpAddress() + ':' + es.getFirstMappedPort());
-        settings.put("elasticsearch-cluster-name", "elasticsearch");
+        settings.put("elasticsearch.host.1", es.getContainerIpAddress() + ':' + es.getFirstMappedPort());
+        settings.put("elasticsearch.cluster.name", "elasticsearch");
         return configuration.get(Settings.of(settings));
     }
 
