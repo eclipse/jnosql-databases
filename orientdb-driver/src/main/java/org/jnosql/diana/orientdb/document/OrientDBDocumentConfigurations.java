@@ -21,7 +21,7 @@ public enum OrientDBDocumentConfigurations implements Supplier<String> {
     HOST("orientdb.host"),
     USER("orientdb.-user"),
     PASSWORD("orientdb.password"),
-    STORAGE_TYPE("orientdb.storageType");
+    STORAGE_TYPE("orientdb.storage.type");
 
     private final String configuration;
 

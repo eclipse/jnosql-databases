@@ -35,18 +35,14 @@ import static java.util.stream.Collectors.toList;
 /**
  * The orientDB implementation of {@link UnaryDocumentConfiguration} that returns
  * {@link OrientDBDocumentCollectionManagerFactory}. It tries to read diana-arangodb.properties file.
- * <p>orientdb-server-host: the host</p>
- * <p>orientdb-server-user: the user</p>
- * <p>orientdb-server-password: the password</p>
- * <p>orientdb-server-storageType: the storage type</p>
+ * <p>orientdb.host: the host</p>
+ * <p>orientdb.user: the user</p>
+ * <p>orientdb.password: the password</p>
+ * <p>orientdb.storage.type: the storage type</p>
  */
 public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-orientdb.properties";
-    private static final String SERVER_HOST = "orientdb-server-host";
-    private static final String SERVER_USER = "orientdb-server-user";
-    private static final String SERVER_PASSWORD = "orientdb-server-password";
-    private static final String SERVER_STORAGE_TYPE = "orientdb-server-storageType";
 
     private String host;
 
