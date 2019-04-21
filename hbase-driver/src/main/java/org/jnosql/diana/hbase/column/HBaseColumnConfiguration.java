@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Configuration to HBase that returns {@link HBaseColumnFamilyManagerFactory}
- * <p>hbase-family-n-: as prefix to add family, eg: hbase-family-1=column-family</p>
+ * <p>hbase.family.n: as prefix to add family, eg: hbase,family.1=column-family</p>
  */
 public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumnFamilyManagerFactory> {
 
@@ -84,11 +84,10 @@ public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumn
 
     @Override
     public HBaseColumnFamilyManagerFactory get(Settings settings) throws NullPointerException {
-
         requireNonNull(settings, "settings is required");
 
-        List<String> families = settings.keySet().stream().filter(s -> s.startsWith("hbase-family-"))
-                .map(settings::get).map(Object::toString).collect(Collectors.toList());
+        List<String> families = settings.prefix(HbaseConfigurations.FAMILY.get())
+                .stream().map(Object::toString).collect(Collectors.toList());
         return new HBaseColumnFamilyManagerFactory(configuration, families);
     }
 
