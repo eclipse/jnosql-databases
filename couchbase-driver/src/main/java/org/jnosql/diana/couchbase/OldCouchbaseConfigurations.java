@@ -14,5 +14,26 @@
  */
 package org.jnosql.diana.couchbase;
 
-public enum OldCouchbaseConfiguration {
+import java.util.function.Supplier;
+
+/**
+ * Uses the new configuration {@link CouchbaseConfigurations}
+ */
+@Deprecated
+public enum OldCouchbaseConfigurations implements Supplier<String> {
+
+    HOST("couchbase-host"),
+    USER("couchbase-user"),
+    PASSWORD("couchbase-password");
+
+    private final String configuration;
+
+    OldCouchbaseConfigurations(String configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public String get() {
+        return configuration;
+    }
 }
