@@ -28,20 +28,7 @@ import static java.util.Objects.requireNonNull;
  * It tries to read the configuration properties from arangodb.properties file.
  *
  * @see ArangoDBConfiguration
- * The Properties:
- * <p>arangodb-host: the host</p>
- * <p>arangodb-user: the user</p>
- * <p>arangodb-password: the password</p>
- * <p>arangodb-port: the port</p>
- * <p>arangodb-timeout: the timeout</p>
- * <p>arangodb-chuckSize: the chuckSize</p>
- * <p>arangodb-userSsl: the userSsl</p>
- * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
- * <p>arangodb.hosts:  the hosts</p>
- * <p>arangodb.protocol: the protocol</p>
- * <p>arangodb.chunksize: the chunksize</p>
- * <p>arangodb.connections.max: the max connection</p>
- * <p>arangodb.acquireHostList: the max connection</p>
+ * @see org.jnosql.diana.arangodb.ArangoDBConfigurations
  *
  */
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
