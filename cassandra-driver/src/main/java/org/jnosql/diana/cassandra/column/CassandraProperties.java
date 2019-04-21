@@ -16,8 +16,13 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.Cluster;
+import com.sun.xml.internal.ws.spi.db.OldBridge;
+import org.jnosql.diana.api.Configurations;
+import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,27 +34,18 @@ import static java.lang.Boolean.FALSE;
 
 class CassandraProperties {
 
-    private static final String DEFAULT_THREADS_NUMBER = Integer.toString(Runtime.getRuntime().availableProcessors());
-    private static final String CASSANDRA_HOSTER = "cassandra-host";
-    private static final String CASSANDRA_PORT = "cassandra-port";
-    private static final String CASSANDRA_QUERY = "cassandra-query";
-    private static final String CASSANDRA_THREADS_NUMBER = "cassandra-threads-number";
-    private static final String CASSANDRA_SSL = "cassandra-ssl";
-    private static final String CASSANDRA_METRICS = "cassandra-metrics";
-    private static final String CASSANDRA_JMX = "cassandra-jmx";
+    private static final int DEFAULT_PORT = 9042;
 
     private List<String> queries = new ArrayList<>();
 
 
-    private String numTreads;
 
     private List<String> nodes = new ArrayList<>();
 
-    private Optional<String> name = Optional.empty();
+    private Optional<String> name;
 
-    private OptionalInt maxSchemaAgreementWaitSeconds = OptionalInt.empty();
 
-    private OptionalInt port = OptionalInt.empty();
+    private int port;
 
     private boolean withoutJXMReporting;
 
@@ -75,8 +71,7 @@ class CassandraProperties {
 
         nodes.forEach(builder::addContactPoint);
         name.ifPresent(builder::withClusterName);
-        maxSchemaAgreementWaitSeconds.ifPresent(builder::withMaxSchemaAgreementWaitSeconds);
-        port.ifPresent(builder::withPort);
+        builder.withPort(port);
 
         if (withoutJXMReporting) {
             builder.withoutJMXReporting();
@@ -91,23 +86,36 @@ class CassandraProperties {
     }
 
     public ExecutorService createExecutorService() {
-        return Executors.newFixedThreadPool(Integer.valueOf(numTreads));
+        return Executors.newCachedThreadPool();
     }
 
     public static CassandraProperties of(Map<String, String> configurations) {
-        CassandraProperties cp = new CassandraProperties();
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        Settings settings = builder.build();
 
-        configurations.keySet().stream().filter(s -> s.startsWith(CASSANDRA_HOSTER))
+        CassandraProperties cp = new CassandraProperties();
+        settings.prefix(Arrays.asList(OldCassandraConfigurations.HOST.get(),
+                CassandraConfigurations.HOST.get(),
+                Configurations.HOST.get())).stream()
                 .map(configurations::get).forEach(cp::addNodes);
 
-        configurations.keySet().stream().filter(s -> s.startsWith(CASSANDRA_QUERY))
-                .sorted().map(configurations::get).forEach(cp::addQuery);
+        settings.prefix(Arrays.asList(OldCassandraConfigurations.QUERY.get(), CassandraConfigurations.QUERY.get()))
+                .stream().map(Object::toString).sorted().forEach(cp::addQuery);
 
-        cp.port = OptionalInt.of(Integer.valueOf(configurations.getOrDefault(CASSANDRA_PORT, "9042")));
-        cp.numTreads = configurations.getOrDefault(CASSANDRA_THREADS_NUMBER, DEFAULT_THREADS_NUMBER);
-        cp.withSSL = Boolean.valueOf(configurations.getOrDefault(CASSANDRA_SSL, FALSE.toString()));
-        cp.withoutMetrics = Boolean.valueOf(configurations.getOrDefault(CASSANDRA_METRICS, FALSE.toString()));
-        cp.withoutJXMReporting = Boolean.valueOf(configurations.getOrDefault(CASSANDRA_JMX, FALSE.toString()));
+        cp.port = settings.get(Arrays.asList(OldCassandraConfigurations.PORT.get(), CassandraConfigurations.PORT.get()))
+                .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_PORT);
+
+
+
+        cp.withSSL = settings.get(Arrays.asList(OldCassandraConfigurations.SSL.get(), CassandraConfigurations.SSL.get()))
+                .map(Object::toString).map(Boolean::parseBoolean).orElse(FALSE);
+        cp.withoutMetrics = settings.get(Arrays.asList(OldCassandraConfigurations.METRICS.get(), CassandraConfigurations.METRICS.get()))
+                .map(Object::toString).map(Boolean::parseBoolean).orElse(FALSE);
+        cp.withoutJXMReporting = settings.get(Arrays.asList(OldCassandraConfigurations.JMX.get(), CassandraConfigurations.JMX.get()))
+                .map(Object::toString).map(Boolean::parseBoolean).orElse(FALSE);
+        cp.name = settings.get(Arrays.asList(OldCassandraConfigurations.NAME.get(), CassandraConfigurations.NAME.get()))
+        .map(Object::toString);
         return cp;
     }
 }

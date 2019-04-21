@@ -16,18 +16,19 @@ package org.jnosql.diana.cassandra.column;
 
 import java.util.function.Supplier;
 
-public enum OldCassandraConfigurations implements Supplier<String> {
+public enum CassandraConfigurations implements Supplier<String> {
 
-    HOST("cassandra-host"),
-    PORT("cassandra-port"),
-    QUERY("cassandra-query"),
-    SSL("cassandra-ssl"),
-    METRICS("cassandra-metrics"),
-    JMX("cassandra-jmx");
+    HOST("cassandra.host"),
+    NAME("cassandra.name"),
+    PORT("cassandra.port"),
+    QUERY("cassandra.query"),
+    SSL("cassandra.ssl"),
+    METRICS("cassandra.metrics"),
+    JMX("cassandra.jmx");
 
     private final String configuration;
 
-    OldCassandraConfigurations(String configuration) {
+    CassandraConfigurations(String configuration) {
         this.configuration = configuration;
     }
 
