@@ -83,37 +83,37 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
         requireNonNull(settings, "settings is required");
         ConnectionFactoryBuilder factoryBuilder = new ConnectionFactoryBuilder();
 
-        ofNullable(settings.get(DAEMON, Boolean.class))
+        settings.get(DAEMON, Boolean.class)
                 .ifPresent(factoryBuilder::setDaemon);
 
-        ofNullable(settings.get(MAX_RECONNECT_DELAY, Long.class))
+        settings.get(MAX_RECONNECT_DELAY, Long.class)
                 .ifPresent(factoryBuilder::setMaxReconnectDelay);
 
-        ofNullable(settings.get(PROTOCOL, Protocol.class))
+        settings.get(PROTOCOL, Protocol.class)
                 .ifPresent(factoryBuilder::setProtocol);
 
-        ofNullable(settings.get(LOCATOR, Locator.class))
+        settings.get(LOCATOR, Locator.class)
                 .ifPresent(factoryBuilder::setLocatorType);
 
-        ofNullable(settings.get(AUTH_WAIT_TIME, Long.class))
+        settings.get(AUTH_WAIT_TIME, Long.class)
                 .ifPresent(factoryBuilder::setAuthWaitTime);
 
-        ofNullable(settings.get(MAX_BLOCK_TIME, Long.class))
+        settings.get(MAX_BLOCK_TIME, Long.class)
                 .ifPresent(factoryBuilder::setOpQueueMaxBlockTime);
 
-        ofNullable(settings.get(TIMEOUT, Long.class))
+        settings.get(TIMEOUT, Long.class)
                 .ifPresent(factoryBuilder::setOpTimeout);
 
-        ofNullable(settings.get(READ_BUFFER_SIZE, Integer.class))
+        settings.get(READ_BUFFER_SIZE, Integer.class)
                 .ifPresent(factoryBuilder::setReadBufferSize);
 
-        ofNullable(settings.get(SHOULD_OPTIMIZE, Boolean.class))
+        settings.get(SHOULD_OPTIMIZE, Boolean.class)
                 .ifPresent(factoryBuilder::setShouldOptimize);
 
-        ofNullable(settings.get(TIMEOUT_THRESHOLD, Integer.class))
+        settings.get(TIMEOUT_THRESHOLD, Integer.class)
                 .ifPresent(factoryBuilder::setTimeoutExceptionThreshold);
 
-        ofNullable(settings.get(USE_NAGLE_ALGORITHM, Boolean.class))
+        settings.get(USE_NAGLE_ALGORITHM, Boolean.class)
                 .ifPresent(factoryBuilder::setUseNagleAlgorithm);
 
         ofNullable(settings.get(USER, String.class))
