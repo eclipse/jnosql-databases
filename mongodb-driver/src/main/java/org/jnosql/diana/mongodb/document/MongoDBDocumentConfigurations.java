@@ -18,7 +18,7 @@ package org.jnosql.diana.mongodb.document;
 import java.util.function.Supplier;
 
 public enum MongoDBDocumentConfigurations implements Supplier<String> {
-    HOST("mongodb.server.host");
+    HOST("mongodb.host"), USER("mongodb.user"), PASSWORD("mongodb.password");
 
     private final String configuration;
 
