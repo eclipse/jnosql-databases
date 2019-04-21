@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
- * It tries to read the configuration properties from arangodb.properties file.
+ * It tries to read the configuration properties from diana-arangodb.properties file.
  *
  * @see ArangoDBConfiguration
  * @see org.jnosql.diana.arangodb.ArangoDBConfigurations

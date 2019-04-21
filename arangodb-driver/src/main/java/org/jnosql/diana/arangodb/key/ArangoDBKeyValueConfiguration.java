@@ -22,18 +22,9 @@ import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 
 /**
  * The ArangoDB implementation to {@link KeyValueConfiguration}
- * The Properties:
- * <p>arangodb-host: the host</p>
- * <p>arangodb-user: the user</p>
- * <p>arangodb-password: the password</p>
- * <p>arangodb-port: the port</p>
- * <p>arangodb-timeout: the timeout</p>
- * <p>arangodb-chuckSize: the chuckSize</p>
- * <p>arangodb-userSsl: the userSsl</p>
- * <p>arangodb.hosts:  the hosts</p>
- * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
- * <p>arangodb.protocol: the protocol</p>
- * <p>arangodb.connections.max: the max connection</p>
+ * It tries to read the configuration properties from diana-arangodb.properties file.
+ *
+ * @see org.jnosql.diana.arangodb.ArangoDBConfigurations
  */
 public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBBucketManagerFactory> {
