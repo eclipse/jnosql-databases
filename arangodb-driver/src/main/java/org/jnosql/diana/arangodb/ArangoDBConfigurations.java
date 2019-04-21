@@ -24,15 +24,13 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     HOST("arangodb.host"),
     USER("arangodb.user"),
     PASSWORD("arangodb.password"),
-    PORT("arangodb.port"),
     TIMEOUT("arangodb.timeout"),
-    CHUCK_SIZE("arangodb.chuckSize"),
+    CHUCK_SIZE("arangodb.chuck.size"),
     USERSSL("arangodb.userSsl"),
     LOADBALANCING("arangodb.loadBalancingStrategy"),
-    HOSTS("arangodb.hosts"),
     PROTOCOL("arangodb.protocol"),
-    CHUNKSIZE("arangodb.chunksize"),
-    CONNECTIONS_MAX("arangodb.connections.max");
+    MAX_CONNECTIONS("arangodb.connections.max"),
+    HOST_LIST("arangodb.acquireHostList");
 
 
     private final String configuration;
