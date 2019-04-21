@@ -49,17 +49,10 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         Map<String, String> configurations = new HashMap<>();
         settings.forEach((key, value) -> configurations.put(key, value.toString()));
 
-        List<String> hosts = new ArrayList<>();
+        String user = getUser(settings);
+        String password = getPassword(settings);
+        List<String> hosts = getHosts(settings);
 
-        configurations.keySet()
-                .stream()
-                .filter(k -> k.startsWith(COUCHBASE_HOST))
-                .sorted()
-                .map(configurations::get)
-                .forEach(this::add);
-
-        String user = configurations.get(COUCHBASE_USER);
-        String password = configurations.get(COUCHBASE_PASSWORD);
         return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }
 

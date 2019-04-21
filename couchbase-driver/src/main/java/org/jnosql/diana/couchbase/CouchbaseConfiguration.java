@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The configuration base to all configuration implementation on couchbase
@@ -50,19 +52,30 @@ public abstract class CouchbaseConfiguration {
     }
 
     protected void update(Settings settings) {
-        settings.prefix(asList(CouchbaseConfigurations.HOST.get(),
-                OldCouchbaseConfigurations.HOST.get(), Configurations.HOST.get()))
-                .stream().map(Object::toString).forEach(this::add);
+        getHosts(settings).forEach(this::add);
+        this.user = getUser(settings);
+        this.password = getUser(settings);
+    }
 
-        this.user = settings.get(asList(Configurations.USER.get(),
-                CouchbaseConfigurations.USER.get(),
-                OldCouchbaseConfigurations.USER.get()))
-                .map(Object::toString).orElse(null);
-
-        this.password = settings.get(asList(Configurations.PASSWORD.get(),
+    protected String getUser(Settings settings) {
+        return settings.get(asList(Configurations.PASSWORD.get(),
                 CouchbaseConfigurations.PASSWORD.get(),
                 OldCouchbaseConfigurations.PASSWORD.get()))
                 .map(Object::toString).orElse(null);
+    }
+
+    protected String getPassword(Settings settings) {
+
+        return settings.get(asList(Configurations.PASSWORD.get(),
+                CouchbaseConfigurations.PASSWORD.get(),
+                OldCouchbaseConfigurations.PASSWORD.get()))
+                .map(Object::toString).orElse(null);
+    }
+
+    protected List<String> getHosts(Settings settings) {
+        return settings.prefix(asList(CouchbaseConfigurations.HOST.get(),
+                OldCouchbaseConfigurations.HOST.get(), Configurations.HOST.get()))
+                .stream().map(Object::toString).collect(toList());
     }
 
     /**

@@ -66,7 +66,9 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
     @Override
     public CouchbaseBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
-        update(settings);
-        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(nodes), user, password);
+        String user = getUser(settings);
+        String password = getPassword(settings);
+        List<String> hosts = getHosts(settings);
+        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }
 }
