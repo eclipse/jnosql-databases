@@ -17,6 +17,7 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,12 +39,12 @@ public class CassandraColumnFamilyManagerFactoryTest {
     @BeforeEach
     public void setUp() throws InterruptedException, IOException {
         Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
-        Map<String, String> configurations = new HashMap<>();
-        configurations.put("cassandra-host-1", settings.get("cassandra-host-1").toString());
-        configurations.put("cassandra-port", settings.get("cassandra-port").toString());
-        configurations.put("cassandra-query-1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
+        SettingsBuilder builder = Settings.builder();
+        builder.put("cassandra.host.1", settings.get("cassandra-host-1").toString());
+        builder.put("cassandra.port", settings.get("cassandra-port").toString());
+        builder.put("cassandra.query.1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        subject = cassandraConfiguration.getManagerFactory(configurations);
+        subject = cassandraConfiguration.get(builder.build());
     }
 
     @Test
