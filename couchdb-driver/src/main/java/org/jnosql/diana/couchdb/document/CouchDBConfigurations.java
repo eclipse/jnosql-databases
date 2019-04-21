@@ -27,7 +27,7 @@ public enum  CouchDBConfigurations implements Supplier<String> {
     MAX_OBJECT_SIZE_BYTES("couchdb.max.object.size.bytes"),
     MAX_CACHE_ENTRIES("couchdb.max.cache.entries"),
     HOST("couchdb.host"),
-    USERNAME("couchdb.username"),
+    USER("couchdb.username"),
     PASSWORD("couchdb.password"),
     ENABLE_SSL("couchdb.enable.ssl"),
     COMPRESSION("couchdb.compression");

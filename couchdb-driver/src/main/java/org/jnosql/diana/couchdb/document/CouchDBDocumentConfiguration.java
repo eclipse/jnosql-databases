@@ -36,7 +36,7 @@ import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.MAX_OBJECT
 import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.PASSWORD;
 import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.PORT;
 import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.SOCKET_TIMEOUT;
-import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.USERNAME;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.USER;
 
 /**
  * The CouchDB implementation of {@link org.jnosql.diana.api.document.DocumentConfiguration} that returns
@@ -75,7 +75,7 @@ public class CouchDBDocumentConfiguration implements UnaryDocumentConfiguration<
         settings.get(Arrays.asList(HOST.get(), Configurations.HOST.get()))
                 .map(Object::toString)
                 .ifPresent(configuration::withHost);
-        settings.get(Arrays.asList(USERNAME.get(), Configurations.USER.get()))
+        settings.get(Arrays.asList(USER.get(), Configurations.USER.get()))
                 .map(Object::toString)
                 .ifPresent(configuration::withUsername);
         settings.get(Arrays.asList(PASSWORD.get(), Configurations.PASSWORD.get()))
