@@ -14,8 +14,7 @@
  */
 package org.jnosql.diana.orientdb.document;
 
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import com.orientechnologies.orient.core.db.ODatabaseType;
 
 import java.util.function.Supplier;
 
@@ -23,23 +22,14 @@ public enum  ManagerFactorySupplier implements Supplier<OrientDBDocumentCollecti
 
     INSTANCE;
 
-    private final GenericContainer orientDB =
-            new GenericContainer("orientdb:latest")
-                    .withExposedPorts(2424)
-                    .withExposedPorts(2480)
-                    .withEnv("ORIENTDB_ROOT_PASSWORD", "rootpwd")
-                    .waitingFor(Wait.defaultWaitStrategy());
-
-    {
-        orientDB.start();
-    }
 
     @Override
     public OrientDBDocumentCollectionManagerFactory get() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
-        configuration.setHost(orientDB.getContainerIpAddress() + ':' + orientDB.getFirstMappedPort());
-        configuration.setUser("root");
-        configuration.setPassword("rootpwd");
+        configuration.setHost("/tmp/db/");
+        configuration.setUser("admin");
+        configuration.setPassword("admin");
+        configuration.setStorageType(ODatabaseType.MEMORY.toString());
         return configuration.get();
     }
 }

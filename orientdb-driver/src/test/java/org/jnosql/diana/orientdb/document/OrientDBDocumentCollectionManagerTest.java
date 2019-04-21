@@ -21,6 +21,7 @@ import org.jnosql.diana.api.document.DocumentDeleteQuery;
 import org.jnosql.diana.api.document.DocumentEntity;
 import org.jnosql.diana.api.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -530,6 +531,7 @@ public class OrientDBDocumentCollectionManagerTest {
 
     @AfterEach
     void removePersons() {
+        entityManager.insert(getEntity());
         DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
         entityManager.delete(query);
     }
