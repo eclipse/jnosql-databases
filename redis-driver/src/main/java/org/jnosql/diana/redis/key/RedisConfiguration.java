@@ -17,6 +17,7 @@ package org.jnosql.diana.redis.key;
 
 
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 import redis.clients.jedis.JedisPool;
@@ -29,20 +30,30 @@ import java.util.Objects;
 /**
  * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisBucketManagerFactory}.
  * It tries to read diana-redis.properties file.
- * <p>redis-master-host: the host client </p>
- * <p>redis-master-port: the port, the default value 6379</p>
- * <p>redis-timeout: the redis timeout, the default value 2000 on milis</p>
- * <p>redis-password: the password</p>
- * <p>redis-database: the redis database number, the default value is 0</p>
- * <p>redis-clientName: the redis client name</p>
- * <p>redis-configuration-max-total: The max number of thread to {@link JedisPoolConfig}, the default value 1000 </p>
- * <p>redis-configuration-max-idle: The max idle {@link JedisPoolConfig}, the default value 10 </p>
- * <p>redis-configuration-min-idle: The min idle {@link JedisPoolConfig}, the default value 1 </p>
- * <p>redis-configuration-max--wait-millis: The max wait on millis on {@link JedisPoolConfig}, the default value 3000 </p>
+ * <p>redis.host: the host client </p>
+ * <p>redis.port: the port, the default value 6379</p>
+ * <p>redis.timeout: the redis timeout, the default value 2000 on milis</p>
+ * <p>redis.password: the password</p>
+ * <p>redis.database: the redis database number, the default value is 0</p>
+ * <p>redis.clientName: the redis client name</p>
+ * <p>redis.max.total: The max number of thread to {@link JedisPoolConfig}, the default value 1000 </p>
+ * <p>redis.max.idle: The max idle {@link JedisPoolConfig}, the default value 10 </p>
+ * <p>redis.min.idle: The min idle {@link JedisPoolConfig}, the default value 1 </p>
+ * <p>redis.max.wait.millis: The max wait on millis on {@link JedisPoolConfig}, the default value 3000 </p>
  */
 public final class RedisConfiguration implements KeyValueConfiguration<RedisBucketManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-redis.properties";
+    public static final String HOST = "redis-master-host";
+    public static final String PORT = "redis-master-port";
+    public static final String TIMEOUT = "redis-timeout";
+    public static final String PASSWORD = "redis-password";
+    public static final String DATABASE = "redis-database";
+    public static final String CLIENT_NAME = "redis-clientName";
+    public static final String MAX_TOTAL = "redis-configuration-max-total";
+    public static final String MAX_IDLE = "redis-configuration-max-idle";
+    public static final String MIN_IDLE = "redis-configuration-min-idle";
+    public static final String MAX_WAIT_MILLIS = "redis-configuration-max--wait-millis";
 
     /**
      * Creates a {@link RedisConfiguration} from map configuration
@@ -51,29 +62,33 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisBuck
      * @return the RedisConfiguration instance
      */
     public RedisBucketManagerFactory getManagerFactory(Map<String, String> configurations) {
-        JedisPoolConfig poolConfig = getJedisPoolConfig(configurations);
-        JedisPool jedisPool = getJedisPool(configurations, poolConfig);
-
-        return new DefaultRedisBucketManagerFactory(jedisPool);
+        Objects.requireNonNull(configurations, "configurations is required");
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 
-    private JedisPool getJedisPool(Map<String, String> configurations, JedisPoolConfig poolConfig) {
-        String localhost = configurations.getOrDefault("redis-master-host", "localhost");
-        Integer port = Integer.valueOf(configurations.getOrDefault("redis-master-port", "6379"));
-        Integer timeout = Integer.valueOf(configurations.getOrDefault("redis-timeout", "2000"));
-        String password = configurations.getOrDefault("redis-password", null);
-        Integer database = Integer.valueOf(configurations.getOrDefault("redis-database", "0"));
-        String clientName = configurations.getOrDefault("redis-clientName", null);
+    private JedisPool getJedisPool(Settings settings, JedisPoolConfig poolConfig) {
+
+        String localhost = settings.get(HOST).map(Object::toString).orElse("localhost");
+        Integer port = settings.get(PORT).map(Object::toString).map(Integer::parseInt).orElse(6379);
+        Integer timeout = settings.get(TIMEOUT).map(Object::toString).map(Integer::parseInt).orElse(2000);
+        String password = settings.get(PASSWORD).map(Object::toString).orElse(null);
+        Integer database = settings.get(DATABASE).map(Object::toString).map(Integer::parseInt).orElse(0);
+        ;
+        String clientName = settings.get(CLIENT_NAME).map(Object::toString).orElse(null);
         return new JedisPool(poolConfig, localhost, port, timeout, password, database, clientName);
     }
 
-    private JedisPoolConfig getJedisPoolConfig(Map<String, String> configurations) {
+    private JedisPoolConfig getJedisPoolConfig(Settings settings) {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(Integer.valueOf(configurations.getOrDefault("redis-configuration-max-total", "1000")));
-        poolConfig.setMaxIdle(Integer.valueOf(configurations.getOrDefault("redis-configuration-max-idle", "10")));
-        poolConfig.setMinIdle(Integer.valueOf(configurations.getOrDefault("redis-configuration-min-idle", "1")));
-        poolConfig.setMaxWaitMillis(Integer.valueOf(configurations
-                .getOrDefault("redis-configuration-max--wait-millis", "3000")));
+
+
+        poolConfig.setMaxTotal(settings.get(MAX_TOTAL).map(Object::toString).map(Integer::parseInt).orElse(1000));
+        poolConfig.setMaxIdle(settings.get(MAX_IDLE).map(Object::toString).map(Integer::parseInt).orElse(10));
+        poolConfig.setMinIdle(settings.get(MIN_IDLE).map(Object::toString).map(Integer::parseInt).orElse(1));
+        poolConfig.setMaxWaitMillis(settings.get(MAX_WAIT_MILLIS).map(Object::toString).map(Integer::parseInt)
+                .orElse(3000));
         return poolConfig;
     }
 
@@ -87,8 +102,9 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisBuck
     @Override
     public RedisBucketManagerFactory get(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-        return getManagerFactory(configurations);
+
+        JedisPoolConfig poolConfig = getJedisPoolConfig(settings);
+        JedisPool jedisPool = getJedisPool(settings, poolConfig);
+        return new DefaultRedisBucketManagerFactory(jedisPool);
     }
 }
