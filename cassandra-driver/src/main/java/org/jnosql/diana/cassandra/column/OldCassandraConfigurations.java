@@ -16,6 +16,9 @@ package org.jnosql.diana.cassandra.column;
 
 import java.util.function.Supplier;
 
+/**
+ * Use properties configuration from {@link CassandraConfigurations}
+ */
 @Deprecated
 public enum OldCassandraConfigurations implements Supplier<String> {
 
