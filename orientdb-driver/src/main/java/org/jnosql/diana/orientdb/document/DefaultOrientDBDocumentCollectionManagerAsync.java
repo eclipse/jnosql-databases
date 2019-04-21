@@ -42,6 +42,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
 
     private static final Consumer<DocumentEntity> NOOPS = d -> {
     };
+    private static final int FIRST_VERSION = 1;
 
 
     private final ODatabasePool pool;
@@ -71,6 +72,7 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
         entityValues.keySet().stream().forEach(k -> document.field(k, entityValues.get(k)));
         ORecordCallback<Number> createCallBack = (rid, clusterPosition) -> {
             entity.add(Document.of(RID_FIELD, rid.toString()));
+            entity.add(Document.of(VERSION_FIELD, FIRST_VERSION));
             callBack.accept(entity);
         };
         ORecordCallback<Integer> updateCallback = (rid, version) -> {
