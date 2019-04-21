@@ -99,7 +99,7 @@ class CassandraProperties {
                 .map(Object::toString).forEach(cp::addNodes);
 
         settings.prefix(Arrays.asList(OldCassandraConfigurations.QUERY.get(), CassandraConfigurations.QUERY.get()))
-                .stream().map(Object::toString).sorted().forEach(cp::addQuery);
+                .stream().map(Object::toString).forEach(cp::addQuery);
 
         cp.port = settings.get(Arrays.asList(OldCassandraConfigurations.PORT.get(), CassandraConfigurations.PORT.get()))
                 .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_PORT);
