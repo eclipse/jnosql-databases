@@ -17,29 +17,23 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
-import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
-import org.jnosql.diana.couchbase.CouchbaseConfigurations;
-import org.jnosql.diana.couchbase.OldCouchbaseConfigurations;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation to {@link KeyValueConfiguration} that returns {@link DefaultCouchbaseBucketManagerFactory}.
  * It tries to read the diana-couchbase.properties file to get some informations:
- * <p>couchbase-host-: the prefix to add a new host</p>
- * <p>couchbase-user: the user</p>
- * <p>couchbase-password: the password</p>
+ * <p>couchbase.host-: the prefix to add a new host</p>
+ * <p>couchbase.user: the user</p>
+ * <p>couchbase.password: the password</p>
+ *
+ * @see org.jnosql.diana.couchbase.CouchbaseConfigurations
  */
 public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
         implements KeyValueConfiguration<CouchbaseBucketManagerFactory> {

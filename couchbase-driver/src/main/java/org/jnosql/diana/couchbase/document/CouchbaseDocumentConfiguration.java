@@ -30,9 +30,10 @@ import static java.util.Objects.requireNonNull;
 /**
  * The couchbase implementation of {@link UnaryDocumentConfiguration} that returns
  * {@link CouhbaseDocumentCollectionManagerFactory}.
- * <p>couchbase-host-: the prefix to add a new host</p>
- * <p>couchbase-user: the user</p>
- * <p>couchbase-password: the password</p>
+ * <p>couchbase.host-: the prefix to add a new host</p>
+ * <p>couchbase.user: the user</p>
+ * <p>couchbase.password: the password</p>
+ * @see org.jnosql.diana.couchbase.CouchbaseConfigurations
  */
 public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         implements UnaryDocumentConfiguration<CouhbaseDocumentCollectionManagerFactory> {
