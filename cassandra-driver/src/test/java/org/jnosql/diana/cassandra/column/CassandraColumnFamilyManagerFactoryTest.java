@@ -37,11 +37,11 @@ public class CassandraColumnFamilyManagerFactoryTest {
 
 
     @BeforeEach
-    public void setUp() throws InterruptedException, IOException {
+    public void setUp() {
         Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         SettingsBuilder builder = Settings.builder();
-        builder.put("cassandra.host.1", settings.get("cassandra-host-1").toString());
-        builder.put("cassandra.port", settings.get("cassandra-port").toString());
+        builder.put("cassandra.host.1", settings.get("cassandra.host-1").get().toString());
+        builder.put("cassandra.port", settings.get("cassandra.port").get().toString());
         builder.put("cassandra.query.1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         subject = cassandraConfiguration.get(builder.build());
@@ -60,19 +60,19 @@ public class CassandraColumnFamilyManagerFactoryTest {
     }
 
     @Test
-    public void shouldReturnEntityManager() throws Exception {
+    public void shouldReturnEntityManager() {
         ColumnFamilyManager columnEntityManager = subject.get(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 
     @Test
-    public void shouldReturnEntityManagerAsync() throws Exception {
+    public void shouldReturnEntityManagerAsync() {
         ColumnFamilyManagerAsync columnEntityManager = subject.getAsync(org.jnosql.diana.cassandra.column.Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 
     @Test
-    public void shouldCloseNode() throws Exception {
+    public void shouldCloseNode() {
         subject.close();
         CassandraColumnFamilyManagerFactory cassandraColumnFamilyManagerFactory = CassandraColumnFamilyManagerFactory.class.cast(subject);
         Cluster cluster = cassandraColumnFamilyManagerFactory.getCluster();
