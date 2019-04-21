@@ -37,7 +37,7 @@ public enum  ManagerFactorySupplier implements Supplier<OrientDBDocumentCollecti
     @Override
     public OrientDBDocumentCollectionManagerFactory get() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
-        configuration.setHost(orientDB.getContainerIpAddress() + ':' + orientDB.getFirstMappedPort(););
+        configuration.setHost(orientDB.getContainerIpAddress() + ':' + orientDB.getFirstMappedPort());
         configuration.setUser("root");
         configuration.setPassword("rootpwd");
         return configuration.get();
