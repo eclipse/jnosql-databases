@@ -17,13 +17,12 @@ package org.jnosql.diana.mongodb.document;
 
 import java.util.function.Supplier;
 
-@Deprecated
-public enum  OldMongoDBDocumentConfigurations implements Supplier<String> {
-    HOST("mongodb-server-host-");
+public enum MongoDBDocumentConfigurations implements Supplier<String> {
+    HOST("mongodb.server.host");
 
     private final String configuration;
 
-    OldMongoDBDocumentConfigurations(String configuration) {
+    MongoDBDocumentConfigurations(String configuration) {
         this.configuration = configuration;
     }
 
