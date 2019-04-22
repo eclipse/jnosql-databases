@@ -26,6 +26,7 @@ import org.jnosql.diana.driver.ConfigurationReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -33,7 +34,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakBucketManagerFactory}.
  * It tries to read diana-riak.properties file.
- * <p>riak.host-: The prefix to host. eg: riak-server-host-1= host1</p>
+ * <p>riak.host-: The prefix to host. eg: riak.server.host.1= host1</p>
  */
 public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBucketManagerFactory> {
 
@@ -104,8 +105,8 @@ public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBuck
 
         settings.prefix(asList(SERVER_PREFIX, OLD_SERVER_PREFIX, Configurations.HOST.get()))
                 .stream()
-                .map(a -> new RiakNode.Builder()
-                        .withRemoteAddress(a.toString()).build())
+                .map(Object::toString)
+                .map(toNode())
                 .forEach(nodes::add);
 
         if (nodes.isEmpty()) {
@@ -115,5 +116,20 @@ public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBuck
                 .build();
 
         return new RiakBucketManagerFactory(cluster);
+    }
+
+    private Function<String, RiakNode> toNode() {
+        return h -> {
+            String[] values = h.split(":");
+            if (values.length == 1) {
+                return new RiakNode.Builder()
+                        .withRemoteAddress(values[0]).build();
+            } else {
+                return new RiakNode.Builder()
+                        .withRemoteAddress(values[0])
+                        .withRemotePort(Integer.valueOf(values[1]))
+                        .build();
+            }
+        };
     }
 }
