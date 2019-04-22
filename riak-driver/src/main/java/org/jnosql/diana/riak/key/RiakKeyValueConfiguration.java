@@ -24,7 +24,6 @@ import org.jnosql.diana.driver.ConfigurationReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -36,7 +35,6 @@ import static java.util.Objects.requireNonNull;
 public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBucketManagerFactory> {
 
     private static final String SERVER_PREFIX = "riak-server-host-";
-    private static final Logger LOGGER = Logger.getLogger(RiakKeyValueConfiguration.class.getName());
 
     private static final String FILE_CONFIGURATION = "diana-riak.properties";
 
