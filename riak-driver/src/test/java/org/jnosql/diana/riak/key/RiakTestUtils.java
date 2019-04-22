@@ -15,12 +15,18 @@
 package org.jnosql.diana.riak.key;
 
 
+import com.basho.riak.client.core.RiakNode;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
 public final class RiakTestUtils {
 
 
     public static BucketManagerFactory get() {
-        return BucketManagerFactorySupplier.INSTANCE.get();
+
+        RiakKeyValueConfiguration riakKeyValueConfiguration = new RiakKeyValueConfiguration();
+        RiakNode node = new RiakNode.Builder()
+                .withRemoteAddress("localhost").build();
+        riakKeyValueConfiguration.add(node);
+        return riakKeyValueConfiguration.get();
     }
 }
