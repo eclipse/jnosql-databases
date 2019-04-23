@@ -54,7 +54,7 @@ public enum ManagerFactorySupplier  {
     private Settings getSettings() {
         Map<String,Object> settings = new HashMap<>();
         String host = mongodb.getContainerIpAddress() + ":" + mongodb.getFirstMappedPort();
-        settings.put("mongodb-server-host-1", host);
+        settings.put("mongodb.host.1", host);
         return Settings.of(settings);
     }
 

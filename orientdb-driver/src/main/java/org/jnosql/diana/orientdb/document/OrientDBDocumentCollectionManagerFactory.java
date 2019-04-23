@@ -47,7 +47,9 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
                 .map(String::toUpperCase)
                 .map(ODatabaseType::valueOf)
                 .orElse(ODatabaseType.PLOCAL);
-        this.orient = new OrientDB("remote:" + host, user, password, OrientDBConfig.defaultConfig());
+
+        String prefix = this.storageType == ODatabaseType.MEMORY ? "embedded:" : "remote:";
+        this.orient = new OrientDB(prefix + host, user, password, OrientDBConfig.defaultConfig());
 
     }
 

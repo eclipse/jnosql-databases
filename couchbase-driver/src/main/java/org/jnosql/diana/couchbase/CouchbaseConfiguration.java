@@ -15,6 +15,9 @@
 package org.jnosql.diana.couchbase;
 
 
+import org.jnosql.diana.api.Configurations;
+import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
@@ -22,15 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
 /**
  * The configuration base to all configuration implementation on couchbase
  */
 public abstract class CouchbaseConfiguration {
 
     private static final String FILE_CONFIGURATION = "diana-couchbase.properties";
-    protected static final String COUCHBASE_HOST = "couchbase-host-";
-    protected static final String COUCHBASE_USER = "couchbase-user";
-    protected static final String COUCHBASE_PASSWORD = "couchbase-password";
 
     protected final List<String> nodes = new ArrayList<>();
 
@@ -40,14 +43,38 @@ public abstract class CouchbaseConfiguration {
 
     public CouchbaseConfiguration() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        configuration.keySet()
-                .stream()
-                .filter(k -> k.startsWith(COUCHBASE_HOST))
-                .sorted()
-                .map(configuration::get)
-                .forEach(this::add);
-        this.user = configuration.get(COUCHBASE_USER);
-        this.password = configuration.get(COUCHBASE_PASSWORD);
+        SettingsBuilder builder = Settings.builder();
+        configuration.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        Settings settings = builder.build();
+
+        update(settings);
+    }
+
+    protected void update(Settings settings) {
+        getHosts(settings).forEach(this::add);
+        this.user = getUser(settings);
+        this.password = getPassword(settings);
+    }
+
+    protected String getUser(Settings settings) {
+        return settings.get(asList(Configurations.USER.get(),
+                CouchbaseConfigurations.USER.get(),
+                OldCouchbaseConfigurations.USER.get()))
+                .map(Object::toString).orElse(null);
+    }
+
+    protected String getPassword(Settings settings) {
+
+        return settings.get(asList(Configurations.PASSWORD.get(),
+                CouchbaseConfigurations.PASSWORD.get(),
+                OldCouchbaseConfigurations.PASSWORD.get()))
+                .map(Object::toString).orElse(null);
+    }
+
+    protected List<String> getHosts(Settings settings) {
+        return settings.prefix(asList(CouchbaseConfigurations.HOST.get(),
+                OldCouchbaseConfigurations.HOST.get(), Configurations.HOST.get()))
+                .stream().map(Object::toString).collect(toList());
     }
 
     /**
@@ -62,6 +89,7 @@ public abstract class CouchbaseConfiguration {
 
     /**
      * set the user
+     *
      * @param user the user
      */
     public void setUser(String user) {
@@ -70,6 +98,7 @@ public abstract class CouchbaseConfiguration {
 
     /**
      * set the password
+     *
      * @param password the password
      */
     public void setPassword(String password) {

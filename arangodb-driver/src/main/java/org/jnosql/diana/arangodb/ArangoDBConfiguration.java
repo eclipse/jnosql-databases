@@ -133,13 +133,13 @@ public abstract class ArangoDBConfiguration {
     }
 
     protected ArangoDB getArangoDB(Settings settings) {
-        ArangoDBBuilderSync aragonDB = new ArangoDBBuilderSync();
+        ArangoDBBuilderSync aragonDB = new ArangoDBBuilderSync(builder);
         ArangoDBBuilders.load(settings, aragonDB);
         return aragonDB.build();
     }
 
     protected ArangoDBAsync getArangoDBAsync(Settings settings) {
-        ArangoDBBuilderAsync aragonDB = new ArangoDBBuilderAsync();
+        ArangoDBBuilderAsync aragonDB = new ArangoDBBuilderAsync(builderAsync);
         ArangoDBBuilders.load(settings, aragonDB);
         return aragonDB.build();
     }

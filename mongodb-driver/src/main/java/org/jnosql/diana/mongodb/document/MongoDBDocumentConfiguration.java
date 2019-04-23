@@ -20,14 +20,17 @@ import com.mongodb.ServerAddress;
 import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.connection.ClusterSettings;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.api.document.DocumentConfigurationAsync;
 import org.jnosql.diana.driver.ConfigurationReader;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -37,14 +40,12 @@ import static java.util.Objects.requireNonNull;
  * The MongoDB implementation to both {@link DocumentConfiguration} and {@link DocumentConfigurationAsync}
  * that returns  {@link MongoDBDocumentCollectionManagerFactory} {@link MongoDBDocumentCollectionManagerAsyncFactory}.
  * It tries to read the diana-mongodb.properties file whose has the following properties
- * <p>mongodb-server-host-: as prefix to add host client, eg: mongodb-server-host-1=host1, mongodb-server-host-2= host2</p>
+ * <p>mongodb.server.host.: as prefix to add host client, eg: mongodb.server.host.1=host1, mongodb.server.host.2= host2</p>
  */
 public class MongoDBDocumentConfiguration implements DocumentConfiguration<MongoDBDocumentCollectionManagerFactory>,
         DocumentConfigurationAsync<MongoDBDocumentCollectionManagerAsyncFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-mongodb.properties";
-
-    private static final String PREFIX_SERVER_HOST = "mongodb-server-host-";
 
     static final int DEFAULT_PORT = 27017;
 
@@ -58,14 +59,9 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
      */
     public MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         requireNonNull(configurations, "configurations is required");
-        List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith(PREFIX_SERVER_HOST))
-                .map(configurations::get).map(HostPortConfiguration::new)
-                .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
-        if (servers.isEmpty()) {
-            return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
-        }
-
-        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers));
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 
     /**
@@ -98,9 +94,20 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
     public MongoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-        return get(configurations);
+
+        List<ServerAddress> servers = settings
+                .prefix(Arrays.asList(OldMongoDBDocumentConfigurations.HOST.get(), MongoDBDocumentConfigurations.HOST.get(),
+                        Configurations.HOST.get()))
+                .stream()
+                .map(Object::toString)
+                .map(HostPortConfiguration::new)
+                .map(HostPortConfiguration::toServerAddress)
+                .collect(Collectors.toList());
+        if (servers.isEmpty()) {
+            return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
+        }
+
+        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers));
     }
 
     public MongoDBDocumentCollectionManagerFactory get(String pathFileConfig) throws NullPointerException {
@@ -109,7 +116,6 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
         Map<String, String> configuration = ConfigurationReader.from(pathFileConfig);
         return get(configuration);
     }
-
 
 
     @Override
@@ -122,10 +128,19 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
     @Override
     public MongoDBDocumentCollectionManagerAsyncFactory getAsync(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
+        List<ServerAddress> servers = settings
+                .prefix(Arrays.asList(OldMongoDBDocumentConfigurations.HOST.get(), MongoDBDocumentConfigurations.HOST.get(),
+                        Configurations.HOST.get()))
+                .stream()
+                .map(Object::toString)
+                .map(HostPortConfiguration::new)
+                .map(HostPortConfiguration::toServerAddress)
+                .collect(Collectors.toList());
 
-        return getAsync(configurations);
+        if (servers.isEmpty()) {
+            return new MongoDBDocumentCollectionManagerAsyncFactory(MongoClients.create());
+        }
+        return new MongoDBDocumentCollectionManagerAsyncFactory(getAsyncMongoClient(servers));
     }
 
     /**
@@ -141,15 +156,11 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
     }
 
 
-
     private MongoDBDocumentCollectionManagerAsyncFactory getAsync(Map<String, String> configurations) {
-        List<ServerAddress> servers = configurations.keySet().stream().filter(s -> s.startsWith(PREFIX_SERVER_HOST))
-                .map(configurations::get).map(HostPortConfiguration::new)
-                .map(HostPortConfiguration::toServerAddress).collect(Collectors.toList());
-        if (servers.isEmpty()) {
-            return new MongoDBDocumentCollectionManagerAsyncFactory(MongoClients.create());
-        }
-        return new MongoDBDocumentCollectionManagerAsyncFactory(getAsyncMongoClient(servers));
+        Objects.requireNonNull(configurations, "configurations is required");
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return getAsync(builder.build());
     }
 
 }

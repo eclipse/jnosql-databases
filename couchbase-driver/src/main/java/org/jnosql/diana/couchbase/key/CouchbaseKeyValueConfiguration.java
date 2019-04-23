@@ -21,20 +21,20 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation to {@link KeyValueConfiguration} that returns {@link DefaultCouchbaseBucketManagerFactory}.
  * It tries to read the diana-couchbase.properties file to get some informations:
- * <p>couchbase-host-: the prefix to add a new host</p>
- * <p>couchbase-user: the user</p>
- * <p>couchbase-password: the password</p>
+ * <p>couchbase.host-: the prefix to add a new host</p>
+ * <p>couchbase.user: the user</p>
+ * <p>couchbase.password: the password</p>
+ *
+ * @see org.jnosql.diana.couchbase.CouchbaseConfigurations
  */
 public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
         implements KeyValueConfiguration<CouchbaseBucketManagerFactory> {
@@ -61,21 +61,9 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
     @Override
     public CouchbaseBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
-
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-
-        List<String> hosts = new ArrayList<>();
-
-        configurations.keySet()
-                .stream()
-                .filter(k -> k.startsWith(COUCHBASE_HOST))
-                .sorted()
-                .map(configurations::get)
-                .forEach(this::add);
-
-        String user = configurations.get(COUCHBASE_USER);
-        String password = configurations.get(COUCHBASE_PASSWORD);
+        String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
+        String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
+        List<String> hosts = getHosts(settings);
         return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }
 }

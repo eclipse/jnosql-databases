@@ -22,6 +22,7 @@ public final class RiakTestUtils {
 
 
     public static BucketManagerFactory get() {
+
         RiakKeyValueConfiguration riakKeyValueConfiguration = new RiakKeyValueConfiguration();
         RiakNode node = new RiakNode.Builder()
                 .withRemoteAddress("localhost").build();

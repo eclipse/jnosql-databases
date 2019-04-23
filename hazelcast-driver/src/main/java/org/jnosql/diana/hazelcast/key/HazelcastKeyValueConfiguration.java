@@ -12,20 +12,24 @@
  *
  *   Otavio Santana
  */
-
 package org.jnosql.diana.hazelcast.key;
 
 
 import com.hazelcast.config.Config;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -34,13 +38,14 @@ import static java.util.Objects.requireNonNull;
  * The hazelcast implementation of {@link KeyValueConfiguration} that returns
  * {@link HazelcastBucketManagerFactory}. It tries to read the diana-hazelcast.properties file
  * that has the properties:
- * <p>hazelcast-instanceName: the instance name</p>
- * <p>hazelcast-host-: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
+ * <p>hazelcast.instanceName: the instance name</p>
+ * <p>hazelcast.host: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
  *
  */
 public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<HazelcastBucketManagerFactory> {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
+    private static final String DEFAULT_INSTANCE = "hazelcast-instanceName";
 
 
     /**
@@ -50,13 +55,10 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<Haz
      * @throws NullPointerException when configurations is null
      */
     public HazelcastBucketManagerFactory get(Map<String, String> configurations) throws NullPointerException {
-
-        List<String> servers = configurations.keySet().stream().filter(s -> s.startsWith("hazelcast-hoster-"))
-                .collect(Collectors.toList());
-        Config config = new Config(configurations.getOrDefault("hazelcast-instanceName", "hazelcast-instanceName"));
-
-        HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
-        return new DefaultHazelcastBucketManagerFactory(hazelcastInstance);
+        Objects.requireNonNull(configurations, "configurations is required");
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 
     /**
@@ -81,8 +83,51 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<Haz
     public HazelcastBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-        return get(configurations);
+        List<String> servers = settings.prefix(Arrays.asList(OldHazelcastConfigurations.HOST.get(),
+                HazelcastConfigurations.HOST.get(), Configurations.HOST.get()))
+                .stream().map(Object::toString)
+                .collect(Collectors.toList());
+        String instance = settings.get(Arrays.asList(OldHazelcastConfigurations.INSTANCE.get(),
+                HazelcastConfigurations.INSTANCE.get())).map(Object::toString)
+                .orElse(DEFAULT_INSTANCE);
+        Config config = new Config(instance);
+
+        NetworkConfig network = config.getNetworkConfig();
+
+        settings.get(HazelcastConfigurations.PORT.get())
+                .map(Object::toString)
+                .map(Integer::parseInt)
+                .ifPresent(network::setPort);
+
+        settings.get(HazelcastConfigurations.PORT_COUNT.get())
+                .map(Object::toString)
+                .map(Integer::parseInt)
+                .ifPresent(network::setPortCount);
+
+        settings.get(HazelcastConfigurations.PORT_AUTO_INCREMENT.get())
+                .map(Object::toString)
+                .map(Boolean::parseBoolean)
+                .ifPresent(network::setPortAutoIncrement);
+
+        JoinConfig join = network.getJoin();
+
+        settings.get(HazelcastConfigurations.MULTICAST_ENABLE.get())
+                .map(Object::toString)
+                .map(Boolean::parseBoolean)
+                .ifPresent(join.getMulticastConfig()::setEnabled);
+
+        servers.forEach(join.getTcpIpConfig()::addMember);
+
+        join.getTcpIpConfig()
+                .addMember("machine1")
+                .addMember("localhost");
+
+        settings.get(HazelcastConfigurations.TCP_IP_JOIN.get())
+                .map(Object::toString)
+                .map(Boolean::valueOf)
+                .ifPresent(join.getTcpIpConfig()::setEnabled);
+
+        HazelcastInstance hazelcastInstance = Hazelcast.getOrCreateHazelcastInstance(config);
+        return new DefaultHazelcastBucketManagerFactory(hazelcastInstance);
     }
 }

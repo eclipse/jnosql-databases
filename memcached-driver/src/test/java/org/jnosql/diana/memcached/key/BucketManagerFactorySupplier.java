@@ -37,7 +37,7 @@ public enum BucketManagerFactorySupplier implements Supplier<BucketManagerFactor
     @Override
     public BucketManagerFactory get() {
         String host  = memcached.getContainerIpAddress() +':' + memcached.getFirstMappedPort();
-        Settings settings = Settings.builder().put("memcached.host-1", host).build();
+        Settings settings = Settings.builder().put("memcached.host.1", host).build();
         MemcachedKeyValueConfiguration configuration = new MemcachedKeyValueConfiguration();
         return configuration.get(settings);
     }

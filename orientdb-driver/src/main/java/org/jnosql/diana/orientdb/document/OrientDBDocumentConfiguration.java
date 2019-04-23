@@ -15,30 +15,30 @@
 package org.jnosql.diana.orientdb.document;
 
 
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The orientDB implementation of {@link UnaryDocumentConfiguration} that returns
  * {@link OrientDBDocumentCollectionManagerFactory}. It tries to read diana-arangodb.properties file.
- * <p>orientdb-server-host: the host</p>
- * <p>orientdb-server-user: the user</p>
- * <p>orientdb-server-password: the password</p>
- * <p>orientdb-server-storageType: the storage type</p>
+ * <p>orientdb.host: the host</p>
+ * <p>orientdb.user: the user</p>
+ * <p>orientdb.password: the password</p>
+ * <p>orientdb.storage.type: the storage type</p>
  */
 public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-orientdb.properties";
-    private static final String SERVER_HOST = "orientdb-server-host";
-    private static final String SERVER_USER = "orientdb-server-user";
-    private static final String SERVER_PASSWORD = "orientdb-server-password";
-    private static final String SERVER_STORAGE_TYPE = "orientdb-server-storageType";
 
     private String host;
 
@@ -50,10 +50,14 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
 
     public OrientDBDocumentConfiguration() {
         Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
-        this.host = properties.get(SERVER_HOST);
-        this.user = properties.get(SERVER_USER);
-        this.password = properties.get(SERVER_PASSWORD);
-        this.storageType = properties.get(SERVER_STORAGE_TYPE);
+        SettingsBuilder builder = Settings.builder();
+        properties.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        Settings settings = builder.build();
+
+        this.host = getHost(settings);
+        this.user = getUser(settings);
+        this.password = getPassword(settings);
+        this.storageType = getStorageType(settings);
     }
 
     public void setHost(String host) {
@@ -96,14 +100,38 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
     private OrientDBDocumentCollectionManagerFactory getOrientDBDocumentCollectionManagerFactory(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        String host = getValue(settings, SERVER_HOST);
-        String user = getValue(settings, SERVER_USER);
-        String password = getValue(settings, SERVER_PASSWORD);
-        String storageType = getValue(settings, SERVER_STORAGE_TYPE);
+        String host = getHost(settings);
+        String user = getUser(settings);
+        String password = getPassword(settings);
+        String storageType = getStorageType(settings);
         return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
     }
 
-    private String getValue(Settings settings, String key) {
-        return ofNullable(settings.get(key)).map(Object::toString).orElse(null);
+    private String getHost(Settings settings) {
+        return find(settings, OldOrientDBDocumentConfigurations.HOST, OrientDBDocumentConfigurations.HOST,
+                Configurations.HOST);
+    }
+
+    private String getUser(Settings settings) {
+        return find(settings, OldOrientDBDocumentConfigurations.USER, OrientDBDocumentConfigurations.USER,
+                Configurations.USER);
+    }
+
+    private String getPassword(Settings settings) {
+        return find(settings, OldOrientDBDocumentConfigurations.PASSWORD, OrientDBDocumentConfigurations.PASSWORD,
+                Configurations.PASSWORD);
+    }
+
+    private String getStorageType(Settings settings) {
+        return find(settings, OldOrientDBDocumentConfigurations.STORAGE_TYPE,
+                OrientDBDocumentConfigurations.STORAGE_TYPE);
+    }
+
+
+    private String find(Settings settings, Supplier<String>... keys) {
+        return settings.get(Stream.of(keys)
+                .map(Supplier::get).collect(toList()))
+                .map(Object::toString)
+                .orElse(null);
     }
 }

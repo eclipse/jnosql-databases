@@ -48,8 +48,8 @@ public enum ManagerFactorySupplier implements Supplier<CassandraColumnFamilyMana
 
     Settings getSettings() {
         Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION));
-        configuration.put("cassandra-host-1", cassandra.getContainerIpAddress());
-        configuration.put("cassandra-port", cassandra.getFirstMappedPort());
+        configuration.put("cassandra.host-1", cassandra.getContainerIpAddress());
+        configuration.put("cassandra.port", cassandra.getFirstMappedPort());
         return Settings.of(configuration);
     }
 }

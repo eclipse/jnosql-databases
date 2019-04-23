@@ -20,25 +20,11 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CassandraConfigurationTest {
 
 
-    @Test
-    public void shoudlCreateDocumentEntityManagerFactory() {
-        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
-
-        Map<String, String> map = new HashMap<>();
-        settings.forEach((k,v) -> map.put(k, v.toString()));
-        CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.getManagerFactory(map);
-        assertNotNull(entityManagerFactory);
-    }
 
     @Test
     public void shoudlCreateDocumentEntityManagerFactoryFromSettings() {
@@ -57,10 +43,5 @@ public class CassandraConfigurationTest {
         assertNotNull(entityManagerFactory);
     }
 
-    @Test
-    public void shouldReturnNPEWhenMapIsNull() {
-        CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        assertThrows(NullPointerException.class, () -> cassandraConfiguration.getManagerFactory(null));
-    }
 
 }

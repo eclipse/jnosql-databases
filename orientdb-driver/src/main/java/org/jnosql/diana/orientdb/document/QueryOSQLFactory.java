@@ -43,6 +43,7 @@ final class QueryOSQLFactory {
 
     static QueryResultAsync toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
         Query query = QueryOSQLConverter.select(documentQuery);
+
         return new QueryResultAsync(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
 

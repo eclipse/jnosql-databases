@@ -15,11 +15,15 @@
 
 package org.jnosql.diana.ravendb.document;
 
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +35,7 @@ import static java.util.Objects.requireNonNull;
  * The RavenDB implementation to both {@link DocumentConfiguration}
  * that returns  {@link RavenDBDocumentCollectionManagerFactory}
  * It tries to read the diana-ravendb.properties file whose has the following properties
- * <p>ravendb-server-host-: as prefix to add host client, eg: ravendb-server-host-1=host1, ravendb-server-host-2= host2</p>
+ * <p>ravendb.host-: as prefix to add host client, eg: ravendb.host-1=host1, ravendb.host-2= host2</p>
  */
 public class RavenDBDocumentConfiguration implements DocumentConfiguration<RavenDBDocumentCollectionManagerFactory> {
 
@@ -48,15 +52,18 @@ public class RavenDBDocumentConfiguration implements DocumentConfiguration<Raven
     @Override
     public RavenDBDocumentCollectionManagerFactory get(Settings settings) {
         requireNonNull(settings, "configurations is required");
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-        return get(configurations);
+
+        String[] servers = settings.prefix(Arrays.asList("ravendb.host", Configurations.HOST.get()))
+                .stream().map(Object::toString)
+                .toArray(String[]::new);
+        return new RavenDBDocumentCollectionManagerFactory(servers);
     }
 
     private RavenDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         requireNonNull(configurations, "configurations is required");
-        String[] servers = configurations.keySet().stream().filter(s -> s.startsWith("ravendb-server-host-"))
-                .map(configurations::get).toArray(String[]::new);
-        return new RavenDBDocumentCollectionManagerFactory(servers);
+
+        SettingsBuilder builder = Settings.builder();
+        configurations.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 }

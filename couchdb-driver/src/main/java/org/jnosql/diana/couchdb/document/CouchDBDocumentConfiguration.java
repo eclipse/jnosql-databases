@@ -16,13 +16,27 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.COMPRESSION;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.CONNECTION_TIMEOUT;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.ENABLE_SSL;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.HOST;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.MAX_CACHE_ENTRIES;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.MAX_CONNECTIONS;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.PASSWORD;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.PORT;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.SOCKET_TIMEOUT;
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.USER;
 
 /**
  * The CouchDB implementation of {@link org.jnosql.diana.api.document.DocumentConfiguration} that returns
@@ -38,21 +52,10 @@ import java.util.Objects;
  * <p>couchdb.password: </p>
  * <p>couchdb.enable.ssl: </p>
  * <p>couchdb.compression: </p>
+ * @see CouchDBConfigurations
  */
 public class CouchDBDocumentConfiguration implements UnaryDocumentConfiguration<CouchDBDocumentCollectionManagerFactory> {
 
-    public static final String PORT = "couchdb.port";
-    public static final String MAX_CONNECTIONS = "couchdb.max.connections";
-    public static final String CONNECTION_TIMEOUT = "couchdb.connection.timeout";
-    public static final String SOCKET_TIMEOUT = "couchdb.socket.timeout";
-    public static final String MAX_OBJECT_SIZE_BYTES = "couchdb.max.object.size.bytes";
-    public static final String MAX_CACHE_ENTRIES = "couchdb.max.cache.entries";
-    public static final String HOST = "couchdb.host";
-    public static final String USERNAME = "couchdb.username";
-    public static final String PASSWORD = "couchdb.password";
-
-    public static final String ENABLE_SSL = "couchdb.enable.ssl";
-    public static final String COMPRESSION = "couchdb.compression";
 
     private static final String FILE_CONFIGURATION = "diana-couchdb.properties";
 
@@ -68,17 +71,24 @@ public class CouchDBDocumentConfiguration implements UnaryDocumentConfiguration<
     public CouchDBDocumentCollectionManagerFactory get(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
         CouchDBHttpConfigurationBuilder configuration = new CouchDBHttpConfigurationBuilder();
-        settings.computeIfPresent(PORT, (k, v) -> configuration.withPort(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(MAX_CONNECTIONS, (k, v) -> configuration.withMaxConnections(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CONNECTION_TIMEOUT, (k, v) -> configuration.withConnectionTimeout(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(SOCKET_TIMEOUT, (k, v) -> configuration.withSocketTimeout(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(MAX_OBJECT_SIZE_BYTES, (k, v) -> configuration.withMaxObjectSizeBytes(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(MAX_CACHE_ENTRIES, (k, v) -> configuration.withMaxCacheEntries(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(HOST, (k, v) -> configuration.withHost(v.toString()));
-        settings.computeIfPresent(USERNAME, (k, v) -> configuration.withUsername(v.toString()));
-        settings.computeIfPresent(PASSWORD, (k, v) -> configuration.withPassword(v.toString()));
-        settings.computeIfPresent(ENABLE_SSL, (k, v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(COMPRESSION, (k, v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
+
+        settings.get(Arrays.asList(HOST.get(), Configurations.HOST.get()))
+                .map(Object::toString)
+                .ifPresent(configuration::withHost);
+        settings.get(Arrays.asList(USER.get(), Configurations.USER.get()))
+                .map(Object::toString)
+                .ifPresent(configuration::withUsername);
+        settings.get(Arrays.asList(PASSWORD.get(), Configurations.PASSWORD.get()))
+                .map(Object::toString)
+                .ifPresent(configuration::withPassword);
+        settings.computeIfPresent(PORT.get(), (k, v) -> configuration.withPort(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(MAX_CONNECTIONS.get(), (k, v) -> configuration.withMaxConnections(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(CONNECTION_TIMEOUT.get(), (k, v) -> configuration.withConnectionTimeout(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(SOCKET_TIMEOUT.get(), (k, v) -> configuration.withSocketTimeout(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(MAX_OBJECT_SIZE_BYTES.get(), (k, v) -> configuration.withMaxObjectSizeBytes(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(MAX_CACHE_ENTRIES.get(), (k, v) -> configuration.withMaxCacheEntries(Integer.valueOf(v.toString())));
+        settings.computeIfPresent(ENABLE_SSL.get(), (k, v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(COMPRESSION.get(), (k, v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
         return new CouchDBDocumentCollectionManagerFactory(configuration.build());
     }
 

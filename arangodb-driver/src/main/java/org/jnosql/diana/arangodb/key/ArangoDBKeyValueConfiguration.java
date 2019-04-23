@@ -17,30 +17,30 @@ package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
+
+import java.util.Map;
+
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATION;
 
 /**
  * The ArangoDB implementation to {@link KeyValueConfiguration}
- * The Properties:
- * <p>arangodb-host: the host</p>
- * <p>arangodb-user: the user</p>
- * <p>arangodb-password: the password</p>
- * <p>arangodb-port: the port</p>
- * <p>arangodb-timeout: the timeout</p>
- * <p>arangodb-chuckSize: the chuckSize</p>
- * <p>arangodb-userSsl: the userSsl</p>
- * <p>arangodb.hosts:  the hosts</p>
- * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
- * <p>arangodb.protocol: the protocol</p>
- * <p>arangodb.connections.max: the max connection</p>
+ * It tries to read the configuration properties from diana-arangodb.properties file.
+ *
+ * @see org.jnosql.diana.arangodb.ArangoDBConfigurations
  */
 public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration<ArangoDBBucketManagerFactory> {
 
     @Override
     public ArangoDBBucketManagerFactory get() {
-        return new ArangoDBBucketManagerFactory(builder.build());
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
+        SettingsBuilder builder = Settings.builder();
+        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 
     @Override

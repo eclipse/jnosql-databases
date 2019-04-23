@@ -21,18 +21,10 @@ public final class DocumentConfigurationUtils {
     }
 
     public static OrientDBDocumentCollectionManagerFactory get() {
-        OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
-        configuration.setHost("localhost");
-        configuration.setUser("root");
-        configuration.setPassword("rootpwd");
-        return configuration.get();
+        return ManagerFactorySupplier.INSTANCE.get();
     }
 
     public static OrientDBDocumentCollectionManagerFactory getAsync() {
-        OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
-        configuration.setHost("localhost");
-        configuration.setUser("root");
-        configuration.setPassword("rootpwd");
-        return configuration.getAsync();
+        return ManagerFactorySupplier.INSTANCE.get();
     }
 }

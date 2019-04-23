@@ -18,25 +18,25 @@ package org.jnosql.diana.dynamodb;
 import org.jnosql.diana.api.Settings;
 
 import static java.util.Optional.ofNullable;
+import static org.jnosql.diana.dynamodb.DynamoDBConfigurations.AWS_ACCESSKEY;
+import static org.jnosql.diana.dynamodb.DynamoDBConfigurations.AWS_SECRET_ACCESS;
+import static org.jnosql.diana.dynamodb.DynamoDBConfigurations.ENDPOINT;
+import static org.jnosql.diana.dynamodb.DynamoDBConfigurations.PROFILE;
+import static org.jnosql.diana.dynamodb.DynamoDBConfigurations.REGION;
 
 final class DynamoDBBuilders {
 
 
-    private static final String ENDPOINT = "dynamodb.endpoint";
-    private static final String REGION = "dynamodb.region";
-    private static final String PROFILE = "dynamodb.profile";
-    private static final String AWS_ACCESSKEY = "dynamodb.awsaccesskey";
-    private static final String AWS_SECRET_ACCESS = "dynamodb.secretaccess";
 
     private DynamoDBBuilders() {
     }
 
     static void load(Settings settings, DynamoDBBuilder dynamoDB) {
-        ofNullable(settings.get(ENDPOINT)).map(Object::toString).ifPresent(dynamoDB::endpoint);
-        ofNullable(settings.get(REGION)).map(Object::toString).ifPresent(dynamoDB::region);
-        ofNullable(settings.get(PROFILE)).map(Object::toString).ifPresent(dynamoDB::profile);
-        ofNullable(settings.get(AWS_ACCESSKEY)).map(Object::toString).ifPresent(dynamoDB::awsAccessKey);
-        ofNullable(settings.get(AWS_SECRET_ACCESS)).map(Object::toString).ifPresent(dynamoDB::awsSecretAccess);
+        ofNullable(settings.get(ENDPOINT.get())).map(Object::toString).ifPresent(dynamoDB::endpoint);
+        ofNullable(settings.get(REGION.get())).map(Object::toString).ifPresent(dynamoDB::region);
+        ofNullable(settings.get(PROFILE.get())).map(Object::toString).ifPresent(dynamoDB::profile);
+        ofNullable(settings.get(AWS_ACCESSKEY.get())).map(Object::toString).ifPresent(dynamoDB::awsAccessKey);
+        ofNullable(settings.get(AWS_SECRET_ACCESS.get())).map(Object::toString).ifPresent(dynamoDB::awsSecretAccess);
     }
 
 }

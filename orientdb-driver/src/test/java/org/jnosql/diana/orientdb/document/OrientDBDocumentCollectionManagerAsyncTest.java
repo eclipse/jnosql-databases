@@ -14,6 +14,7 @@
  */
 package org.jnosql.diana.orientdb.document;
 
+import org.awaitility.Awaitility;
 import org.jnosql.diana.api.document.Document;
 import org.jnosql.diana.api.document.DocumentCollectionManager;
 import org.jnosql.diana.api.document.DocumentDeleteQuery;
@@ -51,17 +52,15 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     private OrientDBDocumentCollectionManagerAsync entityManagerAsync;
 
-    private DocumentCollectionManager entityManager;
 
     @BeforeEach
     public void setUp() {
         entityManagerAsync = getAsync().getAsync(Database.DATABASE);
-        entityManager = DocumentConfigurationUtils.get().get(Database.DATABASE);
     }
 
 
     @Test
-    public void shouldInsertAsync() throws InterruptedException {
+    public void shouldInsertAsync() {
         AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
         entityManagerAsync.insert(getEntity(), entityAtomic::set);
         await().until(entityAtomic::get, notNullValue(DocumentEntity.class));
@@ -70,8 +69,11 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         Document id = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query);
-        assertFalse(entities.isEmpty());
+        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        entityManagerAsync.select(query, entities::set);
+
+        await().until(() -> entities.get() != null);
+        assertFalse(entities.get().isEmpty());
 
     }
 
@@ -88,12 +90,13 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     @Test
     public void shouldUpdateAsync() {
-        DocumentEntity entity = getEntity();
-        entityManager.insert(entity);
-        Document newField = Documents.of("newField", "10");
-        entity.add(newField);
+       AtomicReference<DocumentEntity> entity = new AtomicReference<>();
 
-        entityManagerAsync.update(entity);
+        entityManagerAsync.insert(getEntity(), entity::set);
+
+        Document newField = Documents.of("newField", "10");
+        entity.get().add(newField);
+        entityManagerAsync.update(entity.get());
     }
 
     @Test
@@ -101,54 +104,77 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         final String NEW_FIELD_NAME = "newField2";
         final String NEW_FIELD_VALUE = "55";
 
-        DocumentEntity entity = entityManager.insert(getEntity());
+        AtomicReference<DocumentEntity> entity = new AtomicReference<>();
+
+        entityManagerAsync.insert(getEntity(), entity::set);
+        await().until(() -> entity.get() != null);
+
         Document newField = Documents.of(NEW_FIELD_NAME, NEW_FIELD_VALUE);
-        entity.add(newField);
+        entity.get().add(newField);
 
         AtomicBoolean condition = new AtomicBoolean(false);
-        entityManagerAsync.update(entity, c -> condition.set(true));
+        entityManagerAsync.update(entity.get(), c -> condition.set(true));
         await().untilTrue(condition);
 
-        Optional<Document> idDocument = entity.find(OrientDBConverter.RID_FIELD);
-        DocumentQuery query = select().from(entity.getName())
+        Optional<Document> idDocument = entity.get().find("name");
+        DocumentQuery query = select().from(entity.get().getName())
                 .where(idDocument.get().getName()).eq(idDocument.get().get())
                 .build();
-        Optional<DocumentEntity> entityUpdated = entityManager.singleResult(query);
 
-        assertTrue(entityUpdated.isPresent());
-        assertEquals(entityUpdated.get().find(NEW_FIELD_NAME).get(), newField);
+        AtomicReference<Optional<DocumentEntity>> entityUpdated = new AtomicReference<>();
+        entityManagerAsync.singleResult(query, entityUpdated::set);
+
+        await().until(() -> entityUpdated.get() != null);
+        assertTrue(entityUpdated.get().isPresent());
+        assertEquals(entityUpdated.get().get().find(NEW_FIELD_NAME).get(), newField);
     }
 
     @Test
-    public void shouldRemoveEntityAsync() throws InterruptedException {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
-        Document id = documentEntity.find("name").get();
+    public void shouldRemoveEntityAsync() {
+        AtomicBoolean condition = new AtomicBoolean(false);
+
+        AtomicReference<DocumentEntity> documentEntity = new AtomicReference<>();
+        entityManagerAsync.insert(getEntity(), documentEntity::set);
+
+        Awaitility.await().until(() -> documentEntity.get() != null);
+
+        Document id = documentEntity.get().find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        AtomicBoolean condition = new AtomicBoolean(false);
         entityManagerAsync.delete(deleteQuery, c -> condition.set(true));
         await().untilTrue(condition);
-        assertTrue(entityManager.select(query).isEmpty());
+        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        entityManagerAsync.select(query, entities::set);
+        await().until(() -> entities.get() != null);
+        assertTrue(entities.get().isEmpty());
     }
 
     @Test
     public void shouldRemoveEntityAsyncWithoutCallback() throws InterruptedException {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Document id = entity.find("name").get();
+        AtomicReference<DocumentEntity> entity = new AtomicReference<>();
+
+        entityManagerAsync.insert(getEntity(), entity::set);
+        await().until(() -> entity.get() != null);
+        Document id = entity.get().find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         entityManagerAsync.delete(deleteQuery);
         Thread.sleep(1000L);
-        assertTrue(entityManager.select(query).isEmpty());
+        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        entityManagerAsync.select(query, entities::set);
+        await().until(() -> entities.get() != null);
+        assertTrue(entities.get().isEmpty());
     }
 
     @Test
     public void shouldFindAsync() {
-        DocumentEntity entity = entityManager.insert(getEntity());
+        AtomicReference<DocumentEntity> entity = new AtomicReference<>();
+        entityManagerAsync.insert(getEntity(), entity::set);
+        await().until(() -> entity.get() != null);
 
         AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
         DocumentQuery query = select().from(COLLECTION_NAME).build();
@@ -156,13 +182,13 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         await().until(reference::get, notNullValue(List.class));
 
         assertFalse(reference.get().isEmpty());
-        assertEquals(reference.get().get(0), entity);
     }
 
     @Test
     public void shouldFindAsyncWithNativeQuery() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-
+        AtomicReference<DocumentEntity> entity = new AtomicReference<>();
+        entityManagerAsync.insert(getEntity(), entity::set);
+        await().until(() -> entity.get() != null);
         AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
         StringBuilder query = new StringBuilder().append("SELECT FROM ")
                 .append(COLLECTION_NAME)
@@ -171,14 +197,15 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         await().until(reference::get, notNullValue(List.class));
 
         assertFalse(reference.get().isEmpty());
-        assertEquals(reference.get().get(0), entity);
     }
 
     @Test
     public void shouldFindAsyncWithNativeQueryMapParam() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find(OrientDBConverter.RID_FIELD);
-        Optional<Document> name = entity.find("name");
+        AtomicReference<DocumentEntity> entity = new AtomicReference<>();
+        entityManagerAsync.insert(getEntity(), entity::set);
+        await().until(() -> entity.get() != null);
+        Optional<Document> id = entity.get().find(OrientDBConverter.RID_FIELD);
+        Optional<Document> name = entity.get().find("name");
 
         AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
         Map<String, Object> params = new HashMap<>();
@@ -190,12 +217,11 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         await().until(reference::get, notNullValue(List.class));
 
         assertFalse(reference.get().isEmpty());
-        assertEquals(reference.get().get(0), entity);
     }
 
 
     @Test
-    public void shouldCount()  {
+    public void shouldCount() {
         AtomicReference<DocumentEntity> entityAtomic = new AtomicReference<>();
         AtomicBoolean condition = new AtomicBoolean(false);
         AtomicLong value = new AtomicLong(0L);
@@ -225,7 +251,10 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
     @AfterEach
     void removePersons() {
+        entityManagerAsync.insert(getEntity());
         DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
-        entityManager.delete(query);
+        AtomicBoolean condition = new AtomicBoolean();
+        entityManagerAsync.delete(query, v -> {condition.set(true);});
+        await().untilTrue(condition);
     }
 }

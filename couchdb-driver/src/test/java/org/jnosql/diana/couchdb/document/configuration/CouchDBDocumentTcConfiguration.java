@@ -24,6 +24,8 @@ import org.testcontainers.containers.GenericContainer;
 
 import java.util.function.Supplier;
 
+import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.PORT;
+
 public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentCollectionManagerFactory> {
 
     INSTANCE;
@@ -39,7 +41,7 @@ public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentCo
     public CouchDBDocumentCollectionManagerFactory get() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
         SettingsBuilder builder = Settings.builder();
-        builder.put(CouchDBDocumentConfiguration.PORT, couchDB.getFirstMappedPort());
+        builder.put(PORT.get(), couchDB.getFirstMappedPort());
         return configuration.get(builder.build());
     }
 

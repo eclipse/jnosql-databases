@@ -17,26 +17,30 @@ package org.jnosql.diana.riak.key;
 
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.function.Function;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 /**
  * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakBucketManagerFactory}.
  * It tries to read diana-riak.properties file.
- * <p>riak-server-host-: The prefix to host. eg: riak-server-host-1= host1</p>
+ * <p>riak.host-: The prefix to host. eg: riak.server.host.1= host1</p>
  */
 public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBucketManagerFactory> {
 
-    private static final String SERVER_PREFIX = "riak-server-host-";
-    private static final Logger LOGGER = Logger.getLogger(RiakKeyValueConfiguration.class.getName());
+    @Deprecated
+    private static final String OLD_SERVER_PREFIX = "riak-server-host-";
+    private static final String SERVER_PREFIX = "riak.host";
 
     private static final String FILE_CONFIGURATION = "diana-riak.properties";
 
@@ -48,11 +52,15 @@ public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBuck
 
     public RiakKeyValueConfiguration() {
         Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
-        properties.keySet().stream()
-                .filter(k -> k.startsWith(SERVER_PREFIX))
-                .sorted().map(properties::get)
-                .forEach(this::add);
+        SettingsBuilder builder = Settings.builder();
 
+        properties.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+
+        Settings settings = builder.build();
+
+        settings.prefix(asList(SERVER_PREFIX, OLD_SERVER_PREFIX, Configurations.HOST.get()))
+                .stream().map(Object::toString)
+                .forEach(this::add);
     }
 
 
@@ -95,11 +103,10 @@ public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBuck
         requireNonNull(settings, "settings is required");
         List<RiakNode> nodes = new ArrayList<>();
 
-        settings.keySet().stream()
-                .filter(k -> k.startsWith(SERVER_PREFIX))
-                .sorted().map(settings::get)
-                .map(a -> new RiakNode.Builder()
-                        .withRemoteAddress(a.toString()).build())
+        settings.prefix(asList(SERVER_PREFIX, OLD_SERVER_PREFIX, Configurations.HOST.get()))
+                .stream()
+                .map(Object::toString)
+                .map(toNode())
                 .forEach(nodes::add);
 
         if (nodes.isEmpty()) {
@@ -109,5 +116,20 @@ public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBuck
                 .build();
 
         return new RiakBucketManagerFactory(cluster);
+    }
+
+    private Function<String, RiakNode> toNode() {
+        return h -> {
+            String[] values = h.split(":");
+            if (values.length == 1) {
+                return new RiakNode.Builder()
+                        .withRemoteAddress(values[0]).build();
+            } else {
+                return new RiakNode.Builder()
+                        .withRemoteAddress(values[0])
+                        .withRemotePort(Integer.valueOf(values[1]))
+                        .build();
+            }
+        };
     }
 }

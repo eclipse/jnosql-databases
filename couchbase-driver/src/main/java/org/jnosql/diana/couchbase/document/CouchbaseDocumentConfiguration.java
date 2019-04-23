@@ -20,19 +20,20 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation of {@link UnaryDocumentConfiguration} that returns
  * {@link CouhbaseDocumentCollectionManagerFactory}.
- * <p>couchbase-host-: the prefix to add a new host</p>
- * <p>couchbase-user: the user</p>
- * <p>couchbase-password: the password</p>
+ * <p>couchbase.host-: the prefix to add a new host</p>
+ * <p>couchbase.user: the user</p>
+ * <p>couchbase.password: the password</p>
+ * @see org.jnosql.diana.couchbase.CouchbaseConfigurations
  */
 public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         implements UnaryDocumentConfiguration<CouhbaseDocumentCollectionManagerFactory> {
@@ -49,17 +50,10 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         Map<String, String> configurations = new HashMap<>();
         settings.forEach((key, value) -> configurations.put(key, value.toString()));
 
-        List<String> hosts = new ArrayList<>();
+        String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
+        String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
+        List<String> hosts = getHosts(settings);
 
-        configurations.keySet()
-                .stream()
-                .filter(k -> k.startsWith(COUCHBASE_HOST))
-                .sorted()
-                .map(configurations::get)
-                .forEach(this::add);
-
-        String user = configurations.get(COUCHBASE_USER);
-        String password = configurations.get(COUCHBASE_PASSWORD);
         return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }
 

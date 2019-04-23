@@ -16,60 +16,72 @@ package org.jnosql.diana.arangodb;
 
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
+import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Optional.ofNullable;
+import static java.util.Arrays.asList;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.CHUCK_SIZE;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.HOST;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.LOADBALANCING;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.PASSWORD;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.PROTOCOL;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.TIMEOUT;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.USER;
 
 final class ArangoDBBuilders {
 
-    private static final String USER = "arangodb-user";
-    private static final String PASSWORD = "arangodb-password";
-    private static final String TIMEOUT = "arangodb-timeout";
-    private static final String USER_SSL = "arangodb-userSsl";
-    private static final String LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
-    private static final String PROTOCOL = "arangodb.protocol";
-    private static final String CHUNK_CONTENT_SIZE = "arangodb.chunksize";
-    private static final String MAX_CONNECTIONS = "arangodb.connections.max";
-    private static final String ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
-    private static final String KEY_HOSTS = "arangodb.hosts";
 
     private ArangoDBBuilders() {
     }
 
     static void load(Settings settings, ArangoDBBuilder arangoDB) {
 
-        ofNullable(settings.get(USER)).map(Object::toString).ifPresent(arangoDB::user);
-        ofNullable(settings.get(PASSWORD)).map(Object::toString).ifPresent(arangoDB::password);
-        ofNullable(settings.get(TIMEOUT)).map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
+        settings.get(asList(USER.get(), Configurations.USER.get()))
+                .map(Object::toString).ifPresent(arangoDB::user);
+        settings.get(asList(PASSWORD.get(), Configurations.PASSWORD.get()))
+                .map(Object::toString).ifPresent(arangoDB::password);
+        settings.get(TIMEOUT.get())
+                .map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
 
-        ofNullable(settings.get(CHUNK_CONTENT_SIZE)).map(Object::toString).map(Integer::valueOf)
+        settings.get(CHUCK_SIZE.get())
+                .map(Object::toString).map(Integer::valueOf)
                 .ifPresent(arangoDB::chunksize);
-        ofNullable(settings.get(MAX_CONNECTIONS)).map(Object::toString).map(Integer::valueOf)
+
+        settings.get(ArangoDBConfigurations.MAX_CONNECTIONS.get())
+                .map(Object::toString).map(Integer::valueOf)
                 .ifPresent(arangoDB::maxConnections);
-        ofNullable(settings.get(USER_SSL)).map(Object::toString).map(Boolean::valueOf)
+
+        settings.get(ArangoDBConfigurations.USERSSL.get())
+                .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::useSsl);
-        ofNullable(settings.get(ACQUIRE_HOST_LIST)).map(Object::toString).map(Boolean::valueOf)
+
+        settings.get(ArangoDBConfigurations.HOST_LIST.get())
+                .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::acquireHostList);
-        ofNullable(settings.get(LOAD_BALANCING_STRATEGY)).map(Object::toString).map(LoadBalancingStrategy::valueOf)
+
+        settings.get(LOADBALANCING.get()).map(Object::toString).map(LoadBalancingStrategy::valueOf)
                 .ifPresent(arangoDB::loadBalancingStrategy);
-        ofNullable(settings.get(PROTOCOL)).map(Object::toString).map(Protocol::valueOf)
+
+        settings.get(PROTOCOL.get()).map(Object::toString).map(Protocol::valueOf)
                 .ifPresent(arangoDB::useProtocol);
 
-       ofNullable(settings.get(KEY_HOSTS)).map(Object::toString)
-                .map(ArangoDBHost::new).map(ArangoDBHost::getHost)
-                .ifPresent(l ->feed(l, arangoDB));
-
+        settings.prefix(Arrays.asList(HOST.get(), Configurations.HOST.get()))
+                .stream()
+                .map(Object::toString)
+                .map(ArangoDBHost::new)
+                .flatMap(h -> h.getHost().stream())
+                .forEach(h -> host(arangoDB, h));
     }
 
-    private static void feed(List<String> hosts, ArangoDBBuilder arangoDB) {
-        for (String host : hosts) {
-            final String[] values = host.split(":");
-            arangoDB.host(values[0], Integer.valueOf(values[0]));
-        }
+
+    private static void host(ArangoDBBuilder arangoDB, String host) {
+        final String[] values = host.split(":");
+        arangoDB.host(values[0], Integer.valueOf(values[0]));
     }
+
     private static class ArangoDBHost {
         private final String hots;
 
@@ -78,7 +90,7 @@ final class ArangoDBBuilders {
         }
 
         public List<String> getHost() {
-            return Arrays.asList(this.hots.split(","));
+            return asList(this.hots.split(","));
         }
     }
 }

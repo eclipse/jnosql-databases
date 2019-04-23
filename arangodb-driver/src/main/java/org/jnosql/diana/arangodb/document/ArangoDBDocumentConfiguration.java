@@ -18,30 +18,22 @@ package org.jnosql.diana.arangodb.document;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import org.jnosql.diana.api.Settings;
+import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
+import org.jnosql.diana.driver.ConfigurationReader;
+
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
+import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATION;
 
 /**
  * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
- * It tries to read the configuration properties from arangodb.properties file.
+ * It tries to read the configuration properties from diana-arangodb.properties file.
  *
  * @see ArangoDBConfiguration
- * The Properties:
- * <p>arangodb-host: the host</p>
- * <p>arangodb-user: the user</p>
- * <p>arangodb-password: the password</p>
- * <p>arangodb-port: the port</p>
- * <p>arangodb-timeout: the timeout</p>
- * <p>arangodb-chuckSize: the chuckSize</p>
- * <p>arangodb-userSsl: the userSsl</p>
- * <p>arangodb-loadBalancingStrategy: the define loadBalancingStrategy</p>
- * <p>arangodb.hosts:  the hosts</p>
- * <p>arangodb.protocol: the protocol</p>
- * <p>arangodb.chunksize: the chunksize</p>
- * <p>arangodb.connections.max: the max connection</p>
- * <p>arangodb.acquireHostList: the max connection</p>
+ * @see org.jnosql.diana.arangodb.ArangoDBConfigurations
  *
  */
 public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
@@ -50,7 +42,10 @@ public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
-        return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
+        SettingsBuilder builder = Settings.builder();
+        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return get(builder.build());
     }
 
     @Override
@@ -64,7 +59,10 @@ public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
-        return new ArangoDBDocumentCollectionManagerFactory(builder.build(), builderAsync.build());
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
+        SettingsBuilder builder = Settings.builder();
+        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        return getAsync(builder.build());
     }
 
     @Override
