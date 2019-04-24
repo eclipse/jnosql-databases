@@ -21,10 +21,8 @@ import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
