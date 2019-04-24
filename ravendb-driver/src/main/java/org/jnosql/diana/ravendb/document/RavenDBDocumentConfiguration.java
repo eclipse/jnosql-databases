@@ -21,9 +21,7 @@ import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -38,8 +36,6 @@ import static java.util.Objects.requireNonNull;
 public class RavenDBDocumentConfiguration implements DocumentConfiguration<RavenDBDocumentCollectionManagerFactory> {
 
     private static final String FILE_CONFIGURATION = "diana-ravendb.properties";
-
-    private List<String> hosts = new ArrayList<>();
 
     @Override
     public RavenDBDocumentCollectionManagerFactory get() {
