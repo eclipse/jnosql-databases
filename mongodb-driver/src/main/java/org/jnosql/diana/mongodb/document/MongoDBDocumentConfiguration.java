@@ -107,7 +107,8 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
             return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
         }
 
-        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers));
+        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers, MongoAuthentication.of(settings),
+                null));
     }
 
     public MongoDBDocumentCollectionManagerFactory get(String pathFileConfig) throws NullPointerException {
