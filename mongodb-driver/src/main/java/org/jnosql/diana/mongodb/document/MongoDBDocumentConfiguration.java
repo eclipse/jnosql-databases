@@ -16,6 +16,7 @@
 package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.MongoClients;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -107,7 +109,11 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
             return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
         }
 
-        return new MongoDBDocumentCollectionManagerFactory(new MongoClient(servers));
+        Optional<MongoCredential> credential = MongoAuthentication.of(settings);
+        MongoClient mongoClient = credential.map(c -> new MongoClient(servers, c, null))
+                .orElseGet(() -> new MongoClient(servers));
+
+        return new MongoDBDocumentCollectionManagerFactory(mongoClient);
     }
 
     public MongoDBDocumentCollectionManagerFactory get(String pathFileConfig) throws NullPointerException {
