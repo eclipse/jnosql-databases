@@ -32,6 +32,8 @@ import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.US
 
 final class MongoAuthentication {
 
+    private MongoAuthentication() {
+    }
 
     static Optional<MongoCredential> of(Settings settings) {
 
