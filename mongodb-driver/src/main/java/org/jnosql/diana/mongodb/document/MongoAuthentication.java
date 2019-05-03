@@ -21,87 +21,78 @@ import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.JNoSQLException;
 import org.jnosql.diana.api.Settings;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.function.Supplier;
 
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
 import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM;
+import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
 import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.PASSWORD;
 import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.USER;
 
 final class MongoAuthentication {
 
-    private final String user;
 
-    private final String database;
-
-    private final char[] password;
-
-    private final AuthenticationMechanism mechanism;
-
-    private MongoAuthentication(String user, String database, char[] password,
-                                AuthenticationMechanism mechanism) {
-        this.user = user;
-        this.database = database;
-        this.password = password;
-        this.mechanism = mechanism;
-    }
-
-    MongoCredential toCredential() {
-        switch (mechanism) {
-            case PLAIN:
-                return MongoCredential.createPlainCredential(user, database, password);
-            case GSSAPI:
-                return MongoCredential.createGSSAPICredential(user);
-            case SCRAM_SHA_1:
-                return MongoCredential.createScramSha1Credential(user, database, password);
-            case MONGODB_X509:
-                return MongoCredential.createMongoX509Credential(user);
-            case SCRAM_SHA_256:
-                return MongoCredential.createScramSha256Credential(user, database, password);
-            default:
-                throw new JNoSQLException("There is not support to the type: " + mechanism);
-
-        }
-    }
+    static Optional<MongoCredential> of(Settings settings) {
 
 
-    static List<MongoCredential> of(Settings settings) {
+        Optional<String> user = settings.get(Arrays.asList(USER.get(),
+                Configurations.USER.get()))
+                .map(Object::toString);
 
-        List<MongoCredential> credentials = new ArrayList<>();
+        Optional<char[]> password = settings.get(Arrays.asList(PASSWORD.get(),
+                Configurations.PASSWORD.get()))
+                .map(Object::toString).map(String::toCharArray);
 
-        List<String> users = settings.prefix(Arrays.asList(USER.get(),
-                Configurations.USER.get())).stream()
-                .map(Object::toString).collect(Collectors.toList());
-
-        List<String> passwords = settings.prefix(Arrays.asList(PASSWORD.get(),
-                Configurations.PASSWORD.get())).stream()
-                .map(Object::toString).collect(Collectors.toList());
-
-        List<String> sources = settings.prefix(AUTHENTICATION_SOURCE.get()).stream()
-                .map(Object::toString).collect(Collectors.toList());
+        Optional<String> source = settings.get(AUTHENTICATION_SOURCE.get())
+                .map(Object::toString);
 
         AuthenticationMechanism mechanism = settings.get(AUTHENTICATION_MECHANISM.get())
                 .map(Object::toString)
                 .map(AuthenticationMechanism::fromMechanismName)
                 .orElse(AuthenticationMechanism.PLAIN);
 
-        if (users.size() != passwords.size() || users.size() != sources.size()) {
-            throw new JNoSQLException("There is an inconsistent number of authentication parameter");
+        if (!user.isPresent()) {
+            return Optional.empty();
         }
 
-        for (int index = 0; index < sources.size(); index++) {
-            String user = users.get(index);
-            String password = passwords.get(index);
-            String source = sources.get(index);
-            MongoAuthentication credential = new MongoAuthentication(user,
-                    source, password.toCharArray(), mechanism);
-            credentials.add(credential.toCredential());
+        switch (mechanism) {
+            case PLAIN:
+                return Optional.of(MongoCredential.createPlainCredential(user.orElseThrow(missingExceptionUser()),
+                        source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
+            case GSSAPI:
+                return Optional.of(MongoCredential.createGSSAPICredential(user.orElseThrow(missingExceptionUser())));
+            case SCRAM_SHA_1:
+                return Optional.of(MongoCredential.createScramSha1Credential(user.orElseThrow(missingExceptionUser()),
+                        source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
+            case MONGODB_X509:
+                return Optional.of(MongoCredential.createMongoX509Credential(user.orElseThrow(missingExceptionUser())));
+            case SCRAM_SHA_256:
+                return Optional.of(MongoCredential.createScramSha256Credential(user.orElseThrow(missingExceptionUser()),
+                        source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
+            default:
+                throw new JNoSQLException("There is not support to the type: " + mechanism);
         }
-
-        return credentials;
 
     }
+
+
+    private static Supplier<JNoSQLException> missingExceptionUser() {
+        return missingException("user");
+    }
+
+    private static Supplier<JNoSQLException> missingExceptionPassword() {
+        return missingException("password");
+    }
+
+    private static Supplier<JNoSQLException> missingExceptionSource() {
+        return missingException("source");
+    }
+
+
+    private static Supplier<JNoSQLException> missingException(String parameter) {
+        return () -> new JNoSQLException("There is a missing parameter in mongoDb authentication: " + parameter);
+    }
+
+
 }
