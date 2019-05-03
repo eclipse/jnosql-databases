@@ -68,9 +68,9 @@ final class MongoAuthentication {
     }
 
 
-    static List<MongoAuthentication> of(Settings settings) {
+    static List<MongoCredential> of(Settings settings) {
 
-        List<MongoAuthentication> authentications = new ArrayList<>();
+        List<MongoCredential> credentials = new ArrayList<>();
 
         List<String> users = settings.prefix(Arrays.asList(USER.get(),
                 Configurations.USER.get())).stream()
@@ -96,12 +96,12 @@ final class MongoAuthentication {
             String user = users.get(index);
             String password = passwords.get(index);
             String source = sources.get(index);
-            MongoAuthentication authentication = new MongoAuthentication(user,
+            MongoAuthentication credential = new MongoAuthentication(user,
                     source, password.toCharArray(), mechanism);
-            authentications.add(authentication);
+            credentials.add(credential.toCredential());
         }
 
-        return authentications;
+        return credentials;
 
     }
 }
