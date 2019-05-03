@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_DATABASE;
+import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
 import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM;
 import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.PASSWORD;
 import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.USER;
@@ -80,7 +80,7 @@ final class MongoAuthentication {
                 Configurations.PASSWORD.get())).stream()
                 .map(Object::toString).collect(Collectors.toList());
 
-        List<String> databases = settings.prefix(AUTHENTICATION_DATABASE.get()).stream()
+        List<String> sources = settings.prefix(AUTHENTICATION_SOURCE.get()).stream()
                 .map(Object::toString).collect(Collectors.toList());
 
         AuthenticationMechanism mechanism = settings.get(AUTHENTICATION_MECHANISM.get())
@@ -88,16 +88,16 @@ final class MongoAuthentication {
                 .map(AuthenticationMechanism::fromMechanismName)
                 .orElse(AuthenticationMechanism.PLAIN);
 
-        if (users.size() != passwords.size() && users.size() != databases.size()) {
+        if (users.size() != passwords.size() || users.size() != sources.size()) {
             throw new JNoSQLException("There is an inconsistent number of authentication parameter");
         }
 
-        for (int index = 0; index < databases.size(); index++) {
+        for (int index = 0; index < sources.size(); index++) {
             String user = users.get(index);
             String password = passwords.get(index);
-            String database = databases.get(index);
+            String source = sources.get(index);
             MongoAuthentication authentication = new MongoAuthentication(user,
-                    database, password.toCharArray(), mechanism);
+                    source, password.toCharArray(), mechanism);
             authentications.add(authentication);
         }
 
