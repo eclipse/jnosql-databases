@@ -16,6 +16,7 @@
 package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.async.client.MongoClientSettings;
@@ -110,7 +111,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration<Mongo
         }
 
         Optional<MongoCredential> credential = MongoAuthentication.of(settings);
-        MongoClient mongoClient = credential.map(c -> new MongoClient(servers, c, null))
+        MongoClient mongoClient = credential.map(c -> new MongoClient(servers, c, MongoClientOptions.builder().build()))
                 .orElseGet(() -> new MongoClient(servers));
 
         return new MongoDBDocumentCollectionManagerFactory(mongoClient);
