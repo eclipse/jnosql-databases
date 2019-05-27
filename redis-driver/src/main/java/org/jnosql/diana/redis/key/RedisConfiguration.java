@@ -68,6 +68,32 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisBuck
         return get(builder.build());
     }
 
+    /**
+     * Creates a {@link RedisBucketManagerFactory} instance from a {@link JedisPool}
+     * @param jedisPool the jedis pool
+     * @return a {@link RedisBucketManagerFactory} instance
+     */
+    public RedisBucketManagerFactory get(JedisPool jedisPool) {
+        Objects.requireNonNull(jedisPool, "jedisPool is required");
+        return new DefaultRedisBucketManagerFactory(jedisPool);
+    }
+
+    @Override
+    public RedisBucketManagerFactory get() {
+        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
+        return getManagerFactory(configuration);
+    }
+
+    @Override
+    public RedisBucketManagerFactory get(Settings settings) {
+        Objects.requireNonNull(settings, "settings is required");
+
+        JedisPoolConfig poolConfig = getJedisPoolConfig(settings);
+        JedisPool jedisPool = getJedisPool(settings, poolConfig);
+        return new DefaultRedisBucketManagerFactory(jedisPool);
+    }
+
+
     private JedisPool getJedisPool(Settings settings, JedisPoolConfig poolConfig) {
 
         String localhost = settings.get(asList(OldRedisConfigurations.HOST.get(),
@@ -122,18 +148,4 @@ public final class RedisConfiguration implements KeyValueConfiguration<RedisBuck
     }
 
 
-    @Override
-    public RedisBucketManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        return getManagerFactory(configuration);
-    }
-
-    @Override
-    public RedisBucketManagerFactory get(Settings settings) {
-        Objects.requireNonNull(settings, "settings is required");
-
-        JedisPoolConfig poolConfig = getJedisPoolConfig(settings);
-        JedisPool jedisPool = getJedisPool(settings, poolConfig);
-        return new DefaultRedisBucketManagerFactory(jedisPool);
-    }
 }
