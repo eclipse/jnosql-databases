@@ -134,7 +134,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     public long count(String documentCollection) {
         Objects.requireNonNull(documentCollection, "documentCollection is required");
         MongoCollection<Document> collection = mongoDatabase.getCollection(documentCollection);
-        return collection.count();
+        return collection.countDocuments();
     }
 
     private Bson getSort(Sort sort) {
