@@ -128,7 +128,7 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
         ConnectionFactory connectionFactory = factoryBuilder.build();
 
         try {
-            return new MemcachedBucketManagerFactory(new MemcachedClient(connectionFactory, addresses);
+            return new MemcachedBucketManagerFactory(new MemcachedClient(connectionFactory, addresses));
         } catch (IOException e) {
             throw new MemcachedException("There is an error when try to create da BucketManager", e);
         }
