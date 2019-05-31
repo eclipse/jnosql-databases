@@ -25,7 +25,6 @@ import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.SettingsBuilder;
 import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
-import org.jnosql.diana.elasticsearch.ElasticsearchConfigurations;
 
 import java.util.ArrayList;
 import java.util.Arrays;

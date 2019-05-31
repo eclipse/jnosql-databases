@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.elasticsearch;
+package org.jnosql.diana.elasticsearch.document;
 
 import java.util.function.Supplier;
 
