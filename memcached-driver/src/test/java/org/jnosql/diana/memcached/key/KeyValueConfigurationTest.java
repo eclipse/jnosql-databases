@@ -14,9 +14,13 @@
  */
 package org.jnosql.diana.memcached.key;
 
+import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -29,6 +33,13 @@ public class KeyValueConfigurationTest {
         configuration = new MemcachedKeyValueConfiguration();
     }
 
+    @Test
+    public void shouldCreateKeyValueFactory() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("memcached.host.1","localhost:11211");
+        BucketManagerFactory managerFactory = configuration.get(Settings.of(map));
+        assertNotNull(managerFactory);
+    }
 
     @Test
     public void shouldCreateKeyValueFactoryFromFile() {
