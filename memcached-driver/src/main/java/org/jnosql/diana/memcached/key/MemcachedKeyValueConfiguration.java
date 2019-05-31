@@ -20,17 +20,20 @@ import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
+import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.auth.AuthDescriptor;
 import org.jnosql.diana.api.Configurations;
 import org.jnosql.diana.api.Settings;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -110,7 +113,7 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
                 .map(Object::toString)
                 .ifPresent(u -> {
                     String password = ofNullable(settings.get(asList(MemcachedConfigurations.PASSWORD.get()
-                    ,Configurations.PASSWORD.get())))
+                            , Configurations.PASSWORD.get())))
                             .map(Object::toString).orElse(null);
                     factoryBuilder.setAuthDescriptor(AuthDescriptor.typical(u, password));
                 });
@@ -123,8 +126,23 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<Mem
 
         List<InetSocketAddress> addresses = hots.isEmpty() ? Collections.emptyList() : AddrUtil.getAddresses(hots);
         ConnectionFactory connectionFactory = factoryBuilder.build();
-        return new MemcachedBucketManagerFactory(connectionFactory, addresses);
+
+        try {
+            return new MemcachedBucketManagerFactory(new MemcachedClient(connectionFactory, addresses);
+        } catch (IOException e) {
+            throw new MemcachedException("There is an error when try to create da BucketManager", e);
+        }
     }
 
+    /**
+     * Creates a {@link MemcachedBucketManagerFactory} from a {@link MemcachedClient}
+     *
+     * @param client the client
+     * @return a {@link MemcachedBucketManagerFactory} instance
+     */
+    public MemcachedBucketManagerFactory get(MemcachedClient client) {
+        Objects.requireNonNull(client, "client is required");
+        return new MemcachedBucketManagerFactory(client);
+    }
 }
 

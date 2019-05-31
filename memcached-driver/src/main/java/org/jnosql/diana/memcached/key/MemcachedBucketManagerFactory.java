@@ -14,12 +14,9 @@
  */
 package org.jnosql.diana.memcached.key;
 
-import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.MemcachedClient;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,24 +25,16 @@ import java.util.Set;
 
 final class MemcachedBucketManagerFactory implements BucketManagerFactory<MemcachedBucketManager> {
 
-    private final ConnectionFactory factory;
+    private final MemcachedClient client;
 
-    private final List<InetSocketAddress> addresses;
-
-    MemcachedBucketManagerFactory(ConnectionFactory factory, List<InetSocketAddress> addresses) {
-        this.factory = factory;
-        this.addresses = addresses;
+    MemcachedBucketManagerFactory(MemcachedClient client) {
+        this.client = client;
     }
 
     @Override
     public MemcachedBucketManager getBucketManager(String bucketName) {
         Objects.requireNonNull(bucketName, "bucketName is required");
-        try {
-            MemcachedClient client = new MemcachedClient(factory, addresses);
-            return new MemcachedBucketManager(client, bucketName);
-        } catch (IOException e) {
-            throw new MemcachedException("There is an error when try to create da BucketManager", e);
-        }
+        return new MemcachedBucketManager(client, bucketName);
     }
 
     @Override
