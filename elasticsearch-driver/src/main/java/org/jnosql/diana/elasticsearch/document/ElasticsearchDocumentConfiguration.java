@@ -17,6 +17,10 @@ package org.jnosql.diana.elasticsearch.document;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -31,7 +35,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -66,7 +72,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         if (configurations.isEmpty()) {
             return;
         }
-        settings.prefix(Arrays.asList(OldElasticsearchConfigurations.HOST.get(),
+        settings.prefix(asList(OldElasticsearchConfigurations.HOST.get(),
                 ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
@@ -106,7 +112,7 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         requireNonNull(settings, "settings is required");
 
 
-        settings.prefix(Arrays.asList(OldElasticsearchConfigurations.HOST.get(),
+        settings.prefix(asList(OldElasticsearchConfigurations.HOST.get(),
                 ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
@@ -117,11 +123,29 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
         builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
 
-        String maxRetry = settings.get(Arrays.asList(OldElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get(),
+        String maxRetry = settings.get(asList(OldElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get(),
                 ElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get())).map(Object::toString)
                 .orElse(null);
         if (maxRetry != null) {
             maxRetryTimoutMillis = Integer.valueOf(maxRetry);
+        }
+
+        final Optional<String> username = settings
+                .get(asList(Configurations.USER.get(),
+                        ElasticsearchConfigurations.HOST.get()))
+                .map(Object::toString);
+        final Optional<String> password = settings
+                .get(asList(Configurations.PASSWORD.get(),
+                        ElasticsearchConfigurations.PASSWORD.get()))
+                .map(Object::toString);
+
+        if(username.isPresent()) {
+            final CredentialsProvider credentialsProvider =
+                    new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(username.orElse(null), password.orElse(null)));
+            builder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
+                    .setDefaultCredentialsProvider(credentialsProvider));
         }
 
         builder.setMaxRetryTimeoutMillis(maxRetryTimoutMillis);

@@ -20,6 +20,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -64,7 +65,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         Map<String, Object> jsonObject = getMap(entity);
         IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
         try {
-            client.index(request);
+            client.index(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new ElasticsearchException("An error to insert in Elastic search", e);
         }
@@ -104,7 +105,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
                 .forEach(bulk::add);
 
         try {
-            client.bulk(bulk);
+            client.bulk(bulk, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
         }
@@ -125,10 +126,10 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.size(0);
         try {
-            SearchResponse search = client.search(searchRequest);
+            SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
             return search.getHits().getTotalHits();
         } catch (IOException e) {
-           throw new JNoSQLException("Error on ES when try to execute count to document collection:" + documentCollection, e);
+            throw new JNoSQLException("Error on ES when try to execute count to document collection:" + documentCollection, e);
         }
     }
 
@@ -141,7 +142,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(query);
             searchRequest.types(types);
-            SearchResponse search = client.search(searchRequest);
+            SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
 
             return stream(search.getHits().spliterator(), false)
                     .map(ElasticsearchEntry::of)
