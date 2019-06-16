@@ -18,6 +18,8 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import jakarta.nosql.Settings;
+import jakarta.nosql.column.ColumnConfiguration;
+import jakarta.nosql.column.ColumnConfigurationAsync;
 import jakarta.nosql.column.UnaryColumnConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -43,7 +45,8 @@ import static java.util.Objects.requireNonNull;
  * @see CassandraConfigurations
  * @see OldCassandraConfigurations
  */
-public final class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory> {
+public final class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory>,
+        ColumnConfiguration, ColumnConfigurationAsync {
 
     static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 

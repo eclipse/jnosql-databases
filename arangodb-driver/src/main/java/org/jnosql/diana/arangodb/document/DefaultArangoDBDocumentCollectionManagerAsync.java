@@ -72,8 +72,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
     @Override
     public void insert(Iterable<DocumentEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
-        StreamSupport.stream(entities.spliterator(), false)
-                .forEach(this::insert);
+        entities.forEach(this::insert);
     }
 
     @Override
@@ -108,8 +107,8 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
 
     @Override
     public void update(Iterable<DocumentEntity> entities) {
-        StreamSupport.stream(entities.spliterator(), false)
-                .forEach(this::update);
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::update);
     }
 
     @Override

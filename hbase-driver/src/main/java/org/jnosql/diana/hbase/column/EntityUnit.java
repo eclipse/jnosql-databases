@@ -17,8 +17,8 @@ package org.jnosql.diana.hbase.column;
 
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
-import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnEntity;
+import jakarta.nosql.column.Column;
+import jakarta.nosql.column.ColumnQuery;
 
 import java.util.ArrayList;
 import java.util.List;

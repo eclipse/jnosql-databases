@@ -19,7 +19,7 @@ import com.couchbase.client.java.query.Delete;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.query.dsl.path.MutateLimitPath;
-import org.jnosql.diana.api.Condition;
+import jakarta.nosql.Condition;
 import jakarta.nosql.Sort;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;

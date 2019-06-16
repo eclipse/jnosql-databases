@@ -18,6 +18,8 @@ package org.jnosql.diana.cassandra.column;
 
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.UnaryColumnConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,7 +29,7 @@ public class CassandraConfigurationTest {
 
 
     @Test
-    public void shoudlCreateDocumentEntityManagerFactoryFromSettings() {
+    public void shouldCreateDocumentEntityManagerFactoryFromSettings() {
         Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
@@ -36,12 +38,24 @@ public class CassandraConfigurationTest {
 
 
     @Test
-    public void shoudlCreateDocumentEntityManagerFactoryFromFile() {
+    public void shouldCreateDocumentEntityManagerFactoryFromFile() {
         Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
         assertNotNull(entityManagerFactory);
     }
 
+    @Test
+    public void shouldCreateConfiguration() {
+        UnaryColumnConfiguration<?> configuration = UnaryColumnConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue( configuration instanceof CassandraConfiguration);
+    }
 
+    @Test
+    public void shouldCreateConfigurationQuery() {
+        CassandraConfiguration configuration = UnaryColumnConfiguration.getConfiguration(CassandraConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue( configuration instanceof CassandraConfiguration);
+    }
 }
