@@ -21,7 +21,6 @@ import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
 import jakarta.nosql.document.DocumentConfigurationAsync;
-import jakarta.nosql.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -31,7 +30,8 @@ import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATION;
 
 /**
- * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
+ * The implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync}
+ * that returns {@link ArangoDBDocumentCollectionManagerFactory}.
  * It tries to read the configuration properties from diana-arangodb.properties file.
  *
  * @see ArangoDBConfiguration
@@ -39,9 +39,7 @@ import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATIO
  *
  */
 public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory>,
-        DocumentConfiguration, DocumentConfigurationAsync {
-
+        implements DocumentConfiguration, DocumentConfigurationAsync {
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
