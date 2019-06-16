@@ -19,7 +19,7 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import jakarta.nosql.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.column.ColumnEntity;
+import jakarta.nosql.column.ColumnEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

@@ -17,7 +17,7 @@ package org.jnosql.diana.cassandra.column;
 
 import jakarta.nosql.TypeSupplier;
 import jakarta.nosql.Value;
-import org.jnosql.diana.api.column.Column;
+import jakarta.nosql.column.Column;
 
 import java.util.List;
 import java.util.Objects;

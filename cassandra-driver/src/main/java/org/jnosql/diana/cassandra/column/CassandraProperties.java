@@ -36,12 +36,9 @@ class CassandraProperties {
 
     private List<String> queries = new ArrayList<>();
 
-
-
     private List<String> nodes = new ArrayList<>();
 
     private Optional<String> name;
-
 
     private int port;
 

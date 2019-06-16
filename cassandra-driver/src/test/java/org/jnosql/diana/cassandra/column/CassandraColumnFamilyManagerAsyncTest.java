@@ -16,12 +16,11 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Session;
-import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnDeleteQuery;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnQuery;
-import org.jnosql.diana.api.column.Columns;
-import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
+import jakarta.nosql.column.Column;
+import jakarta.nosql.column.ColumnDeleteQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
+import jakarta.nosql.column.Columns;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +34,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static jakarta.nosql.column.ColumnDeleteQuery.delete;
+import static jakarta.nosql.column.ColumnQuery.select;
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -46,8 +47,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
-import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -184,7 +183,6 @@ public class CassandraColumnFamilyManagerAsyncTest {
         });
     }
 
-
     @Test
     public void shouldInsertColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
@@ -215,8 +213,6 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
     }
 
-
-
     @Test
     public void shouldUpdateColumnsAsync() {
         ColumnEntity columnEntity = getColumnFamily();
@@ -246,8 +242,6 @@ public class CassandraColumnFamilyManagerAsyncTest {
         assertThat(entities.get(), contains(columnEntity));
 
     }
-
-
 
     @Test
     public void shouldReturnErrorWhenDeleteIsNull() {
@@ -335,7 +329,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         MILLISECONDS.sleep(500L);
 
-        ColumnQuery query = ColumnQueryBuilder.select().from(COLUMN_FAMILY).limit(6).build();
+        ColumnQuery query = select().from(COLUMN_FAMILY).limit(6).build();
         CassandraQuery cassandraQuery = CassandraQuery.of(query);
 
         assertFalse(cassandraQuery.getPagingState().isPresent());

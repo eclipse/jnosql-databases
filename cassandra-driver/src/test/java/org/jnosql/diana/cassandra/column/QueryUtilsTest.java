@@ -15,10 +15,10 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.querybuilder.BuiltStatement;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.column.ColumnQuery;
 import org.junit.jupiter.api.Test;
 
-import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
+import static jakarta.nosql.column.ColumnQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

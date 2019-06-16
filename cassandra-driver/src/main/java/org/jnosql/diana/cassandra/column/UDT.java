@@ -15,7 +15,7 @@
 package org.jnosql.diana.cassandra.column;
 
 
-import org.jnosql.diana.api.column.Column;
+import jakarta.nosql.column.Column;
 
 /**
  * A Cassandra user data type, this interface does not support both Value alias method:

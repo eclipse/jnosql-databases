@@ -18,8 +18,8 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.PagingState;
 import jakarta.nosql.Sort;
-import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.column.ColumnCondition;
+import jakarta.nosql.column.ColumnQuery;
 
 import java.util.List;
 import java.util.Objects;

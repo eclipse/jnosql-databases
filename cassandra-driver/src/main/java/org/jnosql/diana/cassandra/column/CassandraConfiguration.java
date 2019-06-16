@@ -18,7 +18,7 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import jakarta.nosql.Settings;
-import org.jnosql.diana.api.column.UnaryColumnConfiguration;
+import jakarta.nosql.column.UnaryColumnConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.HashMap;
@@ -39,10 +39,11 @@ import static java.util.Objects.requireNonNull;
  * <p>cassandra.ssl: Define ssl, the default value is false</p>
  * <p>cassandra.metrics: enable metrics, the default value is true</p>
  * <p>cassandra.jmx: enable JMX, the default value is true</p>
+ *
  * @see CassandraConfigurations
  * @see OldCassandraConfigurations
  */
-public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory> {
+public final class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory> {
 
     static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 
@@ -77,14 +78,4 @@ public class CassandraConfiguration implements UnaryColumnConfiguration<Cassandr
         return getManagerFactory(configurations);
     }
 
-    @Override
-    public CassandraColumnFamilyManagerFactory getAsync() {
-        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
-        return getManagerFactory(configuration);
-    }
-
-    @Override
-    public CassandraColumnFamilyManagerFactory getAsync(Settings settings) throws NullPointerException {
-        return get(settings);
-    }
 }

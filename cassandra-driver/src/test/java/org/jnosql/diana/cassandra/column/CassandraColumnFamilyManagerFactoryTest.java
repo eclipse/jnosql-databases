@@ -18,14 +18,10 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.Cluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import org.jnosql.diana.api.column.ColumnFamilyManager;
-import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
+import jakarta.nosql.column.ColumnFamilyManager;
+import jakarta.nosql.column.ColumnFamilyManagerAsync;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,7 +51,7 @@ public class CassandraColumnFamilyManagerFactoryTest {
         });
 
         assertThrows(NullPointerException.class, () -> {
-            cassandraConfiguration.getAsync(null);
+            cassandraConfiguration.get(null);
         });
     }
 

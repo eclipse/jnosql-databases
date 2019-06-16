@@ -20,8 +20,8 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,6 @@ enum QueryExecutorType implements QueryExecutor {
         @Override
         public List<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
                                           DefaultCassandraColumnFamilyManager manager) {
-
             CassandraQuery query = CassandraQuery.class.cast(q);
 
             if (query.isExhausted()) {
@@ -135,7 +134,6 @@ enum QueryExecutorType implements QueryExecutor {
             resultSet.addListener(executeAsync, manager.getExecutor());
 
         }
-    };
-
+    }
 
 }

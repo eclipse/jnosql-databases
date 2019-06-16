@@ -22,9 +22,9 @@ import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import jakarta.nosql.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.column.ColumnDeleteQuery;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.column.ColumnDeleteQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.List;
@@ -144,6 +144,19 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     }
 
     @Override
+    public void insert(Iterable<ColumnEntity> entities) {
+        requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
+    }
+
+    @Override
+    public void insert(Iterable<ColumnEntity> entities, Duration ttl) {
+        requireNonNull(entities, "entities is required");
+        requireNonNull(ttl, "ttl is required");
+        entities.forEach(e -> insert(e, ttl));
+    }
+
+    @Override
     public void insert(ColumnEntity entity, Duration ttl, Consumer<ColumnEntity> callBack) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
@@ -159,6 +172,12 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     @Override
     public void update(ColumnEntity entity) {
         insert(entity);
+    }
+
+    @Override
+    public void update(Iterable<ColumnEntity> entities) {
+        requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
     }
 
     @Override
