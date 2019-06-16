@@ -15,9 +15,9 @@
 package org.jnosql.diana.driver;
 
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
+import jakarta.nosql.Value;
+import jakarta.nosql.ValueWriter;
+import org.jnosql.diana.writer.ValueWriterDecorator;
 
 import java.util.Collections;
 import java.util.List;
