@@ -14,7 +14,11 @@
  */
 package org.jnosql.diana.arangodb.key;
 
+import jakarta.nosql.document.UnaryDocumentConfiguration;
 import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueConfiguration;
+import org.jnosql.diana.arangodb.document.ArangoDBDocumentConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,5 +38,20 @@ public class ArangoDBConfigurationTest {
     public void shouldCreateKeyValueFactoryFromFile() {
         BucketManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldReturnFromConfiguration() {
+        KeyValueConfiguration configuration = KeyValueConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof KeyValueConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        ArangoDBKeyValueConfiguration configuration = KeyValueConfiguration
+                .getConfiguration(ArangoDBKeyValueConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ArangoDBKeyValueConfiguration);
     }
 }

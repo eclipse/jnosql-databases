@@ -16,6 +16,8 @@
 package org.jnosql.diana.arangodb.document;
 
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.UnaryDocumentConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,5 +31,20 @@ public class ArangoDBDocumentConfigurationTest {
         configuration.addHost("localhost", 8529);
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldReturnFromConfiguration() {
+        ArangoDBDocumentConfiguration configuration = UnaryDocumentConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        ArangoDBDocumentConfiguration configuration = UnaryDocumentConfiguration
+                .getConfiguration(ArangoDBDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
     }
 }
