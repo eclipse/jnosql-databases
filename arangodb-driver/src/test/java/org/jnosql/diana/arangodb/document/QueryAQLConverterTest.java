@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryAQLConverterTest {

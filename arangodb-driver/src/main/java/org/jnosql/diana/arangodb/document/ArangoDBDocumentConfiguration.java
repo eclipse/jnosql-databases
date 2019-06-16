@@ -36,7 +36,7 @@ import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATIO
  * @see org.jnosql.diana.arangodb.ArangoDBConfigurations
  *
  */
-public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
+public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
 
 

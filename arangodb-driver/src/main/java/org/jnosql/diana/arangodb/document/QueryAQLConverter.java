@@ -14,7 +14,7 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.Sort;
+import jakarta.nosql.Sort;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;

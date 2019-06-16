@@ -16,7 +16,7 @@
 package org.jnosql.diana.arangodb.document;
 
 import jakarta.nosql.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
+import jakarta.nosql.document.DocumentCollectionManagerAsync;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

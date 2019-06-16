@@ -58,7 +58,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         this.arangoDB = arangoDB;
     }
 
-
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         String collectionName = entity.getName();

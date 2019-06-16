@@ -18,7 +18,7 @@ package org.jnosql.diana.arangodb.key;
 import com.arangodb.ArangoDB;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -32,8 +32,8 @@ import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATIO
  *
  * @see org.jnosql.diana.arangodb.ArangoDBConfigurations
  */
-public class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
-        implements KeyValueConfiguration<ArangoDBBucketManagerFactory> {
+public final class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
+        implements KeyValueConfiguration {
 
     @Override
     public ArangoDBBucketManagerFactory get() {

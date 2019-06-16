@@ -15,8 +15,8 @@
 package org.jnosql.diana.arangodb.document;
 
 
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.document.DocumentCollectionManagerAsync;
 import jakarta.nosql.document.DocumentEntity;
 
 import java.util.List;

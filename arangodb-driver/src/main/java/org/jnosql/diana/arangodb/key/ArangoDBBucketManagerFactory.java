@@ -15,7 +15,7 @@
 package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 import org.jnosql.diana.arangodb.document.ArangoDBUtil;
 
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.Set;
  * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
  */
-public class ArangoDBBucketManagerFactory implements BucketManagerFactory<ArangoDBBucketManager> {
+public class ArangoDBBucketManagerFactory implements BucketManagerFactory {
 
     private static final String DEFAULT_NAMESPACE = "diana";
 

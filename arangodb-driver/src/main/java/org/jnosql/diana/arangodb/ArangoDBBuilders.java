@@ -16,7 +16,7 @@ package org.jnosql.diana.arangodb;
 
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
-import org.jnosql.diana.api.Configurations;
+import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 
 import java.util.Arrays;

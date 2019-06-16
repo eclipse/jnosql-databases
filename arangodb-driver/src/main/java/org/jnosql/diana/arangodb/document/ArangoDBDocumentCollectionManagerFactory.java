@@ -20,7 +20,7 @@ import com.arangodb.ArangoDBAsync;
 import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
-public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
+final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
         DocumentCollectionManagerAsyncFactory {
 
 
