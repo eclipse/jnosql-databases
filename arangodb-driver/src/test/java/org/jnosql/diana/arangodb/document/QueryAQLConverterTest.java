@@ -14,7 +14,7 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.document.DocumentQuery;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

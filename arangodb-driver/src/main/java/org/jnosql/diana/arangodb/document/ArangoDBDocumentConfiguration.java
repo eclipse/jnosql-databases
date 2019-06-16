@@ -17,9 +17,9 @@ package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -57,16 +57,4 @@ public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         return new ArangoDBDocumentCollectionManagerFactory(arangoDB, arangoDBAsync);
     }
 
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
-        SettingsBuilder builder = Settings.builder();
-        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
-        return getAsync(builder.build());
-    }
-
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
-        return get(settings);
-    }
 }

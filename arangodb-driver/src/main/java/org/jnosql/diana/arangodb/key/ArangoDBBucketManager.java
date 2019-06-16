@@ -17,7 +17,7 @@ package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
-import org.jnosql.diana.api.Value;
+import jakarta.nosql.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.KeyValueEntity;
 import org.jnosql.diana.driver.JsonbSupplier;

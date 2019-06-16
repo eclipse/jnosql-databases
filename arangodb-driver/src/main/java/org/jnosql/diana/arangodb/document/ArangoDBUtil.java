@@ -18,9 +18,9 @@ package org.jnosql.diana.arangodb.document;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;

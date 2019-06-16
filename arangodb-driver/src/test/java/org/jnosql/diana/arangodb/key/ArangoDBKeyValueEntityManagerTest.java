@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.arangodb.key;
 
-import org.jnosql.diana.api.Value;
+import jakarta.nosql.Value;
 import org.jnosql.diana.api.key.BucketManager;
 import org.jnosql.diana.api.key.BucketManagerFactory;
 import org.jnosql.diana.api.key.KeyValueEntity;

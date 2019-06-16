@@ -16,11 +16,11 @@
 package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.api.document.Documents;
 import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.jupiter.api.AfterEach;

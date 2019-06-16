@@ -14,10 +14,10 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
 import org.jnosql.diana.api.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

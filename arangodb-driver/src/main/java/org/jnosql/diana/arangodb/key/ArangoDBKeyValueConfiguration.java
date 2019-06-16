@@ -16,8 +16,8 @@ package org.jnosql.diana.arangodb.key;
 
 
 import com.arangodb.ArangoDB;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
 import org.jnosql.diana.api.key.KeyValueConfiguration;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
