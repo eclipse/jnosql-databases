@@ -16,7 +16,7 @@
 package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

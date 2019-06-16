@@ -16,7 +16,7 @@
 package org.jnosql.diana.redis.key;
 
 
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 

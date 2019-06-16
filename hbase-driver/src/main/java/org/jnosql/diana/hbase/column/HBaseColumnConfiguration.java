@@ -17,7 +17,7 @@ package org.jnosql.diana.hbase.column;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import org.jnosql.diana.api.column.ColumnConfiguration;
 
 import java.util.ArrayList;

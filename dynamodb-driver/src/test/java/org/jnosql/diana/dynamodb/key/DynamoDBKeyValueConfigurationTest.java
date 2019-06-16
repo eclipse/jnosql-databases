@@ -16,7 +16,7 @@ package org.jnosql.diana.dynamodb.key;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

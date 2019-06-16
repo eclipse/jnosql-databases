@@ -17,7 +17,7 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.PagingState;
-import org.jnosql.diana.api.Sort;
+import jakarta.nosql.Sort;
 import org.jnosql.diana.api.column.ColumnCondition;
 import org.jnosql.diana.api.column.ColumnQuery;
 

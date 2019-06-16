@@ -26,9 +26,9 @@ import java.util.stream.StreamSupport;
 
 import javax.json.bind.Jsonb;
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.KeyValueEntity;
 import org.jnosql.diana.driver.ValueJSON;
 
 import redis.clients.jedis.Jedis;

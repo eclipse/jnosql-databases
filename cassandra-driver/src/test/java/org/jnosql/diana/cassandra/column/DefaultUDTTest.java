@@ -15,7 +15,7 @@
 package org.jnosql.diana.cassandra.column;
 
 import org.hamcrest.Matchers;
-import org.jnosql.diana.api.TypeReference;
+import jakarta.nosql.TypeReference;
 import org.jnosql.diana.api.column.Column;
 import org.junit.jupiter.api.Test;
 

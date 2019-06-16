@@ -17,10 +17,10 @@ package org.jnosql.diana.elasticsearch.document;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.api.Condition;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCondition;
+import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;

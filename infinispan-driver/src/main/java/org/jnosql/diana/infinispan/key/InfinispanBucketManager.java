@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.infinispan.commons.api.BasicCache;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.KeyValueEntity;
 
 /**
  * The Infinispan implementation of {@link BucketManager}

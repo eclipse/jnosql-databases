@@ -15,12 +15,12 @@
  */
 package org.jnosql.diana.orientdb.document;
 
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.document.DocumentQuery;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryOSQLConverterTest {

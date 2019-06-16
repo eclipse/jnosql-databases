@@ -16,8 +16,8 @@ package org.jnosql.diana.elasticsearch.document;
 
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.search.SearchResponse;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.document.DocumentEntity;
 
 import java.util.List;
 import java.util.function.Consumer;

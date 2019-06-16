@@ -17,9 +17,9 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoCredential;
-import org.jnosql.diana.api.Configurations;
+import jakarta.nosql.Configurations;
 import org.jnosql.diana.api.JNoSQLException;
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 
 import java.util.Arrays;
 import java.util.Optional;

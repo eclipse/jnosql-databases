@@ -22,7 +22,6 @@ import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,12 +58,12 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void setUp() {
         random = new Random();
         entityManager = INSTANCE.get().get(DATABASE);
-        entityManager.delete(DocumentQueryBuilder.delete().from(COLLECTION_NAME).build());
+        entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
     }
 
     @AfterEach
     public void after() {
-        entityManager.delete(DocumentQueryBuilder.delete().from(COLLECTION_NAME).build());
+        entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
     }
 
     @Test

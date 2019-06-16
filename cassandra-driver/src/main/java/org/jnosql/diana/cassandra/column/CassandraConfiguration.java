@@ -17,7 +17,7 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.Cluster;
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import org.jnosql.diana.api.column.UnaryColumnConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 

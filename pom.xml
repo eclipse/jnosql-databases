@@ -28,21 +28,7 @@
     <artifactId>diana-driver</artifactId>
     <packaging>pom</packaging>
 
-    <name>${project.groupId}:${project.artifactId}</name>
     <description>The Eclipse JNoSQL communication layer, Diana, implementations</description>
-    <url>http://jnosql.org/</url>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-        <license>
-            <name>The Eclipse Public License v1.0</name>
-            <url>http://www.eclipse.org/legal/epl-v10.html</url>
-        </license>
-    </licenses>
-
 
     <scm>
         <connection>scm:git:git://github.com/eclipse/jnosql-diana-driver.git</connection>
@@ -50,24 +36,6 @@
         <url>https://github.com/eclipse/jnosql-diana-driver</url>
     </scm>
 
-    <developers>
-        <developer>
-            <name>Otavio Santana</name>
-            <email>otaviojava@apache.org</email>
-            <organization>SouJava</organization>
-            <organizationUrl>https://about.me/otaviojava</organizationUrl>
-        </developer>
-        <developer>
-            <name>JNoSQL Developers</name>
-            <email>jnosql-dev@eclipse.org</email>
-            <organization>Eclipse JNoSQL</organization>
-            <organizationUrl>https://dev.eclipse.org/mailman/listinfo/jnosql-dev</organizationUrl>
-        </developer>
-    </developers>
-
-    <properties>
-        <sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
 
     <modules>
         <module>diana-driver-commons</module>
@@ -90,18 +58,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>yasson</artifactId>
-            <version>${yasson.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>${javax.json.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers.version}</version>
@@ -109,14 +65,4 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 </project>

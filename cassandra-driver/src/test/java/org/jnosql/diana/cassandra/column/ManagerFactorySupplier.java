@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.cassandra.column;
 
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import org.jnosql.diana.driver.ConfigurationReader;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;

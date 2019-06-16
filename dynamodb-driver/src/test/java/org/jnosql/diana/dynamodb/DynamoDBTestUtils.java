@@ -14,7 +14,7 @@
  */
 package org.jnosql.diana.dynamodb;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 import org.jnosql.diana.dynamodb.key.DynamoDBKeyValueConfiguration;
 import org.testcontainers.containers.GenericContainer;
 

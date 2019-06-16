@@ -16,7 +16,7 @@
 package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.documents.DocumentStore;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 import java.util.Arrays;
 import java.util.Objects;

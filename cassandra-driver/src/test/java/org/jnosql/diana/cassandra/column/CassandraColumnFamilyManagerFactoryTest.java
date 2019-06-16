@@ -16,8 +16,8 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
 import org.jnosql.diana.api.column.ColumnFamilyManager;
 import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
 import org.junit.jupiter.api.BeforeEach;

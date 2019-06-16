@@ -20,7 +20,7 @@ import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.Session;
 import org.hamcrest.Matchers;
 import org.jnosql.diana.api.NonUniqueResultException;
-import org.jnosql.diana.api.Value;
+import jakarta.nosql.Value;
 import org.jnosql.diana.api.column.Column;
 import org.jnosql.diana.api.column.ColumnDeleteQuery;
 import org.jnosql.diana.api.column.ColumnEntity;

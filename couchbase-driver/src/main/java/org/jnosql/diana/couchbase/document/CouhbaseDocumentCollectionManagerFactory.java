@@ -16,8 +16,8 @@ package org.jnosql.diana.couchbase.document;
 
 
 import com.couchbase.client.java.CouchbaseCluster;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.couchbase.util.CouchbaseClusterUtil;
 
 public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchbaseDocumentCollectionManager>,

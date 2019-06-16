@@ -16,7 +16,7 @@
 package org.jnosql.diana.cassandra.column;
 
 
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
 import org.junit.jupiter.api.Test;
 

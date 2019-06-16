@@ -14,8 +14,8 @@
  */
 package org.jnosql.diana.ravendb.document;
 
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -15,8 +15,8 @@
 package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.Constants;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.HashMap;

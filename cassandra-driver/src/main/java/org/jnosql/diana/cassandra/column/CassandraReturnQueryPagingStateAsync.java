@@ -18,7 +18,7 @@ import com.datastax.driver.core.PagingState;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Row;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
+import jakarta.nosql.ExecuteAsyncQueryException;
 import org.jnosql.diana.api.column.ColumnEntity;
 
 import java.util.ArrayList;

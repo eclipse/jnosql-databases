@@ -15,8 +15,8 @@
 package org.jnosql.diana.orientdb.document;
 
 
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.DocumentCollectionManagerAsync;
+import jakarta.nosql.document.DocumentEntity;
 
 import java.util.List;
 import java.util.Map;

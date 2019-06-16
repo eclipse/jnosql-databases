@@ -14,8 +14,8 @@
  */
 package org.jnosql.diana.infinispan.key.util;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.infinispan.key.InfinispanKeyValueConfiguration;
 
 

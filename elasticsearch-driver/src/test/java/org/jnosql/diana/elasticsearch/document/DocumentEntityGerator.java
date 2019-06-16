@@ -14,9 +14,9 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.Documents;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
+import org.jnosql.diana.document.Documents;
 
 import java.util.HashMap;
 import java.util.List;

@@ -15,9 +15,9 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
 import org.jnosql.diana.api.document.DocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 

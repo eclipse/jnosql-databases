@@ -17,8 +17,8 @@ package org.jnosql.diana.hazelcast.key;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.SqlPredicate;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Collection;

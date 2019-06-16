@@ -15,9 +15,9 @@
 package org.jnosql.diana.memcached.key;
 
 import net.spy.memcached.MemcachedClient;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Optional;

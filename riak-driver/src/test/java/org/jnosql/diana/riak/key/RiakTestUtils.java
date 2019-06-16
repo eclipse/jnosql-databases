@@ -16,7 +16,7 @@ package org.jnosql.diana.riak.key;
 
 
 import com.basho.riak.client.core.RiakNode;
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 
 public final class RiakTestUtils {
 
