@@ -12,7 +12,6 @@
  *
  *   Otavio Santana
  */
-
 package org.jnosql.diana.redis.key;
 
 
