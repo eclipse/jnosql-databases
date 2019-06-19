@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
  * It tries to read diana-riak.properties file.
  * <p>riak.host-: The prefix to host. eg: riak.server.host.1= host1</p>
  */
-public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBucketManagerFactory> {
+public class RiakKeyValueConfiguration implements KeyValueConfiguration {
 
     @Deprecated
     private static final String OLD_SERVER_PREFIX = "riak-server-host-";

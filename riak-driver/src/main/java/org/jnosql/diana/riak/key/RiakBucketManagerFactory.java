@@ -33,8 +33,7 @@ import java.util.Set;
  * <p>{@link BucketManagerFactory#getQueue(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getMap(String, Class, Class)}</p>
  */
-public class RiakBucketManagerFactory implements BucketManagerFactory<RiakBucketManager> {
-
+public class RiakBucketManagerFactory implements BucketManagerFactory {
 
     private final RiakCluster cluster;
 

@@ -40,9 +40,7 @@ import static org.jnosql.diana.riak.key.RiakUtils.createStoreValue;
 
 public class RiakBucketManager implements BucketManager {
 
-
     private final RiakClient client;
-
 
     private final Namespace nameSpace;
 
@@ -57,18 +55,18 @@ public class RiakBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
+    public void put(KeyValueEntity entity) throws NullPointerException {
         put(entity, Duration.ZERO);
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl)
+    public void put(KeyValueEntity entity, Duration ttl)
             throws NullPointerException, UnsupportedOperationException {
 
-        K key = entity.getKey();
-        Value value = entity.getValue();
+        Object key = entity.getKey();
+        Object value = entity.getValue();
 
-        StoreValue storeValue = createStoreValue(key, value.get(), nameSpace, ttl);
+        StoreValue storeValue = createStoreValue(key, value, nameSpace, ttl);
 
         try {
             client.execute(storeValue);
@@ -78,12 +76,12 @@ public class RiakBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities) throws NullPointerException {
+    public void put(Iterable<KeyValueEntity> entities) throws NullPointerException {
         StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl)
+    public void put(Iterable<KeyValueEntity> entities, Duration ttl)
             throws NullPointerException, UnsupportedOperationException {
 
         StreamSupport.stream(entities.spliterator(), false).forEach(e -> put(e, ttl));

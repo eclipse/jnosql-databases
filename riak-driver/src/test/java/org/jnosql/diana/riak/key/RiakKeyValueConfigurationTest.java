@@ -16,6 +16,8 @@
 package org.jnosql.diana.riak.key;
 
 import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,5 +42,20 @@ public class RiakKeyValueConfigurationTest {
     public void shouldCreateKeyValueFactoryFromFile() {
         BucketManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldReturnFromConfiguration() {
+        KeyValueConfiguration configuration = KeyValueConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof KeyValueConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        RiakKeyValueConfiguration configuration = KeyValueConfiguration
+                .getConfiguration(RiakKeyValueConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof RiakKeyValueConfiguration);
     }
 }
