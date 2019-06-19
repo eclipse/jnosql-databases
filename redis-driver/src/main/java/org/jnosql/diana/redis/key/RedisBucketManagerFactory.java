@@ -20,7 +20,7 @@ import jakarta.nosql.key.BucketManagerFactory;
 /**
  * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisBucketManager}
  */
-public interface RedisBucketManagerFactory extends BucketManagerFactory<RedisBucketManager> {
+public interface RedisBucketManagerFactory extends BucketManagerFactory {
 
 
     /**
