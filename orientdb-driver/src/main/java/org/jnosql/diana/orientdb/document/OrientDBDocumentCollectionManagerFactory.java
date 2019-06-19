@@ -28,10 +28,8 @@ import static java.util.Optional.ofNullable;
 /**
  * The OrientDB implementation of {@link DocumentCollectionManagerFactory}
  */
-public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<OrientDBDocumentCollectionManager>,
-        DocumentCollectionManagerAsyncFactory<OrientDBDocumentCollectionManagerAsync> {
-
-    private static final String DATABASE_TYPE = "document";
+public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
+        DocumentCollectionManagerAsyncFactory{
 
     private final String host;
     private final String user;
