@@ -18,7 +18,7 @@ package org.jnosql.diana.ravendb.document;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import org.jnosql.diana.api.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Arrays;
