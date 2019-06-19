@@ -15,6 +15,8 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -24,8 +26,6 @@ import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,7 +34,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Objects;
 
 import static java.nio.file.Files.readAllBytes;
