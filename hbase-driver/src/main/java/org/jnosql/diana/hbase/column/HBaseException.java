@@ -15,12 +15,12 @@
 package org.jnosql.diana.hbase.column;
 
 
-import org.jnosql.diana.api.JNoSQLException;
+import jakarta.nosql.CommunicationException;
 
 /**
  * The Hbase exception to diana implementation
  */
-public class HBaseException extends JNoSQLException {
+public class HBaseException extends CommunicationException {
 
     HBaseException(String message, Throwable cause) {
         super(message, cause);

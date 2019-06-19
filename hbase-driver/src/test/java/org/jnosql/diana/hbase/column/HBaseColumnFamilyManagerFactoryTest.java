@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.hbase.column;
 
-import org.jnosql.diana.api.column.ColumnConfiguration;
+import jakarta.nosql.column.ColumnConfiguration;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
 import org.junit.jupiter.api.Test;
 

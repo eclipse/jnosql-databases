@@ -15,10 +15,10 @@
 package org.jnosql.diana.hbase.column;
 
 
+import jakarta.nosql.column.Column;
+import jakarta.nosql.column.ColumnEntity;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
-import jakarta.nosql.column.Column;
-import jakarta.nosql.column.ColumnQuery;
 
 import java.util.ArrayList;
 import java.util.List;

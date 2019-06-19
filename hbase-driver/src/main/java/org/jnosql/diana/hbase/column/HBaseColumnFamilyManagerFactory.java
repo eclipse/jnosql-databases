@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFactory<HBaseColumnFamilyManager> {
+public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFactory {
 
     private final Configuration configuration;
 
