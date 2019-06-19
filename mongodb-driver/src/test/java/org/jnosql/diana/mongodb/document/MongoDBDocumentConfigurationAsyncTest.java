@@ -62,7 +62,7 @@ public class MongoDBDocumentConfigurationAsyncTest {
     }
 
     @Test
-    public void shouldReturnErrorWhendMapSettingsIsNull() {
+    public void shouldReturnErrorWhenMapSettingsIsNull() {
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
     }
