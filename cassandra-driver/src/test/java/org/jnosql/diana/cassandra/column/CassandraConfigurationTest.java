@@ -17,16 +17,15 @@ package org.jnosql.diana.cassandra.column;
 
 
 import jakarta.nosql.Settings;
+import jakarta.nosql.column.ColumnConfiguration;
+import jakarta.nosql.column.ColumnConfigurationAsync;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
-import jakarta.nosql.column.UnaryColumnConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CassandraConfigurationTest {
-
-
 
     @Test
     public void shouldCreateDocumentEntityManagerFactoryFromSettings() {
@@ -35,7 +34,6 @@ public class CassandraConfigurationTest {
         ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
         assertNotNull(entityManagerFactory);
     }
-
 
     @Test
     public void shouldCreateDocumentEntityManagerFactoryFromFile() {
@@ -47,14 +45,28 @@ public class CassandraConfigurationTest {
 
     @Test
     public void shouldCreateConfiguration() {
-        UnaryColumnConfiguration<?> configuration = UnaryColumnConfiguration.getConfiguration();
+        ColumnConfiguration configuration = ColumnConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue( configuration instanceof CassandraConfiguration);
     }
 
     @Test
     public void shouldCreateConfigurationQuery() {
-        CassandraConfiguration configuration = UnaryColumnConfiguration.getConfiguration(CassandraConfiguration.class);
+        CassandraConfiguration configuration = ColumnConfiguration.getConfiguration(CassandraConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue( configuration instanceof CassandraConfiguration);
+    }
+
+    @Test
+    public void shouldCreateConfigurationAsync() {
+        ColumnConfigurationAsync configuration = ColumnConfigurationAsync.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue( configuration instanceof CassandraConfiguration);
+    }
+
+    @Test
+    public void shouldCreateConfigurationAsyncQuery() {
+        ColumnConfigurationAsync configuration = ColumnConfigurationAsync.getConfiguration(CassandraConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue( configuration instanceof CassandraConfiguration);
     }
