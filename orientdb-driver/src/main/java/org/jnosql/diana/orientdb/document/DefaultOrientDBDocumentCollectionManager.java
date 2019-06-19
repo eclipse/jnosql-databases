@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
@@ -92,7 +90,6 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
                 .map(e -> insert(e, ttl))
                 .collect(toList());
     }
-
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
