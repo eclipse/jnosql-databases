@@ -32,8 +32,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.RID_FIELD;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.VERSION_FIELD;
 import static org.jnosql.diana.orientdb.document.OrientDBConverter.toMap;
@@ -71,11 +76,36 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
         throw new UnsupportedOperationException("There is no support to ttl on OrientDB");
     }
 
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert)
+                .collect(toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl))
+                .collect(toList());
+    }
+
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
         return insert(entity);
+    }
+
+    @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update)
+                .collect(toList());
     }
 
     @Override

@@ -18,7 +18,8 @@ package org.jnosql.diana.orientdb.document;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.document.UnaryDocumentConfiguration;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Map;
@@ -29,14 +30,14 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
- * The orientDB implementation of {@link UnaryDocumentConfiguration} that returns
+ * The orientDB implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync} that returns
  * {@link OrientDBDocumentCollectionManagerFactory}. It tries to read diana-arangodb.properties file.
  * <p>orientdb.host: the host</p>
  * <p>orientdb.user: the user</p>
  * <p>orientdb.password: the password</p>
  * <p>orientdb.storage.type: the storage type</p>
  */
-public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration<OrientDBDocumentCollectionManagerFactory> {
+public class OrientDBDocumentConfiguration implements DocumentConfiguration, DocumentConfigurationAsync {
 
     private static final String FILE_CONFIGURATION = "diana-orientdb.properties";
 
@@ -85,17 +86,6 @@ public class OrientDBDocumentConfiguration implements UnaryDocumentConfiguration
     public OrientDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         return getOrientDBDocumentCollectionManagerFactory(settings);
     }
-
-    @Override
-    public OrientDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
-        return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
-    }
-
-    @Override
-    public OrientDBDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
-        return getOrientDBDocumentCollectionManagerFactory(settings);
-    }
-
 
     private OrientDBDocumentCollectionManagerFactory getOrientDBDocumentCollectionManagerFactory(Settings settings) {
         requireNonNull(settings, "settings is required");
