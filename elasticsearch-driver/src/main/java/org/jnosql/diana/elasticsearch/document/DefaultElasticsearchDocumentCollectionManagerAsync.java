@@ -22,6 +22,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
@@ -66,6 +68,19 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
+    public void insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
+    }
+
+    @Override
+    public void insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        entities.forEach(e -> insert(e, ttl));
+    }
+
+    @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
         requireNonNull(entity, "entity is required");
         requireNonNull(callBack, "callBack is required");
@@ -73,7 +88,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = getMap(entity);
         IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
-        client.indexAsync(request, new SaveActionListener(callBack, entity));
+        client.indexAsync(request, RequestOptions.DEFAULT, new SaveActionListener(callBack, entity));
     }
 
     @Override
@@ -84,6 +99,12 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     @Override
     public void update(DocumentEntity entity) {
         insert(entity);
+    }
+
+    @Override
+    public void update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::update);
     }
 
     @Override
@@ -151,7 +172,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.size(0);
         ActionListener<SearchResponse> listener = new CountActionListener(callback, documentCollection);
-        client.searchAsync(searchRequest, listener);
+        client.searchAsync(searchRequest, RequestOptions.DEFAULT, listener);
     }
 
 

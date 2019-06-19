@@ -19,8 +19,7 @@ import java.util.function.Supplier;
 @Deprecated
 public enum OldElasticsearchConfigurations implements Supplier<String> {
 
-    HOST("elasticsearch-host-"),
-    MAX_RETRY_TIMEOUT_MILLIS("elasticsearch-maxRetryTimeoutMillis");
+    HOST("elasticsearch-host-");
 
     private final String configuration;
 
