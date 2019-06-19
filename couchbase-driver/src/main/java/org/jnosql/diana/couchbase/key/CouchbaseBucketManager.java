@@ -72,7 +72,7 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        put(entity.getKey(), convert(entity.getValue()));
+        put(entity.getKey(), convert(Value.of(entity.getValue())));
     }
 
     @Override
