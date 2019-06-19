@@ -21,6 +21,7 @@ import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.query.dsl.path.MutateLimitPath;
 import jakarta.nosql.Condition;
 import jakarta.nosql.Sort;
+import jakarta.nosql.SortType;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
@@ -37,8 +38,8 @@ import java.util.function.Function;
 
 import static com.couchbase.client.java.query.dsl.Expression.x;
 import static java.util.Objects.nonNull;
-import static org.jnosql.diana.api.Condition.EQUALS;
-import static org.jnosql.diana.api.Condition.IN;
+import static jakarta.nosql.Condition.EQUALS;
+import static jakarta.nosql.Condition.IN;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 import static org.jnosql.diana.couchbase.document.StatementFactory.create;
@@ -50,7 +51,7 @@ final class QueryConverter {
     private static final char PARAM_PREFIX = '$';
     private static final String[] ALL_SELECT = {"*"};
     private static final Function<Sort, com.couchbase.client.java.query.dsl.Sort> SORT_MAP = s -> {
-        if (Sort.SortType.ASC.equals(s.getType())) {
+        if (SortType.ASC.equals(s.getType())) {
             return com.couchbase.client.java.query.dsl.Sort.asc(s.getName());
         } else {
             return com.couchbase.client.java.query.dsl.Sort.desc(s.getName());

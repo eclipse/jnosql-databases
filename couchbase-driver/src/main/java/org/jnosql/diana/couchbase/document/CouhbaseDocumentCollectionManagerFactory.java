@@ -20,8 +20,8 @@ import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import org.jnosql.diana.couchbase.util.CouchbaseClusterUtil;
 
-public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchbaseDocumentCollectionManager>,
-        DocumentCollectionManagerAsyncFactory<CouchbaseDocumentCollectionManagerAsync> {
+public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
+        DocumentCollectionManagerAsyncFactory {
 
 
     private final CouchbaseCluster couchbaseCluster;
@@ -46,7 +46,7 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
     }
 
     private CouchbaseCluster getCouchbaseCluster(String database) {
-       return CouchbaseClusterUtil.getCouchbaseCluster(database, couchbaseCluster, user, password);
+        return CouchbaseClusterUtil.getCouchbaseCluster(database, couchbaseCluster, user, password);
     }
 
     @Override

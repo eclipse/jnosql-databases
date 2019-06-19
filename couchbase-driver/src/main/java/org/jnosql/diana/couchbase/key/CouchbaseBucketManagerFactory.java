@@ -31,7 +31,7 @@ import java.util.Set;
  * <p>{@link CouchbaseMap}</p>
  * The default implementation creates the particular structure with the bucket name as the key.
  */
-public interface CouchbaseBucketManagerFactory extends BucketManagerFactory<CouchbaseBucketManager> {
+public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
 
     /**
      * Creates a {@link Queue} from bucket name

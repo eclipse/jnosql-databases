@@ -14,15 +14,23 @@
  */
 package org.jnosql.diana.couchbase.document;
 
-import static com.couchbase.client.java.query.dsl.Expression.x;
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static jakarta.nosql.document.DocumentQuery.select;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.query.Select;
+import com.couchbase.client.java.query.Statement;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
+import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
+import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
+import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
+import org.jnosql.diana.document.Documents;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,25 +40,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
-import org.jnosql.diana.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
-import jakarta.nosql.key.BucketManager;
-import jakarta.nosql.key.BucketManagerFactory;
-import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
-import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
-import org.jnosql.diana.couchbase.CouchbaseUtil;
-import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
-
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.Select;
-import com.couchbase.client.java.query.Statement;
+import static com.couchbase.client.java.query.dsl.Expression.x;
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CouchbaseDocumentCollectionManagerTest {
@@ -104,7 +103,7 @@ public class CouchbaseDocumentCollectionManagerTest {
 
         Document name = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        DocumentDeleteQuery deleteQuery = DocumentQueryBuilder.delete().from(COLLECTION_NAME)
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
                 .where(name.getName()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());

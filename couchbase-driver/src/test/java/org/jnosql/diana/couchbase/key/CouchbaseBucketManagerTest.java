@@ -81,7 +81,7 @@ public class CouchbaseBucketManagerTest {
     @Test
     public void shouldPutValues() {
 
-        List<KeyValueEntity<String>> entities = asList(KeyValueEntity.of(KEY_OTAVIO, userOtavio),
+        List<KeyValueEntity> entities = asList(KeyValueEntity.of(KEY_OTAVIO, userOtavio),
                 KeyValueEntity.of(KEY_SORO, userSoro));
 
         keyValueEntityManager.put(entities);

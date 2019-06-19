@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @see org.jnosql.diana.couchbase.CouchbaseConfigurations
  */
 public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
-        implements KeyValueConfiguration<CouchbaseBucketManagerFactory> {
+        implements KeyValueConfiguration {
 
 
     /**

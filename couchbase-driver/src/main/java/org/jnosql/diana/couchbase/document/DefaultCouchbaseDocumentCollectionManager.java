@@ -33,7 +33,9 @@ import jakarta.nosql.document.DocumentQuery;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.nonNull;
@@ -85,8 +87,30 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     }
 
     @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert).collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl)).collect(Collectors.toList());
+    }
+
+    @Override
     public DocumentEntity update(DocumentEntity entity) {
         return insert(entity);
+    }
+
+    @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update).collect(Collectors.toList());
     }
 
     @Override

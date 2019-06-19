@@ -70,24 +70,24 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
+    public void put(KeyValueEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
         put(entity.getKey(), convert(entity.getValue()));
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
+    public void put(KeyValueEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
 
 
-        if (JsonValue.checkType(entity.get())) {
+        if (JsonValue.checkType(entity.getValue())) {
             RawJsonDocument jsonDocument = RawJsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(),
-                    JSONB.toJson(entity.get().toString()));
+                    JSONB.toJson(entity.getValue().toString()));
 
             bucket.upsert(jsonDocument);
         } else {
-            JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.get());
+            JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.getValue());
             JsonDocument jsonDocument = JsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(), jsonObject);
             bucket.upsert(jsonDocument);
         }
@@ -95,13 +95,13 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities) {
+    public void put(Iterable<KeyValueEntity> keyValueEntities) {
         requireNonNull(keyValueEntities, "keyValueEntities is required");
         keyValueEntities.forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities, Duration ttl) {
+    public void put(Iterable<KeyValueEntity> keyValueEntities, Duration ttl) {
         requireNonNull(keyValueEntities, "keyValueEntities is required");
         requireNonNull(ttl, "ttl is required");
         keyValueEntities.forEach(k -> this.put(k, ttl));
