@@ -34,8 +34,8 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-import static org.jnosql.diana.api.Condition.EQUALS;
-import static org.jnosql.diana.api.Condition.IN;
+import static jakarta.nosql.Condition.EQUALS;
+import static jakarta.nosql.Condition.IN;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
 final class QueryConverter {

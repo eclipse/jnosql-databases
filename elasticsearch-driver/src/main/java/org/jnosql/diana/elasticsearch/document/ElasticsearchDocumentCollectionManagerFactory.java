@@ -20,6 +20,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
@@ -45,8 +47,8 @@ import static java.nio.file.Files.readAllBytes;
  * Eg: {@link ElasticsearchDocumentCollectionManagerFactory#get(String)} with database, if does not exist it tries to
  * read a "/database.json" file. The file must have the mapping to elasticsearch.
  */
-public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<ElasticsearchDocumentCollectionManager>,
-        DocumentCollectionManagerAsyncFactory<ElasticsearchDocumentCollectionManagerAsync> {
+public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
+        DocumentCollectionManagerAsyncFactory {
 
 
     private final RestHighLevelClient client;
@@ -84,10 +86,12 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
             InputStream stream = ElasticsearchDocumentCollectionManagerFactory.class.getResourceAsStream('/' + database + ".json");
             if (Objects.nonNull(stream)) {
                 try {
-                    String mappging = getMappging(stream);
                     RestClient lowLevelClient = client.getLowLevelClient();
-                    HttpEntity entity = new NStringEntity(mappging, ContentType.APPLICATION_JSON);
-                    lowLevelClient.performRequest("PUT", database, Collections.emptyMap(), entity);
+                    HttpEntity entity = new NStringEntity(getMappging(stream), ContentType.APPLICATION_JSON);
+                    Request request = new Request("PUT", database);
+                    request.setEntity(entity);
+
+                    lowLevelClient.performRequest(request);
                 } catch (Exception ex) {
                     throw new ElasticsearchException("Error when create a new mapping", ex);
                 }
@@ -111,7 +115,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
 
     private boolean isExists(String database) {
         try {
-            client.indices().open(new OpenIndexRequest(database));
+            client.indices().open(new OpenIndexRequest(database), RequestOptions.DEFAULT);
             return true;
         } catch (IOException e) {
             throw new ElasticsearchException("And error on admin access to verify if the database exists", e);

@@ -15,6 +15,11 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import jakarta.nosql.CommunicationException;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -24,11 +29,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.jnosql.diana.api.JNoSQLException;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
@@ -80,8 +81,30 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     }
 
     @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert).collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl)).collect(Collectors.toList());
+    }
+
+    @Override
     public DocumentEntity update(DocumentEntity entity) throws NullPointerException {
         return insert(entity);
+    }
+
+    @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update).collect(Collectors.toList());
     }
 
     @Override
@@ -129,7 +152,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
             SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
             return search.getHits().getTotalHits();
         } catch (IOException e) {
-            throw new JNoSQLException("Error on ES when try to execute count to document collection:" + documentCollection, e);
+            throw new CommunicationException("Error on ES when try to execute count to document collection:" + documentCollection, e);
         }
     }
 
@@ -152,8 +175,6 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         } catch (IOException e) {
             throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
         }
-
-
     }
 
     @Override

@@ -97,16 +97,14 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
         this.headers.add(Objects.requireNonNull(header, "header is required"));
     }
 
-
     @Override
-    public ElasticsearchDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
+    public ElasticsearchDocumentCollectionManagerFactory get() {
         return get(Settings.builder().build());
     }
 
     @Override
-    public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
-
 
         settings.prefix(asList(OldElasticsearchConfigurations.HOST.get(),
                 ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))

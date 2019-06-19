@@ -153,7 +153,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
             }
         };
 
-        client.bulkAsync(bulk, listener);
+        client.bulkAsync(bulk, RequestOptions.DEFAULT, listener);
     }
 
     @Override
@@ -185,7 +185,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
         searchRequest.types(types);
-        client.searchAsync(searchRequest, new FindQueryBuilderListener(callBack));
+        client.searchAsync(searchRequest, RequestOptions.DEFAULT, new FindQueryBuilderListener(callBack));
     }
 
     @Override
