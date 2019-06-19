@@ -20,21 +20,20 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
-import jakarta.nosql.SortType;
-import org.bson.BsonDocument;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import jakarta.nosql.Sort;
+import jakarta.nosql.SortType;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.bson.BsonDocument;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.jnosql.diana.document.Documents;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;

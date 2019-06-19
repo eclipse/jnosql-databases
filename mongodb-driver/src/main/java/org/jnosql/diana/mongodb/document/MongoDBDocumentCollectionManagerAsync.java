@@ -22,16 +22,16 @@ import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
-import jakarta.nosql.SortType;
-import org.bson.BsonDocument;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import jakarta.nosql.ExecuteAsyncQueryException;
 import jakarta.nosql.Sort;
+import jakarta.nosql.SortType;
 import jakarta.nosql.document.DocumentCollectionManagerAsync;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.bson.BsonDocument;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.jnosql.diana.document.Documents;
 
 import java.time.Duration;
@@ -39,10 +39,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
-import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
 
