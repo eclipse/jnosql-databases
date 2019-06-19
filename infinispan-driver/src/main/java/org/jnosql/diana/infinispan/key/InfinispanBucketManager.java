@@ -45,22 +45,22 @@ public class InfinispanBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
-        cache.put(entity.getKey(), entity.getValue().get());
+    public void put(KeyValueEntity entity) throws NullPointerException {
+        cache.put(entity.getKey(), entity.getValue());
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
-        cache.put(entity.getKey(), entity.getValue().get(), ttl.toMillis(), TimeUnit.MILLISECONDS);
+    public void put(KeyValueEntity entity, Duration ttl) {
+        cache.put(entity.getKey(), entity.getValue(), ttl.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities) throws NullPointerException {
+    public void put(Iterable<KeyValueEntity> entities) throws NullPointerException {
         StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public void put(Iterable<KeyValueEntity> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         StreamSupport.stream(entities.spliterator(), false).forEach(kv -> this.put(kv, ttl));
     }
 

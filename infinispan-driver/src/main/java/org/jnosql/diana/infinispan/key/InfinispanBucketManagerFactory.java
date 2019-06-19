@@ -26,7 +26,7 @@ import jakarta.nosql.key.BucketManagerFactory;
 /**
  * The Infinispan implementation of {@link BucketManagerFactory}
  */
-public class InfinispanBucketManagerFactory implements BucketManagerFactory<InfinispanBucketManager> {
+public class InfinispanBucketManagerFactory implements BucketManagerFactory {
 
     private final BasicCacheContainer cacheContainer;
 
