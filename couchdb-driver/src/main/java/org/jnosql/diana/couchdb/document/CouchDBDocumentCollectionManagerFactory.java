@@ -21,8 +21,8 @@ import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 import java.util.Objects;
 
-public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchDBDocumentCollectionManager>,
-        DocumentCollectionManagerAsyncFactory<CouchDBDocumentCollectionManagerAsync> {
+public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
+        DocumentCollectionManagerAsyncFactory {
 
 
     private final CouchDBHttpConfiguration configuration;

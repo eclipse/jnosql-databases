@@ -14,11 +14,11 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.jnosql.diana.api.JNoSQLException;
+import jakarta.nosql.CommunicationException;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -71,7 +71,7 @@ final class CouchDBHttpClient {
         try {
             this.client.close();
         } catch (IOException e) {
-            throw new JNoSQLException("An error when try to close the http client", e);
+            throw new CommunicationException("An error when try to close the http client", e);
         }
     }
 

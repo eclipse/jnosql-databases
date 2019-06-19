@@ -21,7 +21,6 @@ import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
+import static java.util.Arrays.asList;
 import static org.jnosql.diana.couchdb.document.CouchDBConstant.ID;
 import static org.jnosql.diana.couchdb.document.configuration.CouchDBDocumentTcConfiguration.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +54,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
     @BeforeEach
     public void setUp() {
-        DocumentDeleteQuery query = DocumentQueryBuilder.delete().from(COLLECTION_NAME).build();
+        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
         entityManager.delete(query);
     }
 
@@ -121,7 +121,6 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         assertTrue(entities.isEmpty());
     }
 
-
     @Test
     public void shouldRemoveEntityByName() {
         DocumentEntity entity = getEntity();
@@ -130,7 +129,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
         Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        DocumentDeleteQuery deleteQuery = DocumentQueryBuilder.delete().from(COLLECTION_NAME)
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
                 .where(name.getName()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).isEmpty());
