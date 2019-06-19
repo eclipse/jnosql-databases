@@ -20,7 +20,7 @@ import org.jnosql.diana.dynamodb.DynamoDBConfiguration;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 public class DynamoDBKeyValueConfiguration extends DynamoDBConfiguration
-        implements KeyValueConfiguration<DynamoDBBucketManagerFactory> {
+        implements KeyValueConfiguration {
 
     @Override
     public DynamoDBBucketManagerFactory get() {

@@ -24,7 +24,7 @@ import org.jnosql.diana.dynamodb.DynamoTableUtils;
 
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-public class DynamoDBBucketManagerFactory implements BucketManagerFactory<DynamoDBBucketManager> {
+public class DynamoDBBucketManagerFactory implements BucketManagerFactory {
 
     private DynamoDbClient client;
 
