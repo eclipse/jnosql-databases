@@ -26,8 +26,10 @@ import org.jnosql.diana.driver.ConfigurationReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
+import static com.basho.riak.client.core.RiakNode.Builder.DEFAULT_REMOTE_PORT;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -37,6 +39,7 @@ import static java.util.Objects.requireNonNull;
  * <p>riak.host-: The prefix to host. eg: riak.server.host.1= host1</p>
  */
 public class RiakKeyValueConfiguration implements KeyValueConfiguration {
+
 
     @Deprecated
     private static final String OLD_SERVER_PREFIX = "riak-server-host-";

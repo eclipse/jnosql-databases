@@ -43,6 +43,7 @@ public class RiakBucketManagerTest {
     private KeyValueEntity keyValueOtavio = KeyValueEntity.of("otavio", Value.of(userOtavio));
 
     private User userSoro = new User("soro");
+
     private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
 
     @BeforeEach
@@ -50,7 +51,6 @@ public class RiakBucketManagerTest {
         keyValueEntityManagerFactory = RiakTestUtils.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
     }
-
 
     @Test
     public void shouldPutValue() {
