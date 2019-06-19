@@ -39,8 +39,6 @@ public class HazelcastBucketManagerQueryTest {
 
     private BucketManagerFactory keyValueEntityManagerFactory;
 
-
-
     @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = KeyValueEntityManagerFactoryUtils.get();

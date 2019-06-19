@@ -16,6 +16,8 @@
 package org.jnosql.diana.hazelcast.key;
 
 import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,4 +48,18 @@ public class KeyValueConfigurationTest {
         assertNotNull(managerFactory);
     }
 
+    @Test
+    public void shouldReturnFromConfiguration() {
+        KeyValueConfiguration configuration = KeyValueConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof KeyValueConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        HazelcastKeyValueConfiguration configuration = KeyValueConfiguration
+                .getConfiguration(HazelcastKeyValueConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof HazelcastKeyValueConfiguration);
+    }
 }
