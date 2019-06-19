@@ -52,7 +52,6 @@ public class HazelcastBucketManagerTest {
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
     }
 
-
     @Test
     public void shouldPutValue() {
         keyValueEntityManager.put("otavio", userOtavio);

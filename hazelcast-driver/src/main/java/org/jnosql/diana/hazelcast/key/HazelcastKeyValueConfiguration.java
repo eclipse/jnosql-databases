@@ -42,7 +42,7 @@ import static java.util.Objects.requireNonNull;
  * <p>hazelcast.host: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
  *
  */
-public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<HazelcastBucketManagerFactory> {
+public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
     private static final String DEFAULT_INSTANCE = "hazelcast-instanceName";
