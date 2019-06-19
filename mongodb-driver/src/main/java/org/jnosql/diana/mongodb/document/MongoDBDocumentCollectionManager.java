@@ -20,6 +20,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
+import jakarta.nosql.SortType;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -33,6 +34,8 @@ import org.jnosql.diana.document.Documents;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -63,7 +66,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         Document document = getDocument(entity);
         collection.insertOne(document);
         boolean hasNotId = entity.getDocuments().stream()
-                .map(org.jnosql.diana.api.document.Document::getName).noneMatch(k -> k.equals(ID_FIELD));
+                .map(jakarta.nosql.document.Document::getName).noneMatch(k -> k.equals(ID_FIELD));
         if (hasNotId) {
             entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
         }
@@ -74,6 +77,23 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("MongoDB does not support save with TTL");
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert)
+                .collect(toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl))
+                .collect(toList());
     }
 
 
@@ -91,6 +111,14 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         copy.remove(ID_FIELD);
         collection.findOneAndReplace(id, getDocument(entity));
         return entity;
+    }
+
+    @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update)
+                .collect(toList());
     }
 
 
@@ -138,7 +166,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     }
 
     private Bson getSort(Sort sort) {
-        boolean isAscending = Sort.SortType.ASC.equals(sort.getType());
+        boolean isAscending = SortType.ASC.equals(sort.getType());
         return isAscending?Sorts.ascending(sort.getName()): Sorts.descending(sort.getName());
     }
 

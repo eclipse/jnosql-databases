@@ -46,8 +46,8 @@ public enum ManagerFactorySupplier  {
 
     public MongoDBDocumentCollectionManagerAsync getAsync(String database) {
         Settings settings = getSettings();
-        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        MongoDBDocumentCollectionManagerAsyncFactory factory = configuration.getAsync(settings);
+        MongoDBDocumentConfigurationAsync configuration = new MongoDBDocumentConfigurationAsync();
+        MongoDBDocumentCollectionManagerAsyncFactory factory = configuration.get(settings);
         return factory.getAsync(database);
     }
 

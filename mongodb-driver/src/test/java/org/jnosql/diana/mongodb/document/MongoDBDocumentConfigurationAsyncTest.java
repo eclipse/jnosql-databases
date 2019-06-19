@@ -15,8 +15,11 @@
 
 package org.jnosql.diana.mongodb.document;
 
+import jakarta.nosql.Settings;
+import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +29,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDBDocumentConfigurationTest {
+public class MongoDBDocumentConfigurationAsyncTest {
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
@@ -34,6 +37,14 @@ public class MongoDBDocumentConfigurationTest {
         map.put("mongodb-server-host-1", "172.17.0.2:27017");
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get(map);
+        assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldCreateSettings() {
+        Settings settings = Settings.builder().put("mongodb-server-host-1", "172.17.0.2:27017").build();
+        MongoDBDocumentConfigurationAsync configuration = new MongoDBDocumentConfigurationAsync();
+        DocumentCollectionManagerAsyncFactory managerFactory = configuration.get(settings);
         assertNotNull(managerFactory);
     }
 
@@ -58,17 +69,17 @@ public class MongoDBDocumentConfigurationTest {
 
     @Test
     public void shouldReturnFromConfiguration() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfiguration);
+        Assertions.assertTrue(configuration instanceof DocumentConfigurationAsync);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        MongoDBDocumentConfiguration configuration = DocumentConfiguration
-                .getConfiguration(MongoDBDocumentConfiguration.class);
+        MongoDBDocumentConfigurationAsync configuration = DocumentConfigurationAsync
+                .getConfiguration(MongoDBDocumentConfigurationAsync.class);
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof MongoDBDocumentConfiguration);
+        Assertions.assertTrue(configuration instanceof MongoDBDocumentConfigurationAsync);
     }
 
 }

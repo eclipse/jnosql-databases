@@ -16,7 +16,7 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoCredential;
-import org.jnosql.diana.api.JNoSQLException;
+import jakarta.nosql.CommunicationException;
 import jakarta.nosql.Settings;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ class MongoAuthenticationTest {
         Settings settings = Settings.builder().put(USER.get(), "value")
                 .build();
 
-        assertThrows(JNoSQLException.class, () -> MongoAuthentication.of(settings));
+        assertThrows(CommunicationException.class, () -> MongoAuthentication.of(settings));
 
     }
 
