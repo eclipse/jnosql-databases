@@ -45,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
-
     private ElasticsearchDocumentCollectionManagerAsync entityManagerAsync;
 
     private DocumentCollectionManager entityManager;
