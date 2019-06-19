@@ -46,10 +46,10 @@ public class MemcachedBucketManagerTest {
     private BucketManagerFactory keyValueEntityManagerFactory;
 
     private User otavio = new User("otavio");
-    private KeyValueEntity<String> entityOtavio = KeyValueEntity.of("otavio", Value.of(otavio));
+    private KeyValueEntity entityOtavio = KeyValueEntity.of("otavio", Value.of(otavio));
 
     private User soro = new User("soro");
-    private KeyValueEntity<String> entitySoro = KeyValueEntity.of("soro", Value.of(soro));
+    private KeyValueEntity entitySoro = KeyValueEntity.of("soro", Value.of(soro));
 
     @BeforeEach
     public void init() {

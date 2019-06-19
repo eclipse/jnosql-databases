@@ -40,9 +40,9 @@ final class MemcachedBucketManager implements BucketManager {
 
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity) {
+    public void put(KeyValueEntity entity) {
         requireNonNull(entity, "entity is required");
-        put(entity.getKey(), entity.get());
+        put(entity.getKey(), entity.getValue());
     }
 
 
@@ -55,20 +55,20 @@ final class MemcachedBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl) {
+    public void put(KeyValueEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        set(entity.getKey(), entity.get(), (int) ttl.getSeconds());
+        set(entity.getKey(), entity.getValue(), (int) ttl.getSeconds());
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities) {
+    public void put(Iterable<KeyValueEntity> entities) {
         requireNonNull(entities, "entities is required");
         entities.forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl) {
+    public void put(Iterable<KeyValueEntity> entities, Duration ttl) {
         requireNonNull(entities, "entities is required");
         requireNonNull(ttl, "ttl is required");
         entities.forEach(e -> this.put(e, ttl));
@@ -106,7 +106,6 @@ final class MemcachedBucketManager implements BucketManager {
     @Override
     public void close() {
     }
-
 
     private <K> String getKey(K key) {
         return bucketName + ':' + key.toString();

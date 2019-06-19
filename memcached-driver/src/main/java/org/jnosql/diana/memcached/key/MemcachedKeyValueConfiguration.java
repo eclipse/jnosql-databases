@@ -61,7 +61,7 @@ import static java.util.Optional.ofNullable;
  *
  * @see MemcachedConfigurations
  */
-public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<MemcachedBucketManagerFactory> {
+public class MemcachedKeyValueConfiguration implements KeyValueConfiguration {
 
     public static final String FILE_CONFIGURATION = "diana-memcached.properties";
 

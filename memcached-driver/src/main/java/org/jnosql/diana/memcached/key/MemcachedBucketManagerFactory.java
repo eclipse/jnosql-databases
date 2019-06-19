@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
-final class MemcachedBucketManagerFactory implements BucketManagerFactory<MemcachedBucketManager> {
+final class MemcachedBucketManagerFactory implements BucketManagerFactory {
 
     private final MemcachedClient client;
 
