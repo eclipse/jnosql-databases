@@ -15,8 +15,13 @@
 package org.jnosql.diana.couchbase.document;
 
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static jakarta.nosql.document.DocumentConfiguration.getConfiguration;
+import static jakarta.nosql.document.DocumentConfigurationAsync.getConfiguration;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CouchbaseDocumentConfigurationTest {
@@ -34,5 +39,36 @@ public class CouchbaseDocumentConfigurationTest {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldGetConfiguration() {
+        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof CouchbaseDocumentConfiguration);
+    }
+
+    @Test
+    public void shouldGetConfigurationFromQuery() {
+        CouchbaseDocumentConfiguration configuration = DocumentConfiguration
+                .getConfiguration(CouchbaseDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof CouchbaseDocumentConfiguration);
+    }
+
+
+    @Test
+    public void shouldGetConfigurationAsync() {
+        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof CouchbaseDocumentConfiguration);
+    }
+
+    @Test
+    public void shouldGetConfigurationAsyncFromQuery() {
+        CouchbaseDocumentConfiguration configuration = DocumentConfigurationAsync
+                .getConfiguration(CouchbaseDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof CouchbaseDocumentConfiguration);
     }
 }

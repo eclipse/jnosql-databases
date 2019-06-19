@@ -14,10 +14,8 @@
  */
 package org.jnosql.diana.arangodb.key;
 
-import jakarta.nosql.document.UnaryDocumentConfiguration;
 import jakarta.nosql.key.BucketManagerFactory;
 import jakarta.nosql.key.KeyValueConfiguration;
-import org.jnosql.diana.arangodb.document.ArangoDBDocumentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
