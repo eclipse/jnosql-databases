@@ -15,14 +15,6 @@
 package org.jnosql.diana.hbase.column;
 
 
-import jakarta.nosql.column.ColumnEntity;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.util.Bytes;
 import jakarta.nosql.Condition;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.Value;
@@ -30,9 +22,16 @@ import jakarta.nosql.ValueWriter;
 import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnCondition;
 import jakarta.nosql.column.ColumnDeleteQuery;
-import jakarta.nosql.column.ColumnQuery;
+import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnFamilyManager;
 import jakarta.nosql.column.ColumnQuery;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.jnosql.diana.writer.ValueWriterDecorator;
 
 import java.io.IOException;
@@ -45,10 +44,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
 import static jakarta.nosql.Condition.EQUALS;
 import static jakarta.nosql.Condition.IN;
 import static jakarta.nosql.Condition.OR;
+import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.hbase.column.HBaseUtils.KEY_COLUMN;
 
 /**
