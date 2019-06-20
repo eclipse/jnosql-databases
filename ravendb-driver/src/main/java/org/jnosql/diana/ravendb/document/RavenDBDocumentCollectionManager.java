@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
 import static net.ravendb.client.Constants.Documents.Metadata.EXPIRES;
@@ -82,6 +83,23 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     }
 
     @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public DocumentEntity update(DocumentEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
 
@@ -96,6 +114,13 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         return entity;
     }
 
+    @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void delete(DocumentDeleteQuery query) {
@@ -167,6 +192,5 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         queryResult.getRavenQuery().map(IEnumerableQuery::toList).ifPresent(entities::addAll);
         return entities;
     }
-
 
 }

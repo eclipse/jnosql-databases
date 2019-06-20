@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  * It tries to read the diana-ravendb.properties file whose has the following properties
  * <p>ravendb.host-: as prefix to add host client, eg: ravendb.host-1=host1, ravendb.host-2= host2</p>
  */
-public class RavenDBDocumentConfiguration implements DocumentConfiguration<RavenDBDocumentCollectionManagerFactory> {
+public class RavenDBDocumentConfiguration implements DocumentConfiguration {
 
     private static final String FILE_CONFIGURATION = "diana-ravendb.properties";
 

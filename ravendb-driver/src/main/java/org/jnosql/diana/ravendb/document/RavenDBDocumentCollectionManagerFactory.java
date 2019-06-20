@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * The RavenDB implementation to {@link DocumentCollectionManagerFactory}
  */
-public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<RavenDBDocumentCollectionManager> {
+public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 
     private final String[] hosts;
 
