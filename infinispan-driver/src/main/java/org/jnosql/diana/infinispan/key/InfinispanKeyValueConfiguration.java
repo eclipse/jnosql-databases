@@ -18,10 +18,10 @@ package org.jnosql.diana.infinispan.key;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ import static java.util.Objects.requireNonNull;
  * <p>infinispan.host-: as prefix to n host where n is the number of host, eg: infinispan-host-1: host </p>
  *
  */
-public class InfinispanKeyValueConfiguration implements KeyValueConfiguration<InfinispanBucketManagerFactory> {
+public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {
 
     private static final String INFINISPAN_FILE_CONFIGURATION = "diana-infinispan.properties";
 

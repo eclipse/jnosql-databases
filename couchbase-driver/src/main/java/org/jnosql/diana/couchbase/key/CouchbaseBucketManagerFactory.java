@@ -14,7 +14,7 @@
  */
 package org.jnosql.diana.couchbase.key;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ import java.util.Set;
  * <p>{@link CouchbaseMap}</p>
  * The default implementation creates the particular structure with the bucket name as the key.
  */
-public interface CouchbaseBucketManagerFactory extends BucketManagerFactory<CouchbaseBucketManager> {
+public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
 
     /**
      * Creates a {@link Queue} from bucket name

@@ -15,13 +15,13 @@
 
 package org.jnosql.diana.mongodb.document;
 
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.Documents;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
+import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -45,8 +45,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

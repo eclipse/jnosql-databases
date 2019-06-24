@@ -15,19 +15,20 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import jakarta.nosql.CommunicationException;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.jnosql.diana.api.JNoSQLException;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
@@ -64,7 +66,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         Map<String, Object> jsonObject = getMap(entity);
         IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
         try {
-            client.index(request);
+            client.index(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new ElasticsearchException("An error to insert in Elastic search", e);
         }
@@ -79,8 +81,30 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     }
 
     @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert).collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl)).collect(Collectors.toList());
+    }
+
+    @Override
     public DocumentEntity update(DocumentEntity entity) throws NullPointerException {
         return insert(entity);
+    }
+
+    @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update).collect(Collectors.toList());
     }
 
     @Override
@@ -104,7 +128,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
                 .forEach(bulk::add);
 
         try {
-            client.bulk(bulk);
+            client.bulk(bulk, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
         }
@@ -125,10 +149,10 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.size(0);
         try {
-            SearchResponse search = client.search(searchRequest);
+            SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
             return search.getHits().getTotalHits();
         } catch (IOException e) {
-           throw new JNoSQLException("Error on ES when try to execute count to document collection:" + documentCollection, e);
+            throw new CommunicationException("Error on ES when try to execute count to document collection:" + documentCollection, e);
         }
     }
 
@@ -141,7 +165,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(query);
             searchRequest.types(types);
-            SearchResponse search = client.search(searchRequest);
+            SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
 
             return stream(search.getHits().spliterator(), false)
                     .map(ElasticsearchEntry::of)
@@ -151,8 +175,6 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         } catch (IOException e) {
             throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
         }
-
-
     }
 
     @Override

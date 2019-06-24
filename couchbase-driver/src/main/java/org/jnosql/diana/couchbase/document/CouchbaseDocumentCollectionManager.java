@@ -18,8 +18,8 @@ package org.jnosql.diana.couchbase.document;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.search.SearchQuery;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentEntity;
 
 import java.util.List;
 

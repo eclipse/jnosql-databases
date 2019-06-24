@@ -16,10 +16,11 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Arrays;
@@ -39,7 +40,7 @@ import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.SOCKET_TIM
 import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.USER;
 
 /**
- * The CouchDB implementation of {@link org.jnosql.diana.api.document.DocumentConfiguration} that returns
+ * The CouchDB implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync} that returns
  * {@link CouchDBDocumentCollectionManagerFactory}, settings:
  * <p>couchdb.port: </p>
  * <p>couchdb.max.connections: </p>
@@ -52,9 +53,10 @@ import static org.jnosql.diana.couchdb.document.CouchDBConfigurations.USER;
  * <p>couchdb.password: </p>
  * <p>couchdb.enable.ssl: </p>
  * <p>couchdb.compression: </p>
+ *
  * @see CouchDBConfigurations
  */
-public class CouchDBDocumentConfiguration implements UnaryDocumentConfiguration<CouchDBDocumentCollectionManagerFactory> {
+public class CouchDBDocumentConfiguration implements DocumentConfiguration, DocumentConfigurationAsync {
 
 
     private static final String FILE_CONFIGURATION = "diana-couchdb.properties";
@@ -90,15 +92,5 @@ public class CouchDBDocumentConfiguration implements UnaryDocumentConfiguration<
         settings.computeIfPresent(ENABLE_SSL.get(), (k, v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
         settings.computeIfPresent(COMPRESSION.get(), (k, v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
         return new CouchDBDocumentCollectionManagerFactory(configuration.build());
-    }
-
-    @Override
-    public CouchDBDocumentCollectionManagerFactory getAsync() {
-        return get();
-    }
-
-    @Override
-    public CouchDBDocumentCollectionManagerFactory getAsync(Settings settings) {
-        return get(settings);
     }
 }

@@ -15,8 +15,8 @@
 package org.jnosql.diana.cassandra.column;
 
 import org.hamcrest.Matchers;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.column.Column;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.column.Column;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -40,7 +40,6 @@ public class DefaultUDTTest {
         assertEquals("name", udt.getName());
     }
 
-
     @Test
     public void shouldReturnGetType() {
         List<Column> columns = new ArrayList<>();
@@ -53,7 +52,6 @@ public class DefaultUDTTest {
         });
 
         assertThat(columns, Matchers.containsInAnyOrder(Column.of("firstname", "Ada"), Column.of("lastname", "Lovelace")));
-
     }
 
 }

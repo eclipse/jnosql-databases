@@ -24,10 +24,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.BucketManagerFactory;
 import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;

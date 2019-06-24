@@ -16,11 +16,11 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.Sort;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.Sort;
+import jakarta.nosql.Value;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCondition;
+import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import javax.json.Json;

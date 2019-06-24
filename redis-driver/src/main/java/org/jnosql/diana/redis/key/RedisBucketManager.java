@@ -26,9 +26,9 @@ import java.util.stream.StreamSupport;
 
 import javax.json.bind.Jsonb;
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.KeyValueEntity;
 import org.jnosql.diana.driver.ValueJSON;
 
 import redis.clients.jedis.Jedis;
@@ -58,24 +58,24 @@ public class RedisBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
-        put(entity.getKey(), entity.getValue().get());
+    public void put(KeyValueEntity entity) throws NullPointerException {
+        put(entity.getKey(), entity.getValue());
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public void put(KeyValueEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         put(entity);
         String valideKey = createKeyWithNameSpace(entity.getKey().toString(), nameSpace);
         jedis.expire(valideKey, (int) ttl.getSeconds());
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities) throws NullPointerException {
+    public void put(Iterable<KeyValueEntity> entities) throws NullPointerException {
         StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public void put(Iterable<KeyValueEntity> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
         StreamSupport.stream(entities.spliterator(), false).map(KeyValueEntity::getKey)
                 .map(k -> createKeyWithNameSpace(k.toString(), nameSpace))

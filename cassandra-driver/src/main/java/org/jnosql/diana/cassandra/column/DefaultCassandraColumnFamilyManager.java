@@ -22,9 +22,9 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import org.jnosql.diana.api.column.ColumnDeleteQuery;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.column.ColumnDeleteQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.List;
@@ -63,6 +63,10 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
         return insert(entity);
     }
 
+    @Override
+    public Iterable<ColumnEntity> update(Iterable<ColumnEntity> entities) {
+        return insert(entities);
+    }
 
     @Override
     public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
@@ -72,6 +76,22 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
         insert.using(QueryBuilder.ttl((int) ttl.getSeconds()));
         session.execute(insert);
         return entity;
+    }
+
+    @Override
+    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities) {
+        requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities, Duration ttl) {
+        requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl))
+                .collect(Collectors.toList());
     }
 
 

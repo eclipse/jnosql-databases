@@ -14,8 +14,8 @@
  */
 package org.jnosql.diana.driver;
 
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.Value;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

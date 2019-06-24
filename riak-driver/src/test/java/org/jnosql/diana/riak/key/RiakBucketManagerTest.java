@@ -15,10 +15,10 @@
 
 package org.jnosql.diana.riak.key;
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +43,7 @@ public class RiakBucketManagerTest {
     private KeyValueEntity keyValueOtavio = KeyValueEntity.of("otavio", Value.of(userOtavio));
 
     private User userSoro = new User("soro");
+
     private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
 
     @BeforeEach
@@ -50,7 +51,6 @@ public class RiakBucketManagerTest {
         keyValueEntityManagerFactory = RiakTestUtils.get();
         keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
     }
-
 
     @Test
     public void shouldPutValue() {

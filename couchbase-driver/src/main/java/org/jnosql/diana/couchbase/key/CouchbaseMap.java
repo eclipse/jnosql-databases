@@ -16,7 +16,7 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonObject;
-import org.jnosql.diana.api.Value;
+import jakarta.nosql.Value;
 import org.jnosql.diana.driver.JsonbSupplier;
 
 import javax.json.bind.Jsonb;

@@ -15,8 +15,8 @@
 package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
 
 import java.util.List;
 import java.util.function.Consumer;

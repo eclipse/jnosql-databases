@@ -24,9 +24,9 @@ import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import com.google.common.reflect.TypeToken;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.Column;
 
 import java.util.ArrayList;
 import java.util.List;

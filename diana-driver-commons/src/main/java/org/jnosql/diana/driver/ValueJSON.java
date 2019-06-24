@@ -14,8 +14,8 @@
  */
 package org.jnosql.diana.driver;
 
-import org.jnosql.diana.api.TypeSupplier;
-import org.jnosql.diana.api.Value;
+import jakarta.nosql.TypeSupplier;
+import jakarta.nosql.Value;
 
 import javax.json.bind.Jsonb;
 import java.util.Objects;

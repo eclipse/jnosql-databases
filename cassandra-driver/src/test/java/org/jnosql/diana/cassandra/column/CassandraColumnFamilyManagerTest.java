@@ -18,15 +18,14 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.Session;
+import jakarta.nosql.Value;
+import jakarta.nosql.column.Column;
+import jakarta.nosql.column.ColumnDeleteQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
+import jakarta.nosql.column.Columns;
 import org.hamcrest.Matchers;
-import org.jnosql.diana.api.NonUniqueResultException;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnDeleteQuery;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnQuery;
-import org.jnosql.diana.api.column.Columns;
-import org.jnosql.diana.api.column.query.ColumnQueryBuilder;
+import jakarta.nosql.NonUniqueResultException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static jakarta.nosql.column.ColumnDeleteQuery.delete;
+import static jakarta.nosql.column.ColumnQuery.select;
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -50,8 +51,6 @@ import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.delete;
-import static org.jnosql.diana.api.column.query.ColumnQueryBuilder.select;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -331,7 +330,6 @@ public class CassandraColumnFamilyManagerTest {
         assertTrue(entities.isEmpty());
     }
 
-
     @Test
     public void shouldReturnErrorWhenDeleteQueryIsNull() {
         assertThrows(NullPointerException.class, () -> {
@@ -481,7 +479,7 @@ public class CassandraColumnFamilyManagerTest {
             entityManager.insert(columnFamily);
         }
 
-        ColumnQuery query = ColumnQueryBuilder.select().from(COLUMN_FAMILY).limit(6).build();
+        ColumnQuery query = select().from(COLUMN_FAMILY).limit(6).build();
         CassandraQuery cassandraQuery = CassandraQuery.of(query);
 
         assertFalse(cassandraQuery.getPagingState().isPresent());

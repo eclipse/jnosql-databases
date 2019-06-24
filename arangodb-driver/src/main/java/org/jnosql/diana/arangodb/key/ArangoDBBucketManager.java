@@ -17,9 +17,9 @@ package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.KeyValueEntity;
 import org.jnosql.diana.driver.JsonbSupplier;
 import org.jnosql.diana.driver.ValueJSON;
 
@@ -72,13 +72,13 @@ public class ArangoDBBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
-        put(entity.getKey(), entity.getValue().get());
+    public void put(KeyValueEntity entity) throws NullPointerException {
+        put(entity.getKey(), entity.getValue());
     }
 
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities) throws NullPointerException {
+    public  void put(Iterable<KeyValueEntity> keyValueEntities) throws NullPointerException {
         keyValueEntities.forEach(this::put);
     }
 
@@ -127,12 +127,12 @@ public class ArangoDBBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> keyValueEntities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public void put(Iterable<KeyValueEntity> keyValueEntities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         throw new UnsupportedOperationException("ArangoDB does not support TTL");
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
+    public void put(KeyValueEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         throw new UnsupportedOperationException("ArangoDB does not support TTL");
     }
 

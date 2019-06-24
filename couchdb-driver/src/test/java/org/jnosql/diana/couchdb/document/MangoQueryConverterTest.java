@@ -16,13 +16,13 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.document.DocumentQuery;
 import org.junit.jupiter.params.ParameterizedTest;
 
 import javax.json.JsonObject;
 import java.util.Arrays;
 
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MangoQueryConverterTest {

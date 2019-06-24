@@ -14,9 +14,10 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.JNoSQLException;
 
-class CouchDBHttpClientException extends JNoSQLException {
+import jakarta.nosql.CommunicationException;
+
+class CouchDBHttpClientException extends CommunicationException {
 
     public CouchDBHttpClientException(String message) {
         super(message);

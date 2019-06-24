@@ -21,12 +21,12 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.infinispan.commons.api.BasicCacheContainer;
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 
 /**
  * The Infinispan implementation of {@link BucketManagerFactory}
  */
-public class InfinispanBucketManagerFactory implements BucketManagerFactory<InfinispanBucketManager> {
+public class InfinispanBucketManagerFactory implements BucketManagerFactory {
 
     private final BasicCacheContainer cacheContainer;
 

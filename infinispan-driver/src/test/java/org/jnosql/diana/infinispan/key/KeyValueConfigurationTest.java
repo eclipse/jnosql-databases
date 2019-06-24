@@ -17,7 +17,7 @@ package org.jnosql.diana.infinispan.key;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

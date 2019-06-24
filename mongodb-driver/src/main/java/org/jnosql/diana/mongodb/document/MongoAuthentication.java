@@ -17,9 +17,9 @@ package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoCredential;
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.JNoSQLException;
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.CommunicationException;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -73,27 +73,27 @@ final class MongoAuthentication {
                 return Optional.of(MongoCredential.createScramSha256Credential(user.orElseThrow(missingExceptionUser()),
                         source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
             default:
-                throw new JNoSQLException("There is not support to the type: " + mechanism);
+                throw new CommunicationException("There is not support to the type: " + mechanism);
         }
 
     }
 
 
-    private static Supplier<JNoSQLException> missingExceptionUser() {
+    private static Supplier<CommunicationException> missingExceptionUser() {
         return missingException("user");
     }
 
-    private static Supplier<JNoSQLException> missingExceptionPassword() {
+    private static Supplier<CommunicationException> missingExceptionPassword() {
         return missingException("password");
     }
 
-    private static Supplier<JNoSQLException> missingExceptionSource() {
+    private static Supplier<CommunicationException> missingExceptionSource() {
         return missingException("source");
     }
 
 
-    private static Supplier<JNoSQLException> missingException(String parameter) {
-        return () -> new JNoSQLException("There is a missing parameter in mongoDb authentication: " + parameter);
+    private static Supplier<CommunicationException> missingException(String parameter) {
+        return () -> new CommunicationException("There is a missing parameter in mongoDb authentication: " + parameter);
     }
 
 

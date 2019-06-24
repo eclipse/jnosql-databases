@@ -15,7 +15,10 @@
 
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,5 +32,35 @@ public class ArangoDBDocumentConfigurationTest {
         configuration.addHost("localhost", 8529);
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldReturnFromConfiguration() {
+        ArangoDBDocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        ArangoDBDocumentConfiguration configuration = DocumentConfiguration
+                .getConfiguration(ArangoDBDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
+    }
+
+    @Test
+    public void shouldGetConfigurationAsync() {
+        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof DocumentConfigurationAsync);
+    }
+
+    @Test
+    public void shouldGetConfigurationAsyncFromQuery() {
+        ArangoDBDocumentConfiguration configuration = DocumentConfigurationAsync
+                .getConfiguration(ArangoDBDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
     }
 }

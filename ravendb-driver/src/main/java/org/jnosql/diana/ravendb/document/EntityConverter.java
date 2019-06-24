@@ -15,8 +15,8 @@
 package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.Constants;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.HashMap;
@@ -88,7 +88,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.jnosql.diana.api.document.Document.class::isInstance);
+                allMatch(jakarta.nosql.document.Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

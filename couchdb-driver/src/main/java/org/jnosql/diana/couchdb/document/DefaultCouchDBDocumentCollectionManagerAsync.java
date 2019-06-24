@@ -16,12 +16,13 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -50,6 +51,19 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
     }
 
     @Override
+    public void insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
+    }
+
+    @Override
+    public void insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        entities.forEach(e -> insert(e, ttl));
+    }
+
+    @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) {
         requireNonNull(entity, "entity is required");
         requireNonNull(callBack, "callBack is required");
@@ -66,6 +80,12 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
     public void update(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
         CompletableFuture<DocumentEntity> async = supplyAsync(() -> manager.update(entity));
+    }
+
+    @Override
+    public void update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::update);
     }
 
     @Override

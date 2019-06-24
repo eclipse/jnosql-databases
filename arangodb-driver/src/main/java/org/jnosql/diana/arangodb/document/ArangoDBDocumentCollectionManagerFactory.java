@@ -17,11 +17,11 @@ package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
-public class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<ArangoDBDocumentCollectionManager>,
-        DocumentCollectionManagerAsyncFactory<ArangoDBDocumentCollectionManagerAsync> {
+final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
+        DocumentCollectionManagerAsyncFactory {
 
 
     private final ArangoDB arangoDB;

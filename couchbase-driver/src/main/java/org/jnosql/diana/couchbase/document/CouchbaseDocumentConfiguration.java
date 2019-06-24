@@ -16,8 +16,9 @@ package org.jnosql.diana.couchbase.document;
 
 
 import com.couchbase.client.java.CouchbaseCluster;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
+import jakarta.nosql.Settings;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The couchbase implementation of {@link UnaryDocumentConfiguration} that returns
+ * The couchbase implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync} that returns
  * {@link CouhbaseDocumentCollectionManagerFactory}.
  * <p>couchbase.host-: the prefix to add a new host</p>
  * <p>couchbase.user: the user</p>
@@ -36,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @see org.jnosql.diana.couchbase.CouchbaseConfigurations
  */
 public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
-        implements UnaryDocumentConfiguration<CouhbaseDocumentCollectionManagerFactory> {
+        implements DocumentConfiguration, DocumentConfigurationAsync {
 
     @Override
     public CouhbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
@@ -57,13 +58,4 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }
 
-    @Override
-    public CouhbaseDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
-        return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(nodes), user, password);
-    }
-
-    @Override
-    public CouhbaseDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
-        return get(settings);
-    }
 }

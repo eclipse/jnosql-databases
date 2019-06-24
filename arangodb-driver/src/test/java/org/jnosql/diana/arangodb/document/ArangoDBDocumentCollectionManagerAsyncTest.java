@@ -14,11 +14,11 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.Documents;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,9 +32,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static org.awaitility.Awaitility.await;
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
 import static org.jnosql.diana.arangodb.document.ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,12 +55,10 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
         entityManager = INSTANCE.get().get("database");
     }
 
-
     @Test
     public void shouldInserAsync() {
         DocumentEntity entity = getEntity();
         entityManagerAsync.insert(entity);
-
     }
 
     @Test

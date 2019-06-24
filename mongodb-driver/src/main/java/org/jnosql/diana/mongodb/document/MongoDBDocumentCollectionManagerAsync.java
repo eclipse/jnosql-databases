@@ -22,19 +22,21 @@ import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.Sort;
+import jakarta.nosql.SortType;
+import jakarta.nosql.document.DocumentCollectionManagerAsync;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.Sort;
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsync;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.Documents;
+import org.jnosql.diana.document.Documents;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
@@ -71,6 +73,19 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     @Override
+    public void insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
+    }
+
+    @Override
+    public void insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        entities.forEach(e -> insert(e, ttl));
+    }
+
+    @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
@@ -90,6 +105,12 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         requireNonNull(entity, "entity is required");
         update(entity, (d, throwable) -> {
         });
+    }
+
+    @Override
+    public void update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::update);
     }
 
     @Override
@@ -192,7 +213,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     private Bson getSort(Sort sort) {
-        boolean isAscending = Sort.SortType.ASC.equals(sort.getType());
+        boolean isAscending = SortType.ASC.equals(sort.getType());
         return isAscending?Sorts.ascending(sort.getName()): Sorts.descending(sort.getName());
     }
 

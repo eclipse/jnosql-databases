@@ -27,7 +27,7 @@ import java.util.stream.StreamSupport;
 
 import javax.json.bind.Jsonb;
 
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.key.KeyValueEntity;
 import org.jnosql.diana.driver.JsonbSupplier;
 
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -67,11 +67,11 @@ public class DynamoDBUtils {
         return map;
     }
 
-    public static <K, V> Map<String, AttributeValue> createAttributeValues(KeyValueEntity<K> entity) {
+    public static <K, V> Map<String, AttributeValue> createAttributeValues(KeyValueEntity entity) {
         return createAttributeValues(entity.getKey(), entity.getValue());
     }
 
-    public static <K> Collection<Map<String, AttributeValue>> createAttributeValues(Iterable<KeyValueEntity<K>> entities) {
+    public static <K> Collection<Map<String, AttributeValue>> createAttributeValues(Iterable<KeyValueEntity> entities) {
 
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(e -> createAttributeValues(e))
@@ -95,7 +95,7 @@ public class DynamoDBUtils {
     }
 
 
-    public static <K> Map<String, List<WriteRequest>> createMapWriteRequest(Iterable<KeyValueEntity<K>> entities) {
+    public static <K> Map<String, List<WriteRequest>> createMapWriteRequest(Iterable<KeyValueEntity> entities) {
 
         Collection<Map<String, AttributeValue>> attributeValues = createAttributeValues(entities);
         return createMapWriteRequest(attributeValues);

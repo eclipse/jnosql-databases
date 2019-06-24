@@ -15,9 +15,9 @@
 
 package org.jnosql.diana.mongodb.document;
 
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
-import org.jnosql.diana.api.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -38,15 +38,6 @@ public class MongoDBDocumentConfigurationTest {
     }
 
     @Test
-    public void shouldCreateSettings() {
-        Settings settings = Settings.builder().put("mongodb-server-host-1", "172.17.0.2:27017").build();
-        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get(settings);
-        assertNotNull(managerFactory);
-        assertNotNull(configuration.getAsync(settings));
-    }
-
-    @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
@@ -63,6 +54,21 @@ public class MongoDBDocumentConfigurationTest {
     public void shouldReturnErrorWhendMapSettingsIsNull() {
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
+    }
+
+    @Test
+    public void shouldReturnFromConfiguration() {
+        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof DocumentConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        MongoDBDocumentConfiguration configuration = DocumentConfiguration
+                .getConfiguration(MongoDBDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof MongoDBDocumentConfiguration);
     }
 
 }

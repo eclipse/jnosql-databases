@@ -20,7 +20,7 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.orientdb.document.QueryOSQLConverter.Query;
 
 import java.util.ArrayList;

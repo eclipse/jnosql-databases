@@ -20,11 +20,12 @@ import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.io.IOException;
@@ -89,7 +90,7 @@ final class EntityConverter {
             setQueryBuilder(query, select, searchRequest);
         }
 
-        SearchResponse response = client.search(searchRequest);
+        SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         Stream.of(response.getHits())
                 .flatMap(h -> Stream.of(h.getHits()))
                 .map(ElasticsearchEntry::of)
@@ -111,8 +112,7 @@ final class EntityConverter {
             select.getIds().stream()
                     .map(id -> new MultiGetRequest.Item(index, query.getDocumentCollection(), id))
                     .forEach(multiGetRequest::add);
-            client.multiGetAsync(multiGetRequest, listener.getIds());
-
+            client.mgetAsync(multiGetRequest,RequestOptions.DEFAULT, listener.getIds());
         }
 
         if (select.hasStatement()) {
@@ -121,7 +121,7 @@ final class EntityConverter {
             if (select.hasQuery()) {
                 setQueryBuilder(query, select, searchRequest);
             }
-            client.searchAsync(searchRequest, listener.getSearch());
+            client.searchAsync(searchRequest, RequestOptions.DEFAULT, listener.getSearch());
         }
 
     }
@@ -153,7 +153,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.jnosql.diana.api.document.Document.class::isInstance);
+                allMatch(jakarta.nosql.document.Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {
@@ -172,7 +172,7 @@ final class EntityConverter {
                 .map(id -> new MultiGetRequest.Item(index, type, id))
                 .forEach(multiGetRequest::add);
 
-        MultiGetResponse responses = client.multiGet(multiGetRequest);
+        MultiGetResponse responses = client.mget(multiGetRequest, RequestOptions.DEFAULT);
         Stream.of(responses.getResponses())
                 .map(MultiGetItemResponse::getResponse)
                 .map(ElasticsearchEntry::of)

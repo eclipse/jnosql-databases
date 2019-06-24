@@ -16,12 +16,12 @@
 package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 /**
  * The mongodb implementation to {@link DocumentCollectionManagerFactory}
  */
-public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<MongoDBDocumentCollectionManager> {
+public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 
     private final MongoClient mongoClient;
 

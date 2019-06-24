@@ -15,9 +15,9 @@
 
 package org.jnosql.diana.elasticsearch.document;
 
+import jakarta.nosql.CommunicationException;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.search.SearchResponse;
-import org.jnosql.diana.api.JNoSQLException;
 
 import java.util.function.Consumer;
 
@@ -38,6 +38,6 @@ final class CountActionListener implements ActionListener<SearchResponse> {
 
     @Override
     public void onFailure(Exception e) {
-        throw new JNoSQLException("An error when do count on document collection: " + documentCollection, e);
+        throw new CommunicationException("An error when do count on document collection: " + documentCollection, e);
     }
 }

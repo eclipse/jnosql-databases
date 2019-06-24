@@ -25,15 +25,17 @@ import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.result.SearchQueryResult;
 import com.couchbase.client.java.search.result.SearchQueryRow;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.nonNull;
@@ -85,8 +87,30 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     }
 
     @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert).collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl)).collect(Collectors.toList());
+    }
+
+    @Override
     public DocumentEntity update(DocumentEntity entity) {
         return insert(entity);
+    }
+
+    @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update).collect(Collectors.toList());
     }
 
     @Override

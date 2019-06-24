@@ -17,8 +17,9 @@ package org.jnosql.diana.cassandra.column;
 
 
 import com.datastax.driver.core.Cluster;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.column.UnaryColumnConfiguration;
+import jakarta.nosql.Settings;
+import jakarta.nosql.column.ColumnConfiguration;
+import jakarta.nosql.column.ColumnConfigurationAsync;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import java.util.concurrent.ExecutorService;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The Cassandra implementation to {@link UnaryColumnConfiguration} that returns
+ * The Cassandra implementation to {@link ColumnConfiguration} and {@link ColumnConfigurationAsync} that returns
  * {@link CassandraColumnFamilyManagerFactory}
  * This configuration reads "diana-cassandra.properties" files and has the following configuration:
  * <p>cassandra.host-: The Cassandra host as prefix, you can set how much you want just setting the number order,
@@ -39,10 +40,11 @@ import static java.util.Objects.requireNonNull;
  * <p>cassandra.ssl: Define ssl, the default value is false</p>
  * <p>cassandra.metrics: enable metrics, the default value is true</p>
  * <p>cassandra.jmx: enable JMX, the default value is true</p>
+ *
  * @see CassandraConfigurations
  * @see OldCassandraConfigurations
  */
-public class CassandraConfiguration implements UnaryColumnConfiguration<CassandraColumnFamilyManagerFactory> {
+public final class CassandraConfiguration implements ColumnConfiguration, ColumnConfigurationAsync {
 
     static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 
@@ -77,14 +79,4 @@ public class CassandraConfiguration implements UnaryColumnConfiguration<Cassandr
         return getManagerFactory(configurations);
     }
 
-    @Override
-    public CassandraColumnFamilyManagerFactory getAsync() {
-        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
-        return getManagerFactory(configuration);
-    }
-
-    @Override
-    public CassandraColumnFamilyManagerFactory getAsync(Settings settings) throws NullPointerException {
-        return get(settings);
-    }
 }

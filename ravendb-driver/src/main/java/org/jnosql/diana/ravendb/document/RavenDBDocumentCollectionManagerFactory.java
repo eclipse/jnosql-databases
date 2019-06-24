@@ -16,7 +16,7 @@
 package org.jnosql.diana.ravendb.document;
 
 import net.ravendb.client.documents.DocumentStore;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * The RavenDB implementation to {@link DocumentCollectionManagerFactory}
  */
-public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<RavenDBDocumentCollectionManager> {
+public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 
     private final String[] hosts;
 

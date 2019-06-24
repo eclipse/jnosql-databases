@@ -15,10 +15,10 @@
 
 package org.jnosql.diana.ravendb.document;
 
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.document.DocumentConfiguration;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.document.DocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  * It tries to read the diana-ravendb.properties file whose has the following properties
  * <p>ravendb.host-: as prefix to add host client, eg: ravendb.host-1=host1, ravendb.host-2= host2</p>
  */
-public class RavenDBDocumentConfiguration implements DocumentConfiguration<RavenDBDocumentCollectionManagerFactory> {
+public class RavenDBDocumentConfiguration implements DocumentConfiguration {
 
     private static final String FILE_CONFIGURATION = "diana-ravendb.properties";
 

@@ -16,8 +16,8 @@ package org.jnosql.diana.mongodb.document;
 
 import org.bson.Document;
 import org.bson.types.Binary;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -49,8 +49,8 @@ final class MongoDBUtils {
 
     private static Object convert(Value value) {
         Object val = ValueUtil.convert(value);
-        if (val instanceof org.jnosql.diana.api.document.Document) {
-            org.jnosql.diana.api.document.Document subDocument = (org.jnosql.diana.api.document.Document) val;
+        if (val instanceof jakarta.nosql.document.Document) {
+            jakarta.nosql.document.Document subDocument = (jakarta.nosql.document.Document) val;
             Object converted = convert(subDocument.getValue());
             return new Document(subDocument.getName(), converted);
         }
@@ -65,28 +65,28 @@ final class MongoDBUtils {
     }
 
 
-    public static List<org.jnosql.diana.api.document.Document> of(Map<String, ?> values) {
+    public static List<jakarta.nosql.document.Document> of(Map<String, ?> values) {
         Predicate<String> isNotNull = s -> values.get(s) != null;
-        Function<String, org.jnosql.diana.api.document.Document> documentMap = key -> {
+        Function<String, jakarta.nosql.document.Document> documentMap = key -> {
             Object value = values.get(key);
             return getDocument(key, value);
         };
         return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
     }
 
-    private static org.jnosql.diana.api.document.Document getDocument(String key, Object value) {
+    private static jakarta.nosql.document.Document getDocument(String key, Object value) {
         if (value instanceof Document) {
-            return org.jnosql.diana.api.document.Document.of(key, of(Document.class.cast(value)));
+            return jakarta.nosql.document.Document.of(key, of(Document.class.cast(value)));
         } else if (isDocumentIterable(value)) {
-            List<List<org.jnosql.diana.api.document.Document>> documents = new ArrayList<>();
+            List<List<jakarta.nosql.document.Document>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
                 Map<?, ?> map = Map.class.cast(object);
                 documents.add(map.entrySet().stream().map(e -> getDocument(e.getKey().toString(), e.getValue())).collect(toList()));
             }
-            return org.jnosql.diana.api.document.Document.of(key, documents);
+            return jakarta.nosql.document.Document.of(key, documents);
         }
 
-        return org.jnosql.diana.api.document.Document.of(key, Value.of(convertValue(value)));
+        return jakarta.nosql.document.Document.of(key, Value.of(convertValue(value)));
     }
 
     private static Object convertValue(Object value) {
@@ -107,13 +107,13 @@ final class MongoDBUtils {
                 .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
     }
 
-    private static org.jnosql.diana.api.document.Document cast(Object document) {
-        return org.jnosql.diana.api.document.Document.class.cast(document);
+    private static jakarta.nosql.document.Document cast(Object document) {
+        return jakarta.nosql.document.Document.class.cast(document);
     }
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.jnosql.diana.api.document.Document.class::isInstance);
+                allMatch(jakarta.nosql.document.Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

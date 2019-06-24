@@ -15,7 +15,7 @@
 package org.jnosql.diana.hbase.column;
 
 
-import org.jnosql.diana.api.column.Column;
+import jakarta.nosql.column.Column;
 
 final class HBaseUtils {
 

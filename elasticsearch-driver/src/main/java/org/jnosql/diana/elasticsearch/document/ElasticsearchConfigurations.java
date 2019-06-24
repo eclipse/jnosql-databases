@@ -19,7 +19,8 @@ import java.util.function.Supplier;
 public enum ElasticsearchConfigurations implements Supplier<String> {
 
     HOST("elasticsearch.host"),
-    MAX_RETRY_TIMEOUT_MILLIS("elasticsearch.maxRetryTimeoutMillis");
+    USER("elasticsearch.user"),
+    PASSWORD("elasticsearch.password");
 
     private final String configuration;
 

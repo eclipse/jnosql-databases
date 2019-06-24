@@ -16,8 +16,8 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentEntity;
 
 import java.util.List;
 

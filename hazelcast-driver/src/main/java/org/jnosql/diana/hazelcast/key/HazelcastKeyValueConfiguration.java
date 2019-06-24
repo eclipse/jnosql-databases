@@ -20,10 +20,10 @@ import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Arrays;
@@ -42,7 +42,7 @@ import static java.util.Objects.requireNonNull;
  * <p>hazelcast.host: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
  *
  */
-public class HazelcastKeyValueConfiguration implements KeyValueConfiguration<HazelcastBucketManagerFactory> {
+public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
 
     private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
     private static final String DEFAULT_INSTANCE = "hazelcast-instanceName";

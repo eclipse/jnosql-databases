@@ -16,11 +16,11 @@ package org.jnosql.diana.elasticsearch.document;
 
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.jnosql.diana.api.Condition;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.Condition;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCondition;
+import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -34,8 +34,8 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-import static org.jnosql.diana.api.Condition.EQUALS;
-import static org.jnosql.diana.api.Condition.IN;
+import static jakarta.nosql.Condition.EQUALS;
+import static jakarta.nosql.Condition.IN;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
 final class QueryConverter {

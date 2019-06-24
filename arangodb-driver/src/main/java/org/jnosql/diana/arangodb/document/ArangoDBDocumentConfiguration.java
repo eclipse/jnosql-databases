@@ -17,9 +17,10 @@ package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.jnosql.diana.arangodb.ArangoDBConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
@@ -29,16 +30,16 @@ import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATION;
 
 /**
- * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ArangoDBDocumentCollectionManagerFactory}.
+ * The implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync}
+ * that returns {@link ArangoDBDocumentCollectionManagerFactory}.
  * It tries to read the configuration properties from diana-arangodb.properties file.
  *
  * @see ArangoDBConfiguration
  * @see org.jnosql.diana.arangodb.ArangoDBConfigurations
  *
  */
-public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements UnaryDocumentConfiguration<ArangoDBDocumentCollectionManagerFactory> {
-
+public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
+        implements DocumentConfiguration, DocumentConfigurationAsync {
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
@@ -57,16 +58,4 @@ public class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         return new ArangoDBDocumentCollectionManagerFactory(arangoDB, arangoDBAsync);
     }
 
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION.get());
-        SettingsBuilder builder = Settings.builder();
-        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
-        return getAsync(builder.build());
-    }
-
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory getAsync(Settings settings) throws NullPointerException {
-        return get(settings);
-    }
 }

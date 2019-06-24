@@ -20,7 +20,7 @@ import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.OLiveQueryResultListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.DocumentEntity;
 
 class LiveQueryListener implements OLiveQueryResultListener {
 

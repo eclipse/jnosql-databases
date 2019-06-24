@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.dynamodb;
 
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 
 import static java.util.Optional.ofNullable;
 import static org.jnosql.diana.dynamodb.DynamoDBConfigurations.AWS_ACCESSKEY;

@@ -17,14 +17,15 @@ package org.jnosql.diana.couchbase.document;
 
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.Statement;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import rx.functions.Action1;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
@@ -57,6 +58,19 @@ class DefaultCouchbaseDocumentCollectionManagerAsync implements CouchbaseDocumen
     }
 
     @Override
+    public void insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
+    }
+
+    @Override
+    public void insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        entities.forEach(e -> this.insert(e, ttl));
+    }
+
+    @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(callBack, "callBack is required");
         just(entity)
@@ -75,6 +89,12 @@ class DefaultCouchbaseDocumentCollectionManagerAsync implements CouchbaseDocumen
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         insert(entity);
+    }
+
+    @Override
+    public void update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::update);
     }
 
     @Override

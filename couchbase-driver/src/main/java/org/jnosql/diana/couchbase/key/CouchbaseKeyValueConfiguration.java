@@ -17,8 +17,8 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.Settings;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
 import java.util.List;
@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @see org.jnosql.diana.couchbase.CouchbaseConfigurations
  */
 public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
-        implements KeyValueConfiguration<CouchbaseBucketManagerFactory> {
+        implements KeyValueConfiguration {
 
 
     /**

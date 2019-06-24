@@ -14,8 +14,8 @@
  */
 package org.jnosql.diana.arangodb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManager;
-import org.jnosql.diana.api.document.DocumentEntity;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,6 @@ import java.util.Map;
  * <p>{@link DocumentCollectionManager#insert(DocumentEntity)}</p>
  */
 public interface ArangoDBDocumentCollectionManager extends DocumentCollectionManager {
-
 
     /**
      * Executes ArangoDB query language, AQL.

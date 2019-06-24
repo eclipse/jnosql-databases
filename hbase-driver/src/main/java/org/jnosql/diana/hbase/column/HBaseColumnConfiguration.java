@@ -15,10 +15,10 @@
 package org.jnosql.diana.hbase.column;
 
 
+import jakarta.nosql.Settings;
+import jakarta.nosql.column.ColumnConfiguration;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.column.ColumnConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  * Configuration to HBase that returns {@link HBaseColumnFamilyManagerFactory}
  * <p>hbase.family.n: as prefix to add family, eg: hbase,family.1=column-family</p>
  */
-public class HBaseColumnConfiguration implements ColumnConfiguration<HBaseColumnFamilyManagerFactory> {
+public class HBaseColumnConfiguration implements ColumnConfiguration {
 
     private final Configuration configuration;
 

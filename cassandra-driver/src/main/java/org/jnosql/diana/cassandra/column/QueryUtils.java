@@ -30,15 +30,15 @@ import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.Ordering;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
-import org.jnosql.diana.api.Condition;
-import org.jnosql.diana.api.Sort;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnDeleteQuery;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.Condition;
+import jakarta.nosql.Sort;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.Value;
+import jakarta.nosql.column.Column;
+import jakarta.nosql.column.ColumnCondition;
+import jakarta.nosql.column.ColumnDeleteQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ import java.util.function.Function;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.asc;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.desc;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
-import static org.jnosql.diana.api.Sort.SortType.ASC;
+import static jakarta.nosql.SortType.ASC;
 
 final class QueryUtils {
 

@@ -16,13 +16,13 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManagerAsyncFactory;
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 import java.util.Objects;
 
-public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory<CouchDBDocumentCollectionManager>,
-        DocumentCollectionManagerAsyncFactory<CouchDBDocumentCollectionManagerAsync> {
+public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
+        DocumentCollectionManagerAsyncFactory {
 
 
     private final CouchDBHttpConfiguration configuration;

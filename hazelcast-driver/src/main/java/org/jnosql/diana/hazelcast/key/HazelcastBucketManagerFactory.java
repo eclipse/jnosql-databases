@@ -17,7 +17,7 @@ package org.jnosql.diana.hazelcast.key;
 
 
 import com.hazelcast.core.IAtomicLong;
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * The hazelcast implementation of {@link BucketManagerFactory}
  */
-public interface HazelcastBucketManagerFactory extends BucketManagerFactory<HazelcastBucketManager> {
+public interface HazelcastBucketManagerFactory extends BucketManagerFactory {
 
     /**
      * Creates a {@link List} from bucket name

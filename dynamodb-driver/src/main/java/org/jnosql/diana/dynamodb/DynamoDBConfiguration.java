@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.dynamodb;
 
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClientBuilder;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;

@@ -17,10 +17,10 @@ package org.jnosql.diana.riak.key;
 
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
@@ -36,7 +36,8 @@ import static java.util.Objects.requireNonNull;
  * It tries to read diana-riak.properties file.
  * <p>riak.host-: The prefix to host. eg: riak.server.host.1= host1</p>
  */
-public class RiakKeyValueConfiguration implements KeyValueConfiguration<RiakBucketManagerFactory> {
+public class RiakKeyValueConfiguration implements KeyValueConfiguration {
+
 
     @Deprecated
     private static final String OLD_SERVER_PREFIX = "riak-server-host-";

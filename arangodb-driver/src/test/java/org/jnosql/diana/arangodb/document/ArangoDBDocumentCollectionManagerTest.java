@@ -16,13 +16,12 @@
 package org.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.document.Documents;
-import org.jnosql.diana.api.document.query.DocumentQueryBuilder;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
+import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,8 +38,8 @@ import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.delete;
-import static org.jnosql.diana.api.document.query.DocumentQueryBuilder.select;
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static org.jnosql.diana.arangodb.document.ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -59,12 +58,12 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void setUp() {
         random = new Random();
         entityManager = INSTANCE.get().get(DATABASE);
-        entityManager.delete(DocumentQueryBuilder.delete().from(COLLECTION_NAME).build());
+        entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
     }
 
     @AfterEach
     public void after() {
-        entityManager.delete(DocumentQueryBuilder.delete().from(COLLECTION_NAME).build());
+        entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
     }
 
     @Test

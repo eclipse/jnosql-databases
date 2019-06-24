@@ -16,8 +16,8 @@
  */
 package org.jnosql.diana.couchdb.document.configuration;
 
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
 import org.jnosql.diana.couchdb.document.CouchDBDocumentCollectionManagerFactory;
 import org.jnosql.diana.couchdb.document.CouchDBDocumentConfiguration;
 import org.testcontainers.containers.GenericContainer;

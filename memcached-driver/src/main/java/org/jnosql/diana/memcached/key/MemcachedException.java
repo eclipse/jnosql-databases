@@ -14,9 +14,9 @@
  */
 package org.jnosql.diana.memcached.key;
 
-import org.jnosql.diana.api.JNoSQLException;
+import jakarta.nosql.CommunicationException;
 
-class MemcachedException extends JNoSQLException {
+class MemcachedException extends CommunicationException {
 
     MemcachedException(String message, Throwable cause) {
         super(message, cause);

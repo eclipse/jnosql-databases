@@ -16,7 +16,7 @@
 package org.jnosql.diana.mongodb.document;
 
 import com.mongodb.MongoClient;
-import org.jnosql.diana.api.Settings;
+import jakarta.nosql.Settings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -29,10 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MongoDBDocumentCollectionManagerFactoryTest {
 
     private static MongoDBDocumentConfiguration configuration;
+    private static MongoDBDocumentConfigurationAsync configurationAsync;
 
     @BeforeAll
     public static void setUp() throws IOException {
         configuration = new MongoDBDocumentConfiguration();
+        configurationAsync = new MongoDBDocumentConfigurationAsync();
     }
 
     @Test
@@ -59,18 +61,18 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerAsyncFactory mongoDBFactory = configuration.getAsync();
+        MongoDBDocumentCollectionManagerAsyncFactory mongoDBFactory = configurationAsync.get();
         assertNotNull(mongoDBFactory.getAsync("database"));
     }
 
     @Test
     public void shouldReturnNPEWhenSettingOnAsyncsIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.getAsync((Settings) null));
+        assertThrows(NullPointerException.class, () -> configurationAsync.get((Settings) null));
     }
 
     @Test
     public void shouldReturnNPEWhenMongoClientAsyncIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.getAsync((com.mongodb.async.client.MongoClient) null));
+        assertThrows(NullPointerException.class, () -> configurationAsync.get((com.mongodb.async.client.MongoClient) null));
     }
 
 }

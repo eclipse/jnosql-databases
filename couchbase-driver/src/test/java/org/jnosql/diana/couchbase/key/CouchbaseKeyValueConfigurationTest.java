@@ -14,7 +14,9 @@
  */
 package org.jnosql.diana.couchbase.key;
 
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,5 +41,20 @@ public class CouchbaseKeyValueConfigurationTest {
     public void shouldCreateKeyValueFactoryFromFile() {
         BucketManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldReturnFromConfiguration() {
+        KeyValueConfiguration configuration = KeyValueConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof KeyValueConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        CouchbaseKeyValueConfiguration configuration = KeyValueConfiguration
+                .getConfiguration(CouchbaseKeyValueConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof CouchbaseKeyValueConfiguration);
     }
 }

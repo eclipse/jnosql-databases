@@ -16,10 +16,10 @@
 package org.jnosql.diana.redis.key;
 
 
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -43,7 +43,7 @@ import static java.util.Arrays.asList;
  * <p>redis.min.idle: The min idle {@link JedisPoolConfig}, the default value 1 </p>
  * <p>redis.max.wait.millis: The max wait on millis on {@link JedisPoolConfig}, the default value 3000 </p>
  */
-public final class RedisConfiguration implements KeyValueConfiguration<RedisBucketManagerFactory> {
+public final class RedisConfiguration implements KeyValueConfiguration {
 
     private static final String FILE_CONFIGURATION = "diana-redis.properties";
     private static final int DEFAULT_PORT = 6379;

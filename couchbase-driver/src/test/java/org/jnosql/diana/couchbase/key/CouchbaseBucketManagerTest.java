@@ -14,10 +14,10 @@
  */
 package org.jnosql.diana.couchbase.key;
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueEntity;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
@@ -81,7 +81,7 @@ public class CouchbaseBucketManagerTest {
     @Test
     public void shouldPutValues() {
 
-        List<KeyValueEntity<String>> entities = asList(KeyValueEntity.of(KEY_OTAVIO, userOtavio),
+        List<KeyValueEntity> entities = asList(KeyValueEntity.of(KEY_OTAVIO, userOtavio),
                 KeyValueEntity.of(KEY_SORO, userSoro));
 
         keyValueEntityManager.put(entities);

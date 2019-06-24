@@ -22,9 +22,9 @@ import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.auth.AuthDescriptor;
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.key.KeyValueConfiguration;
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.key.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.io.IOException;
@@ -61,7 +61,7 @@ import static java.util.Optional.ofNullable;
  *
  * @see MemcachedConfigurations
  */
-public class MemcachedKeyValueConfiguration implements KeyValueConfiguration<MemcachedBucketManagerFactory> {
+public class MemcachedKeyValueConfiguration implements KeyValueConfiguration {
 
     public static final String FILE_CONFIGURATION = "diana-memcached.properties";
 

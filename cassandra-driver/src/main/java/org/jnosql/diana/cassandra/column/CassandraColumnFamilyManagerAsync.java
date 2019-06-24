@@ -17,11 +17,11 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Statement;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.column.ColumnDeleteQuery;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnFamilyManagerAsync;
-import org.jnosql.diana.api.column.ColumnQuery;
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.column.ColumnDeleteQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnFamilyManagerAsync;
+import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.List;

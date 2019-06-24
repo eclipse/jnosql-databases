@@ -16,10 +16,10 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.Sort;
-import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.Sort;
+import jakarta.nosql.document.DocumentCondition;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentQuery;
 
 import java.util.Collections;
 import java.util.List;

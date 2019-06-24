@@ -16,10 +16,10 @@
 package org.jnosql.diana.memcached.key;
 
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.BucketManagerFactory;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.key.KeyValueEntity;
 import org.jnosql.diana.memcached.key.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,10 +46,10 @@ public class MemcachedBucketManagerTest {
     private BucketManagerFactory keyValueEntityManagerFactory;
 
     private User otavio = new User("otavio");
-    private KeyValueEntity<String> entityOtavio = KeyValueEntity.of("otavio", Value.of(otavio));
+    private KeyValueEntity entityOtavio = KeyValueEntity.of("otavio", Value.of(otavio));
 
     private User soro = new User("soro");
-    private KeyValueEntity<String> entitySoro = KeyValueEntity.of("soro", Value.of(soro));
+    private KeyValueEntity entitySoro = KeyValueEntity.of("soro", Value.of(soro));
 
     @BeforeEach
     public void init() {

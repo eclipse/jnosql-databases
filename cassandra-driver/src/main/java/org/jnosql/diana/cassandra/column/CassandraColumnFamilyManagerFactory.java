@@ -18,8 +18,8 @@ package org.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import org.jnosql.diana.api.column.ColumnFamilyManagerAsyncFactory;
-import org.jnosql.diana.api.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.ColumnFamilyManagerAsyncFactory;
+import jakarta.nosql.column.ColumnFamilyManagerFactory;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -27,8 +27,7 @@ import java.util.concurrent.Executor;
 /**
  * The Cassandra implementation to {@link ColumnFamilyManagerFactory}
  */
-public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerFactory<CassandraColumnFamilyManager>
-        , ColumnFamilyManagerAsyncFactory<CassandraColumnFamilyManagerAsync> {
+public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerFactory, ColumnFamilyManagerAsyncFactory {
 
     private final Cluster cluster;
 

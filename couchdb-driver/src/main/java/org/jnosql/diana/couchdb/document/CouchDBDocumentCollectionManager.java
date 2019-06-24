@@ -16,7 +16,7 @@
  */
 package org.jnosql.diana.couchdb.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentCollectionManager;
 
 public interface CouchDBDocumentCollectionManager extends DocumentCollectionManager {
 

@@ -15,7 +15,7 @@
 package org.jnosql.diana.memcached.key;
 
 import net.spy.memcached.MemcachedClient;
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.key.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
-final class MemcachedBucketManagerFactory implements BucketManagerFactory<MemcachedBucketManager> {
+final class MemcachedBucketManagerFactory implements BucketManagerFactory {
 
     private final MemcachedClient client;
 

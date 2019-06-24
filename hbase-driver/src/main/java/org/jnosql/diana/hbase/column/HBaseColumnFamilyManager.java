@@ -15,6 +15,16 @@
 package org.jnosql.diana.hbase.column;
 
 
+import jakarta.nosql.Condition;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.Value;
+import jakarta.nosql.ValueWriter;
+import jakarta.nosql.column.Column;
+import jakarta.nosql.column.ColumnCondition;
+import jakarta.nosql.column.ColumnDeleteQuery;
+import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnFamilyManager;
+import jakarta.nosql.column.ColumnQuery;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
@@ -22,17 +32,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.jnosql.diana.api.Condition;
-import org.jnosql.diana.api.TypeReference;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.ValueWriter;
-import org.jnosql.diana.api.column.Column;
-import org.jnosql.diana.api.column.ColumnCondition;
-import org.jnosql.diana.api.column.ColumnDeleteQuery;
-import org.jnosql.diana.api.column.ColumnEntity;
-import org.jnosql.diana.api.column.ColumnFamilyManager;
-import org.jnosql.diana.api.column.ColumnQuery;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
+import org.jnosql.diana.writer.ValueWriterDecorator;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -40,12 +40,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
+import static jakarta.nosql.Condition.EQUALS;
+import static jakarta.nosql.Condition.IN;
+import static jakarta.nosql.Condition.OR;
 import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.api.Condition.EQUALS;
-import static org.jnosql.diana.api.Condition.IN;
-import static org.jnosql.diana.api.Condition.OR;
 import static org.jnosql.diana.hbase.column.HBaseUtils.KEY_COLUMN;
 
 /**
@@ -96,8 +98,33 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     }
 
     @Override
+    public Iterable<ColumnEntity> update(Iterable<ColumnEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
         throw new UnsupportedOperationException("There is not support to save async");
+    }
+
+    @Override
+    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> insert(e, ttl))
+                .collect(Collectors.toList());
     }
 
 

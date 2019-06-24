@@ -19,19 +19,20 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
-import org.jnosql.diana.api.ValueWriter;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentCondition;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
-import org.jnosql.diana.api.writer.ValueWriterDecorator;
+import jakarta.nosql.ValueWriter;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCondition;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
+import org.jnosql.diana.writer.ValueWriterDecorator;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Collections.emptyMap;
@@ -57,7 +58,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         this.arangoDB = arangoDB;
     }
 
-
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         String collectionName = entity.getName();
@@ -80,6 +80,14 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     }
 
     @Override
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void delete(DocumentDeleteQuery query) {
         requireNonNull(query, "query is required");
         if (checkCondition(query.getCondition())) {
@@ -89,8 +97,6 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
         AQLQueryResult delete = QueryAQLConverter.delete(query);
         arangoDB.db(database).query(delete.getQuery(), delete.getValues(),
                 null, BaseDocument.class);
-
-
     }
 
     @Override
@@ -162,6 +168,23 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> this.insert(e, ttl))
+                .collect(Collectors.toList());
     }
 
     private void updateEntity(DocumentEntity entity, String key, String id, String rev) {

@@ -15,33 +15,40 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.Settings.SettingsBuilder;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.jnosql.diana.api.Configurations;
-import org.jnosql.diana.api.Settings;
-import org.jnosql.diana.api.SettingsBuilder;
-import org.jnosql.diana.api.document.UnaryDocumentConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The implementation of {@link UnaryDocumentConfiguration} that returns {@link ElasticsearchDocumentCollectionManagerFactory}.
+ * The implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync}
+ * that returns {@link ElasticsearchDocumentCollectionManagerFactory}.
  * It tries to read the configuration properties from diana-elasticsearch.properties file. To get some information:
  * <p>elasticsearch.host.n: the host to client connection, if necessary to define a different port than default just
  * use colon, ':' eg: elasticsearch-host-1=172.17.0.2:1234</p>
  * <p>elasticsearch-maxRetryTimeoutMillis: maxRetry- the default value {@link RestClientBuilder#DEFAULT_MAX_RETRY_TIMEOUT_MILLIS}</p>
  */
-public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfiguration<ElasticsearchDocumentCollectionManagerFactory> {
+public class ElasticsearchDocumentConfiguration implements DocumentConfiguration, DocumentConfigurationAsync {
 
     private static final String FILE_CONFIGURATION = "diana-elasticsearch.properties";
     private static final int DEFAULT_PORT = 9200;
@@ -50,7 +57,6 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
 
     private List<Header> headers = new ArrayList<>();
 
-    private int maxRetryTimoutMillis = RestClientBuilder.DEFAULT_MAX_RETRY_TIMEOUT_MILLIS;
 
     public ElasticsearchDocumentConfiguration() {
 
@@ -59,14 +65,10 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
         Settings settings = builder.build();
 
-        String maxRetry = configurations.get(OldElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get());
-        if (maxRetry != null) {
-            maxRetryTimoutMillis = Integer.valueOf(maxRetry);
-        }
         if (configurations.isEmpty()) {
             return;
         }
-        settings.prefix(Arrays.asList(OldElasticsearchConfigurations.HOST.get(),
+        settings.prefix(asList(OldElasticsearchConfigurations.HOST.get(),
                 ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
@@ -95,18 +97,16 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         this.headers.add(Objects.requireNonNull(header, "header is required"));
     }
 
-
     @Override
-    public ElasticsearchDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
+    public ElasticsearchDocumentCollectionManagerFactory get() {
         return get(Settings.builder().build());
     }
 
     @Override
-    public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-
-        settings.prefix(Arrays.asList(OldElasticsearchConfigurations.HOST.get(),
+        settings.prefix(asList(OldElasticsearchConfigurations.HOST.get(),
                 ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
@@ -117,29 +117,27 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
         builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
 
-        String maxRetry = settings.get(Arrays.asList(OldElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get(),
-                ElasticsearchConfigurations.MAX_RETRY_TIMEOUT_MILLIS.get())).map(Object::toString)
-                .orElse(null);
-        if (maxRetry != null) {
-            maxRetryTimoutMillis = Integer.valueOf(maxRetry);
+        final Optional<String> username = settings
+                .get(asList(Configurations.USER.get(),
+                        ElasticsearchConfigurations.HOST.get()))
+                .map(Object::toString);
+        final Optional<String> password = settings
+                .get(asList(Configurations.PASSWORD.get(),
+                        ElasticsearchConfigurations.PASSWORD.get()))
+                .map(Object::toString);
+
+        if (username.isPresent()) {
+            final CredentialsProvider credentialsProvider =
+                    new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(username.orElse(null), password.orElse(null)));
+            builder.setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
+                    .setDefaultCredentialsProvider(credentialsProvider));
         }
 
-        builder.setMaxRetryTimeoutMillis(maxRetryTimoutMillis);
         RestHighLevelClient client = new RestHighLevelClient(builder);
         return new ElasticsearchDocumentCollectionManagerFactory(client);
     }
-
-
-    @Override
-    public ElasticsearchDocumentCollectionManagerFactory getAsync() throws UnsupportedOperationException {
-        return get();
-    }
-
-    @Override
-    public ElasticsearchDocumentCollectionManagerFactory getAsync(org.jnosql.diana.api.Settings settings) throws NullPointerException {
-        return get(settings);
-    }
-
 
     /**
      * returns an {@link ElasticsearchDocumentCollectionManagerFactory} instance
@@ -153,7 +151,6 @@ public class ElasticsearchDocumentConfiguration implements UnaryDocumentConfigur
         RestHighLevelClient client = new RestHighLevelClient(builder);
         return new ElasticsearchDocumentCollectionManagerFactory(client);
     }
-
 
     /**
      * returns an {@link ElasticsearchDocumentCollectionManagerFactory} instance

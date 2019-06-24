@@ -14,7 +14,10 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.jnosql.diana.api.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,5 +34,35 @@ public class ElasticsearchDocumentConfigurationTest {
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
         DocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTACE.get();
         assertNotNull(managerFactory);
+    }
+
+    @Test
+    public void shouldReturnFromConfiguration() {
+        ElasticsearchDocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ElasticsearchDocumentConfiguration);
+    }
+
+    @Test
+    public void shouldReturnFromConfigurationQuery() {
+        ElasticsearchDocumentConfiguration configuration = DocumentConfiguration
+                .getConfiguration(ElasticsearchDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ElasticsearchDocumentConfiguration);
+    }
+
+    @Test
+    public void shouldGetConfigurationAsync() {
+        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof DocumentConfigurationAsync);
+    }
+
+    @Test
+    public void shouldGetConfigurationAsyncFromQuery() {
+        ElasticsearchDocumentConfiguration configuration = DocumentConfigurationAsync
+                .getConfiguration(ElasticsearchDocumentConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertTrue(configuration instanceof ElasticsearchDocumentConfiguration);
     }
 }

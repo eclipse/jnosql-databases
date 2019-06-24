@@ -14,9 +14,9 @@
  */
 package org.jnosql.diana.dynamodb.key;
 
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManager;
-import org.jnosql.diana.api.key.KeyValueEntity;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.key.KeyValueEntity;
 import org.jnosql.diana.driver.ValueJSON;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -57,24 +57,23 @@ public class DynamoDBBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity) throws NullPointerException {
-        put(entity.getKey(), entity.getValue().get());
+    public void put(KeyValueEntity entity) throws NullPointerException {
+        put(entity.getKey(), entity.getValue());
     }
 
     @Override
-    public <K> void put(KeyValueEntity<K> entity, Duration ttl)
+    public void put(KeyValueEntity entity, Duration ttl)
             throws NullPointerException, UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities) throws NullPointerException {
+    public void put(Iterable<KeyValueEntity> entities) throws NullPointerException {
         client.batchWriteItem(BatchWriteItemRequest.builder().requestItems(createMapWriteRequest(entities)).build());
     }
 
     @Override
-    public <K> void put(Iterable<KeyValueEntity<K>> entities, Duration ttl)
-            throws NullPointerException, UnsupportedOperationException {
+    public  void put(Iterable<KeyValueEntity> entities, Duration ttl) {
         throw new UnsupportedOperationException();
     }
 

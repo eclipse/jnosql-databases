@@ -20,11 +20,11 @@ import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -69,6 +69,16 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
     }
 
+    @Override
+    public void insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
+    }
+
+    @Override
+    public void insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        throw new UnsupportedOperationException("TTL is not supported on ArangoDB implementation");
+    }
 
     @Override
     public void insert(DocumentEntity entity, Consumer<DocumentEntity> callBack) throws ExecuteAsyncQueryException
@@ -93,6 +103,12 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
     @Override
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         update(entity, NOOP);
+    }
+
+    @Override
+    public void update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::update);
     }
 
     @Override
@@ -143,7 +159,6 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         AQLQueryResult result = QueryAQLConverter.select(query);
         runAql(result.getQuery(), result.getValues(), callBack);
 
-
     }
 
     @Override
@@ -159,7 +174,6 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         });
 
     }
-
 
     @Override
     public void aql(String query, Map<String, Object> values, Consumer<List<DocumentEntity>> callBack)

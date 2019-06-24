@@ -20,15 +20,16 @@ import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.ORecordAbstract;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.ORecordCallback;
-import org.jnosql.diana.api.ExecuteAsyncQueryException;
-import org.jnosql.diana.api.document.Document;
-import org.jnosql.diana.api.document.DocumentDeleteQuery;
-import org.jnosql.diana.api.document.DocumentEntity;
-import org.jnosql.diana.api.document.DocumentQuery;
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
@@ -54,6 +55,19 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
     @Override
     public void insert(DocumentEntity entity, Duration ttl) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         throw new UnsupportedOperationException("There is support to ttl on OrientDB");
+    }
+
+    @Override
+    public void insert(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::insert);
+    }
+
+    @Override
+    public void insert(Iterable<DocumentEntity> entities, Duration ttl) {
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        entities.forEach(e -> insert(e, ttl));
     }
 
     @Override
@@ -92,6 +106,12 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
     public void update(DocumentEntity entity) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(entity, "entity is required");
         insert(entity);
+    }
+
+    @Override
+    public void update(Iterable<DocumentEntity> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::update);
     }
 
     @Override

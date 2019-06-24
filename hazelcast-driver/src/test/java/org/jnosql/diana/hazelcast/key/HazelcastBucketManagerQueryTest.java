@@ -15,8 +15,8 @@
 package org.jnosql.diana.hazelcast.key;
 
 import com.hazelcast.query.Predicate;
-import org.jnosql.diana.api.Value;
-import org.jnosql.diana.api.key.BucketManagerFactory;
+import jakarta.nosql.Value;
+import jakarta.nosql.key.BucketManagerFactory;
 import org.jnosql.diana.hazelcast.key.model.Movie;
 import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,8 +38,6 @@ public class HazelcastBucketManagerQueryTest {
     private HazelcastBucketManager bucketManager;
 
     private BucketManagerFactory keyValueEntityManagerFactory;
-
-
 
     @BeforeEach
     public void init() {
