@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import com.mongodb.async.client.MongoClient;
 import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;

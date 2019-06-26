@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoCredential;
@@ -25,10 +25,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.PASSWORD;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.USER;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.PASSWORD;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.USER;
 
 final class MongoAuthentication {
 

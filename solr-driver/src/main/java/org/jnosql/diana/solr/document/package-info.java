@@ -12,8 +12,8 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
 
-public enum ContactType {
-    EMAIL, MOBILE, PHONE
-}
+/**
+ * The solr document implementation
+ */
+package org.jnosql.diana.solr.document;

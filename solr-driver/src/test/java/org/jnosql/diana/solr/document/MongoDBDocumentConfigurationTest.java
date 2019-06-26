@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
@@ -31,7 +31,7 @@ public class MongoDBDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("mongodb-server-host-1", "172.17.0.2:27017");
+        map.put("solr-server-host-1", "172.17.0.2:27017");
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get(map);
         assertNotNull(managerFactory);

@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -31,13 +31,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfiguration.FILE_CONFIGURATION;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfiguration.FILE_CONFIGURATION;
 
 /**
  * The MongoDB implementation to {@link DocumentConfigurationAsync}
  * that returns {@link MongoDBDocumentCollectionManagerAsyncFactory}.
- * It tries to read the diana-mongodb.properties file whose has the following properties
- * <p>mongodb.server.host.: as prefix to add host client, eg: mongodb.server.host.1=host1, mongodb.server.host.2= host2</p>
+ * It tries to read the diana-solr.properties file whose has the following properties
+ * <p>solr.server.host.: as prefix to add host client, eg: solr.server.host.1=host1, solr.server.host.2= host2</p>
  */
 public class MongoDBDocumentConfigurationAsync implements DocumentConfigurationAsync {
 

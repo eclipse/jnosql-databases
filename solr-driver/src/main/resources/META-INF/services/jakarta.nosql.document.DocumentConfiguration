@@ -1,1 +1,1 @@
-org.jnosql.diana.mongodb.document.MongoDBDocumentConfiguration
+org.jnosql.diana.solr.document.MongoDBDocumentConfiguration

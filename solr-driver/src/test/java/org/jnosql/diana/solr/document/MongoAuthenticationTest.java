@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoCredential;
@@ -26,10 +26,10 @@ import static com.mongodb.AuthenticationMechanism.GSSAPI;
 import static com.mongodb.AuthenticationMechanism.PLAIN;
 import static com.mongodb.AuthenticationMechanism.SCRAM_SHA_1;
 import static com.mongodb.AuthenticationMechanism.SCRAM_SHA_256;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.PASSWORD;
-import static org.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.USER;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.PASSWORD;
+import static org.jnosql.diana.solr.document.MongoDBDocumentConfigurations.USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

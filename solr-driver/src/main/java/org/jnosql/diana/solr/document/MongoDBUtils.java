@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import org.bson.Document;
 import org.bson.types.Binary;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Otávio Santana and others
+ *  Copyright (c) 2019 Otávio Santana and others
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -13,10 +13,25 @@
  *   Otavio Santana
  */
 
+package org.jnosql.diana.solr.document;
+
+import java.util.function.Supplier;
+
 /**
- * MongoDB (from humongous) is a free and open-source cross-platform document-oriented database program.
- * Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
- * MongoDB is developed by MongoDB Inc. and is free and open-source, published under
- * a combination of the GNU Affero General Public License and the Apache License.
+ * Use {@link MongoDBDocumentConfigurations}
  */
-package org.jnosql.diana.mongodb;
+@Deprecated
+public enum OldMongoDBDocumentConfigurations implements Supplier<String> {
+    HOST("solr-server-host-");
+
+    private final String configuration;
+
+    OldMongoDBDocumentConfigurations(String configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public String get() {
+        return configuration;
+    }
+}

@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -38,11 +38,11 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
-import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
+import static org.jnosql.diana.solr.document.MongoDBUtils.ID_FIELD;
+import static org.jnosql.diana.solr.document.MongoDBUtils.getDocument;
 
 /**
- * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
+ * The solr implementation to {@link DocumentCollectionManager} that does not support TTL methods
  * <p>{@link MongoDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
  */
 public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {

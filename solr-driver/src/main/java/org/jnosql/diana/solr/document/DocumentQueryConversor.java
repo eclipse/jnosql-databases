@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 
 import com.mongodb.client.model.Filters;

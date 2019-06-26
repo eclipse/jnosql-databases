@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 
 import com.mongodb.Block;
@@ -41,11 +41,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
-import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
-import static org.jnosql.diana.mongodb.document.MongoDBUtils.getDocument;
+import static org.jnosql.diana.solr.document.MongoDBUtils.ID_FIELD;
+import static org.jnosql.diana.solr.document.MongoDBUtils.getDocument;
 
 /**
- * The mongodb implementation of {@link DocumentCollectionManagerAsync} whose does not support the TTL methods:
+ * The solr implementation of {@link DocumentCollectionManagerAsync} whose does not support the TTL methods:
  * <p>{@link MongoDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration)}</p>
  * <p>{@link MongoDBDocumentCollectionManagerAsync#insert(DocumentEntity, Duration, Consumer)}</p>
  */

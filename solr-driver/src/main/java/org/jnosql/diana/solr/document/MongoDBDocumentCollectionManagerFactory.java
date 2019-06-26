@@ -13,13 +13,13 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import com.mongodb.MongoClient;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 /**
- * The mongodb implementation to {@link DocumentCollectionManagerFactory}
+ * The solr implementation to {@link DocumentCollectionManagerFactory}
  */
 public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 

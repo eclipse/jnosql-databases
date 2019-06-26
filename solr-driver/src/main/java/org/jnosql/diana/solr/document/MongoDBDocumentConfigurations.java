@@ -13,15 +13,15 @@
  *   Otavio Santana
  */
 
-package org.jnosql.diana.mongodb.document;
+package org.jnosql.diana.solr.document;
 
 import java.util.function.Supplier;
 
 public enum MongoDBDocumentConfigurations implements Supplier<String> {
-    HOST("mongodb.host"), USER("mongodb.user"),
-    PASSWORD("mongodb.password"),
-    AUTHENTICATION_SOURCE("mongodb.authentication.source"),
-    AUTHENTICATION_MECHANISM("mongodb.authentication.mechanism");
+    HOST("solr.host"), USER("solr.user"),
+    PASSWORD("solr.password"),
+    AUTHENTICATION_SOURCE("solr.authentication.source"),
+    AUTHENTICATION_MECHANISM("solr.authentication.mechanism");
 
     private final String configuration;
 
