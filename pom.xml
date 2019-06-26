@@ -54,6 +54,7 @@
         <module>redis-driver</module>
         <module>riak-driver</module>
         <module>dynamodb-driver</module>
+        <module>solr-driver</module>
     </modules>
 
     <dependencies>
