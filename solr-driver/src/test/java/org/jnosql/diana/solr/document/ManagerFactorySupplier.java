@@ -39,7 +39,7 @@ public enum ManagerFactorySupplier  {
 
     public MongoDBDocumentCollectionManager get(String database) {
         Settings settings = getSettings();
-        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
         MongoDBDocumentCollectionManagerFactory factory = configuration.get(settings);
         return factory.get(database);
     }

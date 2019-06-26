@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDBDocumentCollectionManagerFactoryTest {
 
-    private static MongoDBDocumentConfiguration configuration;
+    private static SolrDocumentConfiguration configuration;
     private static MongoDBDocumentConfigurationAsync configurationAsync;
 
     @BeforeAll
     public static void setUp() throws IOException {
-        configuration = new MongoDBDocumentConfiguration();
+        configuration = new SolrDocumentConfiguration();
         configurationAsync = new MongoDBDocumentConfigurationAsync();
     }
 

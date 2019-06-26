@@ -15,8 +15,11 @@
 
 package org.jnosql.diana.solr.document;
 
+import jakarta.nosql.Settings;
+import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,49 +29,57 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDBDocumentConfigurationTest {
+public class SolrDocumentConfigurationAsyncTest {
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
         Map<String, String> map = new HashMap<>();
         map.put("solr-server-host-1", "172.17.0.2:27017");
-        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get(map);
         assertNotNull(managerFactory);
     }
 
     @Test
+    public void shouldCreateSettings() {
+        Settings settings = Settings.builder().put("solr-server-host-1", "172.17.0.2:27017").build();
+        MongoDBDocumentConfigurationAsync configuration = new MongoDBDocumentConfigurationAsync();
+        DocumentCollectionManagerAsyncFactory managerFactory = configuration.get(settings);
+        assertNotNull(managerFactory);
+    }
+
+    @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
-        DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        DocumentConfiguration configuration = new SolrDocumentConfiguration();
         DocumentCollectionManagerFactory managerFactory = configuration.get();
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldReturnErrorWhendSettingsIsNull() {
-        DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        DocumentConfiguration configuration = new SolrDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.get(null));
     }
 
     @Test
-    public void shouldReturnErrorWhendMapSettingsIsNull() {
-        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+    public void shouldReturnErrorWhenMapSettingsIsNull() {
+        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
     }
 
     @Test
     public void shouldReturnFromConfiguration() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfiguration);
+        Assertions.assertTrue(configuration instanceof DocumentConfigurationAsync);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        MongoDBDocumentConfiguration configuration = DocumentConfiguration
-                .getConfiguration(MongoDBDocumentConfiguration.class);
+        MongoDBDocumentConfigurationAsync configuration = DocumentConfigurationAsync
+                .getConfiguration(MongoDBDocumentConfigurationAsync.class);
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof MongoDBDocumentConfiguration);
+        Assertions.assertTrue(configuration instanceof MongoDBDocumentConfigurationAsync);
     }
 
 }
