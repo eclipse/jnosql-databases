@@ -16,21 +16,11 @@
 package org.jnosql.diana.solr.document;
 
 
-import com.mongodb.client.model.Filters;
-import org.bson.conversions.Bson;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import org.jnosql.diana.driver.ValueUtil;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 final class DocumentQueryConversor {
 
     private DocumentQueryConversor() {
     }
-
+/*
     public static Bson convert(DocumentCondition condition) {
         Document document = condition.getDocument();
         Object value = ValueUtil.convert(document.getValue());
@@ -66,7 +56,7 @@ final class DocumentQueryConversor {
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
                         + " is not supported from mongoDB diana driver");
         }
-    }
+    }*/
 
 
 }

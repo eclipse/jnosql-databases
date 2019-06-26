@@ -20,22 +20,10 @@ import jakarta.nosql.document.DocumentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SolrDocumentConfigurationTest {
-
-    @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
-        Map<String, String> map = new HashMap<>();
-        map.put("solr-server-host-1", "172.17.0.2:27017");
-        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get(map);
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
@@ -50,11 +38,6 @@ public class SolrDocumentConfigurationTest {
         assertThrows(NullPointerException.class, () -> configuration.get(null));
     }
 
-    @Test
-    public void shouldReturnErrorWhendMapSettingsIsNull() {
-        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
-        assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
-    }
 
     @Test
     public void shouldReturnFromConfiguration() {
