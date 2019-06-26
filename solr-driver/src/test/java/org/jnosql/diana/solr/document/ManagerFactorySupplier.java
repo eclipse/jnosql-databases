@@ -16,46 +16,17 @@
 package org.jnosql.diana.solr.document;
 
 
-import jakarta.nosql.Settings;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentConfiguration;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
-public enum ManagerFactorySupplier  {
+public enum ManagerFactorySupplier {
 
     INSTANCE;
 
-    private final GenericContainer mongodb =
-            new GenericContainer("mongo:latest")
-                    .withExposedPorts(27017)
-                    .waitingFor(Wait.defaultWaitStrategy());
-
-    {
-        mongodb.start();
+    public DocumentCollectionManager get(String database) {
+        DocumentConfiguration configuration = new SolrDocumentConfiguration();
+        final DocumentCollectionManagerFactory managerFactory = configuration.get();
+        return managerFactory.get(database);
     }
-
-    public SolrBDocumentCollectionManager get(String database) {
-        Settings settings = getSettings();
-        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
-        SolrDocumentCollectionManagerFactory factory = configuration.get(settings);
-        return factory.get(database);
-    }
-
-    public MongoDBDocumentCollectionManagerAsync getAsync(String database) {
-        Settings settings = getSettings();
-        MongoDBDocumentConfigurationAsync configuration = new MongoDBDocumentConfigurationAsync();
-        MongoDBDocumentCollectionManagerAsyncFactory factory = configuration.get(settings);
-        return factory.getAsync(database);
-    }
-
-    private Settings getSettings() {
-        Map<String,Object> settings = new HashMap<>();
-        String host = mongodb.getContainerIpAddress() + ":" + mongodb.getFirstMappedPort();
-        settings.put("mongodb.host.1", host);
-        return Settings.of(settings);
-    }
-
 }
