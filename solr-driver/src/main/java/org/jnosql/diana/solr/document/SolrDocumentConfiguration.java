@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The Apache Solr implementation to {@link DocumentConfiguration}
- * that returns  {@link MongoDBDocumentCollectionManagerFactory}
+ * that returns  {@link SolrDocumentCollectionManagerFactory}
  * It tries to read the diana-solr.properties file whose has the following properties
  * <p>solr.server.host.: as prefix to add host client, eg: solr.server.host.1=host1, solr.server.host.2= host2</p>
  */
@@ -42,35 +42,35 @@ public class SolrDocumentConfiguration implements DocumentConfiguration {
     private static final String DEFAULT_HOST = "http://localhost:8983/solr/";
 
     /**
-     * Creates a {@link MongoDBDocumentCollectionManagerFactory} from mongoClient
+     * Creates a {@link SolrDocumentCollectionManagerFactory} from mongoClient
      *
      * @param solrClient the mongo client {@link HttpSolrClient}
-     * @return a MongoDBDocumentCollectionManagerFactory instance
+     * @return a SolrDocumentCollectionManagerFactory instance
      * @throws NullPointerException when the mongoClient is null
      */
-    public MongoDBDocumentCollectionManagerFactory get(HttpSolrClient solrClient) throws NullPointerException {
+    public SolrDocumentCollectionManagerFactory get(HttpSolrClient solrClient) throws NullPointerException {
         requireNonNull(solrClient, "solrClient is required");
-        return new MongoDBDocumentCollectionManagerFactory(solrClient);
+        return new SolrDocumentCollectionManagerFactory(solrClient);
     }
 
     @Override
-    public MongoDBDocumentCollectionManagerFactory get() {
+    public SolrDocumentCollectionManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
         return get(Settings.of(new HashMap<>(configuration)));
 
     }
 
     @Override
-    public MongoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public SolrDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
 
-        String host = settings.get(Arrays.asList(MongoDBDocumentConfigurations.HOST.get(),
+        String host = settings.get(Arrays.asList(SolrDocumentConfigurations.HOST.get(),
                         Configurations.HOST.get())).map(Object::toString).orElse(DEFAULT_HOST);
 
         final HttpSolrClient solrClient = new HttpSolrClient.Builder(host).build();
         solrClient.setParser(new XMLResponseParser());
-        return new MongoDBDocumentCollectionManagerFactory(solrClient);
+        return new SolrDocumentCollectionManagerFactory(solrClient);
 
     }
 

@@ -14,13 +14,14 @@
  */
 package org.jnosql.diana.solr.document;
 
-import org.bson.Document;
-import org.bson.types.Binary;
 import jakarta.nosql.Value;
+import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
+import org.apache.solr.common.SolrInputDocument;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,34 +33,34 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
-final class MongoDBUtils {
+final class SolrUtils {
     static final String ID_FIELD = "_id";
 
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> MongoDBUtils.convert(cast(d).getValue());
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> SolrUtils.convert(cast(d).getValue());
 
-    private MongoDBUtils() {
+    private SolrUtils() {
     }
 
-    static Document getDocument(DocumentEntity entity) {
-        Document document = new Document();
-        entity.getDocuments().stream().forEach(d -> document.append(d.getName(), convert(d.getValue())));
+    static SolrInputDocument getDocument(DocumentEntity entity) {
+        SolrInputDocument document = new SolrInputDocument();
+        entity.getDocuments().stream().forEach(d -> document.addField(d.getName(), convert(d.getValue())));
         return document;
     }
 
     private static Object convert(Value value) {
         Object val = ValueUtil.convert(value);
-        if (val instanceof jakarta.nosql.document.Document) {
+        if (val instanceof Document) {
             jakarta.nosql.document.Document subDocument = (jakarta.nosql.document.Document) val;
             Object converted = convert(subDocument.getValue());
-            return new Document(subDocument.getName(), converted);
+            return Collections.singletonMap(subDocument.getName(), converted);
         }
         if (isSudDocument(val)) {
             return getMap(val);
         }
         if (isSudDocumentList(val)) {
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .map(MongoDBUtils::getMap).collect(toList());
+                    .map(SolrUtils::getMap).collect(toList());
         }
         return val;
     }
@@ -74,9 +75,9 @@ final class MongoDBUtils {
         return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
     }
 
-    private static jakarta.nosql.document.Document getDocument(String key, Object value) {
+    private static Document getDocument(String key, Object value) {
         if (value instanceof Document) {
-            return jakarta.nosql.document.Document.of(key, of(Document.class.cast(value)));
+            //return Document.of(key, of(Document.class.cast(value)));
         } else if (isDocumentIterable(value)) {
             List<List<jakarta.nosql.document.Document>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
@@ -86,15 +87,9 @@ final class MongoDBUtils {
             return jakarta.nosql.document.Document.of(key, documents);
         }
 
-        return jakarta.nosql.document.Document.of(key, Value.of(convertValue(value)));
+        return Document.of(key, Value.of(value));
     }
 
-    private static Object convertValue(Object value) {
-        if (value instanceof Binary) {
-            return Binary.class.cast(value).getData();
-        }
-        return value;
-    }
 
     private static boolean isDocumentIterable(Object value) {
         return value instanceof Iterable &&

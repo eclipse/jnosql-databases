@@ -26,7 +26,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDBDocumentCollectionManagerFactoryTest {
+public class SolrDocumentCollectionManagerFactoryTest {
 
     private static SolrDocumentConfiguration configuration;
     private static MongoDBDocumentConfigurationAsync configurationAsync;
@@ -39,7 +39,7 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        MongoDBDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
+        SolrDocumentCollectionManagerFactory mongoDBFactory = configuration.get();
         assertNotNull(mongoDBFactory.get("database"));
     }
 

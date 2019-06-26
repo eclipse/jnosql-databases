@@ -15,36 +15,30 @@
 
 package org.jnosql.diana.solr.document;
 
-import com.mongodb.MongoClient;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+
+import java.util.Objects;
 
 /**
  * The solr implementation to {@link DocumentCollectionManagerFactory}
  */
-public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
+public class SolrDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 
-    private final MongoClient mongoClient;
+    private final HttpSolrClient solrClient;
 
-    MongoDBDocumentCollectionManagerFactory(MongoClient mongoClient) {
-        this.mongoClient = mongoClient;
+    SolrDocumentCollectionManagerFactory(HttpSolrClient solrClient) {
+        this.solrClient = solrClient;
     }
 
     @Override
-    public MongoDBDocumentCollectionManager get(String database) {
-        return new MongoDBDocumentCollectionManager(mongoClient.getDatabase(database));
+    public SolrBDocumentCollectionManager get(String database) {
+        Objects.requireNonNull(database, "database is required");
+        return new SolrBDocumentCollectionManager(solrClient);
     }
 
 
     @Override
     public void close() {
-        mongoClient.close();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("MongoDBDocumentCollectionManagerFactory{");
-        sb.append("mongoClient=").append(mongoClient);
-        sb.append('}');
-        return sb.toString();
     }
 }

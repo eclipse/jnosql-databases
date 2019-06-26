@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDBDocumentCollectionManagerTest {
+public class SolrBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     private static DocumentCollectionManager entityManager;

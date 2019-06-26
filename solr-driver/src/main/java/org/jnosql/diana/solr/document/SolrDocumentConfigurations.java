@@ -17,14 +17,14 @@ package org.jnosql.diana.solr.document;
 
 import java.util.function.Supplier;
 
-public enum MongoDBDocumentConfigurations implements Supplier<String> {
+public enum SolrDocumentConfigurations implements Supplier<String> {
     HOST("solr.host"),
     USER("solr.user"),
     PASSWORD("solr.password");
 
     private final String configuration;
 
-    MongoDBDocumentConfigurations(String configuration) {
+    SolrDocumentConfigurations(String configuration) {
         this.configuration = configuration;
     }
 
