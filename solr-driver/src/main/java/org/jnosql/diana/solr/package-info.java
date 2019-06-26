@@ -14,9 +14,11 @@
  */
 
 /**
- * MongoDB (from humongous) is a free and open-source cross-platform document-oriented database program.
- * Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
- * MongoDB is developed by MongoDB Inc. and is free and open-source, published under
- * a combination of the GNU Affero General Public License and the Apache License.
+ * Solr is an open-source enterprise-search platform, written in Java,
+ * from the Apache Lucene project. Its major features include full-text search, hit highlighting,
+ * faceted search, real-time indexing, dynamic clustering, database integration, NoSQL features and rich document
+ * (e.g., Word, PDF) handling. Providing distributed search and index replication, Solr is designed
+ * for scalability and fault tolerance. Solr is widely used for enterprise search and analytics use
+ * cases and has an active development community and regular releases.
  */
 package org.jnosql.diana.solr;
