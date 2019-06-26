@@ -53,7 +53,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
 
         final SolrInputDocument document = getDocument(entity);
         try {
-            solrClient.add(entity.getName(), document);
+            solrClient.add(document);
         } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
