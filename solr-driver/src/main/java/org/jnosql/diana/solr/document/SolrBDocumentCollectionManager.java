@@ -18,10 +18,31 @@ import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The solr implementation to {@link DocumentCollectionManager} that does not support TTL methods
  * <p>{@link DefaultSolrBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
  */
-public interface SolrBDocumentCollectionManager  extends DocumentCollectionManager {
+public interface SolrBDocumentCollectionManager extends DocumentCollectionManager {
+
+    /**
+     * Executes a Solr native query
+     *
+     * @param query the query
+     * @return the result
+     * @throws NullPointerException when query is null
+     */
+    List<DocumentEntity> solr(String query);
+
+    /**
+     * Executes a Solr native query with params.
+     *
+     * @param query  the query
+     * @param params the params
+     * @return the result
+     * @throws NullPointerException when there is null parameter
+     */
+    List<DocumentEntity> solr(String query, Map<String, Object> params);
 }
