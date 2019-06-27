@@ -151,12 +151,14 @@ public class SolrBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        final DocumentEntity result = entities.get(0);
+        assertEquals(entity.find("name").get(), result.find("name").get());
+        assertEquals(entity.find("city").get(), result.find("city").get());
     }
 
     @Test
     public void shouldFindDocumentGreaterThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -173,7 +175,7 @@ public class SolrBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentGreaterEqualsThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -190,7 +192,7 @@ public class SolrBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentLesserThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -207,7 +209,7 @@ public class SolrBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentLesserEqualsThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -224,13 +226,13 @@ public class SolrBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentLike() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where("name").like("Lu")
+                .where("name").like("Lu*")
                 .and("type").eq("V")
                 .build();
 
@@ -241,7 +243,7 @@ public class SolrBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentIn() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -256,7 +258,7 @@ public class SolrBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentStart() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -284,7 +286,7 @@ public class SolrBDocumentCollectionManagerTest {
 
     @Test
     public void shouldFindDocumentLimit() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -307,12 +309,12 @@ public class SolrBDocumentCollectionManagerTest {
 
         entitiesFound = entityManager.select(query);
         assertEquals(2, entitiesFound.size());
-
+        entityManager.delete(deleteQuery);
     }
 
     @Test
     public void shouldFindDocumentSort() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
@@ -324,12 +326,11 @@ public class SolrBDocumentCollectionManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertEquals(2, entitiesFound.size());
         List<Integer> ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
 
-        assertThat(ages, contains(23, 25));
+        assertThat(ages, contains(22, 23, 25));
 
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -341,8 +342,7 @@ public class SolrBDocumentCollectionManagerTest {
         ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
-        assertEquals(2, entitiesFound.size());
-        assertThat(ages, contains(25, 23));
+        assertThat(ages, contains(25, 23, 22));
 
     }
 
@@ -387,28 +387,6 @@ public class SolrBDocumentCollectionManagerTest {
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
         assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
-    }
-
-    @Test
-    public void shouldCreateEntityByteArray() {
-        byte[] contents = {1, 2, 3, 4, 5, 6};
-
-        DocumentEntity entity = DocumentEntity.of("download");
-        long id = ThreadLocalRandom.current().nextLong();
-        entity.add(ID, id);
-        entity.add("contents", contents);
-
-        entityManager.insert(entity);
-
-        List<DocumentEntity> entities = entityManager.select(select().from("download")
-                .where(ID).eq(id).build());
-
-        assertEquals(1, entities.size());
-        DocumentEntity documentEntity = entities.get(0);
-        assertEquals(id, documentEntity.find(ID).get().get());
-
-        assertTrue(Arrays.equals(contents, (byte[]) documentEntity.find("contents").get().get()));
-
     }
 
     @Test

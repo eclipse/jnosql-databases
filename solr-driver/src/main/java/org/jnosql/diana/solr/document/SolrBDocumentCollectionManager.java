@@ -113,6 +113,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
             solrClient.deleteByQuery(query.getCondition()
                     .map(DocumentQueryConversor::convert)
                     .orElse(SELECT_ALL_QUERY));
+            commit();
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to delete at Solr", e);
         }
@@ -130,7 +131,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
                 solrQuery.setStart((int) query.getSkip());
             }
             if (query.getLimit() > 0) {
-                solrQuery.setRows((int) query.getSkip());
+                solrQuery.setRows((int) query.getLimit());
             }
             final List<SortClause> sorts = query.getSorts().stream()
                     .map(s -> new SortClause(s.getName(), s.getType().name().toLowerCase(Locale.US)))

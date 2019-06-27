@@ -35,6 +35,7 @@ final class DocumentQueryConversor {
 
         switch (condition.getCondition()) {
             case EQUALS:
+            case LIKE:
                 return document.getName() + ':' + value;
             case GREATER_EQUALS_THAN:
             case GREATER_THAN:
