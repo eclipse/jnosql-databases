@@ -19,8 +19,11 @@ import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.jnosql.diana.SettingsPriority;
 
@@ -55,7 +58,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
         try {
             solrClient.add(document);
         } catch (SolrServerException | IOException e) {
-            e.printStackTrace();
+            throw new SolrException("Error to insert/update a information", e);
         }
 
         if (isAutomaticCommit()) {
@@ -112,6 +115,20 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
+        try {
+            SolrQuery solrQuery = new SolrQuery();
+            if (query.getSkip() > 0) {
+                solrQuery.setStart((int) query.getSkip());
+            }
+            if (query.getLimit() > 0) {
+                solrQuery.setRows((int) query.getSkip());
+            }
+            final QueryResponse response = solrClient.query(solrQuery);
+            final SolrDocumentList documents = response.getResults();
+
+        } catch (SolrServerException | IOException e) {
+            throw new SolrException("Error to query at Solr", e);
+        }
         return Collections.emptyList();
 
     }
@@ -131,7 +148,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
         try {
             solrClient.commit();
         } catch (SolrServerException | IOException e) {
-            throw new RuntimeException(e);
+            throw new SolrException("Error to commit at Solr", e);
         }
 
     }

@@ -56,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SolrBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
+    public static final String ID = "id";
     private static DocumentCollectionManager entityManager;
 
     @BeforeAll
@@ -67,7 +68,7 @@ public class SolrBDocumentCollectionManagerTest {
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
+        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals(ID)));
     }
 
     @Test
@@ -78,7 +79,7 @@ public class SolrBDocumentCollectionManagerTest {
     @Test
     public void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         DocumentEntity updated = entityManager.update(entity);
@@ -89,11 +90,11 @@ public class SolrBDocumentCollectionManagerTest {
     public void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
-        Optional<Document> id = documentEntity.find("_id");
+        Optional<Document> id = documentEntity.find(ID);
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where("_id").eq(id.get().get())
+                .where(ID).eq(id.get().get())
                 .build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("_id")
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(ID)
                 .eq(id.get().get())
                 .build();
 
@@ -104,10 +105,10 @@ public class SolrBDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("_id");
+        Optional<Document> id = entity.find(ID);
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where("_id").eq(id.get().get())
+                .where(ID).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);
@@ -119,11 +120,11 @@ public class SolrBDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocument2() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("_id");
+        Optional<Document> id = entity.find(ID);
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
-                .and("city").eq("Salvador").and("_id").eq(id.get().get())
+                .and("city").eq("Salvador").and(ID).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query);
@@ -134,7 +135,7 @@ public class SolrBDocumentCollectionManagerTest {
     @Test
     public void shouldFindDocument3() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("_id");
+        Optional<Document> id = entity.find(ID);
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
@@ -352,9 +353,9 @@ public class SolrBDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
+        Document id = entitySaved.find(ID).get();
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where("_id").eq(id.get())
+                .where(ID).eq(id.get())
                 .build();
 
         DocumentEntity entityFound = entityManager.select(query).get(0);
@@ -369,7 +370,7 @@ public class SolrBDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
+        Document id = entitySaved.find(ID).get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where(id.getName()).eq(id.get())
@@ -387,17 +388,17 @@ public class SolrBDocumentCollectionManagerTest {
 
         DocumentEntity entity = DocumentEntity.of("download");
         long id = ThreadLocalRandom.current().nextLong();
-        entity.add("_id", id);
+        entity.add(ID, id);
         entity.add("contents", contents);
 
         entityManager.insert(entity);
 
         List<DocumentEntity> entities = entityManager.select(select().from("download")
-                .where("_id").eq(id).build());
+                .where(ID).eq(id).build());
 
         assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);
-        assertEquals(id, documentEntity.find("_id").get().get());
+        assertEquals(id, documentEntity.find(ID).get().get());
 
         assertTrue(Arrays.equals(contents, (byte[]) documentEntity.find("contents").get().get()));
 
@@ -410,18 +411,18 @@ public class SolrBDocumentCollectionManagerTest {
 
         DocumentEntity entity = DocumentEntity.of("download");
         long id = ThreadLocalRandom.current().nextLong();
-        entity.add("_id", id);
+        entity.add(ID, id);
         entity.add("date", date);
         entity.add("now", now);
 
         entityManager.insert(entity);
 
         List<DocumentEntity> entities = entityManager.select(select().from("download")
-                .where("_id").eq(id).build());
+                .where(ID).eq(id).build());
 
         assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);
-        assertEquals(id, documentEntity.find("_id").get().get());
+        assertEquals(id, documentEntity.find(ID).get().get());
         assertEquals(date, documentEntity.find("date").get().get(Date.class));
         assertEquals(now, documentEntity.find("date").get().get(LocalDate.class));
 
@@ -438,7 +439,7 @@ public class SolrBDocumentCollectionManagerTest {
     @Test
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
-        Document key = entity.find("_id").get();
+        Document key = entity.find(ID).get();
         DocumentQuery query = select().from("AppointmentBook")
                 .where(key.getName())
                 .eq(key.get()).build();
@@ -460,7 +461,7 @@ public class SolrBDocumentCollectionManagerTest {
 
     private DocumentEntity createSubdocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
-        entity.add(Document.of("_id", new Random().nextInt()));
+        entity.add(Document.of(ID, new Random().nextInt()));
         List<List<Document>> documents = new ArrayList<>();
 
         documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.EMAIL),
@@ -482,6 +483,7 @@ public class SolrBDocumentCollectionManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
+        map.put(ID, ThreadLocalRandom.current().nextLong());
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;

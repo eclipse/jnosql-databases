@@ -16,34 +16,40 @@
 package org.jnosql.diana.solr.document;
 
 
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCondition;
+import org.jnosql.diana.driver.ValueUtil;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 final class DocumentQueryConversor {
 
     private DocumentQueryConversor() {
     }
-/*
-    public static Bson convert(DocumentCondition condition) {
+
+    public static String convert(DocumentCondition condition) {
         Document document = condition.getDocument();
         Object value = ValueUtil.convert(document.getValue());
+
         switch (condition.getCondition()) {
             case EQUALS:
-                return Filters.eq(document.getName(), value);
-            case GREATER_THAN:
-                return Filters.gt(document.getName(), value);
+                return document.getName() + ':' + value;
             case GREATER_EQUALS_THAN:
-                return Filters.gte(document.getName(), value);
-            case LESSER_THAN:
-                return Filters.lt(document.getName(), value);
+                return document.getName() + ":[" + value + " TO *]";
             case LESSER_EQUALS_THAN:
-                return Filters.lte(document.getName(), value);
+                return document.getName() + ":[* TO " + value + "]";
             case IN:
-                List<Object> inList = ValueUtil.convertToList(document.getValue());
-                return Filters.in(document.getName(), inList.toArray());
+                final String inConditions = ValueUtil.convertToList(document.getValue())
+                        .stream()
+                        .map(Object::toString).collect(Collectors.joining(" OR "));
+                return document.getName() + ":(" + inConditions + ')';
             case NOT:
-                return Filters.not(convert(document.get(DocumentCondition.class)));
-            case LIKE:
-                return Filters.regex(document.getName(), value.toString());
+                return '-' + convert(document.get(DocumentCondition.class));
+        /*
             case AND:
-                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
+                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<T>() {
                 });
                 return Filters.and(andList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
@@ -51,12 +57,12 @@ final class DocumentQueryConversor {
                 List<DocumentCondition> orList = condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
                 });
                 return Filters.or(orList.stream()
-                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
+                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));*/
             default:
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
                         + " is not supported from mongoDB diana driver");
         }
-    }*/
+    }
 
 
 }
