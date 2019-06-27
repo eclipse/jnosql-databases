@@ -124,9 +124,10 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
         Objects.requireNonNull(query, "query is required");
         try {
             SolrQuery solrQuery = new SolrQuery();
-            solrQuery.set("q", query.getCondition()
+            final String queryExpression = query.getCondition()
                     .map(DocumentQueryConversor::convert)
-                    .orElse(SELECT_ALL_QUERY));
+                    .orElse(SELECT_ALL_QUERY);
+            solrQuery.set("q", queryExpression);
             if (query.getSkip() > 0) {
                 solrQuery.setStart((int) query.getSkip());
             }
