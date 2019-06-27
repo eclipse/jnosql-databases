@@ -44,5 +44,5 @@ public interface SolrBDocumentCollectionManager extends DocumentCollectionManage
      * @return the result
      * @throws NullPointerException when there is null parameter
      */
-    List<DocumentEntity> solr(String query, Map<String, Object> params);
+    List<DocumentEntity> solr(String query, Map<String, ? extends Object> params);
 }

@@ -16,16 +16,14 @@
 package org.jnosql.diana.solr.document;
 
 
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
-import jakarta.nosql.document.DocumentConfiguration;
 
 public enum ManagerFactorySupplier {
 
     INSTANCE;
 
-    public DocumentCollectionManager get(String database) {
-        DocumentConfiguration configuration = new SolrDocumentConfiguration();
+    public SolrBDocumentCollectionManager get(String database) {
+        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
         final DocumentCollectionManagerFactory managerFactory = configuration.get();
         return managerFactory.get(database);
     }

@@ -53,7 +53,7 @@ public class DefaultSolrBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     public static final String ID = "id";
-    private static DocumentCollectionManager entityManager;
+    private static SolrBDocumentCollectionManager entityManager;
 
     @BeforeAll
     public static void setUp() {
@@ -165,7 +165,7 @@ public class DefaultSolrBDocumentCollectionManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 3);
+        assertEquals(3, entitiesFound.size());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class DefaultSolrBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").not().eq("Lucas").build();
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
     }
 
     @Test
@@ -192,7 +192,7 @@ public class DefaultSolrBDocumentCollectionManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
 
@@ -239,7 +239,7 @@ public class DefaultSolrBDocumentCollectionManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
     }
 
     @Test
@@ -345,6 +345,32 @@ public class DefaultSolrBDocumentCollectionManagerTest {
                 .collect(Collectors.toList());
         assertThat(ages, contains(25, 23, 22));
 
+    }
+
+    @Test
+    public void shouldExecuteNativeQuery() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+        entityManager.insert(getEntitiesWithValues());
+
+        List<DocumentEntity> entitiesFound = entityManager.solr("age:22 AND type:V AND _entity:person");
+        assertEquals(1, entitiesFound.size());
+    }
+
+    @Test
+    public void shouldExecuteNativeQueryParams() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+        entityManager.insert(getEntitiesWithValues());
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("age", 22);
+        params.put("type", "V");
+        params.put("entity", "person");
+
+        List<DocumentEntity> entitiesFound = entityManager.solr("age:@age AND type:@type AND _entity:@entity"
+                , params);
+        assertEquals(1, entitiesFound.size());
     }
 
     @Test

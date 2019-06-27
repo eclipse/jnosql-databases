@@ -15,7 +15,6 @@
 
 package org.jnosql.diana.solr.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
@@ -32,6 +31,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 
@@ -153,7 +154,7 @@ class DefaultSolrBDocumentCollectionManager implements SolrBDocumentCollectionMa
             final QueryResponse response = solrClient.query(solrQuery);
             return response.getResults().getNumFound();
         } catch (SolrServerException | IOException e) {
-            throw new SolrException("Error to query at Solr", e);
+            throw new SolrException("Error to execute count at Solr", e);
         }
     }
 
@@ -179,4 +180,29 @@ class DefaultSolrBDocumentCollectionManager implements SolrBDocumentCollectionMa
     }
 
 
+    @Override
+    public List<DocumentEntity> solr(String query) {
+        Objects.requireNonNull(query, "query is required");
+
+        try {
+            SolrQuery solrQuery = new SolrQuery();
+            solrQuery.set("q", query);
+            final QueryResponse response = solrClient.query(solrQuery);
+            final SolrDocumentList documents = response.getResults();
+            return SolrUtils.of(documents);
+        } catch (SolrServerException | IOException e) {
+            throw new SolrException("Error to execute native query at Solr query: " + query, e);
+        }
+    }
+
+    @Override
+    public List<DocumentEntity> solr(String query, Map<String, ? extends Object> params) {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(params, "params is required");
+        String nativeQuery = query;
+        for (Entry<String, ? extends Object> entry : params.entrySet()) {
+            nativeQuery = nativeQuery.replace('@' + entry.getKey(), entry.getValue().toString());
+        }
+        return solr(nativeQuery);
+    }
 }
