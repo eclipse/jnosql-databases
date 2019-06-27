@@ -16,10 +16,12 @@
 package org.jnosql.diana.solr.document;
 
 
+import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
 import org.jnosql.diana.driver.ValueUtil;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 final class DocumentQueryConversor {
@@ -35,8 +37,10 @@ final class DocumentQueryConversor {
             case EQUALS:
                 return document.getName() + ':' + value;
             case GREATER_EQUALS_THAN:
+            case GREATER_THAN:
                 return document.getName() + ":[" + value + " TO *]";
             case LESSER_EQUALS_THAN:
+            case LESSER_THAN:
                 return document.getName() + ":[* TO " + value + "]";
             case IN:
                 final String inConditions = ValueUtil.convertToList(document.getValue())
@@ -45,22 +49,24 @@ final class DocumentQueryConversor {
                 return document.getName() + ":(" + inConditions + ')';
             case NOT:
                 return '-' + convert(document.get(DocumentCondition.class));
-        /*
+
             case AND:
-                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<T>() {
-                });
-                return Filters.and(andList.stream()
-                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
+                return getDocumentConditions(condition).stream()
+                        .map(DocumentQueryConversor::convert)
+                        .collect(Collectors.joining(" AND "));
             case OR:
-                List<DocumentCondition> orList = condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
-                });
-                return Filters.or(orList.stream()
-                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));*/
+                return getDocumentConditions(condition).stream()
+                        .map(DocumentQueryConversor::convert)
+                        .collect(Collectors.joining(" OR "));
             default:
                 throw new UnsupportedOperationException("The condition " + condition.getCondition()
                         + " is not supported from mongoDB diana driver");
         }
     }
 
+    private static List<DocumentCondition> getDocumentConditions(DocumentCondition condition) {
+        return condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
+        });
+    }
 
 }
