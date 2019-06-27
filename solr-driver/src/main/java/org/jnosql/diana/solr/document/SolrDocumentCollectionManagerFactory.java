@@ -35,7 +35,7 @@ public class SolrDocumentCollectionManagerFactory implements DocumentCollectionM
     public SolrBDocumentCollectionManager get(String database) {
         Objects.requireNonNull(database, "database is required");
         final String baseURL = solrClient.getBaseURL() + '/' + database;
-        return new SolrBDocumentCollectionManager(new HttpSolrClient.Builder(baseURL).build());
+        return new DefaultSolrBDocumentCollectionManager(new HttpSolrClient.Builder(baseURL).build());
     }
 
 

@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SolrBDocumentCollectionManagerTest {
+public class DefaultSolrBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     public static final String ID = "id";
