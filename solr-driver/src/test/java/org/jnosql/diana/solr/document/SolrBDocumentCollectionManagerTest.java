@@ -22,6 +22,7 @@ import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.document.Documents;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -350,37 +351,18 @@ public class SolrBDocumentCollectionManagerTest {
 
 
     @Test
-    public void shouldSaveSubDocument() {
+    public void shouldReturnErrorWhenSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find(ID).get();
-        DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(ID).eq(id.get())
-                .build();
+        Assertions.assertThrows(SolrException.class, () -> entityManager.insert(entity));
 
-        DocumentEntity entityFound = entityManager.select(query).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
-        });
-        assertThat(documents, contains(Document.of("mobile", "1231231")));
     }
 
     @Test
     public void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find(ID).get();
-
-        DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
-                .build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
-        });
-        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        Assertions.assertThrows(SolrException.class, () -> entityManager.insert(entity));
     }
 
     @Test
@@ -406,27 +388,8 @@ public class SolrBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
-        entityManager.insert(entity);
-
-    }
-
-    @Test
     public void shouldRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
-        Document key = entity.find(ID).get();
-        DocumentQuery query = select().from("AppointmentBook")
-                .where(key.getName())
-                .eq(key.get()).build();
-
-        DocumentEntity documentEntity = entityManager.singleResult(query).get();
-        assertNotNull(documentEntity);
-
-        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
-
-        assertEquals(3, contacts.size());
-        assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
+        Assertions.assertThrows(SolrException.class, () -> entityManager.insert(createSubdocumentList()));
     }
 
     @Test
