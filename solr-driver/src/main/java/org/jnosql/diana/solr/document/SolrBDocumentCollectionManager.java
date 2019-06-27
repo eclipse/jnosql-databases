@@ -25,6 +25,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
 import org.jnosql.diana.SettingsPriority;
 
@@ -33,6 +34,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -58,10 +60,10 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
 
         try {
             solrClient.add(getDocument(entity));
+            commit();
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to insert/update a information", e);
         }
-        commit();
         return entity;
     }
 
@@ -73,9 +75,15 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
     @Override
     public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
-        return StreamSupport.stream(entities.spliterator(), false)
-                .map(this::insert)
-                .collect(toList());
+        final List<SolrInputDocument> documents = StreamSupport.stream(entities.spliterator(), false)
+                .map(SolrUtils::getDocument).collect(toList());
+        try {
+            solrClient.add(documents);
+            commit();
+        } catch (SolrServerException | IOException e) {
+            throw new SolrException("Error to insert/update a information", e);
+        }
+        return entities;
     }
 
     @Override

@@ -172,11 +172,11 @@ public class SolrBDocumentCollectionManagerTest {
     public void shouldFindNot() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        entityManager.insert(getEntitiesWithValues());
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").not().eq("Lucas").build();
         List<DocumentEntity> entitiesFound = entityManager.select(query);
-        assertTrue(entitiesFound.size() == 3);
+        assertTrue(entitiesFound.size() == 2);
     }
 
     @Test
