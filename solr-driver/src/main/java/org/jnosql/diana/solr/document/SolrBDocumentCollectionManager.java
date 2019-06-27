@@ -15,7 +15,6 @@
 
 package org.jnosql.diana.solr.document;
 
-import jakarta.nosql.SortType;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
@@ -26,16 +25,13 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.SolrInputDocument;
 import org.jnosql.diana.SettingsPriority;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -59,9 +55,8 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
     public DocumentEntity insert(DocumentEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
 
-        final SolrInputDocument document = getDocument(entity);
         try {
-            solrClient.add(document);
+            solrClient.add(getDocument(entity));
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to insert/update a information", e);
         }
