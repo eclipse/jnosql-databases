@@ -16,12 +16,10 @@
 package org.jnosql.diana.solr.document;
 
 
-import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
 import org.jnosql.diana.driver.ValueUtil;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 final class DocumentQueryConversor {

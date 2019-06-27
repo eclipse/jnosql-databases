@@ -43,6 +43,7 @@ import static org.jnosql.diana.solr.document.SolrUtils.getDocument;
  */
 public class SolrBDocumentCollectionManager implements DocumentCollectionManager {
 
+    private static final String SELECT_ALL_QUERY = "*:*";
     private final HttpSolrClient solrClient;
 
     SolrBDocumentCollectionManager(HttpSolrClient solrClient) {
@@ -111,12 +112,14 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
 
     }
 
-
     @Override
     public List<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
         try {
             SolrQuery solrQuery = new SolrQuery();
+            solrQuery.set("q", query.getCondition()
+                    .map(DocumentQueryConversor::convert)
+                    .orElse(SELECT_ALL_QUERY));
             if (query.getSkip() > 0) {
                 solrQuery.setStart((int) query.getSkip());
             }
@@ -125,12 +128,10 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
             }
             final QueryResponse response = solrClient.query(solrQuery);
             final SolrDocumentList documents = response.getResults();
-
+            return SolrUtils.of(documents);
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to query at Solr", e);
         }
-        return Collections.emptyList();
-
     }
 
     @Override
