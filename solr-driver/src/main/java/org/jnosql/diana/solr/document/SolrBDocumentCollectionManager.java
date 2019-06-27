@@ -61,10 +61,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to insert/update a information", e);
         }
-
-        if (isAutomaticCommit()) {
-            commit();
-        }
+        commit();
         return entity;
     }
 
@@ -108,8 +105,13 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
     @Override
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
-
-
+        try {
+            solrClient.deleteByQuery(query.getCondition()
+                    .map(DocumentQueryConversor::convert)
+                    .orElse(SELECT_ALL_QUERY));
+        } catch (SolrServerException | IOException e) {
+            throw new SolrException("Error to delete at Solr", e);
+        }
     }
 
     @Override
@@ -146,12 +148,13 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
     }
 
     private void commit() {
-        try {
-            solrClient.commit();
-        } catch (SolrServerException | IOException e) {
-            throw new SolrException("Error to commit at Solr", e);
+        if (isAutomaticCommit()) {
+            try {
+                solrClient.commit();
+            } catch (SolrServerException | IOException e) {
+                throw new SolrException("Error to commit at Solr", e);
+            }
         }
-
     }
 
     private Boolean isAutomaticCommit() {

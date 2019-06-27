@@ -25,6 +25,7 @@ import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -73,6 +74,7 @@ final class SolrUtils {
 
         return values.stream()
                 .map(SolrDocument::getFieldValueMap)
+                .map(SolrUtils::solrToMap)
                 .map(e -> Documents.of(e))
                 .map(documents -> {
                     final String entity = documents.stream()
@@ -88,6 +90,10 @@ final class SolrUtils {
 //            return getDocument(key, value);
 //        };
 //        return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
+    }
+
+    private static Map<String, Object> solrToMap(Map<String, Object> map) {
+        return map.keySet().stream().collect(Collectors.toMap(k -> k, k -> map.get(k)));
     }
 
     private static Document getDocument(String key, Object value) {

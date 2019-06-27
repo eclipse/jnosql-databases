@@ -113,6 +113,7 @@ public class SolrBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
+
         assertThat(entities, contains(entity));
     }
 
@@ -483,7 +484,7 @@ public class SolrBDocumentCollectionManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        map.put(ID, ThreadLocalRandom.current().nextLong());
+        map.put(ID, ThreadLocalRandom.current().nextLong(1, 10));
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
