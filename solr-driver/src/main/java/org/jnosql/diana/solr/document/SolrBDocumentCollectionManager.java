@@ -15,11 +15,13 @@
 
 package org.jnosql.diana.solr.document;
 
+import jakarta.nosql.SortType;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -31,7 +33,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -128,6 +132,10 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
             if (query.getLimit() > 0) {
                 solrQuery.setRows((int) query.getSkip());
             }
+            final List<SortClause> sorts = query.getSorts().stream()
+                    .map(s -> new SortClause(s.getName(), s.getType().name().toLowerCase(Locale.US)))
+                    .collect(toList());
+            solrQuery.setSorts(sorts);
             final QueryResponse response = solrClient.query(solrQuery);
             final SolrDocumentList documents = response.getResults();
             return SolrUtils.of(documents);
