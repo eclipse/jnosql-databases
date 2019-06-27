@@ -44,7 +44,6 @@ import static org.jnosql.diana.solr.document.SolrUtils.getDocument;
  */
 public class SolrBDocumentCollectionManager implements DocumentCollectionManager {
 
-    private static final String SELECT_ALL_QUERY = "*:*";
     private final HttpSolrClient solrClient;
 
     SolrBDocumentCollectionManager(HttpSolrClient solrClient) {
@@ -112,9 +111,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
         try {
-            solrClient.deleteByQuery(query.getCondition()
-                    .map(DocumentQueryConversor::convert)
-                    .orElse(SELECT_ALL_QUERY));
+            solrClient.deleteByQuery(DocumentQueryConversor.convert(query));
             commit();
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to delete at Solr", e);
@@ -126,9 +123,7 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
         Objects.requireNonNull(query, "query is required");
         try {
             SolrQuery solrQuery = new SolrQuery();
-            final String queryExpression = query.getCondition()
-                    .map(DocumentQueryConversor::convert)
-                    .orElse(SELECT_ALL_QUERY);
+            final String queryExpression = DocumentQueryConversor.convert(query);
             solrQuery.set("q", queryExpression);
             if (query.getSkip() > 0) {
                 solrQuery.setStart((int) query.getSkip());

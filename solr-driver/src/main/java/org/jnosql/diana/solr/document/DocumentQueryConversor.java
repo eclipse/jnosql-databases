@@ -19,6 +19,8 @@ package org.jnosql.diana.solr.document;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.List;
@@ -26,10 +28,27 @@ import java.util.stream.Collectors;
 
 final class DocumentQueryConversor {
 
+    private static final String SELECT_ALL_QUERY = "_entity:";
+
     private DocumentQueryConversor() {
     }
 
-    public static String convert(DocumentCondition condition) {
+
+    static String convert(DocumentQuery query) {
+        String rootCondition = SolrUtils.ENTITY + ':' + query.getDocumentCollection();
+        return rootCondition + query.getCondition()
+                .map(DocumentQueryConversor::convert)
+                .map(s -> " AND " + s).orElse("");
+    }
+
+    static String convert(DocumentDeleteQuery query) {
+        String rootCondition = SolrUtils.ENTITY + ':' + query.getDocumentCollection();
+        return rootCondition + query.getCondition()
+                .map(DocumentQueryConversor::convert)
+                .map(s -> " AND " + s).orElse("");
+    }
+
+    private static String convert(DocumentCondition condition) {
         Document document = condition.getDocument();
         Object value = ValueUtil.convert(document.getValue());
 

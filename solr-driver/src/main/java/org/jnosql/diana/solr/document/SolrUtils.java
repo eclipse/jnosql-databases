@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 final class SolrUtils {
-    private static final String ENTITY = "_entity";
+
+    static final String ENTITY = "_entity";
 
     private SolrUtils() {
     }
