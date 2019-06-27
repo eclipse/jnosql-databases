@@ -30,4 +30,13 @@ public class SolrException extends CommunicationException {
     SolrException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    /**
+     * Constructs a new runtime exception with the specified detail message.
+     *
+     * @param message the message
+     */
+    SolrException(String message) {
+        super(message);
+    }
 }
