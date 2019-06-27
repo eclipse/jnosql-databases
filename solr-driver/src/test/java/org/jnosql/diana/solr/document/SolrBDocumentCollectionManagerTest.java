@@ -60,7 +60,7 @@ public class SolrBDocumentCollectionManagerTest {
     private static DocumentCollectionManager entityManager;
 
     @BeforeAll
-    public static void setUp() throws IOException {
+    public static void setUp() {
         entityManager = ManagerFactorySupplier.INSTANCE.get("database");
     }
 
@@ -113,8 +113,11 @@ public class SolrBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
+        final DocumentEntity result = entities.get(0);
 
-        assertThat(entities, contains(entity));
+        assertEquals(entity.find("name").get(), result.find("name").get());
+        assertEquals(entity.find("city").get(), result.find("city").get());
+
     }
 
 
@@ -130,7 +133,10 @@ public class SolrBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query);
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        final DocumentEntity result = entities.get(0);
+
+        assertEquals(entity.find("name").get(), result.find("name").get());
+        assertEquals(entity.find("city").get(), result.find("city").get());
     }
 
     @Test
