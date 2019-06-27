@@ -17,6 +17,9 @@ package org.jnosql.diana.solr.document;
 import jakarta.nosql.Value;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.Documents;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.jnosql.diana.driver.ValueUtil;
 
@@ -34,16 +37,16 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
 final class SolrUtils {
-    static final String ID_FIELD = "_id";
-
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
     private static final Function<Object, Object> VALUE_DOCUMENT = d -> SolrUtils.convert(cast(d).getValue());
+    private static final String ENTITY = "_entity";
 
     private SolrUtils() {
     }
 
     static SolrInputDocument getDocument(DocumentEntity entity) {
         SolrInputDocument document = new SolrInputDocument();
+        document.addField(ENTITY, entity.getName());
         entity.getDocuments().stream().forEach(d -> document.addField(d.getName(), convert(d.getValue())));
         return document;
     }
@@ -66,13 +69,25 @@ final class SolrUtils {
     }
 
 
-    public static List<jakarta.nosql.document.Document> of(Map<String, ?> values) {
-        Predicate<String> isNotNull = s -> values.get(s) != null;
-        Function<String, jakarta.nosql.document.Document> documentMap = key -> {
-            Object value = values.get(key);
-            return getDocument(key, value);
-        };
-        return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
+    public static List<DocumentEntity> of(SolrDocumentList values) {
+
+        return values.stream()
+                .map(SolrDocument::getFieldValueMap)
+                .map(e -> Documents.of(e))
+                .map(documents -> {
+                    final String entity = documents.stream()
+                            .filter(d -> ENTITY.equals(d.getName()))
+                            .findFirst()
+                            .map(Document::getName)
+                            .orElseThrow(() -> new SolrException("The field _entity is required"));
+                    return DocumentEntity.of(entity, documents);
+                }).collect(Collectors.toList());
+//        Predicate<String> isNotNull = s -> values.get(s) != null;
+//        Function<String, jakarta.nosql.document.Document> documentMap = key -> {
+//            Object value = values.get(key);
+//            return getDocument(key, value);
+//        };
+//        return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
     }
 
     private static Document getDocument(String key, Object value) {
