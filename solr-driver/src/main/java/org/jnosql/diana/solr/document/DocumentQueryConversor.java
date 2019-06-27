@@ -49,7 +49,7 @@ final class DocumentQueryConversor {
                         .map(Object::toString).collect(Collectors.joining(" OR "));
                 return document.getName() + ":(" + inConditions + ')';
             case NOT:
-                return '-' + convert(document.get(DocumentCondition.class));
+                return " NOT " + convert(document.get(DocumentCondition.class));
 
             case AND:
                 return getDocumentConditions(condition).stream()

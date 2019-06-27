@@ -15,7 +15,6 @@
 
 package org.jnosql.diana.solr.document;
 
-import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
@@ -26,11 +25,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,16 +38,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -169,6 +164,17 @@ public class SolrBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
+        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        assertTrue(entitiesFound.size() == 3);
+    }
+
+    @Test
+    public void shouldFindNot() {
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("name").not().eq("Lucas").build();
         List<DocumentEntity> entitiesFound = entityManager.select(query);
         assertTrue(entitiesFound.size() == 3);
     }

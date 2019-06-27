@@ -25,6 +25,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.util.NamedList;
 import org.jnosql.diana.SettingsPriority;
 
 import java.io.IOException;
@@ -144,7 +145,16 @@ public class SolrBDocumentCollectionManager implements DocumentCollectionManager
     @Override
     public long count(String documentCollection) {
         Objects.requireNonNull(documentCollection, "documentCollection is required");
-        return 0L;
+
+        try {
+            SolrQuery solrQuery = new SolrQuery();
+            solrQuery.set("q", "_entity:" + documentCollection);
+            solrQuery.setRows(0);
+            final QueryResponse response = solrClient.query(solrQuery);
+            return response.getResults().getNumFound();
+        } catch (SolrServerException | IOException e) {
+            throw new SolrException("Error to query at Solr", e);
+        }
     }
 
     @Override
