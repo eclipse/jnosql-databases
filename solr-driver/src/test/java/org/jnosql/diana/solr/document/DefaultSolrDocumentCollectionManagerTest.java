@@ -16,7 +16,6 @@
 package org.jnosql.diana.solr.document;
 
 import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
@@ -49,11 +48,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DefaultSolrBDocumentCollectionManagerTest {
+public class DefaultSolrDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     public static final String ID = "id";
-    private static SolrBDocumentCollectionManager entityManager;
+    private static SolrDocumentCollectionManager entityManager;
 
     @BeforeAll
     public static void setUp() {

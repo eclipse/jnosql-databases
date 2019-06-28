@@ -40,13 +40,13 @@ import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.solr.document.SolrUtils.getDocument;
 
 /**
- * The default implementation of {@link SolrBDocumentCollectionManager}
+ * The default implementation of {@link SolrDocumentCollectionManager}
  */
-class DefaultSolrBDocumentCollectionManager implements SolrBDocumentCollectionManager {
+class DefaultSolrDocumentCollectionManager implements SolrDocumentCollectionManager {
 
     private final HttpSolrClient solrClient;
 
-    DefaultSolrBDocumentCollectionManager(HttpSolrClient solrClient) {
+    DefaultSolrDocumentCollectionManager(HttpSolrClient solrClient) {
         this.solrClient = solrClient;
     }
 

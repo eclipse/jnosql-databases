@@ -32,10 +32,10 @@ public class SolrDocumentCollectionManagerFactory implements DocumentCollectionM
     }
 
     @Override
-    public SolrBDocumentCollectionManager get(String database) {
+    public SolrDocumentCollectionManager get(String database) {
         Objects.requireNonNull(database, "database is required");
         final String baseURL = solrClient.getBaseURL() + '/' + database;
-        return new DefaultSolrBDocumentCollectionManager(new HttpSolrClient.Builder(baseURL).build());
+        return new DefaultSolrDocumentCollectionManager(new HttpSolrClient.Builder(baseURL).build());
     }
 
 

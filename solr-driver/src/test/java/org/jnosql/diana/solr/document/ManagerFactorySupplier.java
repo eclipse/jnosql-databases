@@ -22,7 +22,7 @@ public enum ManagerFactorySupplier {
 
     INSTANCE;
 
-    public SolrBDocumentCollectionManager get(String database) {
+    public SolrDocumentCollectionManager get(String database) {
         SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
         final DocumentCollectionManagerFactory managerFactory = configuration.get();
         return managerFactory.get(database);

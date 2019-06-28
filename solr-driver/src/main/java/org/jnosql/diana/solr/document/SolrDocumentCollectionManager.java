@@ -23,9 +23,9 @@ import java.util.Map;
 
 /**
  * The solr implementation to {@link DocumentCollectionManager} that does not support TTL methods
- * <p>{@link DefaultSolrBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
+ * <p>{@link DefaultSolrDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
  */
-public interface SolrBDocumentCollectionManager extends DocumentCollectionManager {
+public interface SolrDocumentCollectionManager extends DocumentCollectionManager {
 
     /**
      * Executes a Solr native query
