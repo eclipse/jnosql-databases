@@ -43,17 +43,18 @@
         <module>cassandra-driver</module>
         <module>couchbase-driver</module>
         <module>couchdb-driver</module>
+        <module>dynamodb-driver</module>
         <module>elasticsearch-driver</module>
         <module>hazelcast-driver</module>
         <module>hbase-driver</module>
         <module>infinispan-driver</module>
-        <module>memcached-driver</module> 
+        <module>memcached-driver</module>
         <module>mongodb-driver</module>
         <module>orientdb-driver</module>
         <module>ravendb-driver</module>
         <module>redis-driver</module>
         <module>riak-driver</module>
-        <module>dynamodb-driver</module>
+        <module>solr-driver</module>
     </modules>
 
     <dependencies>
