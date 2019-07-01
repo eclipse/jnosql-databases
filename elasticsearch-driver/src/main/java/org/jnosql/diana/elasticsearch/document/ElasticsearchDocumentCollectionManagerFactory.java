@@ -21,6 +21,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
@@ -91,6 +92,13 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
                     request.setEntity(entity);
 
                     lowLevelClient.performRequest(request);
+                } catch (Exception ex) {
+                    throw new ElasticsearchException("Error when create a new mapping", ex);
+                }
+            } else {
+                try {
+                    CreateIndexRequest request = new CreateIndexRequest(database);
+                    client.indices().create(request, RequestOptions.DEFAULT);
                 } catch (Exception ex) {
                     throw new ElasticsearchException("Error when create a new mapping", ex);
                 }
