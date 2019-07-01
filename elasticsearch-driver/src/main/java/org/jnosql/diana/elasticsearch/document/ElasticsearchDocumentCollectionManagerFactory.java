@@ -83,25 +83,29 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
     private void initDatabase(String database) {
         boolean exists = isExists(database);
         if (!exists) {
-            InputStream stream = ElasticsearchDocumentCollectionManagerFactory.class.getResourceAsStream('/' + database + ".json");
-            if (Objects.nonNull(stream)) {
-                try {
-                    RestClient lowLevelClient = client.getLowLevelClient();
-                    HttpEntity entity = new NStringEntity(getMappging(stream), ContentType.APPLICATION_JSON);
-                    Request request = new Request("PUT", database);
-                    request.setEntity(entity);
+            createIndex(database);
+        }
+    }
 
-                    lowLevelClient.performRequest(request);
-                } catch (Exception ex) {
-                    throw new ElasticsearchException("Error when create a new mapping", ex);
-                }
-            } else {
-                try {
-                    CreateIndexRequest request = new CreateIndexRequest(database);
-                    client.indices().create(request, RequestOptions.DEFAULT);
-                } catch (Exception ex) {
-                    throw new ElasticsearchException("Error when create a new mapping", ex);
-                }
+    private void createIndex(String database) {
+        InputStream stream = ElasticsearchDocumentCollectionManagerFactory.class.getResourceAsStream('/' + database + ".json");
+        if (Objects.nonNull(stream)) {
+            try {
+                RestClient lowLevelClient = client.getLowLevelClient();
+                HttpEntity entity = new NStringEntity(getMappging(stream), ContentType.APPLICATION_JSON);
+                Request request = new Request("PUT", database);
+                request.setEntity(entity);
+
+                lowLevelClient.performRequest(request);
+            } catch (Exception ex) {
+                throw new ElasticsearchException("Error when create a new mapping", ex);
+            }
+        } else {
+            try {
+                CreateIndexRequest request = new CreateIndexRequest(database);
+                client.indices().create(request, RequestOptions.DEFAULT);
+            } catch (Exception ex) {
+                throw new ElasticsearchException("Error when create a new mapping", ex);
             }
         }
     }
