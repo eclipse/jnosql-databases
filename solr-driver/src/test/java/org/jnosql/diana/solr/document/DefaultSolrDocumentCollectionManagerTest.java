@@ -373,6 +373,22 @@ public class DefaultSolrDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldExecuteNativeQueryParamsReplaceAll() {
+        entityManager.insert(getEntitiesWithValues());
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+        entityManager.insert(getEntitiesWithValues());
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("age", 22);
+
+        List<DocumentEntity> entitiesFound = entityManager.solr("age:@age AND age:@age"
+                , params);
+        assertEquals(1, entitiesFound.size());
+    }
+
+
+    @Test
     public void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
