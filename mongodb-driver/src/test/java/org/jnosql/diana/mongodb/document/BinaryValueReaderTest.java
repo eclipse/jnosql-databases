@@ -44,6 +44,6 @@ class BinaryValueReaderTest {
     public void shouldConvert() {
         byte[] bytes = new byte[] {10, 10, 10};
         assertEquals(new Binary(bytes), valueReader.read(Binary.class, bytes));
-        assertEquals(new Binary("hello".getBytes()), valueReader.read(Binary.class, "helle"));
+        assertEquals(new Binary("hello".getBytes()), valueReader.read(Binary.class, "hello"));
     }
 }
