@@ -79,7 +79,7 @@ final class ArangoDBBuilders {
 
     private static void host(ArangoDBBuilder arangoDB, String host) {
         final String[] values = host.split(":");
-        arangoDB.host(values[0], Integer.valueOf(values[0]));
+        arangoDB.host(values[0], Integer.valueOf(values[1]));
     }
 
     private static class ArangoDBHost {
