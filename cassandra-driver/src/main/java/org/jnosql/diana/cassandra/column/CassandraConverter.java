@@ -47,7 +47,6 @@ final class CassandraConverter {
         List<Column> columns = new ArrayList<>();
         String columnFamily = "";
         for (ColumnDefinitions.Definition definition : row.getColumnDefinitions().asList()) {
-            DataType type = definition.getType();
             columnFamily = definition.getTable();
             Object result = CassandraConverter.get(definition, row);
             if (Objects.nonNull(result)) {
