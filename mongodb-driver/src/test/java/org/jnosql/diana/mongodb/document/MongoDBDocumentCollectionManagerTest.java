@@ -346,6 +346,19 @@ public class MongoDBDocumentCollectionManagerTest {
         assertFalse(entities.isEmpty());
     }
 
+    @Test
+    public void shouldFindAllByFields() {
+        entityManager.insert(getEntity());
+        DocumentQuery query = select("name").from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        final DocumentEntity entity = entities.get(0);
+        assertEquals(2, entity.size());
+        assertTrue(entity.find("name").isPresent());
+        assertTrue(entity.find("_id").isPresent());
+        assertFalse(entity.find("city").isPresent());
+    }
+
 
     @Test
     public void shouldSaveSubDocument() {
