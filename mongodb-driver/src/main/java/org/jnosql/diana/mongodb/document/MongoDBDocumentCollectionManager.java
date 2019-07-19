@@ -18,6 +18,7 @@ package org.jnosql.diana.mongodb.document;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.nosql.Sort;
@@ -129,7 +130,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("condition is required")));
-        DeleteResult deleteResult = collection.deleteMany(mongoDBQuery);
+        collection.deleteMany(mongoDBQuery);
     }
 
 
@@ -141,7 +142,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
 
         FindIterable<Document> documents = collection.find(mongoDBQuery);
-
+        documents.projection(Projections.include(query.getDocuments()));
         if (query.getSkip() > 0) {
             documents.skip((int) query.getSkip());
         }

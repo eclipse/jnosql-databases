@@ -20,6 +20,7 @@ import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.FindIterable;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.nosql.ExecuteAsyncQueryException;
@@ -151,7 +152,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
         List<DocumentEntity> entities = new CopyOnWriteArrayList<>();
         FindIterable<Document> result = collection.find(mongoDBQuery);
-
+        result.projection(Projections.include(query.getDocuments()));
         if (query.getSkip() > 0) {
             result.skip((int) query.getSkip());
         }
