@@ -467,7 +467,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldCount() {
-        DocumentEntity entity = entityManager.insert(getEntity());
+        entityManager.insert(getEntity());
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
     }
 
