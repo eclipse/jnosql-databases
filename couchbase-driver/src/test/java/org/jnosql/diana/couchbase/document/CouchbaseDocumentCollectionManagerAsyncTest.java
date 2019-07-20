@@ -197,7 +197,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         TimeUnit.SECONDS.sleep(2L);
-        await().atLeast(org.awaitility.Duration.TEN_SECONDS);
+        await().atLeast(Duration.ofSeconds(10));
         AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
         entityManagerAsync.n1qlQuery("select * from jnosql", references::set);
         await().until(references::get, notNullValue());
@@ -234,7 +234,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
             references.set(d);
             condition.set(true);
         });
-        await().atLeast(org.awaitility.Duration.ONE_SECOND);
+        await().atLeast(Duration.ofSeconds(1));
         await().untilTrue(condition);
         assertFalse(references.get().isEmpty());
         assertEquals(1, references.get().size());
