@@ -165,6 +165,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(query);
             searchRequest.types(types);
+            searchRequest.source(searchSourceBuilder);
             SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
 
             return stream(search.getHits().spliterator(), false)
