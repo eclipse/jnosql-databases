@@ -185,6 +185,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
         searchRequest.types(types);
+        searchRequest.source(searchSourceBuilder);
         client.searchAsync(searchRequest, RequestOptions.DEFAULT, new FindQueryBuilderListener(callBack));
     }
 
