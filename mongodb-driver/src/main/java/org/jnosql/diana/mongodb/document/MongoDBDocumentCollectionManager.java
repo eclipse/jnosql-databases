@@ -127,7 +127,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);;
+        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
         collection.deleteMany(mongoDBQuery);
     }
 
