@@ -347,6 +347,18 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
+    public void shouldDeleteAll() {
+        entityManager.insert(getEntity());
+        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(query);
+        assertFalse(entities.isEmpty());
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+        entities = entityManager.select(query);
+        assertTrue(entities.isEmpty());
+    }
+
+    @Test
     public void shouldFindAllByFields() {
         entityManager.insert(getEntity());
         DocumentQuery query = select("name").from(COLLECTION_NAME).build();
