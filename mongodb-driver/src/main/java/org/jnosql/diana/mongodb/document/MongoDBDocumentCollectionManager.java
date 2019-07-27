@@ -127,8 +127,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        Bson mongoDBQuery = DocumentQueryConversor.convert(query.getCondition()
-                .orElseThrow(() -> new IllegalArgumentException("condition is required")));
+        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);;
         collection.deleteMany(mongoDBQuery);
     }
 
