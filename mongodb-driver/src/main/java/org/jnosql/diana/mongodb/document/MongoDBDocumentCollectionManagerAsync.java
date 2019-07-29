@@ -202,7 +202,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
         String collectionName = query.getDocumentCollection();
         com.mongodb.async.client.MongoCollection<Document> asyncCollection =
                 asyncMongoDatabase.getCollection(collectionName);
-        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);;
+        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
         asyncCollection.deleteMany(mongoDBQuery, callBack);
     }
 
