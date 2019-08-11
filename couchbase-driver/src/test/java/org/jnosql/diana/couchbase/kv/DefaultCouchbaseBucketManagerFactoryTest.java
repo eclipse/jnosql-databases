@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.key;
+package org.jnosql.diana.couchbase.kv;
 
 import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;

@@ -12,27 +12,8 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.key;
 
-
-import org.jnosql.diana.driver.JsonbSupplier;
-
-import javax.json.bind.Jsonb;
-import java.util.function.Function;
-
-abstract class CouchbaseCollection<T> {
-
-    protected static final Jsonb JSONB = JsonbSupplier.getInstance().get();
-
-    protected final Class<T> clazz;
-
-    CouchbaseCollection(Class<T> clazz) {
-        this.clazz = clazz;
-    }
-
-
-    protected Function<String, T> fromJSON() {
-        return s -> JSONB.fromJson(s, clazz);
-    }
-
-}
+/**
+ * This package has the Couchbase key-value implementation
+ */
+package org.jnosql.diana.couchbase.kv;

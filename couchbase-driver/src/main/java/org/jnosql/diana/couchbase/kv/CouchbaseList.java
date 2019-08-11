@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.key;
+package org.jnosql.diana.couchbase.kv;
 
 
 import com.couchbase.client.java.Bucket;
@@ -31,7 +31,7 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Objects.requireNonNull;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
-import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactory.LIST;
+import static org.jnosql.diana.couchbase.kv.DefaultCouchbaseBucketManagerFactory.LIST;
 
 /**
  * The couchbase implementation to {@link List}

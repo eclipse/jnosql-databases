@@ -27,7 +27,7 @@ import jakarta.nosql.kv.BucketManagerFactory;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
-import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
+import org.jnosql.diana.couchbase.kv.CouchbaseKeyValueConfiguration;
 import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;

@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.key;
+package org.jnosql.diana.couchbase.kv;
 
 import jakarta.nosql.kv.BucketManagerFactory;
 import jakarta.nosql.kv.KeyValueConfiguration;

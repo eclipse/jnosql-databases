@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.key;
+package org.jnosql.diana.couchbase.kv;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonObject;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static org.jnosql.diana.couchbase.key.DefaultCouchbaseBucketManagerFactory.QUEUE;
+import static org.jnosql.diana.couchbase.kv.DefaultCouchbaseBucketManagerFactory.QUEUE;
 
 /**
  * The couchbase implementation to {@link Queue}

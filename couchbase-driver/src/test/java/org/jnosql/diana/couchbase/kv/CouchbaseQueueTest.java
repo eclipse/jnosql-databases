@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.couchbase.key;
+package org.jnosql.diana.couchbase.kv;
 
 import jakarta.nosql.kv.BucketManager;
 import jakarta.nosql.kv.BucketManagerFactory;
@@ -24,29 +24,32 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CouchbaseSetTest {
-
+public class CouchbaseQueueTest {
     private BucketManagerFactory keyValueEntityManagerFactory;
-    private User otavio = new User("otaviojava");
-    private User felipe = new User("ffrancesquini");
-    private Set<User> users;
+
+    private Queue<User> users;
 
     @BeforeEach
     public void init() {
+
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         keyValueEntityManagerFactory = configuration.get();
-        users = keyValueEntityManagerFactory.getSet(CouchbaseUtil.BUCKET_NAME, User.class);
+        users = keyValueEntityManagerFactory.getQueue(CouchbaseUtil.BUCKET_NAME, User.class);
+
+
     }
 
     @AfterAll
@@ -54,83 +57,77 @@ public class CouchbaseSetTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("jnosql:set");
+        keyValueEntityManager.remove("jnosql:queue");
     }
 
     @Test
-    public void shouldAddUsers() {
-        assertTrue(users.isEmpty());
-        users.add(otavio);
+    public void shouldPushInTheLine() {
+        assertTrue(users.add(new User("Otavio")));
         assertTrue(users.size() == 1);
-
-        users.remove(otavio);
+        User otavio = users.poll();
+        assertEquals(otavio.getNickName(), "Otavio");
+        assertNull(users.poll());
         assertTrue(users.isEmpty());
     }
 
-
-    @SuppressWarnings("unused")
     @Test
-    public void shouldIterate() {
-
-        users.add(otavio);
-        users.add(otavio);
-        users.add(felipe);
-        users.add(otavio);
-        users.add(felipe);
-        int count = 0;
-        for (User user : users) {
-            count++;
-        }
-        assertTrue(count == 2);
-        users.remove(otavio);
-        users.remove(felipe);
-        count = 0;
-        for (User user : users) {
-            count++;
-        }
-        assertTrue(count == 0);
+    public void shouldPeekInTheLine() {
+        users.add(new User("Otavio"));
+        User otavio = users.peek();
+        assertNotNull(otavio);
+        assertNotNull(users.peek());
+        User otavio2 = users.remove();
+        assertEquals(otavio.getNickName(), otavio2.getNickName());
+        assertNull(users.remove());
     }
 
     @Test
-    public void shouldContains() {
-        users.add(otavio);
-        assertTrue(users.contains(otavio));
-        assertFalse(users.contains(felipe));
-    }
-
-    @Test
-    public void shouldContainsAll() {
-        users.add(otavio);
-        assertTrue(users.containsAll(singleton(otavio)));
-        assertFalse(users.contains(singleton(felipe)));
-    }
-
-    @Test
-    public void shouldRemove() {
-        users.add(otavio);
-        assertTrue(users.remove(otavio));
-        assertFalse(users.remove(felipe));
+    public void shouldShouldAddAll() {
+        users.addAll(singleton(new User("Otavio")));
+        assertEquals(1, users.size());
     }
 
     @Test
     public void shouldRemoveAll() {
-        users.add(otavio);
-        assertTrue(users.removeAll(singleton(otavio)));
+        users.addAll(singleton(new User("Otavio")));
+        assertTrue(users.removeAll(singleton(new User("Otavio"))));
+        assertTrue(users.isEmpty());
     }
 
+    @Test
+    public void shouldContains() {
+        users.add(new User("Otavio"));
+        assertTrue(users.contains(new User("Otavio")));
+        assertFalse(users.contains(new User("Poliana")));
+    }
 
     @Test
-    public void shouldAddAll() {
-        assertTrue(users.isEmpty());
-        users.addAll(Arrays.asList(otavio, felipe));
-        assertEquals(2, users.size());
+    public void shouldContainsAll() {
+        users.add(new User("Otavio"));
+        assertTrue(users.containsAll(singleton(new User("Otavio"))));
+        assertFalse(users.containsAll(singleton(new User("Poliana"))));
+    }
+
+    @Test
+    public void shouldElementInTheLine() {
+        users.add(new User("Otavio"));
+        assertNotNull(users.element());
+        assertNotNull(users.element());
+        users.remove(new User("Otavio"));
+        boolean happendException = false;
+        try {
+            users.element();
+        } catch (NoSuchElementException e) {
+            happendException = true;
+        }
+        assertTrue(happendException);
     }
 
     @Test
     public void shouldRetains(){
-        users.addAll(asList(otavio));
+        users.addAll(asList(new User("Otavio")));
         List<User> newUsers = new ArrayList<>();
-        newUsers.add(otavio);
+        newUsers.add(new User("Otavio"));
         newUsers.add(new User("gama"));
         users.retainAll(newUsers);
         assertEquals(1, newUsers.size());
@@ -138,7 +135,7 @@ public class CouchbaseSetTest {
 
     @Test
     public void shouldToArray() {
-        users.addAll(asList(otavio, felipe));
+        users.addAll(asList(new User("Otavio"), new User("felipe")));
         Object[] objects = users.toArray();
         assertEquals(2, objects.length);
         assertTrue(Stream.of(objects).allMatch(User.class::isInstance));
@@ -146,10 +143,29 @@ public class CouchbaseSetTest {
 
     @Test
     public void shouldToArrayParams() {
-        users.addAll(asList(otavio, felipe));
+        users.addAll(asList(new User("Otavio"), new User("felipe")));
         User[] objects = users.toArray(new User[2]);
         assertEquals(2, objects.length);
         assertTrue(Stream.of(objects).allMatch(User.class::isInstance));
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    public void shouldIterate() {
+        users.add(new User("Otavio"));
+        users.add(new User("Gama"));
+        int count = 0;
+        for (User line : users) {
+            count++;
+        }
+        assertTrue(count == 2);
+        users.remove();
+        users.remove();
+        count = 0;
+        for (User line : users) {
+            count++;
+        }
+        assertTrue(count == 0);
     }
 
     @AfterEach
