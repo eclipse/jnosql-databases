@@ -16,4 +16,4 @@
 /**
  * The DynamoDB key-value implementation
  */
-package org.jnosql.diana.dynamodb.key;
+package org.jnosql.diana.dynamodb.kv;

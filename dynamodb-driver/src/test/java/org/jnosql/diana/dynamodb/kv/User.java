@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.dynamodb.key;
+package org.jnosql.diana.dynamodb.kv;
 
 import java.io.Serializable;
 import java.util.Objects;

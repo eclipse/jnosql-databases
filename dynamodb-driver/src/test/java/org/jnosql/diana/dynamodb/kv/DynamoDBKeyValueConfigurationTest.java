@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.dynamodb.key;
+package org.jnosql.diana.dynamodb.kv;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

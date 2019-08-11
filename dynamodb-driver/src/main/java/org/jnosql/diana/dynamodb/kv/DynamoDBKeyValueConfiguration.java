@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.dynamodb.key;
+package org.jnosql.diana.dynamodb.kv;
 
 import jakarta.nosql.Settings;
 import jakarta.nosql.kv.KeyValueConfiguration;

@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.dynamodb.key;
+package org.jnosql.diana.dynamodb.kv;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,10 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,9 +32,7 @@ import jakarta.nosql.kv.BucketManager;
 import jakarta.nosql.kv.BucketManagerFactory;
 import jakarta.nosql.kv.KeyValueEntity;
 import org.jnosql.diana.dynamodb.DynamoDBTestUtils;
-import org.junit.AfterClass;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
