@@ -16,4 +16,4 @@
 /**
  * This package has the ArangoDB key-value implementation
  */
-package org.jnosql.diana.arangodb.key;
+package org.jnosql.diana.arangodb.kv;

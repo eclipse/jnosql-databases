@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.arangodb.key;
+package org.jnosql.diana.arangodb.kv;
 
 import java.io.Serializable;
 import java.util.Objects;
