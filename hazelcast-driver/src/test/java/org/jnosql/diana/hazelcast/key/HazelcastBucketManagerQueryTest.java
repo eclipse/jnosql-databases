@@ -16,7 +16,7 @@ package org.jnosql.diana.hazelcast.key;
 
 import com.hazelcast.query.Predicate;
 import jakarta.nosql.Value;
-import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.kv.BucketManagerFactory;
 import org.jnosql.diana.hazelcast.key.model.Movie;
 import org.jnosql.diana.hazelcast.key.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.BeforeEach;

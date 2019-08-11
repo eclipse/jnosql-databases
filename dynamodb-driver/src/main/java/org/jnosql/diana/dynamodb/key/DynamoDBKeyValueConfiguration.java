@@ -15,7 +15,7 @@
 package org.jnosql.diana.dynamodb.key;
 
 import jakarta.nosql.Settings;
-import jakarta.nosql.key.KeyValueConfiguration;
+import jakarta.nosql.kv.KeyValueConfiguration;
 import org.jnosql.diana.dynamodb.DynamoDBConfiguration;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 

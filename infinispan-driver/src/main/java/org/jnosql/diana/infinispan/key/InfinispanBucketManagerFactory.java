@@ -21,7 +21,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.infinispan.commons.api.BasicCacheContainer;
-import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.kv.BucketManagerFactory;
 
 /**
  * The Infinispan implementation of {@link BucketManagerFactory}

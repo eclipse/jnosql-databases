@@ -18,7 +18,7 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.SqlPredicate;
 import jakarta.nosql.Value;
-import jakarta.nosql.key.KeyValueEntity;
+import jakarta.nosql.kv.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Collection;

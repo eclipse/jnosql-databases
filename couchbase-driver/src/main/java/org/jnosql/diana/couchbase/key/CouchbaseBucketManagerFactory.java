@@ -14,7 +14,7 @@
  */
 package org.jnosql.diana.couchbase.key;
 
-import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.kv.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;

@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.redis.key;
 
-import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.kv.BucketManagerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

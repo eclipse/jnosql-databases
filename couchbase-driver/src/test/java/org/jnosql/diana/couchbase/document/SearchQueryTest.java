@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.key.BucketManager;
-import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.kv.BucketManager;
+import jakarta.nosql.kv.BucketManagerFactory;
 import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;

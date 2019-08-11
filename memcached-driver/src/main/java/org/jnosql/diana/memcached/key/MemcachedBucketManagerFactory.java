@@ -15,7 +15,7 @@
 package org.jnosql.diana.memcached.key;
 
 import net.spy.memcached.MemcachedClient;
-import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.kv.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;

@@ -15,7 +15,7 @@
 package org.jnosql.diana.arangodb.key;
 
 import com.arangodb.ArangoDB;
-import jakarta.nosql.key.BucketManagerFactory;
+import jakarta.nosql.kv.BucketManagerFactory;
 import org.jnosql.diana.arangodb.document.ArangoDBUtil;
 
 import java.util.List;

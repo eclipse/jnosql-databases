@@ -22,8 +22,8 @@ import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.document.json.JsonValue;
 import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import jakarta.nosql.Value;
-import jakarta.nosql.key.BucketManager;
-import jakarta.nosql.key.KeyValueEntity;
+import jakarta.nosql.kv.BucketManager;
+import jakarta.nosql.kv.KeyValueEntity;
 import org.jnosql.diana.driver.JsonbSupplier;
 import org.jnosql.diana.driver.ValueJSON;
 

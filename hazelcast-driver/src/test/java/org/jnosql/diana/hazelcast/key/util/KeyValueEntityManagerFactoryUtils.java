@@ -15,8 +15,8 @@
 
 package org.jnosql.diana.hazelcast.key.util;
 
-import jakarta.nosql.key.BucketManagerFactory;
-import jakarta.nosql.key.KeyValueConfiguration;
+import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.kv.KeyValueConfiguration;
 import org.jnosql.diana.hazelcast.key.HazelcastKeyValueConfiguration;
 
 

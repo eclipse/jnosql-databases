@@ -20,7 +20,7 @@ import com.basho.riak.client.core.RiakNode;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.key.KeyValueConfiguration;
+import jakarta.nosql.kv.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;

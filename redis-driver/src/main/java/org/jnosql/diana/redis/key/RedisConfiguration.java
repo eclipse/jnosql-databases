@@ -19,7 +19,7 @@ package org.jnosql.diana.redis.key;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.key.KeyValueConfiguration;
+import jakarta.nosql.kv.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

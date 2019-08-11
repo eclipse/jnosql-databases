@@ -16,7 +16,7 @@ package org.jnosql.diana.couchbase.key;
 
 import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
 import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
-import jakarta.nosql.key.BucketManager;
+import jakarta.nosql.kv.BucketManager;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.BeforeEach;

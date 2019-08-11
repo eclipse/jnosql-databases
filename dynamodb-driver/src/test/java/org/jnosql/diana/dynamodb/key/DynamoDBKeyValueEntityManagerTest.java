@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import jakarta.nosql.Value;
-import jakarta.nosql.key.BucketManager;
-import jakarta.nosql.key.BucketManagerFactory;
-import jakarta.nosql.key.KeyValueEntity;
+import jakarta.nosql.kv.BucketManager;
+import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.kv.KeyValueEntity;
 import org.jnosql.diana.dynamodb.DynamoDBTestUtils;
 import org.junit.AfterClass;
 import org.junit.jupiter.api.AfterAll;
