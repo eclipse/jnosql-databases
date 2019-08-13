@@ -25,8 +25,8 @@ import java.util.stream.StreamSupport;
 
 import org.infinispan.commons.api.BasicCache;
 import jakarta.nosql.Value;
-import jakarta.nosql.kv.BucketManager;
-import jakarta.nosql.kv.KeyValueEntity;
+import jakarta.nosql.keyvalue.BucketManager;
+import jakarta.nosql.keyvalue.KeyValueEntity;
 
 /**
  * The Infinispan implementation of {@link BucketManager}

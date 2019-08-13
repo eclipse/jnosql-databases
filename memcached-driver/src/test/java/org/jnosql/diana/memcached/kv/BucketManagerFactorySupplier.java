@@ -15,7 +15,7 @@
 package org.jnosql.diana.memcached.kv;
 
 import jakarta.nosql.Settings;
-import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 

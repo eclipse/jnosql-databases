@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.jnosql.diana.dynamodb.DynamoTableUtils;
 
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;

@@ -15,9 +15,9 @@
 package org.jnosql.diana.couchbase.kv;
 
 import jakarta.nosql.Value;
-import jakarta.nosql.kv.BucketManager;
-import jakarta.nosql.kv.BucketManagerFactory;
-import jakarta.nosql.kv.KeyValueEntity;
+import jakarta.nosql.keyvalue.BucketManager;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
+import jakarta.nosql.keyvalue.KeyValueEntity;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;

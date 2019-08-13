@@ -23,7 +23,7 @@ import com.hazelcast.core.HazelcastInstance;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.kv.KeyValueConfiguration;
+import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Arrays;

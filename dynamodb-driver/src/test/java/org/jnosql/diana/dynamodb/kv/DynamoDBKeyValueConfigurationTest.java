@@ -16,8 +16,8 @@ package org.jnosql.diana.dynamodb.kv;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import jakarta.nosql.kv.BucketManagerFactory;
-import jakarta.nosql.kv.KeyValueConfiguration;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
+import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

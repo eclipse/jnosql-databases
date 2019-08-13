@@ -18,7 +18,7 @@ package org.jnosql.diana.couchbase.kv;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
 import jakarta.nosql.Settings;
-import jakarta.nosql.kv.KeyValueConfiguration;
+import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseConfiguration;
 
 import java.util.List;

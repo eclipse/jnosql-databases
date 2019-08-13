@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.infinispan.kv;
 
-import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.jnosql.diana.infinispan.kv.model.Species;
 import org.jnosql.diana.infinispan.kv.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.AfterEach;

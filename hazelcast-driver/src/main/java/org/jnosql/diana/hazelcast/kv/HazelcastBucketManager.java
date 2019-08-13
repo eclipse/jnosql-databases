@@ -17,7 +17,7 @@ package org.jnosql.diana.hazelcast.kv;
 
 import com.hazelcast.query.Predicate;
 import jakarta.nosql.Value;
-import jakarta.nosql.kv.BucketManager;
+import jakarta.nosql.keyvalue.BucketManager;
 
 import java.util.Collection;
 import java.util.Map;

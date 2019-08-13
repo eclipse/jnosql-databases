@@ -16,7 +16,7 @@
 package org.jnosql.diana.hazelcast.kv;
 
 
-import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.jnosql.diana.hazelcast.kv.model.User;
 import org.jnosql.diana.hazelcast.kv.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.AfterEach;

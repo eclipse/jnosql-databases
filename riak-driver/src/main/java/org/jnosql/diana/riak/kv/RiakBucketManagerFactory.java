@@ -17,7 +17,7 @@ package org.jnosql.diana.riak.kv;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.query.Namespace;
-import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;

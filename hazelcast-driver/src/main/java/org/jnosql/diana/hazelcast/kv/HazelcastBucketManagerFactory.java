@@ -17,7 +17,7 @@ package org.jnosql.diana.hazelcast.kv;
 
 
 import com.hazelcast.core.IAtomicLong;
-import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;
