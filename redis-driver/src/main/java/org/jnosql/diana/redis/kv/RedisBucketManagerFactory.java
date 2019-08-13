@@ -15,7 +15,7 @@
 
 package org.jnosql.diana.redis.kv;
 
-import jakarta.nosql.kv.BucketManagerFactory;
+import jakarta.nosql.keyvalue.BucketManagerFactory;
 
 /**
  * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisBucketManager}
