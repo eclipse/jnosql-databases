@@ -14,7 +14,7 @@
  */
 package org.jnosql.diana.couchbase.configuration;
 
-import org.jnosql.diana.couchbase.key.CouchbaseKeyValueConfiguration;
+import org.jnosql.diana.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 
 public class CouchbaseKeyValueTcConfiguration extends CouchbaseKeyValueConfiguration {
 
