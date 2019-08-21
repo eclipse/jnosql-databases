@@ -32,6 +32,7 @@ import org.jnosql.diana.ravendb.document.DocumentQueryConversor.QueryResult;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +187,8 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Stream<Map> idQueryStream = queryResult.getIds().stream()
                 .map(i -> session.load(HashMap.class, i));
 
+        final List<HashMap> hashMaps = queryResult.getRavenQuery().map(IEnumerableQuery::toList)
+                .orElse(Collections.emptyList());
         final Stream<HashMap> queryStream = queryResult.getRavenQuery()
                 .map(IEnumerableQuery::toList)
                 .map(List::stream).orElseGet(() -> Stream.empty());

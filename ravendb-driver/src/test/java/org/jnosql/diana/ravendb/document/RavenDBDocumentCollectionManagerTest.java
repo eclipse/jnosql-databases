@@ -264,7 +264,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
         Thread.sleep(TIME_LIMIT);
-        assertEquals(entities, entityManager.select(query));
+        assertEquals(entities, entityManager.select(query).collect(Collectors.toList()));
     }
 
     @Test
