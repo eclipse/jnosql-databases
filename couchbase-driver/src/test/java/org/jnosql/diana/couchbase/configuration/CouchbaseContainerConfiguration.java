@@ -14,7 +14,15 @@
  */
 package org.jnosql.diana.couchbase.configuration;
 
-import static org.jnosql.diana.couchbase.CouchbaseUtil.BUCKET_NAME;
+import com.couchbase.client.core.utils.Base64;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.bucket.BucketType;
+import com.couchbase.client.java.cluster.BucketSettings;
+import com.couchbase.client.java.cluster.ClusterManager;
+import com.couchbase.client.java.cluster.DefaultBucketSettings;
+import com.couchbase.client.java.query.N1qlQuery;
+import org.testcontainers.containers.GenericContainer;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,16 +35,7 @@ import java.nio.file.Paths;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import org.testcontainers.containers.GenericContainer;
-
-import com.couchbase.client.core.utils.Base64;
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.CouchbaseCluster;
-import com.couchbase.client.java.bucket.BucketType;
-import com.couchbase.client.java.cluster.BucketSettings;
-import com.couchbase.client.java.cluster.ClusterManager;
-import com.couchbase.client.java.cluster.DefaultBucketSettings;
-import com.couchbase.client.java.query.N1qlQuery;
+import static org.jnosql.diana.couchbase.CouchbaseUtil.BUCKET_NAME;
 
 /**
  * Configure Couchbase temp containers for integration tests

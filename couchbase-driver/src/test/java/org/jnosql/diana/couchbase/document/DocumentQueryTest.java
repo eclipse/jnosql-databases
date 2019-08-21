@@ -20,9 +20,9 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
-import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static jakarta.nosql.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -97,7 +97,7 @@ public class DocumentQueryTest {
                 .limit(2L)
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
 
     }
@@ -113,7 +113,7 @@ public class DocumentQueryTest {
                 .where(name.getName()).eq(name.get())
                 .skip(1L)
                 .build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
 
     }
@@ -131,7 +131,7 @@ public class DocumentQueryTest {
                 .limit(2L)
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entities.size());
 
     }
@@ -145,7 +145,7 @@ public class DocumentQueryTest {
 
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         Optional<Document> name = entity.find("name");
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertTrue(entities.size() >= 4);
     }
@@ -158,7 +158,7 @@ public class DocumentQueryTest {
 
         Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
@@ -174,7 +174,7 @@ public class DocumentQueryTest {
                 .orderBy("name").asc()
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
                 .filter(d -> "name".equals(d.getName()))
                 .map(d -> d.get(String.class))
@@ -194,7 +194,7 @@ public class DocumentQueryTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .orderBy("name").desc()
                 .build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
                 .filter(d -> "name".equals(d.getName()))
                 .map(d -> d.get(String.class))
@@ -203,7 +203,6 @@ public class DocumentQueryTest {
         assertFalse(result.isEmpty());
         assertThat(result, contains("name3", "name", "name", "name"));
     }
-
 
     @Test
     public void shouldFindDocumentById() {
@@ -215,7 +214,7 @@ public class DocumentQueryTest {
                 .where(id.getName()).eq(id.get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }

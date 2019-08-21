@@ -21,8 +21,8 @@ import jakarta.nosql.ExecuteAsyncQueryException;
 import jakarta.nosql.document.DocumentCollectionManagerAsync;
 import jakarta.nosql.document.DocumentEntity;
 
-import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * The Couchbase interface of {@link DocumentCollectionManagerAsync}
@@ -39,7 +39,7 @@ public interface CouchbaseDocumentCollectionManagerAsync extends DocumentCollect
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
+    void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
     /**
      * Executes the n1qlquery  with params and then result que result
@@ -50,7 +50,7 @@ public interface CouchbaseDocumentCollectionManagerAsync extends DocumentCollect
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    void n1qlQuery(Statement n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
+    void n1qlQuery(Statement n1qlQuery, JsonObject params, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
     /**
      * Executes the n1qlquery  plain query and then result que result
@@ -60,7 +60,7 @@ public interface CouchbaseDocumentCollectionManagerAsync extends DocumentCollect
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    void n1qlQuery(String n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
+    void n1qlQuery(String n1qlQuery, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
     /**
      * Executes the n1qlquery  plain query and then result que result
@@ -70,6 +70,6 @@ public interface CouchbaseDocumentCollectionManagerAsync extends DocumentCollect
      * @throws NullPointerException       when either n1qlQuery or params are null
      * @throws ExecuteAsyncQueryException an async error
      */
-    void n1qlQuery(Statement n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
+    void n1qlQuery(Statement n1qlQuery, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException;
 
 }

@@ -37,9 +37,9 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static com.couchbase.client.java.query.dsl.Expression.x;
-import static java.util.Objects.nonNull;
 import static jakarta.nosql.Condition.EQUALS;
 import static jakarta.nosql.Condition.IN;
+import static java.util.Objects.nonNull;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 import static org.jnosql.diana.couchbase.document.StatementFactory.create;

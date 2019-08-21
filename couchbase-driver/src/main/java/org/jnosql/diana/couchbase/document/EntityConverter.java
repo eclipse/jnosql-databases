@@ -25,17 +25,16 @@ import jakarta.nosql.document.DocumentEntity;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
 final class EntityConverter {
@@ -48,20 +47,18 @@ final class EntityConverter {
     private EntityConverter() {
     }
 
-    static List<DocumentEntity> convert(Collection<String> keys, Bucket bucket) {
+    static Stream<DocumentEntity> convert(Stream<String> keys, Bucket bucket) {
         return keys
-                .stream()
                 .map(bucket::get)
                 .filter(Objects::nonNull)
                 .map(j -> {
                     List<Document> documents = toDocuments(j.content().toMap());
                     return DocumentEntity.of(j.id().split(SPLIT_KEY)[0], documents);
-                })
-                .collect(Collectors.toList());
+                });
     }
 
-    static List<DocumentEntity> convert(N1qlQueryResult result, String database) {
-        return result.allRows().stream()
+    static Stream<DocumentEntity> convert(N1qlQueryResult result, String database) {
+        return StreamSupport.stream(result.spliterator(), false)
                 .map(N1qlQueryRow::value)
                 .map(JsonObject::toMap)
                 .map(m -> m.get(database))
@@ -73,7 +70,7 @@ final class EntityConverter {
                     Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
                     String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
                     return DocumentEntity.of(collection, documents);
-                }).collect(toList());
+                });
     }
 
     static String getPrefix(Document document, String collection) {

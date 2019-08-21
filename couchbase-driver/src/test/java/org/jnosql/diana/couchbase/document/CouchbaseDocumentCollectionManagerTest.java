@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.couchbase.client.java.query.dsl.Expression.x;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
@@ -106,7 +107,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
                 .where(name.getName()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).isEmpty());
+        assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -118,7 +119,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -133,7 +134,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         Thread.sleep(1_00L);
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -204,7 +205,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     public void shouldRunN1Ql() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql");
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql").collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -213,7 +214,8 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         JsonObject params = JsonObject.create().put("name", "Poliana");
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql where name = $name", params);
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql where name = $name",
+                params).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertEquals(1, entities.size());
     }
@@ -224,7 +226,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         entityManager.insert(entity);
 
         Statement statement = Select.select("*").from("jnosql").where(x("name").eq("\"Poliana\""));
-        List<DocumentEntity> entities = entityManager.n1qlQuery(statement);
+        List<DocumentEntity> entities = entityManager.n1qlQuery(statement).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertEquals(1, entities.size());
     }
@@ -236,11 +238,10 @@ public class CouchbaseDocumentCollectionManagerTest {
 
         Statement statement = Select.select("*").from("jnosql").where(x("name").eq("$name"));
         JsonObject params = JsonObject.create().put("name", "Poliana");
-        List<DocumentEntity> entities = entityManager.n1qlQuery(statement, params);
+        List<DocumentEntity> entities = entityManager.n1qlQuery(statement, params).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertEquals(1, entities.size());
     }
-
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

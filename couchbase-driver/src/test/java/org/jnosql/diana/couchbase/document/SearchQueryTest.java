@@ -15,29 +15,28 @@
 package org.jnosql.diana.couchbase.document;
 
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.couchbase.client.java.search.SearchQuery;
+import com.couchbase.client.java.search.queries.MatchQuery;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.jnosql.diana.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
-import org.jnosql.diana.couchbase.CouchbaseUtil;
 import org.jnosql.diana.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.couchbase.client.java.search.SearchQuery;
-import com.couchbase.client.java.search.queries.MatchQuery;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SearchQueryTest {
 
@@ -95,7 +94,7 @@ public class SearchQueryTest {
     public void shouldSearchElement() {
         MatchQuery match = SearchQuery.match("Financial");
         SearchQuery query = new SearchQuery("index-diana", match);
-        List<DocumentEntity> entities = entityManager.search(query);
+        List<DocumentEntity> entities = entityManager.search(query).collect(Collectors.toList());
         assertEquals(1, entities.size());
         assertEquals(Document.of("name", "São Paulo"), entities.get(0).find("name").get());
     }
@@ -104,7 +103,7 @@ public class SearchQueryTest {
     public void shouldSearchElement2() {
         MatchQuery match = SearchQuery.match("Brazil");
         SearchQuery query = new SearchQuery("index-diana", match);
-        List<DocumentEntity> entities = entityManager.search(query);
+        List<DocumentEntity> entities = entityManager.search(query).collect(Collectors.toList());
         assertEquals(3, entities.size());
         List<String> result = entities.stream()
                 .flatMap(e -> e.getDocuments().stream())
@@ -118,7 +117,7 @@ public class SearchQueryTest {
     public void shouldSearchElement3() {
         MatchQuery match = SearchQuery.match("Salvador").field("name");
         SearchQuery query = new SearchQuery("index-diana", match);
-        List<DocumentEntity> entities = entityManager.search(query);
+        List<DocumentEntity> entities = entityManager.search(query).collect(Collectors.toList());
         assertEquals(1, entities.size());
         List<String> result = entities.stream()
                 .flatMap(e -> e.getDocuments().stream())
