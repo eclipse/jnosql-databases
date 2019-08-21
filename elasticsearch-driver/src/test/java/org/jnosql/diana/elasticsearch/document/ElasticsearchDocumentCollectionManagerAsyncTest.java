@@ -14,12 +14,12 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.elasticsearch.index.query.TermQueryBuilder;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,10 +31,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
+import static org.awaitility.Awaitility.await;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;

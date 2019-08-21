@@ -15,10 +15,10 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.search.SearchHit;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.search.SearchHit;
 
 import java.util.ArrayList;
 import java.util.List;

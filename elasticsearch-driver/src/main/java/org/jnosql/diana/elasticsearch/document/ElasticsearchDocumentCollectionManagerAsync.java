@@ -15,13 +15,13 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.index.query.QueryBuilder;
 import jakarta.nosql.ExecuteAsyncQueryException;
 import jakarta.nosql.document.DocumentCollectionManagerAsync;
 import jakarta.nosql.document.DocumentEntity;
+import org.elasticsearch.index.query.QueryBuilder;
 
-import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public interface ElasticsearchDocumentCollectionManagerAsync extends DocumentCollectionManagerAsync {
 
@@ -34,6 +34,6 @@ public interface ElasticsearchDocumentCollectionManagerAsync extends DocumentCol
      * @param callBack the callback
      * @throws NullPointerException when query is null
      */
-    void search(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) throws
+    void search(QueryBuilder query, Consumer<Stream<DocumentEntity>> callBack, String... types) throws
             NullPointerException, ExecuteAsyncQueryException;
 }

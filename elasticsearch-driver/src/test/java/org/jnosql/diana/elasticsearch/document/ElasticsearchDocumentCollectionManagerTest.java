@@ -14,12 +14,12 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
-import org.elasticsearch.index.query.TermQueryBuilder;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,14 +30,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.COLLECTION_NAME;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.INDEX;
 import static org.jnosql.diana.elasticsearch.document.DocumentEntityGerator.getEntity;

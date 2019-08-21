@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
@@ -114,7 +115,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"));
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
-        List<DocumentEntity> entities = select(select);
+        List<DocumentEntity> entities = select(select).collect(Collectors.toList());
 
         if (entities.isEmpty()) {
             return;
@@ -136,7 +137,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
 
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
+    public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         return EntityConverter.query(query, client, index);
     }
@@ -157,7 +158,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     }
 
     @Override
-    public List<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException {
+    public Stream<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
         try {
@@ -171,8 +172,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
             return stream(search.getHits().spliterator(), false)
                     .map(ElasticsearchEntry::of)
                     .filter(ElasticsearchEntry::isNotEmpty)
-                    .map(ElasticsearchEntry::toEntity)
-                    .collect(Collectors.toList());
+                    .map(ElasticsearchEntry::toEntity);
         } catch (IOException e) {
             throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
         }

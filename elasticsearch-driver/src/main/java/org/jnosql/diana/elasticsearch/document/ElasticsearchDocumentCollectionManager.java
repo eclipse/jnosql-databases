@@ -15,11 +15,11 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.index.query.QueryBuilder;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
+import org.elasticsearch.index.query.QueryBuilder;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * The ES implementation of {@link DocumentCollectionManager}
@@ -34,7 +34,7 @@ public interface ElasticsearchDocumentCollectionManager extends DocumentCollecti
      * @return the objects from query
      * @throws NullPointerException when query is null
      */
-     List<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException;
+     Stream<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException;
 
 
 }

@@ -14,12 +14,12 @@
  */
 package org.jnosql.diana.elasticsearch.document;
 
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.document.DocumentEntity;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import jakarta.nosql.ExecuteAsyncQueryException;
-import jakarta.nosql.document.DocumentEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ import static java.util.stream.StreamSupport.stream;
 
 final class FindAsyncListener {
 
-    private final Consumer<List<DocumentEntity>> callBack;
+    private final Consumer<Stream<DocumentEntity>> callBack;
 
     private final String collection;
 
@@ -42,7 +42,7 @@ final class FindAsyncListener {
 
     private AtomicBoolean query = new AtomicBoolean(true);
 
-    FindAsyncListener(Consumer<List<DocumentEntity>> callBack, String collection) {
+    FindAsyncListener(Consumer<Stream<DocumentEntity>> callBack, String collection) {
         this.callBack = callBack;
         this.collection = collection;
     }
@@ -61,7 +61,7 @@ final class FindAsyncListener {
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);
                 if (ids.get() && query.get()) {
-                    callBack.accept(entities);
+                    callBack.accept(entities.stream());
                 }
             }
 
@@ -84,7 +84,7 @@ final class FindAsyncListener {
                         .map(ElasticsearchEntry::toEntity)
                         .forEach(entities::add);
                 if (ids.get() && query.get()) {
-                    callBack.accept(entities);
+                    callBack.accept(entities.stream());
                 }
             }
 
