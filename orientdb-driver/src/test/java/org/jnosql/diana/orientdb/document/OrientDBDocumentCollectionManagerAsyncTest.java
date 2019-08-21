@@ -14,12 +14,11 @@
  */
 package org.jnosql.diana.orientdb.document;
 
-import org.awaitility.Awaitility;
 import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.awaitility.Awaitility;
 import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,11 +33,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.notNullValue;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.orientdb.document.DocumentConfigurationUtils.getAsync;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -69,11 +70,11 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         Document id = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> entities = new AtomicReference<>();
         entityManagerAsync.select(query, entities::set);
 
         await().until(() -> entities.get() != null);
-        assertFalse(entities.get().isEmpty());
+        assertFalse(entities.get().collect(Collectors.toList()).isEmpty());
 
     }
 
@@ -145,10 +146,10 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
         entityManagerAsync.delete(deleteQuery, c -> condition.set(true));
         await().untilTrue(condition);
-        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> entities = new AtomicReference<>();
         entityManagerAsync.select(query, entities::set);
         await().until(() -> entities.get() != null);
-        assertTrue(entities.get().isEmpty());
+        assertTrue(entities.get().collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -164,10 +165,10 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
         entityManagerAsync.delete(deleteQuery);
         Thread.sleep(1000L);
-        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> entities = new AtomicReference<>();
         entityManagerAsync.select(query, entities::set);
         await().until(() -> entities.get() != null);
-        assertTrue(entities.get().isEmpty());
+        assertTrue(entities.get().collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -176,12 +177,12 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
         entityManagerAsync.insert(getEntity(), entity::set);
         await().until(() -> entity.get() != null);
 
-        AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> reference = new AtomicReference<>();
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         entityManagerAsync.select(query, reference::set);
-        await().until(reference::get, notNullValue(List.class));
+        await().until(reference::get, notNullValue(Stream.class));
 
-        assertFalse(reference.get().isEmpty());
+        assertFalse(reference.get().collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -218,7 +219,6 @@ public class OrientDBDocumentCollectionManagerAsyncTest {
 
         assertFalse(reference.get().isEmpty());
     }
-
 
     @Test
     public void shouldCount() {

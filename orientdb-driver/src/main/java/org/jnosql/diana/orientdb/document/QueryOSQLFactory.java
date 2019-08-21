@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
@@ -41,7 +42,7 @@ final class QueryOSQLFactory {
         return new QueryResult(query.getQuery(), query.getParams(), query.getIds());
     }
 
-    static QueryResultAsync toAsync(DocumentQuery documentQuery, Consumer<List<ODocument>> callBack) {
+    static QueryResultAsync toAsync(DocumentQuery documentQuery, Consumer<Stream<ODocument>> callBack) {
         Query query = QueryOSQLConverter.select(documentQuery);
 
         return new QueryResultAsync(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
@@ -56,7 +57,7 @@ final class QueryOSQLFactory {
 
             @Override
             public void end() {
-                callBack.accept(documents);
+                callBack.accept(documents.stream());
             }
 
             @Override

@@ -19,8 +19,8 @@ import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * The orientdb implementation to {@link DocumentCollectionManager}, this implementation
@@ -38,7 +38,7 @@ public interface OrientDBDocumentCollectionManager extends DocumentCollectionMan
      * @return the query result
      * @throws NullPointerException when either query or params are null
      */
-    List<DocumentEntity> sql(String query, Object... params);
+    Stream<DocumentEntity> sql(String query, Object... params);
 
     /**
      * Find using query
@@ -48,7 +48,7 @@ public interface OrientDBDocumentCollectionManager extends DocumentCollectionMan
      * @return the query result
      * @throws NullPointerException when either query or params are null
      */
-    List<DocumentEntity> sql(String query, Map<String, Object> params);
+    Stream<DocumentEntity> sql(String query, Map<String, Object> params);
 
     /**
      * Execute live query
