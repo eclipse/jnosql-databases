@@ -17,10 +17,10 @@ package org.jnosql.diana.mongodb.document;
 
 
 import com.mongodb.client.model.Filters;
-import org.bson.conversions.Bson;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
+import org.bson.conversions.Bson;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.List;
