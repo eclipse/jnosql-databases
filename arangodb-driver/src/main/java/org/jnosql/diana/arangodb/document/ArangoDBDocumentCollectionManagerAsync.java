@@ -19,9 +19,9 @@ import jakarta.nosql.ExecuteAsyncQueryException;
 import jakarta.nosql.document.DocumentCollectionManagerAsync;
 import jakarta.nosql.document.DocumentEntity;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * The ArandoDB implementation of {@link DocumentCollectionManagerAsync}. It does not support to TTL methods:
@@ -42,7 +42,7 @@ public interface ArangoDBDocumentCollectionManagerAsync extends DocumentCollecti
      * @throws UnsupportedOperationException when the database does not support this feature
      * @throws NullPointerException          when either select or callback are null
      */
-    void aql(String query, Map<String, Object> values, Consumer<List<DocumentEntity>> callBack) throws
+    void aql(String query, Map<String, Object> values, Consumer<Stream<DocumentEntity>> callBack) throws
             ExecuteAsyncQueryException, UnsupportedOperationException, NullPointerException;
 
 
