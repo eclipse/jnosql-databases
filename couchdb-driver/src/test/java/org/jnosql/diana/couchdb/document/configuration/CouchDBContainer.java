@@ -16,12 +16,12 @@
  */
 package org.jnosql.diana.couchdb.document.configuration;
 
-import java.util.Arrays;
-
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
 import org.testcontainers.containers.wait.strategy.WaitStrategy;
+
+import java.util.Arrays;
 
 public class CouchDBContainer extends GenericContainer {
 

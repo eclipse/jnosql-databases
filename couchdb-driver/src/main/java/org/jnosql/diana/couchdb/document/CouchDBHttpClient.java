@@ -22,6 +22,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 final class CouchDBHttpClient {
 
@@ -53,10 +54,9 @@ final class CouchDBHttpClient {
         return this.httpExecute.update(database, entity);
     }
 
-    public List<DocumentEntity> select(DocumentQuery query) {
+    public Stream<DocumentEntity> select(DocumentQuery query) {
         return this.httpExecute.select(database, query);
     }
-
 
     public void delete(DocumentDeleteQuery query) {
         this.httpExecute.delete(database, query);

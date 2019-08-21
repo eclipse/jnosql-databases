@@ -14,6 +14,9 @@
  */
 package org.jnosql.diana.couchdb.document;
 
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -26,9 +29,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.document.Documents;
 import org.jnosql.diana.driver.JsonbSupplier;
 
@@ -41,10 +41,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jnosql.diana.couchdb.document.CouchDBConstant.ALL_DBS;
 import static org.jnosql.diana.couchdb.document.CouchDBConstant.COUNT;
@@ -132,11 +132,10 @@ class HttpExecute {
         return insert(database, entity);
     }
 
-    public List<DocumentEntity> select(String database, DocumentQuery query) {
+    public Stream<DocumentEntity> select(String database, DocumentQuery query) {
         List<Map<String, Object>> entities = executeQuery(database, query);
-        return entities.stream().map(this::toEntity).collect(toList());
+        return entities.stream().map(this::toEntity);
     }
-
 
     public void delete(String database, DocumentDeleteQuery query) {
         CouchDBDocumentQuery documentQuery = CouchDBDocumentQuery.of(new DeleteQuery(query));

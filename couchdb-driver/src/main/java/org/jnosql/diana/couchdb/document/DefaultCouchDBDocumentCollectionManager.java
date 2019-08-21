@@ -21,9 +21,9 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollectionManager {
@@ -81,7 +81,7 @@ class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollecti
     }
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) {
+    public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
         return connector.select(query);
     }

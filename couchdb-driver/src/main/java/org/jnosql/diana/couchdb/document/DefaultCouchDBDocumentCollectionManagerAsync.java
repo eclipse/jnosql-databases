@@ -21,10 +21,10 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -112,10 +112,10 @@ final class DefaultCouchDBDocumentCollectionManagerAsync implements CouchDBDocum
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) {
+    public void select(DocumentQuery query, Consumer<Stream<DocumentEntity>> callBack) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
-        CompletableFuture<List<DocumentEntity>> async = supplyAsync(() -> manager.select(query));
+        CompletableFuture<Stream<DocumentEntity>> async = supplyAsync(() -> manager.select(query));
         async.thenAccept(callBack::accept);
     }
 
