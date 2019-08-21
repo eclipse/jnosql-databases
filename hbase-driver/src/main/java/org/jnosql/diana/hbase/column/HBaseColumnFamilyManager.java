@@ -152,12 +152,14 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
 
     @Override
-    public List<ColumnEntity> select(ColumnQuery query) {
+    public Stream<ColumnEntity> select(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
         ColumnCondition condition = query.getCondition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         checkedCondition(condition);
-        return Stream.of(findById(condition)).map(EntityUnit::new).filter(EntityUnit::isNotEmpty).map(EntityUnit::toEntity).collect(toList());
+        return Stream.of(findById(condition))
+                .map(EntityUnit::new).filter(EntityUnit::isNotEmpty)
+                .map(EntityUnit::toEntity);
     }
 
     @Override

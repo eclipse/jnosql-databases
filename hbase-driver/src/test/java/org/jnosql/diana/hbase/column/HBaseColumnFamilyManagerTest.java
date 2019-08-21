@@ -18,7 +18,6 @@ package org.jnosql.diana.hbase.column;
 import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnQuery;
 import jakarta.nosql.column.ColumnFamilyManager;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
 import jakarta.nosql.column.ColumnQuery;
@@ -26,12 +25,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static jakarta.nosql.column.ColumnDeleteQuery.delete;
 import static jakarta.nosql.column.ColumnQuery.select;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HBaseColumnFamilyManagerTest {
 
@@ -72,7 +76,7 @@ public class HBaseColumnFamilyManagerTest {
         columnFamilyManager.insert(createEntity());
 
         ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
-        List<ColumnEntity> columnFamilyEntities = columnFamilyManager.select(query);
+        List<ColumnEntity> columnFamilyEntities = columnFamilyManager.select(query).collect(Collectors.toList());
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
@@ -89,7 +93,7 @@ public class HBaseColumnFamilyManagerTest {
         ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava")
                 .or(ID_FIELD).eq("poliana").build();
 
-        List<ColumnEntity> entities = columnFamilyManager.select(query);
+        List<ColumnEntity> entities = columnFamilyManager.select(query).collect(Collectors.toList());
         assertEquals(Integer.valueOf(2), Integer.valueOf(entities.size()));
 
     }
@@ -100,7 +104,7 @@ public class HBaseColumnFamilyManagerTest {
         ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
         ColumnDeleteQuery deleteQuery = delete().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
         columnFamilyManager.delete(deleteQuery);
-        List<ColumnEntity> entities = columnFamilyManager.select(query);
+        List<ColumnEntity> entities = columnFamilyManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
     }
 
@@ -116,7 +120,7 @@ public class HBaseColumnFamilyManagerTest {
                 .or(ID_FIELD).eq("poliana").build();
 
         columnFamilyManager.delete(deleteQuery);
-        List<ColumnEntity> entities = columnFamilyManager.select(query);
+        List<ColumnEntity> entities = columnFamilyManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
     }
 
