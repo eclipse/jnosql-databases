@@ -27,11 +27,11 @@ import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
@@ -227,7 +227,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     }
 
     @Override
-    public void select(ColumnQuery query, Consumer<List<ColumnEntity>> consumer)
+    public void select(ColumnQuery query, Consumer<Stream<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         requireNonNull(query, "query is required");
@@ -254,7 +254,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     }
 
     @Override
-    public void select(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer) {
+    public void select(ColumnQuery query, ConsistencyLevel level, Consumer<Stream<ColumnEntity>> consumer) {
 
         requireNonNull(query, "query is required");
         requireNonNull(level, "level is required");
@@ -265,7 +265,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     }
 
     @Override
-    public void cql(String query, Consumer<List<ColumnEntity>> consumer) {
+    public void cql(String query, Consumer<Stream<ColumnEntity>> consumer) {
         requireNonNull(query, "query is required");
         requireNonNull(consumer, "consumer is required");
         ResultSetFuture resultSet = session.executeAsync(query);
@@ -274,7 +274,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     }
 
     @Override
-    public void cql(String query, Map<String, Object> values, Consumer<List<ColumnEntity>> consumer) {
+    public void cql(String query, Map<String, Object> values, Consumer<Stream<ColumnEntity>> consumer) {
 
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
@@ -286,7 +286,7 @@ class DefaultCassandraColumnFamilyManagerAsync implements CassandraColumnFamilyM
     }
 
     @Override
-    public void execute(Statement statement, Consumer<List<ColumnEntity>> consumer) {
+    public void execute(Statement statement, Consumer<Stream<ColumnEntity>> consumer) {
 
         requireNonNull(statement, "statement is required");
         requireNonNull(consumer, "consumer is required");

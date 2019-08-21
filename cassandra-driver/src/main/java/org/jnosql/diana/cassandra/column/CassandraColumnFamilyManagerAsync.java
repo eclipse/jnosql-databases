@@ -24,9 +24,9 @@ import jakarta.nosql.column.ColumnFamilyManagerAsync;
 import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * The implementation of {@link ColumnFamilyManagerAsync} whose implements all methods and also has support to CQL and
@@ -128,7 +128,7 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @throws ExecuteAsyncQueryException a thread exception
      * @throws NullPointerException       when any arguments are null
      */
-    void select(ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer)
+    void select(ColumnQuery query, ConsistencyLevel level, Consumer<Stream<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException;
 
     /**
@@ -138,7 +138,7 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @param consumer the callback
      * @throws ExecuteAsyncQueryException a thread exception
      */
-    void cql(String query, Consumer<List<ColumnEntity>> consumer)
+    void cql(String query, Consumer<Stream<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException;
 
     /**
@@ -150,7 +150,7 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @param consumer the callback
      * @throws ExecuteAsyncQueryException a thread exception
      */
-    void cql(String query, Map<String, Object> values, Consumer<List<ColumnEntity>> consumer)
+    void cql(String query, Map<String, Object> values, Consumer<Stream<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException;
 
     /**
@@ -161,7 +161,7 @@ public interface CassandraColumnFamilyManagerAsync extends ColumnFamilyManagerAs
      * @throws ExecuteAsyncQueryException a thread exception
      * @throws NullPointerException       when either statment and callback is null
      */
-    void execute(Statement statement, Consumer<List<ColumnEntity>> consumer)
+    void execute(Statement statement, Consumer<Stream<ColumnEntity>> consumer)
             throws ExecuteAsyncQueryException, NullPointerException;
 
     /**

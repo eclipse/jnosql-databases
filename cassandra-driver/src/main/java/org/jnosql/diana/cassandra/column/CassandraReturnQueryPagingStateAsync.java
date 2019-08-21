@@ -25,17 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 final class CassandraReturnQueryPagingStateAsync implements Runnable {
 
     private final ResultSetFuture resultSet;
 
-    private final Consumer<List<ColumnEntity>> consumer;
+    private final Consumer<Stream<ColumnEntity>> consumer;
 
     private final CassandraQuery query;
 
 
-    CassandraReturnQueryPagingStateAsync(ResultSetFuture resultSet, Consumer<List<ColumnEntity>> consumer, CassandraQuery query) {
+    CassandraReturnQueryPagingStateAsync(ResultSetFuture resultSet, Consumer<Stream<ColumnEntity>> consumer, CassandraQuery query) {
         this.resultSet = resultSet;
         this.consumer = consumer;
         this.query = query;
@@ -59,7 +60,7 @@ final class CassandraReturnQueryPagingStateAsync implements Runnable {
                     break;
                 }
             }
-            consumer.accept(entities);
+            consumer.accept(entities.stream());
         } catch (InterruptedException | ExecutionException e) {
             throw new ExecuteAsyncQueryException(e);
         }

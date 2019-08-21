@@ -21,6 +21,7 @@ import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 import jakarta.nosql.column.Columns;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,19 +34,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static jakarta.nosql.column.ColumnDeleteQuery.delete;
 import static jakarta.nosql.column.ColumnQuery.select;
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.jnosql.diana.cassandra.column.Constants.COLUMN_FAMILY;
 import static org.jnosql.diana.cassandra.column.Constants.KEY_SPACE;
@@ -123,13 +123,13 @@ public class CassandraColumnFamilyManagerAsyncTest {
         sleep(2_000L);
         callBack.set(false);
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
-        AtomicReference<List<ColumnEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<ColumnEntity>> references = new AtomicReference<>();
         entityManager.select(query, l -> {
             references.set(l);
         });
 
-        await().until(references::get, notNullValue(List.class));
-        assertTrue(references.get().isEmpty());
+        await().until(references::get, notNullValue(Stream.class));
+        assertTrue(references.get().collect(Collectors.toList()).isEmpty());
     }
 
 
@@ -205,11 +205,11 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
 
-        AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
+        AtomicReference<Stream<ColumnEntity>> entities = new AtomicReference<>();
 
         entityManager.select(query, entities::set);
-        await().until(() -> entities.get().size(), not(equalTo(0)));
-        assertThat(entities.get(), contains(columnEntity));
+        await().until(() -> entities.get(), Matchers.notNullValue());
+        assertThat(entities.get().collect(Collectors.toList()), contains(columnEntity));
 
     }
 
@@ -235,11 +235,11 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
 
-        AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
+        AtomicReference<Stream<ColumnEntity>> entities = new AtomicReference<>();
 
         entityManager.select(query, entities::set);
-        await().until(() -> entities.get().size(), not(equalTo(0)));
-        assertThat(entities.get(), contains(columnEntity));
+        await().until(() -> entities.get(), Matchers.notNullValue());
+        assertThat(entities.get().collect(Collectors.toList()), contains(columnEntity));
 
     }
 
@@ -284,16 +284,16 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
 
-        AtomicReference<List<ColumnEntity>> entities = new AtomicReference<>(emptyList());
+        AtomicReference<Stream<ColumnEntity>> entities = new AtomicReference<>();
         callback.set(false);
-        Consumer<List<ColumnEntity>> result = (l) -> {
+        Consumer<Stream<ColumnEntity>> result = (l) -> {
             callback.set(true);
             entities.set(l);
         };
         entityManager.select(query, result);
         await().untilTrue(callback);
 
-        assertTrue(entities.get().isEmpty());
+        assertTrue(entities.get().collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -334,13 +334,13 @@ public class CassandraColumnFamilyManagerAsyncTest {
 
         assertFalse(cassandraQuery.getPagingState().isPresent());
 
-        AtomicReference<List<ColumnEntity>> reference = new AtomicReference<>();
+        AtomicReference<Stream<ColumnEntity>> reference = new AtomicReference<>();
 
         entityManager.select(cassandraQuery, reference::set);
 
         await().untilAtomic(reference, notNullValue());
 
-        List<ColumnEntity> entities = reference.get();
+        List<ColumnEntity> entities = reference.get().collect(Collectors.toList());
         assertEquals(6, entities.size());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
@@ -348,7 +348,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
         entityManager.select(cassandraQuery, reference::set);
 
         await().untilAtomic(reference, notNullValue());
-        entities = reference.get();
+        entities = reference.get().collect(Collectors.toList());
         assertEquals(3, entities.size());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
@@ -356,7 +356,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
         entityManager.select(cassandraQuery, reference::set);
 
         await().untilAtomic(reference, notNullValue());
-        entities = reference.get();
+        entities = reference.get().collect(Collectors.toList());
         assertTrue(entities.isEmpty());
 
         assertTrue(cassandraQuery.getPagingState().isPresent());
@@ -365,7 +365,7 @@ public class CassandraColumnFamilyManagerAsyncTest {
         entityManager.select(cassandraQuery, reference::set);
 
         await().untilAtomic(reference, notNullValue());
-        entities = reference.get();
+        entities = reference.get().collect(Collectors.toList());
         assertTrue(entities.isEmpty());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 

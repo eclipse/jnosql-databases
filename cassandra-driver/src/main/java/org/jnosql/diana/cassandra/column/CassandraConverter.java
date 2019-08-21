@@ -25,8 +25,8 @@ import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import com.google.common.reflect.TypeToken;
 import jakarta.nosql.Value;
-import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.Column;
+import jakarta.nosql.column.ColumnEntity;
 
 import java.util.ArrayList;
 import java.util.List;
