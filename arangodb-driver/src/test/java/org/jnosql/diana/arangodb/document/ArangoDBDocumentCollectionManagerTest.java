@@ -32,14 +32,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
 import static org.jnosql.diana.arangodb.document.ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -91,7 +92,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentQuery select = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(select).isEmpty());
+        assertTrue(entityManager.select(select).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -101,7 +102,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentQuery select = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(select).isEmpty());
+        assertTrue(entityManager.select(select).collect(Collectors.toList()).isEmpty());
     }
 
 
@@ -110,7 +111,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find(KEY_NAME).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         DocumentEntity documentEntity = entities.get(0);
         assertEquals(entity.find(KEY_NAME).get().getValue().get(String.class), documentEntity.find(KEY_NAME).get()
@@ -127,7 +128,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find(KEY_NAME).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -141,7 +142,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find(KEY_NAME).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -178,7 +179,7 @@ public class ArangoDBDocumentCollectionManagerTest {
 
         String aql = "FOR a IN person FILTER a.name == @name RETURN a";
         List<DocumentEntity> entities = entityManager.aql(aql,
-                singletonMap("name", "Poliana"));
+                singletonMap("name", "Poliana")).collect(Collectors.toList());
         assertNotNull(entities);
     }
 
@@ -197,7 +198,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         ArangoDB arangoDB = DefaultArangoDBDocumentCollectionManager.class.cast(entityManager).getArangoDB();
         arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(new Person());
         DocumentQuery select = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(select);
+        List<DocumentEntity> entities = entityManager.select(select).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -210,7 +211,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         map.put("city", "Salvador");
         arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(map);
         DocumentQuery select = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(select);
+        List<DocumentEntity> entities = entityManager.select(select).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -219,7 +220,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         entityManager.insert(getEntity());
         String aql = "FOR a IN person FILTER a.name == @name RETURN a";
         List<String> entities = entityManager.aql(aql,
-                singletonMap("name", "Poliana"), String.class);
+                singletonMap("name", "Poliana"), String.class).collect(Collectors.toList());
 
         assertFalse(entities.isEmpty());
     }
@@ -228,7 +229,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     public void shouldExecuteAQLWithType() {
         entityManager.insert(getEntity());
         String aql = "FOR a IN person RETURN a";
-        List<String> entities = entityManager.aql(aql, String.class);
+        List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 

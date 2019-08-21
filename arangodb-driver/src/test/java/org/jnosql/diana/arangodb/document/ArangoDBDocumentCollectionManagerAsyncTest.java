@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
@@ -108,14 +110,14 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
         Document key = entity1.find("_key").get();
 
         condition.set(false);
-        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> references = new AtomicReference<>();
         entityManagerAsync.select(select().from(entity1.getName()).where("_key").eq(key.get()).build(), l -> {
             condition.set(true);
             references.set(l);
         });
         await().untilTrue(condition);
 
-        List<DocumentEntity> entities = references.get();
+        List<DocumentEntity> entities = references.get().collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -137,14 +139,14 @@ public class ArangoDBDocumentCollectionManagerAsyncTest {
         Document key = entity1.find("_key").get();
 
         condition.set(false);
-        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> references = new AtomicReference<>();
         entityManagerAsync.aql("FOR p IN person FILTER  p._key == @key RETURN p", Collections.singletonMap("key", key.get()), l -> {
             condition.set(true);
             references.set(l);
         });
 
         await().untilTrue(condition);
-        List<DocumentEntity> entities = references.get();
+        List<DocumentEntity> entities = references.get().collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
