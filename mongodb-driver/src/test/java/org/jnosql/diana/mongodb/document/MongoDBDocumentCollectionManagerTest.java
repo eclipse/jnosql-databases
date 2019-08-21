@@ -98,7 +98,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .build();
 
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).isEmpty());
+        assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -110,11 +110,10 @@ public class MongoDBDocumentCollectionManagerTest {
                 .where("_id").eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
-
 
     @Test
     public void shouldFindDocument2() {
@@ -126,7 +125,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and("city").eq("Salvador").and("_id").eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
@@ -141,7 +140,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and(id.get().getName()).eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
@@ -158,7 +157,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
@@ -175,7 +174,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
@@ -192,7 +191,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 1);
         assertThat(entitiesFound, contains(entities.get(0)));
     }
@@ -209,7 +208,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
         assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
     }
@@ -226,7 +225,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
         assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
     }
@@ -243,7 +242,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        assertEquals(entities, entityManager.select(query));
+        assertEquals(entities, entityManager.select(query).collect(Collectors.toList()));
     }
 
     @Test
@@ -259,7 +258,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .skip(1L)
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
 
@@ -269,7 +268,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .skip(2L)
                 .build();
 
-        entitiesFound = entityManager.select(query);
+        entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.isEmpty());
 
     }
@@ -287,7 +286,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .limit(1L)
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
 
@@ -297,7 +296,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .limit(2L)
                 .build();
 
-        entitiesFound = entityManager.select(query);
+        entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
 
     }
@@ -315,7 +314,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .orderBy("age").asc()
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         List<Integer> ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
@@ -329,7 +328,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .orderBy("age").desc()
                 .build();
 
-        entitiesFound = entityManager.select(query);
+        entitiesFound = entityManager.select(query).collect(Collectors.toList());
         ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
@@ -342,7 +341,7 @@ public class MongoDBDocumentCollectionManagerTest {
     public void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -350,11 +349,11 @@ public class MongoDBDocumentCollectionManagerTest {
     public void shouldDeleteAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
-        entities = entityManager.select(query);
+        entities = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
     }
 
@@ -362,7 +361,7 @@ public class MongoDBDocumentCollectionManagerTest {
     public void shouldFindAllByFields() {
         entityManager.insert(getEntity());
         DocumentQuery query = select("name").from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         final DocumentEntity entity = entities.get(0);
         assertEquals(2, entity.size());
@@ -382,7 +381,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .where("_id").eq(id.get())
                 .build();
 
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -399,7 +398,7 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where(id.getName()).eq(id.get())
                 .build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -418,7 +417,7 @@ public class MongoDBDocumentCollectionManagerTest {
         entityManager.insert(entity);
 
         List<DocumentEntity> entities = entityManager.select(select().from("download")
-                .where("_id").eq(id).build());
+                .where("_id").eq(id).build()).collect(Collectors.toList());
 
         assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);
@@ -442,7 +441,7 @@ public class MongoDBDocumentCollectionManagerTest {
         entityManager.insert(entity);
 
         List<DocumentEntity> entities = entityManager.select(select().from("download")
-                .where("_id").eq(id).build());
+                .where("_id").eq(id).build()).collect(Collectors.toList());
 
         assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);
@@ -500,7 +499,6 @@ public class MongoDBDocumentCollectionManagerTest {
         entity.add(Document.of("contacts", documents));
         return entity;
     }
-
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
