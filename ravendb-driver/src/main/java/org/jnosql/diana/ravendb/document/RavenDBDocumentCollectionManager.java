@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
@@ -127,8 +128,8 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
         Objects.requireNonNull(query, "query is required");
 
         try (IDocumentSession session = store.openSession()) {
-            List<Map> entities = getQueryMaps(new RavenDeleteQuery(query), session);
-            entities.stream().map(EntityConverter::getId).forEach(session::delete);
+            Stream<Map> entities = getQueryMaps(new RavenDeleteQuery(query), session);
+            entities.map(EntityConverter::getId).forEach(session::delete);
             session.saveChanges();
         }
 
@@ -136,13 +137,12 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) {
+    public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
 
         try (IDocumentSession session = store.openSession()) {
-            List<Map> entities = getQueryMaps(query, session);
-            return entities.stream().filter(Objects::nonNull).map(EntityConverter::getEntity)
-                    .collect(Collectors.toList());
+            Stream<Map> entities = getQueryMaps(query, session);
+            return entities.filter(Objects::nonNull).map(EntityConverter::getEntity);
         }
 
     }
@@ -181,16 +181,16 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
     }
 
 
-    private List<Map> getQueryMaps(DocumentQuery query, IDocumentSession session) {
-        List<Map> entities = new ArrayList<>();
+    private Stream<Map> getQueryMaps(DocumentQuery query, IDocumentSession session) {
         QueryResult queryResult = DocumentQueryConversor.createQuery(session, query);
 
-        queryResult.getIds().stream()
-                .map(i -> session.load(HashMap.class, i))
-                .forEach(entities::add);
+        Stream<Map> idQueryStream = queryResult.getIds().stream()
+                .map(i -> session.load(HashMap.class, i));
 
-        queryResult.getRavenQuery().map(IEnumerableQuery::toList).ifPresent(entities::addAll);
-        return entities;
+        final Stream<HashMap> queryStream = queryResult.getRavenQuery()
+                .map(IEnumerableQuery::toList)
+                .map(List::stream).orElseGet(() -> Stream.empty());
+        return Stream.concat(idQueryStream, queryStream);
     }
 
 }
