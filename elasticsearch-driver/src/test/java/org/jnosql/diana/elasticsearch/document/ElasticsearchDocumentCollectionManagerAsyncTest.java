@@ -30,6 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
@@ -76,7 +78,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         Document id = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
 
     }
@@ -99,14 +101,14 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         entityManagerAsync.delete(deleteQuery);
 
         AtomicBoolean condition = new AtomicBoolean(false);
-        AtomicReference<List<DocumentEntity>> entities = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> entities = new AtomicReference<>();
         entityManagerAsync.select(query, l -> {
             condition.set(true);
             entities.set(l);
 
         });
         await().untilTrue(condition);
-        assertTrue(entities.get().isEmpty());
+        assertTrue(entities.get().collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -115,7 +117,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         entityManager.insert(entity);
         Thread.sleep(1_000L);
         TermQueryBuilder query = termQuery("name", "Poliana");
-        AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> result = new AtomicReference<>();
         AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
         entityManagerAsync.search(query, l -> {
@@ -124,7 +126,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         }, "person");
 
         await().untilTrue(atomicBoolean);
-        List<DocumentEntity> account = result.get();
+        List<DocumentEntity> account = result.get().collect(Collectors.toList());
         assertFalse(account.isEmpty());
     }
 
@@ -135,16 +137,15 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         Thread.sleep(1_000L);
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         AtomicBoolean condition = new AtomicBoolean(false);
-        AtomicReference<List<DocumentEntity>> result = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> result = new AtomicReference<>();
 
         entityManagerAsync.select(query, l -> {
             condition.set(true);
             result.set(l);
         });
         await().untilTrue(condition);
-        List<DocumentEntity> entities = result.get();
+        List<DocumentEntity> entities = result.get().collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-
     }
 
     @Test

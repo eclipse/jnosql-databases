@@ -83,7 +83,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> result = entityManager.select(query);
+        List<DocumentEntity> result = entityManager.select(query).collect(Collectors.toList());
         assertFalse(result.isEmpty());
     }
 
@@ -103,7 +103,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         entityManager.insert(entity);
         TermQueryBuilder query = termQuery("name", "Poliana");
         SECONDS.sleep(1L);
-        List<DocumentEntity> account = entityManager.search(query, "person");
+        List<DocumentEntity> account = entityManager.search(query, "person").collect(Collectors.toList());
         assertFalse(account.isEmpty());
     }
 
@@ -118,7 +118,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         SECONDS.sleep(1L);
         entityManager.delete(deleteQuery);
         SECONDS.sleep(1L);
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         System.out.println(entities);
         assertTrue(entities.isEmpty());
     }
@@ -133,7 +133,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).isEmpty());
+        assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
         SECONDS.sleep(1L);
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         List<Document> names = entities.stream().map(e -> e.find("name").get())
                 .distinct().collect(Collectors.toList());
@@ -157,7 +157,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
@@ -168,7 +168,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         SECONDS.sleep(1L);
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -197,7 +197,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -236,7 +236,6 @@ public class ElasticsearchDocumentCollectionManagerTest {
         SECONDS.sleep(1L);
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
     }
-
 
     private DocumentEntity createSubdocumentList() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
