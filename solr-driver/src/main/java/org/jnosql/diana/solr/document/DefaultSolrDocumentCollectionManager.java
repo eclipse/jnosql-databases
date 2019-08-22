@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -119,7 +120,7 @@ class DefaultSolrDocumentCollectionManager implements SolrDocumentCollectionMana
     }
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) {
+    public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
         try {
             SolrQuery solrQuery = new SolrQuery();
@@ -137,7 +138,7 @@ class DefaultSolrDocumentCollectionManager implements SolrDocumentCollectionMana
             solrQuery.setSorts(sorts);
             final QueryResponse response = solrClient.query(solrQuery);
             final SolrDocumentList documents = response.getResults();
-            return SolrUtils.of(documents);
+            return SolrUtils.of(documents).stream();
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to query at Solr", e);
         }
