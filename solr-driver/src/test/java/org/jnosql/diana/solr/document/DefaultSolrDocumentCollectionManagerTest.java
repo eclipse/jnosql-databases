@@ -338,7 +338,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .orderBy("age").desc()
                 .build();
 
-        entitiesFound = entityManager.select(query);
+        entitiesFound = entityManager.select(query).collect(Collectors.toList());
         ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
@@ -392,7 +392,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
     public void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());;
         assertFalse(entities.isEmpty());
     }
 
@@ -426,7 +426,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
         entityManager.insert(entity);
 
         List<DocumentEntity> entities = entityManager.select(select().from("download")
-                .where(ID).eq(id).build());
+                .where(ID).eq(id).build()).collect(Collectors.toList());;
 
         assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);
