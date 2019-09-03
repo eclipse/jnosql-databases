@@ -27,25 +27,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Stream;
 
 enum QueryExecutorType implements QueryExecutor {
 
     PAGING_STATE {
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
+        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
             return execute(keyspace, query, null, manager);
         }
 
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
+        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
                                           DefaultCassandraColumnFamilyManager manager) {
             CassandraQuery query = CassandraQuery.class.cast(q);
 
             if (query.isExhausted()) {
-                return emptyList();
+                return Stream.empty();
             }
             BuiltStatement select = QueryUtils.select(query, keyspace);
 
@@ -67,22 +65,22 @@ enum QueryExecutorType implements QueryExecutor {
                     break;
                 }
             }
-            return entities;
+            return entities.stream();
         }
 
         @Override
-        public void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+        public void execute(String keyspace, ColumnQuery query, Consumer<Stream<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
             execute(keyspace, query, null, consumer, manager);
         }
 
         @Override
-        public void execute(String keyspace, ColumnQuery q, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer,
+        public void execute(String keyspace, ColumnQuery q, ConsistencyLevel level, Consumer<Stream<ColumnEntity>> consumer,
                             DefaultCassandraColumnFamilyManagerAsync manager) {
 
             CassandraQuery query = CassandraQuery.class.cast(q);
 
             if (query.isExhausted()) {
-                consumer.accept(emptyList());
+                consumer.accept(Stream.empty());
                 return;
             }
 
@@ -99,30 +97,29 @@ enum QueryExecutorType implements QueryExecutor {
 
     }, DEFAULT {
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
+        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
             return execute(keyspace, query, null, manager);
         }
 
         @Override
-        public List<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level, DefaultCassandraColumnFamilyManager manager) {
+        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level, DefaultCassandraColumnFamilyManager manager) {
             BuiltStatement select = QueryUtils.select(query, keyspace);
 
             if (Objects.nonNull(level)) {
                 select.setConsistencyLevel(level);
             }
             ResultSet resultSet = manager.getSession().execute(select);
-            return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
-                    .collect(toList());
+            return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
         }
 
         @Override
-        public void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+        public void execute(String keyspace, ColumnQuery query, Consumer<Stream<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
             execute(keyspace, query, null, consumer, manager);
         }
 
         @Override
         public void execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
-                            Consumer<List<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
+                            Consumer<Stream<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
 
             BuiltStatement select = QueryUtils.select(query, keyspace);
 

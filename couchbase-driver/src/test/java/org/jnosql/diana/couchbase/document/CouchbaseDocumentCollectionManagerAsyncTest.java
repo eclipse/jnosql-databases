@@ -22,9 +22,9 @@ import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
-import org.jnosql.diana.document.Documents;
-import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.jnosql.diana.couchbase.CouchbaseUtil;
+import org.jnosql.diana.couchbase.configuration.CouchbaseDocumentTcConfiguration;
+import org.jnosql.diana.document.Documents;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,12 +37,14 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.couchbase.client.java.query.dsl.Expression.x;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.notNullValue;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -85,7 +87,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
 
         Document id = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
 
     }
@@ -98,7 +100,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         TimeUnit.SECONDS.sleep(2L);
         Document id = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());;
         assertTrue(entities.isEmpty());
 
     }
@@ -115,7 +117,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         TimeUnit.SECONDS.sleep(2L);
         Document id = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());;
         assertTrue(entities.isEmpty());
 
     }
@@ -158,7 +160,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     @Test
     public void shouldRemoveEntityAsyncCallBack() {
         AtomicBoolean condition = new AtomicBoolean(false);
-        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> references = new AtomicReference<>();
         DocumentEntity documentEntity = entityManager.insert(getEntity());
         Document id = documentEntity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
@@ -170,7 +172,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         await().untilTrue(condition);
         entityManagerAsync.select(query, references::set);
         await().until(() -> references.get(), notNullValue());
-        assertFalse(references.get().isEmpty());
+        assertFalse(references.get().collect(Collectors.toList()).isEmpty());
 
     }
 
@@ -178,7 +180,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
     public void shouldSelect() {
         DocumentEntity entity = getEntity();
         AtomicReference<DocumentEntity> reference = new AtomicReference<>();
-        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> references = new AtomicReference<>();
 
         entityManagerAsync.insert(entity, reference::set);
 
@@ -187,7 +189,7 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManagerAsync.select(query, references::set);
         await().until(() -> references.get(), notNullValue());
-        List<DocumentEntity> entities = references.get();
+        List<DocumentEntity> entities = references.get().collect(Collectors.toList());
         assertFalse(entities.isEmpty());
 
     }
@@ -198,15 +200,15 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         entityManager.insert(entity);
         TimeUnit.SECONDS.sleep(2L);
         await().atLeast(Duration.ofSeconds(10));
-        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> references = new AtomicReference<>();
         entityManagerAsync.n1qlQuery("select * from jnosql", references::set);
         await().until(references::get, notNullValue());
-        assertFalse(references.get().isEmpty());
+        assertFalse(references.get().collect(Collectors.toList()).isEmpty());
     }
 
     @Test
     public void shouldRunN1QlParameters() {
-        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> references = new AtomicReference<>();
         AtomicBoolean condition = new AtomicBoolean(false);
 
         DocumentEntity entity = getEntity();
@@ -218,12 +220,12 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         JsonObject params = JsonObject.create().put("name", "Poliana");
         entityManagerAsync.n1qlQuery("select * from jnosql where name = $name", params, references::set);
         await().until(references::get, notNullValue());
-        assertEquals(1, references.get().size());
+        assertEquals(1, references.get().collect(Collectors.toList()).size());
     }
 
     @Test
     public void shouldRunN1QlStatement() {
-        AtomicReference<List<DocumentEntity>> references = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> references = new AtomicReference<>();
         AtomicBoolean condition = new AtomicBoolean(false);
 
         DocumentEntity entity = getEntity();
@@ -236,10 +238,10 @@ public class CouchbaseDocumentCollectionManagerAsyncTest {
         });
         await().atLeast(Duration.ofSeconds(1));
         await().untilTrue(condition);
-        assertFalse(references.get().isEmpty());
-        assertEquals(1, references.get().size());
+        final List<DocumentEntity> entities = references.get().collect(Collectors.toList());
+        assertFalse(entities.isEmpty());
+        assertEquals(1, entities.size());
     }
-
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static com.orientechnologies.orient.core.db.ODatabase.OPERATION_MODE.ASYNCHRONOUS;
 import static java.util.Objects.requireNonNull;
@@ -143,13 +144,12 @@ class DefaultOrientDBDocumentCollectionManagerAsync implements OrientDBDocumentC
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void select(DocumentQuery query, Consumer<Stream<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
         ODatabaseSession tx = pool.acquire();
-        QueryOSQLFactory.QueryResultAsync orientQuery = toAsync(query, l -> callBack.accept(l.stream()
-                .map(OrientDBConverter::convert)
-                .collect(toList())));
+        QueryOSQLFactory.QueryResultAsync orientQuery = toAsync(query, l -> callBack.accept(l
+                .map(OrientDBConverter::convert)));
         tx.command(orientQuery.getQuery()).execute(orientQuery.getParams());
     }
 

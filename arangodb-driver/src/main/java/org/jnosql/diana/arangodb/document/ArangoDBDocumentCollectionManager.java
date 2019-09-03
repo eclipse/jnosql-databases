@@ -17,8 +17,8 @@ package org.jnosql.diana.arangodb.document;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
 
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * The ArangoDB implementation of {@link DocumentCollectionManager} it does not support to TTL methods:
@@ -35,7 +35,7 @@ public interface ArangoDBDocumentCollectionManager extends DocumentCollectionMan
      * @return the query result
      * @throws NullPointerException when either query or values are null
      */
-    List<DocumentEntity> aql(String query, Map<String, Object> values);
+    Stream<DocumentEntity> aql(String query, Map<String, Object> values);
 
     /**
      * Executes ArangoDB query language, AQL.
@@ -48,7 +48,7 @@ public interface ArangoDBDocumentCollectionManager extends DocumentCollectionMan
      * @return the query result
      * @throws NullPointerException when either query or values are null
      */
-    <T> List<T> aql(String query, Map<String, Object> values, Class<T> typeClass);
+    <T> Stream<T> aql(String query, Map<String, Object> values, Class<T> typeClass);
 
     /**
      * Executes ArangoDB query language, AQL.
@@ -60,5 +60,5 @@ public interface ArangoDBDocumentCollectionManager extends DocumentCollectionMan
      * @return the query result
      * @throws NullPointerException when either query or values are null
      */
-    <T> List<T> aql(String query, Class<T> typeClass);
+    <T> Stream<T> aql(String query, Class<T> typeClass);
 }

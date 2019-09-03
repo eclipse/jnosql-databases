@@ -94,7 +94,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .build();
 
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).isEmpty());
+        assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .where(ID).eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         final DocumentEntity result = entities.get(0);
 
@@ -126,7 +126,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and("city").eq("Salvador").and(ID).eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         final DocumentEntity result = entities.get(0);
 
@@ -144,7 +144,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and(id.get().getName()).eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         final DocumentEntity result = entities.get(0);
         assertEquals(entity.find("name").get(), result.find("name").get());
@@ -163,7 +163,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(3, entitiesFound.size());
     }
 
@@ -174,7 +174,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
         entityManager.insert(getEntitiesWithValues());
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").not().eq("Lucas").build();
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
     }
 
@@ -190,7 +190,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
@@ -206,7 +206,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
     }
 
@@ -222,7 +222,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
     }
 
@@ -237,7 +237,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
     }
 
@@ -253,7 +253,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        assertEquals(3, entityManager.select(query).size());
+        assertEquals(3, entityManager.select(query).collect(Collectors.toList()).size());
     }
 
     @Test
@@ -269,7 +269,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .skip(1L)
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
 
@@ -279,7 +279,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .skip(3L)
                 .build();
 
-        entitiesFound = entityManager.select(query);
+        entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.isEmpty());
 
     }
@@ -297,7 +297,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .limit(1L)
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
 
@@ -307,7 +307,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .limit(2L)
                 .build();
 
-        entitiesFound = entityManager.select(query);
+        entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         entityManager.delete(deleteQuery);
     }
@@ -325,7 +325,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .orderBy("age").asc()
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         List<Integer> ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
@@ -338,7 +338,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .orderBy("age").desc()
                 .build();
 
-        entitiesFound = entityManager.select(query);
+        entitiesFound = entityManager.select(query).collect(Collectors.toList());
         ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
@@ -392,7 +392,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
     public void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());;
         assertFalse(entities.isEmpty());
     }
 
@@ -426,7 +426,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
         entityManager.insert(entity);
 
         List<DocumentEntity> entities = entityManager.select(select().from("download")
-                .where(ID).eq(id).build());
+                .where(ID).eq(id).build()).collect(Collectors.toList());;
 
         assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);

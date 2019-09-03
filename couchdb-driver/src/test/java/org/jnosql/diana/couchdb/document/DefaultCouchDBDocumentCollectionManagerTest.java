@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
@@ -117,7 +118,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     @Test
     public void shouldSelectEmptyResult() {
         DocumentQuery query = select().from(COLLECTION_NAME).where("no_field").eq("not_found").build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
     }
 
@@ -132,7 +133,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
                 .where(name.getName()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).isEmpty());
+        assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -157,17 +158,17 @@ class DefaultCouchDBDocumentCollectionManagerTest {
                 .where("index").in(asList(0, 1, 2, 3, 4)).limit(2).build());
 
         assertFalse(query.getBookmark().isPresent());
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
         assertTrue(query.getBookmark().isPresent());
         String bookmark = query.getBookmark().get();
 
-        entities = entityManager.select(query);
+        entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
         assertTrue(query.getBookmark().isPresent());
         assertNotEquals(bookmark, query.getBookmark().get());
 
-        entities = entityManager.select(query);
+        entities = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
 
     }

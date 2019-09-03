@@ -34,11 +34,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.notNullValue;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -129,7 +131,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         }
         AtomicBoolean condition = new AtomicBoolean(false);
         DocumentQuery query = select().from(entity.getName()).build();
-        AtomicReference<List<DocumentEntity>> atomicReference = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> atomicReference = new AtomicReference<>();
 
         entityManager.select(query, c -> {
             condition.set(true);
@@ -137,7 +139,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         });
 
         await().untilTrue(condition);
-        List<DocumentEntity> entities = atomicReference.get();
+        List<DocumentEntity> entities = atomicReference.get().collect(Collectors.toList());
         assertTrue(condition.get());
         assertFalse(entities.isEmpty());
 
@@ -164,7 +166,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         await().untilTrue(condition);
 
         AtomicBoolean selectCondition = new AtomicBoolean(false);
-        AtomicReference<List<DocumentEntity>> reference = new AtomicReference<>();
+        AtomicReference<Stream<DocumentEntity>> reference = new AtomicReference<>();
         DocumentQuery selectQuery = select().from(collection)
                 .where("name").eq(document.get())
                 .build();
@@ -174,7 +176,7 @@ public class MongoDBDocumentCollectionManagerAsyncTest {
         });
         await().untilTrue(selectCondition);
 
-        assertTrue(reference.get().isEmpty());
+        assertTrue(reference.get().collect(Collectors.toList()).isEmpty());
     }
 
     @Test

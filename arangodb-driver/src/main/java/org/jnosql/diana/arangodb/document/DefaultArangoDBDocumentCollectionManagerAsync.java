@@ -28,15 +28,14 @@ import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.ID;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.KEY;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.REV;
@@ -148,9 +147,8 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
         future.thenAccept(c -> callBack.accept(null));
     }
 
-
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
+    public void select(DocumentQuery query, Consumer<Stream<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         requireNonNull(query, "query is required");
@@ -176,7 +174,7 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
     }
 
     @Override
-    public void aql(String query, Map<String, Object> values, Consumer<List<DocumentEntity>> callBack)
+    public void aql(String query, Map<String, Object> values, Consumer<Stream<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException,
             UnsupportedOperationException, NullPointerException {
 
@@ -188,12 +186,12 @@ public class DefaultArangoDBDocumentCollectionManagerAsync implements ArangoDBDo
 
     }
 
-    private void runAql(String query, Map<String, Object> values, Consumer<List<DocumentEntity>> callBack) {
+    private void runAql(String query, Map<String, Object> values, Consumer<Stream<DocumentEntity>> callBack) {
         CompletableFuture<ArangoCursorAsync<BaseDocument>> future = arangoDBAsync.db(database).query(query,
                 values, null, BaseDocument.class);
 
         future.thenAccept(b -> {
-            List<DocumentEntity> entities = StreamSupport.stream(b.spliterator(), false).map(ArangoDBUtil::toEntity).collect(toList());
+            Stream<DocumentEntity> entities = StreamSupport.stream(b.spliterator(), false).map(ArangoDBUtil::toEntity);
             callBack.accept(entities);
         });
     }

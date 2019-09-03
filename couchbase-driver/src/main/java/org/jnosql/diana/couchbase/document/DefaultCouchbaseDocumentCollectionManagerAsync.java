@@ -24,9 +24,9 @@ import jakarta.nosql.document.DocumentQuery;
 import rx.functions.Action1;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static rx.Observable.just;
@@ -119,7 +119,7 @@ class DefaultCouchbaseDocumentCollectionManagerAsync implements CouchbaseDocumen
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
+    public void select(DocumentQuery query, Consumer<Stream<DocumentEntity>> callBack) throws ExecuteAsyncQueryException, UnsupportedOperationException {
         just(query).map(manager::select).subscribe(callBack::accept, ERROR_FIND);
     }
 
@@ -130,27 +130,27 @@ class DefaultCouchbaseDocumentCollectionManagerAsync implements CouchbaseDocumen
 
 
     @Override
-    public void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+    public void n1qlQuery(String n1qlQuery, JsonObject params, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
         requireNonNull(callback, "callback is required");
         just(n1qlQuery).map(n -> manager.n1qlQuery(n, params))
                 .subscribe(callback::accept, ERROR_N1QLQUERY);
     }
 
     @Override
-    public void n1qlQuery(Statement n1qlQuery, JsonObject params, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+    public void n1qlQuery(Statement n1qlQuery, JsonObject params, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
         requireNonNull(callback, "callback is required");
         just(n1qlQuery).map(n -> manager.n1qlQuery(n, params))
                 .subscribe(callback::accept, ERROR_N1QLQUERY);
     }
 
     @Override
-    public void n1qlQuery(String n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+    public void n1qlQuery(String n1qlQuery, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
         requireNonNull(callback, "callback is required");
         just(n1qlQuery).map(manager::n1qlQuery).subscribe(callback::accept, ERROR_N1QLQUERY);
     }
 
     @Override
-    public void n1qlQuery(Statement n1qlQuery, Consumer<List<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
+    public void n1qlQuery(Statement n1qlQuery, Consumer<Stream<DocumentEntity>> callback) throws NullPointerException, ExecuteAsyncQueryException {
         requireNonNull(callback, "callback is required");
         just(n1qlQuery).map(manager::n1qlQuery).subscribe(callback::accept, ERROR_N1QLQUERY);
     }

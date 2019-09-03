@@ -32,8 +32,8 @@ import org.bson.conversions.Bson;
 import org.jnosql.diana.document.Documents;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -131,9 +131,8 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         collection.deleteMany(mongoDBQuery);
     }
 
-
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) {
+    public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
         String collectionName = query.getDocumentCollection();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
@@ -152,7 +151,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         query.getSorts().stream().map(this::getSort).forEach(documents::sort);
 
         return stream(documents.spliterator(), false).map(MongoDBUtils::of)
-                .map(ds -> DocumentEntity.of(collectionName, ds)).collect(toList());
+                .map(ds -> DocumentEntity.of(collectionName, ds));
 
     }
 

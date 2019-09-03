@@ -40,7 +40,6 @@
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
             <version>8.1.1</version>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

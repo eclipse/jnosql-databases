@@ -22,10 +22,9 @@ import com.datastax.driver.core.Session;
 import jakarta.nosql.ExecuteAsyncQueryException;
 import jakarta.nosql.column.ColumnEntity;
 
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The Diana wrapper to {@link com.datastax.driver.core.PreparedStatement}
@@ -46,11 +45,10 @@ public class CassandraPrepareStatment {
         this.session = session;
     }
 
-    public List<ColumnEntity> executeQuery() {
+    public Stream<ColumnEntity> executeQuery() {
         loadBoundStatment();
         ResultSet resultSet = session.execute(boundStatement);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
-                .collect(Collectors.toList());
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
     /**
@@ -60,7 +58,7 @@ public class CassandraPrepareStatment {
      * @throws ExecuteAsyncQueryException when has async error
      * @throws NullPointerException       when consumer is null
      */
-    public void executeQueryAsync(Consumer<List<ColumnEntity>> consumer) throws ExecuteAsyncQueryException, NullPointerException {
+    public void executeQueryAsync(Consumer<Stream<ColumnEntity>> consumer) throws ExecuteAsyncQueryException, NullPointerException {
         loadBoundStatment();
         ResultSetFuture resultSet = session.executeAsync(boundStatement);
         CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);

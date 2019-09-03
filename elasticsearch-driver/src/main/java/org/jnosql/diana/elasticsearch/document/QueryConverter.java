@@ -15,12 +15,12 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
-import org.elasticsearch.index.query.QueryBuilder;
 import jakarta.nosql.Condition;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentQuery;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static jakarta.nosql.Condition.EQUALS;
+import static jakarta.nosql.Condition.IN;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-import static jakarta.nosql.Condition.EQUALS;
-import static jakarta.nosql.Condition.IN;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
 final class QueryConverter {

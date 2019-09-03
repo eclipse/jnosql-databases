@@ -18,6 +18,7 @@ package org.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.Session;
+import jakarta.nosql.NonUniqueResultException;
 import jakarta.nosql.Value;
 import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnDeleteQuery;
@@ -25,7 +26,6 @@ import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 import jakarta.nosql.column.Columns;
 import org.hamcrest.Matchers;
-import jakarta.nosql.NonUniqueResultException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,7 +109,8 @@ public class CassandraColumnFamilyManagerTest {
 
         sleep(2_000L);
 
-        List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).where("id").eq(10L).build());
+        List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).where("id").eq(10L).build())
+                .collect(toList());
         assertTrue(entities.isEmpty());
     }
 
@@ -119,7 +120,8 @@ public class CassandraColumnFamilyManagerTest {
 
         sleep(2_000L);
 
-        List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).build());
+        List<ColumnEntity> entities = entityManager.select(select().from(COLUMN_FAMILY).build())
+                .collect(toList());
         assertTrue(entities.isEmpty());
     }
 
@@ -222,7 +224,7 @@ public class CassandraColumnFamilyManagerTest {
         entityManager.insert(columnEntity);
 
         ColumnQuery query = select().from(columnEntity.getName()).build();
-        List<ColumnEntity> entities = entityManager.select(query);
+        List<ColumnEntity> entities = entityManager.select(query).collect(toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -266,7 +268,7 @@ public class CassandraColumnFamilyManagerTest {
         entityManager.insert(getColumnFamily());
 
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
-        List<ColumnEntity> columnEntity = entityManager.select(query);
+        List<ColumnEntity> columnEntity = entityManager.select(query).collect(toList());
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
@@ -279,7 +281,7 @@ public class CassandraColumnFamilyManagerTest {
 
         entityManager.insert(getColumnFamily());
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
-        List<ColumnEntity> columnEntity = entityManager.select(query, CONSISTENCY_LEVEL);
+        List<ColumnEntity> columnEntity = entityManager.select(query, CONSISTENCY_LEVEL).collect(toList());
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
@@ -290,7 +292,8 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldRunNativeQuery() {
         entityManager.insert(getColumnFamily());
-        List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
+        List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;")
+                .collect(toList());
         assertFalse(entities.isEmpty());
         List<Column> columns = entities.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
@@ -301,7 +304,7 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldRunNativeQuery2() {
         entityManager.insert(getColumnFamily());
         String query = "select * from newKeySpace.newColumnFamily where id = :id;";
-        List<ColumnEntity> entities = entityManager.cql(query, singletonMap("id", 10L));
+        List<ColumnEntity> entities = entityManager.cql(query, singletonMap("id", 10L)).collect(toList());
         assertFalse(entities.isEmpty());
         List<Column> columns = entities.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
@@ -313,7 +316,7 @@ public class CassandraColumnFamilyManagerTest {
         entityManager.insert(getColumnFamily());
         CassandraPrepareStatment preparedStatement = entityManager.nativeQueryPrepare("select * from newKeySpace.newColumnFamily where id=?");
         preparedStatement.bind(10L);
-        List<ColumnEntity> entities = preparedStatement.executeQuery();
+        List<ColumnEntity> entities = preparedStatement.executeQuery().collect(toList());
         List<Column> columns = entities.get(0).getColumns();
         assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
         assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
@@ -326,7 +329,8 @@ public class CassandraColumnFamilyManagerTest {
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").eq(10L).build();
         ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
         entityManager.delete(deleteQuery);
-        List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
+        List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;")
+                .collect(toList());
         assertTrue(entities.isEmpty());
     }
 
@@ -350,7 +354,8 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity.of(COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         ColumnDeleteQuery deleteQuery = delete().from(COLUMN_FAMILY).where("id").eq(10L).build();
         entityManager.delete(deleteQuery, CONSISTENCY_LEVEL);
-        List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;");
+        List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;")
+                .collect(toList());
         assertTrue(entities.isEmpty());
     }
 
@@ -359,7 +364,7 @@ public class CassandraColumnFamilyManagerTest {
         getEntities().forEach(entityManager::insert);
         ColumnQuery query = select().from(COLUMN_FAMILY).where("id").in(Arrays.asList(1L, 2L, 3L))
                 .limit(2).build();
-        List<ColumnEntity> columnFamilyEntities = entityManager.select(query);
+        List<ColumnEntity> columnFamilyEntities = entityManager.select(query).collect(toList());
         assertEquals(Integer.valueOf(2), Integer.valueOf(columnFamilyEntities.size()));
     }
 
@@ -484,22 +489,21 @@ public class CassandraColumnFamilyManagerTest {
 
         assertFalse(cassandraQuery.getPagingState().isPresent());
 
-        List<ColumnEntity> entities = entityManager.select(cassandraQuery);
+        List<ColumnEntity> entities = entityManager.select(cassandraQuery).collect(toList());
         assertEquals(6, entities.size());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
-        entities = entityManager.select(cassandraQuery);
+        entities = entityManager.select(cassandraQuery).collect(toList());
         assertEquals(3, entities.size());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
-        entities = entityManager.select(cassandraQuery);
+        entities = entityManager.select(cassandraQuery).collect(toList());
         assertTrue(entities.isEmpty());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
-        entities = entityManager.select(cassandraQuery);
+        entities = entityManager.select(cassandraQuery).collect(toList());
         assertTrue(entities.isEmpty());
         assertTrue(cassandraQuery.getPagingState().isPresent());
-
 
     }
 

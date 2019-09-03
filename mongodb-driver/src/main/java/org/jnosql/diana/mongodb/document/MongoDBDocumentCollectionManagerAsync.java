@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.mongodb.document.MongoDBUtils.ID_FIELD;
@@ -141,7 +142,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callBack)
+    public void select(DocumentQuery query, Consumer<Stream<DocumentEntity>> callBack)
             throws ExecuteAsyncQueryException, UnsupportedOperationException {
 
         requireNonNull(query, "query is required");
@@ -163,7 +164,7 @@ public class MongoDBDocumentCollectionManagerAsync implements DocumentCollection
 
         query.getSorts().stream().map(this::getSort).forEach(result::sort);
         Block<Document> documentBlock = d -> entities.add(createEntity(collectionName, d));
-        SingleResultCallback<Void> voidSingleResultCallback = (v, e) -> callBack.accept(entities);
+        SingleResultCallback<Void> voidSingleResultCallback = (v, e) -> callBack.accept(entities.stream());
         result.forEach(documentBlock, voidSingleResultCallback);
     }
 

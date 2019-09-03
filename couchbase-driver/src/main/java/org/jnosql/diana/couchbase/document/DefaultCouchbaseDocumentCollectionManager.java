@@ -31,16 +31,13 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toSet;
 import static org.jnosql.diana.couchbase.document.EntityConverter.ID_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.KEY_FIELD;
 import static org.jnosql.diana.couchbase.document.EntityConverter.convert;
@@ -130,30 +127,31 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     }
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
+    public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
 
         QueryConverter.QueryConverterResult select = QueryConverter.select(query, database);
-        List<DocumentEntity> entities = new ArrayList<>();
+        Stream<DocumentEntity> idsQuery = Stream.empty();
+        Stream<DocumentEntity> n1qlQueryStream = Stream.empty();
         if (nonNull(select.getStatement())) {
             ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(select.getStatement(), select.getParams());
             N1qlQueryResult result = bucket.query(n1qlQuery);
-            entities.addAll(convert(result, database));
+            idsQuery = convert(result, database);
         }
         if (!select.getKeys().isEmpty()) {
-            entities.addAll(convert(select.getKeys(), bucket));
+            idsQuery = convert(select.getKeys().stream(), bucket);
         }
 
-        return entities;
+        return Stream.concat(n1qlQueryStream, idsQuery);
     }
 
     @Override
     public long count(String documentCollection) {
-       throw new UnsupportedOperationException("Couchbase does not support count method by document collection");
+        throw new UnsupportedOperationException("Couchbase does not support count method by document collection");
     }
 
 
     @Override
-    public List<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException {
+    public Stream<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
         requireNonNull(params, "params is required");
         N1qlQueryResult result = bucket.query(N1qlQuery.parameterized(n1qlQuery, params));
@@ -161,7 +159,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     }
 
     @Override
-    public List<DocumentEntity> n1qlQuery(Statement n1qlQuery, JsonObject params) throws NullPointerException {
+    public Stream<DocumentEntity> n1qlQuery(Statement n1qlQuery, JsonObject params) throws NullPointerException {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
         requireNonNull(params, "params is required");
         N1qlQueryResult result = bucket.query(N1qlQuery.parameterized(n1qlQuery, params));
@@ -169,27 +167,25 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     }
 
     @Override
-    public List<DocumentEntity> n1qlQuery(String n1qlQuery) throws NullPointerException {
+    public Stream<DocumentEntity> n1qlQuery(String n1qlQuery) throws NullPointerException {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
         N1qlQueryResult result = bucket.query(N1qlQuery.simple(n1qlQuery));
         return convert(result, database);
     }
 
     @Override
-    public List<DocumentEntity> n1qlQuery(Statement n1qlQuery) throws NullPointerException {
+    public Stream<DocumentEntity> n1qlQuery(Statement n1qlQuery) throws NullPointerException {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
         N1qlQueryResult result = bucket.query(N1qlQuery.simple(n1qlQuery));
         return convert(result, database);
     }
 
     @Override
-    public List<DocumentEntity> search(SearchQuery query) throws NullPointerException {
+    public Stream<DocumentEntity> search(SearchQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         SearchQueryResult result = bucket.query(query);
-
-        Set<String> keys = StreamSupport.stream(result.spliterator(), false)
-                .map(SearchQueryRow::id).collect(toSet());
-
+        Stream<String> keys = StreamSupport.stream(result.spliterator(), false)
+                .map(SearchQueryRow::id);
         return convert(keys, bucket);
     }
 

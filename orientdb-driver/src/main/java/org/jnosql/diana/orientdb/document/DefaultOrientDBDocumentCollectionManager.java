@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
@@ -123,7 +124,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
 
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) {
+    public Stream<DocumentEntity> select(DocumentQuery query) {
         requireNonNull(query, "query is required");
         QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(query);
 
@@ -139,7 +140,7 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
                         .map(o -> OrientDBConverter.convert((ODocument) o))
                         .forEach(entities::add);
             }
-            return entities;
+            return entities.stream();
         }
     }
 
@@ -157,24 +158,23 @@ class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollec
     }
 
     @Override
-    public List<DocumentEntity> sql(String query, Object... params) {
+    public Stream<DocumentEntity> sql(String query, Object... params) {
         requireNonNull(query, "query is required");
         try (ODatabaseSession tx = pool.acquire();
              OResultSet resultSet = tx.command(query, params)) {
-            return OrientDBConverter.convert(resultSet);
+            return OrientDBConverter.convert(resultSet).stream();
         }
 
     }
 
     @Override
-    public List<DocumentEntity> sql(String query, Map<String, Object> params) {
+    public Stream<DocumentEntity> sql(String query, Map<String, Object> params) {
         requireNonNull(query, "query is required");
         requireNonNull(params, "params is required");
 
         try (ODatabaseSession tx = pool.acquire();
              OResultSet resultSet = tx.command(query, params)) {
-            return OrientDBConverter.convert(resultSet);
-
+            return OrientDBConverter.convert(resultSet).stream();
         }
     }
 

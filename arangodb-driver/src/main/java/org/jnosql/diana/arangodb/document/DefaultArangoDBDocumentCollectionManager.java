@@ -28,16 +28,15 @@ import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.writer.ValueWriterDecorator;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static org.jnosql.diana.arangodb.document.ArangoDBUtil.getBaseDocument;
 
 class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollectionManager {
@@ -100,7 +99,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
     }
 
     @Override
-    public List<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
+    public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
 
         AQLQueryResult result = QueryAQLConverter.select(query);
@@ -108,8 +107,7 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
                 result.getValues(), null, BaseDocument.class);
 
         return StreamSupport.stream(documents.spliterator(), false)
-                .map(ArangoDBUtil::toEntity)
-                .collect(toList());
+                .map(ArangoDBUtil::toEntity);
     }
 
     @Override
@@ -122,31 +120,30 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
 
 
     @Override
-    public List<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException {
+    public Stream<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
         ArangoCursor<BaseDocument> result = arangoDB.db(database).query(query, values, null, BaseDocument.class);
         return StreamSupport.stream(result.spliterator(), false)
-                .map(ArangoDBUtil::toEntity)
-                .collect(toList());
+                .map(ArangoDBUtil::toEntity);
 
     }
 
     @Override
-    public <T> List<T> aql(String query, Map<String, Object> values, Class<T> typeClass) {
+    public <T> Stream<T> aql(String query, Map<String, Object> values, Class<T> typeClass) {
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
         requireNonNull(typeClass, "typeClass is required");
         ArangoCursor<T> result = arangoDB.db(database).query(query, values, null, typeClass);
-        return result.asListRemaining();
+        return StreamSupport.stream(result.spliterator(), false);
     }
 
     @Override
-    public <T> List<T> aql(String query, Class<T> typeClass) {
+    public <T> Stream<T> aql(String query, Class<T> typeClass) {
         requireNonNull(query, "query is required");
         requireNonNull(typeClass, "typeClass is required");
         ArangoCursor<T> result = arangoDB.db(database).query(query, emptyMap(), null, typeClass);
-        return result.asListRemaining();
+        return StreamSupport.stream(result.spliterator(), false);
     }
 
 

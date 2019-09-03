@@ -15,6 +15,11 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import jakarta.nosql.ExecuteAsyncQueryException;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -26,11 +31,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import jakarta.nosql.ExecuteAsyncQueryException;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static org.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
@@ -128,7 +130,8 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         query.getCondition().orElseThrow(() -> new IllegalArgumentException("condition is required"));
         DocumentQuery select = new ElasticsearchDocumentQuery(query);
 
-        List<DocumentEntity> entities = EntityConverter.query(select, client, index);
+        List<DocumentEntity> entities = EntityConverter.query(select, client, index)
+                .collect(Collectors.toList());
         if (entities.isEmpty()) {
             callBack.accept(null);
             return;
@@ -157,7 +160,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
     }
 
     @Override
-    public void select(DocumentQuery query, Consumer<List<DocumentEntity>> callback) {
+    public void select(DocumentQuery query, Consumer<Stream<DocumentEntity>> callback) {
         requireNonNull(query, "query is required");
         requireNonNull(callback, "callback is required");
         EntityConverter.queryAsync(query, client, index, callback);
@@ -177,7 +180,7 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
 
 
     @Override
-    public void search(QueryBuilder query, Consumer<List<DocumentEntity>> callBack, String... types) {
+    public void search(QueryBuilder query, Consumer<Stream<DocumentEntity>> callBack, String... types) {
         requireNonNull(query, "query is required");
         requireNonNull(callBack, "callBack is required");
 

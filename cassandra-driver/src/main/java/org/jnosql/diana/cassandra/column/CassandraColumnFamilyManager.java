@@ -24,8 +24,8 @@ import jakarta.nosql.column.ColumnFamilyManager;
 import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * The Cassandra implementation of {@link ColumnFamilyManager}, that supports all methods and also supports
@@ -99,7 +99,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * @return the query using a consistency level
      * @throws NullPointerException when either query or level are null
      */
-    List<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException;
+    Stream<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException;
 
     /**
      * Executes CQL
@@ -108,7 +108,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * @return the result of this query
      * @throws NullPointerException when query is null
      */
-    List<ColumnEntity> cql(String query) throws NullPointerException;
+    Stream<ColumnEntity> cql(String query) throws NullPointerException;
 
 
     /**
@@ -120,7 +120,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * @return the result of this query
      * @throws NullPointerException when either query or values are null
      */
-    List<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException;
+    Stream<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException;
 
     /**
      * Executes a statement
@@ -129,7 +129,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * @return the result of this query
      * @throws NullPointerException when statement is null
      */
-    List<ColumnEntity> execute(Statement statement) throws NullPointerException;
+    Stream<ColumnEntity> execute(Statement statement) throws NullPointerException;
 
     /**
      * Executes an query and uses as {@link CassandraPrepareStatment}

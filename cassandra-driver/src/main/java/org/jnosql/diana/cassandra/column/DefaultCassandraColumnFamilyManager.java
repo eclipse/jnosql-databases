@@ -27,10 +27,10 @@ import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
@@ -94,7 +94,6 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public void delete(ColumnDeleteQuery query) {
         requireNonNull(query, "query is required");
@@ -104,7 +103,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
 
     @Override
-    public List<ColumnEntity> select(ColumnQuery query) {
+    public Stream<ColumnEntity> select(ColumnQuery query) {
         requireNonNull(query, "query is required");
         QueryExecutor executor = QueryExecutor.of(query);
         return executor.execute(keyspace, query, this);
@@ -173,7 +172,7 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     }
 
     @Override
-    public List<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
+    public Stream<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(level, "level is required");
         QueryExecutor executor = QueryExecutor.of(query);
@@ -182,28 +181,25 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     }
 
     @Override
-    public List<ColumnEntity> cql(String query) throws NullPointerException {
+    public Stream<ColumnEntity> cql(String query) throws NullPointerException {
         requireNonNull(query, "query is required");
         ResultSet resultSet = session.execute(query);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
-                .collect(Collectors.toList());
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
     @Override
-    public List<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException {
+    public Stream<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
         ResultSet resultSet = session.execute(query, values);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
-                .collect(Collectors.toList());
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
     @Override
-    public List<ColumnEntity> execute(Statement statement) throws NullPointerException {
+    public Stream<ColumnEntity> execute(Statement statement) throws NullPointerException {
         requireNonNull(statement, "statement is required");
         ResultSet resultSet = session.execute(statement);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity)
-                .collect(Collectors.toList());
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
     @Override

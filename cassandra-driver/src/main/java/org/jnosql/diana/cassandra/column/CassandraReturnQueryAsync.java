@@ -21,19 +21,18 @@ import com.datastax.driver.core.ResultSetFuture;
 import jakarta.nosql.ExecuteAsyncQueryException;
 import jakarta.nosql.column.ColumnEntity;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class CassandraReturnQueryAsync implements Runnable {
 
     private final ResultSetFuture resultSet;
 
-    private final Consumer<List<ColumnEntity>> consumer;
+    private final Consumer<Stream<ColumnEntity>> consumer;
 
 
-    CassandraReturnQueryAsync(ResultSetFuture resultSet, Consumer<List<ColumnEntity>> consumer) {
+    CassandraReturnQueryAsync(ResultSetFuture resultSet, Consumer<Stream<ColumnEntity>> consumer) {
         this.resultSet = resultSet;
         this.consumer = consumer;
     }
@@ -42,8 +41,8 @@ class CassandraReturnQueryAsync implements Runnable {
     public void run() {
         try {
             ResultSet resultSet = this.resultSet.get();
-            List<ColumnEntity> entities = resultSet.all().stream()
-                    .map(CassandraConverter::toDocumentEntity).collect(Collectors.toList());
+            Stream<ColumnEntity> entities = resultSet.all().stream()
+                    .map(CassandraConverter::toDocumentEntity);
             consumer.accept(entities);
         } catch (InterruptedException | ExecutionException e) {
             throw new ExecuteAsyncQueryException(e);

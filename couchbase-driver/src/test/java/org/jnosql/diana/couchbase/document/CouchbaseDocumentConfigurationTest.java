@@ -20,8 +20,6 @@ import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static jakarta.nosql.document.DocumentConfiguration.getConfiguration;
-import static jakarta.nosql.document.DocumentConfigurationAsync.getConfiguration;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CouchbaseDocumentConfigurationTest {

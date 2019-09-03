@@ -18,8 +18,8 @@ import com.datastax.driver.core.ConsistencyLevel;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 
-import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 interface QueryExecutor {
 
@@ -30,14 +30,14 @@ interface QueryExecutor {
         return QueryExecutorType.DEFAULT;
     }
 
-    List<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager);
+    Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager);
 
-    List<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
+    Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
                                DefaultCassandraColumnFamilyManager manager);
 
-    void execute(String keyspace, ColumnQuery query, ConsistencyLevel level, Consumer<List<ColumnEntity>> consumer,
+    void execute(String keyspace, ColumnQuery query, ConsistencyLevel level, Consumer<Stream<ColumnEntity>> consumer,
                  DefaultCassandraColumnFamilyManagerAsync manager);
 
-    void execute(String keyspace, ColumnQuery query, Consumer<List<ColumnEntity>> consumer,
+    void execute(String keyspace, ColumnQuery query, Consumer<Stream<ColumnEntity>> consumer,
                  DefaultCassandraColumnFamilyManagerAsync manager);
 }

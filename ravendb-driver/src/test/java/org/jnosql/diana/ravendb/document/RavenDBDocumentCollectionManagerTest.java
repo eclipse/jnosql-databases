@@ -116,7 +116,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .build();
 
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).isEmpty());
+        assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -128,7 +128,8 @@ public class RavenDBDocumentCollectionManagerTest {
                 .where("_id").eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query)
+                .collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
@@ -157,7 +158,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and("city").eq("Salvador").and("_id").eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
@@ -172,7 +173,8 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and(id.get().getName()).eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query)
+                .collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
@@ -190,7 +192,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .build();
 
         Thread.sleep(TIME_LIMIT);
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
@@ -208,7 +210,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .build();
 
         Thread.sleep(TIME_LIMIT);
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, not(contains(entities.get(0))));
     }
@@ -225,7 +227,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound, contains(entities.get(0)));
     }
@@ -243,7 +245,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .build();
 
         Thread.sleep(TIME_LIMIT);
-        List<DocumentEntity> entitiesFound = entityManager.select(query);
+        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         System.out.println(entitiesFound);
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
@@ -262,14 +264,14 @@ public class RavenDBDocumentCollectionManagerTest {
                 .and("type").eq("V")
                 .build();
         Thread.sleep(TIME_LIMIT);
-        assertEquals(entities, entityManager.select(query));
+        assertEquals(entities, entityManager.select(query).collect(Collectors.toList()));
     }
 
     @Test
     public void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query);
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -284,7 +286,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .where("_id").eq(id.get())
                 .build();
 
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
@@ -301,7 +303,7 @@ public class RavenDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where(id.getName()).eq(id.get())
                 .build();
-        DocumentEntity entityFound = entityManager.select(query).get(0);
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });

@@ -15,6 +15,9 @@
 package org.jnosql.diana.elasticsearch.document;
 
 
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
@@ -23,15 +26,10 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
 import org.jnosql.diana.driver.ValueUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -58,32 +56,27 @@ final class EntityConverter {
         return jsonObject;
     }
 
-    static List<DocumentEntity> query(DocumentQuery query, RestHighLevelClient client, String index) {
+    static Stream<DocumentEntity> query(DocumentQuery query, RestHighLevelClient client, String index) {
         QueryConverterResult select = QueryConverter.select(query);
 
 
         try {
-            List<DocumentEntity> entities = new ArrayList<>();
-
+            Stream<DocumentEntity> idQueryStream = Stream.empty();
+            Stream<DocumentEntity> statementQueryStream = Stream.empty();
             if (select.hasId()) {
-                executeId(query, client, index, select, entities);
+                idQueryStream = executeId(query, client, index, select);
             }
             if (select.hasStatement()) {
-                executeStatement(query, client, index, select, entities);
+                statementQueryStream = executeStatement(query, client, index, select);
             }
-
-
-            return entities;
+            return Stream.concat(idQueryStream, statementQueryStream);
         } catch (IOException e) {
             throw new ElasticsearchException("An error to execute a query on elasticsearch", e);
         }
     }
 
-    private static void executeStatement(DocumentQuery query, RestHighLevelClient client, String index,
-                                         QueryConverterResult select,
-                                         List<DocumentEntity> entities) throws IOException {
-
-
+    private static Stream<DocumentEntity> executeStatement(DocumentQuery query, RestHighLevelClient client, String index,
+                                                           QueryConverterResult select) throws IOException {
         SearchRequest searchRequest = new SearchRequest(index);
         searchRequest.types(query.getDocumentCollection());
         if (select.hasQuery()) {
@@ -91,17 +84,16 @@ final class EntityConverter {
         }
 
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
-        Stream.of(response.getHits())
+        return Stream.of(response.getHits())
                 .flatMap(h -> Stream.of(h.getHits()))
                 .map(ElasticsearchEntry::of)
                 .filter(ElasticsearchEntry::isNotEmpty)
-                .map(ElasticsearchEntry::toEntity)
-                .forEach(entities::add);
+                .map(ElasticsearchEntry::toEntity);
     }
 
 
     static void queryAsync(DocumentQuery query, RestHighLevelClient client, String index,
-                           Consumer<List<DocumentEntity>> callBack) {
+                           Consumer<Stream<DocumentEntity>> callBack) {
 
         FindAsyncListener listener = new FindAsyncListener(callBack, query.getDocumentCollection());
         QueryConverterResult select = QueryConverter.select(query);
@@ -112,7 +104,7 @@ final class EntityConverter {
             select.getIds().stream()
                     .map(id -> new MultiGetRequest.Item(index, query.getDocumentCollection(), id))
                     .forEach(multiGetRequest::add);
-            client.mgetAsync(multiGetRequest,RequestOptions.DEFAULT, listener.getIds());
+            client.mgetAsync(multiGetRequest, RequestOptions.DEFAULT, listener.getIds());
         }
 
         if (select.hasStatement()) {
@@ -161,9 +153,8 @@ final class EntityConverter {
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
-    private static void executeId(DocumentQuery query, RestHighLevelClient client, String index,
-                                  QueryConverterResult select,
-                                  List<DocumentEntity> entities) throws IOException {
+    private static Stream<DocumentEntity> executeId(DocumentQuery query, RestHighLevelClient client, String index,
+                                                    QueryConverterResult select) throws IOException {
 
         String type = query.getDocumentCollection();
         MultiGetRequest multiGetRequest = new MultiGetRequest();
@@ -173,12 +164,11 @@ final class EntityConverter {
                 .forEach(multiGetRequest::add);
 
         MultiGetResponse responses = client.mget(multiGetRequest, RequestOptions.DEFAULT);
-        Stream.of(responses.getResponses())
+        return Stream.of(responses.getResponses())
                 .map(MultiGetItemResponse::getResponse)
                 .map(ElasticsearchEntry::of)
                 .filter(ElasticsearchEntry::isNotEmpty)
-                .map(ElasticsearchEntry::toEntity)
-                .forEach(entities::add);
+                .map(ElasticsearchEntry::toEntity);
 
     }
 
