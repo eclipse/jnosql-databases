@@ -25,7 +25,6 @@
     </parent>
 
     <artifactId>couchdb-driver</artifactId>
-    <name>${project.groupId}:${project.artifactId}</name>
     <description>The Eclipse JNoSQL communication layer, Diana, to Couchdb</description>
 
     <dependencies>
