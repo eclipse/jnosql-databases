@@ -25,7 +25,7 @@ import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
-import org.jnosql.diana.writer.ValueWriterDecorator;
+import org.eclipse.jnosql.diana.writer.ValueWriterDecorator;
 
 import java.time.Duration;
 import java.util.Map;

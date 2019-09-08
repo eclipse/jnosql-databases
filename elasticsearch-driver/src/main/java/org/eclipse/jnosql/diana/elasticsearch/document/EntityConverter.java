@@ -26,7 +26,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.jnosql.diana.driver.ValueUtil;
+import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.io.IOException;
 import java.util.HashMap;

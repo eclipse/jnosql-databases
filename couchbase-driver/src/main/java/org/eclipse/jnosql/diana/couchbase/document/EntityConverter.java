@@ -22,7 +22,7 @@ import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
-import org.jnosql.diana.driver.ValueUtil;
+import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;

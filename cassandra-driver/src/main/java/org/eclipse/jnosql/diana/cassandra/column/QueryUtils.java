@@ -39,7 +39,7 @@ import jakarta.nosql.column.ColumnCondition;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
-import org.jnosql.diana.driver.ValueUtil;
+import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;

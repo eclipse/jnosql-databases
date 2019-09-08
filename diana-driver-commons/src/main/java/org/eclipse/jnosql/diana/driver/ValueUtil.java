@@ -12,12 +12,12 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.driver;
+package org.eclipse.jnosql.diana.driver;
 
 
 import jakarta.nosql.Value;
 import jakarta.nosql.ValueWriter;
-import org.jnosql.diana.writer.ValueWriterDecorator;
+import org.eclipse.jnosql.diana.writer.ValueWriterDecorator;
 
 import java.util.Collections;
 import java.util.List;

@@ -19,7 +19,7 @@ import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.diana.dynamodb.ConfigurationAmazonEntity;
 import org.eclipse.jnosql.diana.dynamodb.DynamoDBUtils;
-import org.jnosql.diana.driver.ValueJSON;
+import org.eclipse.jnosql.diana.driver.ValueJSON;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;

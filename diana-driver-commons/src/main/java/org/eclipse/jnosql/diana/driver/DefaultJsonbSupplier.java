@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.driver;
+package org.eclipse.jnosql.diana.driver;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;

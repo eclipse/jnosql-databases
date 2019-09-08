@@ -21,7 +21,7 @@ import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.diana.arangodb.ArangoDBConfigurations;
 import org.eclipse.jnosql.diana.arangodb.ArangoDBConfiguration;
-import org.jnosql.diana.driver.ConfigurationReader;
+import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Map;
 

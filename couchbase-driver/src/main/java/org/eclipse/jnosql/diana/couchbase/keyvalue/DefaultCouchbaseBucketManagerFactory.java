@@ -29,8 +29,8 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The couchbase implementation of {@link org.jnosql.diana.api.key.BucketManagerFactory}. That has support to
- * {@link org.jnosql.diana.api.key.BucketManagerFactory#getBucketManager(String)}
+ * The couchbase implementation of {@link org.eclipse.jnosql.diana.api.key.BucketManagerFactory}. That has support to
+ * {@link org.eclipse.jnosql.diana.api.key.BucketManagerFactory#getBucketManager(String)}
  * and also the structure {@link Map}, {@link Set},
  * {@link Queue}, {@link List}. Each structure has this specific implementation.
  * <p>{@link CouchbaseList}</p>

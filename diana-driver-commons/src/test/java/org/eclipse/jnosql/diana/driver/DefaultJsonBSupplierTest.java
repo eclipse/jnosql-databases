@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.jnosql.diana.driver;
+package org.eclipse.jnosql.diana.driver;
 
 import org.junit.jupiter.api.Test;
 

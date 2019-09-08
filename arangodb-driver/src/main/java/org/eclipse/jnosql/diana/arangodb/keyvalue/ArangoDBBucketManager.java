@@ -20,8 +20,8 @@ import com.arangodb.entity.BaseDocument;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.jnosql.diana.driver.JsonbSupplier;
-import org.jnosql.diana.driver.ValueJSON;
+import org.eclipse.jnosql.diana.driver.JsonbSupplier;
+import org.eclipse.jnosql.diana.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
 import java.time.Duration;

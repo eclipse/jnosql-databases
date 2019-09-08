@@ -18,7 +18,7 @@ import jakarta.nosql.Value;
 import jakarta.nosql.document.DocumentEntity;
 import org.bson.Document;
 import org.bson.types.Binary;
-import org.jnosql.diana.driver.ValueUtil;
+import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;

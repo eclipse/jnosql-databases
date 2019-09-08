@@ -12,7 +12,7 @@
  *
  *   Jesse Gallagher
  */
-package org.jnosql.diana.driver.attachment;
+package org.eclipse.jnosql.diana.driver.attachment;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

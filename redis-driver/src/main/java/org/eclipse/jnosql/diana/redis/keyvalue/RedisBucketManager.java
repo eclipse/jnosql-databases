@@ -28,7 +28,7 @@ import javax.json.bind.Jsonb;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.jnosql.diana.driver.ValueJSON;
+import org.eclipse.jnosql.diana.driver.ValueJSON;
 
 import redis.clients.jedis.Jedis;
 

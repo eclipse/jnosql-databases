@@ -23,7 +23,7 @@ import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
-import org.jnosql.diana.driver.ValueUtil;
+import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

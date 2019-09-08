@@ -28,7 +28,7 @@ import java.util.stream.StreamSupport;
 import javax.json.bind.Jsonb;
 
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.jnosql.diana.driver.JsonbSupplier;
+import org.eclipse.jnosql.diana.driver.JsonbSupplier;
 
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;

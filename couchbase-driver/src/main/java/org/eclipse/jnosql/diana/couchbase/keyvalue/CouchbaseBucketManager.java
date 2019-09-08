@@ -24,8 +24,8 @@ import com.couchbase.client.java.error.DocumentDoesNotExistException;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.jnosql.diana.driver.JsonbSupplier;
-import org.jnosql.diana.driver.ValueJSON;
+import org.eclipse.jnosql.diana.driver.JsonbSupplier;
+import org.eclipse.jnosql.diana.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
 import java.time.Duration;
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jnosql.diana.driver.ValueUtil.convert;
+import static org.eclipse.jnosql.diana.driver.ValueUtil.convert;
 
 /**
  * The couchbase implementation to {@link BucketManager}

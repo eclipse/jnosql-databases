@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 import jakarta.nosql.Settings;
-import org.jnosql.diana.driver.ConfigurationReader;
+import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 

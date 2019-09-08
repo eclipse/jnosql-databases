@@ -29,8 +29,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.jnosql.diana.document.Documents;
-import org.jnosql.diana.driver.JsonbSupplier;
+import org.eclipse.jnosql.diana.document.Documents;
+import org.eclipse.jnosql.diana.driver.JsonbSupplier;
 
 import javax.json.JsonObject;
 import javax.json.bind.Jsonb;

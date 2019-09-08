@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.diana.redis.keyvalue;
 
-import org.jnosql.diana.driver.JsonbSupplier;
+import org.eclipse.jnosql.diana.driver.JsonbSupplier;
 import redis.clients.jedis.Jedis;
 
 import javax.json.bind.Jsonb;

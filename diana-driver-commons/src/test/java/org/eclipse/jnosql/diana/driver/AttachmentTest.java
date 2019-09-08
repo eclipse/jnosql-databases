@@ -12,7 +12,7 @@
  *
  *   Jesse Gallagher
  */
-package org.jnosql.diana.driver;
+package org.eclipse.jnosql.diana.driver;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.jnosql.diana.driver.attachment.EntityAttachment;
+import org.eclipse.jnosql.diana.driver.attachment.EntityAttachment;
 import org.junit.jupiter.api.Test;
 
 /**

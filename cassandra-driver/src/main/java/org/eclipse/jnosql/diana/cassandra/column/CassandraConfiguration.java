@@ -20,7 +20,7 @@ import com.datastax.driver.core.Cluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
 import jakarta.nosql.column.ColumnConfigurationAsync;
-import org.jnosql.diana.driver.ConfigurationReader;
+import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.HashMap;
 import java.util.Map;

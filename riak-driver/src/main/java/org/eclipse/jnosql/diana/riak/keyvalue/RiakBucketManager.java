@@ -25,7 +25,7 @@ import com.basho.riak.client.core.query.Namespace;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.jnosql.diana.driver.ValueJSON;
+import org.eclipse.jnosql.diana.driver.ValueJSON;
 
 import java.time.Duration;
 import java.util.Objects;

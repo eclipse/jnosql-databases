@@ -29,7 +29,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.jnosql.diana.driver.ConfigurationReader;
+import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
 import java.util.List;

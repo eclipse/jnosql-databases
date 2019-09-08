@@ -33,7 +33,7 @@ import jakarta.nosql.document.DocumentQuery;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.jnosql.diana.document.Documents;
+import org.eclipse.jnosql.diana.document.Documents;
 
 import java.time.Duration;
 import java.util.List;
