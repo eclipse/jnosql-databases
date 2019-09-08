@@ -15,6 +15,9 @@
 package org.eclipse.jnosql.diana.memcached.keyvalue;
 
 
+import jakarta.nosql.Configurations;
+import jakarta.nosql.Settings;
+import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
@@ -22,9 +25,6 @@ import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.auth.AuthDescriptor;
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.io.IOException;

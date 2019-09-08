@@ -14,15 +14,15 @@
  */
 package org.eclipse.jnosql.diana.riak.keyvalue;
 
-import java.time.Duration;
-import java.util.Objects;
-
 import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.StoreValue;
 import com.basho.riak.client.api.commands.kv.StoreValue.Builder;
 import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
+
+import java.time.Duration;
+import java.util.Objects;
 
 public final class RiakUtils {
 

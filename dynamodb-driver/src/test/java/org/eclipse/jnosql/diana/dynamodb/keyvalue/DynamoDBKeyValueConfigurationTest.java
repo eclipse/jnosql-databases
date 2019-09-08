@@ -14,13 +14,13 @@
  */
 package org.eclipse.jnosql.diana.dynamodb.keyvalue;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DynamoDBKeyValueConfigurationTest {
 	

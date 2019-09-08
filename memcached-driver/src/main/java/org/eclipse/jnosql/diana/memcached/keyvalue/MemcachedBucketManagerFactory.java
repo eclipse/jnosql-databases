@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.diana.memcached.keyvalue;
 
-import net.spy.memcached.MemcachedClient;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import net.spy.memcached.MemcachedClient;
 
 import java.util.List;
 import java.util.Map;

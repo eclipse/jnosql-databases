@@ -15,14 +15,14 @@
 
 package org.eclipse.jnosql.diana.infinispan.keyvalue;
 
-import org.infinispan.client.hotrod.RemoteCacheManager;
-import org.infinispan.configuration.global.GlobalConfigurationBuilder;
-import org.infinispan.manager.DefaultCacheManager;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
+import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.manager.DefaultCacheManager;
 
 import java.io.IOException;
 import java.util.Arrays;

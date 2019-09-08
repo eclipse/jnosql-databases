@@ -17,9 +17,9 @@ package org.eclipse.jnosql.diana.dynamodb.keyvalue;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.diana.driver.ValueJSON;
 import org.eclipse.jnosql.diana.dynamodb.ConfigurationAmazonEntity;
 import org.eclipse.jnosql.diana.dynamodb.DynamoDBUtils;
-import org.eclipse.jnosql.diana.driver.ValueJSON;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
@@ -34,8 +34,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static org.eclipse.jnosql.diana.dynamodb.DynamoDBUtils.createAttributeValues;
 
 public class DynamoDBBucketManager implements BucketManager {
 

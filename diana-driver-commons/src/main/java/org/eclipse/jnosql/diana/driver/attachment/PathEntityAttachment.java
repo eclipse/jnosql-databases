@@ -14,13 +14,12 @@
  */
 package org.eclipse.jnosql.diana.driver.attachment;
 
+import javax.activation.MimetypesFileTypeMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-
-import javax.activation.MimetypesFileTypeMap;
 
 /**
  * Default representation of {@link EntityAttachment} for a filesystem {@link Path}.

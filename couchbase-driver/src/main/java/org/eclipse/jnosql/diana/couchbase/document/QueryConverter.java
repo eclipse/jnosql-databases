@@ -40,7 +40,6 @@ import static com.couchbase.client.java.query.dsl.Expression.x;
 import static jakarta.nosql.Condition.EQUALS;
 import static jakarta.nosql.Condition.IN;
 import static java.util.Objects.nonNull;
-import static org.eclipse.jnosql.diana.couchbase.document.StatementFactory.create;
 
 final class QueryConverter {
 

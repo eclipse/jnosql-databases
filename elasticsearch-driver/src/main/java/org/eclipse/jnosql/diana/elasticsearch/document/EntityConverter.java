@@ -18,6 +18,7 @@ package org.eclipse.jnosql.diana.elasticsearch.document;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.diana.driver.ValueUtil;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
@@ -26,7 +27,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.io.IOException;
 import java.util.HashMap;

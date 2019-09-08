@@ -16,21 +16,19 @@
 package org.eclipse.jnosql.diana.redis.keyvalue;
 
 
-import static java.util.stream.Collectors.toList;
+import jakarta.nosql.Value;
+import jakarta.nosql.keyvalue.BucketManager;
+import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.diana.driver.ValueJSON;
+import redis.clients.jedis.Jedis;
 
+import javax.json.bind.Jsonb;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import javax.json.bind.Jsonb;
-
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.diana.driver.ValueJSON;
-
-import redis.clients.jedis.Jedis;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The redis implementation to {@link BucketManager}

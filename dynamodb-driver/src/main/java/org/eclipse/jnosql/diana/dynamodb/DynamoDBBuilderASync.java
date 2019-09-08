@@ -14,8 +14,6 @@
  */
 package org.eclipse.jnosql.diana.dynamodb;
 
-import java.net.URI;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -23,6 +21,8 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClientBuilder;
+
+import java.net.URI;
 
 public class DynamoDBBuilderASync implements DynamoDBBuilder {
 

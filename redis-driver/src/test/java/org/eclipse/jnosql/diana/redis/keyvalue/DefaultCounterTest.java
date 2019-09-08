@@ -14,13 +14,13 @@
  */
 package org.eclipse.jnosql.diana.redis.keyvalue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.time.Duration;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class DefaultCounterTest {

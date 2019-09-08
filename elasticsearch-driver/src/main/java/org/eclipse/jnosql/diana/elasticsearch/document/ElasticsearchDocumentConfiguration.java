@@ -26,10 +26,10 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.ArrayList;
 import java.util.List;

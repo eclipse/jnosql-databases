@@ -15,13 +15,13 @@
 
 package org.eclipse.jnosql.diana.infinispan.keyvalue;
 
+import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.infinispan.commons.api.BasicCacheContainer;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-
-import org.infinispan.commons.api.BasicCacheContainer;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
 
 /**
  * The Infinispan implementation of {@link BucketManagerFactory}

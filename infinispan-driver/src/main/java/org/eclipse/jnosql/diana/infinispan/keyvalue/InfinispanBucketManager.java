@@ -15,6 +15,11 @@
 
 package org.eclipse.jnosql.diana.infinispan.keyvalue;
 
+import jakarta.nosql.Value;
+import jakarta.nosql.keyvalue.BucketManager;
+import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.infinispan.commons.api.BasicCache;
+
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,11 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import org.infinispan.commons.api.BasicCache;
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
 
 /**
  * The Infinispan implementation of {@link BucketManager}

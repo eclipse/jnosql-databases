@@ -15,6 +15,16 @@
 package org.eclipse.jnosql.diana.dynamodb;
 
 
+import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.diana.driver.JsonbSupplier;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
+import software.amazon.awssdk.services.dynamodb.model.PutRequest;
+import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
+
+import javax.json.bind.Jsonb;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,20 +35,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.json.bind.Jsonb;
-
-import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.diana.driver.JsonbSupplier;
-
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
-import software.amazon.awssdk.services.dynamodb.model.PutRequest;
-import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
-
-import static org.eclipse.jnosql.diana.dynamodb.ConfigurationAmazonEntity.VALUE;
 import static org.eclipse.jnosql.diana.dynamodb.ConfigurationAmazonEntity.KEY;
+import static org.eclipse.jnosql.diana.dynamodb.ConfigurationAmazonEntity.VALUE;
 
 public class DynamoDBUtils {
 

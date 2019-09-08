@@ -14,15 +14,14 @@
  */
 package org.eclipse.jnosql.diana.dynamodb.keyvalue;
 
+import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.diana.dynamodb.DynamoTableUtils;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-
-import jakarta.nosql.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.diana.dynamodb.DynamoTableUtils;
-
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 public class DynamoDBBucketManagerFactory implements BucketManagerFactory {
 

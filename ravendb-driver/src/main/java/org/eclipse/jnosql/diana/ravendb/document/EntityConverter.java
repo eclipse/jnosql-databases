@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.diana.ravendb.document;
 
-import net.ravendb.client.Constants;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
+import net.ravendb.client.Constants;
 import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.util.HashMap;

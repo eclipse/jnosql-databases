@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.diana.memcached.keyvalue;
 
-import net.spy.memcached.MemcachedClient;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
+import net.spy.memcached.MemcachedClient;
 
 import java.time.Duration;
 import java.util.Optional;

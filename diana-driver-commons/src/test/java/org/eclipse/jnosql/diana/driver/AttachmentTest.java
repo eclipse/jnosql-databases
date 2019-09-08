@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.diana.driver;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.eclipse.jnosql.diana.driver.attachment.EntityAttachment;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,8 +24,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.eclipse.jnosql.diana.driver.attachment.EntityAttachment;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Contains tests to handle attachment representations.

@@ -16,13 +16,13 @@
 package org.eclipse.jnosql.diana.redis.keyvalue;
 
 
-import static java.util.stream.Collectors.toList;
+import redis.clients.jedis.Jedis;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
-import redis.clients.jedis.Jedis;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The default {@link SortedSet} implementation

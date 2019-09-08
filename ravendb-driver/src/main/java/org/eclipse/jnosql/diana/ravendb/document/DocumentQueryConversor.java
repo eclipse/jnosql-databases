@@ -15,14 +15,14 @@
 
 package org.eclipse.jnosql.diana.ravendb.document;
 
-import net.ravendb.client.documents.queries.Query;
-import net.ravendb.client.documents.session.IDocumentQuery;
-import net.ravendb.client.documents.session.IDocumentSession;
 import jakarta.nosql.Sort;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentQuery;
+import net.ravendb.client.documents.queries.Query;
+import net.ravendb.client.documents.session.IDocumentQuery;
+import net.ravendb.client.documents.session.IDocumentSession;
 import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.util.ArrayList;
