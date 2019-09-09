@@ -97,7 +97,7 @@ public class RedisBucketManagerTest {
     public void shouldRemoveKey() {
         keyValueEntityManager.put(keyValueOtavio);
         assertTrue(keyValueEntityManager.get("otavio").isPresent());
-        keyValueEntityManager.remove("otavio");
+        keyValueEntityManager.delete("otavio");
         assertFalse(keyValueEntityManager.get("otavio").isPresent());
     }
 
@@ -107,12 +107,12 @@ public class RedisBucketManagerTest {
         List<String> keys = asList("otavio", "soro");
         Iterable<Value> values = keyValueEntityManager.get(keys);
         assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), Matchers.containsInAnyOrder(userOtavio, userSoro));
-        keyValueEntityManager.remove(keys);
+        keyValueEntityManager.delete(keys);
         assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
     }
 
     @AfterEach
     public void remove() {
-        keyValueEntityManager.remove(Arrays.asList("otavio", "soro"));
+        keyValueEntityManager.delete(Arrays.asList("otavio", "soro"));
     }
 }

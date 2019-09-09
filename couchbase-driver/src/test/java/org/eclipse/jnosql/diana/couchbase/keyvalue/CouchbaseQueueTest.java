@@ -57,7 +57,7 @@ public class CouchbaseQueueTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("jnosql:queue");
+        keyValueEntityManager.delete("jnosql:queue");
     }
 
     @Test

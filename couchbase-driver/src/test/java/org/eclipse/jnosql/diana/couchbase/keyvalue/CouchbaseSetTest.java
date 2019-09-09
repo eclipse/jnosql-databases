@@ -54,7 +54,7 @@ public class CouchbaseSetTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("jnosql:set");
+        keyValueEntityManager.delete("jnosql:set");
     }
 
     @Test

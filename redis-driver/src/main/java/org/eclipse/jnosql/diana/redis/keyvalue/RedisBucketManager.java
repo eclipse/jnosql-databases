@@ -97,13 +97,13 @@ public class RedisBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(K key) {
+    public <K> void delete(K key) {
         jedis.del(RedisUtils.createKeyWithNameSpace(key.toString(), nameSpace));
     }
 
     @Override
-    public <K> void remove(Iterable<K> keys) {
-        StreamSupport.stream(keys.spliterator(), false).forEach(this::remove);
+    public <K> void delete(Iterable<K> keys) {
+        StreamSupport.stream(keys.spliterator(), false).forEach(this::delete);
     }
 
     @Override

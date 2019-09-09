@@ -64,7 +64,7 @@ public class CouchbaseListTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("jnosql:list");
+        keyValueEntityManager.delete("jnosql:list");
     }
 
     @AfterEach

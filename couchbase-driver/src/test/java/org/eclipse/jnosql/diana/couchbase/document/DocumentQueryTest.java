@@ -57,10 +57,10 @@ public class DocumentQueryTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("person:id");
-        keyValueEntityManager.remove("person:id2");
-        keyValueEntityManager.remove("person:id3");
-        keyValueEntityManager.remove("person:id4");
+        keyValueEntityManager.delete("person:id");
+        keyValueEntityManager.delete("person:id2");
+        keyValueEntityManager.delete("person:id3");
+        keyValueEntityManager.delete("person:id4");
     }
 
     @BeforeAll
