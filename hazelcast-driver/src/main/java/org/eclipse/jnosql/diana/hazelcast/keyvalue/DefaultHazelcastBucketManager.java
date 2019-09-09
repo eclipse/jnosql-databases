@@ -85,13 +85,13 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
     }
 
     @Override
-    public <K> void remove(K key) {
+    public <K> void delete(K key) {
         map.remove(key);
     }
 
     @Override
-    public <K> void remove(Iterable<K> keys) {
-        StreamSupport.stream(keys.spliterator(), false).forEach(this::remove);
+    public <K> void delete(Iterable<K> keys) {
+        StreamSupport.stream(keys.spliterator(), false).forEach(this::delete);
     }
 
     @Override

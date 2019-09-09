@@ -50,7 +50,7 @@ public class CouchbaseMapTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("jnosql:map");
+        keyValueEntityManager.delete("jnosql:map");
     }
 
     @Test

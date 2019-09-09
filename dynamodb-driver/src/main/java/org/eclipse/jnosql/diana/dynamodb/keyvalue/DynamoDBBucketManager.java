@@ -106,13 +106,13 @@ public class DynamoDBBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(K key) throws NullPointerException {
+    public <K> void delete(K key) throws NullPointerException {
         client.deleteItem(DeleteItemRequest.builder().tableName(tableName).key(DynamoDBUtils.createAttributeValues(key)).build());
     }
 
     @Override
-    public <K> void remove(Iterable<K> keys) throws NullPointerException {
-        keys.forEach(this::remove);
+    public <K> void delete(Iterable<K> keys) throws NullPointerException {
+        keys.forEach(this::delete);
     }
 
     @Override

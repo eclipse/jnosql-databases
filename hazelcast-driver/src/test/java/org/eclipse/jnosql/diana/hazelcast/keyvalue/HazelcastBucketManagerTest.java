@@ -101,7 +101,7 @@ public class HazelcastBucketManagerTest {
 
         keyValueEntityManager.put(keyValueOtavio);
         assertTrue(keyValueEntityManager.get("otavio").isPresent());
-        keyValueEntityManager.remove("otavio");
+        keyValueEntityManager.delete("otavio");
         assertFalse(keyValueEntityManager.get("otavio").isPresent());
     }
 
@@ -112,7 +112,7 @@ public class HazelcastBucketManagerTest {
         List<String> keys = asList("otavio", "soro");
         Iterable<Value> values = keyValueEntityManager.get(keys);
         assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), containsInAnyOrder(userOtavio, userSoro));
-        keyValueEntityManager.remove(keys);
+        keyValueEntityManager.delete(keys);
         Iterable<Value> users = values;
         assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
     }

@@ -53,10 +53,10 @@ public class SearchQueryTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove("city:salvador");
-        keyValueEntityManager.remove("city:sao_paulo");
-        keyValueEntityManager.remove("city:rio_janeiro");
-        keyValueEntityManager.remove("city:manaus");
+        keyValueEntityManager.delete("city:salvador");
+        keyValueEntityManager.delete("city:sao_paulo");
+        keyValueEntityManager.delete("city:rio_janeiro");
+        keyValueEntityManager.delete("city:manaus");
     }
 
     @BeforeAll

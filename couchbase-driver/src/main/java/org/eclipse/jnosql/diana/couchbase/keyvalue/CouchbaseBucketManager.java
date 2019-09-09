@@ -129,7 +129,7 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(K key) {
+    public <K> void delete(K key) {
         requireNonNull(key, "key is required");
         try {
             bucket.remove(key.toString());
@@ -139,9 +139,9 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(Iterable<K> keys) {
+    public <K> void delete(Iterable<K> keys) {
         requireNonNull(keys, "keys is required");
-        keys.forEach(this::remove);
+        keys.forEach(this::delete);
     }
 
     @Override
