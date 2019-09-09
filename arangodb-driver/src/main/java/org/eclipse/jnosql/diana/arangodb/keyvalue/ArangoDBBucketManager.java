@@ -108,12 +108,12 @@ public class ArangoDBBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(K key) throws NullPointerException {
+    public <K> void delete(K key) throws NullPointerException {
         arangoDB.db(bucketName).collection(namespace).deleteDocument(key.toString());
     }
 
     @Override
-    public <K> void remove(Iterable<K> keys) throws NullPointerException {
+    public <K> void delete(Iterable<K> keys) throws NullPointerException {
         Objects.requireNonNull(keys, "Keys is required");
 
         arangoDB.db(bucketName).collection(namespace)
