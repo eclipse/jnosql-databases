@@ -140,7 +140,7 @@ public class RiakBucketManager implements BucketManager {
 
 
     @Override
-    public <K> void remove(K key) throws NullPointerException {
+    public <K> void delete(K key) throws NullPointerException {
 
         DeleteValue deleteValue = createDeleteValue(nameSpace, key);
 
@@ -152,8 +152,8 @@ public class RiakBucketManager implements BucketManager {
     }
 
     @Override
-    public <K> void remove(Iterable<K> keys) throws NullPointerException {
-        StreamSupport.stream(keys.spliterator(), false).forEach(this::remove);
+    public <K> void delete(Iterable<K> keys) throws NullPointerException {
+        StreamSupport.stream(keys.spliterator(), false).forEach(this::delete);
     }
 
     @Override

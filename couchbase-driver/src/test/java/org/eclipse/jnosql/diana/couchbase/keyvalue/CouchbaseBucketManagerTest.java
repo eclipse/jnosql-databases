@@ -65,8 +65,8 @@ public class CouchbaseBucketManagerTest {
         CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.remove(KEY_OTAVIO);
-        keyValueEntityManager.remove(KEY_SORO);
+        keyValueEntityManager.delete(KEY_OTAVIO);
+        keyValueEntityManager.delete(KEY_SORO);
     }
 
 
@@ -165,7 +165,7 @@ public class CouchbaseBucketManagerTest {
 
         keyValueEntityManager.put(entityOtavio);
         assertTrue(keyValueEntityManager.get(KEY_OTAVIO).isPresent());
-        keyValueEntityManager.remove(KEY_OTAVIO);
+        keyValueEntityManager.delete(KEY_OTAVIO);
         assertFalse(keyValueEntityManager.get(KEY_OTAVIO).isPresent());
     }
 
@@ -176,7 +176,7 @@ public class CouchbaseBucketManagerTest {
         List<String> keys = asList(KEY_OTAVIO, KEY_SORO);
         Iterable<Value> values = keyValueEntityManager.get(keys);
         assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), containsInAnyOrder(userOtavio, userSoro));
-        keyValueEntityManager.remove(keys);
+        keyValueEntityManager.delete(keys);
         Iterable<Value> users = values;
         assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
     }
