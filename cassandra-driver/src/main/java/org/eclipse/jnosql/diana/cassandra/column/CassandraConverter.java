@@ -132,7 +132,11 @@ final class CassandraConverter {
     }
 
     private static boolean isUDTIterable(Object result) {
-        return StreamSupport.stream(Iterable.class.cast(result).spliterator(), false)
+        final Iterable<?> iterable = Iterable.class.cast(result);
+        if (!iterable.iterator().hasNext()) {
+            return false;
+        }
+        return StreamSupport.stream(iterable.spliterator(), false)
                 .allMatch(UDTValue.class::isInstance);
     }
 

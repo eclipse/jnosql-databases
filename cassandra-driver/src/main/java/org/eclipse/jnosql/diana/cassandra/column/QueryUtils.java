@@ -128,11 +128,22 @@ final class QueryUtils {
 
     public static BuiltStatement select(ColumnQuery query, String keySpace) {
         String columnFamily = query.getColumnFamily();
-
+        final List<String> columns = query.getColumns();
         if (Objects.isNull(query.getCondition())) {
-            return QueryBuilder.select().all().from(keySpace, columnFamily);
+            if (columns.isEmpty()) {
+                return QueryBuilder.select().all().from(keySpace, columnFamily);
+            } else {
+                return QueryBuilder.select(columns.toArray()).from(keySpace, columnFamily);
+            }
+
         }
-        Select.Where where = QueryBuilder.select().all().from(keySpace, columnFamily).where();
+        Select.Where where;
+        if (columns.isEmpty()) {
+            where = QueryBuilder.select().all().from(keySpace, columnFamily).where();
+        } else {
+            where = QueryBuilder.select(columns.toArray()).from(keySpace, columnFamily).where();
+        }
+
         if (query.getLimit() > 0) {
             if (CassandraQuery.class.isInstance(query)) {
                 where.setFetchSize((int) query.getLimit());
