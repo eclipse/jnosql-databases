@@ -22,20 +22,15 @@ import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.diana.document.Documents;
+import org.eclipse.jnosql.diana.mongodb.document.type.Money;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -76,7 +71,7 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldUpdateSave() {
+    public void shouldUpdate() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
@@ -480,6 +475,22 @@ public class MongoDBDocumentCollectionManagerTest {
     public void shouldCount() {
         entityManager.insert(getEntity());
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
+    }
+
+    @Test
+    public void shouldCustomTypeWork() {
+        DocumentEntity entity = getEntity();
+        Currency currency = Currency.getInstance("USD");
+        Money money = Money.of(currency, BigDecimal.valueOf(10D));
+        entity.add("money", money);
+        DocumentEntity documentEntity = entityManager.insert(entity);
+        Document id = documentEntity.find("_id").get();
+        DocumentQuery query = DocumentQuery.select().from(documentEntity.getName())
+                .where(id.getName()).eq(id.get()).build();
+
+        DocumentEntity result = entityManager.singleResult(query).get();
+        assertEquals(money, result.find("money").get().get(Money.class));
+
     }
 
     private DocumentEntity createSubdocumentList() {

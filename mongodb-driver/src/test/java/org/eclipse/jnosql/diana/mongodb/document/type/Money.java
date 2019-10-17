@@ -16,19 +16,21 @@
 package org.eclipse.jnosql.diana.mongodb.document.type;
 
 import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.Objects;
 
 public class Money {
 
-    private final String currency;
+    private final Currency currency;
 
     private final BigDecimal value;
 
-    Money(String currency, BigDecimal value) {
+    private Money(Currency currency, BigDecimal value) {
         this.currency = currency;
         this.value = value;
     }
 
-    public String getCurrency() {
+    public Currency getCurrency() {
         return currency;
     }
 
@@ -37,12 +39,35 @@ public class Money {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Money money = (Money) o;
+        return Objects.equals(currency, money.currency) &&
+                Objects.equals(value, money.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currency, value);
+    }
+
+    @Override
     public String toString() {
-        return currency + ' ' + value;
+        return currency.getCurrencyCode() + ' ' + value;
+    }
+
+    public static Money of(Currency currency, BigDecimal value) {
+        return new Money(currency, value);
     }
 
     public static Money parse(String text) {
         String[] texts = text.split(" ");
-        return new Money(texts[0], BigDecimal.valueOf(Double.valueOf(texts[1])));
+        return new Money(Currency.getInstance(texts[0]),
+                BigDecimal.valueOf(Double.valueOf(texts[1])));
     }
 }
