@@ -37,7 +37,6 @@ final class MongoAuthentication {
 
     static Optional<MongoCredential> of(Settings settings) {
 
-
         Optional<String> user = settings.get(Arrays.asList(USER.get(),
                 Configurations.USER.get()))
                 .map(Object::toString);
@@ -49,16 +48,20 @@ final class MongoAuthentication {
         Optional<String> source = settings.get(AUTHENTICATION_SOURCE.get())
                 .map(Object::toString);
 
-        AuthenticationMechanism mechanism = settings.get(AUTHENTICATION_MECHANISM.get())
+        Optional<AuthenticationMechanism> mechanism = settings.get(AUTHENTICATION_MECHANISM.get())
                 .map(Object::toString)
-                .map(AuthenticationMechanism::fromMechanismName)
-                .orElse(AuthenticationMechanism.PLAIN);
+                .map(AuthenticationMechanism::fromMechanismName);
 
         if (!user.isPresent()) {
             return Optional.empty();
         }
 
-        switch (mechanism) {
+        if (!mechanism.isPresent()) {
+            return Optional.of(MongoCredential.createCredential(user.orElseThrow(missingExceptionUser()),
+                    source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
+        }
+
+        switch (mechanism.get()) {
             case PLAIN:
                 return Optional.of(MongoCredential.createPlainCredential(user.orElseThrow(missingExceptionUser()),
                         source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
