@@ -14,7 +14,8 @@
  */
 package org.eclipse.jnosql.diana.driver.attachment;
 
-import javax.activation.MimetypesFileTypeMap;
+import jakarta.nosql.CommunicationException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -54,16 +55,11 @@ class PathEntityAttachment implements EntityAttachment {
 
     @Override
     public String getContentType() {
-        String mimeType;
         try {
-            mimeType = Files.probeContentType(path);
+            return Files.probeContentType(path);
         } catch(IOException e) {
-            throw new RuntimeException(e);
+            throw new CommunicationException("There is an error to load the content type", e);
         }
-        if(mimeType == null || mimeType.isEmpty()) {
-            mimeType = new MimetypesFileTypeMap().getContentType(path.toFile());
-        }
-        return mimeType;
     }
 
     @Override
