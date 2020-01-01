@@ -100,7 +100,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         entityManager.insert(entity);
         TermQueryBuilder query = termQuery("name", "Poliana");
         SECONDS.sleep(1L);
-        List<DocumentEntity> account = entityManager.search(query, "person").collect(Collectors.toList());
+        List<DocumentEntity> account = entityManager.search(query).collect(Collectors.toList());
         assertFalse(account.isEmpty());
     }
 
@@ -156,6 +156,8 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
+        entity.remove(EntityConverter.ENTITY);
+        entities.get(0).remove(EntityConverter.ENTITY);
         assertThat(entities, contains(entity));
     }
 

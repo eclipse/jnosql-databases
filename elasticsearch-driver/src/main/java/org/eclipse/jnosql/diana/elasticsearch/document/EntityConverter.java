@@ -42,6 +42,7 @@ final class EntityConverter {
 
     static final String ID_FIELD = "_id";
 
+    static final String ENTITY = "@entity";
 
     private EntityConverter() {
     }
@@ -53,12 +54,12 @@ final class EntityConverter {
         entity.getDocuments().stream()
                 .filter(d -> !d.getName().equals(ID_FIELD))
                 .forEach(feedJSON(jsonObject));
+        jsonObject.put(ENTITY, entity.getName());
         return jsonObject;
     }
 
     static Stream<DocumentEntity> query(DocumentQuery query, RestHighLevelClient client, String index) {
         QueryConverterResult select = QueryConverter.select(query);
-
 
         try {
             Stream<DocumentEntity> idQueryStream = Stream.empty();
@@ -108,7 +109,6 @@ final class EntityConverter {
 
         if (select.hasStatement()) {
             SearchRequest searchRequest = new SearchRequest(index);
-            searchRequest.types(query.getDocumentCollection());
             if (select.hasQuery()) {
                 setQueryBuilder(query, select, searchRequest);
             }

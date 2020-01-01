@@ -123,7 +123,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
 
         entities.stream()
                 .map(entity -> entity.find(EntityConverter.ID_FIELD).get().get(String.class))
-                .map(id -> new DeleteRequest(index, query.getDocumentCollection(), id))
+                .map(id -> new DeleteRequest(index, id))
                 .forEach(bulk::add);
 
         try {
@@ -144,7 +144,6 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     public long count(String documentCollection) {
         Objects.requireNonNull(documentCollection, "query is required");
         SearchRequest searchRequest = new SearchRequest(index);
-        searchRequest.types(documentCollection);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.size(0);
         try {
@@ -156,14 +155,13 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
     }
 
     @Override
-    public Stream<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException {
+    public Stream<DocumentEntity> search(QueryBuilder query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
         try {
             SearchRequest searchRequest = new SearchRequest(index);
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(query);
-            searchRequest.types(types);
             searchRequest.source(searchSourceBuilder);
             SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
 
