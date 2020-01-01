@@ -31,6 +31,7 @@ import static org.eclipse.jnosql.diana.mongodb.document.MongoDBDocumentConfigura
 import static org.eclipse.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.PASSWORD;
 import static org.eclipse.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,7 +58,7 @@ class MongoAuthenticationTest {
         assertEquals("database", credential.getSource());
         assertTrue(Arrays.equals("password".toCharArray(), credential.getPassword()));
         assertEquals("user", credential.getUserName());
-        assertEquals(PLAIN.getMechanismName(), credential.getMechanism());
+        assertNull(credential.getMechanism());
 
     }
 
