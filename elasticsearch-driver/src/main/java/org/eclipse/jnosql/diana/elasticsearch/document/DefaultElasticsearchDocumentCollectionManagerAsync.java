@@ -171,7 +171,6 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         requireNonNull(documentCollection, "documentCollection is required");
         requireNonNull(callback, "callback is required");
         SearchRequest searchRequest = new SearchRequest(index);
-        searchRequest.types(documentCollection);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.size(0);
         ActionListener<SearchResponse> listener = new CountActionListener(callback, documentCollection);
@@ -187,7 +186,6 @@ class DefaultElasticsearchDocumentCollectionManagerAsync implements Elasticsearc
         SearchRequest searchRequest = new SearchRequest(index);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(query);
-        searchRequest.types(types);
         searchRequest.source(searchSourceBuilder);
         client.searchAsync(searchRequest, RequestOptions.DEFAULT, new FindQueryBuilderListener(callBack));
     }

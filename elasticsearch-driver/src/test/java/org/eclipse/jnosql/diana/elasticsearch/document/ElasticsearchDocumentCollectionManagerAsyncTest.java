@@ -55,7 +55,6 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
         entityManager = managerFactory.get(DocumentEntityGerator.INDEX);
         DocumentEntity documentEntity = DocumentEntityGerator.getEntity();
         Document id = documentEntity.find("name").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManagerAsync.delete(deleteQuery);
     }
