@@ -50,7 +50,7 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
     @BeforeEach
     public void setUp() {
-        ElasticsearchDocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTACE.get();
+        ElasticsearchDocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
         entityManagerAsync = managerFactory.getAsync(DocumentEntityGerator.COLLECTION_NAME);
         entityManager = managerFactory.get(DocumentEntityGerator.INDEX);
         DocumentEntity documentEntity = DocumentEntityGerator.getEntity();

@@ -63,7 +63,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         Document id = entity.find(EntityConverter.ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = EntityConverter.getMap(entity);
-        IndexRequest request = new IndexRequest(index, entity.getName(), id.get(String.class)).source(jsonObject);
+        IndexRequest request = new IndexRequest(index).id(id.get(String.class)).source(jsonObject);
         try {
             client.index(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
@@ -149,7 +149,7 @@ class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocu
         searchSourceBuilder.size(0);
         try {
             SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
-            return search.getHits().getTotalHits();
+            return search.getHits().getTotalHits().value;
         } catch (IOException e) {
             throw new CommunicationException("Error on ES when try to execute count to document collection:" + documentCollection, e);
         }

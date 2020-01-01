@@ -64,7 +64,7 @@ final class EntityConverter {
             Stream<DocumentEntity> idQueryStream = Stream.empty();
             Stream<DocumentEntity> statementQueryStream = Stream.empty();
             if (select.hasId()) {
-                idQueryStream = executeId(query, client, index, select);
+                idQueryStream = executeId(client, index, select);
             }
             if (select.hasStatement()) {
                 statementQueryStream = executeStatement(query, client, index, select);
@@ -78,7 +78,6 @@ final class EntityConverter {
     private static Stream<DocumentEntity> executeStatement(DocumentQuery query, RestHighLevelClient client, String index,
                                                            QueryConverterResult select) throws IOException {
         SearchRequest searchRequest = new SearchRequest(index);
-        searchRequest.types(query.getDocumentCollection());
         if (select.hasQuery()) {
             setQueryBuilder(query, select, searchRequest);
         }
@@ -153,14 +152,13 @@ final class EntityConverter {
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
-    private static Stream<DocumentEntity> executeId(DocumentQuery query, RestHighLevelClient client, String index,
+    private static Stream<DocumentEntity> executeId(RestHighLevelClient client, String index,
                                                     QueryConverterResult select) throws IOException {
 
-        String type = query.getDocumentCollection();
         MultiGetRequest multiGetRequest = new MultiGetRequest();
 
         select.getIds().stream()
-                .map(id -> new MultiGetRequest.Item(index, type, id))
+                .map(id -> new MultiGetRequest.Item(index, id))
                 .forEach(multiGetRequest::add);
 
         MultiGetResponse responses = client.mget(multiGetRequest, RequestOptions.DEFAULT);
