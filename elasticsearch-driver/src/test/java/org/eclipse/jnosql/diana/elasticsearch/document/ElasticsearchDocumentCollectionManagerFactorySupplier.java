@@ -24,10 +24,10 @@ import java.util.function.Supplier;
 
 enum ElasticsearchDocumentCollectionManagerFactorySupplier implements Supplier<ElasticsearchDocumentCollectionManagerFactory> {
 
-INSTACE;
+    INSTANCE;
 
     private final GenericContainer es =
-            new GenericContainer("docker.elastic.co/elasticsearch/elasticsearch:6.4.1")
+            new GenericContainer("elasticsearch:7.5.1")
                     .withExposedPorts(9200, 9300)
                     .withEnv("discovery.type", "single-node")
                     .waitingFor(Wait.forHttp("/")

@@ -21,7 +21,7 @@
     }
   },
   "mappings": {
-    "person": {
+    "_doc": {
       "properties": {
         "name": {
           "type": "keyword"

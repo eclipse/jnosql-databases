@@ -50,12 +50,11 @@ public class ElasticsearchDocumentCollectionManagerAsyncTest {
 
     @BeforeEach
     public void setUp() {
-        ElasticsearchDocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTACE.get();
+        ElasticsearchDocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
         entityManagerAsync = managerFactory.getAsync(DocumentEntityGerator.COLLECTION_NAME);
         entityManager = managerFactory.get(DocumentEntityGerator.INDEX);
         DocumentEntity documentEntity = DocumentEntityGerator.getEntity();
         Document id = documentEntity.find("name").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         entityManagerAsync.delete(deleteQuery);
     }

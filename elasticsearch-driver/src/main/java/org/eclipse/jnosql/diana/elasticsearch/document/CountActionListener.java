@@ -33,7 +33,7 @@ final class CountActionListener implements ActionListener<SearchResponse> {
 
     @Override
     public void onResponse(SearchResponse response) {
-        callback.accept(response.getHits().getTotalHits());
+        callback.accept(response.getHits().getTotalHits().value);
     }
 
     @Override

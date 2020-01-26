@@ -30,11 +30,10 @@ public interface ElasticsearchDocumentCollectionManager extends DocumentCollecti
      * Find entities from {@link QueryBuilder}
      *
      * @param query the query
-     * @param types the types
      * @return the objects from query
      * @throws NullPointerException when query is null
      */
-     Stream<DocumentEntity> search(QueryBuilder query, String... types) throws NullPointerException;
+     Stream<DocumentEntity> search(QueryBuilder query) throws NullPointerException;
 
 
 }

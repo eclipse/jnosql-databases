@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import static java.lang.Boolean.TRUE;
 import static java.nio.file.Files.readAllBytes;
 
 
@@ -94,6 +95,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
                 RestClient lowLevelClient = client.getLowLevelClient();
                 HttpEntity entity = new NStringEntity(getMappging(stream), ContentType.APPLICATION_JSON);
                 Request request = new Request("PUT", database);
+                request.addParameter("include_type_name", TRUE.toString());
                 request.setEntity(entity);
 
                 lowLevelClient.performRequest(request);

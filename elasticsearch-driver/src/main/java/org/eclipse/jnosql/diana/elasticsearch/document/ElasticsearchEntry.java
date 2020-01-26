@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.eclipse.jnosql.diana.elasticsearch.document.EntityConverter.ENTITY;
 import static org.eclipse.jnosql.diana.elasticsearch.document.EntityConverter.ID_FIELD;
 
 class ElasticsearchEntry {
@@ -43,9 +44,9 @@ class ElasticsearchEntry {
             Document.of(entry.getKey().toString(), entry.getValue());
 
 
-    private ElasticsearchEntry(String id, String collection, Map<String, Object> map) {
+    private ElasticsearchEntry(String id, Map<String, Object> map) {
         this.id = id;
-        this.collection = collection;
+        this.collection = map == null ? null : map.getOrDefault(ENTITY, "_doc").toString();
         this.map = map;
     }
 
@@ -97,13 +98,11 @@ class ElasticsearchEntry {
 
     static ElasticsearchEntry of(SearchHit searchHit) {
         return new ElasticsearchEntry(searchHit.getId(),
-                searchHit.getType(),
                 searchHit.getSourceAsMap());
     }
 
     static ElasticsearchEntry of(GetResponse searchHit) {
         return new ElasticsearchEntry(searchHit.getId(),
-                searchHit.getType(),
                 searchHit.getSourceAsMap());
     }
 }

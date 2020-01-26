@@ -23,13 +23,13 @@ public class ElasticsearchDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        ElasticsearchDocumentCollectionManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTACE.get();
+        ElasticsearchDocumentCollectionManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
         assertNotNull(factory.get("database"));
     }
 
     @Test
     public void shouldCreateEntityManagerAsync() {
-        ElasticsearchDocumentCollectionManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTACE.get();
+        ElasticsearchDocumentCollectionManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
         assertNotNull(factory.getAsync("database"));
     }
 }
