@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
@@ -58,6 +59,10 @@ public class ElasticsearchDocumentCollectionManagerTest {
         ElasticsearchDocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
         entityManager = managerFactory.get(DocumentEntityGerator.INDEX);
 
+        DocumentDeleteQuery deleteQuery = DocumentDeleteQuery.delete().from("person").build();
+
+        entityManager.delete(deleteQuery);
+
     }
 
     @Test
@@ -80,10 +85,11 @@ public class ElasticsearchDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldReturnAll() {
+    public void shouldReturnAll() throws InterruptedException {
         DocumentEntity entity = DocumentEntityGerator.getEntity();
         entityManager.insert(entity);
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).build();
+        SECONDS.sleep(1L);
         List<DocumentEntity> result = entityManager.select(query).collect(Collectors.toList());
         assertFalse(result.isEmpty());
     }
@@ -182,10 +188,6 @@ public class ElasticsearchDocumentCollectionManagerTest {
                 .toArray(String[]::new);
 
         assertArrayEquals(names, new String[]{"otavio", "poliana"});
-        DocumentDeleteQuery deleteQuery = DocumentDeleteQuery.delete().from("person").where("_id")
-                .in(Arrays.asList("id", "id2")).build();
-
-        entityManager.delete(deleteQuery);
 
     }
 
