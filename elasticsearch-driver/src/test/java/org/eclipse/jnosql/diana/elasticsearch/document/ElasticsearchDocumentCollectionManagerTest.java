@@ -188,8 +188,27 @@ public class ElasticsearchDocumentCollectionManagerTest {
                 .toArray(String[]::new);
 
         assertArrayEquals(names, new String[]{"otavio", "poliana"});
-
     }
+
+    @Test
+    public void shouldFindOrderByNameDesc() throws InterruptedException {
+        final DocumentEntity poliana = DocumentEntityGerator.getEntity();
+        final DocumentEntity otavio = DocumentEntityGerator.getEntity();
+        poliana.add("name", "poliana");
+        otavio.add("name", "otavio");
+        otavio.add("_id", "id2");
+        entityManager.insert(Arrays.asList(poliana, otavio));
+        SECONDS.sleep(1L);
+        DocumentQuery query = DocumentQuery.select().from("person").orderBy("name").desc().build();
+        String[] names = entityManager.select(query).map(d -> d.find("name"))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(d -> d.get(String.class))
+                .toArray(String[]::new);
+
+        assertArrayEquals(names, new String[]{"poliana", "otavio"});
+    }
+
 
     @Test
     public void shouldFindAll() throws InterruptedException {
