@@ -27,6 +27,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static jakarta.nosql.SortType.ASC;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
@@ -79,10 +81,8 @@ final class EntityConverter {
     private static Stream<DocumentEntity> executeStatement(DocumentQuery query, RestHighLevelClient client, String index,
                                                            QueryConverterResult select) throws IOException {
         SearchRequest searchRequest = new SearchRequest(index);
-        if (select.hasQuery()) {
-            setQueryBuilder(query, select, searchRequest);
-        }
 
+        setQueryBuilder(query, select, searchRequest);
         SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
         return Stream.of(response.getHits())
                 .flatMap(h -> Stream.of(h.getHits()))
@@ -172,15 +172,31 @@ final class EntityConverter {
 
     private static void setQueryBuilder(DocumentQuery query, QueryConverterResult select, SearchRequest searchRequest) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(select.getStatement());
+
+        if (select.hasQuery()) {
+            searchSourceBuilder.query(select.getStatement());
+        }
+        feedBuilder(query, searchSourceBuilder);
+
         searchRequest.source(searchSourceBuilder);
+    }
+
+    private static void feedBuilder(DocumentQuery query, SearchSourceBuilder searchSource) {
+        query.getSorts().forEach(d -> {
+            if (ASC.equals(d.getType())) {
+                searchSource.sort(d.getName(), SortOrder.ASC);
+            } else {
+                searchSource.sort(d.getName(), SortOrder.DESC);
+            }
+        });
+
         int from = (int) query.getSkip();
         int size = (int) query.getLimit();
         if (from > 0) {
-            searchSourceBuilder.from(from);
+            searchSource.from(from);
         }
         if (size > 0) {
-            searchSourceBuilder.size(size);
+            searchSource.size(size);
         }
     }
 
