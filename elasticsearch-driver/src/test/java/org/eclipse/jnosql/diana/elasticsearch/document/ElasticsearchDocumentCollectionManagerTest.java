@@ -21,13 +21,16 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.diana.document.Documents;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.lang.text.StrBuilder;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
@@ -38,6 +41,7 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -159,6 +163,30 @@ public class ElasticsearchDocumentCollectionManagerTest {
         entity.remove(EntityConverter.ENTITY);
         entities.get(0).remove(EntityConverter.ENTITY);
         assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldFindOrderByName() throws InterruptedException {
+        final DocumentEntity poliana = DocumentEntityGerator.getEntity();
+        final DocumentEntity otavio = DocumentEntityGerator.getEntity();
+        poliana.add("name", "poliana");
+        otavio.add("name", "otavio");
+        otavio.add("_id", "id2");
+        entityManager.insert(Arrays.asList(poliana, otavio));
+        SECONDS.sleep(1L);
+        DocumentQuery query = DocumentQuery.select().from("person").orderBy("name").asc().build();
+        String[] names = entityManager.select(query).map(d -> d.find("name"))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(d -> d.get(String.class))
+                .toArray(String[]::new);
+
+        assertArrayEquals(names, new String[]{"otavio", "poliana"});
+        DocumentDeleteQuery deleteQuery = DocumentDeleteQuery.delete().from("person").where("_id")
+                .in(Arrays.asList("id", "id2")).build();
+
+        entityManager.delete(deleteQuery);
+
     }
 
     @Test
