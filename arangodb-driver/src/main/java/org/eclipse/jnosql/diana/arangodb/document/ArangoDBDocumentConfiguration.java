@@ -16,11 +16,9 @@
 package org.eclipse.jnosql.diana.arangodb.document;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.eclipse.jnosql.diana.arangodb.ArangoDBConfiguration;
 import org.eclipse.jnosql.diana.arangodb.ArangoDBConfigurations;
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
@@ -31,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 import static org.eclipse.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONFIGURATION;
 
 /**
- * The implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync}
+ * The implementation of {@link DocumentConfiguration}
  * that returns {@link ArangoDBDocumentCollectionManagerFactory}.
  * It tries to read the configuration properties from diana-arangodb.properties file.
  *
@@ -40,7 +38,7 @@ import static org.eclipse.jnosql.diana.arangodb.ArangoDBConfigurations.FILE_CONF
  *
  */
 public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements DocumentConfiguration, DocumentConfigurationAsync {
+        implements DocumentConfiguration {
 
     @Override
     public ArangoDBDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
@@ -55,8 +53,7 @@ public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         requireNonNull(settings, "settings is required");
 
         ArangoDB arangoDB = getArangoDB(settings);
-        ArangoDBAsync arangoDBAsync = getArangoDBAsync(settings);
-        return new ArangoDBDocumentCollectionManagerFactory(arangoDB, arangoDBAsync);
+        return new ArangoDBDocumentCollectionManagerFactory(arangoDB);
     }
 
 }

@@ -16,7 +16,6 @@
 package org.eclipse.jnosql.diana.arangodb.document;
 
 import jakarta.nosql.document.DocumentCollectionManager;
-import jakarta.nosql.document.DocumentCollectionManagerAsync;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,9 +36,4 @@ public class ArangoDBDocumentCollectionManagerFactoryTest {
         assertNotNull(database);
     }
 
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        DocumentCollectionManagerAsync database = managerFactory.getAsync("database");
-        assertNotNull(database);
-    }
 }

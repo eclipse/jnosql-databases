@@ -16,7 +16,6 @@ package org.eclipse.jnosql.diana.arangodb;
 
 
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
 import com.arangodb.entity.LoadBalancingStrategy;
 import jakarta.nosql.Settings;
 
@@ -25,14 +24,12 @@ import static java.util.Objects.requireNonNull;
 /**
  * The base to configuration both key-value and document on mongoDB.
  * To each configuration setted, it will change both builder
- * {@link ArangoDB.Builder} and {@link ArangoDBAsync.Builder}
+ * {@link ArangoDB.Builder}
  */
 public abstract class ArangoDBConfiguration {
 
 
     protected ArangoDB.Builder builder = new ArangoDB.Builder();
-
-    protected ArangoDBAsync.Builder builderAsync = new ArangoDBAsync.Builder();
 
     /**
      * Adds a host in the arangodb builder
@@ -44,7 +41,6 @@ public abstract class ArangoDBConfiguration {
     public void addHost(String host, int port) throws NullPointerException {
         requireNonNull(host, "host is required");
         builder.host(host, port);
-        builderAsync.host(host, port);
     }
 
     /**
@@ -56,7 +52,6 @@ public abstract class ArangoDBConfiguration {
     public void setLoadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy) throws NullPointerException {
         requireNonNull(loadBalancingStrategy, "loadBalancingStrategy is required");
         builder.loadBalancingStrategy(loadBalancingStrategy);
-        builderAsync.loadBalancingStrategy(loadBalancingStrategy);
     }
 
 
@@ -67,7 +62,6 @@ public abstract class ArangoDBConfiguration {
      */
     public void setTimeout(int timeout) {
         builder.timeout(timeout);
-        builderAsync.timeout(timeout);
     }
 
     /**
@@ -77,7 +71,6 @@ public abstract class ArangoDBConfiguration {
      */
     public void setUser(String user) {
         builder.user(user);
-        builderAsync.user(user);
     }
 
     /**
@@ -87,7 +80,6 @@ public abstract class ArangoDBConfiguration {
      */
     public void setPassword(String password) {
         builder.password(password);
-        builderAsync.password(password);
     }
 
     /**
@@ -97,7 +89,6 @@ public abstract class ArangoDBConfiguration {
      */
     public void setUseSSL(boolean value) {
         builder.useSsl(value);
-        builderAsync.useSsl(value);
     }
 
     /**
@@ -107,7 +98,6 @@ public abstract class ArangoDBConfiguration {
      */
     public void setChuckSize(int chuckSize) {
         builder.chunksize(chuckSize);
-        builderAsync.chunksize(chuckSize);
     }
 
     /**
@@ -121,16 +111,6 @@ public abstract class ArangoDBConfiguration {
         this.builder = builder;
     }
 
-    /**
-     * Defines a new asyncBuilder to ArangoDB
-     *
-     * @param builderAsync the new builderAsync
-     * @throws NullPointerException when builderAsync is null
-     */
-    public void asyncBuilder(ArangoDBAsync.Builder builderAsync) throws NullPointerException {
-        requireNonNull(builderAsync, "asyncBuilder is required");
-        this.builderAsync = builderAsync;
-    }
 
     protected ArangoDB getArangoDB(Settings settings) {
         ArangoDBBuilderSync aragonDB = new ArangoDBBuilderSync(builder);
@@ -138,10 +118,5 @@ public abstract class ArangoDBConfiguration {
         return aragonDB.build();
     }
 
-    protected ArangoDBAsync getArangoDBAsync(Settings settings) {
-        ArangoDBBuilderAsync aragonDB = new ArangoDBBuilderAsync(builderAsync);
-        ArangoDBBuilders.load(settings, aragonDB);
-        return aragonDB.build();
-    }
 
 }

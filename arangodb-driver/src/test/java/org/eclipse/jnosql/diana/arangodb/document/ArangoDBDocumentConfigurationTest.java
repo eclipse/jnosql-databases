@@ -17,7 +17,6 @@ package org.eclipse.jnosql.diana.arangodb.document;
 
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,18 +48,4 @@ public class ArangoDBDocumentConfigurationTest {
         Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
     }
 
-    @Test
-    public void shouldGetConfigurationAsync() {
-        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfigurationAsync);
-    }
-
-    @Test
-    public void shouldGetConfigurationAsyncFromQuery() {
-        ArangoDBDocumentConfiguration configuration = DocumentConfigurationAsync
-                .getConfiguration(ArangoDBDocumentConfiguration.class);
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
-    }
 }
