@@ -18,7 +18,6 @@ package org.eclipse.jnosql.diana.couchbase.document;
 import com.couchbase.client.java.CouchbaseCluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.eclipse.jnosql.diana.couchbase.CouchbaseConfiguration;
 import org.eclipse.jnosql.diana.couchbase.CouchbaseConfigurations;
 
@@ -30,7 +29,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The couchbase implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync} that returns
+ * The couchbase implementation of {@link DocumentConfiguration}  that returns
  * {@link CouhbaseDocumentCollectionManagerFactory}.
  * <p>couchbase.host-: the prefix to add a new host</p>
  * <p>couchbase.user: the user</p>
@@ -38,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @see CouchbaseConfigurations
  */
 public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
-        implements DocumentConfiguration, DocumentConfigurationAsync {
+        implements DocumentConfiguration {
 
     @Override
     public CouhbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {

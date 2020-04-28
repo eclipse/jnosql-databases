@@ -16,12 +16,10 @@ package org.eclipse.jnosql.diana.couchbase.document;
 
 
 import com.couchbase.client.java.CouchbaseCluster;
-import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import org.eclipse.jnosql.diana.couchbase.util.CouchbaseClusterUtil;
 
-public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
-        DocumentCollectionManagerAsyncFactory {
+public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
 
 
     private final CouchbaseCluster couchbaseCluster;
@@ -32,11 +30,6 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
         this.couchbaseCluster = couchbaseCluster;
         this.user = user;
         this.password = password;
-    }
-
-    @Override
-    public CouchbaseDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new DefaultCouchbaseDocumentCollectionManagerAsync(get(database));
     }
 
     @Override
