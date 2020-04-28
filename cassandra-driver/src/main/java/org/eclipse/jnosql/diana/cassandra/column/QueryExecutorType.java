@@ -17,7 +17,6 @@ package org.eclipse.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PagingState;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.BuiltStatement;
 import jakarta.nosql.column.ColumnEntity;
@@ -26,7 +25,6 @@ import jakarta.nosql.column.ColumnQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 enum QueryExecutorType implements QueryExecutor {
@@ -39,7 +37,7 @@ enum QueryExecutorType implements QueryExecutor {
 
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
-                                          DefaultCassandraColumnFamilyManager manager) {
+                                            DefaultCassandraColumnFamilyManager manager) {
             CassandraQuery query = CassandraQuery.class.cast(q);
 
             if (query.isExhausted()) {
@@ -68,33 +66,6 @@ enum QueryExecutorType implements QueryExecutor {
             return entities.stream();
         }
 
-        @Override
-        public void execute(String keyspace, ColumnQuery query, Consumer<Stream<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
-            execute(keyspace, query, null, consumer, manager);
-        }
-
-        @Override
-        public void execute(String keyspace, ColumnQuery q, ConsistencyLevel level, Consumer<Stream<ColumnEntity>> consumer,
-                            DefaultCassandraColumnFamilyManagerAsync manager) {
-
-            CassandraQuery query = CassandraQuery.class.cast(q);
-
-            if (query.isExhausted()) {
-                consumer.accept(Stream.empty());
-                return;
-            }
-
-            BuiltStatement select = QueryUtils.select(query, keyspace);
-            if (Objects.nonNull(level)) {
-                select.setConsistencyLevel(level);
-            }
-            query.toPatingState().ifPresent(select::setPagingState);
-            ResultSetFuture resultSet = manager.getSession().executeAsync(select);
-            Runnable executeAsync = new CassandraReturnQueryPagingStateAsync(resultSet, consumer, query);
-            resultSet.addListener(executeAsync, manager.getExecutor());
-        }
-
-
     }, DEFAULT {
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
@@ -110,26 +81,6 @@ enum QueryExecutorType implements QueryExecutor {
             }
             ResultSet resultSet = manager.getSession().execute(select);
             return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
-        }
-
-        @Override
-        public void execute(String keyspace, ColumnQuery query, Consumer<Stream<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
-            execute(keyspace, query, null, consumer, manager);
-        }
-
-        @Override
-        public void execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
-                            Consumer<Stream<ColumnEntity>> consumer, DefaultCassandraColumnFamilyManagerAsync manager) {
-
-            BuiltStatement select = QueryUtils.select(query, keyspace);
-
-            if (Objects.nonNull(level)) {
-                select.setConsistencyLevel(level);
-            }
-            ResultSetFuture resultSet = manager.getSession().executeAsync(select);
-            Runnable executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
-            resultSet.addListener(executeAsync, manager.getExecutor());
-
         }
     }
 

@@ -18,7 +18,6 @@ package org.eclipse.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import jakarta.nosql.column.ColumnFamilyManagerAsyncFactory;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
 
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.concurrent.Executor;
 /**
  * The Cassandra implementation to {@link ColumnFamilyManagerFactory}
  */
-public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerFactory, ColumnFamilyManagerAsyncFactory {
+public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerFactory {
 
     private final Cluster cluster;
 
@@ -48,11 +47,6 @@ public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerF
     @Override
     public CassandraColumnFamilyManager get(String database) {
         return new DefaultCassandraColumnFamilyManager(cluster.connect(database), executor, database);
-    }
-
-    @Override
-    public CassandraColumnFamilyManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new DefaultCassandraColumnFamilyManagerAsync(cluster.connect(database), executor, database);
     }
 
     @Override

@@ -17,19 +17,16 @@ package org.eclipse.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
-import jakarta.nosql.ExecuteAsyncQueryException;
 import jakarta.nosql.column.ColumnEntity;
 
 import java.util.concurrent.Executor;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
  * The Diana wrapper to {@link com.datastax.driver.core.PreparedStatement}
  */
-public class CassandraPrepareStatment {
+public class CassandraPreparedStatement {
 
     private final com.datastax.driver.core.PreparedStatement prepare;
 
@@ -39,7 +36,7 @@ public class CassandraPrepareStatment {
 
     private BoundStatement boundStatement;
 
-    CassandraPrepareStatment(com.datastax.driver.core.PreparedStatement prepare, Executor executor, Session session) {
+    CassandraPreparedStatement(com.datastax.driver.core.PreparedStatement prepare, Executor executor, Session session) {
         this.prepare = prepare;
         this.executor = executor;
         this.session = session;
@@ -51,19 +48,6 @@ public class CassandraPrepareStatment {
         return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
-    /**
-     * Executes and call the callback with the result
-     *
-     * @param consumer the callback
-     * @throws ExecuteAsyncQueryException when has async error
-     * @throws NullPointerException       when consumer is null
-     */
-    public void executeQueryAsync(Consumer<Stream<ColumnEntity>> consumer) throws ExecuteAsyncQueryException, NullPointerException {
-        loadBoundStatment();
-        ResultSetFuture resultSet = session.executeAsync(boundStatement);
-        CassandraReturnQueryAsync executeAsync = new CassandraReturnQueryAsync(resultSet, consumer);
-        resultSet.addListener(executeAsync, executor);
-    }
 
     /**
      * Bind
@@ -71,7 +55,7 @@ public class CassandraPrepareStatment {
      * @param values the values
      * @return this instance
      */
-    public CassandraPrepareStatment bind(Object... values) {
+    public CassandraPreparedStatement bind(Object... values) {
         boundStatement = prepare.bind(values);
         return this;
     }
