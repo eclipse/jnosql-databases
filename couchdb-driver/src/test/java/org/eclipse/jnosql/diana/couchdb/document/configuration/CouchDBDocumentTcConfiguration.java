@@ -16,6 +16,7 @@
  */
 package org.eclipse.jnosql.diana.couchdb.document.configuration;
 
+import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import org.eclipse.jnosql.diana.couchdb.document.CouchDBConfigurations;
@@ -41,6 +42,8 @@ public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentCo
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
         SettingsBuilder builder = Settings.builder();
         builder.put(CouchDBConfigurations.PORT.get(), couchDB.getFirstMappedPort());
+        builder.put(Configurations.USER.get(), "admin");
+        builder.put(Configurations.PASSWORD.get(), "password");
         return configuration.get(builder.build());
     }
 

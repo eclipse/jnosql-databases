@@ -37,6 +37,7 @@ public class CouchDBContainer extends GenericContainer {
 	protected void configure() {
 		setExposedPorts(Arrays.asList(PORT));
 		setWaitStrategy(getCouchDBWaitStrategy());
+		setEnv(Arrays.asList("COUCHDB_USER=admin", "COUCHDB_PASSWORD=password"));
 	}
 
 	private WaitStrategy getCouchDBWaitStrategy() {

@@ -19,6 +19,7 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -59,7 +60,6 @@ class HttpExecute {
 
     private static final Type JSON = new HashMap<String, Object>() {
     }.getClass().getGenericSuperclass();
-
 
 
     private final CouchDBHttpConfiguration configuration;
@@ -187,6 +187,8 @@ class HttpExecute {
     }
 
     private <T> T execute(HttpUriRequest request, Type type, int expectedStatus, boolean ignoreStatus) {
+
+        configuration.getHashPassword().ifPresent(s -> request.setHeader(HttpHeaders.AUTHORIZATION, s));
         try (CloseableHttpResponse result = client.execute(request)) {
             if (!ignoreStatus && result.getStatusLine().getStatusCode() != expectedStatus) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
