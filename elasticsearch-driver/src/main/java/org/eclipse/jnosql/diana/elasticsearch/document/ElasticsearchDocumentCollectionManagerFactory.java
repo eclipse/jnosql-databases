@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.diana.elasticsearch.document;
 
 
-import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -43,13 +42,12 @@ import static java.nio.file.Files.readAllBytes;
 
 /**
  * The elasticsearch implementation to {@link DocumentCollectionManagerFactory} that returns:
- * {@link ElasticsearchDocumentCollectionManager} and {@link ElasticsearchDocumentCollectionManagerAsync}.
+ * {@link ElasticsearchDocumentCollectionManager}
  * If the database does not exist, it tries to read a json mapping from the database name.
  * Eg: {@link ElasticsearchDocumentCollectionManagerFactory#get(String)} with database, if does not exist it tries to
  * read a "/database.json" file. The file must have the mapping to elasticsearch.
  */
-public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
-        DocumentCollectionManagerAsyncFactory {
+public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
 
 
     private final RestHighLevelClient client;
@@ -58,11 +56,6 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
         this.client = client;
     }
 
-    @Override
-    public ElasticsearchDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        initDatabase(database);
-        return new DefaultElasticsearchDocumentCollectionManagerAsync(client, database);
-    }
 
 
     @Override

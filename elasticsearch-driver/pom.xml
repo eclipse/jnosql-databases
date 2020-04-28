@@ -28,7 +28,7 @@
     <description>The Eclipse JNoSQL communication layer, Diana, implementation to Eclasticsearch</description>
 
     <properties>
-        <es.version>7.5.1</es.version>
+        <es.version>7.6.2</es.version>
     </properties>
     <dependencies>
         <dependency>

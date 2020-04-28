@@ -27,9 +27,4 @@ public class ElasticsearchDocumentCollectionManagerFactoryTest {
         assertNotNull(factory.get("database"));
     }
 
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        ElasticsearchDocumentCollectionManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
-        assertNotNull(factory.getAsync("database"));
-    }
 }
