@@ -14,16 +14,15 @@
  */
 package org.eclipse.jnosql.diana.couchdb.document;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+
+import java.util.Base64;
+import java.util.Optional;
 
 class CouchDBHttpConfiguration {
 
@@ -42,6 +41,7 @@ class CouchDBHttpConfiguration {
     private final int maxObjectSizeBytes;
     private final int maxCacheEntries;
     private final String url;
+    private String hashPassword;
 
 
     CouchDBHttpConfiguration(String host, int port, int maxConnections,
@@ -103,16 +103,11 @@ class CouchDBHttpConfiguration {
                 .setDefaultRequestConfig(requestConfig);
 
         if (username != null) {
-            CredentialsProvider provider = new BasicCredentialsProvider();
-            UsernamePasswordCredentials credentials
-                    = new UsernamePasswordCredentials(username, password);
-            provider.setCredentials(AuthScope.ANY, credentials);
-            builder.setDefaultCredentialsProvider(provider);
+            this.hashPassword = "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
         }
-
         return builder.build();
-
     }
-
-
+    public Optional<String> getHashPassword() {
+        return Optional.ofNullable(hashPassword);
+    }
 }

@@ -19,7 +19,6 @@ import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
-import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 import static java.util.Objects.requireNonNull;
@@ -28,8 +27,7 @@ import static java.util.Optional.ofNullable;
 /**
  * The OrientDB implementation of {@link DocumentCollectionManagerFactory}
  */
-public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
-        DocumentCollectionManagerAsyncFactory{
+public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 
     private final String host;
     private final String user;
@@ -59,15 +57,6 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
         ODatabasePool pool = new ODatabasePool(orient, database, user, password);
         return new DefaultOrientDBDocumentCollectionManager(pool);
 
-    }
-
-    @Override
-    public OrientDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException,
-            NullPointerException {
-        requireNonNull(database, "database is required");
-        orient.createIfNotExists(database, storageType);
-        ODatabasePool pool = new ODatabasePool(orient, database, user, password);
-        return new DefaultOrientDBDocumentCollectionManagerAsync(pool);
     }
 
     @Override

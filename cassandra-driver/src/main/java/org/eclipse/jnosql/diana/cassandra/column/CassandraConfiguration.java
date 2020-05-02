@@ -19,7 +19,6 @@ package org.eclipse.jnosql.diana.cassandra.column;
 import com.datastax.driver.core.Cluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
-import jakarta.nosql.column.ColumnConfigurationAsync;
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The Cassandra implementation to {@link ColumnConfiguration} and {@link ColumnConfigurationAsync} that returns
+ * The Cassandra implementation to {@link ColumnConfiguration}  that returns
  * {@link CassandraColumnFamilyManagerFactory}
  * This configuration reads "diana-cassandra.properties" files and has the following configuration:
  * <p>cassandra.host-: The Cassandra host as prefix, you can set how much you want just setting the number order,
@@ -44,7 +43,7 @@ import static java.util.Objects.requireNonNull;
  * @see CassandraConfigurations
  * @see OldCassandraConfigurations
  */
-public final class CassandraConfiguration implements ColumnConfiguration, ColumnConfigurationAsync {
+public final class CassandraConfiguration implements ColumnConfiguration {
 
     static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 

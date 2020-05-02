@@ -20,7 +20,6 @@ import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Arrays;
@@ -28,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * The CouchDB implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync} that returns
+ * The CouchDB implementation of {@link DocumentConfiguration}  that returns
  * {@link CouchDBDocumentCollectionManagerFactory}, settings:
  * <p>couchdb.port: </p>
  * <p>couchdb.max.connections: </p>
@@ -44,7 +43,7 @@ import java.util.Objects;
  *
  * @see CouchDBConfigurations
  */
-public class CouchDBDocumentConfiguration implements DocumentConfiguration, DocumentConfigurationAsync {
+public class CouchDBDocumentConfiguration implements DocumentConfiguration {
 
 
     private static final String FILE_CONFIGURATION = "diana-couchdb.properties";

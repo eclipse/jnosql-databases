@@ -203,10 +203,10 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     }
 
     @Override
-    public CassandraPrepareStatment nativeQueryPrepare(String query) throws NullPointerException {
+    public CassandraPreparedStatement nativeQueryPrepare(String query) throws NullPointerException {
         requireNonNull(query, "query is required");
         com.datastax.driver.core.PreparedStatement prepare = session.prepare(query);
-        return new CassandraPrepareStatment(prepare, executor, session);
+        return new CassandraPreparedStatement(prepare, executor, session);
     }
 
     @Override

@@ -28,7 +28,7 @@
     <description>The Eclipse JNoSQL communication layer, Diana, to AranboDB</description>
 
     <properties>
-        <arango.driver>6.0.0</arango.driver>
+        <arango.driver>6.6.2</arango.driver>
     </properties>
     <dependencies>
         <dependency>
@@ -49,11 +49,6 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>arangodb-java-driver</artifactId>
-            <version>${arango.driver}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.arangodb</groupId>
-            <artifactId>arangodb-java-driver-async</artifactId>
             <version>${arango.driver}</version>
         </dependency>
     </dependencies>

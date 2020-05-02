@@ -19,7 +19,6 @@ import com.datastax.driver.core.Cluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.column.ColumnFamilyManager;
-import jakarta.nosql.column.ColumnFamilyManagerAsync;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CassandraColumnFamilyManagerFactoryTest {
 
     private CassandraColumnFamilyManagerFactory subject;
-
 
     @BeforeEach
     public void setUp() {
@@ -61,11 +59,6 @@ public class CassandraColumnFamilyManagerFactoryTest {
         assertNotNull(columnEntityManager);
     }
 
-    @Test
-    public void shouldReturnEntityManagerAsync() {
-        ColumnFamilyManagerAsync columnEntityManager = subject.getAsync(Constants.KEY_SPACE);
-        assertNotNull(columnEntityManager);
-    }
 
     @Test
     public void shouldCloseNode() {

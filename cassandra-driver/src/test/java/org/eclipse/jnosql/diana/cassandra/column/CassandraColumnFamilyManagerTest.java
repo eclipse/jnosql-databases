@@ -312,7 +312,7 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldPrepareStatment() {
         entityManager.insert(getColumnFamily());
-        CassandraPrepareStatment preparedStatement = entityManager.nativeQueryPrepare("select * from newKeySpace.newColumnFamily where id=?");
+        CassandraPreparedStatement preparedStatement = entityManager.nativeQueryPrepare("select * from newKeySpace.newColumnFamily where id=?");
         preparedStatement.bind(10L);
         List<ColumnEntity> entities = preparedStatement.executeQuery().collect(toList());
         List<Column> columns = entities.get(0).getColumns();

@@ -17,7 +17,6 @@ package org.eclipse.jnosql.diana.orientdb.document;
 
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -58,21 +57,6 @@ public class OrientDBDocumentConfigurationTest {
     @Test
     public void shouldReturnFromConfigurationQuery() {
         OrientDBDocumentConfiguration configuration = DocumentConfiguration
-                .getConfiguration(OrientDBDocumentConfiguration.class);
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof OrientDBDocumentConfiguration);
-    }
-
-    @Test
-    public void shouldReturnFromConfigurationAsync() {
-        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfiguration);
-    }
-
-    @Test
-    public void shouldReturnFromConfigurationAsyncQuery() {
-        DocumentConfigurationAsync configuration = DocumentConfigurationAsync
                 .getConfiguration(OrientDBDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof OrientDBDocumentConfiguration);

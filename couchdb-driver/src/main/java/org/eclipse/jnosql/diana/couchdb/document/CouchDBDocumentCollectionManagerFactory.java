@@ -16,13 +16,11 @@
  */
 package org.eclipse.jnosql.diana.couchdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 import java.util.Objects;
 
-public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
-        DocumentCollectionManagerAsyncFactory {
+public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 
 
     private final CouchDBHttpConfiguration configuration;
@@ -40,12 +38,6 @@ public class CouchDBDocumentCollectionManagerFactory implements DocumentCollecti
         return new DefaultCouchDBDocumentCollectionManager(client);
     }
 
-    @Override
-    public CouchDBDocumentCollectionManagerAsync getAsync(String database) {
-        Objects.requireNonNull(database, "database is required");
-        CouchDBDocumentCollectionManager manager = get(database);
-        return new DefaultCouchDBDocumentCollectionManagerAsync(manager);
-    }
 
     @Override
     public void close() {

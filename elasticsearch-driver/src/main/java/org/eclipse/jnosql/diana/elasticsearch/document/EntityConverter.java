@@ -92,30 +92,6 @@ final class EntityConverter {
     }
 
 
-    static void queryAsync(DocumentQuery query, RestHighLevelClient client, String index,
-                           Consumer<Stream<DocumentEntity>> callBack) {
-
-        FindAsyncListener listener = new FindAsyncListener(callBack, query.getDocumentCollection());
-        QueryConverterResult select = QueryConverter.select(query);
-
-        if (!select.getIds().isEmpty()) {
-            MultiGetRequest multiGetRequest = new MultiGetRequest();
-
-            select.getIds().stream()
-                    .map(id -> new MultiGetRequest.Item(index, query.getDocumentCollection(), id))
-                    .forEach(multiGetRequest::add);
-            client.mgetAsync(multiGetRequest, RequestOptions.DEFAULT, listener.getIds());
-        }
-
-        if (select.hasStatement()) {
-            SearchRequest searchRequest = new SearchRequest(index);
-            if (select.hasQuery()) {
-                setQueryBuilder(query, select, searchRequest);
-            }
-            client.searchAsync(searchRequest, RequestOptions.DEFAULT, listener.getSearch());
-        }
-
-    }
 
     private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
         return d -> {

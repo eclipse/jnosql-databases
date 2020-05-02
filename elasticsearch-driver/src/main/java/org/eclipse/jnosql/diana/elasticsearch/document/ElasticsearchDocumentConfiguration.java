@@ -19,7 +19,6 @@ import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -41,13 +40,13 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync}
+ * The implementation of {@link DocumentConfiguration}
  * that returns {@link ElasticsearchDocumentCollectionManagerFactory}.
  * It tries to read the configuration properties from diana-elasticsearch.properties file. To get some information:
  * <p>elasticsearch.host.n: the host to client connection, if necessary to define a different port than default just
  * use colon, ':' eg: elasticsearch-host-1=172.17.0.2:1234</p>
  */
-public class ElasticsearchDocumentConfiguration implements DocumentConfiguration, DocumentConfigurationAsync {
+public class ElasticsearchDocumentConfiguration implements DocumentConfiguration {
 
     private static final String FILE_CONFIGURATION = "diana-elasticsearch.properties";
     private static final int DEFAULT_PORT = 9200;

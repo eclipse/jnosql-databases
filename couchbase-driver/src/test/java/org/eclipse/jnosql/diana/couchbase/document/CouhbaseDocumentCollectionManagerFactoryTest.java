@@ -35,10 +35,4 @@ public class CouhbaseDocumentCollectionManagerFactoryTest {
         CouhbaseDocumentCollectionManagerFactory factory = configuration.get();
         assertNotNull(factory.get(CouchbaseUtil.BUCKET_NAME));
     }
-
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        CouhbaseDocumentCollectionManagerFactory factory = configuration.get();
-        assertNotNull(factory.getAsync(CouchbaseUtil.BUCKET_NAME));
-    }
 }

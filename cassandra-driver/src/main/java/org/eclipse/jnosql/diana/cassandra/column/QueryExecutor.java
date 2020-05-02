@@ -18,7 +18,6 @@ import com.datastax.driver.core.ConsistencyLevel;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 interface QueryExecutor {
@@ -35,9 +34,4 @@ interface QueryExecutor {
     Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
                                DefaultCassandraColumnFamilyManager manager);
 
-    void execute(String keyspace, ColumnQuery query, ConsistencyLevel level, Consumer<Stream<ColumnEntity>> consumer,
-                 DefaultCassandraColumnFamilyManagerAsync manager);
-
-    void execute(String keyspace, ColumnQuery query, Consumer<Stream<ColumnEntity>> consumer,
-                 DefaultCassandraColumnFamilyManagerAsync manager);
 }

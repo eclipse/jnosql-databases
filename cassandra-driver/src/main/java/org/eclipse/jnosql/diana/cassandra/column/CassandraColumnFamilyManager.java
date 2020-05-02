@@ -132,11 +132,11 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
     Stream<ColumnEntity> execute(Statement statement) throws NullPointerException;
 
     /**
-     * Executes an query and uses as {@link CassandraPrepareStatment}
+     * Executes an query and uses as {@link CassandraPreparedStatement}
      *
      * @param query the query
      * @return the CassandraPrepareStatment instance
      * @throws NullPointerException when query is null
      */
-    CassandraPrepareStatment nativeQueryPrepare(String query) throws NullPointerException;
+    CassandraPreparedStatement nativeQueryPrepare(String query) throws NullPointerException;
 }

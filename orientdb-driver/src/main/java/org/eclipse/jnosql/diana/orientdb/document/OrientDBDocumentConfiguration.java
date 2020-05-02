@@ -19,7 +19,6 @@ import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
 
 import java.util.Map;
@@ -30,14 +29,14 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
- * The orientDB implementation of {@link DocumentConfiguration} and {@link DocumentConfigurationAsync} that returns
+ * The orientDB implementation of {@link DocumentConfiguration}  that returns
  * {@link OrientDBDocumentCollectionManagerFactory}. It tries to read diana-arangodb.properties file.
  * <p>orientdb.host: the host</p>
  * <p>orientdb.user: the user</p>
  * <p>orientdb.password: the password</p>
  * <p>orientdb.storage.type: the storage type</p>
  */
-public class OrientDBDocumentConfiguration implements DocumentConfiguration, DocumentConfigurationAsync {
+public class OrientDBDocumentConfiguration implements DocumentConfiguration {
 
     private static final String FILE_CONFIGURATION = "diana-orientdb.properties";
 

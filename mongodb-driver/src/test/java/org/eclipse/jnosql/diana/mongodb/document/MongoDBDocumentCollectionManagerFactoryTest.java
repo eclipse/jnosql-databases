@@ -29,12 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MongoDBDocumentCollectionManagerFactoryTest {
 
     private static MongoDBDocumentConfiguration configuration;
-    private static MongoDBDocumentConfigurationAsync configurationAsync;
 
     @BeforeAll
     public static void setUp() throws IOException {
         configuration = new MongoDBDocumentConfiguration();
-        configurationAsync = new MongoDBDocumentConfigurationAsync();
     }
 
     @Test
@@ -56,23 +54,6 @@ public class MongoDBDocumentCollectionManagerFactoryTest {
     @Test
     public void shouldReturnNPEWhenMongoClientIsNull() {
         assertThrows(NullPointerException.class, () -> configuration.get((MongoClient) null));
-    }
-
-
-    @Test
-    public void shouldCreateEntityManagerAsync() {
-        MongoDBDocumentCollectionManagerAsyncFactory mongoDBFactory = configurationAsync.get();
-        assertNotNull(mongoDBFactory.getAsync("database"));
-    }
-
-    @Test
-    public void shouldReturnNPEWhenSettingOnAsyncsIsNull() {
-        assertThrows(NullPointerException.class, () -> configurationAsync.get((Settings) null));
-    }
-
-    @Test
-    public void shouldReturnNPEWhenMongoClientAsyncIsNull() {
-        assertThrows(NullPointerException.class, () -> configurationAsync.get((com.mongodb.async.client.MongoClient) null));
     }
 
 }

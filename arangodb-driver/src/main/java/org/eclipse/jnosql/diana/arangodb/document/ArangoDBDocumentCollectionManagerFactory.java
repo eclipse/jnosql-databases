@@ -16,21 +16,15 @@ package org.eclipse.jnosql.diana.arangodb.document;
 
 
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
-import jakarta.nosql.document.DocumentCollectionManagerAsyncFactory;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
-final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory,
-        DocumentCollectionManagerAsyncFactory {
+final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
 
 
     private final ArangoDB arangoDB;
 
-    private final ArangoDBAsync arangoDBAsync;
-
-    ArangoDBDocumentCollectionManagerFactory(ArangoDB arangoDB, ArangoDBAsync arangoDBAsync) {
+    ArangoDBDocumentCollectionManagerFactory(ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
-        this.arangoDBAsync = arangoDBAsync;
     }
 
     @Override
@@ -40,13 +34,7 @@ final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollecti
     }
 
     @Override
-    public ArangoDBDocumentCollectionManagerAsync getAsync(String database) throws UnsupportedOperationException, NullPointerException {
-        return new DefaultArangoDBDocumentCollectionManagerAsync(database, arangoDB, arangoDBAsync);
-    }
-
-    @Override
     public void close() {
         arangoDB.shutdown();
-        arangoDBAsync.shutdown();
     }
 }

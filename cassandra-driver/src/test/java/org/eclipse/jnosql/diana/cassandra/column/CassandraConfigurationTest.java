@@ -18,7 +18,6 @@ package org.eclipse.jnosql.diana.cassandra.column;
 
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
-import jakarta.nosql.column.ColumnConfigurationAsync;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -57,17 +56,4 @@ public class CassandraConfigurationTest {
         Assertions.assertTrue( configuration instanceof CassandraConfiguration);
     }
 
-    @Test
-    public void shouldCreateConfigurationAsync() {
-        ColumnConfigurationAsync configuration = ColumnConfigurationAsync.getConfiguration();
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue( configuration instanceof CassandraConfiguration);
-    }
-
-    @Test
-    public void shouldCreateConfigurationAsyncQuery() {
-        ColumnConfigurationAsync configuration = ColumnConfigurationAsync.getConfiguration(CassandraConfiguration.class);
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue( configuration instanceof CassandraConfiguration);
-    }
 }

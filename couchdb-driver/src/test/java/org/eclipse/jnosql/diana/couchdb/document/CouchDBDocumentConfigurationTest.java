@@ -18,7 +18,6 @@ package org.eclipse.jnosql.diana.couchdb.document;
 
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentConfigurationAsync;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -55,18 +54,4 @@ class CouchDBDocumentConfigurationTest {
         Assertions.assertTrue(configuration instanceof CouchDBDocumentConfiguration);
     }
 
-    @Test
-    public void shouldGetConfigurationAsync() {
-        DocumentConfigurationAsync configuration = DocumentConfigurationAsync.getConfiguration();
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfigurationAsync);
-    }
-
-    @Test
-    public void shouldGetConfigurationAsyncFromQuery() {
-        CouchDBDocumentConfiguration configuration = DocumentConfigurationAsync
-                .getConfiguration(CouchDBDocumentConfiguration.class);
-        Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof CouchDBDocumentConfiguration);
-    }
 }
