@@ -27,7 +27,7 @@
     <description>The Eclipse JNoSQL communication layer, Diana, implementation to MongoDB</description>
 
     <properties>
-        <monbodb.driver>3.12.3</monbodb.driver>
+        <monbodb.driver>3.12.4</monbodb.driver>
     </properties>
     <dependencies>
         <dependency>
