@@ -21,7 +21,8 @@ public enum CassandraConfigurations implements Supplier<String> {
     HOST("cassandra.host"),
     NAME("cassandra.name"),
     PORT("cassandra.port"),
-    QUERY("cassandra.query");
+    QUERY("cassandra.query"),
+    DATA_CENTER("cassandra.data.center");
 
     private final String configuration;
 

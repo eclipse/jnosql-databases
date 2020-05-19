@@ -36,6 +36,8 @@ class CassandraProperties {
 
     private static final int DEFAULT_PORT = 9042;
 
+    private static final String DEFAULT_DATA_CENTER = "datacenter1";
+
     private List<String> queries = new ArrayList<>();
 
     private List<String> nodes = new ArrayList<>();
@@ -43,6 +45,8 @@ class CassandraProperties {
     private Optional<String> name;
 
     private int port;
+
+    private String dataCenter;
 
     public void addQuery(String query) {
         this.queries.add(query);
@@ -60,6 +64,7 @@ class CassandraProperties {
         CqlSessionBuilder builder = CqlSession.builder();
         nodes.stream().map(h -> new InetSocketAddress(h, port)).forEach(builder::addContactPoint);
         name.ifPresent(builder::withApplicationName);
+        builder.withLocalDatacenter(dataCenter);
         return builder;
     }
 
@@ -85,7 +90,9 @@ class CassandraProperties {
                 .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_PORT);
 
         cp.name = settings.get(Arrays.asList(OldCassandraConfigurations.NAME.get(), CassandraConfigurations.NAME.get()))
-        .map(Object::toString);
+                .map(Object::toString);
+        cp.dataCenter = settings.get(CassandraConfigurations.DATA_CENTER.get()).map(Object::toString)
+                .orElse(DEFAULT_DATA_CENTER);
         return cp;
     }
 }
