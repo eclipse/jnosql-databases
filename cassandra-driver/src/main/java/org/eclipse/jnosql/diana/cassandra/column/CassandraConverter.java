@@ -18,28 +18,22 @@ package org.eclipse.jnosql.diana.cassandra.column;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
-import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.data.UdtValue;
 import com.datastax.oss.driver.api.core.type.DataType;
-import com.datastax.oss.driver.api.core.type.ListType;
 import com.datastax.oss.driver.api.core.type.UserDefinedType;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
-import com.datastax.oss.driver.api.core.type.codec.TypeCodecs;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
-import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken;
 import com.datastax.oss.protocol.internal.ProtocolConstants;
 import jakarta.nosql.Value;
 import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnEntity;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 
 final class CassandraConverter {
@@ -69,6 +63,11 @@ final class CassandraConverter {
                 return Column.class.cast(result);
             case ProtocolConstants.DataType.LIST:
             case ProtocolConstants.DataType.SET:
+                if (isUDTIterable(result)) {
+                    return UDT.builder(getUserType(result)).withName(definition.getName().asInternal())
+                            .addUDTs(getColumns(definition, result)).build();
+                }
+
             default:
                 return Column.of(definition.getName().asInternal(), Value.of(result));
         }
@@ -79,13 +78,14 @@ final class CassandraConverter {
         String name = definition.getName().asInternal();
         final DataType type = definition.getType();
         if (type instanceof UserDefinedType) {
-            return getUDT(name, row.getUdtValue(name));
+            return getUDT(definition, row.getUdtValue(name));
         }
         final TypeCodec<Object> codec = row.codecRegistry().codecFor(type);
         return row.get(name, codec);
     }
 
-    private static UDT getUDT(String name, UdtValue udtValue) {
+    private static UDT getUDT(ColumnDefinition definition, UdtValue udtValue) {
+        String name = definition.getName().asInternal();
         final UserDefinedType type = udtValue.getType();
         List<Column> columns = new ArrayList<>();
         List<String> names = type.getFieldNames().stream().map(CqlIdentifier::asInternal).collect(toList());
@@ -99,5 +99,35 @@ final class CassandraConverter {
         }
         return UDT.builder(type.getName().asInternal()).withName(name).addUDT(columns).build();
     }
+
+    private static String getUserType(Object result) {
+        return StreamSupport.stream(Iterable.class.cast(result).spliterator(), false)
+                .limit(1L)
+                .map(c -> UdtValue.class.cast(c).getType().getName().asInternal())
+                .findFirst()
+                .get().toString();
+    }
+
+    private static Iterable<Iterable<Column>> getColumns(ColumnDefinition definition, Object result) {
+
+        List<Iterable<Column>> columns = new ArrayList<>();
+        for (Object value : Iterable.class.cast(result)) {
+            final UdtValue udtValue = UdtValue.class.cast(value);
+            final UDT udt = getUDT(definition, udtValue);
+            columns.add((Iterable<Column>) udt.get());
+        }
+
+        return columns;
+    }
+
+    private static boolean isUDTIterable(Object result) {
+        final Iterable<?> iterable = Iterable.class.cast(result);
+        if (!iterable.iterator().hasNext()) {
+            return false;
+        }
+        return StreamSupport.stream(iterable.spliterator(), false)
+                .allMatch(UdtValue.class::isInstance);
+    }
+
 
 }
