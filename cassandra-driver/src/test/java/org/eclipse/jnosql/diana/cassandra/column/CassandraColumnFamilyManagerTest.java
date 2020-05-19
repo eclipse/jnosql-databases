@@ -159,7 +159,7 @@ public class CassandraColumnFamilyManagerTest {
 
 
     @Test
-    public void shouldReturnErrorWhenUpdatetWithColumnsNull() {
+    public void shouldReturnErrorWhenUpdateWithColumnsNull() {
 
         assertThrows(NullPointerException.class, () -> {
             entityManager.update((Iterable<ColumnEntity>) null);

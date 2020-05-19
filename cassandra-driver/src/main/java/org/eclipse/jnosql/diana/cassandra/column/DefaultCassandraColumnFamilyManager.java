@@ -26,7 +26,9 @@ import jakarta.nosql.column.ColumnQuery;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 
@@ -48,34 +50,46 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     @Override
     public ColumnEntity insert(ColumnEntity entity) {
         requireNonNull(entity, "entity is required");
-        final RegularInsert insert = QueryUtils.insert(entity, keyspace, session);
+        final RegularInsert insert = QueryUtils.insert(entity, keyspace, session, null);
         session.execute(insert.build());
         return entity;
     }
 
     @Override
-    public ColumnEntity update(ColumnEntity columnEntity) {
-        return null;
+    public ColumnEntity insert(ColumnEntity entity, Duration duration) {
+        requireNonNull(entity, "entity is required");
+        requireNonNull(duration, "duration is required");
+        final RegularInsert insert = QueryUtils.insert(entity, keyspace, session, duration);
+        session.execute(insert.build());
+        return entity;
     }
 
     @Override
-    public Iterable<ColumnEntity> update(Iterable<ColumnEntity> iterable) {
-        return null;
+    public ColumnEntity update(ColumnEntity entity) {
+        return insert(entity);
     }
 
     @Override
-    public ColumnEntity insert(ColumnEntity columnEntity, Duration duration) {
-        return null;
+    public Iterable<ColumnEntity> update(Iterable<ColumnEntity> entities) {
+        return insert(entities);
+    }
+
+
+    @Override
+    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities) {
+        requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::insert)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> iterable) {
-        return null;
-    }
-
-    @Override
-    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> iterable, Duration duration) {
-        return null;
+    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities, Duration duration) {
+        requireNonNull(entities, "entities is required");
+        requireNonNull(duration, "entities is duration");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(d -> insert(d, duration))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -84,8 +98,10 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     }
 
     @Override
-    public Stream<ColumnEntity> select(ColumnQuery columnQuery) {
-        return null;
+    public Stream<ColumnEntity> select(ColumnQuery query) {
+        requireNonNull(query, "query is required");
+        QueryExecutor executor = QueryExecutor.of(query);
+        return executor.execute(keyspace, query, this);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.eclipse.jnosql.diana.cassandra.column;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.data.UdtValue;
+import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
 import com.datastax.oss.driver.api.core.type.DataType;
 import com.datastax.oss.driver.api.core.type.UserDefinedType;
 import com.datastax.oss.driver.api.core.type.codec.CodecNotFoundException;
@@ -26,16 +27,25 @@ import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
 import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
+import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
+import jakarta.nosql.Sort;
+import jakarta.nosql.SortType;
 import jakarta.nosql.Value;
 import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnEntity;
+import jakarta.nosql.column.ColumnQuery;
 import org.eclipse.jnosql.diana.driver.ValueUtil;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 final class QueryUtils {
 
@@ -44,7 +54,7 @@ final class QueryUtils {
     }
 
 
-    public static RegularInsert insert(ColumnEntity entity, String keyspace, CqlSession session) {
+    public static RegularInsert insert(ColumnEntity entity, String keyspace, CqlSession session, Duration duration) {
 
         Map<String, Term> values = new HashMap<>();
         InsertInto insert = QueryBuilder.insertInto(keyspace, entity.getName());
@@ -56,8 +66,40 @@ final class QueryUtils {
                         insertSingleField(c, values);
                     }
                 });
+        final RegularInsert regularInsert = insert.values(values);
+        if (duration != null) {
+            regularInsert.usingTtl((int) duration.getSeconds());
+        }
+        return regularInsert;
+    }
 
-        return insert.values(values);
+    public static Select select(ColumnQuery query, String keyspace) {
+        String columnFamily = query.getColumnFamily();
+        final List<String> columns = query.getColumns();
+
+        Select select = null;
+        if (columns.isEmpty()) {
+            select = QueryBuilder.selectFrom(keyspace, columnFamily).all();
+        } else {
+            select = QueryBuilder.selectFrom(keyspace, columnFamily).columns(columns);
+        }
+
+        if (query.getLimit() > 0) {
+            if (CassandraQuery.class.isInstance(query)) {
+                //
+            } else {
+                select.limit((int) query.getLimit());
+            }
+        }
+        select.where(Relations.createClause(query.getCondition().orElse(null)));
+        final Map<String, ClusteringOrder> sort = query.getSorts().stream().collect(Collectors.toMap(s -> s.getName(), mapSort()));
+        select.orderBy(sort);
+        return select;
+    }
+
+    private static Function<Sort, ClusteringOrder> mapSort() {
+        return s -> SortType.ASC.equals(s.getType()) ? ClusteringOrder.ASC :
+        ClusteringOrder.DESC;
     }
 
     private static void insertUDT(UDT udt, String keyspace, CqlSession session, InsertInto insert) {
@@ -113,7 +155,7 @@ final class QueryUtils {
         return String.format("select count(*) from %s.%s", keyspace, columnFamily);
     }
 
-    private static String getName(Column column) {
+    static String getName(Column column) {
 
         String name = column.getName();
         if (name.charAt(0) == '_') {
