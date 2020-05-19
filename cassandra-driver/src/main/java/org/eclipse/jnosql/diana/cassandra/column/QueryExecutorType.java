@@ -39,7 +39,7 @@ enum QueryExecutorType implements QueryExecutor {
                                             DefaultCassandraColumnFamilyManager manager) {
             SimpleStatement select = QueryUtils.select(query, keyspace).build();
             if (Objects.nonNull(level)) {
-                select.setConsistencyLevel(level);
+                select = select.setConsistencyLevel(level);
             }
             ResultSet resultSet = manager.getSession().execute(select);
             return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);

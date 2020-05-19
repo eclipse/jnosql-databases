@@ -239,7 +239,7 @@ public class CassandraColumnFamilyManagerTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenThereIsNotThanOneRsultInSingleResult() {
+    public void shouldReturnErrorWhenThereIsNotThanOneResultInSingleResult() {
         entityManager.insert(getEntities());
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).build();
         assertThrows(NonUniqueResultException.class, () -> {

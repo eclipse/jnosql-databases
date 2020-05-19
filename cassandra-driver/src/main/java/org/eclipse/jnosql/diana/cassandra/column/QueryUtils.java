@@ -27,6 +27,7 @@ import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
 import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
+import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
@@ -88,18 +89,18 @@ final class QueryUtils {
             if (CassandraQuery.class.isInstance(query)) {
                 //
             } else {
-                select.limit((int) query.getLimit());
+                select = select.limit((int) query.getLimit());
             }
         }
-        select.where(Relations.createClause(query.getCondition().orElse(null)));
+        select = select.where(Relations.createClause(query.getCondition().orElse(null)));
         final Map<String, ClusteringOrder> sort = query.getSorts().stream().collect(Collectors.toMap(s -> s.getName(), mapSort()));
-        select.orderBy(sort);
+        select = select.orderBy(sort);
         return select;
     }
 
     private static Function<Sort, ClusteringOrder> mapSort() {
         return s -> SortType.ASC.equals(s.getType()) ? ClusteringOrder.ASC :
-        ClusteringOrder.DESC;
+                ClusteringOrder.DESC;
     }
 
     private static void insertUDT(UDT udt, String keyspace, CqlSession session, InsertInto insert) {
