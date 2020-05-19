@@ -16,8 +16,6 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;

@@ -16,8 +16,8 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
+import com.datastax.oss.driver.api.core.ConsistencyLevel;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnFamilyManager;
@@ -129,7 +129,7 @@ public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
      * @return the result of this query
      * @throws NullPointerException when statement is null
      */
-    Stream<ColumnEntity> execute(Statement statement) throws NullPointerException;
+    Stream<ColumnEntity> execute(SimpleStatement statement) throws NullPointerException;
 
     /**
      * Executes an query and uses as {@link CassandraPreparedStatement}

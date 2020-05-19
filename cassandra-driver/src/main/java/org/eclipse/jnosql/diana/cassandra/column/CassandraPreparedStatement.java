@@ -15,9 +15,9 @@
 
 package org.eclipse.jnosql.diana.cassandra.column;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import jakarta.nosql.column.ColumnEntity;
 
 import java.util.concurrent.Executor;
@@ -28,15 +28,15 @@ import java.util.stream.Stream;
  */
 public class CassandraPreparedStatement {
 
-    private final com.datastax.driver.core.PreparedStatement prepare;
+    private final com.datastax.oss.driver.api.core.cql.PreparedStatement prepare;
 
     private final Executor executor;
 
-    private final Session session;
+    private final CqlSession session;
 
     private BoundStatement boundStatement;
 
-    CassandraPreparedStatement(com.datastax.driver.core.PreparedStatement prepare, Executor executor, Session session) {
+    CassandraPreparedStatement(com.datastax.oss.driver.api.core.cql.PreparedStatement prepare, Executor executor, CqlSession session) {
         this.prepare = prepare;
         this.executor = executor;
         this.session = session;
@@ -45,7 +45,7 @@ public class CassandraPreparedStatement {
     public Stream<ColumnEntity> executeQuery() {
         loadBoundStatment();
         ResultSet resultSet = session.execute(boundStatement);
-        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
+        return null;
     }
 
 
