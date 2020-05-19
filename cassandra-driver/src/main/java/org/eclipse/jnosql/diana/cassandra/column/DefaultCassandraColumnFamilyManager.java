@@ -17,7 +17,9 @@ package org.eclipse.jnosql.diana.cassandra.column;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
@@ -105,8 +107,10 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
     }
 
     @Override
-    public long count(String s) {
-        return 0;
+    public long count(String columnFamily) {
+        requireNonNull(columnFamily, "columnFamily is required");
+        final ResultSet execute = session.execute(QueryBuilder.selectFrom(keyspace, columnFamily).countAll().build());
+        return execute.one().getLong(0);
     }
 
 

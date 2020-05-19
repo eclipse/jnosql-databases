@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.data.UdtValue;
 import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
@@ -62,7 +63,7 @@ final class QueryUtils {
         entity.getColumns().stream()
                 .forEach(c -> {
                     if (UDT.class.isInstance(c)) {
-                        insertUDT(UDT.class.cast(c), keyspace, session, insert);
+                        insertUDT(UDT.class.cast(c), keyspace, session, values);
                     } else {
                         insertSingleField(c, values);
                     }
@@ -103,7 +104,7 @@ final class QueryUtils {
                 ClusteringOrder.DESC;
     }
 
-    private static void insertUDT(UDT udt, String keyspace, CqlSession session, InsertInto insert) {
+    private static void insertUDT(UDT udt, String keyspace, CqlSession session, Map<String, Term> values) {
 
         UserDefinedType userType =
                 session.getMetadata()
@@ -113,20 +114,22 @@ final class QueryUtils {
 
         Iterable elements = Iterable.class.cast(udt.get());
         Object udtValue = getUdtValue(userType, elements);
-        insert.value(getName(udt), QueryBuilder.literal(udtValue));
+        values.put(getName(udt), QueryBuilder.literal(udtValue));
     }
 
     private static Object getUdtValue(UserDefinedType userType, Iterable elements) {
 
         List<Object> udtValues = new ArrayList<>();
         UdtValue udtValue = userType.newValue();
+        final List<String> udtNames = userType.getFieldNames().stream().map(CqlIdentifier::asInternal)
+                .collect(Collectors.toList());
         for (Object object : elements) {
             if (Column.class.isInstance(object)) {
                 Column column = Column.class.cast(object);
                 Object convert = ValueUtil.convert(column.getValue());
 
-                //DataType fieldType = userType.getFieldType(column.getName());
-                DataType fieldType = null;
+                final int index = udtNames.indexOf(column.getName());
+                DataType fieldType = userType.getFieldTypes().get(index);
                 TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT.codecFor(fieldType);
                 udtValue.set(getName(column), convert, objectTypeCodec);
 
