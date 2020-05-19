@@ -64,7 +64,7 @@ public class CassandraColumnFamilyManagerFactoryTest {
     public void shouldCloseNode() {
         subject.close();
         CassandraColumnFamilyManagerFactory cassandraColumnFamilyManagerFactory = CassandraColumnFamilyManagerFactory.class.cast(subject);
-        Cluster cluster = cassandraColumnFamilyManagerFactory.getCluster();
+        Cluster cluster = cassandraColumnFamilyManagerFactory.getSessionBuilder();
         assertTrue(cluster.isClosed());
     }
 

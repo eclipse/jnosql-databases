@@ -18,6 +18,8 @@ package org.eclipse.jnosql.diana.cassandra.column;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
 
 import java.util.List;
@@ -28,40 +30,35 @@ import java.util.concurrent.Executor;
  */
 public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerFactory {
 
-    private final Cluster cluster;
+    private final CqlSessionBuilder sessionBuilder;
 
     private final Executor executor;
 
-    CassandraColumnFamilyManagerFactory(final Cluster cluster, List<String> queries, Executor executor) {
-        this.cluster = cluster;
+    CassandraColumnFamilyManagerFactory(final CqlSessionBuilder sessionBuilder, List<String> queries, Executor executor) {
+        this.sessionBuilder = sessionBuilder;
         this.executor = executor;
-        runIniticialQuery(queries);
+        load(queries);
     }
 
-    public void runIniticialQuery(List<String> queries) {
-        Session session = cluster.connect();
+    void load(List<String> queries) {
+        final CqlSession session = sessionBuilder.build();
         queries.forEach(session::execute);
         session.close();
     }
 
     @Override
     public CassandraColumnFamilyManager get(String database) {
-        return new DefaultCassandraColumnFamilyManager(cluster.connect(database), executor, database);
+        return new DefaultCassandraColumnFamilyManager(sessionBuilder.build(), executor, database);
     }
 
     @Override
     public void close() {
-        cluster.close();
-    }
-
-    Cluster getCluster() {
-        return cluster;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CassandraColumnFamilyManagerFactory{");
-        sb.append("cluster=").append(cluster);
+        sb.append("cluster=").append(sessionBuilder);
         sb.append(", executor=").append(executor);
         sb.append('}');
         return sb.toString();

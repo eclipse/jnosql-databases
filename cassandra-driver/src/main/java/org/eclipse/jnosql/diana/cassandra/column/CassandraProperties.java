@@ -15,11 +15,13 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 
-import com.datastax.driver.core.Cluster;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,13 +44,6 @@ class CassandraProperties {
 
     private int port;
 
-    private boolean withoutJXMReporting;
-
-    private boolean withoutMetrics;
-
-    private boolean withSSL;
-
-
     public void addQuery(String query) {
         this.queries.add(query);
     }
@@ -61,23 +56,11 @@ class CassandraProperties {
         return queries;
     }
 
-    public Cluster createCluster() {
-        Cluster.Builder builder = Cluster.builder();
-
-        nodes.forEach(builder::addContactPoint);
-        name.ifPresent(builder::withClusterName);
-        builder.withPort(port);
-
-        if (withoutJXMReporting) {
-            builder.withoutJMXReporting();
-        }
-        if (withoutMetrics) {
-            builder.withoutMetrics();
-        }
-        if (withSSL) {
-            builder.withSSL();
-        }
-        return builder.build();
+    public CqlSessionBuilder createCluster() {
+        CqlSessionBuilder builder = CqlSession.builder();
+        nodes.stream().map(h -> new InetSocketAddress(h, port)).forEach(builder::addContactPoint);
+        name.ifPresent(builder::withApplicationName);
+        return builder;
     }
 
     public ExecutorService createExecutorService() {
@@ -101,14 +84,6 @@ class CassandraProperties {
         cp.port = settings.get(Arrays.asList(OldCassandraConfigurations.PORT.get(), CassandraConfigurations.PORT.get()))
                 .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_PORT);
 
-
-
-        cp.withSSL = settings.get(Arrays.asList(OldCassandraConfigurations.SSL.get(), CassandraConfigurations.SSL.get()))
-                .map(Object::toString).map(Boolean::parseBoolean).orElse(FALSE);
-        cp.withoutMetrics = settings.get(Arrays.asList(OldCassandraConfigurations.METRICS.get(), CassandraConfigurations.METRICS.get()))
-                .map(Object::toString).map(Boolean::parseBoolean).orElse(FALSE);
-        cp.withoutJXMReporting = settings.get(Arrays.asList(OldCassandraConfigurations.JMX.get(), CassandraConfigurations.JMX.get()))
-                .map(Object::toString).map(Boolean::parseBoolean).orElse(FALSE);
         cp.name = settings.get(Arrays.asList(OldCassandraConfigurations.NAME.get(), CassandraConfigurations.NAME.get()))
         .map(Object::toString);
         return cp;
