@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.diana.mongodb.document;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
 /**

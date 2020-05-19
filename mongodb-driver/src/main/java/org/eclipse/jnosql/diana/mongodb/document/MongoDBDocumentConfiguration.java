@@ -14,10 +14,11 @@
  */
 package org.eclipse.jnosql.diana.mongodb.document;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
@@ -93,14 +94,18 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
                 .map(HostPortConfiguration::toServerAddress)
                 .collect(Collectors.toList());
         if (servers.isEmpty()) {
-            return new MongoDBDocumentCollectionManagerFactory(new MongoClient());
+            return new MongoDBDocumentCollectionManagerFactory(MongoClients.create());
         }
 
         Optional<MongoCredential> credential = MongoAuthentication.of(settings);
-        MongoClient mongoClient = credential.map(c -> new MongoClient(servers, c, MongoClientOptions.builder().build()))
-                .orElseGet(() -> new MongoClient(servers));
 
-        return new MongoDBDocumentCollectionManagerFactory(mongoClient);
+
+        final MongoClientSettings mongoClientSettings = credential.map(c -> MongoClientSettings.builder().credential(c)
+                .applyToClusterSettings(builder -> builder.hosts(servers))).orElseGet(() ->
+                MongoClientSettings.builder()
+                        .applyToClusterSettings(builder -> builder.hosts(servers))).build();
+
+        return new MongoDBDocumentCollectionManagerFactory(MongoClients.create(mongoClientSettings));
     }
 
     public MongoDBDocumentCollectionManagerFactory get(String pathFileConfig) throws NullPointerException {
