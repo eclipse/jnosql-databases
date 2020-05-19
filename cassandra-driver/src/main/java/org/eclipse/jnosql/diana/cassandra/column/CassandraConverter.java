@@ -16,13 +16,17 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.data.UdtValue;
 import com.datastax.oss.driver.api.core.type.DataType;
 import com.datastax.oss.driver.api.core.type.ListType;
+import com.datastax.oss.driver.api.core.type.UserDefinedType;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodecs;
+import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken;
 import com.datastax.oss.protocol.internal.ProtocolConstants;
 import jakarta.nosql.Value;
@@ -58,12 +62,13 @@ final class CassandraConverter {
 
 
     private static Column getColumn(ColumnDefinition definition, Object result) {
+
+
         switch (definition.getType().getProtocolCode()) {
             case ProtocolConstants.DataType.UDT:
                 return Column.class.cast(result);
             case ProtocolConstants.DataType.LIST:
             case ProtocolConstants.DataType.SET:
-                return Column.of(definition.getName().asInternal(), Value.of(result));
             default:
                 return Column.of(definition.getName().asInternal(), Value.of(result));
         }
@@ -73,8 +78,26 @@ final class CassandraConverter {
 
         String name = definition.getName().asInternal();
         final DataType type = definition.getType();
+        if (type instanceof UserDefinedType) {
+            return getUDT(name, row.getUdtValue(name));
+        }
         final TypeCodec<Object> codec = row.codecRegistry().codecFor(type);
         return row.get(name, codec);
+    }
+
+    private static UDT getUDT(String name, UdtValue udtValue) {
+        final UserDefinedType type = udtValue.getType();
+        List<Column> columns = new ArrayList<>();
+        List<String> names = type.getFieldNames().stream().map(CqlIdentifier::asInternal).collect(toList());
+        for (CqlIdentifier fieldName : type.getFieldNames()) {
+            final int index = names.indexOf(fieldName.asInternal());
+            DataType fieldType = type.getFieldTypes().get(index);
+            Object elementValue = udtValue.get(fieldName, CodecRegistry.DEFAULT.codecFor(fieldType));
+            if (elementValue != null) {
+                columns.add(Column.of(fieldName.asInternal(), elementValue));
+            }
+        }
+        return UDT.builder(type.getName().asInternal()).withName(name).addUDT(columns).build();
     }
 
 }
