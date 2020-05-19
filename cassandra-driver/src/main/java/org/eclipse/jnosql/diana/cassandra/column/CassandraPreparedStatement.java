@@ -20,7 +20,6 @@ import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import jakarta.nosql.column.ColumnEntity;
 
-import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 /**
@@ -30,22 +29,19 @@ public class CassandraPreparedStatement {
 
     private final com.datastax.oss.driver.api.core.cql.PreparedStatement prepare;
 
-    private final Executor executor;
-
     private final CqlSession session;
 
     private BoundStatement boundStatement;
 
-    CassandraPreparedStatement(com.datastax.oss.driver.api.core.cql.PreparedStatement prepare, Executor executor, CqlSession session) {
+    CassandraPreparedStatement(com.datastax.oss.driver.api.core.cql.PreparedStatement prepare, CqlSession session) {
         this.prepare = prepare;
-        this.executor = executor;
         this.session = session;
     }
 
     public Stream<ColumnEntity> executeQuery() {
-        loadBoundStatment();
+        load();
         ResultSet resultSet = session.execute(boundStatement);
-        return null;
+        return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
 
@@ -60,24 +56,19 @@ public class CassandraPreparedStatement {
         return this;
     }
 
-    private void loadBoundStatment() {
+    private void load() {
         if (boundStatement == null) {
             boundStatement = prepare.bind();
         }
     }
 
-    public void close() {
-
-    }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CassandraPrepareStatment{");
-        sb.append("prepare=").append(prepare);
-        sb.append(", executor=").append(executor);
-        sb.append(", session=").append(session);
-        sb.append(", boundStatement=").append(boundStatement);
-        sb.append('}');
-        return sb.toString();
+        return "CassandraPreparedStatement{" +
+                "prepare=" + prepare +
+                ", session=" + session +
+                ", boundStatement=" + boundStatement +
+                '}';
     }
 }

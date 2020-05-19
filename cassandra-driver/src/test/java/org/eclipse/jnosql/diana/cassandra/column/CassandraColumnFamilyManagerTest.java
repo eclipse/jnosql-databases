@@ -30,6 +30,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -433,9 +436,9 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity entity = ColumnEntity.of("history");
         entity.add(Column.of("name", "World war II"));
         ZoneId defaultZoneId = ZoneId.systemDefault();
-        Date dateEnd = Date.from(java.time.LocalDate.of(1945, Month.SEPTEMBER, 2).atStartOfDay(defaultZoneId).toInstant());
-        Calendar dataStart = Calendar.getInstance();
-        //entity.add(Column.of("dataStart", LocalDate.fromYearMonthDay(1939, 9, 1)));
+        Instant dateEnd = LocalDate.of(1945, Month.SEPTEMBER, 2).atStartOfDay(defaultZoneId).toInstant();
+        LocalDateTime dataStart = LocalDateTime.now();
+        entity.add(Column.of("dataStart", LocalDate.of(1939, 9, 1)));
         entity.add(Column.of("dateEnd", dateEnd));
         entityManager.insert(entity);
         ColumnQuery query = select().from("history")

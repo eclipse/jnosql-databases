@@ -26,11 +26,10 @@ import com.datastax.oss.driver.api.core.type.codec.CodecNotFoundException;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.insert.Insert;
 import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
 import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
-import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
-import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
 import jakarta.nosql.Sort;
 import jakarta.nosql.SortType;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -56,7 +54,7 @@ final class QueryUtils {
     }
 
 
-    public static RegularInsert insert(ColumnEntity entity, String keyspace, CqlSession session, Duration duration) {
+    static Insert insert(ColumnEntity entity, String keyspace, CqlSession session, Duration duration) {
 
         Map<String, Term> values = new HashMap<>();
         InsertInto insert = QueryBuilder.insertInto(keyspace, entity.getName());
@@ -68,9 +66,10 @@ final class QueryUtils {
                         insertSingleField(c, values);
                     }
                 });
-        final RegularInsert regularInsert = insert.values(values);
+
+        RegularInsert regularInsert = insert.values(values);
         if (duration != null) {
-            regularInsert.usingTtl((int) duration.getSeconds());
+            return regularInsert.usingTtl((int) duration.getSeconds());
         }
         return regularInsert;
     }
