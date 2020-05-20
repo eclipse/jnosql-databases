@@ -32,7 +32,6 @@ import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
