@@ -14,6 +14,8 @@
  */
 package org.eclipse.jnosql.diana.cassandra.column;
 
+import com.datastax.oss.driver.api.querybuilder.Literal;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
 import jakarta.nosql.Condition;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
 
@@ -67,7 +70,7 @@ final class Relations {
                 relations.add(Relation.column(QueryUtils.getName(column)).isLessThanOrEqualTo(getTerm(column)));
                 return;
             case IN:
-                relations.add(Relation.column(QueryUtils.getName(column)).in(literal(getIinValue(column.getValue()))));
+                relations.add(Relation.column(QueryUtils.getName(column)).in(getIinValue(column.getValue())));
                 return;
             case LIKE:
                 relations.add(Relation.column(QueryUtils.getName(column)).like(getTerm(column)));
@@ -86,7 +89,7 @@ final class Relations {
         return literal(ValueUtil.convert(column.getValue()));
     }
 
-    private static Object[] getIinValue(Value value) {
-        return ValueUtil.convertToList(value).toArray();
+    private static Term[] getIinValue(Value value) {
+        return ValueUtil.convertToList(value).stream().map(QueryBuilder::literal).toArray(Term[]::new);
     }
 }

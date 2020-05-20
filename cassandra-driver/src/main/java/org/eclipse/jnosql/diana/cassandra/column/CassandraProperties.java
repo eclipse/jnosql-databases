@@ -30,8 +30,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.lang.Boolean.FALSE;
-
 class CassandraProperties {
 
     private static final int DEFAULT_PORT = 9042;
