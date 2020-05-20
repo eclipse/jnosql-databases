@@ -36,9 +36,9 @@ class CassandraProperties {
 
     private static final String DEFAULT_DATA_CENTER = "datacenter1";
 
-    private List<String> queries = new ArrayList<>();
+    private final List<String> queries = new ArrayList<>();
 
-    private List<String> nodes = new ArrayList<>();
+    private final List<String> nodes = new ArrayList<>();
 
     private Optional<String> name;
 
