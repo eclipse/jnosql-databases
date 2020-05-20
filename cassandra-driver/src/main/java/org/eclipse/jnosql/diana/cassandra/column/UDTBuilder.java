@@ -29,9 +29,9 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
 
     private String name;
 
-    private String typeName;
+    private final String typeName;
 
-    private List<Column> columns = new ArrayList<>();
+    private final List<Column> columns = new ArrayList<>();
 
     private Iterable<Iterable<Column>> udts = new ArrayList<>();
 

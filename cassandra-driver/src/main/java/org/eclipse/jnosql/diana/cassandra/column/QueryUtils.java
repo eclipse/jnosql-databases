@@ -16,90 +16,113 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 
-import com.datastax.driver.core.CodecRegistry;
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.TypeCodec;
-import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.UserType;
-import com.datastax.driver.core.exceptions.CodecNotFoundException;
-import com.datastax.driver.core.querybuilder.BuiltStatement;
-import com.datastax.driver.core.querybuilder.Clause;
-import com.datastax.driver.core.querybuilder.Delete;
-import com.datastax.driver.core.querybuilder.Insert;
-import com.datastax.driver.core.querybuilder.Ordering;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-import jakarta.nosql.Condition;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.data.UdtValue;
+import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.UserDefinedType;
+import com.datastax.oss.driver.api.core.type.codec.CodecNotFoundException;
+import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
+import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.insert.Insert;
+import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
+import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
+import com.datastax.oss.driver.api.querybuilder.term.Term;
 import jakarta.nosql.Sort;
-import jakarta.nosql.TypeReference;
+import jakarta.nosql.SortType;
 import jakarta.nosql.Value;
 import jakarta.nosql.column.Column;
-import jakarta.nosql.column.ColumnCondition;
-import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 import org.eclipse.jnosql.diana.driver.ValueUtil;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Map;
 import java.util.function.Function;
-
-import static com.datastax.driver.core.querybuilder.QueryBuilder.asc;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.desc;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
-import static jakarta.nosql.SortType.ASC;
+import java.util.stream.Collectors;
 
 final class QueryUtils {
 
-
-    private static final Function<Sort, Ordering> SORT_ORDERING_FUNCTION = sort -> {
-        if (ASC.equals(sort.getType())) {
-            return asc(sort.getName());
-        } else {
-            return desc(sort.getName());
-        }
-    };
 
     private QueryUtils() {
     }
 
 
-    public static Insert insert(ColumnEntity entity, String keyspace, Session session) {
-        Insert insert = insertInto(keyspace, entity.getName());
+    static Insert insert(ColumnEntity entity, String keyspace, CqlSession session, Duration duration) {
 
-
+        Map<String, Term> values = new HashMap<>();
+        InsertInto insert = QueryBuilder.insertInto(keyspace, entity.getName());
         entity.getColumns().stream()
                 .forEach(c -> {
                     if (UDT.class.isInstance(c)) {
-                        insertUDT(UDT.class.cast(c), keyspace, session, insert);
+                        insertUDT(UDT.class.cast(c), keyspace, session, values);
                     } else {
-                        insertSingleField(c, insert);
+                        insertSingleField(c, values);
                     }
                 });
-        return insert;
+
+        RegularInsert regularInsert = insert.values(values);
+        if (duration != null) {
+            return regularInsert.usingTtl((int) duration.getSeconds());
+        }
+        return regularInsert;
     }
 
-    private static void insertUDT(UDT udt, String keyspace, Session session, Insert insert) {
-        UserType userType = session.getCluster().getMetadata().getKeyspace(keyspace).getUserType(udt.getUserType());
+    public static Select select(ColumnQuery query, String keyspace) {
+        String columnFamily = query.getColumnFamily();
+        final List<String> columns = query.getColumns();
+
+        Select select = null;
+        if (columns.isEmpty()) {
+            select = QueryBuilder.selectFrom(keyspace, columnFamily).all();
+        } else {
+            select = QueryBuilder.selectFrom(keyspace, columnFamily).columns(columns);
+        }
+
+        select = select.where(Relations.createClause(query.getCondition().orElse(null)));
+        final Map<String, ClusteringOrder> sort = query.getSorts().stream().collect(Collectors.toMap(s -> s.getName(), mapSort()));
+        select = select.orderBy(sort);
+        return select;
+    }
+
+    private static Function<Sort, ClusteringOrder> mapSort() {
+        return s -> SortType.ASC.equals(s.getType()) ? ClusteringOrder.ASC :
+                ClusteringOrder.DESC;
+    }
+
+    private static void insertUDT(UDT udt, String keyspace, CqlSession session, Map<String, Term> values) {
+
+        UserDefinedType userType =
+                session.getMetadata()
+                        .getKeyspace(keyspace)
+                        .flatMap(ks -> ks.getUserDefinedType(udt.getUserType()))
+                        .orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));
 
         Iterable elements = Iterable.class.cast(udt.get());
         Object udtValue = getUdtValue(userType, elements);
-        insert.value(getName(udt), udtValue);
+        values.put(getName(udt), QueryBuilder.literal(udtValue));
     }
 
-    private static Object getUdtValue(UserType userType, Iterable elements) {
+    private static Object getUdtValue(UserDefinedType userType, Iterable elements) {
 
         List<Object> udtValues = new ArrayList<>();
-        UDTValue udtValue = userType.newValue();
+        UdtValue udtValue = userType.newValue();
+        final List<String> udtNames = userType.getFieldNames().stream().map(CqlIdentifier::asInternal)
+                .collect(Collectors.toList());
         for (Object object : elements) {
             if (Column.class.isInstance(object)) {
                 Column column = Column.class.cast(object);
                 Object convert = ValueUtil.convert(column.getValue());
-                DataType fieldType = userType.getFieldType(column.getName());
-                TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT_INSTANCE.codecFor(fieldType);
+
+                final int index = udtNames.indexOf(column.getName());
+                DataType fieldType = userType.getFieldTypes().get(index);
+                TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT.codecFor(fieldType);
                 udtValue.set(getName(column), convert, objectTypeCodec);
 
             } else if (Iterable.class.isInstance(object)) {
@@ -113,115 +136,26 @@ final class QueryUtils {
 
     }
 
-    private static void insertSingleField(Column column, Insert insert) {
+    private static void insertSingleField(Column column, Map<String, Term> values) {
         Object value = column.get();
         try {
-            CodecRegistry.DEFAULT_INSTANCE.codecFor(value);
-            insert.value(getName(column), value);
+            CodecRegistry.DEFAULT.codecFor(value);
+            values.put(getName(column), QueryBuilder.literal(value));
         } catch (CodecNotFoundException exp) {
-            insert.value(getName(column), ValueUtil.convert(column.getValue()));
+            values.put(getName(column), QueryBuilder.literal(ValueUtil.convert(column.getValue())));
         }
-
-
     }
 
-
-    public static BuiltStatement select(ColumnQuery query, String keySpace) {
-        String columnFamily = query.getColumnFamily();
-        final List<String> columns = query.getColumns();
-        if (Objects.isNull(query.getCondition())) {
-            if (columns.isEmpty()) {
-                return QueryBuilder.select().all().from(keySpace, columnFamily);
-            } else {
-                return QueryBuilder.select(columns.toArray()).from(keySpace, columnFamily);
-            }
-
-        }
-        Select.Where where;
-        if (columns.isEmpty()) {
-            where = QueryBuilder.select().all().from(keySpace, columnFamily).where();
-        } else {
-            where = QueryBuilder.select(columns.toArray()).from(keySpace, columnFamily).where();
-        }
-
-        if (query.getLimit() > 0) {
-            if (CassandraQuery.class.isInstance(query)) {
-                where.setFetchSize((int) query.getLimit());
-            } else {
-                where.limit((int) query.getLimit());
-            }
-        }
-        if (!query.getSorts().isEmpty()) {
-            where.orderBy(query.getSorts().stream().map(SORT_ORDERING_FUNCTION).toArray(Ordering[]::new));
-        }
-        List<Clause> clauses = new ArrayList<>();
-        createClause(query.getCondition(), clauses);
-        clauses.forEach(where::and);
-        return where;
-    }
-
-    public static BuiltStatement delete(ColumnDeleteQuery query, String keySpace) {
-
-        if (Objects.isNull(query.getCondition())) {
-            return QueryBuilder.delete().all().from(keySpace, query.getColumnFamily());
-        }
-        Delete.Where where = QueryBuilder.delete().all().from(keySpace, query.getColumnFamily()).where();
-        List<Clause> clauses = new ArrayList<>();
-        createClause(query.getCondition(), clauses);
-        clauses.forEach(where::and);
-        return where;
-    }
 
     public static String count(String columnFamily, String keyspace) {
         return String.format("select count(*) from %s.%s", keyspace, columnFamily);
     }
 
-    private static void createClause(Optional<ColumnCondition> columnConditionOptional, List<Clause> clauses) {
-        if (!columnConditionOptional.isPresent()) {
-            return;
-        }
-        ColumnCondition columnCondition = columnConditionOptional.get();
-        Column column = columnCondition.getColumn();
-        Condition condition = columnCondition.getCondition();
-        Object value = column.getValue().get();
-        switch (condition) {
-            case EQUALS:
-                clauses.add(QueryBuilder.eq(getName(column), value));
-                return;
-            case GREATER_THAN:
-                clauses.add(QueryBuilder.gt(getName(column), value));
-                return;
-            case GREATER_EQUALS_THAN:
-                clauses.add(QueryBuilder.gte(getName(column), value));
-                return;
-            case LESSER_THAN:
-                clauses.add(QueryBuilder.lt(getName(column), value));
-                return;
-            case LESSER_EQUALS_THAN:
-                clauses.add(QueryBuilder.lte(getName(column), value));
-                return;
-            case IN:
-                clauses.add(QueryBuilder.in(getName(column), getIinValue(column.getValue())));
-                return;
-            case LIKE:
-                clauses.add(QueryBuilder.like(getName(column), value));
-                return;
-            case AND:
-                for (ColumnCondition cc : column.get(new TypeReference<List<ColumnCondition>>() {
-                })) {
-                    createClause(Optional.of(cc), clauses);
-                }
-                return;
-            case OR:
-            default:
-                throw new UnsupportedOperationException("The columnCondition " + condition +
-                        " is not supported in cassandra column driver");
-        }
+    static String getName(Column column) {
+        return getName(column.getName());
     }
 
-    private static String getName(Column column) {
-
-        String name = column.getName();
+    static String getName(String name) {
         if (name.charAt(0) == '_') {
             return "\"" + name + "\"";
         }

@@ -25,10 +25,7 @@ public enum OldCassandraConfigurations implements Supplier<String> {
     HOST("cassandra-host"),
     NAME("cassandra-name"),
     PORT("cassandra-port"),
-    QUERY("cassandra-query"),
-    SSL("cassandra-ssl"),
-    METRICS("cassandra-metrics"),
-    JMX("cassandra-jmx");
+    QUERY("cassandra-query");
 
     private final String configuration;
 

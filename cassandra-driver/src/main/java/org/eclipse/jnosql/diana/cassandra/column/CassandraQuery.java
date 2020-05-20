@@ -16,11 +16,12 @@
  */
 package org.eclipse.jnosql.diana.cassandra.column;
 
-import com.datastax.driver.core.PagingState;
 import jakarta.nosql.Sort;
 import jakarta.nosql.column.ColumnCondition;
 import jakarta.nosql.column.ColumnQuery;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,14 +62,13 @@ public final class CassandraQuery implements ColumnQuery {
         return Optional.ofNullable(pagingState);
     }
 
-    Optional<PagingState> toPatingState() {
-        return getPagingState().filter(NOT_EQUALS).map(PagingState::fromString);
+    Optional<ByteBuffer> toPaginate() {
+        return getPagingState().filter(NOT_EQUALS).map(s -> ByteBuffer.wrap(s.getBytes(StandardCharsets.UTF_8)));
     }
 
-
-    void setPagingState(PagingState pagingState) {
+    void setPagingState(ByteBuffer pagingState) {
         if (pagingState != null) {
-            this.pagingState = pagingState.toString();
+            this.pagingState = StandardCharsets.UTF_8.decode(pagingState).toString();
         }
     }
 

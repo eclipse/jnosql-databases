@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.diana.cassandra.column;
 
-import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 
@@ -32,6 +32,6 @@ interface QueryExecutor {
     Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager);
 
     Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
-                               DefaultCassandraColumnFamilyManager manager);
+                                 DefaultCassandraColumnFamilyManager manager);
 
 }

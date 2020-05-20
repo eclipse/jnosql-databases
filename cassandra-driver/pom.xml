@@ -27,6 +27,9 @@
     <artifactId>cassandra-driver</artifactId>
     <description>The Eclipse JNoSQL communication layer, Diana, to Cassandra</description>
 
+    <properties>
+        <casandra.driver.version>4.6.1</casandra.driver.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -39,9 +42,14 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-core</artifactId>
-            <version>3.8.0</version>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-core</artifactId>
+            <version>${casandra.driver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-query-builder</artifactId>
+            <version>${casandra.driver.version}</version>
         </dependency>
     </dependencies>
 </project>

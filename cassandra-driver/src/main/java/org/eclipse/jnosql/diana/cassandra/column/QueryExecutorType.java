@@ -14,21 +14,21 @@
  */
 package org.eclipse.jnosql.diana.cassandra.column;
 
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.PagingState;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.querybuilder.BuiltStatement;
+import com.datastax.oss.driver.api.core.ConsistencyLevel;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 enum QueryExecutorType implements QueryExecutor {
-
     PAGING_STATE {
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
@@ -38,50 +38,65 @@ enum QueryExecutorType implements QueryExecutor {
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
                                             DefaultCassandraColumnFamilyManager manager) {
+
             CassandraQuery query = CassandraQuery.class.cast(q);
 
             if (query.isExhausted()) {
                 return Stream.empty();
             }
-            BuiltStatement select = QueryUtils.select(query, keyspace);
-
+            Select select = QueryUtils.select(query, keyspace);
+            SimpleStatement simpleStatement = select.build();
             if (Objects.nonNull(level)) {
-                select.setConsistencyLevel(level);
+                simpleStatement = simpleStatement.setConsistencyLevel(level);
             }
 
-            query.toPatingState().ifPresent(select::setPagingState);
-            ResultSet resultSet = manager.getSession().execute(select);
+            if (query.toPaginate().isPresent()) {
+                simpleStatement = simpleStatement.setPagingState(query.toPaginate().get());
+            }
 
-            PagingState pagingState = resultSet.getExecutionInfo().getPagingState();
+            ResultSet resultSet = manager.getSession().execute(simpleStatement);
+
+            final ByteBuffer pagingState = resultSet.getExecutionInfo().getPagingState();
             query.setPagingState(pagingState);
 
             List<ColumnEntity> entities = new ArrayList<>();
+
             for (Row row : resultSet) {
                 entities.add(CassandraConverter.toDocumentEntity(row));
                 if (resultSet.getAvailableWithoutFetching() == 0) {
-                    query.setExhausted(resultSet.isExhausted());
+                    query.setExhausted(resultSet.isFullyFetched());
                     break;
                 }
             }
             return entities.stream();
         }
 
-    }, DEFAULT {
+    },
+    DEFAULT {
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
             return execute(keyspace, query, null, manager);
         }
 
         @Override
-        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level, DefaultCassandraColumnFamilyManager manager) {
-            BuiltStatement select = QueryUtils.select(query, keyspace);
+        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
+                                            DefaultCassandraColumnFamilyManager manager) {
 
+            Select cassandraSelect = QueryUtils.select(query, keyspace);
+
+            if (query.getLimit() > 0 && query.getSkip() == 0) {
+                cassandraSelect = cassandraSelect.limit((int) query.getLimit());
+            }
+
+            SimpleStatement select = cassandraSelect.build();
             if (Objects.nonNull(level)) {
-                select.setConsistencyLevel(level);
+                select = select.setConsistencyLevel(level);
             }
             ResultSet resultSet = manager.getSession().execute(select);
+            if (query.getLimit() > 0 && query.getSkip() > 0) {
+                return resultSet.all().stream().skip(query.getSkip()).limit(query.getLimit()).map(CassandraConverter::toDocumentEntity);
+            }
             return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
         }
     }
-
 }

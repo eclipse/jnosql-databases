@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.diana.cassandra.column;
 
 
-import com.datastax.driver.core.Cluster;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
@@ -55,13 +55,13 @@ public final class CassandraConfiguration implements ColumnConfiguration {
         return new CassandraColumnFamilyManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
     }
 
-    public CassandraColumnFamilyManagerFactory getEntityManagerFactory(Cluster cluster) {
-        requireNonNull(cluster, "Cluster is required");
+    public CassandraColumnFamilyManagerFactory getEntityManagerFactory(CqlSessionBuilder sessionBuilder) {
+        requireNonNull(sessionBuilder, "sessionBuilder is required");
 
         Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
         CassandraProperties properties = CassandraProperties.of(configuration);
         ExecutorService executorService = properties.createExecutorService();
-        return new CassandraColumnFamilyManagerFactory(cluster, properties.getQueries(), executorService);
+        return new CassandraColumnFamilyManagerFactory(sessionBuilder, properties.getQueries(), executorService);
     }
 
     @Override

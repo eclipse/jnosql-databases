@@ -6,7 +6,6 @@ image::https://jnosql.github.io/img/logos/cassandra.png[Cassandra Project,align=
 
 === How To install
 
-On Cassandra, the integration test is made with cassandra-unit, so just run the tests and install with maven command:
 1. Execute the test `mvn clean install`
 
 === Install without testing

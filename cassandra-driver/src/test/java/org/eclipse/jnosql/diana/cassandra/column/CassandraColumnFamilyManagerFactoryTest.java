@@ -15,7 +15,6 @@
 
 package org.eclipse.jnosql.diana.cassandra.column;
 
-import com.datastax.driver.core.Cluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.column.ColumnFamilyManager;
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraColumnFamilyManagerFactoryTest {
 
@@ -57,15 +55,6 @@ public class CassandraColumnFamilyManagerFactoryTest {
     public void shouldReturnEntityManager() {
         ColumnFamilyManager columnEntityManager = subject.get(Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
-    }
-
-
-    @Test
-    public void shouldCloseNode() {
-        subject.close();
-        CassandraColumnFamilyManagerFactory cassandraColumnFamilyManagerFactory = CassandraColumnFamilyManagerFactory.class.cast(subject);
-        Cluster cluster = cassandraColumnFamilyManagerFactory.getCluster();
-        assertTrue(cluster.isClosed());
     }
 
 }

@@ -22,9 +22,7 @@ public enum CassandraConfigurations implements Supplier<String> {
     NAME("cassandra.name"),
     PORT("cassandra.port"),
     QUERY("cassandra.query"),
-    SSL("cassandra.ssl"),
-    METRICS("cassandra.metrics"),
-    JMX("cassandra.jmx");
+    DATA_CENTER("cassandra.data.center");
 
     private final String configuration;
 
