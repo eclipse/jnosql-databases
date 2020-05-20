@@ -159,8 +159,10 @@ final class QueryUtils {
     }
 
     static String getName(Column column) {
+        return getName(column.getName());
+    }
 
-        String name = column.getName();
+    static String getName(String name) {
         if (name.charAt(0) == '_') {
             return "\"" + name + "\"";
         }
