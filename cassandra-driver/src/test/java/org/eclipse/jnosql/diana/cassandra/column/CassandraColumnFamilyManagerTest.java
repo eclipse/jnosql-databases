@@ -494,6 +494,19 @@ public class CassandraColumnFamilyManagerTest {
         assertTrue(cassandraQuery.getPagingState().isPresent());
     }
 
+    @Test
+    public void shouldPaginate() {
+        for (long index = 1; index <= 10; index++) {
+            ColumnEntity columnFamily = getColumnFamily();
+            columnFamily.add("id", index);
+            entityManager.insert(columnFamily);
+        }
+
+        ColumnQuery query = select().from(Constants.COLUMN_FAMILY).limit(4).skip(2).build();
+        List<ColumnEntity> entities = entityManager.select(query).collect(toList());
+        assertEquals(4, entities.size());
+    }
+
     private ColumnEntity createEntityWithIterable() {
         ColumnEntity entity = ColumnEntity.of("contacts");
         entity.add(Column.of("user", "otaviojava"));
