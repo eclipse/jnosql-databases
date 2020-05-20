@@ -42,6 +42,10 @@ class CassandraProperties {
 
     private Optional<String> name;
 
+    private Optional<String> user;
+
+    private Optional<String> password;
+
     private int port;
 
     private String dataCenter;
@@ -63,6 +67,9 @@ class CassandraProperties {
         nodes.stream().map(h -> new InetSocketAddress(h, port)).forEach(builder::addContactPoint);
         name.ifPresent(builder::withApplicationName);
         builder.withLocalDatacenter(dataCenter);
+        if (user.isPresent()) {
+            builder.withAuthCredentials(user.orElse(""), password.orElse(""));
+        }
         return builder;
     }
 
@@ -91,6 +98,9 @@ class CassandraProperties {
                 .map(Object::toString);
         cp.dataCenter = settings.get(CassandraConfigurations.DATA_CENTER.get()).map(Object::toString)
                 .orElse(DEFAULT_DATA_CENTER);
+
+        cp.user = settings.get(Configurations.USER.get()).map(Object::toString);
+        cp.password = settings.get(Configurations.PASSWORD.get()).map(Object::toString);
         return cp;
     }
 }
