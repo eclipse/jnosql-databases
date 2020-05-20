@@ -18,6 +18,7 @@ import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.paging.OffsetPager;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
@@ -81,11 +82,22 @@ enum QueryExecutorType implements QueryExecutor {
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
                                             DefaultCassandraColumnFamilyManager manager) {
-            SimpleStatement select = QueryUtils.select(query, keyspace).build();
+
+            final Select cassandraSelect = QueryUtils.select(query, keyspace);
+
+
+            if (query.getLimit() > 0 && query.getSkip() == 0) {
+                cassandraSelect.limit((int) query.getLimit());
+            }
+
+            SimpleStatement select = cassandraSelect.build();
             if (Objects.nonNull(level)) {
                 select = select.setConsistencyLevel(level);
             }
             ResultSet resultSet = manager.getSession().execute(select);
+            if (query.getLimit() > 0 && query.getSkip() > 0) {
+                return resultSet.all().stream().skip(query.getSkip()).limit(query.getLimit()).map(CassandraConverter::toDocumentEntity);
+            }
             return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
         }
     }

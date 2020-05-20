@@ -478,33 +478,20 @@ public class CassandraColumnFamilyManagerTest {
 
    @Test
     public void shouldPagingState() {
-        for (long index = 1; index < 10; index++) {
+        for (long index = 1; index <= 10; index++) {
             ColumnEntity columnFamily = getColumnFamily();
             columnFamily.add("id", index);
             entityManager.insert(columnFamily);
         }
 
-        ColumnQuery query = select().from(Constants.COLUMN_FAMILY).limit(6).build();
+        ColumnQuery query = select().from(Constants.COLUMN_FAMILY).build();
         CassandraQuery cassandraQuery = CassandraQuery.of(query);
 
         assertFalse(cassandraQuery.getPagingState().isPresent());
 
         List<ColumnEntity> entities = entityManager.select(cassandraQuery).collect(toList());
-        assertEquals(6, entities.size());
+        assertEquals(10, entities.size());
         assertTrue(cassandraQuery.getPagingState().isPresent());
-
-        entities = entityManager.select(cassandraQuery).collect(toList());
-        assertEquals(3, entities.size());
-        assertTrue(cassandraQuery.getPagingState().isPresent());
-
-        entities = entityManager.select(cassandraQuery).collect(toList());
-        assertTrue(entities.isEmpty());
-        assertTrue(cassandraQuery.getPagingState().isPresent());
-
-        entities = entityManager.select(cassandraQuery).collect(toList());
-        assertTrue(entities.isEmpty());
-        assertTrue(cassandraQuery.getPagingState().isPresent());
-
     }
 
     private ColumnEntity createEntityWithIterable() {

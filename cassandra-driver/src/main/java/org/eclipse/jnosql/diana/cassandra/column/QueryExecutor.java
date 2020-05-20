@@ -23,6 +23,9 @@ import java.util.stream.Stream;
 interface QueryExecutor {
 
     static QueryExecutor of(ColumnQuery query) {
+        if (CassandraQuery.class.isInstance(query)) {
+            return QueryExecutorType.PAGING_STATE;
+        }
         return QueryExecutorType.DEFAULT;
     }
 

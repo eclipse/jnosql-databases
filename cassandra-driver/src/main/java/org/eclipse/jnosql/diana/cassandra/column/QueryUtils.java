@@ -85,13 +85,6 @@ final class QueryUtils {
             select = QueryBuilder.selectFrom(keyspace, columnFamily).columns(columns);
         }
 
-        if (query.getLimit() > 0) {
-            if (CassandraQuery.class.isInstance(query)) {
-                //
-            } else {
-                select = select.limit((int) query.getLimit());
-            }
-        }
         select = select.where(Relations.createClause(query.getCondition().orElse(null)));
         final Map<String, ClusteringOrder> sort = query.getSorts().stream().collect(Collectors.toMap(s -> s.getName(), mapSort()));
         select = select.orderBy(sort);
