@@ -476,7 +476,7 @@ public class CassandraColumnFamilyManagerTest {
         assertTrue(contacts > 0);
     }
 
-   /* @Test
+   @Test
     public void shouldPagingState() {
         for (long index = 1; index < 10; index++) {
             ColumnEntity columnFamily = getColumnFamily();
@@ -505,7 +505,7 @@ public class CassandraColumnFamilyManagerTest {
         assertTrue(entities.isEmpty());
         assertTrue(cassandraQuery.getPagingState().isPresent());
 
-    }*/
+    }
 
     private ColumnEntity createEntityWithIterable() {
         ColumnEntity entity = ColumnEntity.of("contacts");
