@@ -57,8 +57,8 @@ final class CassandraConverter {
 
     private static Column getColumn(ColumnDefinition definition, Object result) {
 
-
-        switch (definition.getType().getProtocolCode()) {
+        final DataType type = definition.getType();
+        switch (type.getProtocolCode()) {
             case ProtocolConstants.DataType.UDT:
                 return Column.class.cast(result);
             case ProtocolConstants.DataType.LIST:
@@ -67,7 +67,7 @@ final class CassandraConverter {
                     return UDT.builder(getUserType(result)).withName(definition.getName().asInternal())
                             .addUDTs(getColumns(definition, result)).build();
                 }
-
+                return Column.of(definition.getName().asInternal(), Value.of(result));
             default:
                 return Column.of(definition.getName().asInternal(), Value.of(result));
         }
