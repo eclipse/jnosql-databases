@@ -83,11 +83,10 @@ enum QueryExecutorType implements QueryExecutor {
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
                                             DefaultCassandraColumnFamilyManager manager) {
 
-            final Select cassandraSelect = QueryUtils.select(query, keyspace);
-
+            Select cassandraSelect = QueryUtils.select(query, keyspace);
 
             if (query.getLimit() > 0 && query.getSkip() == 0) {
-                cassandraSelect.limit((int) query.getLimit());
+                cassandraSelect = cassandraSelect.limit((int) query.getLimit());
             }
 
             SimpleStatement select = cassandraSelect.build();
