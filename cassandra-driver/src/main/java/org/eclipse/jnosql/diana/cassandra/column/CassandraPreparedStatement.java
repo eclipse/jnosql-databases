@@ -23,7 +23,7 @@ import jakarta.nosql.column.ColumnEntity;
 import java.util.stream.Stream;
 
 /**
- * The Diana wrapper to {@link com.datastax.driver.core.PreparedStatement}
+ * The Diana wrapper to {@link com.datastax.oss.driver.api.core.cql.PreparedStatement}
  */
 public class CassandraPreparedStatement {
 
