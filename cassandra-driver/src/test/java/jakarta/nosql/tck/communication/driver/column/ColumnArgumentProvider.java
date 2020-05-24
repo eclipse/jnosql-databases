@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2020 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
+ *
+ *   You may elect to redistribute this code under either of these licenses.
+ *
+ *   Contributors:
+ *
+ *   Otavio Santana
+ */
 package jakarta.nosql.tck.communication.driver.column;
 
 import org.eclipse.jnosql.diana.driver.ConfigurationReader;
@@ -31,13 +45,12 @@ public class ColumnArgumentProvider implements ArgumentsProvider, AnnotationCons
         if (map.isEmpty()) {
             return Stream.of(Arguments.of(ColumnArgument.EMPTY));
         }
-        final String entity = map.get("entity");
         final String idName = map.get("id.name");
         final List<String> query = map.entrySet().stream()
                 .filter(s -> s.getKey().startsWith("query"))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
-        return Stream.of(Arguments.of(new ColumnArgument(entity, query, idName)));
+        return Stream.of(Arguments.of(new ColumnArgument(query, idName)));
     }
 
 
