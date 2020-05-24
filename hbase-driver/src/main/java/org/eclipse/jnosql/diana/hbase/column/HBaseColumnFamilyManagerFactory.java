@@ -21,9 +21,13 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
+import org.apache.hadoop.hbase.client.ColumnFamilyDescriptor;
+import org.apache.hadoop.hbase.client.ColumnFamilyDescriptorBuilder;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.client.TableDescriptor;
+import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -61,17 +65,23 @@ public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFacto
 
 
     private void existTable(Admin admin, TableName tableName) throws IOException {
-        HTableDescriptor tableDescriptor = admin.getTableDescriptor(tableName);
-        HColumnDescriptor[] columnFamilies = tableDescriptor.getColumnFamilies();
-        List<String> familiesExist = Arrays.stream(columnFamilies).map(HColumnDescriptor::getName).map(String::new).collect(Collectors.toList());
-        families.stream().filter(s -> !familiesExist.contains(s)).map(HColumnDescriptor::new).forEach(tableDescriptor::addFamily);
-        admin.modifyTable(tableName, tableDescriptor);
+        TableDescriptor tableDescriptor = admin.getDescriptor(tableName);
+        ColumnFamilyDescriptor[] columnFamilies = tableDescriptor.getColumnFamilies();
+        final TableDescriptorBuilder builder = TableDescriptorBuilder.newBuilder(tableName);
+        List<String> familiesExist = Arrays.stream(columnFamilies).map(ColumnFamilyDescriptor::getName).map(String::new).collect(Collectors.toList());
+        families.stream().filter(s -> !familiesExist.contains(s))
+                .forEach(s -> builder.setColumnFamily(ColumnFamilyDescriptorBuilder.newBuilder(s.getBytes())
+                        .build()));
+        final TableDescriptor descriptor = builder.build();
+        admin.modifyTable(descriptor);
     }
 
     private void createTable(Admin admin, TableName tableName) throws IOException {
-        HTableDescriptor desc = new HTableDescriptor(tableName);
-        families.stream().map(HColumnDescriptor::new).forEach(desc::addFamily);
-        admin.createTable(desc);
+        final TableDescriptorBuilder builder = TableDescriptorBuilder.newBuilder(tableName);
+        families.stream().forEach(s -> builder.setColumnFamily(ColumnFamilyDescriptorBuilder.newBuilder(s.getBytes())
+                        .build()));
+        final TableDescriptor descriptor = builder.build();
+        admin.createTable(descriptor);
     }
 
     @Override
