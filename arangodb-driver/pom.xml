@@ -28,7 +28,7 @@
     <description>The Eclipse JNoSQL communication layer, Diana, to AranboDB</description>
 
     <properties>
-        <arango.driver>6.6.2</arango.driver>
+        <arango.driver>6.6.3</arango.driver>
     </properties>
     <dependencies>
         <dependency>
