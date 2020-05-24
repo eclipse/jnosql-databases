@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.diana.redis.keyvalue;
 
-import jakarta.nosql.communication.tck.driver.keyvalue.BucketManagerSupplier;
 import jakarta.nosql.keyvalue.BucketManager;
+import jakarta.nosql.tck.communication.driver.keyvalue.BucketManagerSupplier;
 
 public class RedisBucketManagerSupplier implements BucketManagerSupplier {
 
