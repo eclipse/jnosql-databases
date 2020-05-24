@@ -19,5 +19,6 @@
         <local-cache name="bucketName"/>
         <local-cache name="users-entity"/>
         <local-cache name="vertebrates"/>
+        <local-cache name="tck-users-entity"/>
     </cache-container>
 </infinispan>
