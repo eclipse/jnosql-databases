@@ -12,11 +12,18 @@
  *
  *   Otavio Santana
  */
-package jakarta.nosql.communication.tck.driver.keyvalue;
+package org.eclipse.jnosql.diana.redis.keyvalue;
 
+import jakarta.nosql.communication.tck.driver.keyvalue.BucketManagerSupplier;
 import jakarta.nosql.keyvalue.BucketManager;
 
-import java.util.function.Supplier;
+public class RedisBucketManagerSupplier implements BucketManagerSupplier {
 
-public interface BucketManagerSupplier extends Supplier<BucketManager> {
+    private static final String BUCKET = "tck-users-entity";
+
+    @Override
+    public BucketManager get() {
+        final RedisBucketManagerFactory factory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        return factory.getBucketManager(BUCKET);
+    }
 }
