@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 public class ColumnFamilyManagerTest {
 
     @ParameterizedTest
-    @ColumnSource("column_insert.properties")
+    @ColumnSource("column.properties")
     public void shouldInsert(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -56,7 +56,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert.properties")
+    @ColumnSource("column.properties")
     public void shouldReturnErrorWhenInsertIsNull(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -64,7 +64,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_ttl.properties")
+    @ColumnSource("column_ttl.properties")
     public void shouldInsertTTL(ColumnArgument argument) throws InterruptedException {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -84,7 +84,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_ttl.properties")
+    @ColumnSource("column_ttl.properties")
     public void shouldReturnErrorWhenInsertTTLHasNullParameter(ColumnArgument argument) throws InterruptedException {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -95,7 +95,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_iterable.properties")
+    @ColumnSource("column_iterable.properties")
     public void shouldInsertIterable(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -117,7 +117,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_iterable.properties")
+    @ColumnSource("column_iterable.properties")
     public void shouldReturnErrorWhenInsertIterableIsNull(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -125,7 +125,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_iterable_ttl.properties")
+    @ColumnSource("column_iterable_ttl.properties")
     public void shouldInsertIterableTTL(ColumnArgument argument) throws InterruptedException {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -145,7 +145,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_iterable_ttl.properties")
+    @ColumnSource("column_iterable_ttl.properties")
     public void shouldReturnErrorWhenInsertIterableTTL(ColumnArgument argument) throws InterruptedException {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -161,7 +161,7 @@ public class ColumnFamilyManagerTest {
 
 
     @ParameterizedTest
-    @ColumnSource("column_insert.properties")
+    @ColumnSource("column.properties")
     public void shouldUpdate(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -178,7 +178,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert.properties")
+    @ColumnSource("column.properties")
     public void shouldReturnErrorWhenUpdateIsNull(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -186,7 +186,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_iterable.properties")
+    @ColumnSource("column_iterable.properties")
     public void shouldUpdateIterable(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
@@ -209,7 +209,7 @@ public class ColumnFamilyManagerTest {
     }
 
     @ParameterizedTest
-    @ColumnSource("column_insert_iterable.properties")
+    @ColumnSource("column_iterable.properties")
     public void shouldReturnErrorWhenUpdateIterableIsNull(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
