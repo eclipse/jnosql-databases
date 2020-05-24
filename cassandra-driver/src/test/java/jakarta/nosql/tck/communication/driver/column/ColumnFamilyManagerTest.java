@@ -19,14 +19,20 @@ import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnFamilyManager;
+import jakarta.nosql.column.ColumnQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static jakarta.nosql.column.ColumnDeleteQuery.delete;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ColumnFamilyManagerTest {
@@ -53,12 +59,12 @@ public class ColumnFamilyManagerTest {
     public void shouldReturnErrorWhenInsertIsNull(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
-        Assertions.assertThrows(NullPointerException.class, () -> manager.insert((ColumnEntity) null));
+        assertThrows(NullPointerException.class, () -> manager.insert((ColumnEntity) null));
     }
 
     @ParameterizedTest
     @ColumnSource("column_insert_ttl.properties")
-    public void shouldInsert(ColumnArgument argument) {
+    public void shouldInsertTTL(ColumnArgument argument) throws InterruptedException {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
         Optional<ColumnEntity> entityOptional = argument.getQuery().stream().flatMap(manager::query)
@@ -69,8 +75,22 @@ public class ColumnFamilyManagerTest {
 
         final Column id = entity.find(argument.getIdName())
                 .orElseThrow(() -> new ColumnDriverException("Should return the id in the entity"));
-        ColumnDeleteQuery deleteQuery = delete().from(entity.getName()).where(id.getName()).eq(id.get()).build();
-        manager.delete(deleteQuery);
+
+        TimeUnit.SECONDS.sleep(2L);
+        final ColumnQuery query = ColumnQuery.select().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        final long count = manager.select(query).count();
+        assertEquals(0L, count);
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column_insert_ttl.properties")
+    public void shouldReturnErrorWhenInsertTTLHasNullParameter(ColumnArgument argument) throws InterruptedException {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        assertThrows(NullPointerException.class,
+                () -> manager.insert((ColumnEntity) null, Duration.ZERO));
+        assertThrows(NullPointerException.class,
+                () -> manager.insert(ColumnEntity.of("entity"), null));
     }
 
     @ParameterizedTest
@@ -88,7 +108,7 @@ public class ColumnFamilyManagerTest {
                 .map(Column::get)
                 .collect(Collectors.toList());
 
-        Assertions.assertEquals(argument.getQuery().size(), ids.size());
+        assertEquals(argument.getQuery().size(), ids.size());
 
         ColumnDeleteQuery deleteQuery = delete().from(entities.get(0).getName())
                 .where(argument.getIdName()).in(ids).build();
@@ -100,7 +120,42 @@ public class ColumnFamilyManagerTest {
     public void shouldReturnErrorWhenInsertIterableIsNull(ColumnArgument argument) {
         assumeTrue(argument.isEmpty());
         ColumnFamilyManager manager = getManager();
-        Assertions.assertThrows(NullPointerException.class, () -> manager.insert((Iterable<ColumnEntity>) null));
+        assertThrows(NullPointerException.class, () -> manager.insert((Iterable<ColumnEntity>) null));
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column_insert_iterable_ttl.properties")
+    public void shouldInsertIterableTTL(ColumnArgument argument) throws InterruptedException {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        List<ColumnEntity> entities = argument.getQuery().stream().flatMap(manager::query)
+                .collect(Collectors.toList());
+        Assertions.assertEquals(argument.getQuery().size(), entities.size());
+
+        final List<Object> ids = entities.stream().map(c -> c.find(argument.getIdName()))
+                .filter(Optional::isPresent)
+                .map(Optional::get).map(Column::get).collect(Collectors.toList());
+
+        TimeUnit.SECONDS.sleep(2L);
+        final ColumnQuery query = ColumnQuery.select().from(entities.get(0).getName())
+                .where(argument.getIdName()).in(ids).build();
+        final long count = manager.select(query).count();
+        assertEquals(0L, count);
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column_insert_iterable_ttl.properties")
+    public void shouldReturnErrorWhenInsertIterableTTL(ColumnArgument argument) throws InterruptedException {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+
+        assertThrows(NullPointerException.class, () -> manager.insert((Iterable<ColumnEntity>) null,
+                null));
+        assertThrows(NullPointerException.class, () -> manager.insert((Iterable<ColumnEntity>) null,
+                Duration.ZERO));
+        assertThrows(NullPointerException.class, () -> manager
+                .insert(Collections.singletonList(ColumnEntity.of("entity")),
+                        null));
     }
 
     private ColumnFamilyManager getManager() {
