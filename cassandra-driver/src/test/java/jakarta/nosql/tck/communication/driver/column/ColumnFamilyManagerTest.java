@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static jakarta.nosql.column.ColumnDeleteQuery.delete;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -156,6 +157,63 @@ public class ColumnFamilyManagerTest {
         assertThrows(NullPointerException.class, () -> manager
                 .insert(Collections.singletonList(ColumnEntity.of("entity")),
                         null));
+    }
+
+
+    @ParameterizedTest
+    @ColumnSource("column_insert.properties")
+    public void shouldUpdate(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        Optional<ColumnEntity> entityOptional = argument.getQuery().stream().flatMap(manager::query)
+                .findFirst();
+        Assertions.assertTrue(entityOptional.isPresent());
+        final ColumnEntity entity = entityOptional
+                .orElseThrow(() -> new ColumnDriverException("Should return an entity when the entity is saved"));
+        assertNotNull(manager.update(entity));
+        final Column id = entity.find(argument.getIdName())
+                .orElseThrow(() -> new ColumnDriverException("Should return the id in the entity"));
+        ColumnDeleteQuery deleteQuery = delete().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        manager.delete(deleteQuery);
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column_insert.properties")
+    public void shouldReturnErrorWhenUpdateIsNull(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        assertThrows(NullPointerException.class, () -> manager.update((ColumnEntity) null));
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column_insert_iterable.properties")
+    public void shouldUpdateIterable(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        List<ColumnEntity> entities = argument.getQuery().stream().flatMap(manager::query)
+                .collect(Collectors.toList());
+
+        assertNotNull(manager.update(entities));
+        final List<Object> ids = entities.stream()
+                .map(c -> c.find(argument.getIdName()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Column::get)
+                .collect(Collectors.toList());
+
+        assertEquals(argument.getQuery().size(), ids.size());
+
+        ColumnDeleteQuery deleteQuery = delete().from(entities.get(0).getName())
+                .where(argument.getIdName()).in(ids).build();
+        manager.delete(deleteQuery);
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column_insert_iterable.properties")
+    public void shouldReturnErrorWhenUpdateIterableIsNull(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        assertThrows(NullPointerException.class, () -> manager.update((Iterable<ColumnEntity>) null));
     }
 
     private ColumnFamilyManager getManager() {
