@@ -20,12 +20,12 @@ import jakarta.nosql.tck.communication.driver.column.ColumnFamilyManagerSupplier
 
 public class CassandraColumnFamilyManagerSupplier implements ColumnFamilyManagerSupplier {
 
-    private static final String ENTITY= "person";
+    private static final String KEY_SPACE = "newKeySpace";
 
     @Override
     public ColumnFamilyManager get() {
         ColumnFamilyManagerFactory factory = ManagerFactorySupplier.INSTANCE.get();
-        return factory.get(ENTITY);
+        return factory.get(KEY_SPACE);
     }
 
 }
