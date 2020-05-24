@@ -14,6 +14,7 @@
  */
 package jakarta.nosql.tck.communication.driver.column;
 
+import jakarta.nosql.NonUniqueResultException;
 import jakarta.nosql.ServiceLoaderProvider;
 import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnDeleteQuery;
@@ -31,9 +32,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static jakarta.nosql.column.ColumnDeleteQuery.delete;
+import static jakarta.nosql.column.ColumnQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ColumnFamilyManagerTest {
@@ -78,7 +81,7 @@ public class ColumnFamilyManagerTest {
                 .orElseThrow(() -> new ColumnDriverException("Should return the id in the entity"));
 
         TimeUnit.SECONDS.sleep(2L);
-        final ColumnQuery query = ColumnQuery.select().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        final ColumnQuery query = select().from(entity.getName()).where(id.getName()).eq(id.get()).build();
         final long count = manager.select(query).count();
         assertEquals(0L, count);
     }
@@ -138,7 +141,7 @@ public class ColumnFamilyManagerTest {
                 .map(Optional::get).map(Column::get).collect(Collectors.toList());
 
         TimeUnit.SECONDS.sleep(2L);
-        final ColumnQuery query = ColumnQuery.select().from(entities.get(0).getName())
+        final ColumnQuery query = select().from(entities.get(0).getName())
                 .where(argument.getIdName()).in(ids).build();
         final long count = manager.select(query).count();
         assertEquals(0L, count);
@@ -215,6 +218,117 @@ public class ColumnFamilyManagerTest {
         ColumnFamilyManager manager = getManager();
         assertThrows(NullPointerException.class, () -> manager.update((Iterable<ColumnEntity>) null));
     }
+
+    @ParameterizedTest
+    @ColumnSource("column.properties")
+    public void shouldDelete(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        Optional<ColumnEntity> entityOptional = argument.getQuery().stream().flatMap(manager::query)
+                .findFirst();
+        Assertions.assertTrue(entityOptional.isPresent());
+        final ColumnEntity entity = entityOptional
+                .orElseThrow(() -> new ColumnDriverException("Should return an entity when the entity is saved"));
+
+        final Column id = entity.find(argument.getIdName())
+                .orElseThrow(() -> new ColumnDriverException("Should return the id in the entity"));
+        ColumnDeleteQuery deleteQuery = delete().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        manager.delete(deleteQuery);
+
+        ColumnQuery query = select().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        assertEquals(0L, manager.select(query).count());
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column.properties")
+    public void shouldReturnErrorWhenDelete(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        assertThrows(NullPointerException.class, () -> manager.delete(null));
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column.properties")
+    public void shouldSelect(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        Optional<ColumnEntity> entityOptional = argument.getQuery().stream().flatMap(manager::query)
+                .findFirst();
+        Assertions.assertTrue(entityOptional.isPresent());
+        final ColumnEntity entity = entityOptional
+                .orElseThrow(() -> new ColumnDriverException("Should return an entity when the entity is saved"));
+
+        final Column id = entity.find(argument.getIdName())
+                .orElseThrow(() -> new ColumnDriverException("Should return the id in the entity"));
+
+        ColumnQuery query = select().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        assertEquals(1L, manager.select(query).count());
+        ColumnDeleteQuery deleteQuery = delete().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        manager.delete(deleteQuery);
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column.properties")
+    public void shouldReturnErrorWhenSelect(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        assertThrows(NullPointerException.class, () -> manager.select(null));
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column.properties")
+    public void shouldSingleResult(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        Optional<ColumnEntity> entityOptional = argument.getQuery().stream().flatMap(manager::query)
+                .findFirst();
+        Assertions.assertTrue(entityOptional.isPresent());
+        final ColumnEntity entity = entityOptional
+                .orElseThrow(() -> new ColumnDriverException("Should return an entity when the entity is saved"));
+
+        final Column id = entity.find(argument.getIdName())
+                .orElseThrow(() -> new ColumnDriverException("Should return the id in the entity"));
+
+        ColumnQuery query = select().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        final Optional<ColumnEntity> optional = manager.singleResult(query);
+        assertTrue(optional.isPresent());
+        ColumnDeleteQuery deleteQuery = delete().from(entity.getName()).where(id.getName()).eq(id.get()).build();
+        manager.delete(deleteQuery);
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column_iterable.properties")
+    public void shouldAnEmptySingleResult(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        List<ColumnEntity> entities = argument.getQuery().stream().flatMap(manager::query)
+                .collect(Collectors.toList());
+
+        assertNotNull(manager.update(entities));
+        final List<Object> ids = entities.stream()
+                .map(c -> c.find(argument.getIdName()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Column::get)
+                .collect(Collectors.toList());
+
+        ColumnQuery query = select().from(entities.get(0).getName())
+                .where(argument.getIdName()).in(ids).build();
+
+        assertThrows(NonUniqueResultException.class, () -> manager.singleResult(query));
+        ColumnDeleteQuery deleteQuery = delete().from(entities.get(0).getName())
+                .where(argument.getIdName()).in(ids).build();
+        manager.delete(deleteQuery);
+    }
+
+    @ParameterizedTest
+    @ColumnSource("column.properties")
+    public void shouldReturnErrorWhenSingleResult(ColumnArgument argument) {
+        assumeTrue(argument.isEmpty());
+        ColumnFamilyManager manager = getManager();
+        assertThrows(NullPointerException.class, () -> manager.singleResult(null));
+    }
+
 
     private ColumnFamilyManager getManager() {
         final ColumnFamilyManagerSupplier supplier = ServiceLoaderProvider.get(ColumnFamilyManagerSupplier.class);
