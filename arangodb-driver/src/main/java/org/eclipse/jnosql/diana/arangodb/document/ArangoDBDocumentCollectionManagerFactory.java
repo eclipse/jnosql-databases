@@ -18,7 +18,7 @@ package org.eclipse.jnosql.diana.arangodb.document;
 import com.arangodb.ArangoDB;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 
-final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
+final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
 
 
     private final ArangoDB arangoDB;

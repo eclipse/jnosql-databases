@@ -57,6 +57,12 @@
             <version>${jakarta.nosql.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>jakarta.nosql.tck.communication.driver</groupId>
+            <artifactId>driver-tck-document</artifactId>
+            <version>${jakarta.nosql.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -68,6 +74,7 @@
                 <configuration>
                     <dependenciesToScan>
                         <dependency>jakarta.nosql.tck.communication.driver:driver-tck-key-value</dependency>
+                        <dependency>jakarta.nosql.tck.communication.driver:driver-tck-document</dependency>
                     </dependenciesToScan>
                 </configuration>
             </plugin>
