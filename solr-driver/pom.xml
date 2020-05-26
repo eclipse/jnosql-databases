@@ -39,7 +39,28 @@
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
-            <version>8.4.1</version>
+            <version>8.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.nosql.tck.communication.driver</groupId>
+            <artifactId>driver-tck-document</artifactId>
+            <version>${jakarta.nosql.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <dependenciesToScan>
+                        <dependency>jakarta.nosql.tck.communication.driver:driver-tck-document</dependency>
+                    </dependenciesToScan>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
