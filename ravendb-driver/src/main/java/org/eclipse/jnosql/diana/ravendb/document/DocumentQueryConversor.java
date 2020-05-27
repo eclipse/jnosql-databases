@@ -43,7 +43,6 @@ class DocumentQueryConversor {
         IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(query.getDocumentCollection()));
         query.getCondition().ifPresent(c -> feedQuery(ravenQuery, c, ids));
 
-
         if (!ids.isEmpty() && query.getCondition().isPresent()) {
             return new QueryResult(ids, null);
         } else {
@@ -81,7 +80,12 @@ class DocumentQueryConversor {
         String name = document.getName();
 
         if (EntityConverter.ID_FIELD.equals(name)) {
-            ids.add(value.toString());
+            if (value instanceof Iterable) {
+                final Iterable iterable = Iterable.class.cast(value);
+                iterable.forEach(i -> ids.add(i.toString()));
+            } else {
+                ids.add(value.toString());
+            }
             return;
         }
 

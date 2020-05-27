@@ -35,10 +35,12 @@ final class EntityConverter {
     private EntityConverter() {
     }
 
-
-    public static String getId(Map entity) {
-        Map<String, Object> metadata = (Map<String, Object>) entity.remove(Constants.Documents.Metadata.KEY);
-        return (String) metadata.get(Constants.Documents.Metadata.ID);
+    public static String getId(Map<?, ?> entity) {
+        if (entity != null) {
+            Map<String, Object> metadata = (Map<String, Object>) entity.remove(Constants.Documents.Metadata.KEY);
+            return (String) metadata.get(Constants.Documents.Metadata.ID);
+        }
+        return "";
     }
 
     static DocumentEntity getEntity(Map map) {

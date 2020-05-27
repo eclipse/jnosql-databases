@@ -12,9 +12,13 @@
 
  The Infinispan Team
 -->
-<infinispan xmlns="urn:infinispan:config:9.1">
+<infinispan xmlns="urn:infinispan:config:10.1">
     <cache-container default-cache="default">
         <jmx duplicate-domains="true"/>
-        <local-cache name="default" />
+        <local-cache name="default"/>
+        <local-cache name="bucketName"/>
+        <local-cache name="users-entity"/>
+        <local-cache name="vertebrates"/>
+        <local-cache name="tck-users-entity"/>
     </cache-container>
 </infinispan>
