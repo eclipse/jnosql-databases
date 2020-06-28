@@ -180,7 +180,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
     private String valueToString(Value value) {
         Object object = value.get();
-        if (writerField.isCompatible(object.getClass())) {
+        if (writerField.test(object.getClass())) {
             return writerField.write(object).toString();
         } else {
             return object.toString();
