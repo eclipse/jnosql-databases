@@ -19,8 +19,8 @@ import jakarta.nosql.ValueWriter;
 public class MoneyValueWriter implements ValueWriter<Money, String> {
 
     @Override
-    public boolean isCompatible(Class clazz) {
-        return Money.class.equals(clazz);
+    public boolean test(Class<?> type) {
+        return Money.class.equals(type);
     }
 
     @Override
