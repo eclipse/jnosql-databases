@@ -81,7 +81,7 @@ public final class ValueUtil {
     }
 
     private static Object getObject(Object val) {
-        if (VALUE_WRITER.isCompatible(val.getClass())) {
+        if (VALUE_WRITER.test(val.getClass())) {
             return VALUE_WRITER.write(val);
         }
         return val;
