@@ -23,8 +23,8 @@ import org.bson.types.Binary;
 public class BinaryValueReader implements ValueReader {
 
     @Override
-    public <T> boolean isCompatible(Class<T> valueType) {
-        return Binary.class.equals(valueType);
+    public boolean test(Class<?> type) {
+        return Binary.class.equals(type);
     }
 
     @Override

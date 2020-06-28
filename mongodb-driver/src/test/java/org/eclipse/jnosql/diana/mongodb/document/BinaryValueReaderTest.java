@@ -36,8 +36,8 @@ class BinaryValueReaderTest {
 
     @Test
     public void shouldValidateCompatibility() {
-        assertTrue(valueReader.isCompatible(Binary.class));
-        assertFalse(valueReader.isCompatible(AtomicBoolean.class));
+        assertTrue(valueReader.test(Binary.class));
+        assertFalse(valueReader.test(AtomicBoolean.class));
     }
 
     @Test
