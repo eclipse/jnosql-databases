@@ -24,7 +24,9 @@ import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 import jakarta.nosql.column.Columns;
+import jakarta.nosql.query.DeleteQuery;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static jakarta.nosql.column.ColumnDeleteQuery.delete;
 import static jakarta.nosql.column.ColumnQuery.select;
@@ -507,8 +511,33 @@ public class CassandraColumnFamilyManagerTest {
         assertEquals(4, entities.size());
     }
 
+    @Test
+    public void shouldCreateWithIterable() {
+        ColumnEntity entity = createEntityWithIterableSet();
+        entityManager.insert(entity);
+        ColumnQuery query = ColumnQuery.select().from("agenda").build();
+        final List<ColumnEntity> result = entityManager.select(query).collect(toList());
+        Assert.assertEquals(1, result.size());
+
+
+    }
+
+
     private ColumnEntity createEntityWithIterable() {
         ColumnEntity entity = ColumnEntity.of("contacts");
+        entity.add(Column.of("user", "otaviojava"));
+
+        List<Iterable<Column>> columns = new ArrayList<>();
+        columns.add(asList(Column.of("firstname", "Poliana"), Column.of("lastname", "Santana")));
+        columns.add(asList(Column.of("firstname", "Ada"), Column.of("lastname", "Lovelace")));
+        columns.add(asList(Column.of("firstname", "Maria"), Column.of("lastname", "Goncalves")));
+        UDT udt = UDT.builder("fullname").withName("names")
+                .addUDTs(columns).build();
+        entity.add(udt);
+        return entity;
+    }
+    private ColumnEntity createEntityWithIterableSet() {
+        ColumnEntity entity = ColumnEntity.of("agenda");
         entity.add(Column.of("user", "otaviojava"));
 
         List<Iterable<Column>> columns = new ArrayList<>();
