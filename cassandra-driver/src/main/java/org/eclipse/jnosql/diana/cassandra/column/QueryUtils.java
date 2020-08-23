@@ -34,6 +34,7 @@ import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
 import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
+import com.datastax.oss.protocol.internal.ProtocolConstants;
 import jakarta.nosql.Sort;
 import jakarta.nosql.SortType;
 import jakarta.nosql.Value;
@@ -44,7 +45,9 @@ import org.eclipse.jnosql.diana.driver.ValueUtil;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -105,8 +108,8 @@ final class QueryUtils {
 
         final Optional<KeyspaceMetadata> keyspaceMetadata = session.getMetadata().getKeyspace(keyspace);
         UserDefinedType userType = keyspaceMetadata
-                        .flatMap(ks -> ks.getUserDefinedType(udt.getUserType()))
-                        .orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));
+                .flatMap(ks -> ks.getUserDefinedType(udt.getUserType()))
+                .orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));
 
         final TableMetadata tableMetadata = keyspaceMetadata
                 .flatMap(k -> k.getTable(columnFamily))
@@ -116,15 +119,15 @@ final class QueryUtils {
                 .orElseThrow(() -> new IllegalArgumentException("Missing the column definition"));
 
         final DataType type = columnMetadata.getType();
-        final TypeCodec<Object> codec = CodecRegistry.DEFAULT.codecFor(type);
         Iterable elements = Iterable.class.cast(udt.get());
-        Object udtValue = getUdtValue(userType, elements);
+        Object udtValue = getUdtValue(userType, elements, type);
         values.put(getName(udt), QueryBuilder.literal(udtValue));
     }
 
-    private static Object getUdtValue(UserDefinedType userType, Iterable elements) {
+    private static Object getUdtValue(UserDefinedType userType, Iterable elements, DataType type) {
 
-        List<Object> udtValues = new ArrayList<>();
+        Collection<Object> udtValues = getCollectionUdt(type);
+
         UdtValue udtValue = userType.newValue();
         final List<String> udtNames = userType.getFieldNames().stream().map(CqlIdentifier::asInternal)
                 .collect(Collectors.toList());
@@ -139,7 +142,7 @@ final class QueryUtils {
                 udtValue.set(getName(column), convert, objectTypeCodec);
 
             } else if (Iterable.class.isInstance(object)) {
-                udtValues.add(getUdtValue(userType, Iterable.class.cast(Iterable.class.cast(object))));
+                udtValues.add(getUdtValue(userType, Iterable.class.cast(Iterable.class.cast(object)), type));
             }
         }
         if (udtValues.isEmpty()) {
@@ -147,6 +150,14 @@ final class QueryUtils {
         }
         return udtValues;
 
+    }
+
+    private static Collection<Object> getCollectionUdt(DataType type) {
+        if (ProtocolConstants.DataType.SET == type.getProtocolCode()) {
+            return new HashSet<>();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     private static void insertSingleField(Column column, Map<String, Term> values) {
