@@ -116,6 +116,7 @@ final class QueryUtils {
                 .orElseThrow(() -> new IllegalArgumentException("Missing the column definition"));
 
         final DataType type = columnMetadata.getType();
+        final TypeCodec<Object> codec = CodecRegistry.DEFAULT.codecFor(type);
         Iterable elements = Iterable.class.cast(udt.get());
         Object udtValue = getUdtValue(userType, elements);
         values.put(getName(udt), QueryBuilder.literal(udtValue));
