@@ -516,8 +516,12 @@ public class CassandraColumnFamilyManagerTest {
         ColumnEntity entity = createEntityWithIterableSet();
         entityManager.insert(entity);
         ColumnQuery query = ColumnQuery.select().from("agenda").build();
-        final List<ColumnEntity> result = entityManager.select(query).collect(toList());
-        Assert.assertEquals(1, result.size());
+        final ColumnEntity result = entityManager.singleResult(query).get();
+        Assert.assertEquals(Column.of("user", "otaviojava"), result.find("user").get());
+        Assert.assertEquals(2, result.size());
+        List<List<Column>> names = (List<List<Column>>) result.find("names").get().get();
+        assertEquals(3, names.size());
+        assertTrue(names.stream().allMatch(n -> n.size() == 2));
     }
 
     private ColumnEntity createEntityWithIterable() {
