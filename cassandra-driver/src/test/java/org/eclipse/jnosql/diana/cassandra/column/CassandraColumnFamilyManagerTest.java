@@ -522,7 +522,6 @@ public class CassandraColumnFamilyManagerTest {
 
     }
 
-
     private ColumnEntity createEntityWithIterable() {
         ColumnEntity entity = ColumnEntity.of("contacts");
         entity.add(Column.of("user", "otaviojava"));
@@ -536,6 +535,7 @@ public class CassandraColumnFamilyManagerTest {
         entity.add(udt);
         return entity;
     }
+
     private ColumnEntity createEntityWithIterableSet() {
         ColumnEntity entity = ColumnEntity.of("agenda");
         entity.add(Column.of("user", "otaviojava"));
