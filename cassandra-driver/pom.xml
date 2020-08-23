@@ -28,7 +28,7 @@
     <description>The Eclipse JNoSQL communication layer, Diana, to Cassandra</description>
 
     <properties>
-        <casandra.driver.version>4.6.1</casandra.driver.version>
+        <casandra.driver.version>4.8.0</casandra.driver.version>
     </properties>
     <dependencies>
         <dependency>
