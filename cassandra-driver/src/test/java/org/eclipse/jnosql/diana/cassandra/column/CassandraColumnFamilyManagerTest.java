@@ -512,14 +512,12 @@ public class CassandraColumnFamilyManagerTest {
     }
 
     @Test
-    public void shouldCreateWithIterable() {
+    public void shouldCreateUDTWithSet() {
         ColumnEntity entity = createEntityWithIterableSet();
         entityManager.insert(entity);
         ColumnQuery query = ColumnQuery.select().from("agenda").build();
         final List<ColumnEntity> result = entityManager.select(query).collect(toList());
         Assert.assertEquals(1, result.size());
-
-
     }
 
     private ColumnEntity createEntityWithIterable() {
