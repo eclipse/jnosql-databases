@@ -139,9 +139,9 @@ final class QueryUtils {
 
                 final int index = udtNames.indexOf(column.getName());
                 if (index < 0) {
-                    throw new CommunicationException("There is not the field: " + column.getName() +
+                    throw new CommunicationException("This field has not been found: " + column.getName() +
                             " the fields available are " + udtNames + " in the UDT type " + userType.getName()
-                            .asCql(true));
+                            .asCql(true) + " at the keyspace " + userType.getKeyspace());
                 }
                 DataType fieldType = userType.getFieldTypes().get(index);
                 TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT.codecFor(fieldType);
