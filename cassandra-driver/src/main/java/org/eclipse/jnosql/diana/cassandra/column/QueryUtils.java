@@ -35,6 +35,7 @@ import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
 import com.datastax.oss.protocol.internal.ProtocolConstants;
+import jakarta.nosql.CommunicationException;
 import jakarta.nosql.Sort;
 import jakarta.nosql.SortType;
 import jakarta.nosql.Value;
@@ -137,6 +138,11 @@ final class QueryUtils {
                 Object convert = ValueUtil.convert(column.getValue());
 
                 final int index = udtNames.indexOf(column.getName());
+                if (index < 0) {
+                    throw new CommunicationException("There is not the field: " + column.getName() +
+                            " the fields available are " + udtNames + " in the UDT type " + userType.getName()
+                            .asCql(true));
+                }
                 DataType fieldType = userType.getFieldTypes().get(index);
                 TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT.codecFor(fieldType);
                 udtValue.set(getName(column), convert, objectTypeCodec);
