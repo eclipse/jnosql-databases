@@ -20,6 +20,9 @@ import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.data.UdtValue;
 import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
+import com.datastax.oss.driver.api.core.metadata.schema.ColumnMetadata;
+import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
+import com.datastax.oss.driver.api.core.metadata.schema.TableMetadata;
 import com.datastax.oss.driver.api.core.type.DataType;
 import com.datastax.oss.driver.api.core.type.UserDefinedType;
 import com.datastax.oss.driver.api.core.type.codec.CodecNotFoundException;
@@ -44,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -61,7 +65,7 @@ final class QueryUtils {
         entity.getColumns().stream()
                 .forEach(c -> {
                     if (UDT.class.isInstance(c)) {
-                        insertUDT(UDT.class.cast(c), keyspace, session, values);
+                        insertUDT(UDT.class.cast(c), keyspace, entity.getName(), session, values);
                     } else {
                         insertSingleField(c, values);
                     }
@@ -96,14 +100,22 @@ final class QueryUtils {
                 ClusteringOrder.DESC;
     }
 
-    private static void insertUDT(UDT udt, String keyspace, CqlSession session, Map<String, Term> values) {
+    private static void insertUDT(UDT udt, String keyspace, String columnFamily, CqlSession session,
+                                  Map<String, Term> values) {
 
-        UserDefinedType userType =
-                session.getMetadata()
-                        .getKeyspace(keyspace)
+        final Optional<KeyspaceMetadata> keyspaceMetadata = session.getMetadata().getKeyspace(keyspace);
+        UserDefinedType userType = keyspaceMetadata
                         .flatMap(ks -> ks.getUserDefinedType(udt.getUserType()))
                         .orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));
 
+        final TableMetadata tableMetadata = keyspaceMetadata
+                .flatMap(k -> k.getTable(columnFamily))
+                .orElseThrow(() -> new IllegalArgumentException("Missing Table definition"));
+
+        final ColumnMetadata columnMetadata = tableMetadata.getColumn(getName(udt))
+                .orElseThrow(() -> new IllegalArgumentException("Missing the column definition"));
+
+        final DataType type = columnMetadata.getType();
         Iterable elements = Iterable.class.cast(udt.get());
         Object udtValue = getUdtValue(userType, elements);
         values.put(getName(udt), QueryBuilder.literal(udtValue));
