@@ -101,7 +101,7 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {
             }
         } else {
             GlobalConfigurationBuilder builder = new GlobalConfigurationBuilder();
-            builder.globalJmxStatistics().allowDuplicateDomains(true);
+            builder.jmx().enable();
             return new InfinispanBucketManagerFactory(new DefaultCacheManager(builder.build()));
         }
     }
