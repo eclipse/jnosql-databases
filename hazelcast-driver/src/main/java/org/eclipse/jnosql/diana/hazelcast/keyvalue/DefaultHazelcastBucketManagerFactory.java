@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.diana.hazelcast.keyvalue;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicLong;
 
 import java.util.List;
 import java.util.Map;
@@ -94,11 +93,5 @@ class DefaultHazelcastBucketManagerFactory implements HazelcastBucketManagerFact
     public <K, V> Map<K, V> getMap(String bucketName) throws UnsupportedOperationException, NullPointerException {
         requireNonNull(bucketName, "bucketName is required");
         return hazelcastInstance.getMap(bucketName);
-    }
-
-    @Override
-    public IAtomicLong getAtomicLong(String bucketName) throws NullPointerException {
-        requireNonNull(bucketName, "bucketName is required");
-        return hazelcastInstance.getAtomicLong(bucketName);
     }
 }
