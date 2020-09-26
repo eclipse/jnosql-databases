@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.diana.hazelcast.keyvalue;
 
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
-import com.hazelcast.query.SqlPredicate;
+import com.hazelcast.query.impl.predicates.SqlPredicate;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.KeyValueEntity;
 
