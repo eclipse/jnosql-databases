@@ -102,7 +102,6 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
 
             return connectionString.map(c -> MongoClientSettings.builder()
                     .applyConnectionString(c)
-                    .retryWrites(true)
                     .build())
                     .map(MongoClients::create)
                     .map(MongoDBDocumentCollectionManagerFactory::new)
