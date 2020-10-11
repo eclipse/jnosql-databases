@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.diana.mongodb.document;
 
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -32,6 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static org.eclipse.jnosql.diana.mongodb.document.MongoDBDocumentConfigurations.URL;
 
 
 /**
@@ -84,7 +86,9 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
     public MongoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
-
+        Optional<ConnectionString> connectionString = settings
+                .get(URL.get(), String.class)
+                .map(ConnectionString::new);
         List<ServerAddress> servers = settings
                 .prefix(Arrays.asList(OldMongoDBDocumentConfigurations.HOST.get(), MongoDBDocumentConfigurations.HOST.get(),
                         Configurations.HOST.get()))
@@ -93,8 +97,15 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
                 .map(HostPortConfiguration::new)
                 .map(HostPortConfiguration::toServerAddress)
                 .collect(Collectors.toList());
+
         if (servers.isEmpty()) {
-            return new MongoDBDocumentCollectionManagerFactory(MongoClients.create());
+            return connectionString.map(c -> MongoClientSettings.builder()
+                    .applyConnectionString(c)
+                    .retryWrites(true)
+                    .build())
+                    .map(MongoClients::create)
+                    .map(MongoDBDocumentCollectionManagerFactory::new)
+                    .orElseGet(() -> new MongoDBDocumentCollectionManagerFactory(MongoClients.create()));
         }
 
         Optional<MongoCredential> credential = MongoAuthentication.of(settings);
