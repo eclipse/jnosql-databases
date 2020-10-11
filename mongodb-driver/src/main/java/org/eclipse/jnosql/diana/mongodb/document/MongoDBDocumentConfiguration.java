@@ -86,9 +86,6 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
     public MongoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
-        Optional<ConnectionString> connectionString = settings
-                .get(URL.get(), String.class)
-                .map(ConnectionString::new);
         List<ServerAddress> servers = settings
                 .prefix(Arrays.asList(OldMongoDBDocumentConfigurations.HOST.get(), MongoDBDocumentConfigurations.HOST.get(),
                         Configurations.HOST.get()))
@@ -99,6 +96,10 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
                 .collect(Collectors.toList());
 
         if (servers.isEmpty()) {
+            Optional<ConnectionString> connectionString = settings
+                    .get(URL.get(), String.class)
+                    .map(ConnectionString::new);
+
             return connectionString.map(c -> MongoClientSettings.builder()
                     .applyConnectionString(c)
                     .retryWrites(true)
