@@ -126,6 +126,4 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
         Map<String, String> configuration = ConfigurationReader.from(pathFileConfig);
         return get(configuration);
     }
-
-
 }
