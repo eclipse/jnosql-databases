@@ -24,8 +24,8 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.eclipse.jnosql.diana</groupId>
-    <artifactId>diana-driver</artifactId>
+    <groupId>org.eclipse.jnosql.communication</groupId>
+    <artifactId>communication-driver</artifactId>
     <packaging>pom</packaging>
 
     <description>The Eclipse JNoSQL communication layer, Diana, implementations</description>
@@ -38,7 +38,7 @@
 
 
     <modules>
-        <module>diana-driver-commons</module>
+        <module>communication-driver-commons</module>
         <module>arangodb-driver</module>
         <module>cassandra-driver</module>
         <module>couchbase-driver</module>
