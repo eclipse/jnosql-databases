@@ -19,7 +19,7 @@ import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
-import org.eclipse.jnosql.diana.document.Documents;
+import org.eclipse.jnosql.communication.document.Documents;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

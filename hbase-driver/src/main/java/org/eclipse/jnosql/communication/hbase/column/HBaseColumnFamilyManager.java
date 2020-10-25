@@ -32,7 +32,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.eclipse.jnosql.diana.writer.ValueWriterDecorator;
+import org.eclipse.jnosql.communication.writer.ValueWriterDecorator;
 
 import java.io.IOException;
 import java.time.Duration;

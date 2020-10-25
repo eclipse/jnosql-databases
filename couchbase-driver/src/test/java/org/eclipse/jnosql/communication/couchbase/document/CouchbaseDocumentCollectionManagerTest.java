@@ -28,7 +28,7 @@ import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConf
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
-import org.eclipse.jnosql.diana.document.Documents;
+import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 

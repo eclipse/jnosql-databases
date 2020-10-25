@@ -25,7 +25,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
-import org.eclipse.jnosql.diana.SettingsPriority;
+import org.eclipse.jnosql.communication.SettingsPriority;
 
 import java.io.IOException;
 import java.time.Duration;

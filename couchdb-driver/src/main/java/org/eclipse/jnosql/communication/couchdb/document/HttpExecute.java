@@ -30,7 +30,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.eclipse.jnosql.diana.document.Documents;
+import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 
 import javax.json.JsonObject;
