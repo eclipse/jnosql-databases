@@ -1,1 +1,1 @@
-org.eclipse.jnosql.diana.infinispan.keyvalue.InfinispanKeyValueConfiguration
+org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanKeyValueConfiguration
