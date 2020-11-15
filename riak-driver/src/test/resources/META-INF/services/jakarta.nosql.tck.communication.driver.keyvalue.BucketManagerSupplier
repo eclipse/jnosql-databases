@@ -1,1 +1,1 @@
-org.eclipse.jnosql.diana.riak.keyvalue.RiakBucketManagerSupplier
+org.eclipse.jnosql.communication.riak.keyvalue.RiakBucketManagerSupplier
