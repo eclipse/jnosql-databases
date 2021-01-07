@@ -24,6 +24,7 @@ import com.datastax.oss.driver.api.core.metadata.schema.ColumnMetadata;
 import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
 import com.datastax.oss.driver.api.core.metadata.schema.TableMetadata;
 import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.SetType;
 import com.datastax.oss.driver.api.core.type.UserDefinedType;
 import com.datastax.oss.driver.api.core.type.codec.CodecNotFoundException;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
@@ -145,7 +146,11 @@ final class QueryUtils {
                 }
                 DataType fieldType = userType.getFieldTypes().get(index);
                 TypeCodec<Object> objectTypeCodec = CodecRegistry.DEFAULT.codecFor(fieldType);
-                udtValue.set(getName(column), convert, objectTypeCodec);
+                if (fieldType instanceof SetType) {
+                    udtValue.set(getName(column), new HashSet<Object>((Collection<?>) convert), objectTypeCodec);
+                } else {
+                    udtValue.set(getName(column), convert, objectTypeCodec);
+                }
 
             } else if (Iterable.class.isInstance(object)) {
                 udtValues.add(getUdtValue(userType, Iterable.class.cast(Iterable.class.cast(object)), type));
