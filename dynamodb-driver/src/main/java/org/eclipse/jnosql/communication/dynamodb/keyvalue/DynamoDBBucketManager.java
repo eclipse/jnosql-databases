@@ -33,7 +33,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class DynamoDBBucketManager implements BucketManager {
 
@@ -65,7 +64,7 @@ public class DynamoDBBucketManager implements BucketManager {
 
     @Override
     public void put(Iterable<KeyValueEntity> entities) throws NullPointerException {
-        client.batchWriteItem(BatchWriteItemRequest.builder().requestItems(DynamoDBUtils.createMapWriteRequest(entities)).build());
+        client.batchWriteItem(BatchWriteItemRequest.builder().requestItems(DynamoDBUtils.createMapWriteRequest(entities, tableName)).build());
     }
 
     @Override
@@ -93,13 +92,13 @@ public class DynamoDBBucketManager implements BucketManager {
 
     @Override
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
-
-        return client.batchGetItem(DynamoDBUtils.createBatchGetItemRequest(keys))
+        
+        return client.batchGetItem(DynamoDBUtils.createBatchGetItemRequest(keys, tableName))
                 .responses()
                 .values()
                 .stream()
-                .flatMap(l -> StreamSupport.stream(l.spliterator(), false))
-                .flatMap(v -> v.values().stream())
+                .flatMap(l -> l.stream())
+                .map(v -> v.get(ConfigurationAmazonEntity.VALUE))
                 .map(TO_JSON)
                 .map(ValueJSON::of)
                 .collect(Collectors.toList());
@@ -107,7 +106,7 @@ public class DynamoDBBucketManager implements BucketManager {
 
     @Override
     public <K> void delete(K key) throws NullPointerException {
-        client.deleteItem(DeleteItemRequest.builder().tableName(tableName).key(DynamoDBUtils.createAttributeValues(key)).build());
+        client.deleteItem(DeleteItemRequest.builder().tableName(tableName).key(DynamoDBUtils.createKeyAttributeValues(key)).build());
     }
 
     @Override
