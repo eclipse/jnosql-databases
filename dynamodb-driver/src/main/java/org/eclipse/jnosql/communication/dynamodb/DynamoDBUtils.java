@@ -14,7 +14,6 @@
  */
 package org.eclipse.jnosql.communication.dynamodb;
 
-
 import jakarta.nosql.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -25,7 +24,6 @@ import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 import javax.json.bind.Jsonb;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,7 +46,7 @@ public class DynamoDBUtils {
 
     public static <K, V> Map<String, AttributeValue> createAttributeValues(K key, V value) {
 
-        Map<String, AttributeValue> createAttributeValues = createAttributeValues(key);
+        Map<String, AttributeValue> createAttributeValues = createKeyAttributeValues(key);
         String valueAsJson = JSONB.toJson(value);
 
         AttributeValue valueAttributeValue = attributeValueBuilder.s(valueAsJson).build();
@@ -56,13 +54,18 @@ public class DynamoDBUtils {
         return createAttributeValues;
     }
 
-    public static <K, V> Map<String, AttributeValue> createAttributeValues(K key) {
-
+    public static <K, V> Map<String, AttributeValue> createKeyAttributeValues(K key) {
         Map<String, AttributeValue> map = new HashMap<>();
         AttributeValue keyAttributeValue = attributeValueBuilder.s(key.toString()).build();
         map.put(KEY, keyAttributeValue);
 
         return map;
+    }
+
+    public static <K, V> Collection<Map<String, AttributeValue>> createKeyAttributeValues(Iterable<K> keys) {
+        return StreamSupport.stream(keys.spliterator(), false).map(
+                k -> Collections.singletonMap(KEY, attributeValueBuilder.s(k.toString()).build())
+        ).collect(Collectors.toList());
     }
 
     public static <K, V> Map<String, AttributeValue> createAttributeValues(KeyValueEntity entity) {
@@ -76,27 +79,24 @@ public class DynamoDBUtils {
                 .collect(Collectors.toList());
     }
 
-    private static Map<String, List<WriteRequest>> createMapWriteRequest(Map<String, AttributeValue> map) {
-        return createMapWriteRequest(Arrays.asList(map));
-    }
-
-    private static Map<String, List<WriteRequest>> createMapWriteRequest(Collection<Map<String, AttributeValue>> map) {
+    private static Map<String, List<WriteRequest>> createMapWriteRequest(Collection<Map<String, AttributeValue>> map, String tableName) {
 
         PutRequest.Builder putRequestBuilder = PutRequest.builder();
         WriteRequest.Builder writeRequestBuilder = WriteRequest.builder();
 
-        return map
-                .stream()
-                .map(m -> putRequestBuilder.item(m).build())
-                .map(p -> writeRequestBuilder.putRequest(p).build())
-                .collect(Collectors.groupingBy(w -> w.toString(), Collectors.toList()));
+        return Collections.singletonMap(
+                tableName,
+                map
+                        .stream()
+                        .map(m -> putRequestBuilder.item(m).build())
+                        .map(p -> writeRequestBuilder.putRequest(p).build()).collect(Collectors.toList())
+        );
     }
 
-
-    public static <K> Map<String, List<WriteRequest>> createMapWriteRequest(Iterable<KeyValueEntity> entities) {
-
+    public static <K> Map<String, List<WriteRequest>> createMapWriteRequest(Iterable<KeyValueEntity> entities, String tableName) {
         Collection<Map<String, AttributeValue>> attributeValues = createAttributeValues(entities);
-        return createMapWriteRequest(attributeValues);
+        createMapWriteRequest(attributeValues, tableName);
+        return createMapWriteRequest(attributeValues, tableName);
     }
 
     public static <K> Map<String, AttributeValue> create(Iterable<K> keys) {
@@ -108,25 +108,23 @@ public class DynamoDBUtils {
         return Collections.unmodifiableMap(map);
     }
 
-    private static <K> Map<String, KeysAndAttributes> createKeysAndAttribute(Iterable<K> keys) {
+    private static <K> Map<String, KeysAndAttributes> createKeysAndAttribute(Iterable<K> keys, String tableName) {
 
         KeysAndAttributes.Builder keysAndAttributesBuilder = KeysAndAttributes.builder();
 
-        return StreamSupport.stream(keys.spliterator(), false)
-                .collect(Collectors.toMap
-                        (
-                                e -> e.toString(),
-                                k -> keysAndAttributesBuilder.projectionExpression(KEY).keys(createAttributeValues(k)).build())
-                );
+        return Collections.singletonMap(
+                tableName,
+                keysAndAttributesBuilder.keys(createKeyAttributeValues(keys)).build()
+        );
     }
 
-    public static <K> BatchGetItemRequest createBatchGetItemRequest(Iterable<K> keys) {
+    public static <K> BatchGetItemRequest createBatchGetItemRequest(Iterable<K> keys, String tableName) {
         BatchGetItemRequest.Builder batchGetItemRequestBuilder = BatchGetItemRequest.builder();
-        return batchGetItemRequestBuilder.requestItems(createKeysAndAttribute(keys)).build();
+        return batchGetItemRequestBuilder.requestItems(createKeysAndAttribute(keys, tableName)).build();
     }
 
     public static <K> GetItemRequest createGetItemRequest(K key, String tableName) {
         GetItemRequest.Builder getItemRequest = GetItemRequest.builder();
-        return getItemRequest.tableName(tableName).key(createAttributeValues(key)).build();
+        return getItemRequest.tableName(tableName).key(createKeyAttributeValues(key)).build();
     }
 }
