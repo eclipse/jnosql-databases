@@ -17,8 +17,6 @@ package org.eclipse.jnosql.communication.dynamodb;
 
 import jakarta.nosql.Settings;
 
-import static java.util.Optional.ofNullable;
-
 final class DynamoDBBuilders {
 
 
@@ -27,11 +25,11 @@ final class DynamoDBBuilders {
     }
 
     static void load(Settings settings, DynamoDBBuilder dynamoDB) {
-        ofNullable(settings.get(DynamoDBConfigurations.ENDPOINT.get())).map(Object::toString).ifPresent(dynamoDB::endpoint);
-        ofNullable(settings.get(DynamoDBConfigurations.REGION.get())).map(Object::toString).ifPresent(dynamoDB::region);
-        ofNullable(settings.get(DynamoDBConfigurations.PROFILE.get())).map(Object::toString).ifPresent(dynamoDB::profile);
-        ofNullable(settings.get(DynamoDBConfigurations.AWS_ACCESSKEY.get())).map(Object::toString).ifPresent(dynamoDB::awsAccessKey);
-        ofNullable(settings.get(DynamoDBConfigurations.AWS_SECRET_ACCESS.get())).map(Object::toString).ifPresent(dynamoDB::awsSecretAccess);
+        settings.get(DynamoDBConfigurations.ENDPOINT.get()).map(Object::toString).ifPresent(dynamoDB::endpoint);
+        settings.get(DynamoDBConfigurations.REGION.get()).map(Object::toString).ifPresent(dynamoDB::region);
+        settings.get(DynamoDBConfigurations.PROFILE.get()).map(Object::toString).ifPresent(dynamoDB::profile);
+        settings.get(DynamoDBConfigurations.AWS_ACCESSKEY.get()).map(Object::toString).ifPresent(dynamoDB::awsAccessKey);
+        settings.get(DynamoDBConfigurations.AWS_SECRET_ACCESS.get()).map(Object::toString).ifPresent(dynamoDB::awsSecretAccess);
     }
 
 }

@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public final class DynamoTableUtils {
 
@@ -71,19 +72,17 @@ public final class DynamoTableUtils {
 
         ProvisionedThroughput.Builder provisionedThroughputBuilder = ProvisionedThroughput.builder();
 
-        if (readCapacityUnits != null && readCapacityUnits.longValue() > 0)
+        if (readCapacityUnits != null && readCapacityUnits.longValue() > 0) {
             provisionedThroughputBuilder.readCapacityUnits(readCapacityUnits);
-        else {
+        } else {
             provisionedThroughputBuilder.readCapacityUnits(READ_CAPACITY_UNITS);
         }
 
-
-        if (writeCapacityUnit != null && writeCapacityUnit.longValue() > 0)
+        if (writeCapacityUnit != null && writeCapacityUnit.longValue() > 0) {
             provisionedThroughputBuilder.writeCapacityUnits(writeCapacityUnit);
-        else {
+        } else {
             provisionedThroughputBuilder.writeCapacityUnits(READ_CAPACITY_UNITS);
         }
-
 
         return provisionedThroughputBuilder.build();
     }
@@ -98,33 +97,36 @@ public final class DynamoTableUtils {
 
     public static void manageTables(String tableName, DynamoDbClient client, Long readCapacityUnits, Long writeCapacityUnit) {
 
-        boolean hasTable = true;
+        boolean hasTable = false;
         String lastName = null;
 
-        while (hasTable) {
+        while (!hasTable) {
             try {
-                ListTablesResponse response = null;
-                if (lastName == null) {
-                    ListTablesRequest request = ListTablesRequest.builder().build();
-                    response = client.listTables(request);
-                } else {
-                    ListTablesRequest request = ListTablesRequest.builder().exclusiveStartTableName(lastName).build();
-                    response = client.listTables(request);
+                ListTablesRequest.Builder builder = ListTablesRequest.builder();
+                if (Objects.nonNull(lastName)) {
+                    builder.exclusiveStartTableName(lastName);
                 }
+                ListTablesRequest request = builder.build();
+                ListTablesResponse response = client.listTables(request);
 
                 List<String> tableNames = response.tableNames();
 
-                if (tableNames.size() == 0) {
-                    createTable(tableName, client, readCapacityUnits, writeCapacityUnit);
+                if (tableNames.isEmpty()) {
+                    break;
                 } else {
-                    lastName = response.lastEvaluatedTableName();
-                    if (lastName == null) {
-                        hasTable = false;
+                    if (tableNames.contains(tableName)) {
+                        hasTable = true;
+                        break;
                     }
+                    Collections.reverse(tableNames);
+                    lastName = tableNames.stream().findFirst().get();
                 }
             } catch (DynamoDbException e) {
                 throw new RuntimeException(e);
             }
+        }
+        if (!hasTable) {
+            createTable(tableName, client, readCapacityUnits, writeCapacityUnit);
         }
     }
 
