@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Alessandro Moscatelli
  */
 package org.eclipse.jnosql.communication.dynamodb;
 
