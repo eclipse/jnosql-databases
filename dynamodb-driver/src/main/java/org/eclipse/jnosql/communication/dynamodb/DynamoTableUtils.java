@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Alessandro Moscatelli
  */
 package org.eclipse.jnosql.communication.dynamodb;
 
@@ -134,12 +135,15 @@ public final class DynamoTableUtils {
 
         Map<String, KeyType> keyDefinition = createKeyDefinition();
         Map<String, ScalarAttributeType> attributeDefinition = createAttributesType();
-
+        
         client.createTable(CreateTableRequest.builder()
                 .tableName(tableName)
                 .provisionedThroughput(createProvisionedThroughput(readCapacityUnits, writeCapacityUnit))
                 .keySchema(createKeyElementSchema(keyDefinition))
                 .attributeDefinitions(createAttributeDefinition(attributeDefinition))
                 .build());
+        
+        client.waiter().waitUntilTableExists(t -> t.tableName(tableName));
+        
     }
 }
