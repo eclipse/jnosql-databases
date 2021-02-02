@@ -15,6 +15,7 @@
  */
 package org.eclipse.jnosql.communication.dynamodb;
 
+import java.util.ArrayList;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -110,7 +111,7 @@ public final class DynamoTableUtils {
                 ListTablesRequest request = builder.build();
                 ListTablesResponse response = client.listTables(request);
 
-                List<String> tableNames = response.tableNames();
+                List<String> tableNames = new ArrayList(response.tableNames());
 
                 if (tableNames.isEmpty()) {
                     break;
