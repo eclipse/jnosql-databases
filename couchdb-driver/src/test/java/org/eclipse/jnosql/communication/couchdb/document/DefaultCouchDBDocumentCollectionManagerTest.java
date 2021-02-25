@@ -178,14 +178,14 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+        DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
     public void shouldRetrieveListDocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+        DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find(CouchDBConstant.ID).get();
         DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
 
@@ -230,7 +230,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
     }
 
-    private DocumentEntity createSubdocumentList() {
+    private DocumentEntity createDocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         List<List<Document>> documents = new ArrayList<>();
 
