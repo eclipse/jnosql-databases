@@ -184,7 +184,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
+    public void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find(CouchDBConstant.ID).get();
         DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
