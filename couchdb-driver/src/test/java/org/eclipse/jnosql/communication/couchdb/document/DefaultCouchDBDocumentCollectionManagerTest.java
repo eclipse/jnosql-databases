@@ -249,9 +249,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
         Assertions.assertTrue(optional.isPresent());
         DocumentEntity documentEntity = optional.get();
         Document properties = documentEntity.find("properties").get();
-        Map<String, Object> map = properties.get(new TypeReference<Map<String, Object>>() {
-        });
-        Assertions.assertNotNull(map);
+        Assertions.assertNotNull(properties);
     }
 
     private DocumentEntity createDocumentList() {
