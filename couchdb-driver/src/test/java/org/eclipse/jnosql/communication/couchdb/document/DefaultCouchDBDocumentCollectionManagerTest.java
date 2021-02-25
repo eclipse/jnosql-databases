@@ -191,9 +191,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
-
         List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
-
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
     }
