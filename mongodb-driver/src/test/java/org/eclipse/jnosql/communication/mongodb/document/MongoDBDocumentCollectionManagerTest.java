@@ -449,15 +449,15 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+    public void shouldConvertFromListDocumentList() {
+        DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+    public void shouldRetrieveListDocumentList() {
+        DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from("AppointmentBook")
                 .where(key.getName())
@@ -513,7 +513,7 @@ public class MongoDBDocumentCollectionManagerTest {
         Assertions.assertNotNull(map);
     }
 
-    private DocumentEntity createSubdocumentList() {
+    private DocumentEntity createDocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         entity.add(Document.of("_id", new Random().nextInt()));
         List<List<Document>> documents = new ArrayList<>();
