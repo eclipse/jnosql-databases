@@ -1,11 +1,6 @@
-image::https://github.com/JNOSQL/diana-site/blob/master/images/duke-diana.png[Diana Project,align="center"]
+= Communications Driver API
 
-= Diana Driver
-
-
-Diana is a flexible and extensible API to connect NoSQL databases. It brings an easy interface to support key-value, column family, document oriented and graph databases as JDBC does for SQL databases. This project has several drivers to Diana API.
-
-
+Communications Driver API is a flexible and extensible API to connect NoSQL databases. It brings an easy interface to support key-value, column family, document oriented and graph databases as JDBC does for SQL databases. This project has several drivers to Diana API.
 
 * *Arangodb*: ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 * *Cassandra*: Apache Cassandra is a free and open-source distributed database management system designed to handle large amounts of data across many commodity servers, providing high availability with no single point of failure.
