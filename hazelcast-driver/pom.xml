@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>4.0.3</version>
+            <version>4.1.1</version>
         </dependency>
         <dependency>
             <groupId>jakarta.nosql.tck.communication.driver</groupId>
