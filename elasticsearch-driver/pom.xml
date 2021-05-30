@@ -28,7 +28,7 @@
     <description>The Eclipse JNoSQL communication layer implementation to Eclasticsearch</description>
 
     <properties>
-        <es.version>7.11.1</es.version>
+        <es.version>7.13.0</es.version>
     </properties>
     <dependencies>
         <dependency>
