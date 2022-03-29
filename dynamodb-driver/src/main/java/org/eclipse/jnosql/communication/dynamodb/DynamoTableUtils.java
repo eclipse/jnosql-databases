@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2018 Otávio Santana and others
+ *   Copyright (c) 2022 Otávio Santana and others
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -54,20 +54,20 @@ public final class DynamoTableUtils {
         return keySchemaElementBuilder.build();
     }
 
-    public static AttributeDefinition createAttributeDefinition(Map<String, ScalarAttributeType> attributes) {
-
-        AttributeDefinition.Builder attributeDefinitionBuilder = AttributeDefinition.builder();
-
-        attributes
+    public static AttributeDefinition[] createAttributeDefinition(Map<String, ScalarAttributeType> attributes) {
+        return attributes
                 .entrySet()
-                .forEach(
+                .stream()
+                .map(
                         es -> {
+                            AttributeDefinition.Builder attributeDefinitionBuilder = AttributeDefinition.builder();
                             attributeDefinitionBuilder.attributeName(es.getKey());
                             attributeDefinitionBuilder.attributeType(es.getValue());
+                            return attributeDefinitionBuilder.build();
                         }
+                ).toArray(
+                        AttributeDefinition[]::new
                 );
-
-        return attributeDefinitionBuilder.build();
     }
 
     public static ProvisionedThroughput createProvisionedThroughput(Long readCapacityUnits, Long writeCapacityUnit) {
@@ -97,10 +97,9 @@ public final class DynamoTableUtils {
         return Collections.singletonMap(ConfigurationAmazonEntity.KEY, ScalarAttributeType.S);
     }
 
-    public static void manageTables(String tableName, DynamoDbClient client, Long readCapacityUnits, Long writeCapacityUnit) {
-
-        boolean hasTable = false;
+    public static boolean existTable(String tableName, DynamoDbClient client) {
         String lastName = null;
+        boolean hasTable = false;
 
         while (!hasTable) {
             try {
@@ -127,7 +126,12 @@ public final class DynamoTableUtils {
                 throw new RuntimeException(e);
             }
         }
-        if (!hasTable) {
+
+        return hasTable;
+    }
+
+    public static void manageTables(String tableName, DynamoDbClient client, Long readCapacityUnits, Long writeCapacityUnit) {
+        if (!existTable(tableName, client)) {
             createTable(tableName, client, readCapacityUnits, writeCapacityUnit);
         }
     }
@@ -136,15 +140,15 @@ public final class DynamoTableUtils {
 
         Map<String, KeyType> keyDefinition = createKeyDefinition();
         Map<String, ScalarAttributeType> attributeDefinition = createAttributesType();
-        
+
         client.createTable(CreateTableRequest.builder()
                 .tableName(tableName)
                 .provisionedThroughput(createProvisionedThroughput(readCapacityUnits, writeCapacityUnit))
                 .keySchema(createKeyElementSchema(keyDefinition))
                 .attributeDefinitions(createAttributeDefinition(attributeDefinition))
                 .build());
-        
+
         client.waiter().waitUntilTableExists(t -> t.tableName(tableName));
-        
+
     }
 }
