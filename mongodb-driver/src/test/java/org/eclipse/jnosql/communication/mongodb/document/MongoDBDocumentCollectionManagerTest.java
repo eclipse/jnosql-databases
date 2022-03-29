@@ -23,6 +23,7 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.mongodb.document.type.Money;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -448,15 +449,15 @@ public class MongoDBDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+    public void shouldConvertFromListDocumentList() {
+        DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+    public void shouldRetrieveListDocumentList() {
+        DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from("AppointmentBook")
                 .where(key.getName())
@@ -493,7 +494,26 @@ public class MongoDBDocumentCollectionManagerTest {
 
     }
 
-    private DocumentEntity createSubdocumentList() {
+    @Test
+    public void shouldSaveMap() {
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        String id = UUID.randomUUID().toString();
+        entity.add("properties", Collections.singletonMap("hallo", "Welt"));
+        entity.add("scope", "xxx");
+        entity.add("_id", id);
+        entityManager.insert(entity);
+        final DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("_id").eq(id).and("scope").eq("xxx").build();
+        final Optional<DocumentEntity> optional = entityManager.select(query).findFirst();
+        Assertions.assertTrue(optional.isPresent());
+        DocumentEntity documentEntity = optional.get();
+        Document properties = documentEntity.find("properties").get();
+        Map<String, Object> map = properties.get(new TypeReference<Map<String, Object>>() {
+        });
+        Assertions.assertNotNull(map);
+    }
+
+    private DocumentEntity createDocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         entity.add(Document.of("_id", new Random().nextInt()));
         List<List<Document>> documents = new ArrayList<>();

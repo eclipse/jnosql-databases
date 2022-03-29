@@ -16,24 +16,33 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
+import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.eclipse.jnosql.communication.couchdb.document.configuration.CouchDBDocumentTcConfiguration.INSTANCE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -174,27 +183,76 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
     @Test
     public void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+        DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+    public void shouldRetrieveListDocumentList() {
+        DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find(CouchDBConstant.ID).get();
         DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
-
         List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
-
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
     }
 
-    private DocumentEntity createSubdocumentList() {
+    @Test
+    public void shouldSaveSubDocument() {
+        DocumentEntity entity = getEntity();
+        entity.add(Document.of("phones", Document.of("mobile", "1231231")));
+        DocumentEntity entitySaved = entityManager.insert(entity);
+        Document id = entitySaved.find("_id").get();
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("_id").eq(id.get())
+                .build();
+
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        Document subDocument = entityFound.find("phones").get();
+        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        });
+        assertThat(documents, contains(Document.of("mobile", "1231231")));
+    }
+
+    @Test
+    public void shouldSaveSubDocument2() {
+        DocumentEntity entity = getEntity();
+        entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
+        DocumentEntity entitySaved = entityManager.insert(entity);
+        Document id = entitySaved.find("_id").get();
+
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where(id.getName()).eq(id.get())
+                .build();
+        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        Document subDocument = entityFound.find("phones").get();
+        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        });
+        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+    }
+
+    @Test
+    public void shouldSaveMap() {
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        String id = UUID.randomUUID().toString();
+        entity.add("properties", Collections.singletonMap("hallo", "Welt"));
+        entity.add("scope", "xxx");
+        entity.add("_id", id);
+        entityManager.insert(entity);
+        final DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("_id").eq(id).and("scope").eq("xxx").build();
+        final Optional<DocumentEntity> optional = entityManager.select(query).findFirst();
+        Assertions.assertTrue(optional.isPresent());
+        DocumentEntity documentEntity = optional.get();
+        Document properties = documentEntity.find("properties").get();
+        Assertions.assertNotNull(properties);
+    }
+
+    private DocumentEntity createDocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         List<List<Document>> documents = new ArrayList<>();
 

@@ -31,7 +31,7 @@ public enum ManagerFactorySupplier implements Supplier<CassandraColumnFamilyMana
     private final GenericContainer cassandra =
             new GenericContainer("cassandra:latest")
                     .withExposedPorts(9042)
-                    .withEnv("JVM_OPTS","-Xms256m -Xmx1G")
+                    .withEnv("JVM_OPTS","-Xms256m -Xmx512m")
                     .waitingFor(Wait.defaultWaitStrategy());
 
     {
