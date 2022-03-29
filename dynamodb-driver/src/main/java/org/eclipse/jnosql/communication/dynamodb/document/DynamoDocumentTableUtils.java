@@ -21,15 +21,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
+import javax.json.bind.Jsonb;
+import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import static org.eclipse.jnosql.communication.dynamodb.DynamoTableUtils.createAttributeDefinition;
 import static org.eclipse.jnosql.communication.dynamodb.DynamoTableUtils.createKeyElementSchema;
 import static org.eclipse.jnosql.communication.dynamodb.DynamoTableUtils.createProvisionedThroughput;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
 public final class DynamoDocumentTableUtils {
+
+    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     static final Collection<Class> nTypes = Arrays.asList(Number.class, Boolean.class);
     static final Collection<Class> sTypes = Arrays.asList(Date.class, String.class);
@@ -46,20 +53,34 @@ public final class DynamoDocumentTableUtils {
         }
         return ScalarAttributeType.UNKNOWN_TO_SDK_VERSION;
     }
+    
+    public static <T> AttributeValue getAttributeValue(T value) {
+        AttributeValue.Builder attributeValueBuilder = AttributeValue.builder();
+        if (value instanceof Number) {
+            return attributeValueBuilder.n(JSONB.toJson(value)).build();
+        } else if (value instanceof Boolean) {
+            return attributeValueBuilder.bool(Boolean.class.cast(value)).build();
+        } else if (value instanceof byte[]) {
+            return attributeValueBuilder.b(SdkBytes.fromByteArray((byte[])value)).build();
+        }
+        return attributeValueBuilder.s(JSONB.toJson(value)).build();
+    }
 
     public static Map<String, KeyType> createKeyDefinition(DocumentEntity documentEntity) {
         return Collections.singletonMap(ID_FIELD, KeyType.HASH);
     }
 
-    public static Map<String, ScalarAttributeType> createAttributesType(DocumentEntity documentEntity) {
-        return Map.ofEntries(
-                documentEntity.getDocuments().stream().map(
-                        document -> new AbstractMap.SimpleEntry<>(
-                                document.getName(),
-                                getScalarAttributeType(document.getValue().get())
-                        )
-                ).toArray(
-                        AbstractMap.SimpleEntry[]::new
+    public static Map<String, AttributeValue> createAttributesMap(DocumentEntity documentEntity) {
+        return documentEntity.getDocuments().stream().map(
+                document
+                -> new AbstractMap.SimpleEntry<>(
+                        document.getName(),
+                        getAttributeValue(document.getValue().get())
+                )
+        ).collect(
+                Collectors.toMap(
+                        entry -> entry.getKey(),
+                        entry -> entry.getValue()
                 )
         );
     }

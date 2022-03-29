@@ -21,6 +21,7 @@ import jakarta.nosql.document.DocumentQuery;
 import java.time.Duration;
 import java.util.stream.Stream;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 public class DynamoDBDocumentCollectionManager implements DocumentCollectionManager {
 
@@ -48,7 +49,8 @@ public class DynamoDBDocumentCollectionManager implements DocumentCollectionMana
     @Override
     public DocumentEntity insert(DocumentEntity de) {
         checkTable(de);
-        throw new UnsupportedOperationException();
+        client.putItem(PutItemRequest.builder().tableName(tableName).item(DynamoDocumentTableUtils.createAttributesMap(de)).build());
+        return de;
     }
 
     @Override
