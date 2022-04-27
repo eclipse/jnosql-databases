@@ -68,6 +68,6 @@ public class Money {
     public static Money parse(String text) {
         String[] texts = text.split(" ");
         return new Money(Currency.getInstance(texts[0]),
-                BigDecimal.valueOf(Double.valueOf(texts[1])));
+                BigDecimal.valueOf(Double.parseDouble(texts[1])));
     }
 }

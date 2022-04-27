@@ -28,7 +28,7 @@ class HostPortConfiguration {
         String[] values = value.split(":");
         if (values.length == 2) {
             host = values[0];
-            port = Integer.valueOf(values[1]);
+            port = Integer.parseInt(values[1]);
         } else {
             host = values[0];
             port = MongoDBDocumentConfiguration.DEFAULT_PORT;
