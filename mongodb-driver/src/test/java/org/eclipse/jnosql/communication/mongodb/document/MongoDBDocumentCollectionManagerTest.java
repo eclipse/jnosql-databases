@@ -94,7 +94,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .build();
 
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
+        assertTrue(entityManager.select(query).count() == 0);
     }
 
     @Test
