@@ -15,7 +15,60 @@
 
 package org.eclipse.jnosql.communication.mongodb.document;
 
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.Documents;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static jakarta.nosql.document.DocumentDeleteQuery.delete;
+import static jakarta.nosql.document.DocumentQuery.select;
+
 public class MongoDBQueryTest {
 
+    public static final String COLLECTION_NAME = "person";
+    private static DocumentCollectionManager entityManager;
+
+    @BeforeAll
+    public static void setUp() throws IOException {
+        entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+    }
+
+    @Test
+    public void shouldQuery() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+
+        DocumentQuery query = select()
+                .from(COLLECTION_NAME)
+                .where("name").eq("Otavio")
+                .or("name").eq("Poliana").build();
+
+        Stream<DocumentEntity> stream = entityManager.select(query);
+        long count = stream.count();
+        Assertions.assertEquals(1L, count);
+        entityManager.delete(delete().from(COLLECTION_NAME).build());
+
+    }
+
+    private DocumentEntity getEntity() {
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "Poliana");
+        map.put("city", "Salvador");
+        List<Document> documents = Documents.of(map);
+        documents.forEach(entity::add);
+        return entity;
+    }
 
 }
