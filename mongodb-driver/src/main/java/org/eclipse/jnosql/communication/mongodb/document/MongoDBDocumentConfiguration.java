@@ -58,7 +58,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
     public MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
-        configurations.forEach((key, value) -> builder.put(key, value));
+        configurations.forEach(builder::put);
         return get(builder.build());
     }
 
