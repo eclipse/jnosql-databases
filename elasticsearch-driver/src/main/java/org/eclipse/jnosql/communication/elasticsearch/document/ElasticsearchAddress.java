@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017 Otávio Santana and others
+ *  Copyright (c) 2022 Otávio Santana and others
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -11,33 +11,45 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Alessandro Moscatelli
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Objects;
 import org.apache.http.HttpHost;
 
 final class ElasticsearchAddress {
 
-    private final String host;
-
-    private final int port;
+    private HttpHost host;
 
     private ElasticsearchAddress(String address, int defaultPort) {
-        String[] values = address.split(":");
-
-        this.host = values[0];
-        this.port = values.length == 2 ? Integer.valueOf(values[1]) : defaultPort;
+        try {
+            URL tmp = new URL(address);
+            this.host = new HttpHost(
+                    tmp.getHost(),
+                    Objects.equals(tmp.getPort(), -1) ? defaultPort : tmp.getPort(),
+                    tmp.getProtocol()
+            );
+        } catch (MalformedURLException ex) {
+            String[] values = address.split(":");
+            this.host = new HttpHost(
+                    values[0],
+                    values.length == 2 ? Integer.valueOf(values[1]) : defaultPort
+            );
+        }
     }
 
     public HttpHost toHttpHost() {
-            return new HttpHost(host, port);
+        return this.host;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ElasticsearchAddress{");
-        sb.append("host='").append(host).append('\'');
-        sb.append(", port=").append(port);
+        sb.append("host='").append(host.getHostName()).append('\'');
+        sb.append(", port=").append(host.getPort());
         sb.append('}');
         return sb.toString();
     }

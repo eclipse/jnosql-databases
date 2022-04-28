@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Alessandro Moscatelli
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
@@ -117,7 +118,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
 
         final Optional<String> username = settings
                 .get(asList(Configurations.USER.get(),
-                        ElasticsearchConfigurations.HOST.get()))
+                        ElasticsearchConfigurations.USER.get()))
                 .map(Object::toString);
         final Optional<String> password = settings
                 .get(asList(Configurations.PASSWORD.get(),
