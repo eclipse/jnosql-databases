@@ -42,9 +42,7 @@ public class MongoDBDocumentCollectionManagerFactory implements DocumentCollecti
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MongoDBDocumentCollectionManagerFactory{");
-        sb.append("mongoClient=").append(mongoClient);
-        sb.append('}');
-        return sb.toString();
+       return "MongoDBDocumentCollectionManagerFactory{" + "mongoClient=" + mongoClient +
+                '}';
     }
 }

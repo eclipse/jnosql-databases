@@ -43,7 +43,7 @@ final class MongoDBUtils {
 
     static Document getDocument(DocumentEntity entity) {
         Document document = new Document();
-        entity.getDocuments().stream().forEach(d -> document.append(d.getName(), convert(d.getValue())));
+        entity.getDocuments().forEach(d -> document.append(d.getName(), convert(d.getValue())));
         return document;
     }
 

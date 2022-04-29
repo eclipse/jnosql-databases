@@ -28,8 +28,8 @@ public enum ManagerFactorySupplier  {
 
     INSTANCE;
 
-    private final GenericContainer mongodb =
-            new GenericContainer("mongo:latest")
+    private final GenericContainer<?> mongodb =
+            new GenericContainer<>("mongo:latest")
                     .withExposedPorts(27017)
                     .waitingFor(Wait.defaultWaitStrategy());
 
