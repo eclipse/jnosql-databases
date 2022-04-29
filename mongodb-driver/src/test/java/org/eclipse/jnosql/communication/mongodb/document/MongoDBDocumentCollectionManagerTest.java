@@ -12,10 +12,17 @@
  *
  *   Otavio Santana
  */
-
 package org.eclipse.jnosql.communication.mongodb.document;
 
 import jakarta.nosql.TypeReference;
+import jakarta.nosql.criteria.BinaryPredicate;
+import jakarta.nosql.criteria.ComparableExpression;
+import jakarta.nosql.criteria.CriteriaFunction;
+import jakarta.nosql.criteria.CriteriaQuery;
+import jakarta.nosql.criteria.NumberExpression;
+import jakarta.nosql.criteria.Predicate;
+import jakarta.nosql.criteria.SelectQuery;
+import jakarta.nosql.criteria.StringExpression;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
@@ -39,6 +46,8 @@ import java.util.stream.StreamSupport;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
+import org.eclipse.jnosql.communication.criteria.DefaultCriteriaQuery;
+import org.eclipse.jnosql.communication.mongodb.document.type.Person;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -366,7 +375,6 @@ public class MongoDBDocumentCollectionManagerTest {
         assertFalse(entity.find("city").isPresent());
     }
 
-
     @Test
     public void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
@@ -445,7 +453,6 @@ public class MongoDBDocumentCollectionManagerTest {
         assertEquals(date, documentEntity.find("date").get().get(Date.class));
         assertEquals(now, documentEntity.find("date").get().get(LocalDate.class));
 
-
     }
 
     @Test
@@ -513,6 +520,390 @@ public class MongoDBDocumentCollectionManagerTest {
         Assertions.assertNotNull(map);
     }
 
+    @Test
+    public void shouldSelect() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        SelectQuery<Person> select = criteriaQuery.select();
+        assertTrue(entityManager.executeQuery(select).toArray().length == 1);
+    }
+
+    @Test
+    public void shouldSelectByAttribute() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        StringExpression<Person, Person> city = criteriaQuery.from().get(Person.CITY);
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Poliana")
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Wrong")
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal(city)
+                        )
+                ).toArray().length == 1
+        );
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal(get)
+                        )
+                ).toArray().length == 1
+        );
+    }
+
+    @Test
+    public void shouldSelectByAttributeConjunction() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        StringExpression<Person, Person> city = criteriaQuery.from().get(Person.CITY);
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Poliana").and(
+                                        city.equal("Salvador")
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Poliana").and(
+                                        city.equal("Wrong")
+                                )
+                        )
+                ).toArray().length == 1
+        );
+    }
+
+    @Test
+    public void shouldSelectByAttributeDisjunction() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        StringExpression<Person, Person> city = criteriaQuery.from().get(Person.CITY);
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Poliana").or(
+                                        city.equal("Wrong")
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Wrong1").or(
+                                        city.equal("Wrong2")
+                                )
+                        )
+                ).toArray().length == 1
+        );
+    }
+
+    @Test
+    public void shouldSelectByAttributeNegation() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Poliana").not()
+                        )
+                ).toArray().length == 1
+        );
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.equal("Wrong").not()
+                        )
+                ).toArray().length == 1
+        );
+    }
+
+    @Test
+    public void shouldSelectByAttributeIn() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.in(
+                                        Arrays.asList("Poliana")
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.in(
+                                        Arrays.asList("Wrong")
+                                )
+                        )
+                ).toArray().length == 1
+        );
+    }
+
+    @Test
+    public void shouldSelectByStringAttributeLike() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.like(
+                                        "Pol%"
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.like(
+                                        "%iana"
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.like(
+                                        "%olian%"
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.like(
+                                        "Pol"
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.like(
+                                        "%Wrong%"
+                                )
+                        )
+                ).toArray().length == 1
+        );
+    }
+
+    @Test
+    public void shouldSelectByComparableAttribute() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        ComparableExpression<Person, Person, Integer> get = criteriaQuery.from().get(Person.AGE);
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.greaterThan(
+                                        25
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.greaterThan(
+                                        30
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.greaterThanOrEqualTo(
+                                        30
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.lessThan(
+                                        35
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.lessThan(
+                                        30
+                                )
+                        )
+                ).toArray().length == 1
+        );
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select().where(
+                                get.lessThanOrEqualTo(
+                                        30
+                                )
+                        )
+                ).toArray().length == 1
+        );
+    }
+
+    @Test
+    public void shouldSelectExpressionsByAttribute() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        assertTrue(
+                entityManager.executeQuery(
+                        criteriaQuery.select(
+                                get
+                        ).where(
+                                get.equal(
+                                        "Poliana"
+                                )
+                        )
+                ).allMatch(
+                        document -> document.contains(
+                                get.getAttribute().getName()
+                        )
+                )
+        );
+        assertFalse(
+                entityManager.executeQuery(
+                        criteriaQuery.select(
+                                criteriaQuery.from().get(Person.AGE)
+                        ).where(
+                                get.equal(
+                                        "Poliana"
+                                )
+                        )
+                ).allMatch(
+                        document -> document.contains(
+                                get.getAttribute().getName()
+                        )
+                )
+        );
+    }
+
+    @Test
+    public void shouldSelectCountFunction() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        CriteriaFunction<Person, Person, Person, Number> count = criteriaQuery.from().count();
+        assertTrue(
+                Objects.equals(
+                        entityManager.executeQuery(
+                                criteriaQuery.select(
+                                        count
+                                )
+                        ).findFirst().get().find(
+                                "count"
+                        ).get().getValue().get(),
+                        1
+                )
+        );
+        entityManager.insert(getEntity());
+        assertTrue(
+                Objects.equals(
+                        entityManager.executeQuery(
+                                criteriaQuery.select(
+                                        count
+                                )
+                        ).findFirst().get().find(
+                                "count"
+                        ).get().getValue().get(),
+                        2
+                )
+        );
+    }
+
+    @Test
+    public void shouldSelectCountRestrictionFunction() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        StringExpression<Person, Person> get = criteriaQuery.from().get(Person.NAME);
+        CriteriaFunction<Person, Person, Person, Number> count = criteriaQuery.from().count();
+        assertTrue(
+                Objects.equals(
+                        entityManager.executeQuery(
+                                criteriaQuery.select(
+                                        count
+                                ).where(
+                                        get.equal("Poliana")
+                                )
+                        ).findFirst().get().find(
+                                "count"
+                        ).get().getValue().get(),
+                        1
+                )
+        );
+    }
+
+    @Test
+    public void shouldSelectSumFunction() {
+        entityManager.insert(getEntity());
+        CriteriaQuery<Person> criteriaQuery = new DefaultCriteriaQuery(Person.class);
+        NumberExpression<Person, Person, Integer> get = criteriaQuery.from().get(Person.AGE);
+        assertTrue(
+                Objects.equals(
+                        entityManager.executeQuery(
+                                criteriaQuery.select(
+                                        criteriaQuery.from().count(),
+                                        get.sum()
+                                ).where(
+                                        criteriaQuery.from().get(Person.NAME).equal("Poliana")
+                                )
+                        ).findFirst().get().find(
+                                "age"
+                        ).get().getValue().get(),
+                        30
+                )
+        );
+        entityManager.insert(getEntity());
+        assertTrue(
+                Objects.equals(
+                        entityManager.executeQuery(
+                                criteriaQuery.select(
+                                        criteriaQuery.from().count(),
+                                        get.sum()
+                                ).where(
+                                        criteriaQuery.from().get(Person.NAME).equal("Poliana")
+                                )
+                        ).findFirst().get().find(
+                                "age"
+                        ).get().getValue().get(),
+                        60
+                )
+        );
+    }
+
     private DocumentEntity createDocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         entity.add(Document.of("_id", new Random().nextInt()));
@@ -536,6 +927,7 @@ public class MongoDBDocumentCollectionManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
+        map.put("age", 30);
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
