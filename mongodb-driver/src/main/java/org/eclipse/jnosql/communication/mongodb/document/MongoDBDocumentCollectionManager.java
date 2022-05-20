@@ -155,6 +155,24 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     }
 
+    /**
+     * Finds all documents in the collection.
+     *
+     * @param collectionName the collection name
+     * @param filter the query filter
+     * @return the stream result
+     * @throws NullPointerException when filter or collectionName is null
+     */
+    public Stream<DocumentEntity> select(String collectionName, Bson filter) {
+        Objects.requireNonNull(filter, "filter is required");
+        Objects.requireNonNull(collectionName, "collectionName is required");
+        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        FindIterable<Document> documents = collection.find(filter);
+        return stream(documents.spliterator(), false).map(MongoDBUtils::of)
+                .map(ds -> DocumentEntity.of(collectionName, ds));
+    }
+
+
     @Override
     public long count(String documentCollection) {
         Objects.requireNonNull(documentCollection, "documentCollection is required");
@@ -164,7 +182,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
 
     private Bson getSort(Sort sort) {
         boolean isAscending = SortType.ASC.equals(sort.getType());
-        return isAscending?Sorts.ascending(sort.getName()): Sorts.descending(sort.getName());
+        return isAscending ? Sorts.ascending(sort.getName()) : Sorts.descending(sort.getName());
     }
 
     @Override
