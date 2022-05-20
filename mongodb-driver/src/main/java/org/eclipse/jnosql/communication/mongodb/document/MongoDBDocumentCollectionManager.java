@@ -20,6 +20,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.result.DeleteResult;
 import jakarta.nosql.Sort;
 import jakarta.nosql.SortType;
 import jakarta.nosql.document.DocumentCollectionManager;
@@ -131,6 +132,7 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         collection.deleteMany(mongoDBQuery);
     }
 
+
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
@@ -156,10 +158,28 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
     }
 
     /**
+     * Removes all documents from the collection that match the given query filter.
+     * If no documents match, the collection is not modified.
+     *
+     * @param collectionName the collection name
+     * @param filter         the delete filter
+     * @return the number of documents deleted.
+     * @throws NullPointerException when filter or collectionName is null
+     */
+    public long delete(String collectionName, Bson filter) {
+        Objects.requireNonNull(filter, "filter is required");
+        Objects.requireNonNull(collectionName, "collectionName is required");
+
+        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        DeleteResult result = collection.deleteMany(filter);
+        return result.getDeletedCount();
+    }
+
+    /**
      * Finds all documents in the collection.
      *
      * @param collectionName the collection name
-     * @param filter the query filter
+     * @param filter         the query filter
      * @return the stream result
      * @throws NullPointerException when filter or collectionName is null
      */
