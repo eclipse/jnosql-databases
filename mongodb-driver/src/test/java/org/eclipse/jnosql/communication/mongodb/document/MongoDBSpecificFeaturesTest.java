@@ -14,5 +14,77 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document;
 
+import com.mongodb.client.model.Filters;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentDeleteQuery;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.Documents;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.mongodb.client.model.Filters.eq;
+import static jakarta.nosql.document.DocumentQuery.select;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 public class MongoDBSpecificFeaturesTest {
+
+    public static final String COLLECTION_NAME = "person";
+    private static MongoDBDocumentCollectionManager entityManager;
+
+    @BeforeAll
+    public static void setUp() throws IOException {
+        entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
+    }
+
+    @Test
+    public void shouldReturnErrorWhenThereIsNullParameter(){
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.select(null, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.select(COLLECTION_NAME, null));
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.select(null,  eq("name", "Poliana")));
+    }
+
+    @Test
+    public void shouldFindDocument() {
+        DocumentEntity entity = entityManager.insert(getEntity());
+        Optional<Document> id = entity.find("_id");
+
+
+        List<DocumentEntity> entities = entityManager.select(COLLECTION_NAME,
+                eq("name", "Poliana")).collect(Collectors.toList());
+        assertFalse(entities.isEmpty());
+        assertThat(entities, contains(entity));
+    }
+
+    private DocumentEntity getEntity() {
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "Poliana");
+        map.put("city", "Salvador");
+        List<Document> documents = Documents.of(map);
+        documents.forEach(entity::add);
+        return entity;
+    }
+
 }
