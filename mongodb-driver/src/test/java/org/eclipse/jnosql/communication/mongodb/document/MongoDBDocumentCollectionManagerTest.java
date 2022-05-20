@@ -25,6 +25,7 @@ import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.mongodb.document.type.Money;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -57,6 +58,11 @@ public class MongoDBDocumentCollectionManagerTest {
     @BeforeAll
     public static void setUp() throws IOException {
         entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test

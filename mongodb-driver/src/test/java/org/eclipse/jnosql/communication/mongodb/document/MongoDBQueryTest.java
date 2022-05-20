@@ -15,16 +15,15 @@
 
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.Sort;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCollectionManager;
-import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
@@ -46,6 +44,11 @@ public class MongoDBQueryTest {
     @BeforeAll
     public static void setUp() throws IOException {
         entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test
