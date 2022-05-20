@@ -29,12 +29,14 @@ import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.bson.BsonDocument;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.Documents;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -187,16 +189,12 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
      * @return the number of documents deleted.
      * @throws NullPointerException when filter or collectionName is null
      */
-    public Map<String, Object> aggregate(String collectionName, List<Bson> pipeline) {
+    public Stream<List<jakarta.nosql.document.Document>> aggregate(String collectionName, List<Bson> pipeline) {
         Objects.requireNonNull(pipeline, "filter is required");
         Objects.requireNonNull(collectionName, "collectionName is required");
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         AggregateIterable<Document> aggregate = collection.aggregate(pipeline);
-        for (Document document : aggregate) {
-            BsonDocument bson = document.toBsonDocument();
-            System.out.println(bson);
-        }
-        return Collections.emptyMap();
+        return stream(aggregate.spliterator(), false).map(MongoDBUtils::of);
     }
 
     /**
