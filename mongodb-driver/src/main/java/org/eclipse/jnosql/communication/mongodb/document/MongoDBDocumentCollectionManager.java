@@ -189,12 +189,13 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
      * @return the number of documents deleted.
      * @throws NullPointerException when filter or collectionName is null
      */
-    public Stream<List<jakarta.nosql.document.Document>> aggregate(String collectionName, List<Bson> pipeline) {
+    public Stream<Map<String, BsonValue>> aggregate(String collectionName, List<Bson> pipeline) {
         Objects.requireNonNull(pipeline, "filter is required");
         Objects.requireNonNull(collectionName, "collectionName is required");
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         AggregateIterable<Document> aggregate = collection.aggregate(pipeline);
-        return stream(aggregate.spliterator(), false).map(MongoDBUtils::of);
+        return stream(aggregate.spliterator(), false)
+                .map(Document::toBsonDocument);
     }
 
     /**
