@@ -175,6 +175,10 @@ public class MongoDBDocumentCollectionManager implements DocumentCollectionManag
         return result.getDeletedCount();
     }
 
+    public long aggregate(String collectionName, Bson filter) {
+        return 0L;
+    }
+
     /**
      * Finds all documents in the collection.
      *
