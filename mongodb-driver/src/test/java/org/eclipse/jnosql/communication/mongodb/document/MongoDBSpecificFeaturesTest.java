@@ -68,8 +68,6 @@ public class MongoDBSpecificFeaturesTest {
     @Test
     public void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("_id");
-
 
         List<DocumentEntity> entities = entityManager.select(COLLECTION_NAME,
                 eq("name", "Poliana")).collect(Collectors.toList());
@@ -86,6 +84,19 @@ public class MongoDBSpecificFeaturesTest {
 
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.delete(null,  eq("name", "Poliana")));
+    }
+
+    @Test
+    public void shouldDelete() {
+        entityManager.insert(getEntity());
+
+        long result = entityManager.delete(COLLECTION_NAME,
+                eq("name", "Poliana"));
+
+        Assertions.assertEquals(1L, result);
+        List<DocumentEntity> entities = entityManager.select(COLLECTION_NAME,
+                eq("name", "Poliana")).collect(Collectors.toList());
+        Assertions.assertTrue(entities.isEmpty());
     }
 
     private DocumentEntity getEntity() {
