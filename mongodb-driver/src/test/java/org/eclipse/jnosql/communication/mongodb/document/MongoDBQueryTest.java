@@ -17,11 +17,13 @@ package org.eclipse.jnosql.communication.mongodb.document;
 
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +44,11 @@ public class MongoDBQueryTest {
     @BeforeAll
     public static void setUp() throws IOException {
         entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test
