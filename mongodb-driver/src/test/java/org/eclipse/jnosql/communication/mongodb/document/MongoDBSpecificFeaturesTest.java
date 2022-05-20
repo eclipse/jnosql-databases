@@ -14,12 +14,16 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document;
 
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.bson.BsonValue;
+import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,12 +31,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
 import static jakarta.nosql.document.DocumentQuery.select;
@@ -110,6 +116,25 @@ public class MongoDBSpecificFeaturesTest {
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.aggregate(null,
                         Collections.singletonList(eq("name", "Poliana"))));
+    }
+
+    @Test
+    public void shouldAggregate() {
+        List<Bson> predicates = Arrays.asList(
+                Aggregates.match(eq("name", "Poliana")),
+                Aggregates.group("$stars", Accumulators.sum("count", 1))
+        );
+        entityManager.insert(getEntity());
+        Stream<Map<String, BsonValue>> aggregate = entityManager.aggregate(COLLECTION_NAME, predicates);
+        Assertions.assertNotNull(aggregate);
+        Map<String, BsonValue> result = aggregate.findFirst()
+                .orElseThrow(() -> new IllegalStateException("There is an issue with the aggregate test result"));
+
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+        BsonValue count = result.get("count");
+        Assertions.assertEquals(1L, count.asNumber().longValue());
+
     }
 
 
