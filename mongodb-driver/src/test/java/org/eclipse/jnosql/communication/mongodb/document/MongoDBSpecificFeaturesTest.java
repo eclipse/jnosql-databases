@@ -55,7 +55,7 @@ public class MongoDBSpecificFeaturesTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenThereIsNullParameter(){
+    public void shouldReturnErrorOnSelectWhenThereIsNullParameter(){
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.select(null, null));
         Assertions.assertThrows(NullPointerException.class,
@@ -75,6 +75,17 @@ public class MongoDBSpecificFeaturesTest {
                 eq("name", "Poliana")).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
+    }
+
+    @Test
+    public void shouldReturnErrorOnDeleteWhenThereIsNullParameter(){
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.delete(null, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.delete(COLLECTION_NAME, null));
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.delete(null,  eq("name", "Poliana")));
     }
 
     private DocumentEntity getEntity() {
