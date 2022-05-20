@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +99,19 @@ public class MongoDBSpecificFeaturesTest {
                 eq("name", "Poliana")).collect(Collectors.toList());
         Assertions.assertTrue(entities.isEmpty());
     }
+
+    @Test
+    public void shouldReturnErrorOnAggregateWhenThereIsNullParameter(){
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.aggregate(null, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.aggregate(COLLECTION_NAME, null));
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.aggregate(null,
+                        Collections.singletonList(eq("name", "Poliana"))));
+    }
+
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
