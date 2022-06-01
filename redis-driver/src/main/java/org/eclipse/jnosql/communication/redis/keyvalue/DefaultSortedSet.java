@@ -59,7 +59,7 @@ class DefaultSortedSet implements SortedSet {
     public Number increment(String member, Number value) throws NullPointerException {
         Objects.requireNonNull(member, "member is required");
         Objects.requireNonNull(value, "value is required");
-        return jedis.zincrby(key, value.doubleValue(), member).longValue();
+        return jedis.zincrby(key, value.doubleValue(), member);
     }
 
     @Override
@@ -76,7 +76,7 @@ class DefaultSortedSet implements SortedSet {
 
     @Override
     public int size() {
-        return jedis.zcard(key).intValue();
+        return (int) jedis.zcard(key);
     }
 
     @Override
