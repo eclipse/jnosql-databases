@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ListPosition;
+import redis.clients.jedis.args.ListPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +34,7 @@ class RedisList<T> extends RedisCollection<T> implements List<T> {
 
     @Override
     public int size() {
-        return jedis.llen(keyWithNameSpace).intValue();
+        return (int) jedis.llen(keyWithNameSpace);
     }
 
     @Override
