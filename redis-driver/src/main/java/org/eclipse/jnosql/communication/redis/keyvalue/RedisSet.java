@@ -46,7 +46,7 @@ class RedisSet<T> extends RedisCollection<T> implements Set<T> {
 
     @Override
     public int size() {
-        return jedis.scard(keyWithNameSpace).intValue();
+        return (int) jedis.scard(keyWithNameSpace);
     }
 
     @Override
