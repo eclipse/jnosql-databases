@@ -59,7 +59,7 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     @Override
     public int size() {
-        return jedis.llen(keyWithNameSpace).intValue();
+        return (int) jedis.llen(keyWithNameSpace);
     }
 
     @Override
