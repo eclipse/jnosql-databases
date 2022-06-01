@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 /**
- * An {@link SortedSet} element
+ * An SortedSet element
  */
 public interface Ranking {
 
