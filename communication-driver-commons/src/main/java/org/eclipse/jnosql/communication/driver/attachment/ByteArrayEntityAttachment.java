@@ -23,7 +23,7 @@ import java.io.InputStream;
  * 
  * @since 0.0.9
  */
-class ByteArrayEntityAttachment implements EntityAttachment {
+public class ByteArrayEntityAttachment implements EntityAttachment {
     private final String name;
     private final String contentType;
     private final long lastModified;
