@@ -27,7 +27,7 @@ import java.util.Objects;
  * 
  * @since 0.0.9
  */
-class PathEntityAttachment implements EntityAttachment {
+public class PathEntityAttachment implements EntityAttachment {
     private final Path path;
     
     public PathEntityAttachment(Path path) {
