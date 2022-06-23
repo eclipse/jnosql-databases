@@ -38,23 +38,23 @@
 
 
     <modules>
-        <module>communication-driver-commons</module>
-        <module>arangodb-driver</module>
-        <module>cassandra-driver</module>
-        <module>couchbase-driver</module>
-        <module>couchdb-driver</module>
-        <module>dynamodb-driver</module>
-        <module>elasticsearch-driver</module>
-        <module>hazelcast-driver</module>
-        <module>hbase-driver</module>
-        <module>infinispan-driver</module>
-        <module>memcached-driver</module>
-        <module>mongodb-driver</module>
-        <module>orientdb-driver</module>
-        <module>ravendb-driver</module>
-        <module>redis-driver</module>
-        <module>riak-driver</module>
-        <module>solr-driver</module>
+        <module>jnosql-communication-driver-commons</module>
+        <module>jnosql-arangodb-driver</module>
+        <module>jnosql-cassandra-driver</module>
+        <module>jnosql-couchbase-driver</module>
+        <module>jnosql-couchdb-driver</module>
+        <module>jnosql-dynamodb-driver</module>
+        <module>jnosql-elasticsearch-driver</module>
+        <module>jnosql-hazelcast-driver</module>
+        <module>jnosql-hbase-driver</module>
+        <module>jnosql-infinispan-driver</module>
+        <module>jnosql-memcached-driver</module>
+        <module>jnosql-mongodb-driver</module>
+        <module>jnosql-orientdb-driver</module>
+        <module>jnosql-ravendb-driver</module>
+        <module>jnosql-redis-driver</module>
+        <module>jnosql-riak-driver</module>
+        <module>jnosql-solr-driver</module>
     </modules>
 
     <dependencies>
