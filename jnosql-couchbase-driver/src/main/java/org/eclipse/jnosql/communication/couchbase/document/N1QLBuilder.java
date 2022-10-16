@@ -47,7 +47,10 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         n1ql.append("from '").append(database)
                 .append("'.").append(query.getDocumentCollection());
 
-        query.getCondition().ifPresent(c -> condition(c, n1ql, params));
+        query.getCondition().ifPresent(c -> {
+            n1ql.append(" WHERE ");
+            condition(c, n1ql, params);
+        });
 
         if (query.getLimit() > 0) {
             n1ql.append(" LIMIT ").append(query.getLimit());
@@ -103,13 +106,13 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     private void predicateBetween(StringBuilder n1ql, JsonObject params, Document document) {
         n1ql.append(" BETWEEN ");
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = document.getName();
+        String name = '\''+ document.getName() + '\'';
 
         List<Object> values = new ArrayList<>();
         ((Iterable<?>) document.get()).forEach(values::add);
 
-        String param = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
-        String param2 = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
+        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param2 = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         n1ql.append(param).append(" AND ").append(param2);
         params.put(param, values.get(0));
         params.put(param2, values.get(1));
@@ -130,9 +133,9 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                            Document document,
                            JsonObject params) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = document.getName();
+        String name = '\'' + document.getName() + '\'';
         Object value = document.get();
-        String param = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
+        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt()));
         n1ql.append(name).append(condition).append(param);
         params.put(param, value);
     }

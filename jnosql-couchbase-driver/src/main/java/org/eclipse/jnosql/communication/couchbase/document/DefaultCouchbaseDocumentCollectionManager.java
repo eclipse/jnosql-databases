@@ -143,13 +143,13 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
         QueryResult result;
         if (n1QLQuery.isEmpty()) {
+            result = cluster.query(n1QLQuery.getQuery());
+        } else {
             result = cluster.query(n1QLQuery.getQuery(), QueryOptions
                     .queryOptions().parameters(n1QLQuery.getParams()));
-        } else {
-            result = cluster.query(n1QLQuery.getQuery());
         }
         List<JsonObject> jsons = result.rowsAsObject();
-        return EntityConverter.convert(jsons,database);
+        return EntityConverter.convert(jsons, database);
     }
 
     @Override
