@@ -70,7 +70,6 @@ public class CouchbaseBucketManagerTest {
         keyValueEntityManager.delete(KEY_SORO);
     }
 
-
     @Test
     public void shouldPutValue() {
         keyValueEntityManager.put(KEY_OTAVIO, userOtavio);

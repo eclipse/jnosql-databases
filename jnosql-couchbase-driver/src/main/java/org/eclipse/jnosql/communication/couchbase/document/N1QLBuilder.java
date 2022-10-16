@@ -41,6 +41,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     public N1QLQuery get() {
         StringBuilder n1ql = new StringBuilder();
         JsonObject params = JsonObject.create();
+        List<String> ids = new ArrayList<>();
 
         n1ql.append("select ");
         n1ql.append(select()).append(' ');

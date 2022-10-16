@@ -20,12 +20,14 @@ import java.util.Objects;
 
 public class User {
 
-    private final String nickName;
+    private String nickName;
 
     @JsonbCreator
     public User(@JsonbProperty("nickName") String nickName) {
         this.nickName = nickName;
+    }
 
+    public User() {
     }
 
     public String getNickName() {
