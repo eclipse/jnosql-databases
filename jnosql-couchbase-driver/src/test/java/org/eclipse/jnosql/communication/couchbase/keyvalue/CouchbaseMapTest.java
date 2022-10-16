@@ -17,7 +17,7 @@ package org.eclipse.jnosql.communication.couchbase.keyvalue;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
-import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
+import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,14 +40,14 @@ public class CouchbaseMapTest {
 
     @BeforeEach
     public void init() {
-        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
+        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
         entityManagerFactory = configuration.get();
         entityManagerFactory.getMap(CouchbaseUtil.BUCKET_NAME, String.class, User.class).clear();
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
+        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.delete("jnosql:map");
