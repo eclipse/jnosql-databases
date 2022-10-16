@@ -20,6 +20,7 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
@@ -52,7 +53,7 @@ public class DocumentQueryTest {
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
+        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.delete("person:id");
@@ -63,7 +64,7 @@ public class DocumentQueryTest {
 
     @BeforeAll
     public static void beforeClass() throws InterruptedException {
-        configuration = CouchbaseDocumentTcConfiguration.getTcConfiguration();
+        configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
 

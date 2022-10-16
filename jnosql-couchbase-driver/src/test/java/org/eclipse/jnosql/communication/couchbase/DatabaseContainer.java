@@ -16,7 +16,7 @@ public enum DatabaseContainer {
                 .withPrimaryIndex(true)
                 .withReplicas(0)
                 .withFlushEnabled(true);
-        CouchbaseContainer container = new CouchbaseContainer("couchbase/server")
+        container = new CouchbaseContainer("couchbase/server")
                 .withBucket(bucketDefinition);
         container.start();
     }
