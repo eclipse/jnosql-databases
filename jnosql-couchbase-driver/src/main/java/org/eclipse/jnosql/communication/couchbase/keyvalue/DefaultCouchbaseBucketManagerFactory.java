@@ -16,9 +16,13 @@ package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.datastructures.CouchbaseArrayList;
 import com.couchbase.client.java.datastructures.CouchbaseArraySet;
-import com.couchbase.client.java.json.JsonValue;
+import com.couchbase.client.java.kv.ArrayListOptions;
+import com.couchbase.client.java.kv.ArraySetOptions;
+import com.couchbase.client.java.kv.MapOptions;
+import com.couchbase.client.java.kv.QueueOptions;
 
 import java.util.List;
 import java.util.Map;
@@ -28,14 +32,8 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The couchbase implementation of {@link org.eclipse.jnosql.communication.api.key.BucketManagerFactory}. That has support to
- * {@link org.eclipse.jnosql.communication.api.key.BucketManagerFactory#getBucketManager(String)}
- * and also the structure {@link Map}, {@link Set},
+ * The couchbase implementation of BucketManagerFactory. That has support the structure {@link Map}, {@link Set},
  * {@link Queue}, {@link List}. Each structure has this specific implementation.
- * <p>{@link CouchbaseList}</p>
- * <p>{@link CouchbaseSet}</p>
- * <p>{@link CouchbaseQueue}</p>
- * <p>{@link CouchbaseMap}</p>
  */
 class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFactory {
 
@@ -59,7 +57,8 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     @Override
     public CouchbaseBucketManager getBucketManager(String bucketName) {
         requireNonNull(bucketName, "bucket is required");
-        return new CouchbaseBucketManager(getBucket(bucketName), bucketName);
+        Bucket bucket = cluster.bucket(bucketName);
+        return new CouchbaseBucketManager(bucket, bucketName);
     }
 
     @Override
@@ -68,17 +67,16 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(valueValue, "valueValue is required");
         requireNonNull(keyValue, "keyValue is required");
 
-        if(!String.class.isAssignableFrom(keyValue)) {
+        if (!String.class.isAssignableFrom(keyValue)) {
             throw new UnsupportedOperationException("Couchbase Map does not support a not String key instead of: "
-            + keyValue);
+                    + keyValue);
         }
-        if (JsonValueCheck.checkType(valueValue)) {
-            return (Map<K, V>)
-                    new com.couchbase.client.java.datastructures.
-                            CouchbaseMap<V>(bucketName + ":map", getBucket(bucketName));
-        } else {
-            return new CouchbaseMap<>(getBucket(bucketName), bucketName, keyValue, valueValue);
-        }
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
+        return (Map<K, V>)
+                new com.couchbase.client.java.datastructures.
+                        CouchbaseMap<V>(bucketName + ":map", collection, valueValue,
+                        MapOptions.mapOptions());
 
     }
 
@@ -90,29 +88,30 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(valueValue, "valueValue is required");
         requireNonNull(keyValue, "keyValue is required");
 
-        if(!String.class.isAssignableFrom(keyValue)) {
+        if (!String.class.isAssignableFrom(keyValue)) {
             throw new UnsupportedOperationException("Couchbase Map does not support a not String key instead of: "
                     + keyValue);
         }
 
-        if (JsonValueCheck.checkType(valueValue)) {
-            return (Map<K, V>)
-                    new com.couchbase.client.java.datastructures.collections.CouchbaseMap<V>(key, getBucket(bucketName));
-        }
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
 
-        return new CouchbaseMap<>(getBucket(bucketName), key, keyValue, valueValue);
+        return (Map<K, V>)
+                new com.couchbase.client.java.datastructures.
+                        CouchbaseMap<V>(key, collection, valueValue,
+                        MapOptions.mapOptions());
     }
 
     @Override
     public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
-        if (JsonValueCheck.checkType(clazz)) {
-            return new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(bucketName + QUEUE,
-                    getBucket(bucketName));
-        } else {
-            return new CouchbaseQueue<>(getBucket(bucketName), bucketName, clazz);
-        }
+
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
+
+        return new com.couchbase.client.java.datastructures.CouchbaseQueue<>(bucketName + QUEUE, collection, clazz,
+                QueueOptions.queueOptions());
 
     }
 
@@ -120,22 +119,20 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
-        if (JsonValueCheck.checkType(clazz) && !JsonValue.class.isAssignableFrom(clazz)) {
-            return new CouchbaseArraySet<>(bucketName + SET, getBucket(bucketName));
-        } else {
-            return new CouchbaseSet<>(getBucket(bucketName), bucketName, clazz);
-        }
+
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
+
+        return new CouchbaseArraySet<>(bucketName + SET, collection, clazz, ArraySetOptions.arraySetOptions());
     }
 
     @Override
     public <T> List<T> getList(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
-        if (JsonValueCheck.checkType(clazz)) {
-            return new CouchbaseArrayList<>(bucketName + LIST, getBucket(bucketName));
-        } else {
-            return new CouchbaseList<>(getBucket(bucketName), bucketName, clazz);
-        }
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
+        return new CouchbaseArrayList<>(bucketName + LIST, collection, clazz, ArrayListOptions.arrayListOptions());
     }
 
     @Override
@@ -143,12 +140,11 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
-        if (JsonValueCheck.checkType(clazz)) {
-            return new com.couchbase.client.java.datastructures.collections.CouchbaseQueue<>(key + QUEUE,
-                    getBucket(bucketName));
-        } else {
-            return new CouchbaseQueue<>(getBucket(bucketName), key, clazz);
-        }
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
+
+        return new com.couchbase.client.java.datastructures.CouchbaseQueue<>(key + QUEUE, collection, clazz,
+                QueueOptions.queueOptions());
 
     }
 
@@ -157,11 +153,10 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
-        if (JsonValueCheck.checkType(clazz) && !JsonValue.class.isAssignableFrom(clazz)) {
-            return new CouchbaseArraySet<>(key + SET, getBucket(key));
-        } else {
-            return new CouchbaseSet<>(getBucket(key), bucketName, clazz);
-        }
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
+
+        return new CouchbaseArraySet<>(key, collection, clazz, ArraySetOptions.arraySetOptions());
 
     }
 
@@ -170,23 +165,14 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(clazz, "valueValue is required");
         requireNonNull(key, "key is required");
-        if (JsonValueCheck.checkType(clazz)) {
-            return new CouchbaseArrayList<>(key + LIST, getBucket(key));
-        } else {
-            return new CouchbaseList<>(getBucket(bucketName), key, clazz);
-        }
-    }
-
-    private Bucket getBucket(String bucketName) {
-        requireNonNull(bucketName, "bucket is required");
-        CouchbaseCluster couchbaseCluster = CouchbaseClusterUtil.getCouchbaseCluster(bucketName,
-                this.couchbaseCluster, user, password);
-        return couchbaseCluster.openBucket(bucketName);
+        Bucket bucket = this.cluster.bucket(bucketName);
+        Collection collection = bucket.collection(bucketName);
+        return new CouchbaseArrayList<>(key, collection, clazz, ArrayListOptions.arrayListOptions());
     }
 
 
     @Override
     public void close() {
-        couchbaseCluster.clusterManager();
+        cluster.close();
     }
 }
