@@ -27,7 +27,6 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
     private final String host;
     private final String user;
     private final String password;
-
     private final Cluster cluster;
     CouhbaseDocumentCollectionManagerFactory(String host, String user, String password) {
         this.host = host;

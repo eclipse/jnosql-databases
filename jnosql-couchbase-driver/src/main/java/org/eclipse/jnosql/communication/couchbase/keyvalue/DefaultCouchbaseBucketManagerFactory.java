@@ -15,11 +15,10 @@
 package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.CouchbaseCluster;
-import com.couchbase.client.java.datastructures.collections.CouchbaseArrayList;
-import com.couchbase.client.java.datastructures.collections.CouchbaseArraySet;
-import com.couchbase.client.java.document.json.JsonValue;
-import org.eclipse.jnosql.communication.couchbase.util.CouchbaseClusterUtil;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.datastructures.CouchbaseArrayList;
+import com.couchbase.client.java.datastructures.CouchbaseArraySet;
+import com.couchbase.client.java.json.JsonValue;
 
 import java.util.List;
 import java.util.Map;
@@ -43,16 +42,17 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     static final String QUEUE = ":queue";
     static final String SET = ":set";
     static final String LIST = ":list";
-    private final CouchbaseCluster couchbaseCluster;
-
     private final String user;
-
     private final String password;
+    private final String host;
+    private final Cluster cluster;
 
-    DefaultCouchbaseBucketManagerFactory(CouchbaseCluster couchbaseCluster, String user, String password) {
-        this.couchbaseCluster = couchbaseCluster;
+
+    DefaultCouchbaseBucketManagerFactory(String host, String user, String password) {
+        this.host = host;
         this.user = user;
         this.password = password;
+        this.cluster = Cluster.connect(host, user, password);
     }
 
 
@@ -74,7 +74,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         }
         if (JsonValueCheck.checkType(valueValue)) {
             return (Map<K, V>)
-                    new com.couchbase.client.java.datastructures.collections.
+                    new com.couchbase.client.java.datastructures.
                             CouchbaseMap<V>(bucketName + ":map", getBucket(bucketName));
         } else {
             return new CouchbaseMap<>(getBucket(bucketName), bucketName, keyValue, valueValue);
