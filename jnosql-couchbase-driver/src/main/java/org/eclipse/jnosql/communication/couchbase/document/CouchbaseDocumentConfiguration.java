@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * The couchbase implementation of {@link DocumentConfiguration}  that returns
  * {@link CouhbaseDocumentCollectionManagerFactory}.
- * <p>couchbase.host-: the prefix to add a new host</p>
+ * <p>couchbase.host: to identify the connection</p>
  * <p>couchbase.user: the user</p>
  * <p>couchbase.password: the password</p>
  * @see CouchbaseConfigurations
