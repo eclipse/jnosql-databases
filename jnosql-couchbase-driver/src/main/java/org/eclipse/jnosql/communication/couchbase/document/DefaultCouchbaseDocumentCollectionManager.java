@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.eclipse.jnosql.communication.couchbase.document.EntityConverter.ID_FIELD;
 import static org.eclipse.jnosql.communication.couchbase.document.EntityConverter.convert;
@@ -131,7 +130,8 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
 
-        return Stream.concat(n1qlQueryStream, idsQuery);
+//        return Stream.concat(n1qlQueryStream, idsQuery);
+        return null;
     }
 
     @Override
