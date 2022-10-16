@@ -58,22 +58,19 @@ public abstract class CouchbaseConfiguration {
 
     protected String getUser(Settings settings) {
         return settings.get(asList(Configurations.USER.get(),
-                CouchbaseConfigurations.USER.get(),
-                OldCouchbaseConfigurations.USER.get()))
+                        CouchbaseConfigurations.USER.get()))
                 .map(Object::toString).orElse(null);
     }
 
     protected String getPassword(Settings settings) {
 
         return settings.get(asList(Configurations.PASSWORD.get(),
-                CouchbaseConfigurations.PASSWORD.get(),
-                OldCouchbaseConfigurations.PASSWORD.get()))
+                        CouchbaseConfigurations.PASSWORD.get()))
                 .map(Object::toString).orElse(null);
     }
 
     protected List<String> getHosts(Settings settings) {
-        return settings.prefix(asList(CouchbaseConfigurations.HOST.get(),
-                OldCouchbaseConfigurations.HOST.get(), Configurations.HOST.get()))
+        return settings.prefix(asList(CouchbaseConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream().map(Object::toString).collect(toList());
     }
 
