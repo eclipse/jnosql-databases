@@ -37,6 +37,10 @@ final class N1QLQuery {
         return params;
     }
 
+    public boolean isEmpty() {
+        return this.params.isEmpty();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
