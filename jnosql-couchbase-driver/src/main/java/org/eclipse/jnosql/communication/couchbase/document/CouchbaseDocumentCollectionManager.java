@@ -38,15 +38,6 @@ public interface CouchbaseDocumentCollectionManager extends DocumentCollectionMa
      */
     Stream<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException;
 
-    /**
-     * Executes the n1qlquery  with params and then result que result
-     *
-     * @param n1qlQuery the query
-     * @param params    the params
-     * @return the query result
-     * @throws NullPointerException when either n1qlQuery or params are null
-     */
-    Stream<DocumentEntity> n1qlQuery(Statement n1qlQuery, JsonObject params) throws NullPointerException;
 
     /**
      * Executes the n1qlquery  plain query and then result que result
@@ -57,14 +48,6 @@ public interface CouchbaseDocumentCollectionManager extends DocumentCollectionMa
      */
     Stream<DocumentEntity> n1qlQuery(String n1qlQuery) throws NullPointerException;
 
-    /**
-     * Executes the n1qlquery  plain query and then result que result
-     *
-     * @param n1qlQuery the query
-     * @return the query result
-     * @throws NullPointerException when either n1qlQuery or params are null
-     */
-    Stream<DocumentEntity> n1qlQuery(Statement n1qlQuery) throws NullPointerException;
 
     /**
      * Searches in Couchbase using Full Text Search
