@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class CouchbaseConfiguration {
 
-    private static final String FILE_CONFIGURATION = "diana-couchbase.properties";
+    private static final String FILE_CONFIGURATION = "couchbase.properties";
 
     protected final List<String> nodes = new ArrayList<>();
 
