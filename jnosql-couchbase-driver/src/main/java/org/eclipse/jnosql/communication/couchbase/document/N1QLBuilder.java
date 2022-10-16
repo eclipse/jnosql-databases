@@ -89,20 +89,25 @@ final class N1QLBuilder implements Supplier<String> {
                 appendCondition(n1ql, params, document.get(new TypeReference<>() {
                 }), " AND ");
             case BETWEEN:
-                n1ql.append(" BETWEEN ");
-                ThreadLocalRandom random = ThreadLocalRandom.current();
-                String name = document.getName();
-                Iterable<?> values = (Iterable<?>) document.get();
-                List<Object> values = new ArrayList<>();
-                values.forEach();
-
-                String param = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
-                String param2 = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
-                n1ql.append(param).append(" AND ").append(param2);
-
+                predicateBetween(n1ql, params, document);
             default:
                 throw new UnsupportedOperationException("There is not support condition for " + condition.getCondition());
         }
+    }
+
+    private void predicateBetween(StringBuilder n1ql, JsonObject params, Document document) {
+        n1ql.append(" BETWEEN ");
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        String name = document.getName();
+
+        List<Object> values = new ArrayList<>();
+        ((Iterable<?>) document.get()).forEach(values::add);
+
+        String param = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
+        String param2 = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
+        n1ql.append(param).append(" AND ").append(param2);
+        params.put(param, values.get(0));
+        params.put(param2, values.get(1));
     }
 
     private void appendCondition(StringBuilder n1ql, JsonObject params,
