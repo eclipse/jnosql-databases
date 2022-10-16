@@ -58,6 +58,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     public CouchbaseBucketManager getBucketManager(String bucketName) {
         requireNonNull(bucketName, "bucket is required");
         Bucket bucket = cluster.bucket(bucketName);
+
         return new CouchbaseBucketManager(bucket, bucketName);
     }
 
