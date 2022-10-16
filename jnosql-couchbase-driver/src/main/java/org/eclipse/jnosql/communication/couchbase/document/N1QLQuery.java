@@ -14,5 +14,55 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
+import com.couchbase.client.java.json.JsonObject;
+
+import java.util.Objects;
+
 final class N1QLQuery {
+
+    private final String query;
+
+    private final JsonObject params;
+
+    N1QLQuery(String query, JsonObject params) {
+        this.query = query;
+        this.params = params;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public JsonObject getParams() {
+        return params;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        N1QLQuery n1QLQuery = (N1QLQuery) o;
+        return Objects.equals(query, n1QLQuery.query) && Objects.equals(params, n1QLQuery.params);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(query, params);
+    }
+
+    @Override
+    public String toString() {
+        return "N1QLQuery{" +
+                "query='" + query + '\'' +
+                ", params=" + params +
+                '}';
+    }
+
+    static N1QLQuery of(StringBuilder query, JsonObject params) {
+        return new N1QLQuery(query.toString(), params);
+    }
 }
