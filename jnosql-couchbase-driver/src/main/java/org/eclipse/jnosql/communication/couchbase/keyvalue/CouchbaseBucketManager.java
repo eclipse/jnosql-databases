@@ -51,10 +51,20 @@ public class CouchbaseBucketManager implements BucketManager {
 
     private final Collection collection;
 
+    private final String collectionName;
+
     CouchbaseBucketManager(Bucket bucket, String bucketName) {
         this.bucket = bucket;
         this.bucketName = bucketName;
         this.collection = bucket.defaultCollection();
+        this.collectionName = bucket.defaultCollection().name();
+    }
+
+    CouchbaseBucketManager(Bucket bucket, String bucketName, String collectionName) {
+        this.bucket = bucket;
+        this.bucketName = bucketName;
+        this.collectionName = collectionName;
+        this.collection = bucket.collection(collectionName);
     }
 
     @Override
@@ -131,4 +141,13 @@ public class CouchbaseBucketManager implements BucketManager {
     public void close() {
     }
 
+    @Override
+    public String toString() {
+        return "CouchbaseBucketManager{" +
+                "bucket=" + bucket +
+                ", bucketName='" + bucketName + '\'' +
+                ", collection=" + collection +
+                ", collectionName='" + collectionName + '\'' +
+                '}';
+    }
 }

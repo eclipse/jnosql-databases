@@ -23,6 +23,7 @@ import com.couchbase.client.java.kv.ArrayListOptions;
 import com.couchbase.client.java.kv.ArraySetOptions;
 import com.couchbase.client.java.kv.MapOptions;
 import com.couchbase.client.java.kv.QueueOptions;
+import jakarta.nosql.keyvalue.BucketManager;
 
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,14 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         Bucket bucket = cluster.bucket(bucketName);
 
         return new CouchbaseBucketManager(bucket, bucketName);
+    }
+
+    @Override
+    public BucketManager getBucketManager(String bucketName, String collection) {
+        requireNonNull(bucketName, "bucketName is required");
+        requireNonNull(collection, "collection is required");
+        Bucket bucket = cluster.bucket(bucketName);
+        return new CouchbaseBucketManager(bucket, bucketName, collection);
     }
 
     @Override
@@ -135,6 +144,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         Collection collection = bucket.collection(bucketName);
         return new CouchbaseArrayList<>(bucketName + LIST, collection, clazz, ArrayListOptions.arrayListOptions());
     }
+
 
     @Override
     public <T> Queue<T> getQueue(String bucketName, String key, Class<T> clazz) {

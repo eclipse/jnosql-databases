@@ -24,9 +24,11 @@ import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseBucketManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -60,12 +62,12 @@ public class CouchbaseDocumentCollectionManagerTest {
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
-    @AfterAll
-    public static void afterClass() {
+    @AfterEach
+    public void afterEach() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
-        BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-
+        CouchbaseBucketManagerFactory keyValueEntityManagerFactory = configuration.get();
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory
+                .getBucketManager(CouchbaseUtil.BUCKET_NAME, COLLECTION_NAME);
         keyValueEntityManager.delete("id");
     }
 
@@ -112,7 +114,6 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
-        Thread.sleep(5_00L);
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
