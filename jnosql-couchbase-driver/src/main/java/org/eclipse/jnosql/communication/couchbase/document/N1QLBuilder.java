@@ -21,7 +21,6 @@ import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
@@ -48,7 +47,7 @@ final class N1QLBuilder implements Supplier<String> {
         n1ql.append("from '").append(database)
                 .append("'.").append(query.getDocumentCollection());
 
-        query.getCondition().ifPresent(c ->);
+        query.getCondition().ifPresent(c -> condition(c, n1ql, params));
 
 
         return null;
