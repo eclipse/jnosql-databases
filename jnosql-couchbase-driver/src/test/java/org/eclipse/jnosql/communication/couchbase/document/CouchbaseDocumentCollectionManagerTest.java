@@ -14,9 +14,7 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.Select;
-import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.json.JsonObject;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
@@ -24,10 +22,10 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseDocumentTcConfiguration;
 import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
+import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -41,7 +39,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.couchbase.client.java.query.dsl.Expression.x;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
@@ -220,28 +217,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         assertEquals(1, entities.size());
     }
 
-    @Test
-    public void shouldRunN1QlStatement() {
-        DocumentEntity entity = getEntity();
-        entityManager.insert(entity);
 
-        Statement statement = Select.select("*").from("jnosql").where(x("name").eq("\"Poliana\""));
-        List<DocumentEntity> entities = entityManager.n1qlQuery(statement).collect(Collectors.toList());
-        assertFalse(entities.isEmpty());
-        assertEquals(1, entities.size());
-    }
-
-    @Test
-    public void shouldRunN1QlStatementParams() {
-        DocumentEntity entity = getEntity();
-        entityManager.insert(entity);
-
-        Statement statement = Select.select("*").from("jnosql").where(x("name").eq("$name"));
-        JsonObject params = JsonObject.create().put("name", "Poliana");
-        List<DocumentEntity> entities = entityManager.n1qlQuery(statement, params).collect(Collectors.toList());
-        assertFalse(entities.isEmpty());
-        assertEquals(1, entities.size());
-    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
