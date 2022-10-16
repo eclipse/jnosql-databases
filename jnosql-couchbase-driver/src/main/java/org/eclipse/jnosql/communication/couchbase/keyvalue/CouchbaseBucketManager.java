@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 
+import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.kv.GetResult;
@@ -27,7 +28,6 @@ import org.eclipse.jnosql.communication.driver.ValueJSON;
 
 import javax.json.bind.Jsonb;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -97,8 +97,12 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
         requireNonNull(key, "key is required");
-        GetResult result = this.collection.get(key.toString());
-        return Optional.of(ValueJSON.of(value.toString()));
+        try {
+            GetResult result = this.collection.get(key.toString());
+            return Optional.of(new CouchbaseValue(result));
+        } catch (DocumentNotFoundException exp) {
+            return Optional.empty();
+        }
     }
 
     @Override
