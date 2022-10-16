@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
+import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 
 import java.util.List;
@@ -25,13 +26,20 @@ import java.util.Set;
  * The couchbase implementation of {@link BucketManagerFactory}. That has support to
  * {@link BucketManagerFactory#getBucketManager(String)} and also the structure {@link Map}, {@link Set},
  * {@link Queue}, {@link List}. Each structure has this specific implementation.
- * <p>{@link CouchbaseList}</p>
- * <p>{@link CouchbaseSet}</p>
- * <p>{@link CouchbaseQueue}</p>
- * <p>{@link CouchbaseMap}</p>
  * The default implementation creates the particular structure with the bucket name as the key.
  */
 public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
+
+
+    /**
+     * Create a BucketManager using a given collection instead of the default
+     *
+     * @param bucketName the bucket name
+     * @param collection the collection name
+     * @return a BucketManager instance
+     * @throws NullPointerException when there is null parameter
+     */
+    BucketManager getBucketManager(String bucketName, String collection);
 
     /**
      * Creates a {@link Queue} from bucket name

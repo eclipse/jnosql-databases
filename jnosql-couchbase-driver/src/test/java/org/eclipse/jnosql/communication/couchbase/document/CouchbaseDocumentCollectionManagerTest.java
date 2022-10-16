@@ -65,7 +65,8 @@ public class CouchbaseDocumentCollectionManagerTest {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.delete("person:id");
+
+        keyValueEntityManager.delete("id");
     }
 
     @Test
