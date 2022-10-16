@@ -27,9 +27,9 @@ public enum ManagerFactorySupplier implements Supplier<OrientDBDocumentCollectio
     {
         configuration = new OrientDBDocumentConfiguration();
         configuration.setHost("/tmp/db/");
-        configuration.setUser("admin");
-        configuration.setPassword("admin");
-        configuration.setStorageType(ODatabaseType.MEMORY.toString());
+        configuration.setUser("root");
+        configuration.setPassword("rootpwd");
+        configuration.setStorageType(ODatabaseType.PLOCAL.toString());
     }
 
     @Override
