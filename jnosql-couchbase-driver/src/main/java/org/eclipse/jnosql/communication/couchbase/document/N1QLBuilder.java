@@ -1,0 +1,138 @@
+/*
+ *  Copyright (c) 2022 Otávio Santana and others
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
+ *
+ *   You may elect to redistribute this code under either of these licenses.
+ *
+ *   Contributors:
+ *
+ *   Otavio Santana
+ */
+package org.eclipse.jnosql.communication.couchbase.document;
+
+import com.couchbase.client.java.json.JsonObject;
+import jakarta.nosql.TypeReference;
+import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCondition;
+import jakarta.nosql.document.DocumentQuery;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+final class N1QLBuilder implements Supplier<String> {
+
+    private final DocumentQuery query;
+
+    private final String database;
+
+    N1QLBuilder(DocumentQuery query, String database) {
+        this.query = query;
+        this.database = database;
+    }
+
+    @Override
+    public String get() {
+        StringBuilder n1ql = new StringBuilder();
+        JsonObject params = JsonObject.create();
+
+        n1ql.append("select ");
+        n1ql.append(select()).append(' ');
+        n1ql.append("from '").append(database)
+                .append("'.").append(query.getDocumentCollection());
+
+        query.getCondition().ifPresent(c ->);
+
+
+        return null;
+    }
+
+
+    private void condition(DocumentCondition condition, StringBuilder n1ql, JsonObject params) {
+        Document document = condition.getDocument();
+        switch (condition.getCondition()) {
+            case EQUALS:
+                predicate(n1ql, " = ", document, params);
+                return;
+            case IN:
+                predicate(n1ql, " IN ", document, params);
+                return;
+            case LESSER_THAN:
+                predicate(n1ql, " < ", document, params);
+                return;
+            case GREATER_THAN:
+                predicate(n1ql, " > ", document, params);
+                return;
+            case LESSER_EQUALS_THAN:
+                predicate(n1ql, " <= ", document, params);
+                return;
+            case GREATER_EQUALS_THAN:
+                predicate(n1ql, " >= ", document, params);
+                return;
+            case LIKE:
+                predicate(n1ql, " LIKE ", document, params);
+                return;
+            case NOT:
+                n1ql.append(" NOT ");
+                condition(document.get(DocumentCondition.class), n1ql, params);
+            case OR:
+                appendCondition(n1ql, params, document.get(new TypeReference<>() {
+                }), " OR ");
+            case AND:
+                appendCondition(n1ql, params, document.get(new TypeReference<>() {
+                }), " AND ");
+            case BETWEEN:
+                n1ql.append(" BETWEEN ");
+                ThreadLocalRandom random = ThreadLocalRandom.current();
+                String name = document.getName();
+                Iterable<?> values = (Iterable<?>) document.get();
+                List<Object> values = new ArrayList<>();
+                values.forEach();
+
+                String param = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
+                String param2 = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
+                n1ql.append(param).append(" AND ").append(param2);
+
+            default:
+                throw new UnsupportedOperationException("There is not support condition for " + condition.getCondition());
+        }
+    }
+
+    private void appendCondition(StringBuilder n1ql, JsonObject params,
+                                 List<DocumentCondition> conditions,
+                                 String condition) {
+        for (DocumentCondition documentCondition : conditions) {
+            StringBuilder query = new StringBuilder();
+            condition(documentCondition, query, params);
+            n1ql.append(condition).append(query);
+        }
+    }
+
+    private void predicate(StringBuilder n1ql,
+                           String condition,
+                           Document document,
+                           JsonObject params) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        String name = document.getName();
+        Object value = document.get();
+        String param = "$".concat(name).concat("_").concat(Integer.toString(random.nextInt()));
+        n1ql.append(name).append(condition).append(param);
+        params.put(param, value);
+    }
+
+    private String select() {
+        String documents = query.getDocuments().stream()
+                .collect(Collectors.joining(", "));
+        if (documents.isBlank()) {
+            return "*";
+        }
+        return documents;
+    }
+}

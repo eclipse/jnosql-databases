@@ -16,6 +16,7 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.InsertOptions;
@@ -42,9 +43,12 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     private final Bucket bucket;
     private final String database;
 
-    DefaultCouchbaseDocumentCollectionManager(Bucket bucket, String database) {
-        this.bucket = bucket;
+    private final Cluster cluster;
+
+    DefaultCouchbaseDocumentCollectionManager(Cluster cluster, String database) {
+        this.bucket = cluster.bucket(database);
         this.database = database;
+        this.cluster = cluster;
     }
 
     @Override
@@ -110,7 +114,10 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
 
+
+
         Collection collection = bucket.collection(query.getDocumentCollection());
+
 //        QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
 //        if (nonNull(delete.getStatement())) {
 //            ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
@@ -129,6 +136,8 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
+        N1QLBuilder n1QLBuilder = new N1QLBuilder(query, database);
+        String n1ql = n1QLBuilder.get();
 
 //        return Stream.concat(n1qlQueryStream, idsQuery);
         return null;

@@ -38,8 +38,7 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
     @Override
     public CouchbaseDocumentCollectionManager get(String database)  {
         Objects.requireNonNull(database, "database is required");
-        Bucket bucket = cluster.bucket(database);
-        return new DefaultCouchbaseDocumentCollectionManager(bucket, database);
+        return new DefaultCouchbaseDocumentCollectionManager(cluster, database);
     }
 
 
