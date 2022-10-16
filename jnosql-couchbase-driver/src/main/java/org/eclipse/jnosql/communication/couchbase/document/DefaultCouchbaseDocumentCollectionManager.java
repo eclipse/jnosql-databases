@@ -16,15 +16,11 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.JsonDocument;
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.N1qlQuery;
-import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.ParameterizedN1qlQuery;
-import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.InsertOptions;
+import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.search.SearchQuery;
-import com.couchbase.client.java.search.result.SearchQueryResult;
-import com.couchbase.client.java.search.result.SearchQueryRow;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
@@ -58,14 +54,12 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        JsonObject jsonObject = convert(entity);
+        JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        String prefix = getPrefix(id, entity.getName());
-        jsonObject.put(KEY_FIELD, prefix);
-        bucket.upsert(JsonDocument.create(prefix, jsonObject));
-        entity.add(Document.of(ID_FIELD, prefix));
+        Collection collection = bucket.collection(entity.getName());
+        collection.insert(id.get(String.class), json);
         return entity;
     }
 
@@ -73,13 +67,12 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        JsonObject jsonObject = convert(entity);
+        JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        String prefix = getPrefix(id, entity.getName());
-        jsonObject.put(KEY_FIELD, prefix);
-        bucket.upsert(JsonDocument.create(prefix, (int) ttl.getSeconds(), jsonObject));
+        Collection collection = bucket.collection(entity.getName());
+        collection.insert(id.get(String.class), json, InsertOptions.insertOptions().expiry(ttl));
         return entity;
     }
 
@@ -100,7 +93,14 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        return insert(entity);
+        requireNonNull(entity, "entity is required");
+        JsonObject json = convert(entity);
+        Document id = entity.find(ID_FIELD)
+                .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
+
+        Collection collection = bucket.collection(entity.getName());
+        collection.upsert(id.get(String.class), json);
+        return entity;
     }
 
     @Override
@@ -112,11 +112,15 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
     @Override
     public void delete(DocumentDeleteQuery query) {
+        Objects.requireNonNull(query, "query is required");
+
+        Collection collection = bucket.collection(query.getDocumentCollection());
         QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
         if (nonNull(delete.getStatement())) {
             ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
             bucket.query(n1qlQuery);
         }
+
         if (!delete.getKeys().isEmpty()) {
             delete.getKeys()
                     .stream()

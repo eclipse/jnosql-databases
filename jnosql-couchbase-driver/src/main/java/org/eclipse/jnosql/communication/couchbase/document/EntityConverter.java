@@ -16,10 +16,7 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.json.JsonArray;
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.N1qlQueryRow;
+import com.couchbase.client.java.json.JsonObject;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
@@ -71,11 +68,6 @@ final class EntityConverter {
                     String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
                     return DocumentEntity.of(collection, documents);
                 });
-    }
-
-    static String getPrefix(Document document, String collection) {
-        String id = document.get(String.class);
-        return getPrefix(collection, id);
     }
 
     private static List<Document> toDocuments(Map<String, Object> map) {

@@ -15,9 +15,11 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 
-import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
-import org.eclipse.jnosql.communication.couchbase.util.CouchbaseClusterUtil;
+
+import java.util.Objects;
 
 public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
 
@@ -26,19 +28,24 @@ public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollect
     private final String user;
     private final String password;
 
+    private final Cluster cluster;
     CouhbaseDocumentCollectionManagerFactory(String host, String user, String password) {
         this.host = host;
         this.user = user;
         this.password = password;
+        this.cluster = Cluster.connect(host, user, password);
     }
 
     @Override
-    public CouchbaseDocumentCollectionManager get(String database) throws UnsupportedOperationException, NullPointerException {
-        return new DefaultCouchbaseDocumentCollectionManager(authenticate.openBucket(database), database);
+    public CouchbaseDocumentCollectionManager get(String database)  {
+        Objects.requireNonNull(database, "database is required");
+        Bucket bucket = cluster.bucket(database);
+        return new DefaultCouchbaseDocumentCollectionManager(bucket, database);
     }
 
 
     @Override
     public void close() {
+        cluster.close();
     }
 }
