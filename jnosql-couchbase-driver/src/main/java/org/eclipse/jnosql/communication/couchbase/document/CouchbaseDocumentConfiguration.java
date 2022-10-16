@@ -53,7 +53,7 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
 
         String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
         String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
-        List<String> hosts = getHosts(settings);
+        String host = getHost(settings);
 
         return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }

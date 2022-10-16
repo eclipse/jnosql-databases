@@ -35,7 +35,7 @@ public abstract class CouchbaseConfiguration {
 
     private static final String FILE_CONFIGURATION = "couchbase.properties";
 
-    protected final List<String> nodes = new ArrayList<>();
+    protected String connection;
 
     protected String user;
 
@@ -69,20 +69,12 @@ public abstract class CouchbaseConfiguration {
                 .map(Object::toString).orElse(null);
     }
 
-    protected List<String> getHosts(Settings settings) {
-        return settings.prefix(asList(CouchbaseConfigurations.HOST.get(), Configurations.HOST.get()))
-                .stream().map(Object::toString).collect(toList());
+    protected String getHost(Settings settings) {
+        return settings.get(asList(Configurations.HOST.get(),
+                        CouchbaseConfigurations.HOST.get()))
+                .map(Object::toString).orElse(null);
     }
 
-    /**
-     * Adds a new node to cluster
-     *
-     * @param node the new node
-     * @throws NullPointerException when the cluster is null
-     */
-    public void add(String node) throws NullPointerException {
-        nodes.add(Objects.requireNonNull(node, "node is required"));
-    }
 
     /**
      * set the user

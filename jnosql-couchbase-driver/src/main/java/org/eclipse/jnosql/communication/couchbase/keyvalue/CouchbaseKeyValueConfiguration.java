@@ -64,7 +64,7 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
         requireNonNull(settings, "settings is required");
         String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
         String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
-        List<String> hosts = getHosts(settings);
+        String host = getHost(settings);
         return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
     }
 }
