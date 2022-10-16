@@ -22,28 +22,23 @@ import org.eclipse.jnosql.communication.couchbase.util.CouchbaseClusterUtil;
 public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
 
 
-    private final CouchbaseCluster couchbaseCluster;
+    private final String host;
     private final String user;
     private final String password;
 
-    CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster couchbaseCluster, String user, String password) {
-        this.couchbaseCluster = couchbaseCluster;
+    CouhbaseDocumentCollectionManagerFactory(String host, String user, String password) {
+        this.host = host;
         this.user = user;
         this.password = password;
     }
 
     @Override
     public CouchbaseDocumentCollectionManager get(String database) throws UnsupportedOperationException, NullPointerException {
-        CouchbaseCluster authenticate = getCouchbaseCluster(database);
         return new DefaultCouchbaseDocumentCollectionManager(authenticate.openBucket(database), database);
     }
 
-    private CouchbaseCluster getCouchbaseCluster(String database) {
-        return CouchbaseClusterUtil.getCouchbaseCluster(database, couchbaseCluster, user, password);
-    }
 
     @Override
     public void close() {
-        couchbaseCluster.disconnect();
     }
 }

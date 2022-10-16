@@ -35,7 +35,7 @@ public abstract class CouchbaseConfiguration {
 
     private static final String FILE_CONFIGURATION = "couchbase.properties";
 
-    protected String connection;
+    protected String host;
 
     protected String user;
 
@@ -51,7 +51,7 @@ public abstract class CouchbaseConfiguration {
     }
 
     protected void update(Settings settings) {
-        getHosts(settings).forEach(this::add);
+        this.host = getHost(settings);
         this.user = getUser(settings);
         this.password = getPassword(settings);
     }
@@ -75,6 +75,16 @@ public abstract class CouchbaseConfiguration {
                 .map(Object::toString).orElse(null);
     }
 
+
+
+    /**
+     * set the host
+     *
+     * @param host the host
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
 
     /**
      * set the user
