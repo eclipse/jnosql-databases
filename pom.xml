@@ -36,6 +36,9 @@
         <url>https://github.com/eclipse/jnosql-diana-driver</url>
     </scm>
 
+    <properties>
+        <testcontainers.version>1.17.5</testcontainers.version>
+    </properties>
 
     <modules>
         <module>jnosql-communication-driver-commons</module>
