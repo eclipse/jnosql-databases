@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -48,7 +50,8 @@ public class DefaultCouchbaseBucketManagerFactoryTest {
 
     @Test
     public void shouldReturnList() {
-        Assertions.assertNotNull(factory.getList("jnosql", String.class));
+        List<String> names = factory.getList("jnosql", String.class);
+        Assertions.assertNotNull(names);
     }
 
     @Test
