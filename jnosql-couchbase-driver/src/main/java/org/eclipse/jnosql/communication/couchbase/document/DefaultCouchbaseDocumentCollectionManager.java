@@ -20,6 +20,8 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.InsertOptions;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.search.SearchQuery;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
@@ -27,6 +29,7 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -115,7 +118,6 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         Objects.requireNonNull(query, "query is required");
 
 
-
         Collection collection = bucket.collection(query.getDocumentCollection());
 
 //        QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
@@ -137,10 +139,17 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         N1QLBuilder n1QLBuilder = new N1QLBuilder(query, database);
-        String n1ql = n1QLBuilder.get();
+        N1QLQuery n1QLQuery = n1QLBuilder.get();
 
-//        return Stream.concat(n1qlQueryStream, idsQuery);
-        return null;
+        QueryResult result;
+        if (n1QLQuery.isEmpty()) {
+            result = cluster.query(n1QLQuery.getQuery(), QueryOptions
+                    .queryOptions().parameters(n1QLQuery.getParams()));
+        } else {
+            result = cluster.query(n1QLQuery.getQuery());
+        }
+        List<JsonObject> jsons = result.rowsAsObject();
+        return EntityConverter.convert(jsons,database);
     }
 
     @Override

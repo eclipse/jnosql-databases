@@ -25,7 +25,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
@@ -65,6 +69,22 @@ final class EntityConverter {
 //                    return DocumentEntity.of(collection, documents);
 //                });
 //    }
+
+    static Stream<DocumentEntity> convert(List<JsonObject> result, String database) {
+        return
+                result.stream()
+                        .map(JsonObject::toMap)
+                        .map(m -> m.get(database))
+                        .filter(Objects::nonNull)
+                        .filter(Map.class::isInstance)
+                        .map(m -> (Map<String, Object>) m)
+                        .map(map -> {
+                            List<Document> documents = toDocuments(map);
+                            Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
+                            String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
+                            return DocumentEntity.of(collection, documents);
+                        });
+    }
 
     private static List<Document> toDocuments(Map<String, Object> map) {
         List<Document> documents = new ArrayList<>();
