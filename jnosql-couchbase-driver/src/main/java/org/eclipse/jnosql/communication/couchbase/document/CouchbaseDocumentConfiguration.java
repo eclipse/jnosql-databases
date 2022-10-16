@@ -15,14 +15,12 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 
-import com.couchbase.client.java.CouchbaseCluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfigurations;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,7 +39,7 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
 
     @Override
     public CouhbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
-        return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(nodes), user, password);
+        return new CouhbaseDocumentCollectionManagerFactory(host, user, password);
     }
 
     @Override
@@ -55,7 +53,7 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
         String host = getHost(settings);
 
-        return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(hosts), user, password);
+        return new CouhbaseDocumentCollectionManagerFactory(host, user, password);
     }
 
 }
