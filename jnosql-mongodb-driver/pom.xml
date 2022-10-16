@@ -27,7 +27,7 @@
     <description>The Eclipse JNoSQL communication layer implementation to MongoDB</description>
 
     <properties>
-        <monbodb.driver>4.6.0</monbodb.driver>
+        <monbodb.driver>4.7.2</monbodb.driver>
     </properties>
     <dependencies>
         <dependency>
