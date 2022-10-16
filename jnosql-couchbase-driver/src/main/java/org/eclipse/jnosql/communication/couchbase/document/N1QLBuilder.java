@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-final class N1QLBuilder implements Supplier<String> {
+final class N1QLBuilder implements Supplier<N1QLQuery> {
 
     private final DocumentQuery query;
 
@@ -38,7 +38,7 @@ final class N1QLBuilder implements Supplier<String> {
     }
 
     @Override
-    public String get() {
+    public N1QLQuery get() {
         StringBuilder n1ql = new StringBuilder();
         JsonObject params = JsonObject.create();
 
@@ -49,8 +49,14 @@ final class N1QLBuilder implements Supplier<String> {
 
         query.getCondition().ifPresent(c -> condition(c, n1ql, params));
 
+        if (query.getLimit() > 0) {
+            n1ql.append(" LIMIT ").append(query.getLimit());
+        }
 
-        return null;
+        if (query.getSkip() > 0) {
+            n1ql.append(" OFFSET ").append(query.getSkip());
+        }
+        return N1QLQuery.of(n1ql, params);
     }
 
 
