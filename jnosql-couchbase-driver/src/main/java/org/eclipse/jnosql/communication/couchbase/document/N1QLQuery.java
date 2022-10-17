@@ -46,8 +46,16 @@ final class N1QLQuery {
         return Collections.unmodifiableList(ids);
     }
 
-    public boolean isEmpty() {
+    public boolean hasParameter() {
         return this.params.isEmpty();
+    }
+
+    public boolean hasOnlyIds() {
+        return hasIds() && hasParameter();
+    }
+
+    public boolean hasIds() {
+        return !this.ids.isEmpty();
     }
 
     @Override

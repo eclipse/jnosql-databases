@@ -142,7 +142,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
         N1QLQuery n1QLQuery = n1QLBuilder.get();
 
         QueryResult result;
-        if (n1QLQuery.isEmpty()) {
+        if (n1QLQuery.hasParameter()) {
             result = cluster.query(n1QLQuery.getQuery());
         } else {
             result = cluster.query(n1QLQuery.getQuery(), QueryOptions

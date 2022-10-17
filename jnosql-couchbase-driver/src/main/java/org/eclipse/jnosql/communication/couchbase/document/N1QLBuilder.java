@@ -62,7 +62,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         if (query.getSkip() > 0) {
             n1ql.append(" OFFSET ").append(query.getSkip());
         }
-        return N1QLQuery.of(n1ql, params);
+        return N1QLQuery.of(n1ql, params, ids);
     }
 
 
