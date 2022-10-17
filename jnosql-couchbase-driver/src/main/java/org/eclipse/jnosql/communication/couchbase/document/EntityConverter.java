@@ -52,6 +52,13 @@ final class EntityConverter {
                         .map(JsonObject::toMap)
                         .filter(Objects::nonNull)
                         .map(map -> {
+                            if (map.size() == 1) {
+                                Map.Entry<String, Object> entry = map.entrySet().stream().findFirst().get();
+                                if (entry.getValue() instanceof Map) {
+                                    List<Document> documents = toDocuments((Map<String, Object>) entry.getValue());
+                                    return DocumentEntity.of(entry.getKey(), documents);
+                                }
+                            }
                             List<Document> documents = toDocuments(map);
                             Optional<Document> entityDocument = documents.stream().filter(d -> COLLECTION_FIELD.equals(d.getName())).findFirst();
                             String collection = entityDocument.map(d -> d.get(String.class)).orElse(database);
