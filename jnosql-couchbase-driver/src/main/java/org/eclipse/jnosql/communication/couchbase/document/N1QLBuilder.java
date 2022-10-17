@@ -151,7 +151,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         String name = '\'' + document.getName() + '\'';
         Object value = document.get();
-        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt()));
+        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         n1ql.append(name).append(condition).append(param);
         params.put(param, value);
     }

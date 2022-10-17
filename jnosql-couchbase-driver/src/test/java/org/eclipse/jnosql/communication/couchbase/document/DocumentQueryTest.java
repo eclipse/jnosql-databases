@@ -88,7 +88,7 @@ public class DocumentQueryTest {
         try {
             entityManager.insert(Arrays.asList(entity, entity2, entity3, entity4));
         } catch (DocumentExistsException exp) {
-            
+
         }
 
     }
@@ -124,7 +124,7 @@ public class DocumentQueryTest {
                 .skip(1L)
                 .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        assertEquals(2, entities.size());
+        assertEquals(3, entities.size());
 
     }
 
@@ -142,7 +142,7 @@ public class DocumentQueryTest {
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        assertEquals(1, entities.size());
+        assertEquals(2, entities.size());
 
     }
 
@@ -164,13 +164,12 @@ public class DocumentQueryTest {
     @Test
     public void shouldFindDocumentByName() {
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4"),
-                Document.of("name", "name3"), Document.of("_key", "person:id4")));
+                Document.of("name", "name"), Document.of("_key", "person:id4")));
 
         Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
     }
 
     @Test
@@ -226,7 +225,6 @@ public class DocumentQueryTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
     }
 
 }
