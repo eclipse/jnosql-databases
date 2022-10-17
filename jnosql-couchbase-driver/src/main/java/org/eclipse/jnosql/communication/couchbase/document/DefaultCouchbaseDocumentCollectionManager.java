@@ -15,10 +15,12 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 
+import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.InsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
@@ -29,8 +31,11 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -43,6 +48,9 @@ import static org.eclipse.jnosql.communication.couchbase.document.EntityConverte
  * The default implementation of {@link CouchbaseDocumentCollectionManager}
  */
 class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentCollectionManager {
+
+    private static final Logger LOGGER = Logger.getLogger(DefaultCouchbaseDocumentCollectionManager.class.getName());
+
     private final Bucket bucket;
     private final String database;
 
@@ -138,17 +146,31 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
-        N1QLBuilder n1QLBuilder = new N1QLBuilder(query, database);
-        N1QLQuery n1QLQuery = n1QLBuilder.get();
+        N1QLQuery n1QLQuery = new N1QLBuilder(query, database).get();
+        List<JsonObject> jsons = new ArrayList<>();
 
-        QueryResult result;
-        if (n1QLQuery.hasParameter()) {
-            result = cluster.query(n1QLQuery.getQuery());
-        } else {
-            result = cluster.query(n1QLQuery.getQuery(), QueryOptions
-                    .queryOptions().parameters(n1QLQuery.getParams()));
+        if (n1QLQuery.hasIds()) {
+            Collection collection = bucket.collection(query.getDocumentCollection());
+            for (String id : n1QLQuery.getIds()) {
+                try {
+                    GetResult result = collection.get(id);
+                    jsons.add(result.contentAsObject());
+                } catch (DocumentNotFoundException exp) {
+                    LOGGER.log(Level.FINEST, "The id was not found: " + id);
+                }
+            }
         }
-        List<JsonObject> jsons = result.rowsAsObject();
+
+        if (!n1QLQuery.hasOnlyIds()) {
+            QueryResult result;
+            if (n1QLQuery.hasParameter()) {
+                result = cluster.query(n1QLQuery.getQuery());
+            } else {
+                result = cluster.query(n1QLQuery.getQuery(), QueryOptions
+                        .queryOptions().parameters(n1QLQuery.getParams()));
+            }
+            jsons.addAll(result.rowsAsObject());
+        }
         return EntityConverter.convert(jsons, database);
     }
 
@@ -162,18 +184,18 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     public Stream<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
         requireNonNull(params, "params is required");
-//        N1qlQueryResult result = bucket.query(N1qlQuery.parameterized(n1qlQuery, params));
-//        return convert(result, database);
-        return null;
+
+        QueryResult query = cluster.query(n1qlQuery, QueryOptions
+                .queryOptions().parameters(params));
+        return EntityConverter.convert(query.rowsAsObject(), database);
     }
 
 
     @Override
     public Stream<DocumentEntity> n1qlQuery(String n1qlQuery) throws NullPointerException {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
-//        N1qlQueryResult result = bucket.query(N1qlQuery.simple(n1qlQuery));
-//        return convert(result, database);
-        return null;
+        QueryResult query = cluster.query(n1qlQuery);
+        return EntityConverter.convert(query.rowsAsObject(), database);
     }
 
 
