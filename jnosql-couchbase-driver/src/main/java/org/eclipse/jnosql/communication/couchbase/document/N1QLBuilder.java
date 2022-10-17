@@ -116,14 +116,18 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
             case NOT:
                 n1ql.append(" NOT ");
                 condition(document.get(DocumentCondition.class), n1ql, params, ids);
+                return;
             case OR:
                 appendCondition(n1ql, params, document.get(new TypeReference<>() {
                 }), " OR ", ids);
+                return;
             case AND:
                 appendCondition(n1ql, params, document.get(new TypeReference<>() {
                 }), " AND ", ids);
+                return;
             case BETWEEN:
                 predicateBetween(n1ql, params, document);
+                return;
             default:
                 throw new UnsupportedOperationException("There is not support condition for " + condition.getCondition());
         }
