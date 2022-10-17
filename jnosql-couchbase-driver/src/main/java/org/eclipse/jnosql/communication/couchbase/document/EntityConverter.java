@@ -37,51 +37,24 @@ import static java.util.stream.StreamSupport.stream;
 final class EntityConverter {
 
     static final String ID_FIELD = "_id";
-    static final String KEY_FIELD = "_key";
+
+    static final String COLLECTION_FIELD = "_collection";
     static final String SPLIT_KEY = ":";
     static final char SPLIT_KEY_CHAR = ':';
 
     private EntityConverter() {
     }
 
-//    static Stream<DocumentEntity> convert(Stream<String> keys, Bucket bucket) {
-//        return keys
-//                .map(bucket::get)
-//                .filter(Objects::nonNull)
-//                .map(j -> {
-//                    List<Document> documents = toDocuments(j.content().toMap());
-//                    return DocumentEntity.of(j.id().split(SPLIT_KEY)[0], documents);
-//                });
-//    }
-
-//    static Stream<DocumentEntity> convert(N1qlQueryResult result, String database) {
-//        return StreamSupport.stream(result.spliterator(), false)
-//                .map(N1qlQueryRow::value)
-//                .map(JsonObject::toMap)
-//                .map(m -> m.get(database))
-//                .filter(Objects::nonNull)
-//                .filter(Map.class::isInstance)
-//                .map(m -> (Map<String, Object>) m)
-//                .map(map -> {
-//                    List<Document> documents = toDocuments(map);
-//                    Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
-//                    String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
-//                    return DocumentEntity.of(collection, documents);
-//                });
-//    }
 
     static Stream<DocumentEntity> convert(List<JsonObject> result, String database) {
         return
                 result.stream()
                         .map(JsonObject::toMap)
-                        .map(m -> m.get(database))
                         .filter(Objects::nonNull)
-                        .filter(Map.class::isInstance)
-                        .map(m -> (Map<String, Object>) m)
                         .map(map -> {
                             List<Document> documents = toDocuments(map);
-                            Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
-                            String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
+                            Optional<Document> entityDocument = documents.stream().filter(d -> COLLECTION_FIELD.equals(d.getName())).findFirst();
+                            String collection = entityDocument.map(d -> d.get(String.class)).orElse(database);
                             return DocumentEntity.of(collection, documents);
                         });
     }

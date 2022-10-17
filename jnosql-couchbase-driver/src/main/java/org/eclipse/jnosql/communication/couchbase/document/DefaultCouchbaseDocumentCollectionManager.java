@@ -41,6 +41,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
+import static org.eclipse.jnosql.communication.couchbase.document.EntityConverter.COLLECTION_FIELD;
 import static org.eclipse.jnosql.communication.couchbase.document.EntityConverter.ID_FIELD;
 import static org.eclipse.jnosql.communication.couchbase.document.EntityConverter.convert;
 
@@ -65,6 +66,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
+        entity.add(COLLECTION_FIELD, entity.getName());
         JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
@@ -105,6 +107,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
+        entity.add(COLLECTION_FIELD, entity.getName());
         JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
