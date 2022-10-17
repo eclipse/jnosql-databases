@@ -34,9 +34,12 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
 
     private final String database;
 
-    N1QLBuilder(DocumentQuery query, String database) {
+    private final String scope;
+
+    private N1QLBuilder(DocumentQuery query, String database, String scope) {
         this.query = query;
         this.database = database;
+        this.scope = scope;
     }
 
     @Override
@@ -47,8 +50,10 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
 
         n1ql.append("select ");
         n1ql.append(select()).append(' ');
-        n1ql.append("from '").append(database)
-                .append("'.").append(query.getDocumentCollection());
+        n1ql.append("from ")
+                .append(database).append(".")
+                .append(scope).append(".")
+                .append(query.getDocumentCollection());
 
         query.getCondition().ifPresent(c -> {
             n1ql.append(" WHERE ");
@@ -158,5 +163,9 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
             return "*";
         }
         return documents;
+    }
+
+    public static N1QLBuilder of(DocumentQuery query, String database, String scope){
+        return new N1QLBuilder(query, database, scope);
     }
 }

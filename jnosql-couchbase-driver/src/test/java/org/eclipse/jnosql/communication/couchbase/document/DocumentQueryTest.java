@@ -15,6 +15,8 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 
+import com.couchbase.client.core.error.DocumentExistsException;
+import com.couchbase.client.core.error.DocumentNotFoundException;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
@@ -24,7 +26,9 @@ import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -52,18 +56,22 @@ public class DocumentQueryTest {
     }
 
     @AfterAll
-    public static void afterClass() {
+    public static void afterEach() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.delete("person:id");
-        keyValueEntityManager.delete("person:id2");
-        keyValueEntityManager.delete("person:id3");
-        keyValueEntityManager.delete("person:id4");
+        try {
+            keyValueEntityManager.delete("id");
+            keyValueEntityManager.delete("id2");
+            keyValueEntityManager.delete("id3");
+            keyValueEntityManager.delete("id4");
+        } catch (DocumentNotFoundException exp) {
+
+        }
     }
 
     @BeforeAll
-    public static void beforeClass() throws InterruptedException {
+    public static void beforeEach() {
         configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
         CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
@@ -77,8 +85,11 @@ public class DocumentQueryTest {
         DocumentEntity entity4 = DocumentEntity.of("person", asList(Document.of("_id", "id4")
                 , Document.of("name", "name3")));
 
-        entityManager.insert(Arrays.asList(entity, entity2, entity3, entity4));
-        Thread.sleep(2_000L);
+        try {
+            entityManager.insert(Arrays.asList(entity, entity2, entity3, entity4));
+        } catch (DocumentExistsException exp) {
+            
+        }
 
     }
 

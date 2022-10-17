@@ -149,7 +149,7 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
-        N1QLQuery n1QLQuery = new N1QLBuilder(query, database).get();
+        N1QLQuery n1QLQuery = N1QLBuilder.of(query, database, bucket.defaultScope().name()).get();
         List<JsonObject> jsons = new ArrayList<>();
 
         if (n1QLQuery.hasIds()) {
