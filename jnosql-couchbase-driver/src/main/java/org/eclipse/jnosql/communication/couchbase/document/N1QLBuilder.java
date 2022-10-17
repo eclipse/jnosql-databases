@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonObject;
+import jakarta.nosql.Sort;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
@@ -67,6 +68,15 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         if (query.getSkip() > 0) {
             n1ql.append(" OFFSET ").append(query.getSkip());
         }
+
+        if (!query.getSorts().isEmpty()) {
+            n1ql.append(" ORDER BY ");
+            String order = query.getSorts().stream()
+                    .map(s -> s.getName() + " " + s.getType().name())
+                    .collect(Collectors.joining(", "));
+            n1ql.append(order);
+        }
+
         return N1QLQuery.of(n1ql, params, ids);
     }
 
@@ -83,7 +93,8 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                 return;
             case IN:
                 if (document.getName().equals(ID_FIELD)) {
-                    ids.addAll(document.get(new TypeReference<List<String>>() {}));
+                    ids.addAll(document.get(new TypeReference<List<String>>() {
+                    }));
                 } else {
                     predicate(n1ql, " IN ", document, params);
                 }
@@ -165,7 +176,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         return documents;
     }
 
-    public static N1QLBuilder of(DocumentQuery query, String database, String scope){
+    public static N1QLBuilder of(DocumentQuery query, String database, String scope) {
         return new N1QLBuilder(query, database, scope);
     }
 }

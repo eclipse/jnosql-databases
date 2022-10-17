@@ -174,17 +174,14 @@ public class DocumentQueryTest {
 
     @Test
     public void shouldFindDocumentByNameSortAsc() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
-                , Document.of("name", "name3"), Document.of("_key", "person:id4")));
-
-        Optional<Document> name = entity.find("name");
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .orderBy("name").asc()
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
+        List<String> result = entities.stream()
+                .flatMap(e -> e.getDocuments().stream())
                 .filter(d -> "name".equals(d.getName()))
                 .map(d -> d.get(String.class))
                 .collect(Collectors.toList());
