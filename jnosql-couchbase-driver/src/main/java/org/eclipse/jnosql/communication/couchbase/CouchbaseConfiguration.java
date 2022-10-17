@@ -20,13 +20,9 @@ import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 /**
  * The configuration base to all configuration implementation on couchbase

@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.nosql.Sort;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;

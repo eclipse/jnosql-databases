@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 
-import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
 

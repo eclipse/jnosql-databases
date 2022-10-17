@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
@@ -156,11 +155,9 @@ final class EntityConverter {
         return e -> toJsonObject(subJson).accept((Document) e);
     }
 
-
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(jakarta.nosql.document.Document.class::isInstance);
     }
-
 
 }
