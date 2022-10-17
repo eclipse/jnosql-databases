@@ -26,6 +26,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static org.eclipse.jnosql.communication.couchbase.document.EntityConverter.ID_FIELD;
+
 final class N1QLBuilder implements Supplier<N1QLQuery> {
 
     private final DocumentQuery query;
@@ -50,7 +52,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
 
         query.getCondition().ifPresent(c -> {
             n1ql.append(" WHERE ");
-            condition(c, n1ql, params);
+            condition(c, n1ql, params, ids);
         });
 
         if (query.getLimit() > 0) {
@@ -64,14 +66,22 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     }
 
 
-    private void condition(DocumentCondition condition, StringBuilder n1ql, JsonObject params) {
+    private void condition(DocumentCondition condition, StringBuilder n1ql, JsonObject params, List<String> ids) {
         Document document = condition.getDocument();
         switch (condition.getCondition()) {
             case EQUALS:
-                predicate(n1ql, " = ", document, params);
+                if (document.getName().equals(ID_FIELD)) {
+                    ids.add(document.get(String.class));
+                } else {
+                    predicate(n1ql, " = ", document, params);
+                }
                 return;
             case IN:
-                predicate(n1ql, " IN ", document, params);
+                if (document.getName().equals(ID_FIELD)) {
+                    ids.addAll(document.get(new TypeReference<List<String>>() {}));
+                } else {
+                    predicate(n1ql, " IN ", document, params);
+                }
                 return;
             case LESSER_THAN:
                 predicate(n1ql, " < ", document, params);
@@ -90,13 +100,13 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                 return;
             case NOT:
                 n1ql.append(" NOT ");
-                condition(document.get(DocumentCondition.class), n1ql, params);
+                condition(document.get(DocumentCondition.class), n1ql, params, ids);
             case OR:
                 appendCondition(n1ql, params, document.get(new TypeReference<>() {
-                }), " OR ");
+                }), " OR ", ids);
             case AND:
                 appendCondition(n1ql, params, document.get(new TypeReference<>() {
-                }), " AND ");
+                }), " AND ", ids);
             case BETWEEN:
                 predicateBetween(n1ql, params, document);
             default:
@@ -107,24 +117,24 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     private void predicateBetween(StringBuilder n1ql, JsonObject params, Document document) {
         n1ql.append(" BETWEEN ");
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = '\''+ document.getName() + '\'';
+        String name = '\'' + document.getName() + '\'';
 
         List<Object> values = new ArrayList<>();
         ((Iterable<?>) document.get()).forEach(values::add);
 
         String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         String param2 = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
-        n1ql.append(param).append(" AND ").append(param2);
+        n1ql.append(name).append(" ").append(param).append(" AND ").append(param2);
         params.put(param, values.get(0));
         params.put(param2, values.get(1));
     }
 
     private void appendCondition(StringBuilder n1ql, JsonObject params,
                                  List<DocumentCondition> conditions,
-                                 String condition) {
+                                 String condition, List<String> ids) {
         for (DocumentCondition documentCondition : conditions) {
             StringBuilder query = new StringBuilder();
-            condition(documentCondition, query, params);
+            condition(documentCondition, query, params, ids);
             n1ql.append(condition).append(query);
         }
     }
