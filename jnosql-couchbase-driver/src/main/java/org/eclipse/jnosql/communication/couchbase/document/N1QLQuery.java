@@ -16,6 +16,8 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonObject;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 final class N1QLQuery {
@@ -24,9 +26,12 @@ final class N1QLQuery {
 
     private final JsonObject params;
 
-    N1QLQuery(String query, JsonObject params) {
+    private final List<String> ids;
+
+    N1QLQuery(String query, JsonObject params, List<String> ids) {
         this.query = query;
         this.params = params;
+        this.ids = ids;
     }
 
     public String getQuery() {
@@ -35,6 +40,10 @@ final class N1QLQuery {
 
     public JsonObject getParams() {
         return params;
+    }
+
+    public List<String> getIds() {
+        return Collections.unmodifiableList(ids);
     }
 
     public boolean isEmpty() {
@@ -50,12 +59,13 @@ final class N1QLQuery {
             return false;
         }
         N1QLQuery n1QLQuery = (N1QLQuery) o;
-        return Objects.equals(query, n1QLQuery.query) && Objects.equals(params, n1QLQuery.params);
+        return Objects.equals(query, n1QLQuery.query) && Objects.equals(params, n1QLQuery.params)
+                && Objects.equals(ids, n1QLQuery.ids);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(query, params);
+        return Objects.hash(query, params, ids);
     }
 
     @Override
@@ -63,10 +73,11 @@ final class N1QLQuery {
         return "N1QLQuery{" +
                 "query='" + query + '\'' +
                 ", params=" + params +
+                ", ids=" + ids +
                 '}';
     }
 
-    static N1QLQuery of(StringBuilder query, JsonObject params) {
-        return new N1QLQuery(query.toString(), params);
+    static N1QLQuery of(StringBuilder query, JsonObject params, List<String> ids) {
+        return new N1QLQuery(query.toString(), params, ids);
     }
 }
