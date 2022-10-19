@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
+import com.couchbase.client.core.error.BucketNotFoundException;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.manager.bucket.BucketManager;
 import com.couchbase.client.java.manager.bucket.BucketSettings;
@@ -24,6 +25,7 @@ import org.testcontainers.couchbase.BucketDefinition;
 import org.testcontainers.couchbase.CouchbaseContainer;
 
 import java.util.Map;
+import java.util.Objects;
 
 public enum DatabaseContainer {
 
@@ -33,7 +35,7 @@ public enum DatabaseContainer {
 
     DatabaseContainer() {
         //TODO create couchbase container to run all tests instead of run an outside container
-      BucketDefinition bucketDefinition = new BucketDefinition(CouchbaseUtil.BUCKET_NAME)
+        BucketDefinition bucketDefinition = new BucketDefinition(CouchbaseUtil.BUCKET_NAME)
                 .withPrimaryIndex(true)
                 .withReplicas(0)
                 .withFlushEnabled(true);
