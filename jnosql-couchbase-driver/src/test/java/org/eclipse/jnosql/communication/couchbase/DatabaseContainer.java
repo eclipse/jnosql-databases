@@ -33,14 +33,15 @@ public enum DatabaseContainer {
 
     DatabaseContainer() {
         //TODO create couchbase container to run all tests instead of run an outside container
-     /*   BucketDefinition bucketDefinition = new BucketDefinition(CouchbaseUtil.BUCKET_NAME)
+      BucketDefinition bucketDefinition = new BucketDefinition(CouchbaseUtil.BUCKET_NAME)
                 .withPrimaryIndex(true)
                 .withReplicas(0)
                 .withFlushEnabled(true);
         container = new CouchbaseContainer("couchbase/server")
                 .withBucket(bucketDefinition)
                 .withExposedPorts(8091, 8092, 8093, 8094, 11207, 11210, 11211, 18091, 18092, 18093);
-        container.start();*/
+        container.start();
+
     }
 
     public CouchbaseDocumentConfiguration getDocumentConfiguration() {
