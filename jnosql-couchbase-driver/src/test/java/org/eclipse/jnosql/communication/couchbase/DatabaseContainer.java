@@ -14,26 +14,10 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
-import com.couchbase.client.core.error.BucketNotFoundException;
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.Cluster;
-import com.couchbase.client.java.manager.bucket.BucketManager;
-import com.couchbase.client.java.manager.bucket.BucketSettings;
-import com.couchbase.client.java.manager.bucket.BucketType;
-import com.couchbase.client.java.manager.collection.CollectionManager;
-import com.couchbase.client.java.manager.collection.CollectionSpec;
-import com.couchbase.client.java.manager.collection.ScopeSpec;
-import com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions;
-import com.couchbase.client.java.manager.query.QueryIndexManager;
 import org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentConfiguration;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.testcontainers.couchbase.BucketDefinition;
 import org.testcontainers.couchbase.CouchbaseContainer;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public enum DatabaseContainer {
 
@@ -52,31 +36,6 @@ public enum DatabaseContainer {
                 .withExposedPorts(8091, 8092, 8093, 8094, 11207, 11210, 11211, 18091, 18092, 18093);
         container.start();
 
-        Cluster cluster = Cluster.connect("couchbase://localhost", container.getUsername(),
-                container.getPassword());
-
-        String database = "jnosql";
-        String scope = "";
-        List<String> collections = Arrays.asList("person", "AppointmentBook", "jnosql");
-
-        BucketManager buckets = cluster.buckets();
-        buckets.getBucket(database);
-        buckets.createBucket(BucketSettings.create(database));
-        Bucket bucket = cluster.bucket(database);
-
-        CollectionManager manager = bucket.collections();
-        List<ScopeSpec> scopes = manager.getAllScopes();
-        String finalScope = scope == null ? bucket.defaultScope().name() : scope;
-        ScopeSpec spec = scopes.stream().filter(s -> finalScope.equals(s.name()))
-                .findFirst().get();
-        for (String collection : collections) {
-            if (spec.collections().stream().noneMatch(c -> collection.equals(c.name()))) {
-                manager.createCollection(CollectionSpec.create(collection, finalScope));
-                QueryIndexManager queryIndexManager = cluster.queryIndexes();
-                queryIndexManager.createPrimaryIndex(database, CreatePrimaryQueryIndexOptions
-                        .createPrimaryQueryIndexOptions().collectionName(collection));
-            }
-        }
     }
 
     public CouchbaseDocumentConfiguration getDocumentConfiguration() {
