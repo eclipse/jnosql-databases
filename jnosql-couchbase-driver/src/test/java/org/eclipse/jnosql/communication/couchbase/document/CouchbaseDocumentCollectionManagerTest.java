@@ -216,7 +216,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     public void shouldRunN1Ql() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql").collect(Collectors.toList());
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._default.person").collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -225,9 +225,10 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         JsonObject params = JsonObject.create().put("name", "Poliana");
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql where name = $name",
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._default.person where name = $name",
                 params).collect(Collectors.toList());
         assertNotNull(entities);
+        assertFalse(entities.isEmpty());
     }
 
 
