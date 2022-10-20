@@ -43,6 +43,9 @@ CouchbaseDocumentCollectionManager entityManager = managerFactory.get(BUCKET_NAM
  DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id"), Document.of("name", "name")));
 
 entityManager.insert(entity);
+
+List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._default.person").collect(Collectors.toList());
+
 ----
 
 == Adding dependencies
