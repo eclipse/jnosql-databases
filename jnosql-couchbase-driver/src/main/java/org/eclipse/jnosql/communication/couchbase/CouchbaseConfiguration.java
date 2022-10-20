@@ -129,4 +129,15 @@ public abstract class CouchbaseConfiguration {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    /**
+     * add collection in the settings
+     *
+     * @param collection the collection
+     * @throws NullPointerException when collection is null
+     */
+    public void addCollection(String collection) {
+        java.util.Objects.requireNonNull(collection, "collection is required");
+        this.collections.add(collection);
+    }
 }
