@@ -41,11 +41,11 @@ public abstract class CouchbaseConfiguration {
 
     protected String password;
 
-    private String scope;
+    protected String scope;
 
-    private List<String> collections = new ArrayList<>();
+    protected List<String> collections = new ArrayList<>();
 
-    private String index;
+    protected String index;
 
     public CouchbaseConfiguration() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
