@@ -23,6 +23,7 @@ import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -139,5 +140,38 @@ public abstract class CouchbaseConfiguration {
     public void addCollection(String collection) {
         java.util.Objects.requireNonNull(collection, "collection is required");
         this.collections.add(collection);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CouchbaseConfiguration that = (CouchbaseConfiguration) o;
+        return Objects.equals(host, that.host) && Objects.equals(user, that.user)
+                && Objects.equals(password, that.password)
+                && Objects.equals(scope, that.scope)
+                && Objects.equals(collections, that.collections)
+                && Objects.equals(index, that.index);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(host, user, password, scope, collections, index);
+    }
+
+    @Override
+    public String toString() {
+        return "CouchbaseConfiguration{" +
+                "host='" + host + '\'' +
+                ", user='" + user + '\'' +
+                ", password='" + "***" + '\'' +
+                ", scope='" + scope + '\'' +
+                ", collections=" + collections +
+                ", index='" + index + '\'' +
+                '}';
     }
 }
