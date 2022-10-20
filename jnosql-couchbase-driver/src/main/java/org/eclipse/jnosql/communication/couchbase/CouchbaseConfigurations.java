@@ -36,13 +36,13 @@ public enum CouchbaseConfigurations implements Supplier<String> {
      */
     PASSWORD("couchbase.password"),
     /**
-     * Define the scope to use at couchbase otherwise it will use the default
+     * Define the scope to use at couchbase otherwise, it will use the default.
      */
     SCOPE("couchbase.scope"),
     /**
-     * couchbase collection split by comma.
-     * At the start-up of a {@link CouchbaseConfiguration}, there is this option to check if these collections exist if not
-     * it will create using the default settings.
+     * couchbase collection split by a comma.
+     * At the start-up of a {@link CouchbaseConfiguration}, there is this option to check if
+     * these collections exist; if not, it will create using the default settings.
      */
     COLLECTIONS("couchbase.collections"),
     /**
