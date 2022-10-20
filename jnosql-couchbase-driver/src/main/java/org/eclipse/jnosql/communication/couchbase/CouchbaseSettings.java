@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Couchbase Configuration.
+ * An immutable structure that has the Couchbase settings.
  */
 public final class CouchbaseSettings {
 

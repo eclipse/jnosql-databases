@@ -142,8 +142,13 @@ public abstract class CouchbaseConfiguration {
         this.collections.add(collection);
     }
 
+    /**
+     * Returns an immutable structure with the Couchbase settings
+     * @return the {@link CouchbaseSettings}
+     */
     public CouchbaseSettings toCouchbaseSettings() {
-        return new CouchbaseSettings(this.host, this.user, this.password, this.scope, this.index, this.collections);
+        return new CouchbaseSettings(this.host, this.user, this.password,
+                this.scope, this.index, this.collections);
     }
 
     @Override
