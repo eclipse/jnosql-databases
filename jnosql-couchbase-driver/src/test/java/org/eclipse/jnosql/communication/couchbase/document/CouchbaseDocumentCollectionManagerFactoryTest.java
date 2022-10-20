@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CouhbaseDocumentCollectionManagerFactoryTest {
+public class CouchbaseDocumentCollectionManagerFactoryTest {
 
     private CouchbaseDocumentConfiguration configuration;
 
