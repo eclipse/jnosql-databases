@@ -162,7 +162,6 @@ public class CouchbaseBucketManagerTest {
 
     @Test
     public void shouldRemoveKey() {
-
         keyValueEntityManager.put(entityOtavio);
         assertTrue(keyValueEntityManager.get(KEY_OTAVIO).isPresent());
         keyValueEntityManager.delete(KEY_OTAVIO);
