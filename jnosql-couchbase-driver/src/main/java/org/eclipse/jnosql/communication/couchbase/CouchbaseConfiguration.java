@@ -138,6 +138,23 @@ public abstract class CouchbaseConfiguration {
         this.password = password;
     }
 
+
+    /**
+     * Set the scope
+     * @param scope the scope
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    /**
+     * Set the collection
+     * @param collection the collection
+     */
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
     /**
      * add collection in the settings
      *
