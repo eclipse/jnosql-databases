@@ -26,9 +26,7 @@ import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -51,7 +49,7 @@ public class DocumentQueryTest {
     private static CouchbaseDocumentConfiguration configuration;
 
     {
-        CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
@@ -73,7 +71,7 @@ public class DocumentQueryTest {
     @BeforeAll
     public static void beforeEach() {
         configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
-        CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
 
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")

@@ -58,7 +58,7 @@ public class CouchbaseDocumentCollectionManagerTest {
 
     {
         CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
-        CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 

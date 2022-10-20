@@ -17,21 +17,18 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.Cluster;
 import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import org.eclipse.jnosql.communication.couchbase.CouchbaseSettings;
 
 import java.util.Objects;
 
-public class CouhbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
+public class CouchbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
 
 
-    private final String host;
-    private final String user;
-    private final String password;
+    private final CouchbaseSettings settings;
     private final Cluster cluster;
-    CouhbaseDocumentCollectionManagerFactory(String host, String user, String password) {
-        this.host = host;
-        this.user = user;
-        this.password = password;
-        this.cluster = Cluster.connect(host, user, password);
+    CouchbaseDocumentCollectionManagerFactory(CouchbaseSettings settings) {
+        this.settings = settings;
+        this.cluster = settings.getCluster();
     }
 
     @Override

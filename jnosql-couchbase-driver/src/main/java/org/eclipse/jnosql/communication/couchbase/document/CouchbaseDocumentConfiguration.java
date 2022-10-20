@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation of {@link DocumentConfiguration}  that returns
- * {@link CouhbaseDocumentCollectionManagerFactory}.
+ * {@link CouchbaseDocumentCollectionManagerFactory}.
  * <p>couchbase.host: to identify the connection</p>
  * <p>couchbase.user: the user</p>
  * <p>couchbase.password: the password</p>
@@ -38,12 +38,12 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         implements DocumentConfiguration {
 
     @Override
-    public CouhbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
-        return new CouhbaseDocumentCollectionManagerFactory(host, user, password);
+    public CouchbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
+        return new CouchbaseDocumentCollectionManagerFactory(host, user, password);
     }
 
     @Override
-    public CouhbaseDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public CouchbaseDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
         Map<String, String> configurations = new HashMap<>();
@@ -53,7 +53,7 @@ public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
         String host = getHost(settings);
 
-        return new CouhbaseDocumentCollectionManagerFactory(host, user, password);
+        return new CouchbaseDocumentCollectionManagerFactory(host, user, password);
     }
 
 }

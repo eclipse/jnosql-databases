@@ -32,7 +32,7 @@ public class CouchbaseDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        CouhbaseDocumentCollectionManagerFactory factory = configuration.get();
+        CouchbaseDocumentCollectionManagerFactory factory = configuration.get();
         assertNotNull(factory.get(CouchbaseUtil.BUCKET_NAME));
     }
 }

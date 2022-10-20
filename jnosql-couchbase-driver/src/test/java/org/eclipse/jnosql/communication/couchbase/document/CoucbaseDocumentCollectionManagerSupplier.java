@@ -25,7 +25,7 @@ public class CoucbaseDocumentCollectionManagerSupplier implements DocumentCollec
     @Override
     public DocumentCollectionManager get() {
         CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
-        CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         return managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
