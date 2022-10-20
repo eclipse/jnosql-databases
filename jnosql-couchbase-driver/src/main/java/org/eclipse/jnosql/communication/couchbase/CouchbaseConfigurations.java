@@ -16,10 +16,24 @@ package org.eclipse.jnosql.communication.couchbase;
 
 import java.util.function.Supplier;
 
+/**
+ * This class is a {@link Supplier} of properties settings that to set up on couchbase.
+ */
 public enum CouchbaseConfigurations implements Supplier<String> {
 
+    /**
+     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#HOST} alias
+     */
     HOST("couchbase.host"),
+
+    /**
+     * Define the user at the database. It is a {@link jakarta.nosql.Configurations#USER} alias
+     */
     USER("couchbase.user"),
+
+    /**
+     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#PASSWORD} alias
+     */
     PASSWORD("couchbase.password"),
     SCOPE(""),
     COLLECTIONS(""),
