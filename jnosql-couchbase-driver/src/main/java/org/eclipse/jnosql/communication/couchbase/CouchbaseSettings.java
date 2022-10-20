@@ -14,7 +14,16 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
+import com.couchbase.client.core.error.BucketNotFoundException;
+import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.manager.bucket.BucketManager;
+import com.couchbase.client.java.manager.bucket.BucketSettings;
+import com.couchbase.client.java.manager.collection.CollectionManager;
+import com.couchbase.client.java.manager.collection.CollectionSpec;
+import com.couchbase.client.java.manager.collection.ScopeSpec;
+import com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions;
+import com.couchbase.client.java.manager.query.QueryIndexManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -127,6 +136,42 @@ public final class CouchbaseSettings {
      */
     public Cluster getCluster() {
         return Cluster.connect(host, user, password);
+    }
+
+    /**
+     * Create and setup collection, database and index from te settings
+     *
+     * @param database the database
+     * @throws NullPointerException when parameter is null
+     */
+    public void setUp(String database) {
+        Objects.requireNonNull(database, "database is required");
+
+        Cluster cluster = getCluster();
+
+        BucketManager buckets = cluster.buckets();
+        try {
+            buckets.getBucket(database);
+        } catch (BucketNotFoundException exp) {
+            buckets.createBucket(BucketSettings.create(database));
+        }
+        Bucket bucket = cluster.bucket(database);
+
+        CollectionManager manager = bucket.collections();
+        List<ScopeSpec> scopes = manager.getAllScopes();
+        String finalScope = getScope().orElseGet(() -> bucket.defaultScope().name());
+        ScopeSpec spec = scopes.stream().filter(s -> finalScope.equals(s.name()))
+                .findFirst().get();
+        for (String collection : collections) {
+            if (spec.collections().stream().noneMatch(c -> collection.equals(c.name()))) {
+                manager.createCollection(CollectionSpec.create(collection, finalScope));
+            }
+        }
+        if (index != null) {
+            QueryIndexManager queryIndexManager = cluster.queryIndexes();
+            queryIndexManager.createPrimaryIndex(database, CreatePrimaryQueryIndexOptions
+                    .createPrimaryQueryIndexOptions().scopeName(finalScope).collectionName(index));
+        }
     }
 
     @Override
