@@ -91,16 +91,16 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyValue, Class<V> valueValue) {
+    public <K, V> Map<K, V> getMap(String bucketName, String key, Class<K> keyType, Class<V> valueType) {
 
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(key, "key is required");
-        requireNonNull(valueValue, "valueValue is required");
-        requireNonNull(keyValue, "keyValue is required");
+        requireNonNull(valueType, "valueValue is required");
+        requireNonNull(keyType, "keyValue is required");
 
-        if (!String.class.isAssignableFrom(keyValue)) {
+        if (!String.class.isAssignableFrom(keyType)) {
             throw new UnsupportedOperationException("Couchbase Map does not support a not String key instead of: "
-                    + keyValue);
+                    + keyType);
         }
 
         Bucket bucket = this.cluster.bucket(bucketName);
@@ -108,7 +108,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
 
         return (Map<K, V>)
                 new com.couchbase.client.java.datastructures.
-                        CouchbaseMap<V>(key, collection, valueValue,
+                        CouchbaseMap<V>(key, collection, valueType,
                         MapOptions.mapOptions());
     }
 
@@ -147,38 +147,38 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
 
 
     @Override
-    public <T> Queue<T> getQueue(String bucketName, String key, Class<T> clazz) {
+    public <T> Queue<T> getQueue(String bucketName, String key, Class<T> type) {
         requireNonNull(bucketName, "bucketName is required");
-        requireNonNull(clazz, "valueValue is required");
+        requireNonNull(type, "valueValue is required");
         requireNonNull(key, "key is required");
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
 
-        return new com.couchbase.client.java.datastructures.CouchbaseQueue<>(key + QUEUE, collection, clazz,
+        return new com.couchbase.client.java.datastructures.CouchbaseQueue<>(key + QUEUE, collection, type,
                 QueueOptions.queueOptions());
 
     }
 
     @Override
-    public <T> Set<T> getSet(String bucketName, String key, Class<T> clazz) {
+    public <T> Set<T> getSet(String bucketName, String key, Class<T> type) {
         requireNonNull(bucketName, "bucketName is required");
-        requireNonNull(clazz, "valueValue is required");
+        requireNonNull(type, "valueValue is required");
         requireNonNull(key, "key is required");
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
 
-        return new CouchbaseArraySet<>(key, collection, clazz, ArraySetOptions.arraySetOptions());
+        return new CouchbaseArraySet<>(key, collection, type, ArraySetOptions.arraySetOptions());
 
     }
 
     @Override
-    public <T> List<T> getList(String bucketName, String key, Class<T> clazz) {
+    public <T> List<T> getList(String bucketName, String key, Class<T> type) {
         requireNonNull(bucketName, "bucketName is required");
-        requireNonNull(clazz, "valueValue is required");
+        requireNonNull(type, "valueValue is required");
         requireNonNull(key, "key is required");
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
-        return new CouchbaseArrayList<>(key, collection, clazz, ArrayListOptions.arrayListOptions());
+        return new CouchbaseArrayList<>(key, collection, type, ArrayListOptions.arrayListOptions());
     }
 
 
