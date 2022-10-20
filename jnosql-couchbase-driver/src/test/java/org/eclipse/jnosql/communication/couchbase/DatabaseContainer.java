@@ -57,9 +57,6 @@ public enum DatabaseContainer {
         CouchbaseDocumentConfiguration configuration = setup(new CouchbaseDocumentConfiguration());
         CouchbaseSettings settings = configuration.toCouchbaseSettings();
         settings.setUp("jnosql");
-        settings.setUp("jnosql");
-        settings.setUp("jnosql");
-
     }
 
     public CouchbaseDocumentConfiguration getDocumentConfiguration() {
