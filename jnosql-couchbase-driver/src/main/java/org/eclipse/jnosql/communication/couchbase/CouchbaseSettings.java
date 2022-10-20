@@ -45,22 +45,43 @@ public final class CouchbaseSettings {
         this.index = index;
     }
 
+
+    /**
+     * Returns the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
+     * @return the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST
+     */
     public String getHost() {
         return host;
     }
 
+    /**
+     * Returns the user {@link jakarta.nosql.Configurations#USER} or {@link CouchbaseConfigurations#USER}
+     * @return the user {@link jakarta.nosql.Configurations#USER} or {@link CouchbaseConfigurations#USER}
+     */
     public String getUser() {
         return user;
     }
 
+    /**
+     * Returns the password {@link jakarta.nosql.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
+     * @return the password {@link jakarta.nosql.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Returns the scope {@link CouchbaseConfigurations#SCOPE}
+     * @return the password {@link CouchbaseConfigurations#SCOPE}
+     */
     public String getScope() {
         return scope;
     }
 
+    /**
+     * Returns the scope {@link CouchbaseConfigurations#COLLECTIONS}
+     * @return the password {@link CouchbaseConfigurations#COLLECTIONS}
+     */
     public List<String> getCollections() {
         if (collections == null || collections.isEmpty()) {
             return Collections.emptyList();
@@ -68,6 +89,10 @@ public final class CouchbaseSettings {
         return Collections.unmodifiableList(collections);
     }
 
+    /**
+     * Returns the scope {@link CouchbaseConfigurations#INDEX}
+     * @return the password {@link CouchbaseConfigurations#INDEX}
+     */
     public String getIndex() {
         return index;
     }
