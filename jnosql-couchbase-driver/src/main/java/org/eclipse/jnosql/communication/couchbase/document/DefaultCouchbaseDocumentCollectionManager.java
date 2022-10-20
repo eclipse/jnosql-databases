@@ -184,20 +184,20 @@ class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentColl
 
 
     @Override
-    public Stream<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException {
-        requireNonNull(n1qlQuery, "n1qlQuery is required");
+    public Stream<DocumentEntity> n1qlQuery(String n1ql, JsonObject params) throws NullPointerException {
+        requireNonNull(n1ql, "n1qlQuery is required");
         requireNonNull(params, "params is required");
 
-        QueryResult query = cluster.query(n1qlQuery, QueryOptions
+        QueryResult query = cluster.query(n1ql, QueryOptions
                 .queryOptions().parameters(params));
         return EntityConverter.convert(query.rowsAsObject(), database);
     }
 
 
     @Override
-    public Stream<DocumentEntity> n1qlQuery(String n1qlQuery) throws NullPointerException {
-        requireNonNull(n1qlQuery, "n1qlQuery is required");
-        QueryResult query = cluster.query(n1qlQuery);
+    public Stream<DocumentEntity> n1qlQuery(String n1ql) throws NullPointerException {
+        requireNonNull(n1ql, "n1qlQuery is required");
+        QueryResult query = cluster.query(n1ql);
         return EntityConverter.convert(query.rowsAsObject(), database);
     }
 

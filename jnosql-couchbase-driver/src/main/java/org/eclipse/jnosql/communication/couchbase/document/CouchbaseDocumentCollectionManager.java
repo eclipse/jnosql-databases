@@ -31,22 +31,22 @@ public interface CouchbaseDocumentCollectionManager extends DocumentCollectionMa
     /**
      * Executes the n1qlquery with params and then result que result
      *
-     * @param n1qlQuery the query
+     * @param n1ql the query
      * @param params    the params
      * @return the query result
-     * @throws NullPointerException when either n1qlQuery or params are null
+     * @throws NullPointerException when either n1ql or params are null
      */
-    Stream<DocumentEntity> n1qlQuery(String n1qlQuery, JsonObject params) throws NullPointerException;
+    Stream<DocumentEntity> n1qlQuery(String n1ql, JsonObject params) throws NullPointerException;
 
 
     /**
      * Executes the n1qlquery  plain query and then result que result
      *
-     * @param n1qlQuery the query
+     * @param n1ql the query
      * @return the query result
-     * @throws NullPointerException when either n1qlQuery or params are null
+     * @throws NullPointerException when either n1ql or params are null
      */
-    Stream<DocumentEntity> n1qlQuery(String n1qlQuery) throws NullPointerException;
+    Stream<DocumentEntity> n1qlQuery(String n1ql) throws NullPointerException;
 
 
     /**
