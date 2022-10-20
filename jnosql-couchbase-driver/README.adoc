@@ -2,8 +2,26 @@
 
 The Couchbase driver provides an API integration between Java and the database thought a standard communication level.
 
+== Installing
 
-=== Adding dependencies
+Maven
+[source,xml]
+----
+<dependency>
+    <groupId>org.eclipse.jnosql.communication</groupId>
+    <artifactId>jnosql-couchbase-driver</artifactId>
+    <version>VERSION</version>
+</dependency>
+----
+Gradle
+[source,groovy]
+----
+compile('org.eclipse.jnosql.communication:jnosql-couchbase-driver:VERSION')
+----
+
+
+
+== Adding dependencies
 
 If you are not using a Jakarta EE application server, you must add the Jakarta JSON Processing and Jakarta JSON Binding.
 
@@ -15,13 +33,13 @@ Maven
 <dependency>
     <groupId>org.eclipse</groupId>
     <artifactId>yasson</artifactId>
-    <version>1.0</version>
+    <version>VERSION</version>
 </dependency>
 
 <dependency>
     <groupId>org.glassfish</groupId>
     <artifactId>javax.json</artifactId>
-    <version>1.1</version>
+    <version>VERSION</version>
 </dependency>
 ----
 Gradle
