@@ -23,7 +23,7 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * A
+ * A Couchbase specialization of BucketManagerFactory.
  */
 public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
 
@@ -42,7 +42,7 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
      * Creates a {@link Queue} from bucket name
      *
      * @param bucketName a bucket name
-     * @param type      the value class
+     * @param type       the value class
      * @param key        key to the queue
      * @param <T>        the value type
      * @return a {@link Queue} instance
@@ -55,7 +55,7 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
      * Creates a {@link Set} from bucket name
      *
      * @param bucketName a bucket name
-     * @param type      the valeu class
+     * @param type       the valeu class
      * @param key        key to the set
      * @param <T>        the value type
      * @return a {@link Set} instance
@@ -69,7 +69,7 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
      * Creates a {@link List} from bucket name
      *
      * @param bucketName a bucket name
-     * @param type      the valeu class
+     * @param type       the valeu class
      * @param key        key to the List
      * @param <T>        the value type
      * @return a {@link List} instance
@@ -84,8 +84,8 @@ public interface CouchbaseBucketManagerFactory extends BucketManagerFactory {
      *
      * @param bucketName the bucket name
      * @param key        key to the Map
-     * @param keyType   the key class
-     * @param valueType the value class
+     * @param keyType    the key class
+     * @param valueType  the value class
      * @param <K>        the key type
      * @param <V>        the value type
      * @return a {@link Map} instance
