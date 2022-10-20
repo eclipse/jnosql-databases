@@ -58,8 +58,8 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucket is required");
         Bucket bucket = cluster.bucket(bucketName);
         String scopeName = settings.getScope().orElseGet(() -> bucket.defaultScope().name());
-        String collection =
-        return new CouchbaseBucketManager(bucket, bucketName);
+        String collection = settings.getCollection().orElseGet(() -> bucket.defaultCollection().name());
+        return new CouchbaseBucketManager(bucket, bucketName, scopeName, collection);
     }
 
     @Override
@@ -67,7 +67,8 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         requireNonNull(bucketName, "bucketName is required");
         requireNonNull(collection, "collection is required");
         Bucket bucket = cluster.bucket(bucketName);
-        return new CouchbaseBucketManager(bucket, bucketName, collection);
+        String scopeName = settings.getScope().orElseGet(() -> bucket.defaultScope().name());
+        return new CouchbaseBucketManager(bucket, bucketName, scopeName, collection);
     }
 
     @Override
@@ -83,8 +84,8 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
         return (Map<K, V>)
-                new com.couchbase.client.java.datastructures.
-                        CouchbaseMap<V>(bucketName + ":map", collection, valueValue,
+                new com.couchbase.client.java.datastructures.CouchbaseMap<V>(bucketName + ":map",
+                        collection, valueValue,
                         MapOptions.mapOptions());
 
     }

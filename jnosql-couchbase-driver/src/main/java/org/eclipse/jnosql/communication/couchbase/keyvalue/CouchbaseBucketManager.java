@@ -24,12 +24,9 @@ import com.couchbase.client.java.kv.UpsertOptions;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 
-import javax.json.bind.Jsonb;
 import java.time.Duration;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -40,10 +37,6 @@ import static org.eclipse.jnosql.communication.driver.ValueUtil.convert;
  * The couchbase implementation to {@link BucketManager}
  */
 public class CouchbaseBucketManager implements BucketManager {
-
-    private static final Logger LOGGER = Logger.getLogger(CouchbaseBucketManager.class.getName());
-
-    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private final Bucket bucket;
 
