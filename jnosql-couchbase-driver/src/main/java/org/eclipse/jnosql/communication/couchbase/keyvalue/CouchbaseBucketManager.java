@@ -15,23 +15,18 @@
 package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 
+import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.JsonDocument;
-import com.couchbase.client.java.document.RawJsonDocument;
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.document.json.JsonValue;
-import com.couchbase.client.java.error.DocumentDoesNotExistException;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.kv.UpsertOptions;
 import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.communication.driver.JsonbSupplier;
-import org.eclipse.jnosql.communication.driver.ValueJSON;
 
-import javax.json.bind.Jsonb;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -43,29 +38,31 @@ import static org.eclipse.jnosql.communication.driver.ValueUtil.convert;
  */
 public class CouchbaseBucketManager implements BucketManager {
 
-    private static final Logger LOGGER = Logger.getLogger(CouchbaseBucketManager.class.getName());
-
-    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
-
     private final Bucket bucket;
 
     private final String bucketName;
 
-    CouchbaseBucketManager(Bucket bucket, String bucketName) {
+    private final Collection collection;
+
+    private final String collectionName;
+
+    private final String scopeName;
+
+
+    CouchbaseBucketManager(Bucket bucket, String bucketName, String scopeName, String collectionName) {
         this.bucket = bucket;
         this.bucketName = bucketName;
+        this.collectionName = collectionName;
+        this.scopeName = scopeName;
+        Scope scope = bucket.scope(scopeName);
+        this.collection = scope.collection(collectionName);
     }
 
     @Override
     public <K, V> void put(K key, V value) {
         requireNonNull(key, "key is required");
         requireNonNull(value, "value is required");
-
-        if (JsonValue.checkType(value)) {
-            bucket.upsert(RawJsonDocument.create(key.toString(), JSONB.toJson(value.toString())));
-        } else {
-            bucket.upsert(JsonDocument.create(key.toString(), JsonObjectCouchbaseUtil.toJson(JSONB, value)));
-        }
+        collection.upsert(key.toString(), value);
 
     }
 
@@ -79,18 +76,9 @@ public class CouchbaseBucketManager implements BucketManager {
     public void put(KeyValueEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-
-
-        if (JsonValue.checkType(entity.getValue())) {
-            RawJsonDocument jsonDocument = RawJsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(),
-                    JSONB.toJson(entity.getValue().toString()));
-
-            bucket.upsert(jsonDocument);
-        } else {
-            JsonObject jsonObject = JsonObjectCouchbaseUtil.toJson(JSONB, entity.getValue());
-            JsonDocument jsonDocument = JsonDocument.create(entity.getKey().toString(), (int) ttl.getSeconds(), jsonObject);
-            bucket.upsert(jsonDocument);
-        }
+        String key = entity.getKey(String.class);
+        Object value = convert(Value.of(entity.getValue()));
+        collection.upsert(key, value, UpsertOptions.upsertOptions().expiry(ttl));
 
     }
 
@@ -110,12 +98,12 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
         requireNonNull(key, "key is required");
-        RawJsonDocument jsonDocument = bucket.get(key.toString(), RawJsonDocument.class);
-        if (Objects.isNull(jsonDocument)) {
+        try {
+            GetResult result = this.collection.get(key.toString());
+            return Optional.of(new CouchbaseValue(result));
+        } catch (DocumentNotFoundException exp) {
             return Optional.empty();
         }
-        Object value = jsonDocument.content();
-        return Optional.of(ValueJSON.of(value.toString()));
     }
 
     @Override
@@ -131,11 +119,7 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public <K> void delete(K key) {
         requireNonNull(key, "key is required");
-        try {
-            bucket.remove(key.toString());
-        } catch (DocumentDoesNotExistException e) {
-            LOGGER.info("Not found any document with the key " + key);
-        }
+        collection.remove(key.toString());
     }
 
     @Override
@@ -146,15 +130,15 @@ public class CouchbaseBucketManager implements BucketManager {
 
     @Override
     public void close() {
-        bucket.close();
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CouchbaseBucketManager{");
-        sb.append("bucket=").append(bucket);
-        sb.append(", bucketName='").append(bucketName).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "CouchbaseBucketManager{" +
+                "bucket=" + bucket +
+                ", bucketName='" + bucketName + '\'' +
+                ", collection=" + collection +
+                ", collectionName='" + collectionName + '\'' +
+                '}';
     }
 }

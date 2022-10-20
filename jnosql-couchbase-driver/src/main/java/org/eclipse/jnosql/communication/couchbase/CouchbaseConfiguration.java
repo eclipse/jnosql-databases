@@ -24,67 +24,99 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 /**
  * The configuration base to all configuration implementation on couchbase
  */
 public abstract class CouchbaseConfiguration {
 
-    private static final String FILE_CONFIGURATION = "diana-couchbase.properties";
+    private static final String FILE_CONFIGURATION = "couchbase.properties";
 
-    protected final List<String> nodes = new ArrayList<>();
+    protected String host;
 
     protected String user;
 
     protected String password;
+
+    protected String scope;
+
+    protected String index;
+
+    protected String collection;
+    protected List<String> collections = new ArrayList<>();
 
     public CouchbaseConfiguration() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
         configuration.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
         Settings settings = builder.build();
-
         update(settings);
     }
 
     protected void update(Settings settings) {
-        getHosts(settings).forEach(this::add);
+        this.host = getHost(settings);
         this.user = getUser(settings);
         this.password = getPassword(settings);
+        this.scope = getScope(settings);
+        this.collections = getCollections(settings);
+        this.index = getIndex(settings);
+        this.collection = getCollection(settings);
     }
 
     protected String getUser(Settings settings) {
         return settings.get(asList(Configurations.USER.get(),
-                CouchbaseConfigurations.USER.get(),
-                OldCouchbaseConfigurations.USER.get()))
+                        CouchbaseConfigurations.USER.get()))
                 .map(Object::toString).orElse(null);
+    }
+
+    private String getScope(Settings settings) {
+        return settings.get(CouchbaseConfigurations.SCOPE.get())
+                .map(Object::toString).orElse(null);
+    }
+
+    private String getCollection(Settings settings) {
+        return settings.get(CouchbaseConfigurations.COLLECTION.get())
+                .map(Object::toString).orElse(null);
+    }
+
+    private String getIndex(Settings settings) {
+        return settings.get(CouchbaseConfigurations.INDEX.get())
+                .map(Object::toString).orElse(null);
+    }
+
+    private List<String> getCollections(Settings settings) {
+        List<String> collections = new ArrayList<>();
+        settings.get(CouchbaseConfigurations.COLLECTIONS.get())
+                .map(Object::toString).stream()
+                .flatMap(s -> Stream.of(s.split(",\\s*")))
+                .forEach(collections::add);
+        return collections;
     }
 
     protected String getPassword(Settings settings) {
 
         return settings.get(asList(Configurations.PASSWORD.get(),
-                CouchbaseConfigurations.PASSWORD.get(),
-                OldCouchbaseConfigurations.PASSWORD.get()))
+                        CouchbaseConfigurations.PASSWORD.get()))
                 .map(Object::toString).orElse(null);
     }
 
-    protected List<String> getHosts(Settings settings) {
-        return settings.prefix(asList(CouchbaseConfigurations.HOST.get(),
-                OldCouchbaseConfigurations.HOST.get(), Configurations.HOST.get()))
-                .stream().map(Object::toString).collect(toList());
+    protected String getHost(Settings settings) {
+        return settings.get(asList(Configurations.HOST.get(),
+                        CouchbaseConfigurations.HOST.get()))
+                .map(Object::toString).orElse(null);
     }
 
+
     /**
-     * Adds a new node to cluster
+     * set the host
      *
-     * @param node the new node
-     * @throws NullPointerException when the cluster is null
+     * @param host the host
      */
-    public void add(String node) throws NullPointerException {
-        nodes.add(Objects.requireNonNull(node, "node is required"));
+    public void setHost(String host) {
+        this.host = host;
     }
 
     /**
@@ -103,5 +135,75 @@ public abstract class CouchbaseConfiguration {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    /**
+     * Set the scope
+     * @param scope the scope
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    /**
+     * Set the collection
+     * @param collection the collection
+     */
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    /**
+     * add collection in the settings
+     *
+     * @param collection the collection
+     * @throws NullPointerException when collection is null
+     */
+    public void addCollection(String collection) {
+        java.util.Objects.requireNonNull(collection, "collection is required");
+        this.collections.add(collection);
+    }
+
+    /**
+     * Returns an immutable structure with the Couchbase settings
+     * @return the {@link CouchbaseSettings}
+     */
+    public CouchbaseSettings toCouchbaseSettings() {
+        return new CouchbaseSettings(this.host, this.user, this.password,
+                this.scope, this.index, this.collection, this.collections);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CouchbaseConfiguration that = (CouchbaseConfiguration) o;
+        return Objects.equals(host, that.host) && Objects.equals(user, that.user)
+                && Objects.equals(password, that.password)
+                && Objects.equals(scope, that.scope)
+                && Objects.equals(collections, that.collections)
+                && Objects.equals(index, that.index);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(host, user, password, scope, collections, index);
+    }
+
+    @Override
+    public String toString() {
+        return "CouchbaseConfiguration{" +
+                "host='" + host + '\'' +
+                ", user='" + user + '\'' +
+                ", password='" + "***" + '\'' +
+                ", scope='" + scope + '\'' +
+                ", collections=" + collections +
+                ", index='" + index + '\'' +
+                '}';
     }
 }

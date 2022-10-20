@@ -17,13 +17,13 @@ package org.eclipse.jnosql.communication.couchbase.keyvalue;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.tck.communication.driver.keyvalue.BucketManagerSupplier;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
-import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
+import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 
 public class CouchbaseBucketManagerSupplier implements BucketManagerSupplier {
 
     @Override
     public BucketManager get() {
-        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
+        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
         final CouchbaseBucketManagerFactory factory = configuration.get();
         return factory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
     }

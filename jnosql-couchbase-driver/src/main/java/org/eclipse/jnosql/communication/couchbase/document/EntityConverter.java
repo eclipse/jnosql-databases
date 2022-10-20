@@ -15,11 +15,8 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.json.JsonArray;
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.N1qlQueryRow;
+import com.couchbase.client.java.json.JsonArray;
+import com.couchbase.client.java.json.JsonObject;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
@@ -32,7 +29,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
@@ -40,42 +36,33 @@ import static java.util.stream.StreamSupport.stream;
 final class EntityConverter {
 
     static final String ID_FIELD = "_id";
-    static final String KEY_FIELD = "_key";
+
+    static final String COLLECTION_FIELD = "_collection";
     static final String SPLIT_KEY = ":";
     static final char SPLIT_KEY_CHAR = ':';
 
     private EntityConverter() {
     }
 
-    static Stream<DocumentEntity> convert(Stream<String> keys, Bucket bucket) {
-        return keys
-                .map(bucket::get)
-                .filter(Objects::nonNull)
-                .map(j -> {
-                    List<Document> documents = toDocuments(j.content().toMap());
-                    return DocumentEntity.of(j.id().split(SPLIT_KEY)[0], documents);
-                });
-    }
 
-    static Stream<DocumentEntity> convert(N1qlQueryResult result, String database) {
-        return StreamSupport.stream(result.spliterator(), false)
-                .map(N1qlQueryRow::value)
-                .map(JsonObject::toMap)
-                .map(m -> m.get(database))
-                .filter(Objects::nonNull)
-                .filter(Map.class::isInstance)
-                .map(m -> (Map<String, Object>) m)
-                .map(map -> {
-                    List<Document> documents = toDocuments(map);
-                    Optional<Document> keyDocument = documents.stream().filter(d -> KEY_FIELD.equals(d.getName())).findFirst();
-                    String collection = keyDocument.map(d -> d.get(String.class)).orElse(database).split(SPLIT_KEY)[0];
-                    return DocumentEntity.of(collection, documents);
-                });
-    }
-
-    static String getPrefix(Document document, String collection) {
-        String id = document.get(String.class);
-        return getPrefix(collection, id);
+    static Stream<DocumentEntity> convert(List<JsonObject> result, String database) {
+        return
+                result.stream()
+                        .map(JsonObject::toMap)
+                        .filter(Objects::nonNull)
+                        .map(map -> {
+                            if (map.size() == 1) {
+                                Map.Entry<String, Object> entry = map.entrySet().stream().findFirst().get();
+                                if (entry.getValue() instanceof Map) {
+                                    List<Document> documents = toDocuments((Map<String, Object>) entry.getValue());
+                                    return DocumentEntity.of(entry.getKey(), documents);
+                                }
+                            }
+                            List<Document> documents = toDocuments(map);
+                            Optional<Document> entityDocument = documents.stream().filter(d -> COLLECTION_FIELD.equals(d.getName())).findFirst();
+                            String collection = entityDocument.map(d -> d.get(String.class)).orElse(database);
+                            return DocumentEntity.of(collection, documents);
+                        });
     }
 
     private static List<Document> toDocuments(Map<String, Object> map) {
@@ -168,11 +155,9 @@ final class EntityConverter {
         return e -> toJsonObject(subJson).accept((Document) e);
     }
 
-
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(jakarta.nosql.document.Document.class::isInstance);
     }
-
 
 }

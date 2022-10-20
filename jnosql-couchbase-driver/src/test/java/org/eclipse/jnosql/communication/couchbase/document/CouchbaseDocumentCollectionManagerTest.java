@@ -14,22 +14,20 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.Select;
-import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.core.error.DocumentNotFoundException;
+import com.couchbase.client.java.json.JsonObject;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
-import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseDocumentTcConfiguration;
-import org.eclipse.jnosql.communication.couchbase.configuration.CouchbaseKeyValueTcConfiguration;
+import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseBucketManagerFactory;
+import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.document.Documents;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -41,7 +39,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.couchbase.client.java.query.dsl.Expression.x;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
@@ -55,21 +52,36 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchbaseDocumentCollectionManagerTest {
 
-    public static final String COLLECTION_NAME = "person";
+    public static final String COLLECTION_PERSON_NAME = "person";
+    public static final String COLLECTION_APP_NAME = "AppointmentBook";
     private CouchbaseDocumentCollectionManager entityManager;
 
     {
-        CouchbaseDocumentConfiguration configuration = CouchbaseDocumentTcConfiguration.getTcConfiguration();
-        CouhbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
+        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
         entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
     }
 
-    @AfterAll
-    public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = CouchbaseKeyValueTcConfiguration.getTcConfiguration();
-        BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
-        keyValueEntityManager.delete("person:id");
+    @AfterEach
+    public void afterEach() {
+        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
+        CouchbaseBucketManagerFactory keyValueEntityManagerFactory = configuration.get();
+
+        try {
+            BucketManager keyValueEntityManager = keyValueEntityManagerFactory
+                    .getBucketManager(CouchbaseUtil.BUCKET_NAME, COLLECTION_PERSON_NAME);
+            keyValueEntityManager.delete("id");
+        } catch (DocumentNotFoundException exp) {
+            //IGNORE
+        }
+
+        try {
+            BucketManager keyValueEntityManager = keyValueEntityManagerFactory
+                    .getBucketManager(CouchbaseUtil.BUCKET_NAME, COLLECTION_APP_NAME);
+            keyValueEntityManager.delete("ids");
+        } catch (DocumentNotFoundException exp) {
+            //IGNORE
+        }
     }
 
     @Test
@@ -103,22 +115,21 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Document name = documentEntity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_PERSON_NAME)
                 .where(name.getName()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
-    public void shouldSaveSubDocument() throws InterruptedException {
+    public void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
-        Thread.sleep(5_00L);
         Document id = entitySaved.find("_id").get();
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -133,7 +144,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Thread.sleep(1_00L);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
@@ -146,13 +157,13 @@ public class CouchbaseDocumentCollectionManagerTest {
         Set<String> set = new HashSet<>();
         set.add("Acarajé");
         set.add("Munguzá");
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_PERSON_NAME);
         entity.add(Document.of("_id", "id"));
         entity.add(Document.of("foods", set));
         entityManager.insert(entity);
         Document id = entity.find("_id").get();
         Thread.sleep(1_000L);
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.singleResult(query).get();
         Optional<Document> foods = entityFound.find("foods");
         Set<String> setFoods = foods.get().get(new TypeReference<Set<String>>() {
@@ -161,17 +172,17 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListSubdocumentList() {
+    public void shouldConvertFromListDocumentList() {
         DocumentEntity entity = createSubdocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
+    public void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
+        DocumentQuery query = select().from(COLLECTION_APP_NAME).where(key.getName()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
@@ -183,7 +194,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     }
 
     private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_APP_NAME);
         entity.add(Document.of("_id", "ids"));
         List<List<Document>> documents = new ArrayList<>();
 
@@ -205,7 +216,7 @@ public class CouchbaseDocumentCollectionManagerTest {
     public void shouldRunN1Ql() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql").collect(Collectors.toList());
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._default.person").collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
@@ -214,37 +225,15 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         JsonObject params = JsonObject.create().put("name", "Poliana");
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql where name = $name",
+        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._default.person where name = $name",
                 params).collect(Collectors.toList());
+        assertNotNull(entities);
         assertFalse(entities.isEmpty());
-        assertEquals(1, entities.size());
     }
 
-    @Test
-    public void shouldRunN1QlStatement() {
-        DocumentEntity entity = getEntity();
-        entityManager.insert(entity);
-
-        Statement statement = Select.select("*").from("jnosql").where(x("name").eq("\"Poliana\""));
-        List<DocumentEntity> entities = entityManager.n1qlQuery(statement).collect(Collectors.toList());
-        assertFalse(entities.isEmpty());
-        assertEquals(1, entities.size());
-    }
-
-    @Test
-    public void shouldRunN1QlStatementParams() {
-        DocumentEntity entity = getEntity();
-        entityManager.insert(entity);
-
-        Statement statement = Select.select("*").from("jnosql").where(x("name").eq("$name"));
-        JsonObject params = JsonObject.create().put("name", "Poliana");
-        List<DocumentEntity> entities = entityManager.n1qlQuery(statement, params).collect(Collectors.toList());
-        assertFalse(entities.isEmpty());
-        assertEquals(1, entities.size());
-    }
 
     private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_PERSON_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");

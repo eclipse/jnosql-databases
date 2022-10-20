@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CouhbaseDocumentCollectionManagerFactoryTest {
+public class CouchbaseDocumentCollectionManagerFactoryTest {
 
     private CouchbaseDocumentConfiguration configuration;
 
@@ -32,7 +32,7 @@ public class CouhbaseDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        CouhbaseDocumentCollectionManagerFactory factory = configuration.get();
+        CouchbaseDocumentCollectionManagerFactory factory = configuration.get();
         assertNotNull(factory.get(CouchbaseUtil.BUCKET_NAME));
     }
 }

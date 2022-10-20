@@ -32,10 +32,6 @@ public class CouchbaseKeyValueConfigurationTest {
         configuration = new CouchbaseKeyValueConfiguration();
     }
 
-    @Test
-    public void shouldReturnErroWhenNodeIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.add(null));
-    }
 
     @Test
     public void shouldCreateKeyValueFactoryFromFile() {

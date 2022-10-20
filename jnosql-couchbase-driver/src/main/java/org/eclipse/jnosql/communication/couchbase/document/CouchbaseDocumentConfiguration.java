@@ -15,47 +15,33 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 
-import com.couchbase.client.java.CouchbaseCluster;
 import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfigurations;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation of {@link DocumentConfiguration}  that returns
- * {@link CouhbaseDocumentCollectionManagerFactory}.
- * <p>couchbase.host-: the prefix to add a new host</p>
- * <p>couchbase.user: the user</p>
- * <p>couchbase.password: the password</p>
+ * {@link CouchbaseDocumentCollectionManagerFactory}.
  * @see CouchbaseConfigurations
  */
 public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         implements DocumentConfiguration {
 
     @Override
-    public CouhbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
-        return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(nodes), user, password);
+    public CouchbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
+        return new CouchbaseDocumentCollectionManagerFactory(toCouchbaseSettings());
     }
 
     @Override
-    public CouhbaseDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public CouchbaseDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
-        Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
-
-        String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
-        String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
-        List<String> hosts = getHosts(settings);
-
-        return new CouhbaseDocumentCollectionManagerFactory(CouchbaseCluster.create(hosts), user, password);
+        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        configuration.update(settings);
+        return new CouchbaseDocumentCollectionManagerFactory(configuration.toCouchbaseSettings());
     }
 
 }

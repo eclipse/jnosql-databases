@@ -14,13 +14,50 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
+import com.couchbase.client.java.Bucket;
+
 import java.util.function.Supplier;
 
+/**
+ * This class is a {@link Supplier} of properties settings that to set up on couchbase.
+ */
 public enum CouchbaseConfigurations implements Supplier<String> {
 
+    /**
+     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#HOST} alias
+     */
     HOST("couchbase.host"),
+
+    /**
+     * Define the user at the database. It is a {@link jakarta.nosql.Configurations#USER} alias
+     */
     USER("couchbase.user"),
-    PASSWORD("couchbase.password");
+
+    /**
+     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#PASSWORD} alias
+     */
+    PASSWORD("couchbase.password"),
+    /**
+     * Define the scope to use at couchbase otherwise, it will use the default.
+     */
+    SCOPE("couchbase.scope"),
+    /**
+     * couchbase collection split by a comma.
+     * At the start-up of a {@link CouchbaseConfiguration}, there is this option to check if
+     * these collections exist; if not, it will create using the default settings.
+     */
+    COLLECTIONS("couchbase.collections"),
+    /**
+     * A default couchbase collection.
+     * When it is not defined the default value comes from {@link Bucket#defaultCollection()}
+     */
+    COLLECTION("couchbase.collection"),
+    /**
+     * A couchbase collection index.
+     * At the start-up of a {@link CouchbaseConfiguration}, it will read this property to check if the index does exist,
+     * if not it will create combined by scope and the database.
+     */
+    INDEX("couchbase.index");
 
     private final String configuration;
 

@@ -15,23 +15,17 @@
 package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 
-import com.couchbase.client.java.CouchbaseCluster;
-import com.couchbase.client.java.env.CouchbaseEnvironment;
 import jakarta.nosql.Settings;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfigurations;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation to {@link KeyValueConfiguration} that returns {@link DefaultCouchbaseBucketManagerFactory}.
  * It tries to read the diana-couchbase.properties file to get some informations:
- * <p>couchbase.host-: the prefix to add a new host</p>
+ * <p>couchbase.host: to identify the connection</p>
  * <p>couchbase.user: the user</p>
  * <p>couchbase.password: the password</p>
  *
@@ -41,30 +35,16 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
         implements KeyValueConfiguration {
 
 
-    /**
-     * Creates a {@link DefaultCouchbaseBucketManagerFactory} from {@link CouchbaseEnvironment}
-     *
-     * @param environment the {@link CouchbaseEnvironment}
-     * @return the new {@link DefaultCouchbaseBucketManagerFactory} instance
-     * @throws NullPointerException when environment is null
-     */
-    public CouchbaseBucketManagerFactory getManagerFactory(CouchbaseEnvironment environment) throws NullPointerException {
-        Objects.requireNonNull(environment, "environment is required");
-        CouchbaseCluster couchbaseCluster = CouchbaseCluster.create(environment, nodes);
-        return new DefaultCouchbaseBucketManagerFactory(couchbaseCluster, user, password);
-    }
-
     @Override
     public CouchbaseBucketManagerFactory get() {
-        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(nodes), user, password);
+        return new DefaultCouchbaseBucketManagerFactory(toCouchbaseSettings());
     }
 
     @Override
     public CouchbaseBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
-        String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
-        String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
-        List<String> hosts = getHosts(settings);
-        return new DefaultCouchbaseBucketManagerFactory(CouchbaseCluster.create(hosts), user, password);
+        CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+        configuration.update(settings);
+        return new DefaultCouchbaseBucketManagerFactory(configuration.toCouchbaseSettings());
     }
 }
