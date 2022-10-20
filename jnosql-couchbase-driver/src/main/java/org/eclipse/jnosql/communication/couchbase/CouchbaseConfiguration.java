@@ -142,6 +142,10 @@ public abstract class CouchbaseConfiguration {
         this.collections.add(collection);
     }
 
+    public CouchbaseSettings toCouchbaseSettings() {
+        return new CouchbaseSettings(this.host, this.user, this.password, this.scope, this.index, this.collections);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

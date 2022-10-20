@@ -35,8 +35,9 @@ public final class CouchbaseSettings {
 
     private final String index;
 
-    CouchbaseSettings(String host, String user, String password, String scope,
-                      List<String> collections, String index) {
+    CouchbaseSettings(String host, String user, String password,
+                      String scope, String index,
+                      List<String> collections) {
         this.host = host;
         this.user = user;
         this.password = password;
