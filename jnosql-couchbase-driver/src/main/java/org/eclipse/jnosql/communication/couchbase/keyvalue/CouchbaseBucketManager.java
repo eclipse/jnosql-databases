@@ -18,6 +18,7 @@ package org.eclipse.jnosql.communication.couchbase.keyvalue;
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.Scope;
 import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.UpsertOptions;
 import jakarta.nosql.Value;
@@ -52,18 +53,16 @@ public class CouchbaseBucketManager implements BucketManager {
 
     private final String collectionName;
 
-    CouchbaseBucketManager(Bucket bucket, String bucketName) {
-        this.bucket = bucket;
-        this.bucketName = bucketName;
-        this.collection = bucket.defaultCollection();
-        this.collectionName = bucket.defaultCollection().name();
-    }
+    private final String scopeName;
 
-    CouchbaseBucketManager(Bucket bucket, String bucketName, String collectionName) {
+
+    CouchbaseBucketManager(Bucket bucket, String bucketName, String scopeName, String collectionName) {
         this.bucket = bucket;
         this.bucketName = bucketName;
         this.collectionName = collectionName;
-        this.collection = bucket.collection(collectionName);
+        this.scopeName = scopeName;
+        Scope scope = bucket.scope(scopeName);
+        this.collection = scope.collection(collectionName);
     }
 
     @Override

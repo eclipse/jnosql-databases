@@ -44,9 +44,10 @@ public abstract class CouchbaseConfiguration {
 
     protected String scope;
 
-    protected List<String> collections = new ArrayList<>();
-
     protected String index;
+
+    protected String collection;
+    protected List<String> collections = new ArrayList<>();
 
     public CouchbaseConfiguration() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
@@ -63,6 +64,7 @@ public abstract class CouchbaseConfiguration {
         this.scope = getScope(settings);
         this.collections = getCollections(settings);
         this.index = getIndex(settings);
+        this.collection = getCollection(settings);
     }
 
     protected String getUser(Settings settings) {
@@ -73,6 +75,11 @@ public abstract class CouchbaseConfiguration {
 
     private String getScope(Settings settings) {
         return settings.get(CouchbaseConfigurations.SCOPE.get())
+                .map(Object::toString).orElse(null);
+    }
+
+    private String getCollection(Settings settings) {
+        return settings.get(CouchbaseConfigurations.COLLECTION.get())
                 .map(Object::toString).orElse(null);
     }
 
@@ -148,7 +155,7 @@ public abstract class CouchbaseConfiguration {
      */
     public CouchbaseSettings toCouchbaseSettings() {
         return new CouchbaseSettings(this.host, this.user, this.password,
-                this.scope, this.index, this.collections);
+                this.scope, this.index, this.collection, this.collections);
     }
 
     @Override

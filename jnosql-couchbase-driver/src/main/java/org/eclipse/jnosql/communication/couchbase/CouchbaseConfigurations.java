@@ -14,6 +14,8 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
+import com.couchbase.client.java.Bucket;
+
 import java.util.function.Supplier;
 
 /**
@@ -45,6 +47,11 @@ public enum CouchbaseConfigurations implements Supplier<String> {
      * these collections exist; if not, it will create using the default settings.
      */
     COLLECTIONS("couchbase.collections"),
+    /**
+     * A default couchbase collection.
+     * When it is not defined the default value comes from {@link Bucket#defaultCollection()}
+     */
+    COLLECTION("couchbase.collection"),
     /**
      * A couchbase collection index.
      * At the start-up of a {@link CouchbaseConfiguration}, it will read this property to check if the index does exist,
