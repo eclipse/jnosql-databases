@@ -20,7 +20,10 @@ public enum CouchbaseConfigurations implements Supplier<String> {
 
     HOST("couchbase.host"),
     USER("couchbase.user"),
-    PASSWORD("couchbase.password");
+    PASSWORD("couchbase.password"),
+    SCOPE(""),
+    COLLECTIONS(""),
+    INDEX("");
 
     private final String configuration;
 
