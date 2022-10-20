@@ -23,17 +23,26 @@ import com.couchbase.client.java.manager.collection.CollectionManager;
 import com.couchbase.client.java.manager.collection.CollectionSpec;
 import com.couchbase.client.java.manager.collection.ScopeSpec;
 import com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions;
+import com.couchbase.client.java.manager.query.GetAllQueryIndexesOptions;
+import com.couchbase.client.java.manager.query.QueryIndex;
 import com.couchbase.client.java.manager.query.QueryIndexManager;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions.createPrimaryQueryIndexOptions;
+import static com.couchbase.client.java.manager.query.GetAllQueryIndexesOptions.getAllQueryIndexesOptions;
 
 /**
  * An immutable structure that has the Couchbase settings.
  */
 public final class CouchbaseSettings {
+
+    private static final Logger LOGGER = Logger.getLogger(CouchbaseSettings.class.getName());
 
     private final String host;
 
@@ -139,7 +148,9 @@ public final class CouchbaseSettings {
     }
 
     /**
-     * Create and setup collection, database and index from te settings
+     * Given a database/bucket, it creates a basic setup to create a scope, collection, and index.
+     * It will read the properties from Settings if it does exist.
+     * It is for a development proposal. <b>Don't use it on production</b>.
      *
      * @param database the database
      * @throws NullPointerException when parameter is null
@@ -147,30 +158,45 @@ public final class CouchbaseSettings {
     public void setUp(String database) {
         Objects.requireNonNull(database, "database is required");
 
-        Cluster cluster = getCluster();
+        long start = System.currentTimeMillis();
+        LOGGER.log(Level.FINEST, "starting the setup with database: "  + database);
 
-        BucketManager buckets = cluster.buckets();
-        try {
-            buckets.getBucket(database);
-        } catch (BucketNotFoundException exp) {
-            buckets.createBucket(BucketSettings.create(database));
-        }
-        Bucket bucket = cluster.bucket(database);
+        try (Cluster cluster = getCluster()) {
 
-        CollectionManager manager = bucket.collections();
-        List<ScopeSpec> scopes = manager.getAllScopes();
-        String finalScope = getScope().orElseGet(() -> bucket.defaultScope().name());
-        ScopeSpec spec = scopes.stream().filter(s -> finalScope.equals(s.name()))
-                .findFirst().get();
-        for (String collection : collections) {
-            if (spec.collections().stream().noneMatch(c -> collection.equals(c.name()))) {
-                manager.createCollection(CollectionSpec.create(collection, finalScope));
+            BucketManager buckets = cluster.buckets();
+            try {
+                buckets.getBucket(database);
+            } catch (BucketNotFoundException exp) {
+                LOGGER.log(Level.FINEST, "The database/bucket does not exist, creating it: "  + database);
+                buckets.createBucket(BucketSettings.create(database));
             }
-        }
-        if (index != null) {
-            QueryIndexManager queryIndexManager = cluster.queryIndexes();
-            queryIndexManager.createPrimaryIndex(database, CreatePrimaryQueryIndexOptions
-                    .createPrimaryQueryIndexOptions().scopeName(finalScope).collectionName(index));
+            Bucket bucket = cluster.bucket(database);
+
+            CollectionManager manager = bucket.collections();
+            List<ScopeSpec> scopes = manager.getAllScopes();
+            String finalScope = getScope().orElseGet(() -> bucket.defaultScope().name());
+            ScopeSpec spec = scopes.stream().filter(s -> finalScope.equals(s.name()))
+                    .findFirst().get();
+            for (String collection : collections) {
+                if (spec.collections().stream().noneMatch(c -> collection.equals(c.name()))) {
+                    manager.createCollection(CollectionSpec.create(collection, finalScope));
+                }
+            }
+            if (index != null) {
+                QueryIndexManager queryIndexManager = cluster.queryIndexes();
+                List<QueryIndex> indexes = queryIndexManager.getAllIndexes(database, getAllQueryIndexesOptions()
+                        .scopeName(finalScope).collectionName(index));
+                if (indexes.isEmpty()) {
+                    LOGGER.log(Level.FINEST, "Index does not exist, creating primary key with scope "
+                            + scope + " collection " + index + " at database " + database);
+                    queryIndexManager.createPrimaryIndex(database, createPrimaryQueryIndexOptions()
+                            .scopeName(finalScope).collectionName(index));
+                }
+            }
+
+            long end = System.currentTimeMillis() - start;
+            LOGGER.log(Level.FINEST, "Finished the setup with database: "  + database + " end with millis "
+            + end);
         }
     }
 
