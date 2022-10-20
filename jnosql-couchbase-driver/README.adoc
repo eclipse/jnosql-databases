@@ -1,30 +1,13 @@
-image::https://jnosql.github.io/img/logos/couchbase.svg[Couchbase Project,align="center"]
+# Couchbase Driver
 
+The Couchbase driver provides an API integration between Java and the database thought a standard communication level.
 
-
-*Couchbase*: Couchbase Server, originally known as Membase, is an open-source, distributed multi-model NoSQL document-oriented database software package that is optimized for interactive applications.
-
-
-=== How To test
-
-Once this a communication layer to Couchbase, we're using integration test, so you need to install Couchbase. The recommended way is using Docker.
-
-image::https://www.docker.com/sites/default/files/horizontal_large.png[Docker,align="center"]
-
-
-1. Execute the test `mvn clean install`
-
-
-=== Install without testing
-
-
-If you won't run the tests the database is not required, so just run the maven skipping the tests.
-
-1. Execute the test `mvn clean install -DskipTests`
 
 === Adding dependencies
 
-If you are not using a Java EE application server, you must add the following dependencies:
+If you are not using a Jakarta EE application server, you must add the Jakarta JSON Processing and Jakarta JSON Binding.
+
+E.g.:
 
 Maven
 [source,xml]
