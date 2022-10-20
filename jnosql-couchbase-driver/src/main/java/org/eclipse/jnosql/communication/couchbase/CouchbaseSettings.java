@@ -34,19 +34,21 @@ public final class CouchbaseSettings {
 
     private final String scope;
 
-    private final List<String> collections;
-
     private final String index;
 
+    private final String collection;
+    private final List<String> collections;
+
     CouchbaseSettings(String host, String user, String password,
-                      String scope, String index,
+                      String scope, String index, String collection,
                       List<String> collections) {
         this.host = host;
         this.user = user;
         this.password = password;
         this.scope = scope;
-        this.collections = collections;
         this.index = index;
+        this.collection = collection;
+        this.collections = collections;
     }
 
 
@@ -73,8 +75,8 @@ public final class CouchbaseSettings {
      *
      * @return the password {@link jakarta.nosql.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
      */
-    public Optional<String> getPassword() {
-        return Optional.ofNullable(password);
+    public String getPassword() {
+        return password;
     }
 
     /**
@@ -82,8 +84,17 @@ public final class CouchbaseSettings {
      *
      * @return the password {@link CouchbaseConfigurations#SCOPE}
      */
-    public String getScope() {
-        return scope;
+    public Optional<String> getScope() {
+        return Optional.ofNullable(scope);
+    }
+
+    /**
+     * Returns the scope {@link CouchbaseConfigurations#SCOPE}
+     *
+     * @return the password {@link CouchbaseConfigurations#SCOPE}
+     */
+    public Optional<String> getCollection() {
+        return Optional.ofNullable(collection);
     }
 
     /**
