@@ -140,12 +140,13 @@ public final class CouchbaseSettings {
         CouchbaseSettings that = (CouchbaseSettings) o;
         return Objects.equals(host, that.host) && Objects.equals(user, that.user)
                 && Objects.equals(password, that.password) && Objects.equals(scope, that.scope)
-                && Objects.equals(collections, that.collections) && Objects.equals(index, that.index);
+                && Objects.equals(index, that.index) && Objects.equals(collection, that.collection)
+                && Objects.equals(collections, that.collections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(host, user, password, scope, collections, index);
+        return Objects.hash(host, user, password, scope, index, collection, collections);
     }
 
     @Override
@@ -153,11 +154,11 @@ public final class CouchbaseSettings {
         return "CouchbaseSettings{" +
                 "host='" + host + '\'' +
                 ", user='" + user + '\'' +
-                ", password='" + "****" + '\'' +
+                ", password='" + password + '\'' +
                 ", scope='" + scope + '\'' +
-                ", collections=" + collections +
                 ", index='" + index + '\'' +
+                ", collection='" + collection + '\'' +
+                ", collections=" + collections +
                 '}';
     }
-
 }
