@@ -39,7 +39,7 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
 
     @Override
     public CouchbaseBucketManagerFactory get() {
-        return new DefaultCouchbaseBucketManagerFactory(host, user, password);
+        return new DefaultCouchbaseBucketManagerFactory(toCouchbaseSettings());
     }
 
     @Override

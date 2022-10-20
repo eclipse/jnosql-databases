@@ -14,6 +14,8 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
+import com.couchbase.client.java.Cluster;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -50,6 +52,7 @@ public final class CouchbaseSettings {
 
     /**
      * Returns the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
+     *
      * @return the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST
      */
     public String getHost() {
@@ -58,6 +61,7 @@ public final class CouchbaseSettings {
 
     /**
      * Returns the user {@link jakarta.nosql.Configurations#USER} or {@link CouchbaseConfigurations#USER}
+     *
      * @return the user {@link jakarta.nosql.Configurations#USER} or {@link CouchbaseConfigurations#USER}
      */
     public String getUser() {
@@ -66,6 +70,7 @@ public final class CouchbaseSettings {
 
     /**
      * Returns the password {@link jakarta.nosql.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
+     *
      * @return the password {@link jakarta.nosql.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
      */
     public Optional<String> getPassword() {
@@ -74,6 +79,7 @@ public final class CouchbaseSettings {
 
     /**
      * Returns the scope {@link CouchbaseConfigurations#SCOPE}
+     *
      * @return the password {@link CouchbaseConfigurations#SCOPE}
      */
     public String getScope() {
@@ -82,6 +88,7 @@ public final class CouchbaseSettings {
 
     /**
      * Returns the scope {@link CouchbaseConfigurations#COLLECTIONS}
+     *
      * @return the password {@link CouchbaseConfigurations#COLLECTIONS}
      */
     public List<String> getCollections() {
@@ -93,10 +100,22 @@ public final class CouchbaseSettings {
 
     /**
      * Returns the scope {@link CouchbaseConfigurations#INDEX}
+     *
      * @return the password {@link CouchbaseConfigurations#INDEX}
      */
     public String getIndex() {
         return index;
+    }
+
+
+    /**
+     * Create a new {@link Cluster} instance using {@link CouchbaseSettings#getHost()}
+     * {@link  CouchbaseSettings#getUser()} {@link CouchbaseSettings#getPassword()}
+     *
+     * @return a {@link Cluster} instance
+     */
+    public Cluster getCluster() {
+        return Cluster.connect(host, user, password);
     }
 
     @Override
@@ -129,4 +148,5 @@ public final class CouchbaseSettings {
                 ", index='" + index + '\'' +
                 '}';
     }
+
 }

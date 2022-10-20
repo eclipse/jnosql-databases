@@ -24,6 +24,7 @@ import com.couchbase.client.java.kv.ArraySetOptions;
 import com.couchbase.client.java.kv.MapOptions;
 import com.couchbase.client.java.kv.QueueOptions;
 import jakarta.nosql.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.couchbase.CouchbaseSettings;
 
 import java.util.List;
 import java.util.Map;
@@ -41,17 +42,14 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     static final String QUEUE = ":queue";
     static final String SET = ":set";
     static final String LIST = ":list";
-    private final String user;
-    private final String password;
-    private final String host;
+
+    private final CouchbaseSettings settings;
     private final Cluster cluster;
 
 
-    DefaultCouchbaseBucketManagerFactory(String host, String user, String password) {
-        this.host = host;
-        this.user = user;
-        this.password = password;
-        this.cluster = Cluster.connect(host, user, password);
+    DefaultCouchbaseBucketManagerFactory(CouchbaseSettings settings) {
+        this.settings = settings;
+        this.cluster = this.settings.getCluster();
     }
 
 
