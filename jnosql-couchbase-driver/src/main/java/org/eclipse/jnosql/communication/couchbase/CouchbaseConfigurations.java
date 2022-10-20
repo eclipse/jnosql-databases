@@ -40,11 +40,15 @@ public enum CouchbaseConfigurations implements Supplier<String> {
      */
     SCOPE("couchbase.scope"),
     /**
-     *
+     * couchbase collection split by comma.
+     * At the start-up of a {@link CouchbaseConfiguration}, there is this option to check if these collections exist if not
+     * it will create using the default settings.
      */
     COLLECTIONS("couchbase.collections"),
     /**
-     *
+     * A couchbase collection index.
+     * At the start-up of a {@link CouchbaseConfiguration}, it will read this property to check if the index does exist,
+     * if not it will create combined by scope and the database.
      */
     INDEX("couchbase.index");
 
