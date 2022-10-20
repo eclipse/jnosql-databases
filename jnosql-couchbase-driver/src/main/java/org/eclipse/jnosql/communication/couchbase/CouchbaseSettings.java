@@ -14,27 +14,26 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * Couchbase Configuration.
  */
 public final class CouchbaseSettings {
 
     private final String host;
 
-    private final  String user;
+    private final String user;
 
-    private final  String password;
+    private final String password;
 
-    private final  String scope;
+    private final String scope;
 
-    private final  List<String> collections;
+    private final List<String> collections;
 
-    private final  String index;
+    private final String index;
 
     CouchbaseSettings(String host, String user, String password, String scope,
                       List<String> collections, String index) {
@@ -63,7 +62,7 @@ public final class CouchbaseSettings {
     }
 
     public List<String> getCollections() {
-        if(collections == null || collections.isEmpty()) {
+        if (collections == null || collections.isEmpty()) {
             return Collections.emptyList();
         }
         return Collections.unmodifiableList(collections);

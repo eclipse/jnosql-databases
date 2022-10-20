@@ -52,7 +52,6 @@ public abstract class CouchbaseConfiguration {
         SettingsBuilder builder = Settings.builder();
         configuration.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
         Settings settings = builder.build();
-
         update(settings);
     }
 
