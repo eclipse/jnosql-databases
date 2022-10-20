@@ -48,6 +48,18 @@ List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._d
 
 ----
 
+It provides key-value extension as well:
+
+[source,java]
+----
+CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
+BucketManagerFactory factory = configuration.get();
+BucketManager manager = factory.getBucketManager("bucket");
+User user = new User("otavio");
+manager.put(¨otaviojava¨, user);
+Optional<Value> otavio = manager.get("otaviojava");
+----
+
 == Adding dependencies
 
 If you are not using a Jakarta EE application server, you must add the Jakarta JSON Processing and Jakarta JSON Binding.
