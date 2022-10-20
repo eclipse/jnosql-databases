@@ -27,7 +27,6 @@ import java.util.stream.Stream;
  */
 public interface CouchbaseDocumentCollectionManager extends DocumentCollectionManager {
 
-
     /**
      * Executes the N1QL with params and then result que result
      *
@@ -57,5 +56,4 @@ public interface CouchbaseDocumentCollectionManager extends DocumentCollectionMa
      * @throws NullPointerException when either the query or index are null
      */
     Stream<DocumentEntity> search(SearchQuery query) throws NullPointerException;
-
 }
