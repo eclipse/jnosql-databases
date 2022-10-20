@@ -35,9 +35,9 @@ public enum CouchbaseConfigurations implements Supplier<String> {
      * Define the host at the database. It is a {@link jakarta.nosql.Configurations#PASSWORD} alias
      */
     PASSWORD("couchbase.password"),
-    SCOPE(""),
-    COLLECTIONS(""),
-    INDEX("");
+    SCOPE("couchbase.scope"),
+    COLLECTIONS("couchbase.collections"),
+    INDEX("couchbase.index");
 
     private final String configuration;
 
