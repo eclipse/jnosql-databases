@@ -2,6 +2,8 @@
 
 The Couchbase driver provides an API integration between Java and the database through a standard communication level.
 
+This driver has support for two NoSQL API types: Document and Key-value.
+
 == Installing
 
 Maven
@@ -24,6 +26,24 @@ compile('org.eclipse.jnosql.communication:jnosql-couchbase-driver:VERSION')
 Couchbase provides both a configuration programmatically or by the ```couchbase.properties``` file.
 Check the ```CouchbaseConfigurations``` for more information.
 
+== Features
+
+Besides the default API, Couchbase has support for N1QL and search through the API.
+
+[source,java]
+----
+CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+
+DocumentCollectionManagerFactory managerFactory = configuration.get();
+
+
+CouchbaseDocumentCollectionManager entityManager = managerFactory.get(BUCKET_NAME);
+
+
+ DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id"), Document.of("name", "name")));
+
+entityManager.insert(entity);
+----
 
 == Adding dependencies
 
