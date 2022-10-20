@@ -71,7 +71,7 @@ public final class CouchbaseSettings {
     /**
      * Returns the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
      *
-     * @return the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST
+     * @return the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
      */
     public String getHost() {
         return host;
