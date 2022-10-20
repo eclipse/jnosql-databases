@@ -56,7 +56,7 @@ CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguratio
 BucketManagerFactory factory = configuration.get();
 BucketManager manager = factory.getBucketManager("bucket");
 User user = new User("otavio");
-manager.put(¨otaviojava¨, user);
+manager.put("otaviojava", user);
 Optional<Value> otavio = manager.get("otaviojava");
 ----
 
