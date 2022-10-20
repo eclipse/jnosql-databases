@@ -20,8 +20,6 @@ import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfigurations;
 
-import java.util.Optional;
-
 import static java.util.Objects.requireNonNull;
 
 /**
