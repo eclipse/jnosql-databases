@@ -20,7 +20,11 @@ import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
@@ -37,6 +41,12 @@ public abstract class CouchbaseConfiguration {
 
     protected String password;
 
+    private String scope;
+
+    private List<String> collections = new ArrayList<>();
+
+    private String index;
+
     public CouchbaseConfiguration() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
@@ -50,12 +60,34 @@ public abstract class CouchbaseConfiguration {
         this.host = getHost(settings);
         this.user = getUser(settings);
         this.password = getPassword(settings);
+        this.scope = getScope(settings);
+        this.collections = getCollections(settings);
+        this.index = getIndex(settings);
     }
 
     protected String getUser(Settings settings) {
         return settings.get(asList(Configurations.USER.get(),
                         CouchbaseConfigurations.USER.get()))
                 .map(Object::toString).orElse(null);
+    }
+
+    private String getScope(Settings settings) {
+        return settings.get(CouchbaseConfigurations.SCOPE.get())
+                .map(Object::toString).orElse(null);
+    }
+
+    private String getIndex(Settings settings) {
+        return settings.get(CouchbaseConfigurations.INDEX.get())
+                .map(Object::toString).orElse(null);
+    }
+
+    private List<String> getCollections(Settings settings) {
+        List<String> collections = new ArrayList<>();
+        settings.get(CouchbaseConfigurations.COLLECTIONS.get())
+                .map(Object::toString).stream()
+                .flatMap(s -> Stream.of(s.split(",\\s*")))
+                .forEach(collections::add);
+        return collections;
     }
 
     protected String getPassword(Settings settings) {
@@ -70,7 +102,6 @@ public abstract class CouchbaseConfiguration {
                         CouchbaseConfigurations.HOST.get()))
                 .map(Object::toString).orElse(null);
     }
-
 
 
     /**
