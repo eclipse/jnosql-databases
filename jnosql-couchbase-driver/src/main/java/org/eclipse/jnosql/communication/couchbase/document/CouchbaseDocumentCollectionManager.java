@@ -29,7 +29,7 @@ public interface CouchbaseDocumentCollectionManager extends DocumentCollectionMa
 
 
     /**
-     * Executes the n1qlquery with params and then result que result
+     * Executes the N1QL with params and then result que result
      *
      * @param n1ql the query
      * @param params    the params
