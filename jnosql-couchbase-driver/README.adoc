@@ -1,6 +1,6 @@
 # Couchbase Driver
 
-The Couchbase driver provides an API integration between Java and the database thought a standard communication level.
+The Couchbase driver provides an API integration between Java and the database through a standard communication level.
 
 == Installing
 
@@ -19,6 +19,10 @@ Gradle
 compile('org.eclipse.jnosql.communication:jnosql-couchbase-driver:VERSION')
 ----
 
+== Configurations
+
+Couchbase provides both a configuration programmatically or by the ```couchbase.properties``` file.
+Check the ```CouchbaseConfigurations``` for more information.
 
 
 == Adding dependencies
