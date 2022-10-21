@@ -178,7 +178,20 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
         entities = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
+    }
 
+    @Test
+    public void shouldExecuteInStringQueryAtCouchbase() {
+        for (int index = 0; index < 4; index++) {
+            DocumentEntity entity = getEntity();
+            entity.remove(CouchDBConstant.ID);
+            entity.add("index", index);
+            entityManager.insert(entity);
+        }
+        CouchDBDocumentQuery query = CouchDBDocumentQuery.of(select().from(COLLECTION_NAME)
+                .where("name").in(Collections.singleton("Poliana")).build());
+        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        assertEquals(4, entities.size());
     }
 
     @Test
