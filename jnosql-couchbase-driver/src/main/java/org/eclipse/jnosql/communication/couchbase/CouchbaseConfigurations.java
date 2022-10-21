@@ -19,7 +19,7 @@ import com.couchbase.client.java.Bucket;
 import java.util.function.Supplier;
 
 /**
- * This class is a {@link Supplier} of properties settings that to set up on couchbase.
+ * This class is a {@link Supplier} of properties settings available at Couchbase client.
  */
 public enum CouchbaseConfigurations implements Supplier<String> {
 

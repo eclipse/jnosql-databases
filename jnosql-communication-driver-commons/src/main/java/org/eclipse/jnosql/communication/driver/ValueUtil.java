@@ -19,6 +19,7 @@ import jakarta.nosql.Value;
 import jakarta.nosql.ValueWriter;
 import org.eclipse.jnosql.communication.writer.ValueWriterDecorator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,7 @@ import static java.util.stream.Collectors.toList;
  * Utilitarian class to {@link Value}
  */
 public final class ValueUtil {
-
+    private static final String PARAM_CLASS_NAME = "org.eclipse.jnosql.communication.ParamValue";
     private static final ValueWriter VALUE_WRITER = ValueWriterDecorator.getInstance();
     private static final Function CONVERT = o -> {
         if (o instanceof Value) {
@@ -52,7 +53,7 @@ public final class ValueUtil {
     public static Object convert(Value value) {
         Objects.requireNonNull(value, "value is required");
         Object val = value.get();
-        if(val instanceof Iterable) {
+        if (val instanceof Iterable) {
             return getObjects(val);
         }
         return getObject(val);
@@ -68,8 +69,22 @@ public final class ValueUtil {
     public static List<Object> convertToList(Value value) {
         Objects.requireNonNull(value, "value is required");
         Object val = value.get();
-        if(val instanceof Iterable) {
-            return getObjects(val);
+        if (val instanceof Iterable) {
+            List<Object> items = new ArrayList<>();
+            Iterable.class.cast(val).forEach(items::add);
+            if (items.size() == 1) {
+                Object item = items.get(0);
+                //check if it is dynamic params
+                if (PARAM_CLASS_NAME.equals(item.getClass().getName())) {
+                    Object params = Value.class.cast(item).get();
+                    if (params instanceof Iterable) {
+                        return getObjects(Iterable.class.cast(params));
+                    } else {
+                        return Collections.singletonList(getObject(params));
+                    }
+                }
+            }
+            return (List<Object>) items.stream().map(CONVERT).collect(toList());
 
         }
         return Collections.singletonList(getObject(val));

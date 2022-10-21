@@ -18,6 +18,9 @@ package org.eclipse.jnosql.communication.couchdb.document;
 
 import jakarta.nosql.document.DocumentCollectionManager;
 
+/**
+ * A couchdb extension where it does provide a {@link CouchDBDocumentCollectionManager#count()} feature.
+ */
 public interface CouchDBDocumentCollectionManager extends DocumentCollectionManager {
 
     /**
