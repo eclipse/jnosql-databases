@@ -34,7 +34,7 @@ import java.util.Objects;
 public class CouchDBDocumentConfiguration implements DocumentConfiguration {
 
 
-    private static final String FILE_CONFIGURATION = "diana-couchdb.properties";
+    private static final String FILE_CONFIGURATION = "couchdb.properties";
 
     @Override
     public CouchDBDocumentCollectionManagerFactory get() {
