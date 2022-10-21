@@ -18,18 +18,62 @@ package org.eclipse.jnosql.communication.couchdb.document;
 
 import java.util.function.Supplier;
 
+/**
+ * This class is a {@link Supplier} of properties settings available at Couchdb client.
+ */
 public enum  CouchDBConfigurations implements Supplier<String> {
 
+    /**
+     * Define the port connection to a client connect. The default value is "5984"
+     */
     PORT("couchdb.port"),
+
+    /**
+     * The max of connection that the couchdb client have. The default value is "20"
+     */
     MAX_CONNECTIONS("couchdb.max.connections"),
+
+    /**
+     * The timeout in milliseconds used when requesting a connection. The default value is "1000".
+     */
     CONNECTION_TIMEOUT("couchdb.connection.timeout"),
+
+    /**
+     * Defines the socket timeout in milliseconds, which is the timeout for waiting for data or, put differently,
+     *  a maximum period inactivity between two consecutive data packets). The default value is "10000".
+     */
     SOCKET_TIMEOUT("couchdb.socket.timeout"),
+
+    /**
+     *  Returns the current maximum response body size that will be cached. The value is "8192".
+     */
     MAX_OBJECT_SIZE_BYTES("couchdb.max.object.size.bytes"),
+
+    /**
+     * The maximum number of cache entries the cache will retain. The default value is "1000".
+     */
     MAX_CACHE_ENTRIES("couchdb.max.cache.entries"),
+    /**
+     * The host of the client, it is an alias for {@link jakarta.nosql.Configurations#HOST}
+     */
     HOST("couchdb.host"),
+    /**
+     * The user of a credential connection, it is an alias for {@link jakarta.nosql.Configurations#USER}
+     */
     USER("couchdb.username"),
+
+    /**
+     * The password of a credential connection, it is an alias for {@link jakarta.nosql.Configurations#HOST}
+     */
     PASSWORD("couchdb.password"),
+    /**
+     *If the request will use a https or a http.
+     */
     ENABLE_SSL("couchdb.enable.ssl"),
+
+    /**
+     * Determines whether compressed entities should be decompressed automatically.
+     */
     COMPRESSION("couchdb.compression");
 
     private final String configuration;

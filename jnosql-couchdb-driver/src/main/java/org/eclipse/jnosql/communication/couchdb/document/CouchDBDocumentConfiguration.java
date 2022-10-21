@@ -28,19 +28,7 @@ import java.util.Objects;
 
 /**
  * The CouchDB implementation of {@link DocumentConfiguration}  that returns
- * {@link CouchDBDocumentCollectionManagerFactory}, settings:
- * <p>couchdb.port: </p>
- * <p>couchdb.max.connections: </p>
- * <p>couchdb.connection.timeout: </p>
- * <p>couchdb.socket.timeout: </p>
- * <p>couchdb.max.object.size.bytes: </p>
- * <p>couchdb.max.cache.entries: </p>
- * <p>couchdb.host: </p>
- * <p>couchdb.username: </p>
- * <p>couchdb.password: </p>
- * <p>couchdb.enable.ssl: </p>
- * <p>couchdb.compression: </p>
- *
+ * {@link CouchDBDocumentCollectionManagerFactory}.
  * @see CouchDBConfigurations
  */
 public class CouchDBDocumentConfiguration implements DocumentConfiguration {
