@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -189,7 +190,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
             entityManager.insert(entity);
         }
         CouchDBDocumentQuery query = CouchDBDocumentQuery.of(select().from(COLLECTION_NAME)
-                .where("name").in(Collections.singleton("Poliana")).build());
+                .where("name").in(Arrays.asList("Poliana", "Poliana")).build());
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(4, entities.size());
     }
