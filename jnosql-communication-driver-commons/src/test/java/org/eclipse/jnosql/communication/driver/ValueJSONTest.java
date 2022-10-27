@@ -47,7 +47,8 @@ public class ValueJSONTest {
     public void shouldConvertMapIgnoringKeyValue() {
         Map<Integer, List<String>> map = Collections.singletonMap(10, Arrays.asList("1", "2", "3"));
         Value value = ValueJSON.of(map);
-        Map<String, List<String>> result = value.get(new TypeReference<Map<String, List<String>>>(){});
+        Map<String, List<String>> result = value.get(new TypeReference<>() {
+        });
         List<String> valueResult = result.get("10");
         Assertions.assertThat(result.keySet()).contains("10");
         Assertions.assertThat(valueResult).contains("1", "2", "3");
