@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.memcached.keyvalue.model;
+package org.eclipse.jnosql.communication.memcached.keyvalue;
 
 import java.io.Serializable;
 import java.util.Objects;
