@@ -21,6 +21,7 @@ import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnFamilyManager;
 import jakarta.nosql.column.ColumnFamilyManagerFactory;
 import jakarta.nosql.column.ColumnQuery;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +30,7 @@ import java.util.stream.Collectors;
 
 import static jakarta.nosql.column.ColumnDeleteQuery.delete;
 import static jakarta.nosql.column.ColumnQuery.select;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -81,8 +81,8 @@ public class HBaseColumnFamilyManagerTest {
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
         assertEquals(FAMILY, entity.getName());
-        assertThat(entity.getColumns(), containsInAnyOrder(Column.of(ID_FIELD, "otaviojava"),
-                Column.of("age", "26"), Column.of("country", "Brazil")));
+        assertThat(entity.getColumns()).contains(Column.of(ID_FIELD, "otaviojava"),
+                Column.of("age", "26"), Column.of("country", "Brazil"));
     }
 
     @Test

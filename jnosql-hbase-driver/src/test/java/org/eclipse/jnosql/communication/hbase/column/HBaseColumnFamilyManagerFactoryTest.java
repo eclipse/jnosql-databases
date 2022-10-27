@@ -23,9 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 
 public class HBaseColumnFamilyManagerFactoryTest {
-
     private ColumnConfiguration configuration = new HBaseColumnConfiguration();
-
 
     @Test
     public void shouldCreateColumnFamilyManager() {
