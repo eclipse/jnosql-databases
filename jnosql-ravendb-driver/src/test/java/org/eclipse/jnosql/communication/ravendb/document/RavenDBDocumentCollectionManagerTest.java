@@ -21,7 +21,6 @@ import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
-import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -285,7 +284,7 @@ public class RavenDBDocumentCollectionManagerTest {
 
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
@@ -302,7 +301,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"),
                 Document.of("mobile2", "1231231"));

@@ -190,7 +190,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
                 .orElse(Collections.emptyList());
         final Stream<HashMap> queryStream = queryResult.getRavenQuery()
                 .map(IEnumerableQuery::toList)
-                .map(List::stream).orElseGet(() -> Stream.empty());
+                .map(List::stream).orElseGet(Stream::empty);
         return Stream.concat(idQueryStream, queryStream);
     }
 
