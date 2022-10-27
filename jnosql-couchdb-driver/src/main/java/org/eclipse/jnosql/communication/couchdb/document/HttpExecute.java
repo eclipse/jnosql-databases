@@ -139,7 +139,7 @@ class HttpExecute {
         HttpGet request = new HttpGet(configuration.getUrl().concat(database).concat(CouchDBConstant.COUNT));
         Map<String, Object> json = execute(request, JSON, HttpStatus.SC_OK);
         String total = json.get(CouchDBConstant.TOTAL_ROWS_RESPONSE).toString();
-        return Long.valueOf(total);
+        return Long.parseLong(total);
     }
 
 

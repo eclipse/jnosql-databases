@@ -224,7 +224,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
@@ -242,7 +242,7 @@ class DefaultCouchDBDocumentCollectionManagerTest {
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"),
                 Document.of("mobile2", "1231231"));

@@ -40,7 +40,7 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration {
     public CouchDBDocumentCollectionManagerFactory get() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
-        configuration.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        configuration.forEach((key, value) -> builder.put(key, value));
         return get(builder.build());
     }
 
@@ -58,14 +58,14 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration {
         settings.get(Arrays.asList(CouchDBConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
                 .map(Object::toString)
                 .ifPresent(configuration::withPassword);
-        settings.computeIfPresent(CouchDBConfigurations.PORT.get(), (k, v) -> configuration.withPort(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_CONNECTIONS.get(), (k, v) -> configuration.withMaxConnections(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.CONNECTION_TIMEOUT.get(), (k, v) -> configuration.withConnectionTimeout(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.SOCKET_TIMEOUT.get(), (k, v) -> configuration.withSocketTimeout(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES.get(), (k, v) -> configuration.withMaxObjectSizeBytes(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_CACHE_ENTRIES.get(), (k, v) -> configuration.withMaxCacheEntries(Integer.valueOf(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.ENABLE_SSL.get(), (k, v) -> configuration.withEnableSSL(Boolean.valueOf(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.COMPRESSION.get(), (k, v) -> configuration.withCompression(Boolean.valueOf(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.PORT.get(), (k, v) -> configuration.withPort(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.MAX_CONNECTIONS.get(), (k, v) -> configuration.withMaxConnections(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.CONNECTION_TIMEOUT.get(), (k, v) -> configuration.withConnectionTimeout(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.SOCKET_TIMEOUT.get(), (k, v) -> configuration.withSocketTimeout(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES.get(), (k, v) -> configuration.withMaxObjectSizeBytes(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.MAX_CACHE_ENTRIES.get(), (k, v) -> configuration.withMaxCacheEntries(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.ENABLE_SSL.get(), (k, v) -> configuration.withEnableSSL(Boolean.parseBoolean(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.COMPRESSION.get(), (k, v) -> configuration.withCompression(Boolean.parseBoolean(v.toString())));
         return new CouchDBDocumentCollectionManagerFactory(configuration.build());
     }
 }
