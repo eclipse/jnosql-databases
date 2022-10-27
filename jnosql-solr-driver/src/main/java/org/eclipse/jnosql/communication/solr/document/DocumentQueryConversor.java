@@ -85,7 +85,7 @@ final class DocumentQueryConversor {
     }
 
     private static List<DocumentCondition> getDocumentConditions(DocumentCondition condition) {
-        return condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
+        return condition.getDocument().getValue().get(new TypeReference<>() {
         });
     }
 
