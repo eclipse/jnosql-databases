@@ -24,7 +24,6 @@ import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
 import jakarta.nosql.column.ColumnQuery;
 import jakarta.nosql.column.Columns;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,8 +49,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -270,8 +268,10 @@ public class CassandraColumnFamilyManagerTest {
         List<ColumnEntity> columnEntity = entityManager.select(query).collect(toList());
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
+        assertThat(columns.stream().map(Column::getName).collect(toList()))
+                .contains("name", "version", "options", "id");
+        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList())).contains
+                ("Cassandra", 3.2, asList(1, 2, 3), 10L);
 
     }
 
@@ -283,8 +283,9 @@ public class CassandraColumnFamilyManagerTest {
         List<ColumnEntity> columnEntity = entityManager.select(query, CONSISTENCY_LEVEL).collect(toList());
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).getColumns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
+        assertThat(columns.stream().map(Column::getName).collect(toList())).contains("name", "version", "options", "id");
+        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
+                .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
 
     }
 
@@ -295,8 +296,9 @@ public class CassandraColumnFamilyManagerTest {
                 .collect(toList());
         assertFalse(entities.isEmpty());
         List<Column> columns = entities.get(0).getColumns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
+        assertThat(columns.stream().map(Column::getName).collect(toList())).contains("name", "version", "options", "id");
+        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
+                .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
     }
 
     @Test
@@ -306,8 +308,10 @@ public class CassandraColumnFamilyManagerTest {
         List<ColumnEntity> entities = entityManager.cql(query, singletonMap("id", 10L)).collect(toList());
         assertFalse(entities.isEmpty());
         List<Column> columns = entities.get(0).getColumns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
+        assertThat(columns.stream().map(Column::getName).collect(toList()))
+                .contains("name", "version", "options", "id");
+        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
+                .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
     }
 
     @Test
@@ -317,8 +321,10 @@ public class CassandraColumnFamilyManagerTest {
         preparedStatement.bind(10L);
         List<ColumnEntity> entities = preparedStatement.executeQuery().collect(toList());
         List<Column> columns = entities.get(0).getColumns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()), containsInAnyOrder("name", "version", "options", "id"));
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()), containsInAnyOrder("Cassandra", 3.2, asList(1, 2, 3), 10L));
+        assertThat(columns.stream().map(Column::getName).collect(toList()))
+                .contains("name", "version", "options", "id");
+        assertThat(columns.stream().map(Column::getValue).map(Value::get)
+                .collect(toList())).contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
     }
 
     @Test
@@ -401,8 +407,8 @@ public class CassandraColumnFamilyManagerTest {
         List<Column> udtColumns = (List<Column>) udt.get();
         assertEquals("name", udt.getName());
         assertEquals("fullname", udt.getUserType());
-        assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ada"),
-                Column.of("lastname", "Lovelace")));
+        assertThat(udtColumns).contains(Column.of("firstname", "Ada"),
+                Column.of("lastname", "Lovelace"));
     }
 
     @Test
@@ -426,7 +432,7 @@ public class CassandraColumnFamilyManagerTest {
         List<Column> udtColumns = (List<Column>) udt.get();
         assertEquals("name", udt.getName());
         assertEquals("fullname", udt.getUserType());
-        assertThat(udtColumns, Matchers.containsInAnyOrder(Column.of("firstname", "Ioda")));
+        assertThat(udtColumns).contains(Column.of("firstname", "Ioda"));
     }
 
 
