@@ -44,7 +44,7 @@ final class CouchbaseValue implements Value {
     @Override
     public <T> T get(TypeSupplier<T> typeSupplier) {
         Objects.requireNonNull(typeSupplier, "typeSupplier is required");
-        return result.contentAs(new TypeRef<T>() {
+        return result.contentAs(new TypeRef<>() {
             @Override
             public Type type() {
                 return typeSupplier.get();

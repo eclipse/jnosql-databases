@@ -22,7 +22,6 @@ import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import jakarta.nosql.keyvalue.BucketManager;
-import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseBucketManagerFactory;
@@ -132,7 +131,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
@@ -147,7 +146,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"),
                 Document.of("mobile2", "1231231"));
@@ -167,7 +166,7 @@ public class CouchbaseDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.singleResult(query).get();
         Optional<Document> foods = entityFound.find("foods");
-        Set<String> setFoods = foods.get().get(new TypeReference<Set<String>>() {
+        Set<String> setFoods = foods.get().get(new TypeReference<>() {
         });
         assertEquals(set, setFoods);
     }
