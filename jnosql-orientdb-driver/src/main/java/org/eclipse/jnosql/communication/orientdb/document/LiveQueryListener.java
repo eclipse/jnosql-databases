@@ -52,7 +52,7 @@ class LiveQueryListener implements OLiveQueryResultListener {
 
     @Override
     public void onError(ODatabaseDocument database, OException exception) {
-        System.out.printf("error");
+        System.out.print("error");
     }
 
     @Override
