@@ -21,6 +21,7 @@ import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,10 +42,7 @@ import java.util.stream.StreamSupport;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -131,7 +129,7 @@ public class RavenDBDocumentCollectionManagerTest {
         List<DocumentEntity> entities = entityManager.select(query)
                 .collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
@@ -160,7 +158,7 @@ public class RavenDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
@@ -176,7 +174,7 @@ public class RavenDBDocumentCollectionManagerTest {
         List<DocumentEntity> entities = entityManager.select(query)
                 .collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
@@ -193,8 +191,7 @@ public class RavenDBDocumentCollectionManagerTest {
 
         Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertEquals(2, entitiesFound.size());
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).hasSize(2).isNotIn(entities.get(0));
     }
 
     @Test
@@ -212,7 +209,7 @@ public class RavenDBDocumentCollectionManagerTest {
         Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
     @Test
@@ -228,8 +225,7 @@ public class RavenDBDocumentCollectionManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertEquals(1, entitiesFound.size());
-        assertThat(entitiesFound, contains(entities.get(0)));
+        assertThat(entitiesFound).hasSize(1).contains(entities.get(0));
     }
 
     @Test
@@ -247,8 +243,9 @@ public class RavenDBDocumentCollectionManagerTest {
         Thread.sleep(TIME_LIMIT);
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         System.out.println(entitiesFound);
-        assertEquals(2, entitiesFound.size());
-        assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
+        assertThat(entitiesFound)
+                .hasSize(2)
+                .contains(entities.get(0), entities.get(2));
     }
 
 
@@ -290,7 +287,7 @@ public class RavenDBDocumentCollectionManagerTest {
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
 
     @Test
@@ -307,7 +304,8 @@ public class RavenDBDocumentCollectionManagerTest {
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
-        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"),
+                Document.of("mobile2", "1231231"));
     }
 
     @Test
