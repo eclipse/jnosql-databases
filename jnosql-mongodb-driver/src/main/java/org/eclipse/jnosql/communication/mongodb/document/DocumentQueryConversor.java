@@ -53,12 +53,12 @@ final class DocumentQueryConversor {
             case LIKE:
                 return Filters.regex(document.getName(), value.toString());
             case AND:
-                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
+                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<>() {
                 });
                 return Filters.and(andList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
             case OR:
-                List<DocumentCondition> orList = condition.getDocument().getValue().get(new TypeReference<List<DocumentCondition>>() {
+                List<DocumentCondition> orList = condition.getDocument().getValue().get(new TypeReference<>() {
                 });
                 return Filters.or(orList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));

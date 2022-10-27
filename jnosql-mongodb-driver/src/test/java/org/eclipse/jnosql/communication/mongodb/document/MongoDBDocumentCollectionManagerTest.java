@@ -97,7 +97,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .build();
 
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).count() == 0);
+        assertTrue(entityManager.select(query).findAny().isEmpty());
     }
 
     @Test
@@ -384,7 +384,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
@@ -401,7 +401,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"),
                 Document.of("mobile2", "1231231"));
@@ -514,7 +514,7 @@ public class MongoDBDocumentCollectionManagerTest {
         Assertions.assertTrue(optional.isPresent());
         DocumentEntity documentEntity = optional.get();
         Document properties = documentEntity.find("properties").get();
-        Map<String, Object> map = properties.get(new TypeReference<Map<String, Object>>() {
+        Map<String, Object> map = properties.get(new TypeReference<>() {
         });
         Assertions.assertNotNull(map);
     }
