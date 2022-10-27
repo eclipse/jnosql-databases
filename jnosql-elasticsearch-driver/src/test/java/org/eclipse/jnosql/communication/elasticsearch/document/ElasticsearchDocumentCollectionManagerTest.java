@@ -35,10 +35,8 @@ import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -76,9 +74,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
 
     @Test
     public void shouldInsertTTL() {
-        assertThrows(UnsupportedOperationException.class, () -> {
-            entityManager.insert(DocumentEntityGerator.getEntity(), Duration.ofSeconds(1L));
-        });
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(DocumentEntityGerator.getEntity(), Duration.ofSeconds(1L)));
     }
 
     @Test
@@ -151,7 +147,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         assertFalse(entities.isEmpty());
         List<Document> names = entities.stream().map(e -> e.find("name").get())
                 .distinct().collect(Collectors.toList());
-        assertThat(names, contains(name));
+        assertThat(names).contains(name);
     }
 
     @Test
@@ -165,7 +161,7 @@ public class ElasticsearchDocumentCollectionManagerTest {
         assertFalse(entities.isEmpty());
         entity.remove(EntityConverter.ENTITY);
         entities.get(0).remove(EntityConverter.ENTITY);
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
@@ -229,9 +225,9 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.singleResult(query).get();
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
 
     @Test
@@ -244,9 +240,10 @@ public class ElasticsearchDocumentCollectionManagerTest {
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"),
+                Document.of("mobile2", "1231231"));
     }
 
     @Test

@@ -61,7 +61,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
 
         Map<String, String> configurations = ConfigurationReader.from(FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
-        configurations.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        configurations.forEach((key, value) -> builder.put(key, value));
         Settings settings = builder.build();
 
         if (configurations.isEmpty()) {
@@ -113,7 +113,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
                 .map(ElasticsearchAddress::toHttpHost)
                 .forEach(httpHosts::add);
 
-        RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
+        RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[0]));
         builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
 
         final Optional<String> username = settings
