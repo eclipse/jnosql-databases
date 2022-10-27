@@ -41,9 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
-import static jakarta.nosql.document.DocumentQuery.select;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class MongoDBSpecificFeaturesTest {
@@ -79,7 +77,7 @@ public class MongoDBSpecificFeaturesTest {
         List<DocumentEntity> entities = entityManager.select(COLLECTION_NAME,
                 eq("name", "Poliana")).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
