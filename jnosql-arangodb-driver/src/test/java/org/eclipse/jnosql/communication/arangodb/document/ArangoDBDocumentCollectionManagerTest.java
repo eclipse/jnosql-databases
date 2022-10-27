@@ -21,6 +21,7 @@ import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +39,7 @@ import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -131,7 +130,7 @@ public class ArangoDBDocumentCollectionManagerTest {
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
 
     @Test
@@ -145,7 +144,8 @@ public class ArangoDBDocumentCollectionManagerTest {
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
         });
-        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"),
+                Document.of("mobile2", "1231231"));
     }
 
 
