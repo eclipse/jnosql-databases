@@ -15,15 +15,14 @@
 
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
-import org.hamcrest.Matchers;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -131,7 +130,7 @@ public class DefaultSortedSetTest {
         sortedSet.add(USA, 2);
         sortedSet.add(ENGLAND, 3);
 
-        assertThat(sortedSet.range(2, 3), contains(Ranking.of(ENGLAND, 3.0)));
+        assertThat(sortedSet.range(2, 3)).contains(Ranking.of(ENGLAND, 3.0));
     }
 
     @Test
@@ -143,7 +142,7 @@ public class DefaultSortedSetTest {
         sortedSet.add(usa);
         sortedSet.add(england);
 
-        assertThat(sortedSet.getRanking(), Matchers.contains(brazil, usa, england));
+        assertThat(sortedSet.getRanking()).contains(brazil, usa, england);
     }
 
     @Test
@@ -152,7 +151,7 @@ public class DefaultSortedSetTest {
         sortedSet.add(USA, 2);
         sortedSet.add(ENGLAND, 3);
 
-        assertThat(sortedSet.revRange(2, 3), contains(Ranking.of(BRAZIL, 1.0)));
+        assertThat(sortedSet.revRange(2, 3)).contains(Ranking.of(BRAZIL, 1.0));
     }
 
     @Test
@@ -164,7 +163,7 @@ public class DefaultSortedSetTest {
         sortedSet.add(usa);
         sortedSet.add(england);
 
-        assertThat(sortedSet.getRevRanking(), Matchers.contains(england, usa, brazil));
+        assertThat(sortedSet.getRevRanking()).contains(england, usa, brazil);
     }
 
     @AfterEach

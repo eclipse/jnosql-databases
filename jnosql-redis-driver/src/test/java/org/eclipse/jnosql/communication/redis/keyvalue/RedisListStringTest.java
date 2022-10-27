@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,9 +24,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -89,7 +88,7 @@ public class RedisListStringTest {
         fruits.add("watermellon");
 
         fruits.remove("banana");
-        assertThat(fruits, not(contains("banana")));
+        assertThat(fruits).isNotIn("banana");
     }
 
     @Test

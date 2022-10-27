@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,9 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -89,7 +88,7 @@ public class RedisListTest {
         fruits.add(waterMelon);
 
         fruits.remove(waterMelon);
-        assertThat(fruits, not(contains(waterMelon)));
+        assertThat(fruits).isNotIn(waterMelon);
     }
 
     @Test
@@ -100,7 +99,7 @@ public class RedisListTest {
 
         fruits.removeAll(Arrays.asList(orange, banana));
         assertTrue(fruits.size() == 1);
-        assertThat(fruits, contains(waterMelon));
+        assertThat(fruits).contains(waterMelon);
     }
 
     @Test
@@ -110,8 +109,7 @@ public class RedisListTest {
         fruits.add(waterMelon);
 
         fruits.remove(0);
-        assertTrue(fruits.size() == 2);
-        assertThat(fruits, not(contains(orange)));
+        assertThat(fruits).hasSize(2).isNotIn(orange);
     }
 
     @Test

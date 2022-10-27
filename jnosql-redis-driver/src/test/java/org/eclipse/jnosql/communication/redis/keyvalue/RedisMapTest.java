@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,9 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -104,7 +103,7 @@ public class RedisMapTest {
 
         vertebrates.remove("fishes");
         assertTrue(vertebrates.size() == 2);
-        assertThat(vertebrates, not(hasKey(fishes)));
+        assertThat(vertebrates).isNotIn(fishes);
     }
 
     @Test
