@@ -48,7 +48,7 @@ public class DefaultUDTTest {
         UDT udt = UDT.builder("fullname").withName("name")
                 .addUDT(columns).build();
 
-        List<Column> udtColumn = udt.get(new TypeReference<List<Column>>() {
+        List<Column> udtColumn = udt.get(new TypeReference<>() {
         });
 
         assertThat(columns).contains(Column.of("firstname", "Ada"),

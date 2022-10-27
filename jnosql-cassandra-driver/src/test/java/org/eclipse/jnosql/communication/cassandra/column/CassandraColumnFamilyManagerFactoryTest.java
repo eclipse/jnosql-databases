@@ -42,13 +42,9 @@ public class CassandraColumnFamilyManagerFactoryTest {
     @Test
     public void shouldReturnErrorWhenSettingsIsNull() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        assertThrows(NullPointerException.class, () -> {
-            cassandraConfiguration.get(null);
-        });
+        assertThrows(NullPointerException.class, () -> cassandraConfiguration.get(null));
 
-        assertThrows(NullPointerException.class, () -> {
-            cassandraConfiguration.get(null);
-        });
+        assertThrows(NullPointerException.class, () -> cassandraConfiguration.get(null));
     }
 
     @Test

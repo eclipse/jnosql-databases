@@ -125,29 +125,21 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldReturnErrorWhenInsertWithColumnNull() {
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.insert((ColumnEntity) null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.insert((ColumnEntity) null));
     }
 
     @Test
     public void shouldReturnErrorWhenInsertWithConsistencyLevelNull() {
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.insert(getColumnFamily(), null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.insert(getColumnFamily(), null));
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.insert(getEntities(), null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.insert(getEntities(), null));
     }
 
     @Test
     public void shouldReturnErrorWhenInsertWithColumnsNull() {
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.insert((Iterable<ColumnEntity>) null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.insert((Iterable<ColumnEntity>) null));
     }
 
 
@@ -161,17 +153,13 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldReturnErrorWhenUpdateWithColumnsNull() {
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.update((Iterable<ColumnEntity>) null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.update((Iterable<ColumnEntity>) null));
 
     }
 
     @Test
     public void shouldReturnErrorWhenUpdateWithColumnNull() {
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.update((ColumnEntity) null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.update((ColumnEntity) null));
     }
 
     @Test
@@ -187,32 +175,20 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldReturnErrorWhenSaveHasNullElement() {
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.save((ColumnEntity) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.save((ColumnEntity) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL));
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.save(getColumnFamily(), null, ConsistencyLevel.ALL);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.save(getColumnFamily(), null, ConsistencyLevel.ALL));
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.save(getColumnFamily(), Duration.ofSeconds(1L), null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.save(getColumnFamily(), Duration.ofSeconds(1L), null));
     }
 
     @Test
     public void shouldReturnErrorWhenSaveIterableHasNullElement() {
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.save((List<ColumnEntity>) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.save((List<ColumnEntity>) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL));
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.save(getEntities(), null, ConsistencyLevel.ALL);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.save(getEntities(), null, ConsistencyLevel.ALL));
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.save(getEntities(), Duration.ofSeconds(1L), null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.save(getEntities(), Duration.ofSeconds(1L), null));
     }
 
     @Test
@@ -242,20 +218,14 @@ public class CassandraColumnFamilyManagerTest {
     public void shouldReturnErrorWhenThereIsNotThanOneResultInSingleResult() {
         entityManager.insert(getEntities());
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).build();
-        assertThrows(NonUniqueResultException.class, () -> {
-            entityManager.singleResult(query);
-        });
+        assertThrows(NonUniqueResultException.class, () -> entityManager.singleResult(query));
     }
 
     @Test
     public void shouldReturnErrorWhenQueryIsNull() {
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.select(null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.select(null));
 
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.singleResult(null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.singleResult(null));
     }
 
 
@@ -341,16 +311,12 @@ public class CassandraColumnFamilyManagerTest {
 
     @Test
     public void shouldReturnErrorWhenDeleteQueryIsNull() {
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.delete(null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.delete(null));
     }
 
     @Test
     public void shouldReturnErrorWhenDeleteConsistencyLevelIsNull() {
-        assertThrows(NullPointerException.class, () -> {
-            entityManager.delete(delete().from(Constants.COLUMN_FAMILY).build(), null);
-        });
+        assertThrows(NullPointerException.class, () -> entityManager.delete(delete().from(Constants.COLUMN_FAMILY).build(), null));
     }
 
     @Test
