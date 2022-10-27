@@ -95,7 +95,8 @@ final class QueryUtils {
         }
 
         select = select.where(Relations.createClause(query.getCondition().orElse(null)));
-        final Map<String, ClusteringOrder> sort = query.getSorts().stream().collect(Collectors.toMap(s -> s.getName(), mapSort()));
+        final Map<String, ClusteringOrder> sort = query.getSorts().stream()
+                .collect(Collectors.toMap(Sort::getName, mapSort()));
         select = select.orderBy(sort);
         return select;
     }

@@ -16,7 +16,6 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.column.Column;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
