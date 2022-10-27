@@ -22,6 +22,7 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
@@ -36,8 +37,7 @@ import java.util.stream.Collectors;
 
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -185,7 +185,7 @@ public class DocumentQueryTest {
                 .collect(Collectors.toList());
 
         assertFalse(result.isEmpty());
-        assertThat(result, contains("name", "name", "name", "name3"));
+        assertThat(result).contains("name", "name", "name", "name3");
     }
 
     @Test
@@ -205,7 +205,7 @@ public class DocumentQueryTest {
                 .collect(Collectors.toList());
 
         assertFalse(result.isEmpty());
-        assertThat(result, contains("name3", "name", "name", "name"));
+        assertThat(result).contains("name3", "name", "name", "name");
     }
 
     @Test
