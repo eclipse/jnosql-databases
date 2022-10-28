@@ -40,10 +40,7 @@ import java.util.stream.StreamSupport;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -100,7 +97,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .build();
 
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(query).count() == 0);
+        assertTrue(entityManager.select(query).findAny().isEmpty());
     }
 
     @Test
@@ -114,7 +111,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
@@ -129,7 +126,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
@@ -144,7 +141,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test
@@ -161,7 +158,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
     @Test
@@ -178,7 +175,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
     @Test
@@ -186,7 +183,8 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false)
+                .collect(Collectors.toList());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").lt(23)
@@ -195,7 +193,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 1);
-        assertThat(entitiesFound, contains(entities.get(0)));
+        assertThat(entitiesFound).contains(entities.get(0));
     }
 
     @Test
@@ -212,7 +210,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
-        assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
+        assertThat(entitiesFound).contains(entities.get(0), entities.get(2));
     }
 
     @Test
@@ -229,7 +227,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entitiesFound.size() == 2);
-        assertThat(entitiesFound, contains(entities.get(0), entities.get(2)));
+        assertThat(entitiesFound).contains(entities.get(0), entities.get(2));
     }
 
     @Test
@@ -262,7 +260,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
 
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -290,7 +288,7 @@ public class MongoDBDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
 
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -308,7 +306,8 @@ public class MongoDBDocumentCollectionManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).
+                collect(Collectors.toList());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -322,7 +321,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
 
-        assertThat(ages, contains(23, 25));
+        assertThat(ages).contains(23, 25);
 
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -335,7 +334,7 @@ public class MongoDBDocumentCollectionManagerTest {
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
-        assertThat(ages, contains(25, 23));
+        assertThat(ages).contains(25, 23);
 
     }
 
@@ -385,9 +384,9 @@ public class MongoDBDocumentCollectionManagerTest {
 
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
 
     @Test
@@ -402,9 +401,10 @@ public class MongoDBDocumentCollectionManagerTest {
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"),
+                Document.of("mobile2", "1231231"));
     }
 
     @Test
@@ -514,7 +514,7 @@ public class MongoDBDocumentCollectionManagerTest {
         Assertions.assertTrue(optional.isPresent());
         DocumentEntity documentEntity = optional.get();
         Document properties = documentEntity.find("properties").get();
-        Map<String, Object> map = properties.get(new TypeReference<Map<String, Object>>() {
+        Map<String, Object> map = properties.get(new TypeReference<>() {
         });
         Assertions.assertNotNull(map);
     }

@@ -16,13 +16,12 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.column.Column;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultUDTTest {
@@ -48,10 +47,11 @@ public class DefaultUDTTest {
         UDT udt = UDT.builder("fullname").withName("name")
                 .addUDT(columns).build();
 
-        List<Column> udtColumn = udt.get(new TypeReference<List<Column>>() {
+        List<Column> udtColumn = udt.get(new TypeReference<>() {
         });
 
-        assertThat(columns, Matchers.containsInAnyOrder(Column.of("firstname", "Ada"), Column.of("lastname", "Lovelace")));
+        assertThat(columns).contains(Column.of("firstname", "Ada"),
+                Column.of("lastname", "Lovelace"));
     }
 
 }

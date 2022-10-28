@@ -38,7 +38,7 @@ enum DefaultJsonbSupplier implements JsonbSupplier {
     }
 
 
-    class PrivateVisibilityStrategy implements PropertyVisibilityStrategy {
+    static class PrivateVisibilityStrategy implements PropertyVisibilityStrategy {
 
         @Override
         public boolean isVisible(Field field) {

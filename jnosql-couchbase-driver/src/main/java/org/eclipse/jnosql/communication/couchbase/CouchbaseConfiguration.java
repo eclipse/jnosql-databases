@@ -51,7 +51,7 @@ public abstract class CouchbaseConfiguration {
     public CouchbaseConfiguration() {
         Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
-        configuration.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        configuration.forEach((key, value) -> builder.put(key, value));
         Settings settings = builder.build();
         update(settings);
     }

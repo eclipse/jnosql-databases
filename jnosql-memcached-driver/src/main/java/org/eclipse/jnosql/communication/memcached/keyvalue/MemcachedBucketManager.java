@@ -86,7 +86,7 @@ final class MemcachedBucketManager implements BucketManager {
 
         return stream(keys.spliterator(), false)
                 .map(this::get)
-                .filter(o -> o.isPresent())
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }

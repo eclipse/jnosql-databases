@@ -221,7 +221,7 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
 
         Condition condition = columnCondition.getCondition();
         if (OR.equals(condition)) {
-            List<ColumnCondition> columnConditions = columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
+            List<ColumnCondition> columnConditions = columnCondition.getColumn().get(new TypeReference<>() {
             });
             for (ColumnCondition cc : columnConditions) {
                 checkedCondition(cc);

@@ -16,12 +16,9 @@ package org.eclipse.jnosql.communication.mongodb.document;
 
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
 import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.Documents;
@@ -36,14 +33,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
-import static jakarta.nosql.document.DocumentQuery.select;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class MongoDBSpecificFeaturesTest {
@@ -79,7 +73,7 @@ public class MongoDBSpecificFeaturesTest {
         List<DocumentEntity> entities = entityManager.select(COLLECTION_NAME,
                 eq("name", "Poliana")).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertThat(entities, contains(entity));
+        assertThat(entities).contains(entity);
     }
 
     @Test

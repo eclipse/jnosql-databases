@@ -51,7 +51,7 @@ public class OrientDBDocumentConfiguration implements DocumentConfiguration {
     public OrientDBDocumentConfiguration() {
         Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
-        properties.entrySet().forEach(e -> builder.put(e.getKey(), e.getValue()));
+        properties.forEach((key, value) -> builder.put(key, value));
         Settings settings = builder.build();
 
         this.host = getHost(settings);

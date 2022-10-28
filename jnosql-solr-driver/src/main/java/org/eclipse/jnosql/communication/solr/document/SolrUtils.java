@@ -56,7 +56,7 @@ final class SolrUtils {
         return values.stream()
                 .map(SolrDocument::getFieldValueMap)
                 .map(SolrUtils::solrToMap)
-                .map(e -> Documents.of(e))
+                .map(Documents::of)
                 .map(documents -> {
                     final String entity = documents.stream()
                             .filter(d -> ENTITY.equals(d.getName()))
@@ -68,7 +68,7 @@ final class SolrUtils {
     }
 
     private static Map<String, Object> solrToMap(Map<String, Object> map) {
-        return map.keySet().stream().collect(Collectors.toMap(k -> k, k -> map.get(k)));
+        return map.keySet().stream().collect(Collectors.toMap(k -> k, map::get));
     }
 
     private static boolean isSudDocument(Object value) {

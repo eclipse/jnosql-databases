@@ -22,6 +22,7 @@ import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
 import org.testcontainers.containers.wait.strategy.WaitStrategy;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class CouchDBContainer extends GenericContainer {
 
@@ -35,7 +36,7 @@ public class CouchDBContainer extends GenericContainer {
 
 	@Override
 	protected void configure() {
-		setExposedPorts(Arrays.asList(PORT));
+		setExposedPorts(List.of(PORT));
 		setWaitStrategy(getCouchDBWaitStrategy());
 		setEnv(Arrays.asList("COUCHDB_USER=admin", "COUCHDB_PASSWORD=password"));
 	}

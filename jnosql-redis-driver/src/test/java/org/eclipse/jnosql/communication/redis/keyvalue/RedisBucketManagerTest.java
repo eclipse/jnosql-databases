@@ -20,7 +20,6 @@ import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import jakarta.nosql.keyvalue.KeyValueEntity;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -106,7 +105,9 @@ public class RedisBucketManagerTest {
         keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
         List<String> keys = asList("otavio", "soro");
         Iterable<Value> values = keyValueEntityManager.get(keys);
-        assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), Matchers.containsInAnyOrder(userOtavio, userSoro));
+        assertThat(StreamSupport.stream(values.spliterator(), false)
+                .map(value -> value.get(User.class)).collect(Collectors.toList()))
+                .contains(userOtavio, userSoro);
         keyValueEntityManager.delete(keys);
         assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
     }

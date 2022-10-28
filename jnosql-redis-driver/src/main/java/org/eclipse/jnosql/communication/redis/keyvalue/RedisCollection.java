@@ -100,6 +100,7 @@ abstract class RedisCollection<T> implements Collection<T> {
         for (T element : (Collection<T>) elements) {
             if (!contains(element)) {
                 containsAll = false;
+                break;
             }
         }
         return containsAll;

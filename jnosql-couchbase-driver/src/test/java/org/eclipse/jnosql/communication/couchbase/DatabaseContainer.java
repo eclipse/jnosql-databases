@@ -14,29 +14,10 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
-import com.couchbase.client.core.error.BucketNotFoundException;
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.Cluster;
-import com.couchbase.client.java.manager.bucket.BucketManager;
-import com.couchbase.client.java.manager.bucket.BucketSettings;
-import com.couchbase.client.java.manager.bucket.BucketType;
-import com.couchbase.client.java.manager.collection.CollectionManager;
-import com.couchbase.client.java.manager.collection.CollectionSpec;
-import com.couchbase.client.java.manager.collection.ScopeSpec;
-import com.couchbase.client.java.manager.query.AsyncQueryIndexManager;
-import com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions;
-import com.couchbase.client.java.manager.query.GetAllQueryIndexesOptions;
-import com.couchbase.client.java.manager.query.QueryIndex;
-import com.couchbase.client.java.manager.query.QueryIndexManager;
 import org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentConfiguration;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.testcontainers.couchbase.BucketDefinition;
 import org.testcontainers.couchbase.CouchbaseContainer;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public enum DatabaseContainer {
 

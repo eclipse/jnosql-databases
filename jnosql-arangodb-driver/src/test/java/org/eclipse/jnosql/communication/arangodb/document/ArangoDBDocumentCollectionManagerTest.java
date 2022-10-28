@@ -38,9 +38,7 @@ import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -129,9 +127,9 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"));
     }
 
     @Test
@@ -143,9 +141,10 @@ public class ArangoDBDocumentCollectionManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<List<Document>>() {
+        List<Document> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents).contains(Document.of("mobile", "1231231"),
+                Document.of("mobile2", "1231231"));
     }
 
 

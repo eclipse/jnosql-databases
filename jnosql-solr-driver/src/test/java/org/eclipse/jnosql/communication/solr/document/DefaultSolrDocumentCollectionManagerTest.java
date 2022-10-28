@@ -40,9 +40,7 @@ import java.util.stream.StreamSupport;
 import static jakarta.nosql.document.DocumentDeleteQuery.delete;
 import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -192,7 +190,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
     @Test
@@ -271,7 +269,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
 
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -299,7 +297,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
-        assertThat(entitiesFound, not(contains(entities.get(0))));
+        assertThat(entitiesFound).isNotIn(entities.get(0));
 
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -330,7 +328,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
 
-        assertThat(ages, contains(22, 23, 25));
+        assertThat(ages).contains(22, 23, 25);
 
         query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -342,7 +340,7 @@ public class DefaultSolrDocumentCollectionManagerTest {
         ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
-        assertThat(ages, contains(25, 23, 22));
+        assertThat(ages).contains(25, 23, 22);
 
     }
 

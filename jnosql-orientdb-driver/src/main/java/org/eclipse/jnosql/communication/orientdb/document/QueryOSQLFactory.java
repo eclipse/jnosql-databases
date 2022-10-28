@@ -111,7 +111,7 @@ final class QueryOSQLFactory {
         }
 
         Object[] getParams() {
-            return params.toArray(new Object[params.size()]);
+            return params.toArray(new Object[0]);
         }
 
         public List<ORecordId> getIds() {
@@ -142,7 +142,7 @@ final class QueryOSQLFactory {
         }
 
         Object[] getParams() {
-            return params.toArray(new Object[params.size()]);
+            return params.toArray(new Object[0]);
         }
     }
 

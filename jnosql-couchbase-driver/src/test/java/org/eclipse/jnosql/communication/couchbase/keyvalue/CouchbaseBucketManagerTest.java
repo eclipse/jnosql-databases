@@ -18,9 +18,9 @@ import jakarta.nosql.Value;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +33,6 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -174,7 +172,9 @@ public class CouchbaseBucketManagerTest {
         manager.put(asList(soroEntity, entityOtavio));
         List<String> keys = asList(KEY_OTAVIO, KEY_SORO);
         Iterable<Value> values = manager.get(keys);
-        assertThat(StreamSupport.stream(values.spliterator(), false).map(value -> value.get(User.class)).collect(Collectors.toList()), Matchers.containsInAnyOrder(userOtavio, userSoro));
+        Assertions.assertThat(StreamSupport.stream(values.spliterator(), false)
+                .map(value -> value.get(User.class)).collect(Collectors.toList()))
+                .contains(userOtavio, userSoro);
         manager.delete(keys);
         Iterable<Value> users = values;
         assertEquals(0L, StreamSupport.stream(manager.get(keys).spliterator(), false).count());

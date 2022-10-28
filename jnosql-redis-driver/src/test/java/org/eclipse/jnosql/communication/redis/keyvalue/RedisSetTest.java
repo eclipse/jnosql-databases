@@ -25,9 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,7 +55,7 @@ public class RedisSetTest {
         users.remove(felipe);
 
         assertTrue(users.size() == 1);
-        assertThat(users, not(contains(felipe)));
+        assertThat(users).isNotIn(felipe);
    }
 
     @Test

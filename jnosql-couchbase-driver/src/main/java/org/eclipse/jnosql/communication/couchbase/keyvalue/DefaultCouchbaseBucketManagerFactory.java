@@ -84,7 +84,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
         return (Map<K, V>)
-                new com.couchbase.client.java.datastructures.CouchbaseMap<V>(bucketName + ":map",
+                new com.couchbase.client.java.datastructures.CouchbaseMap<>(bucketName + ":map",
                         collection, valueValue,
                         MapOptions.mapOptions());
 
@@ -108,7 +108,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
 
         return (Map<K, V>)
                 new com.couchbase.client.java.datastructures.
-                        CouchbaseMap<V>(key, collection, valueType,
+                        CouchbaseMap<>(key, collection, valueType,
                         MapOptions.mapOptions());
     }
 

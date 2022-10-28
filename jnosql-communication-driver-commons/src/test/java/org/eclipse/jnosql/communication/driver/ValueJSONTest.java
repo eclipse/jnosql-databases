@@ -16,6 +16,7 @@ package org.eclipse.jnosql.communication.driver;
 
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.Value;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -24,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -48,10 +47,11 @@ public class ValueJSONTest {
     public void shouldConvertMapIgnoringKeyValue() {
         Map<Integer, List<String>> map = Collections.singletonMap(10, Arrays.asList("1", "2", "3"));
         Value value = ValueJSON.of(map);
-        Map<String, List<String>> result = value.get(new TypeReference<Map<String, List<String>>>(){});
+        Map<String, List<String>> result = value.get(new TypeReference<>() {
+        });
         List<String> valueResult = result.get("10");
-        assertThat(result.keySet(), containsInAnyOrder("10"));
-        assertThat(valueResult, containsInAnyOrder("1", "2", "3"));
+        Assertions.assertThat(result.keySet()).contains("10");
+        Assertions.assertThat(valueResult).contains("1", "2", "3");
     }
 
 }
