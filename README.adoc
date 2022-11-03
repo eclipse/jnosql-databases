@@ -5,6 +5,21 @@ Eclipse JNoSQL Communications driver is a collection of implementations.  In the
 
 == ArangoDB
 
+image::https://jnosql.github.io/img/logos/ArangoDB.png[Arangodb Project,align="center"width=25%, height=25%]
+
+ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
+
+=== How To Install
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>arangodb-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
 == Cassandra
 
 == Couchbase
