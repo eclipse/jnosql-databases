@@ -9,7 +9,11 @@ image::https://jnosql.github.io/img/logos/ArangoDB.png[Arangodb Project,align="c
 
 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 
+This API offers support for Document and Key-value types. The Graph is possible through Apache TinkerPop.
+
 === How To Install
+
+You can use either, maven or Gradle dependency:
 
 [source,xml]
 ----
@@ -19,6 +23,8 @@ ArangoDB is a native multi-model database with flexible data models for document
   <version>1.0.0-b4</version>
 </dependency>
 ----
+
+=== Configuration
 
 == Cassandra
 
