@@ -512,6 +512,10 @@ It is a sample using OrientDB's document-API with Eclipse MicroProfile Configura
 document=document
 document.provider=org.eclipse.jnosql.communication.orientdb.document.OrientDBDocumentConfiguration
 document.database=heroes
+document.orientdb.host=localhost:27017
+document.orientdb.user=root
+document.orientdb.password=rootpwd
+document.orientdb.storageType=plocal
 ----
 
 
