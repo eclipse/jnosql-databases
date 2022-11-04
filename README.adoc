@@ -252,6 +252,12 @@ document.database=developers
 
 == Hazelcast
 
+image::https://jnosql.github.io/img/logos/hazelcast.svg[Hazelcast Project,align="center"width=25%, height=25%]
+
+Hazelcast is an open source in-memory data grid based on Java.
+
+This driver has support for *Key-value* NoSQL API.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -260,35 +266,32 @@ You can use either, maven or Gradle dependency:
 ----
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>arangodb-driver</artifactId>
+  <artifactId>hazelcast-driver</artifactId>
   <version>1.0.0-b4</version>
 </dependency>
 ----
 
 === Configuration
 
-The API provides the class ```ArangoDBConfigurations```
+The API provides the class ```HazelcastConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+* hazelcast.instance.name
+* hazelcast.host
+* hazelcast.port
+* hazelcast.port.count
+* hazelcast.port.auto.increment
+* hazelcast.multicast.enable
+* hazelcast.tcp.ip.join
 
-It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+It is a sample using Hazelcast's key-value-API with Eclipse MicroProfile Configuration.
 
 
 [source,properties]
 ----
-document=document
-document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
-document.database=heroes
+keyvalue=keyvalue
+keyvalue.provider=org.eclipse.jnosql.communication.hazelcast.keyvalue.HazelcastKeyValueConfiguration
+keyvalue.database=heroes
 ----
 
 
