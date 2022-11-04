@@ -377,6 +377,12 @@ keyvalue.infinispan.config=infinispan.xml
 
 == Memcached
 
+image::https://davidmles.com/wp-content/uploads/2016/01/memcached-logo-768x432.png[Memcached Project,align="center" width=25%, height=25%]
+
+Memcached is a general-purpose distributed memory caching system. It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source (such as a database or API) must be read. Memcached is free and open-source software, licensed under the Revised BSD license. Memcached runs on Unix-like operating systems (at least Linux and OS X) and on Microsoft Windows.
+
+This driver has support for *key-value* NoSQL API.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -385,35 +391,40 @@ You can use either, maven or Gradle dependency:
 ----
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>arangodb-driver</artifactId>
+  <artifactId>memcached-driver</artifactId>
   <version>1.0.0-b4</version>
 </dependency>
 ----
 
 === Configuration
 
-The API provides the class ```ArangoDBConfigurations```
+The API provides the class ```MemcachedConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+* memcached.daemon
+* memcached.reconnect.delay
+* memcached.protocol
+* memcached.locator
+* memcached.auth.wait.time
+* memcached.max.block.time
+* memcached.timeout
+* memcached.read.buffer.size
+* memcached.should.optimize
+* memcached.timeout.threshold
+* memcached.nagle.algorithm
+* memcached.user
+* memcached.password
+* memcached.host
 
-It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+It is a sample using Memcached's document-API with Eclipse MicroProfile Configuration.
 
 
 [source,properties]
 ----
-document=document
-document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
-document.database=heroes
+keyvalue=keyvalue
+keyvalue.provider=org.eclipse.jnosql.communication.memcached.keyvalue.MemcachedKeyValueConfiguration
+keyvalue.database=heroes
+keyvalue.memcached.host.1=localhost:11211
 ----
 
 
