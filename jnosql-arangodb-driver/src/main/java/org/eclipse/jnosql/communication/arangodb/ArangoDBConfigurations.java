@@ -26,11 +26,11 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     PASSWORD("arangodb.password"),
     TIMEOUT("arangodb.timeout"),
     CHUCK_SIZE("arangodb.chuck.size"),
-    USERSSL("arangodb.userSsl"),
-    LOAD_BALANCING("arangodb.loadBalancingStrategy"),
+    USERSSL("arangodb.user.ssl"),
+    LOAD_BALANCING("arangodb.load.balancing.strategy"),
     PROTOCOL("arangodb.protocol"),
     MAX_CONNECTIONS("arangodb.connections.max"),
-    HOST_LIST("arangodb.acquireHostList"),
+    HOST_LIST("arangodb.acquire.host.list"),
     FILE_CONFIGURATION("diana-arangodb.properties");
 
 
