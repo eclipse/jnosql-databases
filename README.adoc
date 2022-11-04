@@ -105,6 +105,10 @@ column.settings.cassandra.query.2=<CQL-QUERY-2>
 
 == Couchbase
 
+The Couchbase driver provides an API integration between Java and the database through a standard communication level.
+
+This driver has support for two NoSQL API types: *Document* and *Key-value*.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -113,26 +117,23 @@ You can use either, maven or Gradle dependency:
 ----
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>arangodb-driver</artifactId>
+  <artifactId>couchbase-driver</artifactId>
   <version>1.0.0-b4</version>
 </dependency>
 ----
 
 === Configuration
 
-The API provides the class ```ArangoDBConfigurations```
+The API provides the class ```CouchbaseConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+* couchbase.host
+* couchbase.user
+* couchbase.password
+* couchbase.scope
+* couchbase.collections
+* couchbase.collection
+* couchbase.index
 
 It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
 
@@ -140,8 +141,24 @@ It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configura
 [source,properties]
 ----
 document=document
-document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
+document.settings.couchbase.host.1=localhost
+document.settings.couchbase.user=root
+document.settings.couchbase.password=123456
+document.provider=org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentConfiguration
 document.database=heroes
+----
+
+It is a sample using ArangoDB's key-value-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.settings.couchbase.host.1=localhost
+keyvalue.settings.couchbase.user=root
+keyvalue.settings.couchbase.password=123456
+keyvalue.database=heroes
+keyvalue.provider=org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration
 ----
 
 
