@@ -526,6 +526,8 @@ image::https://ravendb.net/Content/images/logo/ravendb_logo_small.jpg[RavenDB Pr
 
 RavenDB is a fully Transactional Open Source NoSQL Document Database. Easy to use, rapidly scalable, offers high availability, and takes your Business into the Next Generation of Data Performance.
 
+This driver has support for *document* NoSQL API.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -541,19 +543,18 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```ArangoDBConfigurations```
+The API provides the class ```RavenDBConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
 * raven.host
-*
 
-It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+It is a sample using RavenDB's document-API with Eclipse MicroProfile Configuration.
 
 
 [source,properties]
 ----
 document=document
-document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
+document.provider=org.eclipse.jnosql.communication.ravendb.document.RavenDBDocumentConfiguration
 document.database=heroes
 ----
 
