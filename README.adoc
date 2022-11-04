@@ -521,6 +521,11 @@ document.orientdb.storageType=plocal
 
 == RavenDB
 
+image::https://ravendb.net/Content/images/logo/ravendb_logo_small.jpg[RavenDB Project,align="center",align="center" width=25%, height=25%]
+
+
+RavenDB is a fully Transactional Open Source NoSQL Document Database. Easy to use, rapidly scalable, offers high availability, and takes your Business into the Next Generation of Data Performance.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -529,7 +534,7 @@ You can use either, maven or Gradle dependency:
 ----
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>arangodb-driver</artifactId>
+  <artifactId>ravendb-driver</artifactId>
   <version>1.0.0-b4</version>
 </dependency>
 ----
@@ -539,16 +544,8 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```ArangoDBConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+* raven.host
+*
 
 It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
 
