@@ -47,7 +47,7 @@ final class ArangoDBBuilders {
                 .map(Object::toString).map(Integer::valueOf)
                 .ifPresent(arangoDB::maxConnections);
 
-        settings.get(ArangoDBConfigurations.USERSSL.get())
+        settings.get(ArangoDBConfigurations.USER_SSL.get())
                 .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::useSsl);
 

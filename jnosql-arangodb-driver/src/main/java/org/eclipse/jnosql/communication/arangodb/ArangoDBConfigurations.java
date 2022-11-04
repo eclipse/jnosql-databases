@@ -26,7 +26,7 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     PASSWORD("arangodb.password"),
     TIMEOUT("arangodb.timeout"),
     CHUCK_SIZE("arangodb.chuck.size"),
-    USERSSL("arangodb.user.ssl"),
+    USER_SSL("arangodb.user.ssl"),
     LOAD_BALANCING("arangodb.load.balancing.strategy"),
     PROTOCOL("arangodb.protocol"),
     MAX_CONNECTIONS("arangodb.connections.max"),
