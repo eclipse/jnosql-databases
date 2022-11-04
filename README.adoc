@@ -105,6 +105,8 @@ column.settings.cassandra.query.2=<CQL-QUERY-2>
 
 == Couchbase
 
+image::https://jnosql.github.io/img/logos/couchbase.svg[Couchbase Project,align="center"width=25%, height=25%]
+
 The Couchbase driver provides an API integration between Java and the database through a standard communication level.
 
 This driver has support for two NoSQL API types: *Document* and *Key-value*.
