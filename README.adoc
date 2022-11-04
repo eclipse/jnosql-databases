@@ -699,5 +699,6 @@ To add a new driver, we have a few requirements:
 * Include a class to represent and contain the properties.
 ** A nomenclature is the <DATABASE>Configurations, e.g., CassandraConfigurations, MongoDBConfigurations
 
-
 == Graph Drivers
+
+Eclipse JNoSQL uses Apache Tinkerpop for Graph API.  Using this API gives support to https://tinkerpop.apache.org/providers.html[over twenty fives databases].
