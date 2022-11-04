@@ -430,6 +430,12 @@ keyvalue.memcached.host.1=localhost:11211
 
 == Mongodb
 
+image::https://jnosql.github.io/img/logos/mongodb.png[MongoDB Project,align="center" width=25%, height=25%]
+
+MongoDB is a free and open-source cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
+
+This driver has support for *document* NoSQL API.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -438,35 +444,32 @@ You can use either, maven or Gradle dependency:
 ----
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>arangodb-driver</artifactId>
+  <artifactId>mongodb-driver</artifactId>
   <version>1.0.0-b4</version>
 </dependency>
 ----
 
 === Configuration
 
-The API provides the class ```ArangoDBConfigurations```
+The API provides the class ```MongoDBDocumentConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+* mongodb.host
+* mongodb.user
+* mongodb.url
+* mongodb.password
+* mongodb.authentication.source
+* mongodb.authentication.mechanism
 
-It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+It is a sample using Mongodb's document-API with Eclipse MicroProfile Configuration.
 
 
 [source,properties]
 ----
 document=document
-document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
-document.database=heroes
+document.database=olympus
+document.settings.mongodb.host=localhost:27017
+document.provider=org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfiguration
 ----
 
 
