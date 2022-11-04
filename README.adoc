@@ -11,7 +11,7 @@ image::https://jnosql.github.io/img/logos/ArangoDB.png[Arangodb Project,align="c
 
 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 
-This API offers support for Document and Key-value types. The Graph is possible through Apache TinkerPop.
+This API offers support for **Document** and **Key-value** types. The Graph is possible through Apache TinkerPop.
 
 === How To Install
 
@@ -27,6 +27,38 @@ You can use either, maven or Gradle dependency:
 ----
 
 === Configuration
+The API provides the class ```ArangoDBConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* arangodb.host
+* arangodb.user
+* arangodb.password
+* arangodb.timeout
+* arangodb.chuck.size
+* arangodb.userSsl
+* arangodb.load.balancing.strategy
+* arangodb.protocol
+* arangodb.connections.max
+* arangodb.acquire.host.list
+
+It is a sample using ArangoDB with document-API.
+
+
+[source,properties]
+----
+document=document
+document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
+document.database=heroes
+----
+
+It is a sample using ArangoDB with key-value-API:
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.database=heroes
+keyvalue.provider=org.eclipse.jnosql.communication.arangodb.keyvalue.ArangoDBKeyValueConfiguration
+----
 
 == Cassandra
 
