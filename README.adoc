@@ -475,6 +475,12 @@ document.provider=org.eclipse.jnosql.communication.mongodb.document.MongoDBDocum
 
 == OrientDB
 
+image::https://jnosql.github.io/img/logos/orientdb.png[Orient Project,align="center" width=25%, height=25%]
+
+OrientDB is an open source NoSQL database management system written in Java. It is a multi-model database, supporting graph, document, key/value, and object models, but the relationships are managed as in graph databases with direct connections between records. It supports schema-less, schema-full and schema-mixed modes. It has a strong security profiling system based on users and roles and supports querying with Gremlin along with SQL extended for graph traversal.
+
+This driver has support for *document* NoSQL API.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -483,34 +489,28 @@ You can use either, maven or Gradle dependency:
 ----
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>arangodb-driver</artifactId>
+  <artifactId>orientdb-driver</artifactId>
   <version>1.0.0-b4</version>
 </dependency>
 ----
 
 === Configuration
 
-The API provides the class ```ArangoDBConfigurations```
+The API provides the class ```OrientDBDocumentConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+* orientdb.host
+* orientdb.-user
+* orientdb.password
+* orientdb.storage.type
 
-It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+It is a sample using OrientDB's document-API with Eclipse MicroProfile Configuration.
 
 
 [source,properties]
 ----
 document=document
-document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
+document.provider=org.eclipse.jnosql.communication.orientdb.document.OrientDBDocumentConfiguration
 document.database=heroes
 ----
 
