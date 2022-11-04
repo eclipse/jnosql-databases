@@ -99,11 +99,9 @@ It is a sample using Cassandra with Eclipse MicroProfile Configuration.
 column=column
 column.provider=org.eclipse.jnosql.communication.cassandra.column.CassandraConfiguration
 column.database=developers
-column.settings.cassandra.query-1=CREATE KEYSPACE IF NOT EXISTS developers WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};
-column.settings.cassandra.query.2=CREATE COLUMNFAMILY IF NOT EXISTS developers.Person (id bigint PRIMARY KEY, name text, phones list<text>);
-document.database=heroes
+column.settings.cassandra.query-1=<CQL-QUERY>
+column.settings.cassandra.query.2=<CQL-QUERY-2>
 ----
-
 
 == Couchbase
 
