@@ -41,7 +41,7 @@ to set up the credentials programmatically. Beware that you can set up through p
 * arangodb.connections.max
 * arangodb.acquire.host.list
 
-It is a sample using ArangoDB with document-API.
+It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
 
 
 [source,properties]
@@ -51,7 +51,7 @@ document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDoc
 document.database=heroes
 ----
 
-It is a sample using ArangoDB with key-value-API:
+It is a sample using ArangoDB's key-value-API with Eclipse MicroProfile Configuration.
 
 [source,properties]
 ----
