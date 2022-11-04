@@ -210,6 +210,10 @@ document.database=heroes
 
 == Elasticsearch
 
+image::https://jnosql.github.io/img/logos/elastic.svg[Elasticsearch Project,align="center"width=25%, height=25%]
+
+Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java and is released as open source under the terms of the Apache License. Elasticsearch is the most popular enterprise search engine followed by Apache Solr, also based on Lucene.
+
 === How To Install
 
 You can use either, maven or Gradle dependency:
@@ -218,7 +222,7 @@ You can use either, maven or Gradle dependency:
 ----
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>arangodb-driver</artifactId>
+  <artifactId>elasticsearch-driver</artifactId>
   <version>1.0.0-b4</version>
 </dependency>
 ----
