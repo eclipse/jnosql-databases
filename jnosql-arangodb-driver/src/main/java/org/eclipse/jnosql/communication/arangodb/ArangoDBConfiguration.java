@@ -23,7 +23,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The base to configuration both key-value and document on mongoDB.
- * To each configuration setted, it will change both builder
+ * To each configuration set, it will change both builder
  * {@link ArangoDB.Builder}
  */
 public abstract class ArangoDBConfiguration {
