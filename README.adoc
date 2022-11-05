@@ -166,6 +166,8 @@ keyvalue.provider=org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseK
 
 == Couchdb
 
+image::https://www.jnosql.org/img/logos/couchdb.png[Couchdb,align="center"width=25%, height=25%]
+
 The Couchdb driver provides an API integration between Java and the database through a standard communication level.
 
 This driver has support for *Document* NoSQL API.
@@ -379,7 +381,7 @@ keyvalue.infinispan.config=infinispan.xml
 
 == Memcached
 
-image::https://davidmles.com/wp-content/uploads/2016/01/memcached-logo-768x432.png[Memcached Project,align="center" width=25%, height=25%]
+image::https://www.jnosql.org/img/logos/memcached.png[Memcached Project,align="center" width=25%, height=25%]
 
 Memcached is a general-purpose distributed memory caching system. It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source (such as a database or API) must be read. Memcached is free and open-source software, licensed under the Revised BSD license. Memcached runs on Unix-like operating systems (at least Linux and OS X) and on Microsoft Windows.
 
