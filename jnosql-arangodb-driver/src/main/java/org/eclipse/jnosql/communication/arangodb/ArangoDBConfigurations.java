@@ -32,14 +32,10 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     MAX_CONNECTIONS("arangodb.connections.max"),
     HOST_LIST("arangodb.acquire.host.list"),
     FILE_CONFIGURATION("diana-arangodb.properties");
-
-
     private final String configuration;
-
     ArangoDBConfigurations(String configuration) {
         this.configuration = configuration;
     }
-
 
     @Override
     public String get() {
