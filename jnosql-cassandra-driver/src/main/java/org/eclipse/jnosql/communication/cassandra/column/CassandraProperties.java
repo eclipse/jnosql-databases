@@ -99,8 +99,11 @@ class CassandraProperties {
         cp.dataCenter = settings.get(CassandraConfigurations.DATA_CENTER.get()).map(Object::toString)
                 .orElse(DEFAULT_DATA_CENTER);
 
-        cp.user = settings.get(Configurations.USER.get()).map(Object::toString);
-        cp.password = settings.get(Configurations.PASSWORD.get()).map(Object::toString);
+        cp.user = settings.get(Arrays.asList(Configurations.USER.get(), CassandraConfigurations.USER.get()))
+                .map(Object::toString);
+        cp.password = settings.get(Arrays.asList(Configurations.PASSWORD.get(),
+                        CassandraConfigurations.PASSWORD.get()))
+                .map(Object::toString);
         return cp;
     }
 }
