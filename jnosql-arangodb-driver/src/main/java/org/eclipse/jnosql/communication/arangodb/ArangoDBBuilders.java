@@ -47,7 +47,7 @@ final class ArangoDBBuilders {
                 .map(Object::toString).map(Integer::valueOf)
                 .ifPresent(arangoDB::maxConnections);
 
-        settings.get(ArangoDBConfigurations.USERSSL.get())
+        settings.get(ArangoDBConfigurations.USER_SSL.get())
                 .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::useSsl);
 
@@ -55,7 +55,7 @@ final class ArangoDBBuilders {
                 .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::acquireHostList);
 
-        settings.get(ArangoDBConfigurations.LOADBALANCING.get()).map(Object::toString).map(LoadBalancingStrategy::valueOf)
+        settings.get(ArangoDBConfigurations.LOAD_BALANCING.get()).map(Object::toString).map(LoadBalancingStrategy::valueOf)
                 .ifPresent(arangoDB::loadBalancingStrategy);
 
         settings.get(ArangoDBConfigurations.PROTOCOL.get()).map(Object::toString).map(Protocol::valueOf)

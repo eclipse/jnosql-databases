@@ -181,7 +181,7 @@ public class RavenDBDocumentCollectionManager implements DocumentCollectionManag
 
 
     private Stream<Map> getQueryMaps(DocumentQuery query, IDocumentSession session) {
-        DocumentQueryConversor.QueryResult queryResult = DocumentQueryConversor.createQuery(session, query);
+        DocumentQueryConverter.QueryResult queryResult = DocumentQueryConverter.createQuery(session, query);
 
         Stream<Map> idQueryStream = queryResult.getIds().stream()
                 .map(i -> session.load(HashMap.class, i));

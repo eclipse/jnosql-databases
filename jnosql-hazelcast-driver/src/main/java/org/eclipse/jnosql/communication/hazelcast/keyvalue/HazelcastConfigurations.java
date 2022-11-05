@@ -17,7 +17,8 @@ package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 import java.util.function.Supplier;
 
 public enum HazelcastConfigurations implements Supplier<String> {
-    INSTANCE("hazelcast.instance.name"), HOST("hazelcast.host"),
+    INSTANCE("hazelcast.instance.name"),
+    HOST("hazelcast.host"),
     PORT("hazelcast.port"),
     PORT_COUNT("hazelcast.port.count"),
     PORT_AUTO_INCREMENT("hazelcast.port.auto.increment"),

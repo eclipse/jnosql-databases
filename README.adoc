@@ -1,15 +1,706 @@
 = Communications Driver API
+:toc: auto
 
-Communications Driver API is a flexible and extensible API to connect NoSQL databases. It brings an easy interface to support key-value, column family, document oriented and graph databases as JDBC does for SQL databases. This project has several drivers to Diana API.
+Eclipse JNoSQL Communications driver is a collection of implementations.  In the NoSQL communication layer, you can make an analogy with JDBC.
 
-* *Arangodb*: ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
-* *Cassandra*: Apache Cassandra is a free and open-source distributed database management system designed to handle large amounts of data across many commodity servers, providing high availability with no single point of failure.
-* *Couchbase*: Couchbase Server, originally known as Membase, is an open-source, distributed multi-model NoSQL document-oriented database software package that is optimized for interactive applications.
-* *Elasticsearch*: Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java and is released as open source under the terms of the Apache License. Elasticsearch is the most popular enterprise search engine followed by Apache Solr, also based on Lucene.
-* *Hazelcast*:In computing, Hazelcast is an open source in-memory data grid based on Java.
-* *Hbase*: HBase is an open source, non-relational, distributed database modeled after Google's BigTable and is written in Java. It is developed as part of Apache Software Foundation's Apache Hadoop project and runs on top of HDFS (Hadoop Distributed File System), providing BigTable-like capabilities for Hadoop. That is, it provides a fault-tolerant way of storing large quantities of sparse data (small amounts of information caught within a large collection of empty or unimportant data, such as finding the 50 largest items in a group of 2 billion records, or finding the non-zero items representing less than 0.1% of a huge collection).
-* *Mongodb*: MongoDB is a free and open-source cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
-* *Orientdb*: OrientDB is an open source NoSQL database management system written in Java. It is a multi-model database, supporting graph, document, key/value, and object models, but the relationships are managed as in graph databases with direct connections between records. It supports schema-less, schema-full and schema-mixed modes. It has a strong security profiling system based on users and roles and supports querying with Gremlin along with SQL extended for graph traversal. OrientDB uses several indexing mechanisms based on B-tree and Extendible hashing, the last one is known as "hash index", there are plans to implement LSM-tree and Fractal tree index based indexes. Each record has Surrogate key which indicates position of record inside of Array list , links between records are stored either as single value of record's position stored inside of referrer or as B-tree of record positions (so-called record IDs or RIDs) which allows fast traversal (with O(1) complexity) of one-to-many relationships and fast addition/removal of new links. OrientDB is the second most popular graph database according to the DB-Engines graph database ranking
-* *RavenDB*: RavenDB is an open source document-oriented NoSQL designed, based on .NET/Windows platform. Supports multiple databases and can easily handle hundreds/thousands of databases on the same instance and was designed with multi-tenancy. RavenDB uses JSON (JavaScript Object Notation) to store documents.
-* *Redis*: Redis is a software project that implements data structure servers. It is open-source, networked, in-memory, and stores keys with optional durability.
-* *Riak*: Riak (pronounced "ree-ack" ) is a distributed NoSQL key-value data store that offers high availability, fault tolerance, operational simplicity, and scalability. In addition to the open-source version, it comes in a supported enterprise version and a cloud storage version. Riak implements the principles from Amazon's Dynamo paper with heavy influence from the CAP Theorem. Written in Erlang, Riak has fault tolerance data replication and automatic data distribution across the cluster for performance and resilience.
+Those are communication implementations of https://github.com/eclipse-ee4j/nosql[Jakarta NoSQL].
+
+== ArangoDB
+
+image::https://jnosql.github.io/img/logos/ArangoDB.png[Arangodb Project,align="center"width=25%, height=25%]
+
+ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
+
+This API offers support for **Document** and **Key-value** types. The Graph is possible through Apache TinkerPop.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>arangodb-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```ArangoDBConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* arangodb.host
+* arangodb.user
+* arangodb.password
+* arangodb.timeout
+* arangodb.chuck.size
+* arangodb.userSsl
+* arangodb.load.balancing.strategy
+* arangodb.protocol
+* arangodb.connections.max
+* arangodb.acquire.host.list
+
+It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
+document.database=heroes
+----
+
+It is a sample using ArangoDB's key-value-API with Eclipse MicroProfile Configuration.
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.database=heroes
+keyvalue.provider=org.eclipse.jnosql.communication.arangodb.keyvalue.ArangoDBKeyValueConfiguration
+----
+
+== Cassandra
+
+image::https://jnosql.github.io/img/logos/cassandra.png[Apache Cassandra,align="center"width=25%, height=25%]
+
+Apache Cassandra is a free and open-source distributed database management system designed to handle large amounts of data across many commodity servers, providing high availability with no single point of failure.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>cassandra-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```CassandraConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* cassandra.host
+* cassandra.name
+* cassandra.port
+* cassandra.query
+* cassandra.data.center
+
+It is a sample using Cassandra with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+column=column
+column.provider=org.eclipse.jnosql.communication.cassandra.column.CassandraConfiguration
+column.database=developers
+column.settings.cassandra.query-1=<CQL-QUERY>
+column.settings.cassandra.query.2=<CQL-QUERY-2>
+----
+
+== Couchbase
+
+image::https://jnosql.github.io/img/logos/couchbase.svg[Couchbase Project,align="center"width=25%, height=25%]
+
+The Couchbase driver provides an API integration between Java and the database through a standard communication level.
+
+This driver has support for two NoSQL API types: *Document* and *Key-value*.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>couchbase-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```CouchbaseConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* couchbase.host
+* couchbase.user
+* couchbase.password
+* couchbase.scope
+* couchbase.collections
+* couchbase.collection
+* couchbase.index
+
+It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.settings.couchbase.host.1=localhost
+document.settings.couchbase.user=root
+document.settings.couchbase.password=123456
+document.provider=org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentConfiguration
+document.database=heroes
+----
+
+It is a sample using ArangoDB's key-value-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.settings.couchbase.host.1=localhost
+keyvalue.settings.couchbase.user=root
+keyvalue.settings.couchbase.password=123456
+keyvalue.database=heroes
+keyvalue.provider=org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration
+----
+
+
+== Couchdb
+
+The Couchdb driver provides an API integration between Java and the database through a standard communication level.
+
+This driver has support for *Document* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>couchdb-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```CouchDBConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* couchbase.host
+* couchbase.user
+* couchbase.password
+* couchbase.scope
+* couchbase.collections
+* couchbase.collection
+* couchbase.index
+
+It is a sample using Couchdb's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.settings.couchdb.host=localhost
+document.settings.couchdb.username=admin
+document.settings.couchdb.password=password
+document.provider=org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentConfiguration
+document.database=heroes
+----
+
+
+== Elasticsearch
+
+image::https://jnosql.github.io/img/logos/elastic.svg[Elasticsearch Project,align="center"width=25%, height=25%]
+
+Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java and is released as open source under the terms of the Apache License. Elasticsearch is the most popular enterprise search engine followed by Apache Solr, also based on Lucene.
+
+This driver has support for *Document* NoSQL API.
+
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>elasticsearch-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```ElasticsearchConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* elasticsearch.host
+* elasticsearch.user
+* elasticsearch.password
+
+It is a sample using Elasticsearch's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.provider=org.eclipse.jnosql.communication.elasticsearch.document.ElasticsearchDocumentConfiguration
+document.database=developers
+----
+
+
+== Hazelcast
+
+image::https://jnosql.github.io/img/logos/hazelcast.svg[Hazelcast Project,align="center" width=25%, height=25%]
+
+Hazelcast is an open source in-memory data grid based on Java.
+
+This driver has support for *Key-value* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>hazelcast-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```HazelcastConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* hazelcast.instance.name
+* hazelcast.host
+* hazelcast.port
+* hazelcast.port.count
+* hazelcast.port.auto.increment
+* hazelcast.multicast.enable
+* hazelcast.tcp.ip.join
+
+It is a sample using Hazelcast's key-value-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.provider=org.eclipse.jnosql.communication.hazelcast.keyvalue.HazelcastKeyValueConfiguration
+keyvalue.database=heroes
+----
+
+
+== Hbase
+
+image::https://jnosql.github.io/img/logos/hbase.png[Hbase Project,align="center" width=25%, height=25%]
+
+HBase is an open source, non-relational, distributed database modeled after Google's BigTable and is written in Java.
+
+This driver has support for *column* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>hbase-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```HbaseConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* hbase.family
+
+It is a sample using ArangoDB's column-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+column=column
+document.provider=org.eclipse.jnosql.communication.hbase.column.HBaseColumnConfiguration
+column.database=heroes
+----
+
+
+== Infinispan
+
+image::https://jnosql.github.io/img/logos/infinispan.svg[Infinista Project,align="center" width=25%, height=25%]
+
+Infinispan is a distributed in-memory key/value data store with optional schema, available under the Apache License 2.0.
+
+This driver has support for *key-value* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>infinispan-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```InfinispanConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* infinispan.host
+* infinispan.config
+
+It is a sample using Infinispan's key-value-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.provider=org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanKeyValueConfiguration
+keyvalue.database=heroes
+keyvalue.infinispan.config=infinispan.xml
+----
+
+
+== Memcached
+
+image::https://davidmles.com/wp-content/uploads/2016/01/memcached-logo-768x432.png[Memcached Project,align="center" width=25%, height=25%]
+
+Memcached is a general-purpose distributed memory caching system. It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source (such as a database or API) must be read. Memcached is free and open-source software, licensed under the Revised BSD license. Memcached runs on Unix-like operating systems (at least Linux and OS X) and on Microsoft Windows.
+
+This driver has support for *key-value* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>memcached-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```MemcachedConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* memcached.daemon
+* memcached.reconnect.delay
+* memcached.protocol
+* memcached.locator
+* memcached.auth.wait.time
+* memcached.max.block.time
+* memcached.timeout
+* memcached.read.buffer.size
+* memcached.should.optimize
+* memcached.timeout.threshold
+* memcached.nagle.algorithm
+* memcached.user
+* memcached.password
+* memcached.host
+
+It is a sample using Memcached's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.provider=org.eclipse.jnosql.communication.memcached.keyvalue.MemcachedKeyValueConfiguration
+keyvalue.database=heroes
+keyvalue.memcached.host.1=localhost:11211
+----
+
+
+== Mongodb
+
+image::https://jnosql.github.io/img/logos/mongodb.png[MongoDB Project,align="center" width=25%, height=25%]
+
+MongoDB is a free and open-source cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
+
+This driver has support for *document* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>mongodb-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```MongoDBDocumentConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* mongodb.host
+* mongodb.user
+* mongodb.url
+* mongodb.password
+* mongodb.authentication.source
+* mongodb.authentication.mechanism
+
+It is a sample using Mongodb's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.database=olympus
+document.settings.mongodb.host=localhost:27017
+document.provider=org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfiguration
+----
+
+
+== OrientDB
+
+image::https://jnosql.github.io/img/logos/orientdb.png[Orient Project,align="center" width=25%, height=25%]
+
+OrientDB is an open source NoSQL database management system written in Java. It is a multi-model database, supporting graph, document, key/value, and object models, but the relationships are managed as in graph databases with direct connections between records. It supports schema-less, schema-full and schema-mixed modes. It has a strong security profiling system based on users and roles and supports querying with Gremlin along with SQL extended for graph traversal.
+
+This driver has support for *document* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>orientdb-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```OrientDBDocumentConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* orientdb.host
+* orientdb.-user
+* orientdb.password
+* orientdb.storage.type
+
+It is a sample using OrientDB's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.provider=org.eclipse.jnosql.communication.orientdb.document.OrientDBDocumentConfiguration
+document.database=heroes
+document.orientdb.host=localhost:27017
+document.orientdb.user=root
+document.orientdb.password=rootpwd
+document.orientdb.storageType=plocal
+----
+
+
+== RavenDB
+
+image::https://ravendb.net/Content/images/logo/ravendb_logo_small.jpg[RavenDB Project,align="center",align="center" width=25%, height=25%]
+
+
+RavenDB is a fully Transactional Open Source NoSQL Document Database. Easy to use, rapidly scalable, offers high availability, and takes your Business into the Next Generation of Data Performance.
+
+This driver has support for *document* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>ravendb-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```RavenDBConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* raven.host
+
+It is a sample using RavenDB's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.provider=org.eclipse.jnosql.communication.ravendb.document.RavenDBDocumentConfiguration
+document.database=heroes
+----
+
+
+== Redis
+
+image::https://jnosql.github.io/img/logos/redis.png[Redis Project,align="center" width=25%, height=25%]
+
+Redis is a software project that implements data structure servers. It is open-source, networked, in-memory, and stores keys with optional durability.
+
+This driver has support for *key-value* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>redis-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```RedisConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* redis.host
+* redis.port
+* redis.timeout
+* redis.password
+* redis.database
+* redis.clientName
+* redis.max.total
+* redis.max.idle
+* redis.min.idle
+* redis.max.wait.millis
+
+It is a sample using Redis's keyvalue-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.provider=org.eclipse.jnosql.communication.redis.keyvalue.RedisConfiguration
+keyvalue.database=heroes
+----
+
+
+== Riak
+
+image::https://jnosql.github.io/img/logos/riak.png[Riak Project,align="center" width=25%, height=25%]
+
+Riak (pronounced "ree-ack" ) is a distributed NoSQL key-value data store that offers high availability, fault tolerance, operational simplicity, and scalability. In addition to the open-source version, it comes in a supported enterprise version and a cloud storage version.
+
+This driver has support for *key-value* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>redis-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```RiakConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* riak.host
+
+It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+keyvalue=keyvalue
+keyvalue.provider=org.eclipse.jnosql.communication.riak.keyvalue.RiakKeyValueConfiguration
+keyvalue.database=heroes
+----
+
+
+== Solr
+
+image::https://jnosql.github.io/img/logos/solr.svg[Apache Solr Project,align="center" width=25%, height=25%"]
+
+Solr is an open-source enterprise-search platform, written in Java, from the Apache Lucene project. Its major features include full-text search, hit highlighting, faceted search, real-time indexing, dynamic clustering, database integration, NoSQL features and rich document (e.g., Word, PDF) handling. Providing distributed search and index replication, Solr is designed for scalability and fault tolerance. Solr is widely used for enterprise search and analytics use cases and has an active development community and regular releases.
+
+This driver has support for *document* NoSQL API.
+
+=== How To Install
+
+You can use either, maven or Gradle dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.communication</groupId>
+  <artifactId>solr-driver</artifactId>
+  <version>1.0.0-b4</version>
+</dependency>
+----
+
+=== Configuration
+
+The API provides the class ```SolrDocumentConfigurations```
+to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
+* solr.host
+* solr.user
+* solr.password
+
+It is a sample using Solr's document-API with Eclipse MicroProfile Configuration.
+
+
+[source,properties]
+----
+document=document
+document.provider=org.eclipse.jnosql.communication.solr.document.SolrDocumentConfiguration
+document.database=heroes
+----
+
+
+== Contribute to a new Driver
+
+As an open-source project, you're free to create any driver, and you're welcome to join and participate in the process.
+To add a new driver, we have a few requirements:
+
+* Run Java 11 and Java 17
+* Include the documentation driver in the README file.
+* Cover the driver with tests and preferences with TestContainer.
+* Please pay attention to the documentation; it includes Javadoc
+* Include a class to represent and contain the properties.
+** A nomenclature is the <DATABASE>Configurations, e.g., CassandraConfigurations, MongoDBConfigurations
+
+== Graph Drivers
+
+Eclipse JNoSQL uses Apache Tinkerpop for Graph API.  Using this API gives support to https://tinkerpop.apache.org/providers.html[over twenty fives databases].
