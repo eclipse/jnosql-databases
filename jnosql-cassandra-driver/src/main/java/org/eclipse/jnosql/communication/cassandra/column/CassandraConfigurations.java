@@ -18,9 +18,9 @@ import java.util.function.Supplier;
 
 public enum CassandraConfigurations implements Supplier<String> {
 
-    USER("cassandra.host"),
+    USER("cassandra.user"),
 
-    PASSWORD("cassandra.host"),
+    PASSWORD("cassandra.password"),
     HOST("cassandra.host"),
     NAME("cassandra.name"),
     PORT("cassandra.port"),
