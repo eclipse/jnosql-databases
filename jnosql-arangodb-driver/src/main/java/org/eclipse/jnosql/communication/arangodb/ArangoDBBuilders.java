@@ -55,7 +55,8 @@ final class ArangoDBBuilders {
                 .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::acquireHostList);
 
-        settings.get(ArangoDBConfigurations.LOAD_BALANCING.get()).map(Object::toString).map(LoadBalancingStrategy::valueOf)
+        settings.get(ArangoDBConfigurations.LOAD_BALANCING.get()).map(Object::toString)
+                .map(LoadBalancingStrategy::valueOf)
                 .ifPresent(arangoDB::loadBalancingStrategy);
 
         settings.get(ArangoDBConfigurations.PROTOCOL.get()).map(Object::toString).map(Protocol::valueOf)
