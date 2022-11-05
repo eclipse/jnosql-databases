@@ -30,19 +30,19 @@ public enum ArangoDBConfigurations implements Supplier<String> {
      */
     HOST("arangodb.host"),
     /**
-     * The user credential.
+     * The user's credential.
      */
     USER("arangodb.user"),
     /**
-     * the password's credential
+     * The password's credential
      */
     PASSWORD("arangodb.password"),
     /**
-     * the connection and request timeout in milliseconds.
+     * The connection and request timeout in milliseconds.
      */
     TIMEOUT("arangodb.timeout"),
     /**
-     * the chunk size when {@link com.arangodb.Protocol#VST} is used.
+     * The chunk size when {@link com.arangodb.Protocol} is used.
      */
     CHUCK_SIZE("arangodb.chuck.size"),
     /**
@@ -62,7 +62,7 @@ public enum ArangoDBConfigurations implements Supplier<String> {
      */
     MAX_CONNECTIONS("arangodb.connections.max"),
     /**
-     *Set host split by comma
+     *Set hosts split by comma
      */
     HOST_LIST("arangodb.acquire.host.list"),
     FILE_CONFIGURATION("diana-arangodb.properties");
