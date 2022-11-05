@@ -17,7 +17,7 @@ package org.eclipse.jnosql.communication.arangodb;
 import java.util.function.Supplier;
 
 /**
- * This class has all the configurations on the arangoDB
+ * The settings option available at AragonDB
  */
 public enum ArangoDBConfigurations implements Supplier<String> {
 
