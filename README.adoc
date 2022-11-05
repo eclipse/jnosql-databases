@@ -116,25 +116,25 @@ to set up the credentials programmatically. Beware that you can set up through p
 |Configuration property |Description
 
 |cassandra.user
-|
+|The user's credential.
 
 |cassandra.password
-|
+|The password's credential
 
 |cassandra.host
-|
+|Cassandra's host. It is a prefix to enumerate hosts. E.g.: cassandra.host.1=localhost
 
 |cassandra.name
-|
+|The name of the application using the created session.
 
 |cassandra.port
-|
+|The cassandra's port
 
 |cassandra.query
-|
+|The Cassandra CQL to execute when the configuration starts. It uses as a prefix. E.g.: cassandra.query.1=<CQL>
 
 |cassandra.data.center
-|
+|The datacenter that is considered "local" by the load balancing policy.
 |===
 
 It is a sample using Cassandra with Eclipse MicroProfile Configuration.

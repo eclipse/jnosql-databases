@@ -44,7 +44,7 @@ public enum CassandraConfigurations implements Supplier<String> {
      */
     QUERY("cassandra.query"),
     /**
-     * Specifies the datacenter that is considered "local" by the load balancing policy.
+     * The datacenter that is considered "local" by the load balancing policy.
      */
     DATA_CENTER("cassandra.data.center");
 
