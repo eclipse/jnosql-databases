@@ -31,16 +31,42 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```ArangoDBConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+
+[cols="1,1"]
+|===
+|Configuration property |Description
+
+|arangodb.host
+|The database host, where you need to put the port split by colons. E.g., localhost:8529
+
+|arangodb.user
+|The user's credential.
+
+|arangodb.password
+|The password's credential
+
+|arangodb.timeout
+|The connection and request timeout in milliseconds.
+
+|arangodb.chuck.size
+|The chunk size when Protocol is used.
+
+|arangodb.userSsl
+|The true SSL will be used when connecting to an ArangoDB server.
+
+|arangodb.load.balancing.strategy
+|The com.arangodb.entity.LoadBalancingStrategy as String.
+
+|arangodb.protocol
+|The com.arangodb.Protocol as String
+
+|arangodb.connections.max
+|The maximum number of connections the built in connection pool will open per host.
+
+|arangodb.acquire.host.list
+|Set hosts split by comma
+|===
+
 
 It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
 
@@ -189,6 +215,7 @@ You can use either, maven or Gradle dependency:
 
 The API provides the class ```CouchDBConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+
 
 * couchbase.host
 * couchbase.user
