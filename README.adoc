@@ -32,7 +32,7 @@ The API provides the class ```ArangoDBConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
 
-[cols="1,1"]
+[cols="Arango Properties"]
 |===
 |Configuration property |Description
 
@@ -111,11 +111,31 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```CassandraConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* cassandra.host
-* cassandra.name
-* cassandra.port
-* cassandra.query
-* cassandra.data.center
+[cols="1,1"]
+|===
+|Configuration property |Description
+
+|cassandra.user
+|
+
+|cassandra.password
+|
+
+|cassandra.host
+|
+
+|cassandra.name
+|
+
+|cassandra.port
+|
+
+|cassandra.query
+|
+
+|cassandra.data.center
+|
+|===
 
 It is a sample using Cassandra with Eclipse MicroProfile Configuration.
 
