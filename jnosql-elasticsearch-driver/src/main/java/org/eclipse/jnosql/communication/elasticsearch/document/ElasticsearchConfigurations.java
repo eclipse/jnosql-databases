@@ -18,8 +18,17 @@ import java.util.function.Supplier;
 
 public enum ElasticsearchConfigurations implements Supplier<String> {
 
+    /**
+     * The database's host
+     */
     HOST("elasticsearch.host"),
+    /**
+     * The user's credential.
+     */
     USER("elasticsearch.user"),
+    /**
+     * The password's credential
+     */
     PASSWORD("elasticsearch.password");
 
     private final String configuration;
