@@ -175,31 +175,31 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```CouchbaseConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-[cols="1,1"]
+[cols="Couchbase"]
 |===
 |Configuration property |Description
 
 
 |couchbase.host
-|
+|The host at the database.
 
 |couchbase.user
-|
+|The user's credential.
 
 |couchbase.password
-|
+|The password's credential
 
 |couchbase.scope
-|
+|The scope to use at couchbase otherwise, it will use the default.
 
 |couchbase.collections
-|
+|couchbase collection split by a comma. At the start-up of a CouchbaseConfiguration, there is this option to check if these collections exist; if not, it will create using the default settings.
 
 |couchbase.collection
-|
+|A default couchbase collection. When it is not defined the default value comes from Bucket.
 
 |couchbase.index
-|
+|A couchbase collection index. At the start-up of a {@link CouchbaseConfiguration}, it will read this property to check if the index does exist, if not it will create combined by scope and the database.
 
 
 |===
