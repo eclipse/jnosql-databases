@@ -111,7 +111,7 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```CassandraConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-[cols="1,1"]
+[cols="Cassandra"]
 |===
 |Configuration property |Description
 
@@ -175,13 +175,34 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```CouchbaseConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* couchbase.host
-* couchbase.user
-* couchbase.password
-* couchbase.scope
-* couchbase.collections
-* couchbase.collection
-* couchbase.index
+[cols="1,1"]
+|===
+|Configuration property |Description
+
+
+|couchbase.host
+|
+
+|couchbase.user
+|
+
+|couchbase.password
+|
+
+|couchbase.scope
+|
+
+|couchbase.collections
+|
+
+|couchbase.collection
+|
+
+|couchbase.index
+|
+
+
+|===
 
 It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
 
