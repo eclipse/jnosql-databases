@@ -258,13 +258,44 @@ The API provides the class ```CouchDBConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
 
-* couchbase.host
-* couchbase.user
-* couchbase.password
-* couchbase.scope
-* couchbase.collections
-* couchbase.collection
-* couchbase.index
+[cols="CouchDB"]
+|===
+|Configuration property |Description
+
+|couchdb.port
+|The port connection to a client connect. The default value is "5984"
+
+|couchdb.max.connections
+|The max of connection that the couchdb client have. The default value is "20"
+
+|couchdb.connection.timeout
+|The timeout in milliseconds used when requesting a connection. The default value is "1000".
+
+|couchdb.socket.timeout
+|The socket timeout in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). The default value is "10000".
+
+|couchdb.max.object.size.bytes
+|The current maximum response body size that will be cached. The value is "8192".
+
+|couchdb.max.cache.entries
+|The maximum number of cache entries the cache will retain. The default value is "1000".
+
+|couchdb.host
+|The host at the database.
+
+|couchdb.username
+|The user's credential.
+
+|couchdb.password
+|The password's credential
+
+|couchdb.enable.ssl
+|If the request use a https or a http.
+
+|couchdb.compression
+|Determines whether compressed entities should be decompressed automatically.
+
+|===
 
 It is a sample using Couchdb's document-API with Eclipse MicroProfile Configuration.
 
