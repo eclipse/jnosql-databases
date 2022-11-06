@@ -19,7 +19,9 @@ package org.eclipse.jnosql.communication.couchdb.document;
 import java.util.function.Supplier;
 
 /**
- * This class is a {@link Supplier} of properties settings available at Couchdb client.
+ * The settings option available at CouchDB
+ *
+ * @see jakarta.nosql.Settings
  */
 public enum  CouchDBConfigurations implements Supplier<String> {
 

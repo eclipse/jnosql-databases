@@ -16,6 +16,11 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import java.util.function.Supplier;
 
+/**
+ * The settings option available at Cassandra driver.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum CassandraConfigurations implements Supplier<String> {
 
     /**

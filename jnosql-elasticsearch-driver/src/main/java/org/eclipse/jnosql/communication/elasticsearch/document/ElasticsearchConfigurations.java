@@ -16,6 +16,11 @@ package org.eclipse.jnosql.communication.elasticsearch.document;
 
 import java.util.function.Supplier;
 
+/**
+ * The settings option available at Elasticsearch
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum ElasticsearchConfigurations implements Supplier<String> {
 
     /**
