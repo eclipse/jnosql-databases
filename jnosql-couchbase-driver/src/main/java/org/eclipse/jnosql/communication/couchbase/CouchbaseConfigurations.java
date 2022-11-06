@@ -24,17 +24,17 @@ import java.util.function.Supplier;
 public enum CouchbaseConfigurations implements Supplier<String> {
 
     /**
-     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#HOST} alias
+     * The host at the database.
      */
     HOST("couchbase.host"),
 
     /**
-     * Define the user at the database. It is a {@link jakarta.nosql.Configurations#USER} alias
+     * The user's credential.
      */
     USER("couchbase.user"),
 
     /**
-     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#PASSWORD} alias
+     * The password's credential
      */
     PASSWORD("couchbase.password"),
     /**
