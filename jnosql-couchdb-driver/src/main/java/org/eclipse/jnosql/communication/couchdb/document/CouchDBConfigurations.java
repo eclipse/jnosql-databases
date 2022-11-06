@@ -67,7 +67,7 @@ public enum  CouchDBConfigurations implements Supplier<String> {
      */
     PASSWORD("couchdb.password"),
     /**
-     *If the request will use a https or a http.
+     *If the request use a https or a http.
      */
     ENABLE_SSL("couchdb.enable.ssl"),
 
