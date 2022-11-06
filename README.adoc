@@ -338,9 +338,20 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```ElasticsearchConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* elasticsearch.host
-* elasticsearch.user
-* elasticsearch.password
+[cols="Elasticsearch"]
+|===
+|Configuration property |Description
+
+|elasticsearch.host
+|The database's host
+
+|elasticsearch.user
+|The user's credential.
+
+|elasticsearch.password
+|The password's credential
+
+|===
 
 It is a sample using Elasticsearch's document-API with Eclipse MicroProfile Configuration.
 
