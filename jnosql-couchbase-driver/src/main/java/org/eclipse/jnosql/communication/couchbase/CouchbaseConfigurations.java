@@ -38,7 +38,7 @@ public enum CouchbaseConfigurations implements Supplier<String> {
      */
     PASSWORD("couchbase.password"),
     /**
-     * Define the scope to use at couchbase otherwise, it will use the default.
+     * The scope to use at couchbase otherwise, it will use the default.
      */
     SCOPE("couchbase.scope"),
     /**
