@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 public enum HazelcastConfigurations implements Supplier<String> {
 
     /**
-     * the instance name uniquely identifying the hazelcast instance created by this configuration.
+     * The instance name uniquely identifying the hazelcast instance created by this configuration.
      * This name is used in different scenarios, such as identifying the hazelcast
      * instance when running multiple instances in the same JVM.
      */
@@ -49,11 +49,11 @@ public enum HazelcastConfigurations implements Supplier<String> {
      */
     PORT_AUTO_INCREMENT("hazelcast.port.auto.increment"),
     /**
-     *Enables or disables the multicast discovery mechanism
+     * Enables or disables the multicast discovery mechanism
      */
     MULTICAST_ENABLE("hazelcast.multicast.enable"),
     /**
-     *Enables or disables the Tcp/Ip join mechanism.
+     * Enables or disables the Tcp/Ip join mechanism.
      */
     TCP_IP_JOIN("hazelcast.tcp.ip.join");
 
