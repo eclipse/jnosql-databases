@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 public enum ElasticsearchConfigurations implements Supplier<String> {
 
     /**
-     * The database's host as a prefix. E.g.: elasticsearch.host.1=172.17.0.2:1234
+     * Elasticsearch's host. It is a prefix to enumerate hosts. E.g.: elasticsearch.host.1=172.17.0.2:1234
      */
     HOST("elasticsearch.host"),
     /**
