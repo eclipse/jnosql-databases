@@ -31,8 +31,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * The Apache Solr implementation to {@link DocumentConfiguration}
  * that returns  {@link SolrDocumentCollectionManagerFactory}
- * It tries to read the diana-solr.properties file whose has the following properties
- * <p>solr.server.host.: as prefix to add host client, eg: solr.server.host.1=host1, solr.server.host.2= host2</p>
+ * @see SolrDocumentConfigurations
  */
 public class SolrDocumentConfiguration implements DocumentConfiguration {
 
