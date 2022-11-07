@@ -25,15 +25,45 @@ import java.util.function.Supplier;
  */
 public enum RedisConfigurations implements Supplier<String> {
 
+    /**
+     * The database host
+     */
     HOST("redis.host"),
+    /**
+     * The database port
+     */
     PORT("redis.port"),
+    /**
+     *
+     */
     TIMEOUT("redis.timeout"),
+    /**
+     * The password's credential
+     */
     PASSWORD("redis.password"),
+    /**
+     * The redis database's number
+     */
     DATABASE("redis.database"),
-    CLIENT_NAME("redis.clientName"),
+    /**
+     * The client's name
+     */
+    CLIENT_NAME("redis.client.name"),
+    /**
+     * The value for the maxTotal configuration attribute for pools created with this configuration instance.
+     */
     MAX_TOTAL("redis.max.total"),
+    /**
+     * The value for the maxIdle configuration attribute for pools created with this configuration instance.
+     */
     MAX_IDLE("redis.max.idle"),
+    /**
+     * Set the value for the minIdle configuration attribute for pools created with this configuration instance.
+     */
     MIN_IDLE("redis.min.idle"),
+    /**
+     * Sets the value for the {@code maxWait} configuration attribute for pools created with this configuration instance.
+     */
     MAX_WAIT_MILLIS("redis.max.wait.millis");
 
     private final String configuration;
