@@ -640,12 +640,30 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```MongoDBDocumentConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* mongodb.host
-* mongodb.user
-* mongodb.url
-* mongodb.password
-* mongodb.authentication.source
-* mongodb.authentication.mechanism
+[cols="MongoDB"]
+|===
+|Configuration property |Description
+
+|mongodb.host
+|The database host as prefix. E.g.: mongodb.host.1=localhost:27017
+
+|mongodb.user
+|The user's credential.
+
+|mongodb.url
+|MongoDB's connection string
+
+|mongodb.password
+|The password's credential
+
+|mongodb.authentication.source
+|The source where the user is defined.
+
+|mongodb.authentication.mechanism
+|Authentication mechanisms com.mongodb.AuthenticationMechanism
+
+|===
+
 
 It is a sample using Mongodb's document-API with Eclipse MicroProfile Configuration.
 
