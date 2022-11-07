@@ -47,7 +47,7 @@ public enum CassandraConfigurations implements Supplier<String> {
      */
     PORT("cassandra.port"),
     /**
-     * The Cassandra CQL to execute when the configuration starts. It uses as a prefix. E.g.: cassandra.query.1=<CQL>
+     * The Cassandra CQL to execute when the configuration starts. It uses as a prefix. E.g.: cassandra.query.1=CQL
      */
     QUERY("cassandra.query"),
     /**
