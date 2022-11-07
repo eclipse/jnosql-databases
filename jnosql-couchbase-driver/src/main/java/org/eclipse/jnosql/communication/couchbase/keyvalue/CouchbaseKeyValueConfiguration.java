@@ -24,11 +24,6 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation to {@link KeyValueConfiguration} that returns {@link DefaultCouchbaseBucketManagerFactory}.
- * It tries to read the diana-couchbase.properties file to get some informations:
- * <p>couchbase.host: to identify the connection</p>
- * <p>couchbase.user: the user</p>
- * <p>couchbase.password: the password</p>
- *
  * @see CouchbaseConfigurations
  */
 public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration

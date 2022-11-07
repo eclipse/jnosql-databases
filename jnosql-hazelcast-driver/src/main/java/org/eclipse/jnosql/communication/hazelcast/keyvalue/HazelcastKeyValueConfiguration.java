@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The hazelcast implementation of {@link KeyValueConfiguration} that returns
- * {@link HazelcastBucketManagerFactory}. It tries to read the diana-hazelcast.properties file
+ * {@link HazelcastBucketManagerFactory}.
  *
  * @see HazelcastConfigurations
  */

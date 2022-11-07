@@ -27,7 +27,6 @@ import java.util.Map;
 
 /**
  * The ArangoDB implementation to {@link KeyValueConfiguration}
- * It tries to read the configuration properties from diana-arangodb.properties file.
  *
  * @see ArangoDBConfigurations
  */

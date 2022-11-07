@@ -30,7 +30,6 @@ import static java.util.Objects.requireNonNull;
 /**
  * The implementation of {@link DocumentConfiguration}
  * that returns {@link ArangoDBDocumentCollectionManagerFactory}.
- * It tries to read the configuration properties from diana-arangodb.properties file.
  *
  * @see ArangoDBConfiguration
  * @see ArangoDBConfigurations

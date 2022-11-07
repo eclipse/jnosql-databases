@@ -35,8 +35,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The Infinispan implementation of {@link KeyValueConfiguration} that returns
- * {@link InfinispanBucketManagerFactory}. It tries to read the diana-infinispan.properties file
- * that has the properties:
+ * {@link InfinispanBucketManagerFactory}.
  * @see InfinispanConfigurations
  *
  */
