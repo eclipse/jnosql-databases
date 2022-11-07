@@ -43,9 +43,8 @@ import static java.util.Objects.requireNonNull;
 /**
  * The implementation of {@link DocumentConfiguration}
  * that returns {@link ElasticsearchDocumentCollectionManagerFactory}.
- * It tries to read the configuration properties from diana-elasticsearch.properties file. To get some information:
- * <p>elasticsearch.host.n: the host to client connection, if necessary to define a different port than default just
- * use colon, ':' eg: elasticsearch-host-1=172.17.0.2:1234</p>
+ *
+ * @see ElasticsearchConfigurations
  */
 public class ElasticsearchDocumentConfiguration implements DocumentConfiguration {
 

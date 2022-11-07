@@ -17,12 +17,37 @@ package org.eclipse.jnosql.communication.mongodb.document;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the Mongodb database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum MongoDBDocumentConfigurations implements Supplier<String> {
+    /**
+     * The database host as prefix. E.g.: mongodb.host.1=localhost:27017
+     */
     HOST("mongodb.host"),
+    /**
+     * The user's credential.
+     */
     USER("mongodb.user"),
-    URL("mongodb.url"),
+    /**
+     * The password's credential
+     */
     PASSWORD("mongodb.password"),
+    /**
+     * MongoDB's connection string
+     */
+    URL("mongodb.url"),
+    /**
+     * The source where the user is defined.
+     */
     AUTHENTICATION_SOURCE("mongodb.authentication.source"),
+    /**
+     * Authentication mechanisms {@link com.mongodb.AuthenticationMechanism}
+     */
     AUTHENTICATION_MECHANISM("mongodb.authentication.mechanism");
 
     private final String configuration;

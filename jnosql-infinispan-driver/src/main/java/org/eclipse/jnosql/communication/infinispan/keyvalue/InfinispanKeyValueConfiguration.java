@@ -35,10 +35,8 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The Infinispan implementation of {@link KeyValueConfiguration} that returns
- * {@link InfinispanBucketManagerFactory}. It tries to read the diana-infinispan.properties file
- * that has the properties:
- * <p>infinispan.config: the optional path to an Infinispan configuration file</p>
- * <p>infinispan.host-: as prefix to n host where n is the number of host, eg: infinispan-host-1: host </p>
+ * {@link InfinispanBucketManagerFactory}.
+ * @see InfinispanConfigurations
  *
  */
 public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {

@@ -31,17 +31,7 @@ import static java.util.Arrays.asList;
 
 /**
  * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisBucketManagerFactory}.
- * It tries to read diana-redis.properties file.
- * <p>redis.host: the host client </p>
- * <p>redis.port: the port, the default value 6379</p>
- * <p>redis.timeout: the redis timeout, the default value 2000 on milis</p>
- * <p>redis.password: the password</p>
- * <p>redis.database: the redis database number, the default value is 0</p>
- * <p>redis.clientName: the redis client name</p>
- * <p>redis.max.total: The max number of thread to {@link JedisPoolConfig}, the default value 1000 </p>
- * <p>redis.max.idle: The max idle {@link JedisPoolConfig}, the default value 10 </p>
- * <p>redis.min.idle: The min idle {@link JedisPoolConfig}, the default value 1 </p>
- * <p>redis.max.wait.millis: The max wait on millis on {@link JedisPoolConfig}, the default value 3000 </p>
+ * @see RedisConfigurations
  */
 public final class RedisConfiguration implements KeyValueConfiguration {
 

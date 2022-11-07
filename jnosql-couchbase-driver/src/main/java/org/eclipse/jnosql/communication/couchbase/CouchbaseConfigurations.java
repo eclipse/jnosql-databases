@@ -19,26 +19,30 @@ import com.couchbase.client.java.Bucket;
 import java.util.function.Supplier;
 
 /**
- * This class is a {@link Supplier} of properties settings available at Couchbase client.
+ * An enumeration to show the available options to connect to the Couchbase database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
  */
 public enum CouchbaseConfigurations implements Supplier<String> {
 
     /**
-     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#HOST} alias
+     * The host at the database.
      */
     HOST("couchbase.host"),
 
     /**
-     * Define the user at the database. It is a {@link jakarta.nosql.Configurations#USER} alias
+     * The user's credential.
      */
     USER("couchbase.user"),
 
     /**
-     * Define the host at the database. It is a {@link jakarta.nosql.Configurations#PASSWORD} alias
+     * The password's credential
      */
     PASSWORD("couchbase.password"),
     /**
-     * Define the scope to use at couchbase otherwise, it will use the default.
+     * The scope to use at couchbase otherwise, it will use the default.
      */
     SCOPE("couchbase.scope"),
     /**

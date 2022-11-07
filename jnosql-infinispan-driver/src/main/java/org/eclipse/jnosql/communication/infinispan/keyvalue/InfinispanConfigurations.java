@@ -16,9 +16,23 @@ package org.eclipse.jnosql.communication.infinispan.keyvalue;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the Infinispan database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum InfinispanConfigurations implements Supplier<String> {
 
-HOST("infinispan.host"), CONFIG("infinispan.config");
+    /**
+     * Database's host. It is a prefix to enumerate hosts. E.g.: infinispan.host.1=HOST
+     */
+    HOST("infinispan.host"),
+    /**
+     * The Infinispan configuration path. E.g.: infinispan.config=infinispan.xml
+     */
+    CONFIG("infinispan.config");
 
     private final String configuration;
 

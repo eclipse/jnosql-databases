@@ -41,7 +41,6 @@ import static java.util.Objects.requireNonNull;
  * <p>cassandra.jmx: enable JMX, the default value is true</p>
  *
  * @see CassandraConfigurations
- * @see OldCassandraConfigurations
  */
 public final class CassandraConfiguration implements ColumnConfiguration {
 

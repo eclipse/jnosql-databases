@@ -14,19 +14,62 @@
  */
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
+
+
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the Redis database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum RedisConfigurations implements Supplier<String> {
 
+    /**
+     * The database host
+     */
     HOST("redis.host"),
+    /**
+     * The database port
+     */
     PORT("redis.port"),
+    /**
+     * The redis timeout, the default value 2000 on milliseconds
+     */
     TIMEOUT("redis.timeout"),
+    /**
+     * The password's credential
+     */
     PASSWORD("redis.password"),
+    /**
+     * The redis database number, the default value is 0
+     */
     DATABASE("redis.database"),
-    CLIENT_NAME("redis.clientName"),
+    /**
+     * The client's name
+     */
+    CLIENT_NAME("redis.client.name"),
+    /**
+     * The value for the maxTotal configuration attribute for pools created with this configuration instance.
+     * The max number of thread to {@link redis.clients.jedis.JedisPoolConfig}, the default value 1000
+     */
     MAX_TOTAL("redis.max.total"),
+    /**
+     * The value for the maxIdle configuration attribute for pools created with this configuration instance.
+     * The max idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 10
+     */
     MAX_IDLE("redis.max.idle"),
+    /**
+     * The value for the minIdle configuration attribute for pools created with this configuration instance.
+     * The min idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 1
+     */
     MIN_IDLE("redis.min.idle"),
+    /**
+     * The value for the {@code maxWait} configuration attribute for pools created with this configuration instance.
+     * The max wait on millis on {@link redis.clients.jedis.JedisPoolConfig}, the default value 3000
+     */
     MAX_WAIT_MILLIS("redis.max.wait.millis");
 
     private final String configuration;

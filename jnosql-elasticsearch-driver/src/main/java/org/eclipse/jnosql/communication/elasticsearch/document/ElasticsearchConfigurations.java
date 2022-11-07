@@ -16,10 +16,26 @@ package org.eclipse.jnosql.communication.elasticsearch.document;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the Elasticsearch database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum ElasticsearchConfigurations implements Supplier<String> {
 
+    /**
+     * Database's host. It is a prefix to enumerate hosts. E.g.: elasticsearch.host.1=172.17.0.2:1234
+     */
     HOST("elasticsearch.host"),
+    /**
+     * The user's credential.
+     */
     USER("elasticsearch.user"),
+    /**
+     * The password's credential
+     */
     PASSWORD("elasticsearch.password");
 
     private final String configuration;

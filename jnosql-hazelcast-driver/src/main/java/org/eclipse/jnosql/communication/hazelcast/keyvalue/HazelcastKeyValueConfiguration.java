@@ -36,11 +36,9 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The hazelcast implementation of {@link KeyValueConfiguration} that returns
- * {@link HazelcastBucketManagerFactory}. It tries to read the diana-hazelcast.properties file
- * that has the properties:
- * <p>hazelcast.instanceName: the instance name</p>
- * <p>hazelcast.host: as prefix to n host where n is the number of host, eg: hazelcast-host-1: host </p>
+ * {@link HazelcastBucketManagerFactory}.
  *
+ * @see HazelcastConfigurations
  */
 public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
 

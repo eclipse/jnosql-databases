@@ -1,17 +1,20 @@
 = Communications Driver API
 :toc: auto
 
-Eclipse JNoSQL Communications driver is a collection of implementations.  In the NoSQL communication layer, you can make an analogy with JDBC.
+Eclipse JNoSQL Communications driver is a collection of implementations.
+In the NoSQL communication layer, you can make an analogy with JDBC.
 
 Those are communication implementations of https://github.com/eclipse-ee4j/nosql[Jakarta NoSQL].
 
 == ArangoDB
 
-image::https://jnosql.github.io/img/logos/ArangoDB.png[Arangodb Project,align="center"width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/ArangoDB.png[Arangodb Project,align="center"width=25%,height=25%]
 
-ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
+ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values.
+Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 
-This API offers support for **Document** and **Key-value** types. The Graph is possible through Apache TinkerPop.
+This API offers support for **Document** and **Key-value** types.
+The Graph is possible through Apache TinkerPop.
 
 === How To Install
 
@@ -28,22 +31,45 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```ArangoDBConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```ArangoDBConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* arangodb.host
-* arangodb.user
-* arangodb.password
-* arangodb.timeout
-* arangodb.chuck.size
-* arangodb.userSsl
-* arangodb.load.balancing.strategy
-* arangodb.protocol
-* arangodb.connections.max
-* arangodb.acquire.host.list
+[cols="Arango Properties"]
+|===
+|Configuration property |Description
+
+|arangodb.host
+|The database host, where you need to put the port split by colons. E.g., localhost:8529
+
+|arangodb.user
+|The user's credential.
+
+|arangodb.password
+|The password's credential
+
+|arangodb.timeout
+|The connection and request timeout in milliseconds.
+
+|arangodb.chuck.size
+|The chunk size when Protocol is used.
+
+|arangodb.userSsl
+|The true SSL will be used when connecting to an ArangoDB server.
+
+|arangodb.load.balancing.strategy
+|The com.arangodb.entity.LoadBalancingStrategy as String.
+
+|arangodb.protocol
+|The com.arangodb.Protocol as String
+
+|arangodb.connections.max
+|The maximum number of connections the built in connection pool will open per host.
+
+|arangodb.acquire.host.list
+|Set hosts split by comma
+|===
 
 It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -63,7 +89,7 @@ keyvalue.provider=org.eclipse.jnosql.communication.arangodb.keyvalue.ArangoDBKey
 
 == Cassandra
 
-image::https://jnosql.github.io/img/logos/cassandra.png[Apache Cassandra,align="center"width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/cassandra.png[Apache Cassandra,align="center"width=25%,height=25%]
 
 Apache Cassandra is a free and open-source distributed database management system designed to handle large amounts of data across many commodity servers, providing high availability with no single point of failure.
 
@@ -82,17 +108,36 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```CassandraConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```CassandraConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* cassandra.host
-* cassandra.name
-* cassandra.port
-* cassandra.query
-* cassandra.data.center
+[cols="Cassandra"]
+|===
+|Configuration property |Description
+
+|cassandra.user
+|The user's credential.
+
+|cassandra.password
+|The password's credential
+
+|cassandra.host
+|Database's host. It is a prefix to enumerate hosts. E.g.: cassandra.host.1=localhost
+
+|cassandra.name
+|The name of the application using the created session.
+
+|cassandra.port
+|The cassandra's port
+
+|cassandra.query
+|The Cassandra CQL to execute when the configuration starts. It uses as a prefix. E.g.: cassandra.query.1=<CQL>
+
+|cassandra.data.center
+|The datacenter that is considered "local" by the load balancing policy.
+|===
 
 It is a sample using Cassandra with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -105,7 +150,7 @@ column.settings.cassandra.query.2=<CQL-QUERY-2>
 
 == Couchbase
 
-image::https://jnosql.github.io/img/logos/couchbase.svg[Couchbase Project,align="center"width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/couchbase.svg[Couchbase Project,align="center"width=25%,height=25%]
 
 The Couchbase driver provides an API integration between Java and the database through a standard communication level.
 
@@ -126,19 +171,39 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```CouchbaseConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```CouchbaseConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* couchbase.host
-* couchbase.user
-* couchbase.password
-* couchbase.scope
-* couchbase.collections
-* couchbase.collection
-* couchbase.index
+[cols="Couchbase"]
+|===
+|Configuration property |Description
+
+
+|couchbase.host
+|The host at the database.
+
+|couchbase.user
+|The user's credential.
+
+|couchbase.password
+|The password's credential
+
+|couchbase.scope
+|The scope to use at couchbase otherwise, it will use the default.
+
+|couchbase.collections
+|couchbase collection split by a comma. At the start-up of a CouchbaseConfiguration, there is this option to check if these collections exist; if not, it will create using the default settings.
+
+|couchbase.collection
+|A default couchbase collection. When it is not defined the default value comes from Bucket.
+
+|couchbase.index
+|A couchbase collection index. At the start-up of a {@link CouchbaseConfiguration}, it will read this property to check if the index does exist, if not it will create combined by scope and the database.
+
+
+|===
 
 It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -152,7 +217,6 @@ document.database=heroes
 
 It is a sample using ArangoDB's key-value-API with Eclipse MicroProfile Configuration.
 
-
 [source,properties]
 ----
 keyvalue=keyvalue
@@ -163,10 +227,9 @@ keyvalue.database=heroes
 keyvalue.provider=org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration
 ----
 
-
 == Couchdb
 
-image::https://www.jnosql.org/img/logos/couchdb.png[Couchdb,align="center"width=25%, height=25%]
+image::https://www.jnosql.org/img/logos/couchdb.png[Couchdb,align="center"width=25%,height=25%]
 
 The Couchdb driver provides an API integration between Java and the database through a standard communication level.
 
@@ -187,19 +250,49 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```CouchDBConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```CouchDBConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* couchbase.host
-* couchbase.user
-* couchbase.password
-* couchbase.scope
-* couchbase.collections
-* couchbase.collection
-* couchbase.index
+[cols="CouchDB"]
+|===
+|Configuration property |Description
+
+|couchdb.port
+|The port connection to a client connect. The default value is "5984"
+
+|couchdb.max.connections
+|The max of connection that the couchdb client have. The default value is "20"
+
+|couchdb.connection.timeout
+|The timeout in milliseconds used when requesting a connection. The default value is "1000".
+
+|couchdb.socket.timeout
+|The socket timeout in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). The default value is "10000".
+
+|couchdb.max.object.size.bytes
+|The current maximum response body size that will be cached. The value is "8192".
+
+|couchdb.max.cache.entries
+|The maximum number of cache entries the cache will retain. The default value is "1000".
+
+|couchdb.host
+|The host at the database.
+
+|couchdb.username
+|The user's credential.
+
+|couchdb.password
+|The password's credential
+
+|couchdb.enable.ssl
+|If the request use a https or a http.
+
+|couchdb.compression
+|Determines whether compressed entities should be decompressed automatically.
+
+|===
 
 It is a sample using Couchdb's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -211,15 +304,16 @@ document.provider=org.eclipse.jnosql.communication.couchdb.document.CouchDBDocum
 document.database=heroes
 ----
 
-
 == Elasticsearch
 
-image::https://jnosql.github.io/img/logos/elastic.svg[Elasticsearch Project,align="center"width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/elastic.svg[Elasticsearch Project,align="center"width=25%,height=25%]
 
-Elasticsearch is a search engine based on Lucene. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents. Elasticsearch is developed in Java and is released as open source under the terms of the Apache License. Elasticsearch is the most popular enterprise search engine followed by Apache Solr, also based on Lucene.
+Elasticsearch is a search engine based on Lucene.
+It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents.
+Elasticsearch is developed in Java and is released as open source under the terms of the Apache License.
+Elasticsearch is the most popular enterprise search engine followed by Apache Solr, also based on Lucene.
 
 This driver has support for *Document* NoSQL API.
-
 
 === How To Install
 
@@ -236,15 +330,25 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```ElasticsearchConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```ElasticsearchConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* elasticsearch.host
-* elasticsearch.user
-* elasticsearch.password
+[cols="Elasticsearch"]
+|===
+|Configuration property |Description
+
+|elasticsearch.host
+|Database's host. It is a prefix to enumerate hosts. E.g.: elasticsearch.host.1=172.17.0.2:1234
+
+|elasticsearch.user
+|The user's credential.
+
+|elasticsearch.password
+|The password's credential
+
+|===
 
 It is a sample using Elasticsearch's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -253,10 +357,9 @@ document.provider=org.eclipse.jnosql.communication.elasticsearch.document.Elasti
 document.database=developers
 ----
 
-
 == Hazelcast
 
-image::https://jnosql.github.io/img/logos/hazelcast.svg[Hazelcast Project,align="center" width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/hazelcast.svg[Hazelcast Project,align="center" width=25%,height=25%]
 
 Hazelcast is an open source in-memory data grid based on Java.
 
@@ -277,19 +380,37 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```HazelcastConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```HazelcastConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* hazelcast.instance.name
-* hazelcast.host
-* hazelcast.port
-* hazelcast.port.count
-* hazelcast.port.auto.increment
-* hazelcast.multicast.enable
-* hazelcast.tcp.ip.join
+[cols="Hazelcast"]
+|===
+|Configuration property |Description
+
+|hazelcast.instance.name
+|The instance name uniquely identifying the hazelcast instance created by this configuration. This name is used in different scenarios, such as identifying the hazelcast instance when running multiple instances in the same JVM.
+
+|hazelcast.host
+|Database's host. It is a prefix to enumerate hosts. E.g.: hazelcast.host.1=localhost
+
+|hazelcast.port
+|The database port
+
+|hazelcast.port.count
+|The maximum number of ports allowed to use.
+
+|hazelcast.port.auto.increment
+|Sets if a Hazelcast member is allowed to find a free port by incrementing the port number when it encounters an occupied port.
+
+|hazelcast.multicast.enable
+|Enables or disables the multicast discovery mechanism
+
+|hazelcast.tcp.ip.join
+|Enables or disables the Tcp/Ip join mechanism.
+
+|===
 
 It is a sample using Hazelcast's key-value-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -298,10 +419,9 @@ keyvalue.provider=org.eclipse.jnosql.communication.hazelcast.keyvalue.HazelcastK
 keyvalue.database=heroes
 ----
 
-
 == Hbase
 
-image::https://jnosql.github.io/img/logos/hbase.png[Hbase Project,align="center" width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/hbase.png[Hbase Project,align="center" width=25%,height=25%]
 
 HBase is an open source, non-relational, distributed database modeled after Google's BigTable and is written in Java.
 
@@ -322,13 +442,19 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```HbaseConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```HbaseConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* hbase.family
+[cols="HBase"]
+|===
+|Configuration property |Description
 
-It is a sample using ArangoDB's column-API with Eclipse MicroProfile Configuration.
+|hbase.family
+|The Column family prefixes. E.g.: hbase.family.1=<FAMILY>
 
+|===
+
+It is a sample using Hbase's column-API with Eclipse MicroProfile Configuration.
 
 [source,properties]
 ----
@@ -337,10 +463,9 @@ document.provider=org.eclipse.jnosql.communication.hbase.column.HBaseColumnConfi
 column.database=heroes
 ----
 
-
 == Infinispan
 
-image::https://jnosql.github.io/img/logos/infinispan.svg[Infinista Project,align="center" width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/infinispan.svg[Infinista Project,align="center" width=25%,height=25%]
 
 Infinispan is a distributed in-memory key/value data store with optional schema, available under the Apache License 2.0.
 
@@ -361,14 +486,22 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```InfinispanConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```InfinispanConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* infinispan.host
-* infinispan.config
+[cols="Infinispan"]
+|===
+|Configuration property |Description
+
+|infinispan.host
+|Database's host. It is a prefix to enumerate hosts. E.g.: infinispan.host.1=HOST
+
+|infinispan.config
+|The Infinispan configuration path. E.g.: infinispan.config=infinispan.xml
+
+|===
 
 It is a sample using Infinispan's key-value-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -378,12 +511,14 @@ keyvalue.database=heroes
 keyvalue.infinispan.config=infinispan.xml
 ----
 
-
 == Memcached
 
-image::https://www.jnosql.org/img/logos/memcached.png[Memcached Project,align="center" width=25%, height=25%]
+image::https://www.jnosql.org/img/logos/memcached.png[Memcached Project,align="center" width=25%,height=25%]
 
-Memcached is a general-purpose distributed memory caching system. It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source (such as a database or API) must be read. Memcached is free and open-source software, licensed under the Revised BSD license. Memcached runs on Unix-like operating systems (at least Linux and OS X) and on Microsoft Windows.
+Memcached is a general-purpose distributed memory caching system.
+It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source (such as a database or API) must be read.
+Memcached is free and open-source software, licensed under the Revised BSD license.
+Memcached runs on Unix-like operating systems (at least Linux and OS X) and on Microsoft Windows.
 
 This driver has support for *key-value* NoSQL API.
 
@@ -402,26 +537,58 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```MemcachedConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```MemcachedConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* memcached.daemon
-* memcached.reconnect.delay
-* memcached.protocol
-* memcached.locator
-* memcached.auth.wait.time
-* memcached.max.block.time
-* memcached.timeout
-* memcached.read.buffer.size
-* memcached.should.optimize
-* memcached.timeout.threshold
-* memcached.nagle.algorithm
-* memcached.user
-* memcached.password
-* memcached.host
+[cols="Memcached"]
+|===
+|Configuration property |Description
+
+|memcached.daemon
+|The daemon state of the IO thread (defaults to true).
+
+|memcached.reconnect.delay
+|The maximum reconnect delay
+
+|memcached.protocol
+|The protocol type  net.spy.memcached.ConnectionFactoryBuilder.Protocol
+
+|memcached.locator
+|The locator type net.spy.memcached.ConnectionFactoryBuilder.Locator
+
+|memcached.auth.wait.time
+|Custom wait time for the authentication on connect/reconnect.
+
+|memcached.max.block.time
+|The maximum amount of time (in milliseconds) a client is willing to wait for space to become available in an output queue.
+
+|memcached.timeout
+|The default operation timeout in milliseconds.
+
+|memcached.read.buffer.size
+|The read buffer size.
+
+|memcached.should.optimize
+|The default operation optimization is not desirable.
+
+|memcached.timeout.threshold
+|The maximum timeout exception threshold.
+
+|memcached.nagle.algorithm
+|Enable the Nagle algorithm.
+
+|memcached.user
+|The user's credential
+
+|memcached.password
+|The password's credential.
+
+|memcached.host
+|Database's host. It is a prefix to enumerate hosts. E.g.: memcached.host.1=localhost:11211
+
+|===
 
 It is a sample using Memcached's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -431,12 +598,12 @@ keyvalue.database=heroes
 keyvalue.memcached.host.1=localhost:11211
 ----
 
-
 == Mongodb
 
-image::https://jnosql.github.io/img/logos/mongodb.png[MongoDB Project,align="center" width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/mongodb.png[MongoDB Project,align="center" width=25%,height=25%]
 
-MongoDB is a free and open-source cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
+MongoDB is a free and open-source cross-platform document-oriented database program.
+Classified as a NoSQL database program, MongoDB uses JSON-like documents with schemas.
 
 This driver has support for *document* NoSQL API.
 
@@ -455,18 +622,34 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```MongoDBDocumentConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```MongoDBDocumentConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* mongodb.host
-* mongodb.user
-* mongodb.url
-* mongodb.password
-* mongodb.authentication.source
-* mongodb.authentication.mechanism
+[cols="MongoDB"]
+|===
+|Configuration property |Description
+
+|mongodb.host
+|The database host as prefix. E.g.: mongodb.host.1=localhost:27017
+
+|mongodb.user
+|The user's credential.
+
+|mongodb.url
+|MongoDB's connection string
+
+|mongodb.password
+|The password's credential
+
+|mongodb.authentication.source
+|The source where the user is defined.
+
+|mongodb.authentication.mechanism
+|Authentication mechanisms com.mongodb.AuthenticationMechanism
+
+|===
 
 It is a sample using Mongodb's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -476,12 +659,14 @@ document.settings.mongodb.host=localhost:27017
 document.provider=org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfiguration
 ----
 
-
 == OrientDB
 
-image::https://jnosql.github.io/img/logos/orientdb.png[Orient Project,align="center" width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/orientdb.png[Orient Project,align="center" width=25%,height=25%]
 
-OrientDB is an open source NoSQL database management system written in Java. It is a multi-model database, supporting graph, document, key/value, and object models, but the relationships are managed as in graph databases with direct connections between records. It supports schema-less, schema-full and schema-mixed modes. It has a strong security profiling system based on users and roles and supports querying with Gremlin along with SQL extended for graph traversal.
+OrientDB is an open source NoSQL database management system written in Java.
+It is a multi-model database, supporting graph, document, key/value, and object models, but the relationships are managed as in graph databases with direct connections between records.
+It supports schema-less, schema-full and schema-mixed modes.
+It has a strong security profiling system based on users and roles and supports querying with Gremlin along with SQL extended for graph traversal.
 
 This driver has support for *document* NoSQL API.
 
@@ -500,16 +685,28 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```OrientDBDocumentConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```OrientDBDocumentConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* orientdb.host
-* orientdb.-user
-* orientdb.password
-* orientdb.storage.type
+[cols="OrientDB"]
+|===
+|Configuration property |Description
+
+|orientdb.host
+|The database host
+
+|orientdb.-user
+|The user's credential.
+
+|orientdb.password
+|The password's credential
+
+|orientdb.storage.type
+|The storage type com.orientechnologies.orient.core.db.ODatabaseType
+
+|===
 
 It is a sample using OrientDB's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -522,13 +719,12 @@ document.orientdb.password=rootpwd
 document.orientdb.storageType=plocal
 ----
 
-
 == RavenDB
 
-image::https://ravendb.net/Content/images/logo/ravendb_logo_small.jpg[RavenDB Project,align="center",align="center" width=25%, height=25%]
+image::https://ravendb.net/Content/images/logo/ravendb_logo_small.jpg[RavenDB Project,align="center",align="center" width=25%,height=25%]
 
-
-RavenDB is a fully Transactional Open Source NoSQL Document Database. Easy to use, rapidly scalable, offers high availability, and takes your Business into the Next Generation of Data Performance.
+RavenDB is a fully Transactional Open Source NoSQL Document Database.
+Easy to use, rapidly scalable, offers high availability, and takes your Business into the Next Generation of Data Performance.
 
 This driver has support for *document* NoSQL API.
 
@@ -547,13 +743,19 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```RavenDBConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```RavenDBConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* raven.host
+[cols="RavenDB"]
+|===
+|Configuration property |Description
+
+|ravendb.host
+|The database host
+
+|===
 
 It is a sample using RavenDB's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -562,12 +764,12 @@ document.provider=org.eclipse.jnosql.communication.ravendb.document.RavenDBDocum
 document.database=heroes
 ----
 
-
 == Redis
 
-image::https://jnosql.github.io/img/logos/redis.png[Redis Project,align="center" width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/redis.png[Redis Project,align="center" width=25%,height=25%]
 
-Redis is a software project that implements data structure servers. It is open-source, networked, in-memory, and stores keys with optional durability.
+Redis is a software project that implements data structure servers.
+It is open-source, networked, in-memory, and stores keys with optional durability.
 
 This driver has support for *key-value* NoSQL API.
 
@@ -586,22 +788,46 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```RedisConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```RedisConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* redis.host
-* redis.port
-* redis.timeout
-* redis.password
-* redis.database
-* redis.clientName
-* redis.max.total
-* redis.max.idle
-* redis.min.idle
-* redis.max.wait.millis
+[cols="Redis"]
+|===
+|Configuration property |Description
+
+|redis.host
+|The database host
+
+|redis.port
+|The database port
+
+|redis.timeout
+|The redis timeout, the default value 2000 on milliseconds
+
+|redis.password
+|The password's credential
+
+|redis.database
+|The redis database number, the default value is 0
+
+|redis.client.name
+|The client's name
+
+|redis.max.total
+|The value for the maxTotal configuration attribute for pools created with this configuration instance, the default value 1000.
+
+|redis.max.idle
+|The value for the maxIdle configuration attribute for pools created with this configuration instance, the default value 10.
+
+|redis.min.idle
+|The value for the minIdle configuration attribute for pools created with this configuration instance, the default value 1.
+
+|redis.max.wait.millis
+|The value for the maxWait configuration attribute for pools created with this configuration instance, the default value 3000.
+
+|===
 
 It is a sample using Redis's keyvalue-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -610,12 +836,12 @@ keyvalue.provider=org.eclipse.jnosql.communication.redis.keyvalue.RedisConfigura
 keyvalue.database=heroes
 ----
 
-
 == Riak
 
-image::https://jnosql.github.io/img/logos/riak.png[Riak Project,align="center" width=25%, height=25%]
+image::https://jnosql.github.io/img/logos/riak.png[Riak Project,align="center" width=25%,height=25%]
 
-Riak (pronounced "ree-ack" ) is a distributed NoSQL key-value data store that offers high availability, fault tolerance, operational simplicity, and scalability. In addition to the open-source version, it comes in a supported enterprise version and a cloud storage version.
+Riak (pronounced "ree-ack" ) is a distributed NoSQL key-value data store that offers high availability, fault tolerance, operational simplicity, and scalability.
+In addition to the open-source version, it comes in a supported enterprise version and a cloud storage version.
 
 This driver has support for *key-value* NoSQL API.
 
@@ -634,13 +860,19 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```RiakConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```RiakConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* riak.host
+[cols="Riak"]
+|===
+|Configuration property |Description
 
-It is a sample using ArangoDB's document-API with Eclipse MicroProfile Configuration.
+|riak.host
+|The database host
 
+|===
+
+It is a sample using Riak's key-value-API with Eclipse MicroProfile Configuration.
 
 [source,properties]
 ----
@@ -649,12 +881,14 @@ keyvalue.provider=org.eclipse.jnosql.communication.riak.keyvalue.RiakKeyValueCon
 keyvalue.database=heroes
 ----
 
-
 == Solr
 
-image::https://jnosql.github.io/img/logos/solr.svg[Apache Solr Project,align="center" width=25%, height=25%"]
+image::https://jnosql.github.io/img/logos/solr.svg[Apache Solr Project,align="center" width=25%,height=25%"]
 
-Solr is an open-source enterprise-search platform, written in Java, from the Apache Lucene project. Its major features include full-text search, hit highlighting, faceted search, real-time indexing, dynamic clustering, database integration, NoSQL features and rich document (e.g., Word, PDF) handling. Providing distributed search and index replication, Solr is designed for scalability and fault tolerance. Solr is widely used for enterprise search and analytics use cases and has an active development community and regular releases.
+Solr is an open-source enterprise-search platform, written in Java, from the Apache Lucene project.
+Its major features include full-text search, hit highlighting, faceted search, real-time indexing, dynamic clustering, database integration, NoSQL features and rich document (e.g., Word, PDF) handling.
+Providing distributed search and index replication, Solr is designed for scalability and fault tolerance.
+Solr is widely used for enterprise search and analytics use cases and has an active development community and regular releases.
 
 This driver has support for *document* NoSQL API.
 
@@ -673,15 +907,25 @@ You can use either, maven or Gradle dependency:
 
 === Configuration
 
-The API provides the class ```SolrDocumentConfigurations```
-to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
+The API provides the class ```SolrDocumentConfigurations``` to set up the credentials programmatically.
+Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* solr.host
-* solr.user
-* solr.password
+[cols="Solr"]
+|===
+|Configuration property |Description
+
+|solr.host
+|Database's host. It is a prefix to enumerate hosts. E.g.: solr.host.1=HOST
+
+|solr.user
+|The user's credential.
+
+|solr.password
+|The password's credential
+
+|===
 
 It is a sample using Solr's document-API with Eclipse MicroProfile Configuration.
-
 
 [source,properties]
 ----
@@ -689,7 +933,6 @@ document=document
 document.provider=org.eclipse.jnosql.communication.solr.document.SolrDocumentConfiguration
 document.database=heroes
 ----
-
 
 == Contribute to a new Driver
 
@@ -705,4 +948,5 @@ To add a new driver, we have a few requirements:
 
 == Graph Drivers
 
-Eclipse JNoSQL uses Apache Tinkerpop for Graph API.  Using this API gives support to https://tinkerpop.apache.org/providers.html[over twenty fives databases].
+Eclipse JNoSQL uses Apache Tinkerpop for Graph API.
+Using this API gives support to https://tinkerpop.apache.org/providers.html[over twenty fives databases].

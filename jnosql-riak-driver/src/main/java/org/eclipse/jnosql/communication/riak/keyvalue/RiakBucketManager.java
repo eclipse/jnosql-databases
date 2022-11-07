@@ -71,7 +71,7 @@ public class RiakBucketManager implements BucketManager {
         try {
             client.execute(storeValue);
         } catch (ExecutionException | InterruptedException e) {
-            throw new DianaRiakException(e.getMessage(), e);
+            throw new RiakCommunicationException(e.getMessage(), e);
         }
     }
 
@@ -91,7 +91,7 @@ public class RiakBucketManager implements BucketManager {
     public <K> Optional<Value> get(K key) throws NullPointerException {
         Objects.requireNonNull(key, "key is required");
         if (key.toString().isEmpty()) {
-            throw new DianaRiakException("The Key is irregular", new IllegalStateException());
+            throw new RiakCommunicationException("The Key is irregular", new IllegalStateException());
         }
 
         FetchValue fetchValue = createFetchValue(nameSpace, key);
@@ -105,7 +105,7 @@ public class RiakBucketManager implements BucketManager {
             }
 
         } catch (ExecutionException | InterruptedException e) {
-            throw new DianaRiakException(e.getMessage(), e);
+            throw new RiakCommunicationException(e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -120,7 +120,7 @@ public class RiakBucketManager implements BucketManager {
                             try {
                                 return client.execute(f);
                             } catch (ExecutionException | InterruptedException e) {
-                                throw new DianaRiakException(e.getMessage(), e);
+                                throw new RiakCommunicationException(e.getMessage(), e);
                             }
                         }
                 )
@@ -130,7 +130,7 @@ public class RiakBucketManager implements BucketManager {
                     try {
                         return r.getValue(String.class);
                     } catch (UnresolvedConflictException e) {
-                        throw new DianaRiakException(e.getMessage(), e);
+                        throw new RiakCommunicationException(e.getMessage(), e);
                     }
 
                 })
@@ -147,7 +147,7 @@ public class RiakBucketManager implements BucketManager {
         try {
             client.execute(deleteValue);
         } catch (ExecutionException | InterruptedException e) {
-            throw new DianaRiakException(e.getMessage(), e);
+            throw new RiakCommunicationException(e.getMessage(), e);
         }
     }
 

@@ -30,11 +30,8 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * The orientDB implementation of {@link DocumentConfiguration}  that returns
- * {@link OrientDBDocumentCollectionManagerFactory}. It tries to read diana-arangodb.properties file.
- * <p>orientdb.host: the host</p>
- * <p>orientdb.user: the user</p>
- * <p>orientdb.password: the password</p>
- * <p>orientdb.storage.type: the storage type</p>
+ * {@link OrientDBDocumentCollectionManagerFactory}.
+ * @see OrientDBDocumentConfigurations
  */
 public class OrientDBDocumentConfiguration implements DocumentConfiguration {
 

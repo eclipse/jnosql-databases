@@ -19,12 +19,16 @@ package org.eclipse.jnosql.communication.couchdb.document;
 import java.util.function.Supplier;
 
 /**
- * This class is a {@link Supplier} of properties settings available at Couchdb client.
+ * An enumeration to show the available options to connect to the CouchDB database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
  */
 public enum  CouchDBConfigurations implements Supplier<String> {
 
     /**
-     * Define the port connection to a client connect. The default value is "5984"
+     * The port connection to a client connect. The default value is "5984"
      */
     PORT("couchdb.port"),
 
@@ -39,13 +43,13 @@ public enum  CouchDBConfigurations implements Supplier<String> {
     CONNECTION_TIMEOUT("couchdb.connection.timeout"),
 
     /**
-     * Defines the socket timeout in milliseconds, which is the timeout for waiting for data or, put differently,
+     * The socket timeout in milliseconds, which is the timeout for waiting for data or, put differently,
      *  a maximum period inactivity between two consecutive data packets). The default value is "10000".
      */
     SOCKET_TIMEOUT("couchdb.socket.timeout"),
 
     /**
-     *  Returns the current maximum response body size that will be cached. The value is "8192".
+     *  The current maximum response body size that will be cached. The value is "8192".
      */
     MAX_OBJECT_SIZE_BYTES("couchdb.max.object.size.bytes"),
 
@@ -54,20 +58,20 @@ public enum  CouchDBConfigurations implements Supplier<String> {
      */
     MAX_CACHE_ENTRIES("couchdb.max.cache.entries"),
     /**
-     * The host of the client, it is an alias for {@link jakarta.nosql.Configurations#HOST}
+     * The host at the database.
      */
     HOST("couchdb.host"),
     /**
-     * The user of a credential connection, it is an alias for {@link jakarta.nosql.Configurations#USER}
+     * The user's credential.
      */
     USER("couchdb.username"),
 
     /**
-     * The password of a credential connection, it is an alias for {@link jakarta.nosql.Configurations#HOST}
+     * The password's credential
      */
     PASSWORD("couchdb.password"),
     /**
-     *If the request will use a https or a http.
+     *If the request use a https or a http.
      */
     ENABLE_SSL("couchdb.enable.ssl"),
 

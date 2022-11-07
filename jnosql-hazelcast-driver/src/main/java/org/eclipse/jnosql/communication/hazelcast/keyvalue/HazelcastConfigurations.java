@@ -16,13 +16,45 @@ package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the Hazelcast database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum HazelcastConfigurations implements Supplier<String> {
+
+    /**
+     * The instance name uniquely identifying the hazelcast instance created by this configuration.
+     * This name is used in different scenarios, such as identifying the hazelcast
+     * instance when running multiple instances in the same JVM.
+     */
     INSTANCE("hazelcast.instance.name"),
+    /**
+     * Database's host. It is a prefix to enumerate hosts. E.g.: hazelcast.host.1=localhost
+     */
     HOST("hazelcast.host"),
+    /**
+     * The database port
+     */
     PORT("hazelcast.port"),
+    /**
+     * The maximum number of ports allowed to use.
+     */
     PORT_COUNT("hazelcast.port.count"),
+    /**
+     * Sets if a Hazelcast member is allowed to find a free port by incrementing the port number when it encounters
+     * an occupied port.
+     */
     PORT_AUTO_INCREMENT("hazelcast.port.auto.increment"),
+    /**
+     * Enables or disables the multicast discovery mechanism
+     */
     MULTICAST_ENABLE("hazelcast.multicast.enable"),
+    /**
+     * Enables or disables the Tcp/Ip join mechanism.
+     */
     TCP_IP_JOIN("hazelcast.tcp.ip.join");
 
     private final String configuration;

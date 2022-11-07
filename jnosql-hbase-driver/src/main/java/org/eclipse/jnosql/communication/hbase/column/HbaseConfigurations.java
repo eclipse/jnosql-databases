@@ -16,8 +16,19 @@ package org.eclipse.jnosql.communication.hbase.column;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the HBase database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum  HbaseConfigurations implements Supplier<String> {
 
+
+    /**
+     * The Column family prefixes. E.g.: hbase.family.1=FAMILY
+     */
     FAMILY("hbase.family");
 
     private final String configuration;

@@ -42,22 +42,7 @@ import static java.util.Optional.ofNullable;
 
 /**
  * The memcached implementation of {@link KeyValueConfiguration} that returns
- * {@link MemcachedBucketManagerFactory}. It tries to read the diana-memcached.properties file
- * that has the properties:
- * <p>memcached.daemon: {@link ConnectionFactoryBuilder#setDaemon(boolean)}</p>
- * <p>memcached.reconnect.delay: {@link ConnectionFactoryBuilder#setMaxReconnectDelay(long)}</p>
- * <p>memcached.protocol: {@link ConnectionFactoryBuilder#setProtocol(Protocol)}</p>
- * <p>memcached.locator: {@link ConnectionFactoryBuilder#setLocatorType(Locator)}</p>
- * <p>memcached.auth.wait.time: {@link ConnectionFactoryBuilder#setAuthWaitTime(long)}</p>
- * <p>memcached.max.block.time: {@link ConnectionFactoryBuilder#setOpQueueMaxBlockTime(long)}</p>
- * <p>memcached.timeout: {@link ConnectionFactoryBuilder#setOpTimeout(long)}</p>
- * <p>memcached.read.buffer.size: {@link ConnectionFactoryBuilder#setReadBufferSize(int)}</p>
- * <p>memcached.should.optimize: {@link ConnectionFactoryBuilder#setShouldOptimize(boolean)}</p>
- * <p>memcached.timeout.threshold: {@link ConnectionFactoryBuilder#setTimeoutExceptionThreshold(int)}</p>
- * <p>memcached.nagle.algorithm: {@link ConnectionFactoryBuilder#setUseNagleAlgorithm(boolean)}</p>
- * <p>memcached.user: the user</p>
- * <p>memcached.password: the password</p>
- * <p>memcached.host.: define the host to connect defined to n hots, e.g.: memcached.host.1: localhost:11211</p>
+ * {@link MemcachedBucketManagerFactory}.
  *
  * @see MemcachedConfigurations
  */
