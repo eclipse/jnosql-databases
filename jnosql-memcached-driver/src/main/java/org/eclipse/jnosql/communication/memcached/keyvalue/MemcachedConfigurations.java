@@ -25,19 +25,62 @@ import java.util.function.Supplier;
  */
 public enum MemcachedConfigurations implements Supplier<String> {
 
+    /**
+     * The daemon state of the IO thread (defaults to true).
+     */
     DAEMON("memcached.daemon"),
+    /**
+     * The maximum reconnect delay
+     */
     MAX_RECONNECT_DELAY("memcached.reconnect.delay"),
+    /**
+     * The protocol type {@link  net.spy.memcached.ConnectionFactoryBuilder.Protocol}
+     */
     PROTOCOL("memcached.protocol"),
+    /**
+     * The locator type {@link  net.spy.memcached.ConnectionFactoryBuilder.Locator}
+     */
     LOCATOR("memcached.locator"),
+    /**
+     * Custom wait time for the authentication on connect/reconnect.
+     */
     AUTH_WAIT_TIME("memcached.auth.wait.time"),
+    /**
+     * The maximum amount of time (in milliseconds) a client is willing to
+     * wait for space to become available in an output queue.
+     */
     MAX_BLOCK_TIME("memcached.max.block.time"),
+    /**
+     * The default operation timeout in milliseconds.
+     */
     TIMEOUT("memcached.timeout"),
+    /**
+     * The read buffer size.
+     */
     READ_BUFFER_SIZE("memcached.read.buffer.size"),
+    /**
+     * The default operation optimization is not desirable.
+     */
     SHOULD_OPTIMIZE("memcached.should.optimize"),
+    /**
+     * The maximum timeout exception threshold.
+     */
     TIMEOUT_THRESHOLD("memcached.timeout.threshold"),
+    /**
+     * Enable the Nagle algorithm.
+     */
     USE_NAGLE_ALGORITHM("memcached.nagle.algorithm"),
+    /**
+     * The password's credential
+     */
     USER("memcached.user"),
+    /**
+     * The user's credential.
+     */
     PASSWORD("memcached.password"),
+    /**
+     * The database host
+     */
     HOST("memcached.host");
 
     private final String configuration;
