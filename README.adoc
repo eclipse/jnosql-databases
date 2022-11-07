@@ -763,7 +763,14 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```RavenDBConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* raven.host
+[cols="RavenDB"]
+|===
+|Configuration property |Description
+
+|ravendb.host
+|The database host
+
+|===
 
 It is a sample using RavenDB's document-API with Eclipse MicroProfile Configuration.
 
