@@ -390,13 +390,33 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```HazelcastConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* hazelcast.instance.name
-* hazelcast.host
-* hazelcast.port
-* hazelcast.port.count
-* hazelcast.port.auto.increment
-* hazelcast.multicast.enable
-* hazelcast.tcp.ip.join
+[cols="Hazelcast"]
+|===
+|Configuration property |Description
+
+|hazelcast.instance.name
+|The instance name uniquely identifying the hazelcast instance created by this configuration. This name is used in different scenarios, such as identifying the hazelcast instance when running multiple instances in the same JVM.
+
+|hazelcast.host
+|The database host
+
+|hazelcast.port
+|The database port
+
+|hazelcast.port.count
+|The maximum number of ports allowed to use.
+
+|hazelcast.port.auto.increment
+|Sets if a Hazelcast member is allowed to find a free port by incrementing the port number when it encounters an occupied port.
+
+|hazelcast.multicast.enable
+|Enables or disables the multicast discovery mechanism
+
+|hazelcast.tcp.ip.join
+|Enables or disables the Tcp/Ip join mechanism.
+
+|===
+
 
 It is a sample using Hazelcast's key-value-API with Eclipse MicroProfile Configuration.
 
