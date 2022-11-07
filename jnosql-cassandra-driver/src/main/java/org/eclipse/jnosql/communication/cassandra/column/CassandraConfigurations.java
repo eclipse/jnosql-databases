@@ -35,7 +35,7 @@ public enum CassandraConfigurations implements Supplier<String> {
      */
     PASSWORD("cassandra.password"),
     /**
-     * Cassandra's host. It is a prefix to enumerate hosts. E.g.: cassandra.host.1=localhost
+     * Database's host. It is a prefix to enumerate hosts. E.g.: cassandra.host.1=localhost
      */
     HOST("cassandra.host"),
     /**
