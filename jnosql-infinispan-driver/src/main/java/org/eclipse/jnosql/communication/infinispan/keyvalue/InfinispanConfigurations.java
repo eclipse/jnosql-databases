@@ -25,7 +25,14 @@ import java.util.function.Supplier;
  */
 public enum InfinispanConfigurations implements Supplier<String> {
 
-HOST("infinispan.host"), CONFIG("infinispan.config");
+    /**
+     * The database host.
+     */
+    HOST("infinispan.host"),
+    /**
+     * The Infinispan configuration path. E.g.: infinispan.config=infinispan.xml
+     */
+    CONFIG("infinispan.config");
 
     private final String configuration;
 
