@@ -502,8 +502,18 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```InfinispanConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* infinispan.host
-* infinispan.config
+[cols="Infinispan"]
+|===
+|Configuration property |Description
+
+|infinispan.host
+|The database host.
+
+|infinispan.config
+|The Infinispan configuration path. E.g.: infinispan.config=infinispan.xml
+
+|===
+
 
 It is a sample using Infinispan's key-value-API with Eclipse MicroProfile Configuration.
 
