@@ -25,8 +25,17 @@ import java.util.function.Supplier;
  * @see jakarta.nosql.Settings
  */
 public enum SolrDocumentConfigurations implements Supplier<String> {
+    /**
+     * The database host
+     */
     HOST("solr.host"),
+    /**
+     * The user's credential.
+     */
     USER("solr.user"),
+    /**
+     * The password's credential
+     */
     PASSWORD("solr.password");
 
     private final String configuration;
