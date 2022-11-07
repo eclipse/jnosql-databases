@@ -553,20 +553,54 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```MemcachedConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* memcached.daemon
-* memcached.reconnect.delay
-* memcached.protocol
-* memcached.locator
-* memcached.auth.wait.time
-* memcached.max.block.time
-* memcached.timeout
-* memcached.read.buffer.size
-* memcached.should.optimize
-* memcached.timeout.threshold
-* memcached.nagle.algorithm
-* memcached.user
-* memcached.password
-* memcached.host
+[cols="Memcached"]
+|===
+|Configuration property |Description
+
+|memcached.daemon
+|The daemon state of the IO thread (defaults to true).
+
+|memcached.reconnect.delay
+|The maximum reconnect delay
+
+|memcached.protocol
+|The protocol type  net.spy.memcached.ConnectionFactoryBuilder.Protocol
+
+|memcached.locator
+|The locator type net.spy.memcached.ConnectionFactoryBuilder.Locator
+
+|memcached.auth.wait.time
+|Custom wait time for the authentication on connect/reconnect.
+
+|memcached.max.block.time
+|The maximum amount of time (in milliseconds) a client is willing to wait for space to become available in an output queue.
+
+|memcached.timeout
+|The default operation timeout in milliseconds.
+
+|memcached.read.buffer.size
+|The read buffer size.
+
+|memcached.should.optimize
+|The default operation optimization is not desirable.
+
+|memcached.timeout.threshold
+|The maximum timeout exception threshold.
+
+|memcached.nagle.algorithm
+|Enable the Nagle algorithm.
+
+|memcached.user
+|The user's credential
+
+|memcached.password
+|The password's credential.
+
+|memcached.host
+|The database host
+
+|===
+
 
 It is a sample using Memcached's document-API with Eclipse MicroProfile Configuration.
 
