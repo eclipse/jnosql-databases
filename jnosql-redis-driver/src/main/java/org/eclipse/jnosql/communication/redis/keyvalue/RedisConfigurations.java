@@ -14,6 +14,8 @@
  */
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
+
+
 import java.util.function.Supplier;
 
 /**
@@ -34,7 +36,7 @@ public enum RedisConfigurations implements Supplier<String> {
      */
     PORT("redis.port"),
     /**
-     * The timeout
+     * the redis timeout, the default value 2000 on milliseconds
      */
     TIMEOUT("redis.timeout"),
     /**
@@ -42,7 +44,7 @@ public enum RedisConfigurations implements Supplier<String> {
      */
     PASSWORD("redis.password"),
     /**
-     * The redis database's number
+     * The redis database number, the default value is 0
      */
     DATABASE("redis.database"),
     /**
@@ -51,18 +53,22 @@ public enum RedisConfigurations implements Supplier<String> {
     CLIENT_NAME("redis.client.name"),
     /**
      * The value for the maxTotal configuration attribute for pools created with this configuration instance.
+     * The max number of thread to {@link redis.clients.jedis.JedisPoolConfig}, the default value 1000
      */
     MAX_TOTAL("redis.max.total"),
     /**
      * The value for the maxIdle configuration attribute for pools created with this configuration instance.
+     * The max idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 10
      */
     MAX_IDLE("redis.max.idle"),
     /**
      * The value for the minIdle configuration attribute for pools created with this configuration instance.
+     * The min idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 1
      */
     MIN_IDLE("redis.min.idle"),
     /**
      * The value for the {@code maxWait} configuration attribute for pools created with this configuration instance.
+     * The max wait on millis on {@link redis.clients.jedis.JedisPoolConfig}, the default value 3000
      */
     MAX_WAIT_MILLIS("redis.max.wait.millis");
 
