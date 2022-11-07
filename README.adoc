@@ -910,9 +910,20 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```SolrDocumentConfigurations``` to set up the credentials programmatically.
 Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* solr.host
-* solr.user
-* solr.password
+[cols="Solr"]
+|===
+|Configuration property |Description
+
+|solr.host
+|The database host
+
+|solr.user
+|The user's credential.
+
+|solr.password
+|The password's credential
+
+|===
 
 It is a sample using Solr's document-API with Eclipse MicroProfile Configuration.
 
