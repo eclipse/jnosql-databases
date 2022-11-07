@@ -915,7 +915,7 @@ Beware that you can set up through properties using either https://microprofile.
 |Configuration property |Description
 
 |solr.host
-|The database host
+|Database's host. It is a prefix to enumerate hosts. E.g.: solr.host.1=HOST
 
 |solr.user
 |The user's credential.

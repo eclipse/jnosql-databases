@@ -33,7 +33,6 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The riak implementation to {@link KeyValueConfiguration} that returns {@link RiakBucketManagerFactory}.
- * It tries to read diana-riak.properties file.
  * <p>riak.host-: The prefix to host. eg: riak.server.host.1= host1</p>
  */
 public class RiakKeyValueConfiguration implements KeyValueConfiguration {
