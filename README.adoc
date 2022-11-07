@@ -455,9 +455,17 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```HbaseConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* hbase.family
+[cols="HBase"]
+|===
+|Configuration property |Description
 
-It is a sample using ArangoDB's column-API with Eclipse MicroProfile Configuration.
+|hbase.family
+|The Column family prefixes. E.g.: hbase.family.1=<FAMILY>
+
+|===
+
+
+It is a sample using Hbase's column-API with Eclipse MicroProfile Configuration.
 
 
 [source,properties]
