@@ -15,16 +15,18 @@
 package org.eclipse.jnosql.communication.riak.keyvalue;
 
 
+import jakarta.nosql.CommunicationException;
+
 /**
  * The riak exception to Diana project
  */
-public class DianaRiakException extends RuntimeException {
+public class RiakCommunicationException extends CommunicationException {
 
-    DianaRiakException(String message, Throwable cause) {
+    RiakCommunicationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    DianaRiakException(String message) {
+    RiakCommunicationException(String message) {
         super(message);
     }
 }
