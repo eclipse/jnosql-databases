@@ -38,8 +38,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * The MongoDB implementation to {@link DocumentConfiguration}
  * that returns  {@link MongoDBDocumentCollectionManagerFactory}
- * It tries to read the diana-mongodb.properties file whose has the following properties
- * <p>mongodb.server.host.: as prefix to add host client, eg: mongodb.server.host.1=host1, mongodb.server.host.2= host2</p>
+ * @see MongoDBDocumentConfigurations
  */
 public class MongoDBDocumentConfiguration implements DocumentConfiguration {
 
