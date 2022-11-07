@@ -34,7 +34,7 @@ public enum RedisConfigurations implements Supplier<String> {
      */
     PORT("redis.port"),
     /**
-     *
+     * The timeout
      */
     TIMEOUT("redis.timeout"),
     /**
@@ -58,11 +58,11 @@ public enum RedisConfigurations implements Supplier<String> {
      */
     MAX_IDLE("redis.max.idle"),
     /**
-     * Set the value for the minIdle configuration attribute for pools created with this configuration instance.
+     * The value for the minIdle configuration attribute for pools created with this configuration instance.
      */
     MIN_IDLE("redis.min.idle"),
     /**
-     * Sets the value for the {@code maxWait} configuration attribute for pools created with this configuration instance.
+     * The value for the {@code maxWait} configuration attribute for pools created with this configuration instance.
      */
     MAX_WAIT_MILLIS("redis.max.wait.millis");
 

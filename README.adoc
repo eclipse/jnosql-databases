@@ -809,16 +809,41 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```RedisConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* redis.host
-* redis.port
-* redis.timeout
-* redis.password
-* redis.database
-* redis.clientName
-* redis.max.total
-* redis.max.idle
-* redis.min.idle
-* redis.max.wait.millis
+[cols="Redis"]
+|===
+|Configuration property |Description
+
+|redis.host
+|The database host
+
+|redis.port
+|The database port
+
+|redis.timeout
+|The timeout
+
+|redis.password
+|The password's credential
+
+|redis.database
+|The redis database's number
+
+|redis.client.name
+|The client's name
+
+|redis.max.total
+|The value for the maxTotal configuration attribute for pools created with this configuration instance.
+
+|redis.max.idle
+|The value for the maxIdle configuration attribute for pools created with this configuration instance.
+
+|redis.min.idle
+|The value for the minIdle configuration attribute for pools created with this configuration instance.
+
+|redis.max.wait.millis
+|The value for the maxWait configuration attribute for pools created with this configuration instance.
+
+|===
 
 It is a sample using Redis's keyvalue-API with Eclipse MicroProfile Configuration.
 
