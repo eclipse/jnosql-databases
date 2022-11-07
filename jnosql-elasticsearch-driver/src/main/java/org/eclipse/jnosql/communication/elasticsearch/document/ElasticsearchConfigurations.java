@@ -17,7 +17,9 @@ package org.eclipse.jnosql.communication.elasticsearch.document;
 import java.util.function.Supplier;
 
 /**
- * The settings option available at Elasticsearch
+ * An enumeration to show the available options to connect to the Elasticsearch database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
  *
  * @see jakarta.nosql.Settings
  */

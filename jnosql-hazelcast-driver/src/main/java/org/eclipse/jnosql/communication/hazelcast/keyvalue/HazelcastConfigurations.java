@@ -16,6 +16,13 @@ package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the Hazelcast database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum HazelcastConfigurations implements Supplier<String> {
     INSTANCE("hazelcast.instance.name"),
     HOST("hazelcast.host"),

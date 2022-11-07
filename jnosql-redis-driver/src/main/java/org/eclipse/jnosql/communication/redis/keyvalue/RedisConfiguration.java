@@ -26,6 +26,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
 
@@ -42,6 +43,13 @@ import static java.util.Arrays.asList;
  * <p>redis.max.idle: The max idle {@link JedisPoolConfig}, the default value 10 </p>
  * <p>redis.min.idle: The min idle {@link JedisPoolConfig}, the default value 1 </p>
  * <p>redis.max.wait.millis: The max wait on millis on {@link JedisPoolConfig}, the default value 3000 </p>
+ */
+/**
+ * An enumeration to show the available options to connect to the Redis database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
  */
 public final class RedisConfiguration implements KeyValueConfiguration {
 

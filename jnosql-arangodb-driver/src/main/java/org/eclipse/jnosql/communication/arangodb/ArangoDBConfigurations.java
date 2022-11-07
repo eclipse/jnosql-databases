@@ -18,7 +18,9 @@ package org.eclipse.jnosql.communication.arangodb;
 import java.util.function.Supplier;
 
 /**
- * The settings option available at AragonDB
+ * An enumeration to show the available options to connect to the ArangoDB database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
  *
  * @see jakarta.nosql.Settings
  */

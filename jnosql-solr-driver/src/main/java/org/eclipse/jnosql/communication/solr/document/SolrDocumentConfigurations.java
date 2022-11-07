@@ -17,6 +17,13 @@ package org.eclipse.jnosql.communication.solr.document;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the Solr database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum SolrDocumentConfigurations implements Supplier<String> {
     HOST("solr.host"),
     USER("solr.user"),

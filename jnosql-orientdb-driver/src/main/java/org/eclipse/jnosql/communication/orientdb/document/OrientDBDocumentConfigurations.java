@@ -16,6 +16,13 @@ package org.eclipse.jnosql.communication.orientdb.document;
 
 import java.util.function.Supplier;
 
+/**
+ * An enumeration to show the available options to connect to the OrientDB database.
+ * It implements {@link Supplier}, where its it returns the property name that might be
+ * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ *
+ * @see jakarta.nosql.Settings
+ */
 public enum OrientDBDocumentConfigurations implements Supplier<String> {
 
     HOST("orientdb.host"),
