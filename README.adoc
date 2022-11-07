@@ -703,10 +703,23 @@ You can use either, maven or Gradle dependency:
 The API provides the class ```OrientDBDocumentConfigurations```
 to set up the credentials programmatically. Beware that you can set up through properties using either https://microprofile.io/microprofile-config/[Eclipse MicroProfile Configuration] or https://jakarta.ee/specifications/config/[Jakarta Configuration].
 
-* orientdb.host
-* orientdb.-user
-* orientdb.password
-* orientdb.storage.type
+[cols="OrientDB"]
+|===
+|Configuration property |Description
+
+|orientdb.host
+|The database host
+
+|orientdb.-user
+|The user's credential.
+
+|orientdb.password
+|The password's credential
+
+|orientdb.storage.type
+|The storage type com.orientechnologies.orient.core.db.ODatabaseType
+
+|===
 
 It is a sample using OrientDB's document-API with Eclipse MicroProfile Configuration.
 
