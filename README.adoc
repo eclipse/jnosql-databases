@@ -802,28 +802,28 @@ Beware that you can set up through properties using either https://microprofile.
 |The database port
 
 |redis.timeout
-|The timeout
+|The redis timeout, the default value 2000 on milliseconds
 
 |redis.password
 |The password's credential
 
 |redis.database
-|The redis database's number
+|The redis database number, the default value is 0
 
 |redis.client.name
 |The client's name
 
 |redis.max.total
-|The value for the maxTotal configuration attribute for pools created with this configuration instance.
+|The value for the maxTotal configuration attribute for pools created with this configuration instance, the default value 1000.
 
 |redis.max.idle
-|The value for the maxIdle configuration attribute for pools created with this configuration instance.
+|The value for the maxIdle configuration attribute for pools created with this configuration instance, the default value 10.
 
 |redis.min.idle
-|The value for the minIdle configuration attribute for pools created with this configuration instance.
+|The value for the minIdle configuration attribute for pools created with this configuration instance, the default value 1.
 
 |redis.max.wait.millis
-|The value for the maxWait configuration attribute for pools created with this configuration instance.
+|The value for the maxWait configuration attribute for pools created with this configuration instance, the default value 3000.
 
 |===
 

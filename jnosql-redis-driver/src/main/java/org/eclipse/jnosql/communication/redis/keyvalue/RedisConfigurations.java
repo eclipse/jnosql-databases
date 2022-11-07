@@ -36,7 +36,7 @@ public enum RedisConfigurations implements Supplier<String> {
      */
     PORT("redis.port"),
     /**
-     * the redis timeout, the default value 2000 on milliseconds
+     * The redis timeout, the default value 2000 on milliseconds
      */
     TIMEOUT("redis.timeout"),
     /**
