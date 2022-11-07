@@ -71,11 +71,11 @@ public enum MemcachedConfigurations implements Supplier<String> {
      */
     USE_NAGLE_ALGORITHM("memcached.nagle.algorithm"),
     /**
-     * The password's credential
+     * The user's credential
      */
     USER("memcached.user"),
     /**
-     * The user's credential.
+     * The password's credential.
      */
     PASSWORD("memcached.password"),
     /**
