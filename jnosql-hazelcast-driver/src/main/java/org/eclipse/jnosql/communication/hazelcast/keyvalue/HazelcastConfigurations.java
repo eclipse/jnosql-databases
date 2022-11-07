@@ -32,7 +32,7 @@ public enum HazelcastConfigurations implements Supplier<String> {
      */
     INSTANCE("hazelcast.instance.name"),
     /**
-     * The database host
+     * Database's host. It is a prefix to enumerate hosts. E.g.: hazelcast.host.1=localhost
      */
     HOST("hazelcast.host"),
     /**

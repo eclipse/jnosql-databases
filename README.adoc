@@ -391,7 +391,7 @@ Beware that you can set up through properties using either https://microprofile.
 |The instance name uniquely identifying the hazelcast instance created by this configuration. This name is used in different scenarios, such as identifying the hazelcast instance when running multiple instances in the same JVM.
 
 |hazelcast.host
-|The database host
+|Database's host. It is a prefix to enumerate hosts. E.g.: hazelcast.host.1=localhost
 
 |hazelcast.port
 |The database port
