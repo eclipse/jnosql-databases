@@ -25,9 +25,21 @@ import java.util.function.Supplier;
  */
 public enum OrientDBDocumentConfigurations implements Supplier<String> {
 
+    /**
+     * The database host
+     */
     HOST("orientdb.host"),
+    /**
+     * The user's credential.
+     */
     USER("orientdb.-user"),
+    /**
+     * The password's credential
+     */
     PASSWORD("orientdb.password"),
+    /**
+     * The storage type {@link com.orientechnologies.orient.core.db.ODatabaseType}
+     */
     STORAGE_TYPE("orientdb.storage.type");
 
     private final String configuration;
