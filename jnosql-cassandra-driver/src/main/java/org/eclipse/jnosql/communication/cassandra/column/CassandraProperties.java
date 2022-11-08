@@ -83,25 +83,25 @@ class CassandraProperties {
         Settings settings = builder.build();
 
         CassandraProperties cp = new CassandraProperties();
-        settings.prefix(Arrays.asList(CassandraConfigurations.HOST.get(),
-                Configurations.HOST.get())).stream()
+        settings.prefixSupplier(Arrays.asList(CassandraConfigurations.HOST,
+                Configurations.HOST)).stream()
                 .map(Object::toString).forEach(cp::addNodes);
 
-        settings.prefix(CassandraConfigurations.QUERY.get())
+        settings.prefix(CassandraConfigurations.QUERY)
                 .stream().map(Object::toString).forEach(cp::addQuery);
 
-        cp.port = settings.get(CassandraConfigurations.PORT.get())
+        cp.port = settings.get(CassandraConfigurations.PORT)
                 .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_PORT);
 
-        cp.name = settings.get(CassandraConfigurations.NAME.get())
+        cp.name = settings.get(CassandraConfigurations.NAME)
                 .map(Object::toString);
-        cp.dataCenter = settings.get(CassandraConfigurations.DATA_CENTER.get()).map(Object::toString)
+        cp.dataCenter = settings.get(CassandraConfigurations.DATA_CENTER).map(Object::toString)
                 .orElse(DEFAULT_DATA_CENTER);
 
-        cp.user = settings.get(Arrays.asList(Configurations.USER.get(), CassandraConfigurations.USER.get()))
+        cp.user = settings.getSupplier(Arrays.asList(Configurations.USER, CassandraConfigurations.USER))
                 .map(Object::toString);
-        cp.password = settings.get(Arrays.asList(Configurations.PASSWORD.get(),
-                        CassandraConfigurations.PASSWORD.get()))
+        cp.password = settings.getSupplier(Arrays.asList(Configurations.PASSWORD,
+                        CassandraConfigurations.PASSWORD))
                 .map(Object::toString);
         return cp;
     }

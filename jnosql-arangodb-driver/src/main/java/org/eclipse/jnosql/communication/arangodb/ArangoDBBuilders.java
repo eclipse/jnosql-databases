@@ -32,37 +32,37 @@ final class ArangoDBBuilders {
 
     static void load(Settings settings, ArangoDBBuilder arangoDB) {
 
-        settings.get(asList(ArangoDBConfigurations.USER.get(), Configurations.USER.get()))
+        settings.getSupplier(asList(ArangoDBConfigurations.USER, Configurations.USER))
                 .map(Object::toString).ifPresent(arangoDB::user);
-        settings.get(asList(ArangoDBConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
+        settings.getSupplier(asList(ArangoDBConfigurations.PASSWORD, Configurations.PASSWORD))
                 .map(Object::toString).ifPresent(arangoDB::password);
-        settings.get(ArangoDBConfigurations.TIMEOUT.get())
+        settings.get(ArangoDBConfigurations.TIMEOUT)
                 .map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
 
-        settings.get(ArangoDBConfigurations.CHUCK_SIZE.get())
+        settings.get(ArangoDBConfigurations.CHUCK_SIZE)
                 .map(Object::toString).map(Integer::valueOf)
                 .ifPresent(arangoDB::chunksize);
 
-        settings.get(ArangoDBConfigurations.MAX_CONNECTIONS.get())
+        settings.get(ArangoDBConfigurations.MAX_CONNECTIONS)
                 .map(Object::toString).map(Integer::valueOf)
                 .ifPresent(arangoDB::maxConnections);
 
-        settings.get(ArangoDBConfigurations.USER_SSL.get())
+        settings.get(ArangoDBConfigurations.USER_SSL)
                 .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::useSsl);
 
-        settings.get(ArangoDBConfigurations.HOST_LIST.get())
+        settings.get(ArangoDBConfigurations.HOST_LIST)
                 .map(Object::toString).map(Boolean::valueOf)
                 .ifPresent(arangoDB::acquireHostList);
 
-        settings.get(ArangoDBConfigurations.LOAD_BALANCING.get()).map(Object::toString)
+        settings.get(ArangoDBConfigurations.LOAD_BALANCING).map(Object::toString)
                 .map(LoadBalancingStrategy::valueOf)
                 .ifPresent(arangoDB::loadBalancingStrategy);
 
-        settings.get(ArangoDBConfigurations.PROTOCOL.get()).map(Object::toString).map(Protocol::valueOf)
+        settings.get(ArangoDBConfigurations.PROTOCOL).map(Object::toString).map(Protocol::valueOf)
                 .ifPresent(arangoDB::useProtocol);
 
-        settings.prefix(Arrays.asList(ArangoDBConfigurations.HOST.get(), Configurations.HOST.get()))
+        settings.prefixSupplier(Arrays.asList(ArangoDBConfigurations.HOST, Configurations.HOST))
                 .stream()
                 .map(Object::toString)
                 .map(ArangoDBHost::new)
