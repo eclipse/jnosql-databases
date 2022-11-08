@@ -86,30 +86,24 @@ public final class RedisConfiguration implements KeyValueConfiguration {
 
     private JedisPool getJedisPool(Settings settings, JedisPoolConfig poolConfig) {
 
-        String localhost = settings.get(asList(OldRedisConfigurations.HOST.get(),
-                RedisConfigurations.HOST.get(), Configurations.HOST.get()))
+        String localhost = settings.get(asList(RedisConfigurations.HOST.get(), Configurations.HOST.get()))
                 .map(Object::toString).orElse(DEFAULT_HOST);
 
-        Integer port = settings.get(asList(OldRedisConfigurations.PORT.get(),
-                RedisConfigurations.PORT.get()))
+        Integer port = settings.get(RedisConfigurations.PORT.get())
                 .map(Object::toString).map(Integer::parseInt)
                 .orElse(DEFAULT_PORT);
 
-        Integer timeout = settings.get(asList(OldRedisConfigurations.TIMEOUT.get(),
-                RedisConfigurations.TIMEOUT.get()))
+        Integer timeout = settings.get(RedisConfigurations.TIMEOUT.get())
                 .map(Object::toString).map(Integer::parseInt)
                 .orElse(DEFAULT_TIMEOUT);
 
-        String password = settings.get(asList(OldRedisConfigurations.PASSWORD.get(),
-                RedisConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
+        String password = settings.get(asList(RedisConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
                 .map(Object::toString).orElse(null);
-        Integer database = settings.get(asList(OldRedisConfigurations.DATABASE.get(),
-                RedisConfigurations.DATABASE.get()))
+        Integer database = settings.get(RedisConfigurations.DATABASE.get())
                 .map(Object::toString).map(Integer::parseInt)
                 .orElse(DEFAULT_DATABASE);
 
-        String clientName = settings.get(asList(OldRedisConfigurations.CLIENT_NAME.get(),
-                RedisConfigurations.CLIENT_NAME.get()))
+        String clientName = settings.get(RedisConfigurations.CLIENT_NAME.get())
                 .map(Object::toString).orElse(null);
         return new JedisPool(poolConfig, localhost, port, timeout, password, database, clientName);
     }
@@ -118,24 +112,20 @@ public final class RedisConfiguration implements KeyValueConfiguration {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
 
 
-        poolConfig.setMaxTotal(settings.get(asList(OldRedisConfigurations.MAX_TOTAL.get(),
-                RedisConfigurations.MAX_TOTAL.get())).map(Object::toString).map(Integer::parseInt)
+        poolConfig.setMaxTotal(settings.get(RedisConfigurations.MAX_TOTAL.get())
+                .map(Object::toString).map(Integer::parseInt)
                 .orElse(DEFAULT_MAX_TOTAL));
 
-        poolConfig.setMaxIdle(settings.get(asList(OldRedisConfigurations.MAX_IDLE.get(),
-                RedisConfigurations.MAX_IDLE.get()))
+        poolConfig.setMaxIdle(settings.get(RedisConfigurations.MAX_IDLE.get())
                 .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_MAX_IDLE));
 
-        poolConfig.setMinIdle(   settings.get(asList(OldRedisConfigurations.MIN_IDLE.get(),
-                RedisConfigurations.MIN_IDLE.get()))
+        poolConfig.setMinIdle(   settings.get(RedisConfigurations.MIN_IDLE.get())
                 .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_MIN_IDLE));
 
-        poolConfig.setMaxWaitMillis(settings.get(asList(OldRedisConfigurations.MAX_WAIT_MILLIS.get(),
-                RedisConfigurations.MAX_WAIT_MILLIS.get()))
+        poolConfig.setMaxWaitMillis(settings.get(RedisConfigurations.MAX_WAIT_MILLIS.get())
                 .map(Object::toString).map(Integer::parseInt)
                 .orElse(DEFAULT_MAX_WAIT_MILLIS));
         return poolConfig;
     }
-
 
 }
