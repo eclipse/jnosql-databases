@@ -81,11 +81,11 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
     public HazelcastBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        List<String> servers = settings.prefix(Arrays.asList(OldHazelcastConfigurations.HOST.get(),
+        List<String> servers = settings.prefix(Arrays.asList(
                 HazelcastConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream().map(Object::toString)
                 .collect(Collectors.toList());
-        String instance = settings.get(Arrays.asList(OldHazelcastConfigurations.INSTANCE.get(),
+        String instance = settings.get(Arrays.asList(
                 HazelcastConfigurations.INSTANCE.get())).map(Object::toString)
                 .orElse(DEFAULT_INSTANCE);
         Config config = new Config(instance);
