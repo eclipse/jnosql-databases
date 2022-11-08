@@ -38,7 +38,7 @@ class MongoAuthenticationTest {
 
     @Test
     public void shouldReturnErrorWhenTheNumberParameterIsInvalid() {
-        Settings settings = Settings.builder().put(USER.get(), "value")
+        Settings settings = Settings.builder().put(USER, "value")
                 .build();
 
         assertThrows(CommunicationException.class, () -> MongoAuthentication.of(settings));
@@ -48,9 +48,9 @@ class MongoAuthenticationTest {
     @Test
     public void shouldReturnOneAuthentication() {
         Settings settings = Settings.builder()
-                .put(AUTHENTICATION_SOURCE.get(), "database")
-                .put(PASSWORD.get(), "password")
-                .put(USER.get(), "user")
+                .put(AUTHENTICATION_SOURCE, "database")
+                .put(PASSWORD, "password")
+                .put(USER, "user")
                 .build();
 
         MongoCredential credential = MongoAuthentication.of(settings).get();
@@ -64,10 +64,10 @@ class MongoAuthenticationTest {
     @Test
     public void shouldReturnOneAuthenticationWithGSSAPI() {
         Settings settings = Settings.builder()
-                .put(AUTHENTICATION_SOURCE.get(), "database")
-                .put(PASSWORD.get(), "password")
-                .put(USER.get(), "user")
-                .put(AUTHENTICATION_MECHANISM.get(), "GSSAPI")
+                .put(AUTHENTICATION_SOURCE, "database")
+                .put(PASSWORD, "password")
+                .put(USER, "user")
+                .put(AUTHENTICATION_MECHANISM, "GSSAPI")
                 .build();
 
         MongoCredential credential = MongoAuthentication.of(settings).get();
@@ -80,10 +80,10 @@ class MongoAuthenticationTest {
     @Test
     public void shouldReturnOneAuthenticationWithMongoX509() {
         Settings settings = Settings.builder()
-                .put(AUTHENTICATION_SOURCE.get(), "database")
-                .put(PASSWORD.get(), "password")
-                .put(USER.get(), "user")
-                .put(AUTHENTICATION_MECHANISM.get(), "MONGODB-X509")
+                .put(AUTHENTICATION_SOURCE, "database")
+                .put(PASSWORD, "password")
+                .put(USER, "user")
+                .put(AUTHENTICATION_MECHANISM, "MONGODB-X509")
                 .build();
 
         MongoCredential credential = MongoAuthentication.of(settings).get();
@@ -95,10 +95,10 @@ class MongoAuthenticationTest {
     @Test
     public void shouldReturnOneAuthenticationWithSCRAMSHA1() {
         Settings settings = Settings.builder()
-                .put(AUTHENTICATION_SOURCE.get(), "database")
-                .put(PASSWORD.get(), "password")
-                .put(USER.get(), "user")
-                .put(AUTHENTICATION_MECHANISM.get(), "SCRAM-SHA-1")
+                .put(AUTHENTICATION_SOURCE, "database")
+                .put(PASSWORD, "password")
+                .put(USER, "user")
+                .put(AUTHENTICATION_MECHANISM, "SCRAM-SHA-1")
                 .build();
 
         MongoCredential credential = MongoAuthentication.of(settings).get();
@@ -111,10 +111,10 @@ class MongoAuthenticationTest {
     @Test
     public void shouldReturnOneAuthenticationWithSCRAMSHA256() {
         Settings settings = Settings.builder()
-                .put(AUTHENTICATION_SOURCE.get(), "database")
-                .put(PASSWORD.get(), "password")
-                .put(USER.get(), "user")
-                .put(AUTHENTICATION_MECHANISM.get(), "SCRAM-SHA-256")
+                .put(AUTHENTICATION_SOURCE, "database")
+                .put(PASSWORD, "password")
+                .put(USER, "user")
+                .put(AUTHENTICATION_MECHANISM, "SCRAM-SHA-256")
                 .build();
 
         MongoCredential credential = MongoAuthentication.of(settings).get();

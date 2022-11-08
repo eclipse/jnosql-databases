@@ -85,8 +85,8 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
         requireNonNull(settings, "settings is required");
 
         List<ServerAddress> servers = settings
-                .prefix(Arrays.asList(MongoDBDocumentConfigurations.HOST.get(),
-                        Configurations.HOST.get()))
+                .prefixSupplier(Arrays.asList(MongoDBDocumentConfigurations.HOST,
+                        Configurations.HOST))
                 .stream()
                 .map(Object::toString)
                 .map(HostPortConfiguration::new)
@@ -95,7 +95,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
 
         if (servers.isEmpty()) {
             Optional<ConnectionString> connectionString = settings
-                    .get(MongoDBDocumentConfigurations.URL.get(), String.class)
+                    .get(MongoDBDocumentConfigurations.URL, String.class)
                     .map(ConnectionString::new);
 
             return connectionString.map(c -> MongoClientSettings.builder()
