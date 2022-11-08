@@ -32,18 +32,18 @@ final class MongoAuthentication {
 
     static Optional<MongoCredential> of(Settings settings) {
 
-        Optional<String> user = settings.get(Arrays.asList(MongoDBDocumentConfigurations.USER.get(),
-                Configurations.USER.get()))
+        Optional<String> user = settings.getSupplier(Arrays.asList(MongoDBDocumentConfigurations.USER,
+                Configurations.USER))
                 .map(Object::toString);
 
-        Optional<char[]> password = settings.get(Arrays.asList(MongoDBDocumentConfigurations.PASSWORD.get(),
-                Configurations.PASSWORD.get()))
+        Optional<char[]> password = settings.getSupplier(Arrays.asList(MongoDBDocumentConfigurations.PASSWORD,
+                Configurations.PASSWORD))
                 .map(Object::toString).map(String::toCharArray);
 
-        Optional<String> source = settings.get(MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE.get())
+        Optional<String> source = settings.get(MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE)
                 .map(Object::toString);
 
-        Optional<AuthenticationMechanism> mechanism = settings.get(MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM.get())
+        Optional<AuthenticationMechanism> mechanism = settings.get(MongoDBDocumentConfigurations.AUTHENTICATION_MECHANISM)
                 .map(Object::toString)
                 .map(AuthenticationMechanism::fromMechanismName);
 
