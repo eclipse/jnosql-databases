@@ -49,23 +49,23 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration {
         Objects.requireNonNull(settings, "settings is required");
         CouchDBHttpConfigurationBuilder configuration = new CouchDBHttpConfigurationBuilder();
 
-        settings.get(Arrays.asList(CouchDBConfigurations.HOST.get(), Configurations.HOST.get()))
+        settings.getSupplier(Arrays.asList(CouchDBConfigurations.HOST, Configurations.HOST))
                 .map(Object::toString)
                 .ifPresent(configuration::withHost);
-        settings.get(Arrays.asList(CouchDBConfigurations.USER.get(), Configurations.USER.get()))
+        settings.getSupplier(Arrays.asList(CouchDBConfigurations.USER, Configurations.USER))
                 .map(Object::toString)
                 .ifPresent(configuration::withUsername);
-        settings.get(Arrays.asList(CouchDBConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
+        settings.getSupplier(Arrays.asList(CouchDBConfigurations.PASSWORD, Configurations.PASSWORD))
                 .map(Object::toString)
                 .ifPresent(configuration::withPassword);
-        settings.computeIfPresent(CouchDBConfigurations.PORT.get(), (k, v) -> configuration.withPort(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_CONNECTIONS.get(), (k, v) -> configuration.withMaxConnections(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.CONNECTION_TIMEOUT.get(), (k, v) -> configuration.withConnectionTimeout(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.SOCKET_TIMEOUT.get(), (k, v) -> configuration.withSocketTimeout(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES.get(), (k, v) -> configuration.withMaxObjectSizeBytes(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_CACHE_ENTRIES.get(), (k, v) -> configuration.withMaxCacheEntries(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.ENABLE_SSL.get(), (k, v) -> configuration.withEnableSSL(Boolean.parseBoolean(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.COMPRESSION.get(), (k, v) -> configuration.withCompression(Boolean.parseBoolean(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.PORT, (k, v) -> configuration.withPort(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.MAX_CONNECTIONS, (k, v) -> configuration.withMaxConnections(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.CONNECTION_TIMEOUT, (k, v) -> configuration.withConnectionTimeout(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.SOCKET_TIMEOUT, (k, v) -> configuration.withSocketTimeout(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES, (k, v) -> configuration.withMaxObjectSizeBytes(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.MAX_CACHE_ENTRIES, (k, v) -> configuration.withMaxCacheEntries(Integer.parseInt(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.ENABLE_SSL, (k, v) -> configuration.withEnableSSL(Boolean.parseBoolean(v.toString())));
+        settings.computeIfPresent(CouchDBConfigurations.COMPRESSION, (k, v) -> configuration.withCompression(Boolean.parseBoolean(v.toString())));
         return new CouchDBDocumentCollectionManagerFactory(configuration.build());
     }
 }

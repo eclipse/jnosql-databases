@@ -67,29 +67,29 @@ public abstract class CouchbaseConfiguration {
     }
 
     protected String getUser(Settings settings) {
-        return settings.get(asList(Configurations.USER.get(),
-                        CouchbaseConfigurations.USER.get()))
+        return settings.getSupplier(asList(Configurations.USER,
+                        CouchbaseConfigurations.USER))
                 .map(Object::toString).orElse(null);
     }
 
     private String getScope(Settings settings) {
-        return settings.get(CouchbaseConfigurations.SCOPE.get())
+        return settings.get(CouchbaseConfigurations.SCOPE)
                 .map(Object::toString).orElse(null);
     }
 
     private String getCollection(Settings settings) {
-        return settings.get(CouchbaseConfigurations.COLLECTION.get())
+        return settings.get(CouchbaseConfigurations.COLLECTION)
                 .map(Object::toString).orElse(null);
     }
 
     private String getIndex(Settings settings) {
-        return settings.get(CouchbaseConfigurations.INDEX.get())
+        return settings.get(CouchbaseConfigurations.INDEX)
                 .map(Object::toString).orElse(null);
     }
 
     private List<String> getCollections(Settings settings) {
         List<String> collections = new ArrayList<>();
-        settings.get(CouchbaseConfigurations.COLLECTIONS.get())
+        settings.get(CouchbaseConfigurations.COLLECTIONS)
                 .map(Object::toString).stream()
                 .flatMap(s -> Stream.of(s.split(",\\s*")))
                 .forEach(collections::add);
@@ -98,14 +98,14 @@ public abstract class CouchbaseConfiguration {
 
     protected String getPassword(Settings settings) {
 
-        return settings.get(asList(Configurations.PASSWORD.get(),
-                        CouchbaseConfigurations.PASSWORD.get()))
+        return settings.getSupplier(asList(Configurations.PASSWORD,
+                        CouchbaseConfigurations.PASSWORD))
                 .map(Object::toString).orElse(null);
     }
 
     protected String getHost(Settings settings) {
-        return settings.get(asList(Configurations.HOST.get(),
-                        CouchbaseConfigurations.HOST.get()))
+        return settings.getSupplier(asList(Configurations.HOST,
+                        CouchbaseConfigurations.HOST))
                 .map(Object::toString).orElse(null);
     }
 

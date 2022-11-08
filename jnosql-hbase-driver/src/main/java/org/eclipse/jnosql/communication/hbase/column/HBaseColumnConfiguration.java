@@ -86,7 +86,7 @@ public class HBaseColumnConfiguration implements ColumnConfiguration {
     public HBaseColumnFamilyManagerFactory get(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
-        List<String> families = settings.prefix(HbaseConfigurations.FAMILY.get())
+        List<String> families = settings.prefix(HbaseConfigurations.FAMILY)
                 .stream().map(Object::toString).collect(Collectors.toList());
         return new HBaseColumnFamilyManagerFactory(configuration, families);
     }
