@@ -31,6 +31,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * The orientDB implementation of {@link DocumentConfiguration}  that returns
  * {@link OrientDBDocumentCollectionManagerFactory}.
+ *
  * @see OrientDBDocumentConfigurations
  */
 public class OrientDBDocumentConfiguration implements DocumentConfiguration {
@@ -94,29 +95,27 @@ public class OrientDBDocumentConfiguration implements DocumentConfiguration {
     }
 
     private String getHost(Settings settings) {
-        return find(settings, OldOrientDBDocumentConfigurations.HOST, OrientDBDocumentConfigurations.HOST,
+        return find(settings, OrientDBDocumentConfigurations.HOST,
                 Configurations.HOST);
     }
 
     private String getUser(Settings settings) {
-        return find(settings, OldOrientDBDocumentConfigurations.USER, OrientDBDocumentConfigurations.USER,
+        return find(settings, OrientDBDocumentConfigurations.USER,
                 Configurations.USER);
     }
 
     private String getPassword(Settings settings) {
-        return find(settings, OldOrientDBDocumentConfigurations.PASSWORD, OrientDBDocumentConfigurations.PASSWORD,
+        return find(settings, OrientDBDocumentConfigurations.PASSWORD,
                 Configurations.PASSWORD);
     }
 
     private String getStorageType(Settings settings) {
-        return find(settings, OldOrientDBDocumentConfigurations.STORAGE_TYPE,
-                OrientDBDocumentConfigurations.STORAGE_TYPE);
+        return find(settings, OrientDBDocumentConfigurations.STORAGE_TYPE);
     }
-
 
     private String find(Settings settings, Supplier<String>... keys) {
         return settings.get(Stream.of(keys)
-                .map(Supplier::get).collect(toList()))
+                        .map(Supplier::get).collect(toList()))
                 .map(Object::toString)
                 .orElse(null);
     }
