@@ -61,50 +61,50 @@ public class MemcachedKeyValueConfiguration implements KeyValueConfiguration {
         requireNonNull(settings, "settings is required");
         ConnectionFactoryBuilder factoryBuilder = new ConnectionFactoryBuilder();
 
-        settings.get(MemcachedConfigurations.DAEMON.get(), Boolean.class)
+        settings.get(MemcachedConfigurations.DAEMON, Boolean.class)
                 .ifPresent(factoryBuilder::setDaemon);
 
-        settings.get(MemcachedConfigurations.MAX_RECONNECT_DELAY.get(), Long.class)
+        settings.get(MemcachedConfigurations.MAX_RECONNECT_DELAY, Long.class)
                 .ifPresent(factoryBuilder::setMaxReconnectDelay);
 
-        settings.get(MemcachedConfigurations.PROTOCOL.get(), Protocol.class)
+        settings.get(MemcachedConfigurations.PROTOCOL, Protocol.class)
                 .ifPresent(factoryBuilder::setProtocol);
 
-        settings.get(MemcachedConfigurations.LOCATOR.get(), Locator.class)
+        settings.get(MemcachedConfigurations.LOCATOR, Locator.class)
                 .ifPresent(factoryBuilder::setLocatorType);
 
-        settings.get(MemcachedConfigurations.AUTH_WAIT_TIME.get(), Long.class)
+        settings.get(MemcachedConfigurations.AUTH_WAIT_TIME, Long.class)
                 .ifPresent(factoryBuilder::setAuthWaitTime);
 
-        settings.get(MemcachedConfigurations.MAX_BLOCK_TIME.get(), Long.class)
+        settings.get(MemcachedConfigurations.MAX_BLOCK_TIME, Long.class)
                 .ifPresent(factoryBuilder::setOpQueueMaxBlockTime);
 
-        settings.get(MemcachedConfigurations.TIMEOUT.get(), Long.class)
+        settings.get(MemcachedConfigurations.TIMEOUT, Long.class)
                 .ifPresent(factoryBuilder::setOpTimeout);
 
-        settings.get(MemcachedConfigurations.READ_BUFFER_SIZE.get(), Integer.class)
+        settings.get(MemcachedConfigurations.READ_BUFFER_SIZE, Integer.class)
                 .ifPresent(factoryBuilder::setReadBufferSize);
 
-        settings.get(MemcachedConfigurations.SHOULD_OPTIMIZE.get(), Boolean.class)
+        settings.get(MemcachedConfigurations.SHOULD_OPTIMIZE, Boolean.class)
                 .ifPresent(factoryBuilder::setShouldOptimize);
 
-        settings.get(MemcachedConfigurations.TIMEOUT_THRESHOLD.get(), Integer.class)
+        settings.get(MemcachedConfigurations.TIMEOUT_THRESHOLD, Integer.class)
                 .ifPresent(factoryBuilder::setTimeoutExceptionThreshold);
 
-        settings.get(MemcachedConfigurations.USE_NAGLE_ALGORITHM.get(), Boolean.class)
+        settings.get(MemcachedConfigurations.USE_NAGLE_ALGORITHM, Boolean.class)
                 .ifPresent(factoryBuilder::setUseNagleAlgorithm);
 
-        settings.get(asList(MemcachedConfigurations.USER.get(), Configurations.USER.get()))
+        settings.getSupplier(asList(MemcachedConfigurations.USER, Configurations.USER))
                 .map(Object::toString)
                 .ifPresent(u -> {
-                    String password = ofNullable(settings.get(asList(MemcachedConfigurations.PASSWORD.get()
-                            , Configurations.PASSWORD.get())))
+                    String password = ofNullable(settings.getSupplier(asList(MemcachedConfigurations.PASSWORD
+                            , Configurations.PASSWORD)))
                             .map(Object::toString).orElse(null);
                     factoryBuilder.setAuthDescriptor(AuthDescriptor.typical(u, password));
                 });
 
 
-        List<String> hots = settings.prefix(asList(MemcachedConfigurations.HOST.get(), Configurations.HOST.get()))
+        List<String> hots = settings.prefixSupplier(asList(MemcachedConfigurations.HOST, Configurations.HOST))
                 .stream()
                 .map(Object::toString)
                 .collect(Collectors.toList());
