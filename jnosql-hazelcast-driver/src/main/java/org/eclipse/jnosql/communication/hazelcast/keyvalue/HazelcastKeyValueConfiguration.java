@@ -81,35 +81,35 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
     public HazelcastBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        List<String> servers = settings.prefix(Arrays.asList(
-                HazelcastConfigurations.HOST.get(), Configurations.HOST.get()))
+        List<String> servers = settings.prefixSupplier(Arrays.asList(
+                HazelcastConfigurations.HOST, Configurations.HOST))
                 .stream().map(Object::toString)
                 .collect(Collectors.toList());
-        String instance = settings.get(Arrays.asList(
-                HazelcastConfigurations.INSTANCE.get())).map(Object::toString)
+        String instance = settings.getSupplier(Arrays.asList(
+                HazelcastConfigurations.INSTANCE)).map(Object::toString)
                 .orElse(DEFAULT_INSTANCE);
         Config config = new Config(instance);
 
         NetworkConfig network = config.getNetworkConfig();
 
-        settings.get(HazelcastConfigurations.PORT.get())
+        settings.get(HazelcastConfigurations.PORT)
                 .map(Object::toString)
                 .map(Integer::parseInt)
                 .ifPresent(network::setPort);
 
-        settings.get(HazelcastConfigurations.PORT_COUNT.get())
+        settings.get(HazelcastConfigurations.PORT_COUNT)
                 .map(Object::toString)
                 .map(Integer::parseInt)
                 .ifPresent(network::setPortCount);
 
-        settings.get(HazelcastConfigurations.PORT_AUTO_INCREMENT.get())
+        settings.get(HazelcastConfigurations.PORT_AUTO_INCREMENT)
                 .map(Object::toString)
                 .map(Boolean::parseBoolean)
                 .ifPresent(network::setPortAutoIncrement);
 
         JoinConfig join = network.getJoin();
 
-        settings.get(HazelcastConfigurations.MULTICAST_ENABLE.get())
+        settings.get(HazelcastConfigurations.MULTICAST_ENABLE)
                 .map(Object::toString)
                 .map(Boolean::parseBoolean)
                 .ifPresent(join.getMulticastConfig()::setEnabled);
@@ -120,7 +120,7 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
                 .addMember("machine1")
                 .addMember("localhost");
 
-        settings.get(HazelcastConfigurations.TCP_IP_JOIN.get())
+        settings.get(HazelcastConfigurations.TCP_IP_JOIN)
                 .map(Object::toString)
                 .map(Boolean::valueOf)
                 .ifPresent(join.getTcpIpConfig()::setEnabled);

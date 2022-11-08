@@ -66,7 +66,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
         if (configurations.isEmpty()) {
             return;
         }
-        settings.prefix(asList(ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
+        settings.prefixSupplier(asList(ElasticsearchConfigurations.HOST, Configurations.HOST))
                 .stream()
                 .map(Object::toString)
                 .map(h -> ElasticsearchAddress.of(h, DEFAULT_PORT))
@@ -103,7 +103,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
     public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        settings.prefix(asList(ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
+        settings.prefixSupplier(asList(ElasticsearchConfigurations.HOST, Configurations.HOST))
                 .stream()
                 .map(Object::toString)
                 .map(h -> ElasticsearchAddress.of(h, DEFAULT_PORT))
@@ -114,12 +114,12 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
         builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
 
         final Optional<String> username = settings
-                .get(asList(Configurations.USER.get(),
-                        ElasticsearchConfigurations.USER.get()))
+                .getSupplier(asList(Configurations.USER,
+                        ElasticsearchConfigurations.USER))
                 .map(Object::toString);
         final Optional<String> password = settings
-                .get(asList(Configurations.PASSWORD.get(),
-                        ElasticsearchConfigurations.PASSWORD.get()))
+                .getSupplier(asList(Configurations.PASSWORD,
+                        ElasticsearchConfigurations.PASSWORD))
                 .map(Object::toString);
 
         if (username.isPresent()) {
