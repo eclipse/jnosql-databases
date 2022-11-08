@@ -64,8 +64,8 @@ public class SolrDocumentConfiguration implements DocumentConfiguration {
         requireNonNull(settings, "settings is required");
 
 
-        String host = settings.get(Arrays.asList(SolrDocumentConfigurations.HOST.get(),
-                        Configurations.HOST.get())).map(Object::toString).orElse(DEFAULT_HOST);
+        String host = settings.getSupplier(Arrays.asList(SolrDocumentConfigurations.HOST,
+                        Configurations.HOST)).map(Object::toString).orElse(DEFAULT_HOST);
 
         final HttpSolrClient solrClient = new HttpSolrClient.Builder(host).build();
         solrClient.setParser(new XMLResponseParser());
