@@ -78,12 +78,10 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {
     public InfinispanBucketManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        List<String> servers = settings.prefix(Arrays.asList(OldInfinispanConfigurations.HOST.get(),
-                InfinispanConfigurations.HOST.get(), Configurations.HOST.get()))
+        List<String> servers = settings.prefix(Arrays.asList(InfinispanConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream().map(Object::toString).collect(Collectors.toList());
 
-        Optional<String> config = settings.get(Arrays.asList(OldInfinispanConfigurations.CONFIG.get(),
-                InfinispanConfigurations.CONFIG.get()))
+        Optional<String> config = settings.get(InfinispanConfigurations.CONFIG.get())
                 .map(Object::toString);
         if (!servers.isEmpty()) {
             org.infinispan.client.hotrod.configuration.ConfigurationBuilder builder = new org.infinispan.client.hotrod.configuration.ConfigurationBuilder();

@@ -66,8 +66,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
         if (configurations.isEmpty()) {
             return;
         }
-        settings.prefix(asList(OldElasticsearchConfigurations.HOST.get(),
-                ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
+        settings.prefix(asList(ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
                 .map(h -> ElasticsearchAddress.of(h, DEFAULT_PORT))
@@ -104,8 +103,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
     public ElasticsearchDocumentCollectionManagerFactory get(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        settings.prefix(asList(OldElasticsearchConfigurations.HOST.get(),
-                ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
+        settings.prefix(asList(ElasticsearchConfigurations.HOST.get(), Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
                 .map(h -> ElasticsearchAddress.of(h, DEFAULT_PORT))

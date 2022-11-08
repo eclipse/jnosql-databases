@@ -83,18 +83,17 @@ class CassandraProperties {
         Settings settings = builder.build();
 
         CassandraProperties cp = new CassandraProperties();
-        settings.prefix(Arrays.asList(OldCassandraConfigurations.HOST.get(),
-                CassandraConfigurations.HOST.get(),
+        settings.prefix(Arrays.asList(CassandraConfigurations.HOST.get(),
                 Configurations.HOST.get())).stream()
                 .map(Object::toString).forEach(cp::addNodes);
 
-        settings.prefix(Arrays.asList(OldCassandraConfigurations.QUERY.get(), CassandraConfigurations.QUERY.get()))
+        settings.prefix(CassandraConfigurations.QUERY.get())
                 .stream().map(Object::toString).forEach(cp::addQuery);
 
-        cp.port = settings.get(Arrays.asList(OldCassandraConfigurations.PORT.get(), CassandraConfigurations.PORT.get()))
+        cp.port = settings.get(CassandraConfigurations.PORT.get())
                 .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_PORT);
 
-        cp.name = settings.get(Arrays.asList(OldCassandraConfigurations.NAME.get(), CassandraConfigurations.NAME.get()))
+        cp.name = settings.get(CassandraConfigurations.NAME.get())
                 .map(Object::toString);
         cp.dataCenter = settings.get(CassandraConfigurations.DATA_CENTER.get()).map(Object::toString)
                 .orElse(DEFAULT_DATA_CENTER);

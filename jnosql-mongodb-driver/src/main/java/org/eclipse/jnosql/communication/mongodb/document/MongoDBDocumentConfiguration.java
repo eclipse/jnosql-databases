@@ -85,7 +85,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
         requireNonNull(settings, "settings is required");
 
         List<ServerAddress> servers = settings
-                .prefix(Arrays.asList(OldMongoDBDocumentConfigurations.HOST.get(), MongoDBDocumentConfigurations.HOST.get(),
+                .prefix(Arrays.asList(MongoDBDocumentConfigurations.HOST.get(),
                         Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
