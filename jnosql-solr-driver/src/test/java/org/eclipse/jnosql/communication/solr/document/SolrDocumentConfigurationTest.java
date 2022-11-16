@@ -25,7 +25,7 @@ public class SolrDocumentConfigurationTest {
 
 
     @Test
-    public void shouldReturnErrorWhendSettingsIsNull() {
+    public void shouldReturnErrorWhenSettingsIsNull() {
         DocumentConfiguration configuration = new SolrDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
