@@ -42,12 +42,20 @@ import static org.eclipse.jnosql.communication.orientdb.document.OrientDBConvert
 import static org.eclipse.jnosql.communication.orientdb.document.OrientDBConverter.VERSION_FIELD;
 import static org.eclipse.jnosql.communication.orientdb.document.OrientDBConverter.toMap;
 
-class DefaultOrientDBDocumentCollectionManager implements OrientDBDocumentCollectionManager {
+class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
 
     private final ODatabasePool pool;
 
-    DefaultOrientDBDocumentCollectionManager(ODatabasePool pool) {
+    private final String database;
+
+    DefaultOrientDBDocumentManager(ODatabasePool pool, String database) {
         this.pool = pool;
+        this.database = database;
+    }
+
+    @Override
+    public String getName() {
+        return database;
     }
 
     @Override

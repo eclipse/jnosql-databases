@@ -19,15 +19,15 @@ import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 /**
- * The OrientDB implementation of {@link DocumentCollectionManagerFactory}
+ * The OrientDB implementation of {@link DocumentManagerFactory}
  */
-public class OrientDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
+public class OrientDBDocumentManagerFactory implements DocumentManagerFactory {
 
     private final String host;
     private final String user;
@@ -35,7 +35,7 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
     private final ODatabaseType storageType;
     private final OrientDB orient;
 
-    OrientDBDocumentCollectionManagerFactory(String host, String user, String password, String storageType) {
+    OrientDBDocumentManagerFactory(String host, String user, String password, String storageType) {
         this.host = host;
         this.user = user;
         this.password = password;
@@ -50,12 +50,12 @@ public class OrientDBDocumentCollectionManagerFactory implements DocumentCollect
     }
 
     @Override
-    public OrientDBDocumentCollectionManager get(String database) {
+    public OrientDBDocumentManager apply(String database) {
         requireNonNull(database, "database is required");
 
         orient.createIfNotExists(database, storageType);
         ODatabasePool pool = new ODatabasePool(orient, database, user, password);
-        return new DefaultOrientDBDocumentCollectionManager(pool);
+        return new DefaultOrientDBDocumentManager(pool, database);
 
     }
 

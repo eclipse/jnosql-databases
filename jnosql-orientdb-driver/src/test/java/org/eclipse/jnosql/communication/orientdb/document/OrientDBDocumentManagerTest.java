@@ -52,14 +52,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OrientDBDocumentCollectionManagerTest {
+public class OrientDBDocumentManagerTest {
     public static final String COLLECTION_NAME = "person";
 
-    private OrientDBDocumentCollectionManager entityManager;
+    private OrientDBDocumentManager entityManager;
 
     @BeforeEach
     public void setUp() {
-        entityManager = DocumentConfigurationUtils.get().get(Database.DATABASE);
+        entityManager = DocumentConfigurationUtils.get().apply(Database.DATABASE);
     }
 
     @Test

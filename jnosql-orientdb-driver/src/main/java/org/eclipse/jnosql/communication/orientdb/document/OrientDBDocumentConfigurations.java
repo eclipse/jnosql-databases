@@ -28,19 +28,19 @@ public enum OrientDBDocumentConfigurations implements Supplier<String> {
     /**
      * The database host
      */
-    HOST("orientdb.host"),
+    HOST("jnosql.orientdb.host"),
     /**
      * The user's credential.
      */
-    USER("orientdb.-user"),
+    USER("jnosql.orientdb.-user"),
     /**
      * The password's credential
      */
-    PASSWORD("orientdb.password"),
+    PASSWORD("jnosql.orientdb.password"),
     /**
      * The storage type {@link com.orientechnologies.orient.core.db.ODatabaseType}
      */
-    STORAGE_TYPE("orientdb.storage.type");
+    STORAGE_TYPE("jnosql.orientdb.storage.type");
 
     private final String configuration;
 

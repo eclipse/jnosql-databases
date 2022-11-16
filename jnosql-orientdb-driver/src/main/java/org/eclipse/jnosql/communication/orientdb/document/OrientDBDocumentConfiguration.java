@@ -17,11 +17,10 @@ package org.eclipse.jnosql.communication.orientdb.document;
 
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
-import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -30,13 +29,11 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * The orientDB implementation of {@link DocumentConfiguration}  that returns
- * {@link OrientDBDocumentCollectionManagerFactory}.
+ * {@link OrientDBDocumentManagerFactory}.
  *
  * @see OrientDBDocumentConfigurations
  */
 public class OrientDBDocumentConfiguration implements DocumentConfiguration {
-
-    private static final String FILE_CONFIGURATION = "diana-orientdb.properties";
 
     private String host;
 
@@ -46,17 +43,6 @@ public class OrientDBDocumentConfiguration implements DocumentConfiguration {
 
     private String storageType;
 
-    public OrientDBDocumentConfiguration() {
-        Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
-        SettingsBuilder builder = Settings.builder();
-        properties.forEach((key, value) -> builder.put(key, value));
-        Settings settings = builder.build();
-
-        this.host = getHost(settings);
-        this.user = getUser(settings);
-        this.password = getPassword(settings);
-        this.storageType = getStorageType(settings);
-    }
 
     public void setHost(String host) {
         this.host = host;
@@ -75,23 +61,19 @@ public class OrientDBDocumentConfiguration implements DocumentConfiguration {
     }
 
     @Override
-    public OrientDBDocumentCollectionManagerFactory get() {
-        return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
+    public OrientDBDocumentManagerFactory apply(Settings settings) throws NullPointerException {
+        Objects.requireNonNull(settings, "settings is required");
+        return getOrientDBDocumentManagerFactory(settings);
     }
 
-    @Override
-    public OrientDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
-        return getOrientDBDocumentCollectionManagerFactory(settings);
-    }
-
-    private OrientDBDocumentCollectionManagerFactory getOrientDBDocumentCollectionManagerFactory(Settings settings) {
+    private OrientDBDocumentManagerFactory getOrientDBDocumentManagerFactory(Settings settings) {
         requireNonNull(settings, "settings is required");
 
-        String host = getHost(settings);
-        String user = getUser(settings);
-        String password = getPassword(settings);
-        String storageType = getStorageType(settings);
-        return new OrientDBDocumentCollectionManagerFactory(host, user, password, storageType);
+        String host = Optional.ofNullable(getHost(settings)).orElse(this.host);
+        String user = Optional.ofNullable(getUser(settings)).orElse(this.user);
+        String password = Optional.ofNullable(getPassword(settings)).orElse(this.password);
+        String storageType = Optional.ofNullable(getStorageType(settings)).orElse(this.storageType);
+        return new OrientDBDocumentManagerFactory(host, user, password, storageType);
     }
 
     private String getHost(Settings settings) {

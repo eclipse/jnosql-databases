@@ -15,21 +15,21 @@
 package org.eclipse.jnosql.communication.orientdb.document;
 
 
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * The orientdb implementation to {@link DocumentCollectionManager}, this implementation
+ * The orientdb implementation to {@link DocumentManager}, this implementation
  * does not support TTL.
- * <p>{@link OrientDBDocumentCollectionManager#insert(DocumentEntity, java.time.Duration)}</p>
+ * <p>{@link OrientDBDocumentManager#insert(DocumentEntity, java.time.Duration)}</p>
  * Also this implementation has support SQL query and also live query.
- * <p>{@link OrientDBDocumentCollectionManager#sql(String, Object...)}</p>
+ * <p>{@link OrientDBDocumentManager#sql(String, Object...)}</p>
  */
-public interface OrientDBDocumentCollectionManager extends DocumentCollectionManager {
+public interface OrientDBDocumentManager extends DocumentManager {
     /**
      * Find using query
      *

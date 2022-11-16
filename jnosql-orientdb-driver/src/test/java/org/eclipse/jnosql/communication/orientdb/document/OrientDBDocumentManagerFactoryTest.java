@@ -14,16 +14,16 @@
  */
 package org.eclipse.jnosql.communication.orientdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManager;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class OrientDBDocumentCollectionManagerFactoryTest {
+public class OrientDBDocumentManagerFactoryTest {
 
-    private DocumentCollectionManagerFactory managerFactory;
+    private DocumentManagerFactory managerFactory;
 
     @BeforeEach
     public void setUp() {
@@ -32,7 +32,7 @@ public class OrientDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        DocumentCollectionManager database = managerFactory.get("database");
+        DocumentManager database = managerFactory.apply("database");
         assertNotNull(database);
     }
 }
