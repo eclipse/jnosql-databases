@@ -203,24 +203,22 @@ This is an example using Couchbase's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-document=document
-document.settings.couchbase.host.1=localhost
-document.settings.couchbase.user=root
-document.settings.couchbase.password=123456
 jnosql.document.provider=org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentConfiguration
 jnosql.document.database=heroes
+jnosql.couchbase.host.1=localhost
+jnosql.couchbase.user=root
+jnosql.couchbase.password=123456
 ----
 
 This is an example using Couchbase's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-keyvalue=keyvalue
-keyvalue.settings.couchbase.host.1=localhost
-keyvalue.settings.couchbase.user=root
-keyvalue.settings.couchbase.password=123456
 jnosql.keyvalue.database=heroes
 jnosql.keyvalue.provider=org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration
+jnosql.couchbase.host.1=localhost
+jnosql.couchbase.user=root
+jnosql.couchbase.password=123456
 ----
 
 == CouchDB
@@ -292,12 +290,11 @@ This is an example using CouchDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-document=document
-document.settings.couchdb.host=localhost
-document.settings.couchdb.username=admin
-document.settings.couchdb.password=password
 jnosql.document.provider=org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentConfiguration
 jnosql.document.database=heroes
+jnosql.couchdb.host=localhost
+jnosql.couchdb.username=admin
+jnosql.couchdb.password=password
 ----
 
 == Elasticsearch
@@ -348,7 +345,6 @@ This is an example using Elasticsearch's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-document=document
 jnosql.document.provider=org.eclipse.jnosql.communication.elasticsearch.document.ElasticsearchDocumentConfiguration
 jnosql.document.database=developers
 ----
@@ -410,7 +406,6 @@ This is an example using Hazelcast's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-keyvalue=keyvalue
 jnosql.keyvalue.provider=org.eclipse.jnosql.communication.hazelcast.keyvalue.HazelcastKeyValueConfiguration
 jnosql.keyvalue.database=heroes
 ----
@@ -454,7 +449,6 @@ This is an example using HBase's *Column Family* NoSQL API with MicroProfile Con
 
 [source,properties]
 ----
-column=column
 jnosql.document.provider=org.eclipse.jnosql.communication.hbase.column.HBaseColumnConfiguration
 jnosql.column.database=heroes
 ----
@@ -501,10 +495,9 @@ This is an example using Infinispan's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-keyvalue=keyvalue
 jnosql.keyvalue.provider=org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanKeyValueConfiguration
 jnosql.keyvalue.database=heroes
-keyvalue.infinispan.config=infinispan.xml
+jnosql.infinispan.config=infinispan.xml
 ----
 
 == Memcached
@@ -588,10 +581,9 @@ This is an example using Memcached's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-keyvalue=keyvalue
 jnosql.keyvalue.provider=org.eclipse.jnosql.communication.memcached.keyvalue.MemcachedKeyValueConfiguration
 jnosql.keyvalue.database=heroes
-keyvalue.memcached.host.1=localhost:11211
+jnosql.memcached.host.1=localhost:11211
 ----
 
 == MongoDB
@@ -649,9 +641,8 @@ This is an example using Mongodb's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-document=document
 jnosql.document.database=olympus
-document.settings.mongodb.host=localhost:27017
+jnosql.mongodb.host=localhost:27017
 jnosql.document.provider=org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfiguration
 ----
 
@@ -706,13 +697,12 @@ This is an example using OrientDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-document=document
 jnosql.document.provider=org.eclipse.jnosql.communication.orientdb.document.OrientDBDocumentConfiguration
 jnosql.document.database=heroes
-document.orientdb.host=localhost:27017
-document.orientdb.user=root
-document.orientdb.password=rootpwd
-document.orientdb.storageType=plocal
+jnosql.orientdb.host=localhost:27017
+jnosql.orientdb.user=root
+jnosql.orientdb.password=rootpwd
+jnosql.orientdb.storageType=plocal
 ----
 
 == RavenDB
@@ -755,7 +745,6 @@ This is an example using RavenDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-document=document
 jnosql.document.provider=org.eclipse.jnosql.communication.ravendb.document.RavenDBDocumentConfiguration
 jnosql.document.database=heroes
 ----
@@ -827,7 +816,6 @@ This is an example using Redis's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-keyvalue=keyvalue
 jnosql.keyvalue.provider=org.eclipse.jnosql.communication.redis.keyvalue.RedisConfiguration
 jnosql.keyvalue.database=heroes
 ----
@@ -872,7 +860,6 @@ This is an example using Riak's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-keyvalue=keyvalue
 jnosql.keyvalue.provider=org.eclipse.jnosql.communication.riak.keyvalue.RiakKeyValueConfiguration
 jnosql.keyvalue.database=heroes
 ----
@@ -925,7 +912,6 @@ This is an example using Solr's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-document=document
 jnosql.document.provider=org.eclipse.jnosql.communication.solr.document.SolrDocumentConfiguration
 jnosql.document.database=heroes
 ----
