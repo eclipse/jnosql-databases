@@ -37,34 +37,34 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```arangodb.host```
+|`jnosql.jnosql.arangodb.host`
 |The database host, where you need to put the port split by colons. E.g., localhost:8529
 
-|```arangodb.user```
+|`jnosql.arangodb.user`
 |The user's userID.
 
-|```arangodb.password```
+|`jnosql.arangodb.password`
 |The user's password
 
-|```arangodb.timeout```
+|`jnosql.arangodb.timeout`
 |The connection and request timeout in milliseconds.
 
-|```arangodb.chuck.size```
+|`jnosql.arangodb.chuck.size`
 |The chunk size when Protocol is used.
 
-|```arangodb.userSsl```
+|`jnosql.arangodb.userSsl`
 |The true SSL will be used when connecting to an ArangoDB server.
 
-|```arangodb.load.balancing.strategy```
+|`jnosql.arangodb.load.balancing.strategy`
 |The com.arangodb.entity.LoadBalancingStrategy as String.
 
-|```arangodb.protocol```
+|`jnosql.arangodb.protocol`
 |The com.arangodb.Protocol as String
 
-|```arangodb.connections.max```
+|`jnosql.arangodb.connections.max`
 |The maximum number of connections the built in connection pool will open per host.
 
-|```arangodb.acquire.host.list```
+|`jnosql.arangodb.acquire.host.list`
 |Set hosts split by comma
 |===
 
@@ -114,25 +114,25 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```cassandra.user```
+|`jnosql.cassandra.user`
 |The user's userID.
 
-|```cassandra.password```
+|`jnosql.cassandra.password`
 |The user's password
 
-|```cassandra.host```
+|`jnosql.cassandra.host`
 |Database's host. It is a prefix to enumerate hosts. E.g.: cassandra.host.1=localhost
 
-|```cassandra.name```
+|`jnosql.cassandra.name`
 |The name of the application using the created session.
 
-|```cassandra.port```
+|`jnosql.cassandra.port`
 |The cassandra's port
 
-|```cassandra.query```
+|`jnosql.cassandra.query`
 |The Cassandra CQL to execute when the configuration starts. It uses as a prefix. E.g.: cassandra.query.1=<CQL>
 
-|```cassandra.data.center```
+|`jnosql.cassandra.data.center`
 |The datacenter that is considered "local" by the load balancing policy.
 |===
 
@@ -178,25 +178,25 @@ Please note that you can establish properties using the https://microprofile.io/
 |Configuration property |Description
 
 
-|```couchbase.host```
+|`jnosql.couchbase.host`
 |The host at the database.
 
-|```couchbase.user```
+|`jnosql.couchbase.user`
 |The user's userID.
 
-|```couchbase.password```
+|`jnosql.couchbase.password`
 |The user's password
 
-|```couchbase.scope```
+|`jnosql.couchbase.scope`
 |The scope to use at couchbase otherwise, it will use the default.
 
-|```couchbase.collections```
+|`jnosql.couchbase.collections`
 |couchbase collection split by a comma. At the start-up of a CouchbaseConfiguration, there is this option to check if these collections exist; if not, it will create using the default settings.
 
-|```couchbase.collection```
+|`jnosql.couchbase.collection`
 |A default couchbase collection. When it is not defined the default value comes from Bucket.
 
-|```couchbase.index```
+|`jnosql.couchbase.index`
 |A couchbase collection index. At the start-up of a {@link CouchbaseConfiguration}, it will read this property to check if the index does exist, if not it will create combined by scope and the database.
 
 
@@ -256,37 +256,37 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```couchdb.port```
+|`jnosql.couchdb.port`
 |The port connection to a client connect. The default value is "5984"
 
-|```couchdb.max.connections```
+|`jnosql.couchdb.max.connections`
 |The max of connection that the couchdb client have. The default value is "20"
 
-|```couchdb.connection.timeout```
+|`jnosql.couchdb.connection.timeout`
 |The timeout in milliseconds used when requesting a connection. The default value is "1000".
 
-|```couchdb.socket.timeout```
+|`jnosql.couchdb.socket.timeout`
 |The socket timeout in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). The default value is "10000".
 
-|```couchdb.max.object.size.bytes```
+|`jnosql.couchdb.max.object.size.bytes`
 |The current maximum response body size that will be cached. The value is "8192".
 
-|```couchdb.max.cache.entries```
+|`jnosql.couchdb.max.cache.entries`
 |The maximum number of cache entries the cache will retain. The default value is "1000".
 
-|```couchdb.host```
+|`jnosql.couchdb.host`
 |The host at the database.
 
-|```couchdb.username```
+|`jnosql.couchdb.username`
 |The user's userID.
 
-|```couchdb.password```
+|`jnosql.couchdb.password`
 |The user's password
 
-|```couchdb.enable.ssl```
+|`jnosql.couchdb.enable.ssl`
 |If the request use a https or a http.
 
-|```couchdb.compression```
+|`jnosql.couchdb.compression`
 |Determines whether compressed entities should be decompressed automatically.
 
 |===
@@ -336,13 +336,13 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```elasticsearch.host```
+|`jnosql.elasticsearch.host`
 |Database's host. It is a prefix to enumerate hosts. E.g.: elasticsearch.host.1=172.17.0.2:1234
 
-|```elasticsearch.user```
+|`jnosql.elasticsearch.user`
 |The user's userID.
 
-|```elasticsearch.password```
+|`jnosql.elasticsearch.password`
 |The user's password
 
 |===
@@ -386,25 +386,25 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```hazelcast.instance.name```
+|`jnosql.hazelcast.instance.name`
 |The instance name uniquely identifying the hazelcast instance created by this configuration. This name is used in different scenarios, such as identifying the hazelcast instance when running multiple instances in the same JVM.
 
-|```hazelcast.host```
+|`jnosql.hazelcast.host`
 |Database's host. It is a prefix to enumerate hosts. E.g.: hazelcast.host.1=localhost
 
-|```hazelcast.port```
+|`jnosql.hazelcast.port`
 |The database port
 
-|```hazelcast.port.count```
+|`jnosql.hazelcast.port.count`
 |The maximum number of ports allowed to use.
 
-|```hazelcast.port.auto.increment```
+|`jnosql.hazelcast.port.auto.increment`
 |Sets if a Hazelcast member is allowed to find a free port by incrementing the port number when it encounters an occupied port.
 
-|```hazelcast.multicast.enable```
+|`jnosql.hazelcast.multicast.enable`
 |Enables or disables the multicast discovery mechanism
 
-|```hazelcast.tcp.ip.join```
+|`jnosql.hazelcast.tcp.ip.join`
 |Enables or disables the Tcp/Ip join mechanism.
 
 |===
@@ -448,7 +448,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```hbase.family```
+|`jnosql.hbase.family`
 |The Column family prefixes. E.g.: hbase.family.1=<FAMILY>
 
 |===
@@ -492,10 +492,10 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```infinispan.host```
+|`jnosql.infinispan.host`
 |Database's host. It is a prefix to enumerate hosts. E.g.: infinispan.host.1=HOST
 
-|```infinispan.config```
+|`jnosql.infinispan.config`
 |The Infinispan configuration path. E.g.: infinispan.config=infinispan.xml
 
 |===
@@ -543,46 +543,46 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```memcached.daemon```
+|`jnosql.memcached.daemon`
 |The daemon state of the IO thread (defaults to true).
 
-|```memcached.reconnect.delay```
+|`jnosql.memcached.reconnect.delay`
 |The maximum reconnect delay
 
-|```memcached.protocol```
+|`jnosql.memcached.protocol`
 |The protocol type  net.spy.memcached.ConnectionFactoryBuilder.Protocol
 
-|```memcached.locator```
+|`jnosql.memcached.locator`
 |The locator type net.spy.memcached.ConnectionFactoryBuilder.Locator
 
-|```memcached.auth.wait.time```
+|`jnosql.memcached.auth.wait.time`
 |Custom wait time for the authentication on connect/reconnect.
 
-|```memcached.max.block.time```
+|`jnosql.memcached.max.block.time`
 |The maximum amount of time (in milliseconds) a client is willing to wait for space to become available in an output queue.
 
-|```memcached.timeout``
+|`jnosql.memcached.timeout
 |The default operation timeout in milliseconds.
 
-|```memcached.read.buffer.size```
+|`jnosql.memcached.read.buffer.size`
 |The read buffer size.
 
-|```memcached.should.optimize```
+|`jnosql.memcached.should.optimize`
 |The default operation optimization is not desirable.
 
-|```memcached.timeout.threshold```
+|`jnosql.memcached.timeout.threshold`
 |The maximum timeout exception threshold.
 
-|```memcached.nagle.algorithm```
+|`jnosql.memcached.nagle.algorithm`
 |Enable the Nagle algorithm.
 
-|```memcached.user```
+|`jnosql.memcached.user`
 |The user's userID
 
-|```memcached.password```
+|`jnosql.memcached.password`
 |The user's password.
 
-|```memcached.host```
+|`jnosql.memcached.host`
 |Database's host. It is a prefix to enumerate hosts. E.g.: memcached.host.1=localhost:11211
 
 |===
@@ -628,22 +628,22 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```mongodb.host```
+|`jnosql.mongodb.host`
 |The database host as prefix. E.g.: mongodb.host.1=localhost:27017
 
-|```mongodb.user```
+|`jnosql.mongodb.user`
 |The user's userID.
 
-|```mongodb.url```
+|`jnosql.mongodb.url`
 |MongoDB's connection string
 
-|```mongodb.password```
+|`jnosql.mongodb.password`
 |The user's password
 
-|```mongodb.authentication.source```
+|`jnosql.mongodb.authentication.source`
 |The source where the user is defined.
 
-|```mongodb.authentication.mechanism```
+|`jnosql.mongodb.authentication.mechanism`
 |Authentication mechanisms com.mongodb.AuthenticationMechanism
 
 |===
@@ -691,16 +691,16 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```orientdb.host```
+|`jnosql.orientdb.host`
 |The database host
 
-|```orientdb.user```
+|`jnosql.orientdb.user`
 |The user's userID.
 
-|```orientdb.password```
+|`jnosql.orientdb.password`
 |The user's password
 
-|```orientdb.storage.type```
+|`jnosql.orientdb.storage.type`
 |The storage type com.orientechnologies.orient.core.db.ODatabaseType
 
 |===
@@ -749,7 +749,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```ravendb.host```
+|`jnosql.ravendb.host`
 |The database host
 
 |===
@@ -794,34 +794,34 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```redis.host```
+|`jnosql.redis.host`
 |The database host
 
-|```redis.port```
+|`jnosql.redis.port`
 |The database port
 
-|```redis.timeout```
+|`jnosql.redis.timeout`
 |The redis timeout, the default value 2000 on milliseconds
 
-|```redis.password```
+|`jnosql.redis.password`
 |The user's password
 
-|```redis.database```
+|`jnosql.redis.database`
 |The redis database number, the default value is 0
 
-|```redis.client.name```
+|`jnosql.redis.client.name`
 |The client's name
 
-|```redis.max.total```
+|`jnosql.redis.max.total`
 |The value for the maxTotal configuration attribute for pools created with this configuration instance, the default value 1000.
 
-|```redis.max.idle```
+|`jnosql.redis.max.idle`
 |The value for the maxIdle configuration attribute for pools created with this configuration instance, the default value 10.
 
-|```redis.min.idle```
+|`jnosql.redis.min.idle`
 |The value for the minIdle configuration attribute for pools created with this configuration instance, the default value 1.
 
-|```redis.max.wait.millis```
+|`jnosql.redis.max.wait.millis`
 |The value for the maxWait configuration attribute for pools created with this configuration instance, the default value 3000.
 
 |===
@@ -866,7 +866,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```riak.host```
+|`jnosql.riak.host`
 |The database host
 
 |===
@@ -913,13 +913,13 @@ Please note that you can establish properties using the https://microprofile.io/
 |===
 |Configuration property |Description
 
-|```solr.host```
+|`jnosql.solr.host`
 |Database's host. It is a prefix to enumerate hosts. E.g.: solr.host.1=HOST
 
-|```solr.user```
+|`jnosql.solr.user`
 |The user's userID.
 
-|```solr.password```
+|`jnosql.solr.password`
 |The user's password
 
 |===
