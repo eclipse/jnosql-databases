@@ -46,11 +46,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DefaultSolrDocumentCollectionManagerTest {
+public class DefaultSolrDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     public static final String ID = "id";
-    private static SolrDocumentCollectionManager entityManager;
+    private static SolrDocumentManager entityManager;
 
     @BeforeAll
     public static void setUp() {

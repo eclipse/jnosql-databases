@@ -15,27 +15,27 @@
 
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 import java.util.Objects;
 
 /**
- * The solr implementation to {@link DocumentCollectionManagerFactory}
+ * The solr implementation to {@link DocumentManagerFactory}
  */
-public class SolrDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
+public class SolrDocumentManagerFactory implements DocumentManagerFactory {
 
     private final HttpSolrClient solrClient;
 
-    SolrDocumentCollectionManagerFactory(HttpSolrClient solrClient) {
+    SolrDocumentManagerFactory(HttpSolrClient solrClient) {
         this.solrClient = solrClient;
     }
 
     @Override
-    public SolrDocumentCollectionManager get(String database) {
+    public SolrDocumentManager apply(String database) {
         Objects.requireNonNull(database, "database is required");
         final String baseURL = solrClient.getBaseURL() + '/' + database;
-        return new DefaultSolrDocumentCollectionManager(new HttpSolrClient.Builder(baseURL).build());
+        return new DefaultSolrDocumentManager(new HttpSolrClient.Builder(baseURL).build(), database);
     }
 
 

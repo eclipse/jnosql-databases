@@ -40,16 +40,24 @@ import java.util.stream.StreamSupport;
 import static java.util.stream.Collectors.toList;
 
 /**
- * The default implementation of {@link SolrDocumentCollectionManager}
+ * The default implementation of {@link SolrDocumentManager}
  */
-class DefaultSolrDocumentCollectionManager implements SolrDocumentCollectionManager {
+class DefaultSolrDocumentManager implements SolrDocumentManager {
 
     private final HttpSolrClient solrClient;
 
-    DefaultSolrDocumentCollectionManager(HttpSolrClient solrClient) {
+    private final String database;
+
+    DefaultSolrDocumentManager(HttpSolrClient solrClient, String database) {
         this.solrClient = solrClient;
+        this.database = database;
     }
 
+
+    @Override
+    public String getName() {
+        return database;
+    }
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {

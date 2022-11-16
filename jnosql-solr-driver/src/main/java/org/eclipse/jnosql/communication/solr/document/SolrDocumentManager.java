@@ -14,18 +14,18 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentManager;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
 /**
- * The solr implementation to {@link DocumentCollectionManager} that does not support TTL methods
- * <p>{@link DefaultSolrDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
+ * The solr implementation to {@link DocumentManager} that does not support TTL methods
+ * <p>{@link DefaultSolrDocumentManager#insert(DocumentEntity, Duration)}</p>
  */
-public interface SolrDocumentCollectionManager extends DocumentCollectionManager {
+public interface SolrDocumentManager extends DocumentManager {
 
     /**
      * Executes a Solr native query
