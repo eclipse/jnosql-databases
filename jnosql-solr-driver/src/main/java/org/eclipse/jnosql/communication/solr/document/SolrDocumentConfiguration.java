@@ -44,7 +44,7 @@ public class SolrDocumentConfiguration implements DocumentConfiguration {
      */
     public SolrDocumentManagerFactory get(HttpSolrClient solrClient) throws NullPointerException {
         requireNonNull(solrClient, "solrClient is required");
-        return new SolrDocumentManagerFactory(solrClient);
+        return new SolrDocumentManagerFactory(solrClient, true);
     }
 
 
@@ -56,9 +56,11 @@ public class SolrDocumentConfiguration implements DocumentConfiguration {
         String host = settings.getSupplier(Arrays.asList(SolrDocumentConfigurations.HOST,
                         Configurations.HOST)).map(Object::toString).orElse(DEFAULT_HOST);
 
+        boolean automaticCommit = settings.getOrDefault(SolrDocumentConfigurations.AUTOMATIC_COMMIT, true);
+
         final HttpSolrClient solrClient = new HttpSolrClient.Builder(host).build();
         solrClient.setParser(new XMLResponseParser());
-        return new SolrDocumentManagerFactory(solrClient);
+        return new SolrDocumentManagerFactory(solrClient, automaticCommit);
 
     }
 

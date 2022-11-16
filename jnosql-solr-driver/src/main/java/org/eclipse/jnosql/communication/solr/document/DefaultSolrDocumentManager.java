@@ -25,7 +25,6 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
-import org.eclipse.jnosql.communication.SettingsPriority;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -48,9 +47,12 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
 
     private final String database;
 
-    DefaultSolrDocumentManager(HttpSolrClient solrClient, String database) {
+    private final boolean automaticCommit;
+
+    DefaultSolrDocumentManager(HttpSolrClient solrClient, String database, boolean automaticCommit) {
         this.solrClient = solrClient;
         this.database = database;
+        this.automaticCommit = automaticCommit;
     }
 
 
@@ -182,9 +184,7 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
     }
 
     private Boolean isAutomaticCommit() {
-        return SettingsPriority.get("jakarta.nosql.transaction")
-                .map(Object::toString)
-                .map(Boolean::parseBoolean).orElse(true);
+        return automaticCommit;
     }
 
 

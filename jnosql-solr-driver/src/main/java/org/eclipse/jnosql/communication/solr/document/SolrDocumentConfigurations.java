@@ -36,7 +36,11 @@ public enum SolrDocumentConfigurations implements Supplier<String> {
     /**
      * The password's credential
      */
-    PASSWORD("jnosql.solr.password");
+    PASSWORD("jnosql.solr.password"),
+    /**
+     * Define if each operation Apache Solr will commit automatically, true by default.
+     */
+    AUTOMATIC_COMMIT("jnosql.solr.automatic.commit");
 
     private final String configuration;
 
