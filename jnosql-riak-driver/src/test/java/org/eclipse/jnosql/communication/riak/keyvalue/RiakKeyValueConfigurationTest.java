@@ -34,15 +34,10 @@ public class RiakKeyValueConfigurationTest {
     }
 
     @Test
-    public void shouldReturnErroWhenNodeIsNull() {
+    public void shouldReturnErrorWhenNodeIsNull() {
         assertThrows(NullPointerException.class, () -> configuration.add((String) null));
     }
 
-    @Test
-    public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.get();
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldReturnFromConfiguration() {

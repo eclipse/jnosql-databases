@@ -44,9 +44,17 @@ public class RiakBucketManager implements BucketManager {
 
     private final Namespace nameSpace;
 
-    RiakBucketManager(RiakClient client, Namespace nameSpace) {
+    private final String bucketName;
+
+    RiakBucketManager(RiakClient client, Namespace nameSpace, String bucketName) {
         this.client = client;
         this.nameSpace = nameSpace;
+        this.bucketName = bucketName;
+    }
+
+    @Override
+    public String getName() {
+        return bucketName;
     }
 
     @Override

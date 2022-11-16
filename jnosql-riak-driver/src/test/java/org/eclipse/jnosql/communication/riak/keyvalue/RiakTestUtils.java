@@ -16,6 +16,7 @@ package org.eclipse.jnosql.communication.riak.keyvalue;
 
 
 import com.basho.riak.client.core.RiakNode;
+import jakarta.nosql.Settings;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 
 public final class RiakTestUtils {
@@ -27,6 +28,6 @@ public final class RiakTestUtils {
         RiakNode node = new RiakNode.Builder()
                 .withRemoteAddress("localhost").build();
         riakKeyValueConfiguration.add(node);
-        return riakKeyValueConfiguration.get();
+        return riakKeyValueConfiguration.apply(Settings.builder().build());
     }
 }

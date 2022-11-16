@@ -38,30 +38,12 @@ import static java.util.Objects.requireNonNull;
 public class RiakKeyValueConfiguration implements KeyValueConfiguration {
 
 
-    @Deprecated
-    private static final String OLD_SERVER_PREFIX = "riak-server-host-";
-    private static final String SERVER_PREFIX = "riak.host";
-
-    private static final String FILE_CONFIGURATION = "diana-riak.properties";
+    private static final String SERVER_PREFIX = "jnosql.riak.host";
 
     private static final RiakNode DEFAULT_NODE = new RiakNode.Builder()
             .withRemoteAddress("127.0.0.1").build();
 
     private final List<RiakNode> nodes = new ArrayList<>();
-
-
-    public RiakKeyValueConfiguration() {
-        Map<String, String> properties = ConfigurationReader.from(FILE_CONFIGURATION);
-        SettingsBuilder builder = Settings.builder();
-
-        properties.forEach((key, value) -> builder.put(key, value));
-
-        Settings settings = builder.build();
-
-        settings.prefix(asList(SERVER_PREFIX, OLD_SERVER_PREFIX, Configurations.HOST.get()))
-                .stream().map(Object::toString)
-                .forEach(this::add);
-    }
 
 
     /**
@@ -86,24 +68,13 @@ public class RiakKeyValueConfiguration implements KeyValueConfiguration {
         this.nodes.add(new RiakNode.Builder().withRemoteAddress(address).build());
     }
 
-    @Override
-    public RiakBucketManagerFactory get() {
-
-        if (nodes.isEmpty()) {
-            nodes.add(DEFAULT_NODE);
-        }
-        RiakCluster cluster = new RiakCluster.Builder(nodes)
-                .build();
-
-        return new RiakBucketManagerFactory(cluster);
-    }
 
     @Override
-    public RiakBucketManagerFactory get(Settings settings) {
+    public RiakBucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
         List<RiakNode> nodes = new ArrayList<>();
 
-        settings.prefix(asList(SERVER_PREFIX, OLD_SERVER_PREFIX, Configurations.HOST.get()))
+        settings.prefix(asList(SERVER_PREFIX, Configurations.HOST.get()))
                 .stream()
                 .map(Object::toString)
                 .map(toNode())
