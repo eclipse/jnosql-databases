@@ -20,6 +20,7 @@ import org.infinispan.commons.api.BasicCacheContainer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -35,8 +36,9 @@ public class InfinispanBucketManagerFactory implements BucketManagerFactory {
     }
 
     @Override
-    public InfinispanBucketManager getBucketManager(String bucketName) {
-        return new InfinispanBucketManager(cacheContainer.getCache(bucketName));
+    public InfinispanBucketManager apply(String bucketName) {
+        Objects.requireNonNull(bucketName, "bucketName is required");
+        return new InfinispanBucketManager(cacheContainer.getCache(bucketName), bucketName);
     }
 
     @Override

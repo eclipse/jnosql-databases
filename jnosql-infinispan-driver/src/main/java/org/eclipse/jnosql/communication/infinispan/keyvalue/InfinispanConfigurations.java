@@ -28,11 +28,11 @@ public enum InfinispanConfigurations implements Supplier<String> {
     /**
      * Database's host. It is a prefix to enumerate hosts. E.g.: infinispan.host.1=HOST
      */
-    HOST("infinispan.host"),
+    HOST("jnosql.infinispan.host"),
     /**
      * The Infinispan configuration path. E.g.: infinispan.config=infinispan.xml
      */
-    CONFIG("infinispan.config");
+    CONFIG("jnosql.infinispan.config");
 
     private final String configuration;
 

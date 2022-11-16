@@ -14,8 +14,10 @@
  */
 package org.eclipse.jnosql.communication.infinispan.keyvalue.util;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanConfigurations;
 import org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanKeyValueConfiguration;
 
 
@@ -23,7 +25,10 @@ public class KeyValueEntityManagerFactoryUtils {
 
     public static BucketManagerFactory get() {
         KeyValueConfiguration configuration = new InfinispanKeyValueConfiguration();
-        BucketManagerFactory managerFactory = configuration.get();
+        Settings settings = Settings.builder()
+                .put(InfinispanConfigurations.CONFIG, "infinispan.xml")
+                .build();
+        BucketManagerFactory managerFactory = configuration.apply(settings);
         return managerFactory;
     }
 }

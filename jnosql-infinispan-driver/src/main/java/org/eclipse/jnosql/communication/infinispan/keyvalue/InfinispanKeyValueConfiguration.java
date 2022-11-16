@@ -19,7 +19,6 @@ import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
@@ -41,7 +40,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {
 
-    private static final String INFINISPAN_FILE_CONFIGURATION = "diana-infinispan.properties";
 
     /**
      * Creates a {@link InfinispanBucketManagerFactory} from configuration map
@@ -53,7 +51,7 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {
         requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
         configurations.forEach((key, value) -> builder.put(key, value));
-        return get(builder.build());
+        return apply(builder.build());
     }
 
     /**
@@ -68,14 +66,9 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {
         return new InfinispanBucketManagerFactory(new DefaultCacheManager(config));
     }
 
-    @Override
-    public InfinispanBucketManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(INFINISPAN_FILE_CONFIGURATION);
-        return get(configuration);
-    }
 
     @Override
-    public InfinispanBucketManagerFactory get(Settings settings) {
+    public InfinispanBucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
 
         List<String> servers = settings.prefixSupplier(Arrays.asList(InfinispanConfigurations.HOST, Configurations.HOST))
