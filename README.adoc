@@ -906,7 +906,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |`jnosql.solr.password`
 |The user's password
 
-|`jnosql.solr.automatic.commit
+|`jnosql.solr.automatic.commit`
 |Define if each operation Apache Solr will commit automatically, true by default.
 
 |===
