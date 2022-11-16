@@ -39,7 +39,7 @@ enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<Arango
     @Override
     public ArangoDBDocumentCollectionManagerFactory get() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
-        configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());
+        configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
         return configuration.get();
     }
 }
