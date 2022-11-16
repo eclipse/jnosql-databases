@@ -17,13 +17,9 @@ package org.eclipse.jnosql.communication.arangodb.keyvalue;
 
 import com.arangodb.ArangoDB;
 import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfigurations;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
-
-import java.util.Map;
 
 /**
  * The ArangoDB implementation to {@link KeyValueConfiguration}
