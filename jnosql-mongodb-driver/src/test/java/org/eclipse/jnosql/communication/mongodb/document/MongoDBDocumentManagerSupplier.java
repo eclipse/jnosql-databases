@@ -17,7 +17,7 @@ package org.eclipse.jnosql.communication.mongodb.document;
 import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 
-public class MongoDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
+public class MongoDBDocumentManagerSupplier implements DocumentCollectionManagerSupplier {
 
     private static final String DATABASE = "tck-database";
 
