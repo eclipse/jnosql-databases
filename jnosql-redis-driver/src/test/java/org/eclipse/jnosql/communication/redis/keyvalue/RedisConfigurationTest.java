@@ -43,11 +43,6 @@ public class RedisConfigurationTest {
         assertNotNull(managerFactory);
     }
 
-    @Test
-    public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.get();
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldReturnFromConfiguration() {

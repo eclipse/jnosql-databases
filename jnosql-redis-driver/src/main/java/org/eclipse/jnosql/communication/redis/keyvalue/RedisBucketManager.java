@@ -47,6 +47,11 @@ public class RedisBucketManager implements BucketManager {
     }
 
     @Override
+    public String getName() {
+        return nameSpace;
+    }
+
+    @Override
     public <K, V> void put(K key, V value) throws NullPointerException {
         Objects.requireNonNull(value, "Value is required");
         Objects.requireNonNull(key, "key is required");

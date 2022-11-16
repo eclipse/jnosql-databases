@@ -24,6 +24,6 @@ public class RedisBucketManagerSupplier implements BucketManagerSupplier {
     @Override
     public BucketManager get() {
         final RedisBucketManagerFactory factory = RedisBucketManagerFactorySupplier.INSTANCE.get();
-        return factory.getBucketManager(BUCKET);
+        return factory.apply(BUCKET);
     }
 }

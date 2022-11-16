@@ -39,8 +39,9 @@ public enum RedisBucketManagerFactorySupplier implements Supplier<RedisBucketMan
     public RedisBucketManagerFactory get() {
         RedisConfiguration configuration = new RedisConfiguration();
         Map<String, Object> settings = new HashMap<>();
-        settings.put("redis-master-host", redis.getContainerIpAddress());
-        settings.put("redis-master-port", redis.getFirstMappedPort());
-        return configuration.get(Settings.of(settings));
+
+        settings.put(RedisConfigurations.HOST.get(), redis.getHost());
+        settings.put(RedisConfigurations.PORT.get(), redis.getFirstMappedPort());
+        return configuration.apply(Settings.of(settings));
     }
 }
