@@ -12,18 +12,20 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.orientdb.document;
+package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
+import jakarta.nosql.column.ColumnManager;
+import jakarta.nosql.column.ColumnManagerFactory;
+import jakarta.nosql.tck.communication.driver.column.ColumnManagerSupplier;
 
-public class OrientDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
+public class CassandraColumnManagerSupplier implements ColumnManagerSupplier {
 
-    private static final String DATABASE = "tck-database";
+    private static final String KEY_SPACE = "newKeySpace";
 
     @Override
-    public DocumentManager get() {
-        return DocumentConfigurationUtils.get().apply(Database.DATABASE);
+    public ColumnManager get() {
+        ColumnManagerFactory factory = ManagerFactorySupplier.INSTANCE.get();
+        return factory.apply(KEY_SPACE);
     }
 
 }

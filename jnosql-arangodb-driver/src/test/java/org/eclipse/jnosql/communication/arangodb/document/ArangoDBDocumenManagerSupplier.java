@@ -12,20 +12,18 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.couchdb.document;
+package org.eclipse.jnosql.communication.arangodb.document;
 
 import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
-import org.eclipse.jnosql.communication.couchdb.document.configuration.CouchDBDocumentTcConfiguration;
+import jakarta.nosql.tck.communication.driver.document.DocumentManagerSupplier;
 
-public class CouchDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
+public class ArangoDBDocumenManagerSupplier implements DocumentManagerSupplier {
 
     private static final String DATABASE = "tck-database";
 
     @Override
     public DocumentManager get() {
-        final CouchDBDocumentManagerFactory factory = CouchDBDocumentTcConfiguration.INSTANCE.get();
-        return factory.apply(DATABASE);
+        return ArangoDBDocumentManagerFactorySupplier.INSTANCE.get().apply(DATABASE);
     }
 
 }

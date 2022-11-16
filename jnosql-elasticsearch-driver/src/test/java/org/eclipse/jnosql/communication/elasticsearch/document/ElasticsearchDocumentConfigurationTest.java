@@ -25,13 +25,13 @@ public class ElasticsearchDocumentConfigurationTest {
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
-        DocumentManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        DocumentManagerFactory managerFactory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
-        DocumentManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        DocumentManagerFactory managerFactory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
         assertNotNull(managerFactory);
     }
 

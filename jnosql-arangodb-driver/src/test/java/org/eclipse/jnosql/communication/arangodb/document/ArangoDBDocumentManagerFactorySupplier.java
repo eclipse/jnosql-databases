@@ -12,38 +12,35 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.elasticsearch.document;
+
+package org.eclipse.jnosql.communication.arangodb.document;
+
 
 import jakarta.nosql.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
-enum ElasticsearchDocumentCollectionManagerFactorySupplier implements Supplier<ElasticsearchDocumentManagerFactory> {
+enum ArangoDBDocumentManagerFactorySupplier implements Supplier<ArangoDBDocumentManagerFactory> {
 
     INSTANCE;
 
-    private final GenericContainer es =
-            new GenericContainer("elasticsearch:7.5.1")
-                    .withExposedPorts(9200, 9300)
-                    .withEnv("discovery.type", "single-node")
+    private final GenericContainer arangodb =
+            new GenericContainer("arangodb/arangodb:latest")
+                    .withExposedPorts(8529)
+                    .withEnv("ARANGO_NO_AUTH", "1")
                     .waitingFor(Wait.forHttp("/")
-                            .forPort(9200)
                             .forStatusCode(200));
-    {
-        es.start();
-    }
 
+    {
+        arangodb.start();
+    }
 
     @Override
-    public ElasticsearchDocumentManagerFactory get() {
-        ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
-        Map<String, Object> settings = new HashMap<>();
-        settings.put(ElasticsearchConfigurations.HOST.get()+".1", es.getHost() + ':' + es.getFirstMappedPort());
-        return configuration.apply(Settings.of(settings));
+    public ArangoDBDocumentManagerFactory get() {
+        ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
+        configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
+        return configuration.apply(Settings.builder().build());
     }
-
 }

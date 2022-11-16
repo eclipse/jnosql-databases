@@ -12,22 +12,18 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.hbase.column;
+package org.eclipse.jnosql.communication.elasticsearch.document;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.column.ColumnManager;
-import jakarta.nosql.tck.communication.driver.column.ColumnFamilyManagerSupplier;
+import jakarta.nosql.document.DocumentManager;
+import jakarta.nosql.tck.communication.driver.document.DocumentManagerSupplier;
 
-public class HBaseColumnFamilyManagerSupplier implements ColumnFamilyManagerSupplier {
+public class ElasticsearchDocumentManagerSupplier implements DocumentManagerSupplier {
 
     private static final String DATABASE = "tck-database";
-    public static final String FAMILY = "person";
 
     @Override
-    public ColumnManager get() {
-        HBaseColumnConfiguration configuration = new HBaseColumnConfiguration();
-        configuration.add(FAMILY);
-        final HBaseColumnManagerFactory factory = configuration.apply(Settings.builder().build());
+    public DocumentManager get() {
+        final ElasticsearchDocumentManagerFactory factory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
         return factory.apply(DATABASE);
     }
 

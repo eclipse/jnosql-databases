@@ -12,17 +12,16 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.solr.document;
+package org.eclipse.jnosql.communication.ravendb.document;
 
 import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
+import jakarta.nosql.tck.communication.driver.document.DocumentManagerSupplier;
 
-public class SolrDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
-
+public class RavenDBDocumentManagerSupplier implements DocumentManagerSupplier {
 
     @Override
     public DocumentManager get() {
-        return ManagerFactorySupplier.INSTANCE.get("database");
+        return DocumentConfigurationUtils.INSTANCE.get().apply("database");
     }
 
 }
