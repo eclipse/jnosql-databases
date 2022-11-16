@@ -30,32 +30,32 @@ public enum HazelcastConfigurations implements Supplier<String> {
      * This name is used in different scenarios, such as identifying the hazelcast
      * instance when running multiple instances in the same JVM.
      */
-    INSTANCE("hazelcast.instance.name"),
+    INSTANCE("jnosql.hazelcast.instance.name"),
     /**
      * Database's host. It is a prefix to enumerate hosts. E.g.: hazelcast.host.1=localhost
      */
-    HOST("hazelcast.host"),
+    HOST("jnosql.hazelcast.host"),
     /**
      * The database port
      */
-    PORT("hazelcast.port"),
+    PORT("jnosql.hazelcast.port"),
     /**
      * The maximum number of ports allowed to use.
      */
-    PORT_COUNT("hazelcast.port.count"),
+    PORT_COUNT("jnosql.hazelcast.port.count"),
     /**
      * Sets if a Hazelcast member is allowed to find a free port by incrementing the port number when it encounters
      * an occupied port.
      */
-    PORT_AUTO_INCREMENT("hazelcast.port.auto.increment"),
+    PORT_AUTO_INCREMENT("jnosql.hazelcast.port.auto.increment"),
     /**
      * Enables or disables the multicast discovery mechanism
      */
-    MULTICAST_ENABLE("hazelcast.multicast.enable"),
+    MULTICAST_ENABLE("jnosql.hazelcast.multicast.enable"),
     /**
      * Enables or disables the Tcp/Ip join mechanism.
      */
-    TCP_IP_JOIN("hazelcast.tcp.ip.join");
+    TCP_IP_JOIN("jnosql.hazelcast.tcp.ip.join");
 
     private final String configuration;
 
