@@ -16,10 +16,8 @@
 package org.eclipse.jnosql.communication.cassandra.column;
 
 
-import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.HashMap;
 import java.util.Map;

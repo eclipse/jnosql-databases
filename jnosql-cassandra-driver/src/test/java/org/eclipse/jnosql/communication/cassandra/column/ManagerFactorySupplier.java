@@ -17,6 +17,7 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import jakarta.nosql.Settings;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
+import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
@@ -28,11 +29,9 @@ public enum ManagerFactorySupplier implements Supplier<CassandraColumnManagerFac
 
     INSTANCE;
 
-    private final GenericContainer cassandra =
-            new GenericContainer("cassandra:latest")
-                    .withExposedPorts(9042)
-                    .withEnv("JVM_OPTS","-Xms256m -Xmx512m")
-                    .waitingFor(Wait.defaultWaitStrategy());
+    private final CassandraContainer cassandra =
+            (CassandraContainer) new CassandraContainer("cassandra:latest")
+                    .withExposedPorts(9042);
 
     {
         cassandra.start();
@@ -47,8 +46,8 @@ public enum ManagerFactorySupplier implements Supplier<CassandraColumnManagerFac
 
     Settings getSettings() {
         Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from("cassandra.properties"));
-        configuration.put("cassandra.host.1", cassandra.getHost());
-        configuration.put("cassandra.port", cassandra.getFirstMappedPort());
+        configuration.put(CassandraConfigurations.HOST.get()+".1", cassandra.getHost());
+        configuration.put(CassandraConfigurations.PORT.get(), cassandra.getFirstMappedPort());
         return Settings.of(configuration);
     }
 }

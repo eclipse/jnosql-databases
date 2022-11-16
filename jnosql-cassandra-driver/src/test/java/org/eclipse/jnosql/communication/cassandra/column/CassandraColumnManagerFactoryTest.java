@@ -32,9 +32,11 @@ public class CassandraColumnManagerFactoryTest {
     public void setUp() {
         Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         SettingsBuilder builder = Settings.builder();
-        builder.put("cassandra.host.1", settings.get("cassandra.host-1").get().toString());
-        builder.put("cassandra.port", settings.get("cassandra.port").get().toString());
-        builder.put("cassandra.query.1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
+        builder.put(CassandraConfigurations.HOST.get() + ".1", settings.get(CassandraConfigurations.HOST.get() + ".1")
+                .get().toString());
+
+        builder.put(CassandraConfigurations.PORT.get(), settings.get(CassandraConfigurations.PORT.get()).get().toString());
+        builder.put(CassandraConfigurations.QUERY.get() + ".1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         subject = cassandraConfiguration.apply(builder.build());
     }
