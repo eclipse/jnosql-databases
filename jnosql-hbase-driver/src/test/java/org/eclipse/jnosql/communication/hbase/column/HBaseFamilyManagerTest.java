@@ -15,11 +15,12 @@
 
 package org.eclipse.jnosql.communication.hbase.column;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnFamilyManager;
-import jakarta.nosql.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.ColumnManager;
+import jakarta.nosql.column.ColumnManagerFactory;
 import jakarta.nosql.column.ColumnQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,16 +43,16 @@ public class HBaseFamilyManagerTest {
     public static final String FAMILY = "person";
     public static final String ID_FIELD = HBaseUtils.KEY_COLUMN;
 
-    private ColumnFamilyManagerFactory managerFactory;
+    private ColumnManagerFactory managerFactory;
 
-    private ColumnFamilyManager columnFamilyManager;
+    private ColumnManager columnFamilyManager;
 
     @BeforeEach
     public void setUp() {
         HBaseColumnConfiguration configuration = new HBaseColumnConfiguration();
         configuration.add(FAMILY);
-        managerFactory = configuration.get();
-        columnFamilyManager = managerFactory.get(DATA_BASE);
+        managerFactory = configuration.apply(Settings.builder().build());
+        columnFamilyManager = managerFactory.apply(DATA_BASE);
     }
 
 
