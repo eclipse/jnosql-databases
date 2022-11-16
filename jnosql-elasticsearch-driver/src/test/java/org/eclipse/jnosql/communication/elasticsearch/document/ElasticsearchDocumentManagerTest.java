@@ -44,15 +44,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ElasticsearchDocumentCollectionManagerTest {
+public class ElasticsearchDocumentManagerTest {
 
 
-    private ElasticsearchDocumentCollectionManager entityManager;
+    private ElasticsearchDocumentManager entityManager;
 
     @BeforeEach
     public void setUp() {
-        ElasticsearchDocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
-        entityManager = managerFactory.get(DocumentEntityGerator.INDEX);
+        ElasticsearchDocumentManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        entityManager = managerFactory.apply(DocumentEntityGerator.INDEX);
 
         DocumentDeleteQuery deleteQuery = DocumentDeleteQuery.delete().from("person").build();
 

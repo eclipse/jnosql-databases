@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 /**
- * An exception when {@link ElasticsearchDocumentCollectionManager} tries to both update and insert, but it does not found
+ * An exception when {@link ElasticsearchDocumentManager} tries to both update and insert, but it does not found
  * The column with the name "_id".
  */
 public class ElasticsearchKeyFoundException extends RuntimeException {

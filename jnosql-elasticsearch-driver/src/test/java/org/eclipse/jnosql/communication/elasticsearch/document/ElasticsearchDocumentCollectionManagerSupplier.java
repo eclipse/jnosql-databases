@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 
 public class ElasticsearchDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
@@ -22,9 +22,9 @@ public class ElasticsearchDocumentCollectionManagerSupplier implements DocumentC
     private static final String DATABASE = "tck-database";
 
     @Override
-    public DocumentCollectionManager get() {
-        final ElasticsearchDocumentCollectionManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
-        return factory.get(DATABASE);
+    public DocumentManager get() {
+        final ElasticsearchDocumentManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        return factory.apply(DATABASE);
     }
 
 }

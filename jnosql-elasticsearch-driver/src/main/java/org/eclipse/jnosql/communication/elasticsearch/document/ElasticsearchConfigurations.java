@@ -28,15 +28,15 @@ public enum ElasticsearchConfigurations implements Supplier<String> {
     /**
      * Database's host. It is a prefix to enumerate hosts. E.g.: elasticsearch.host.1=172.17.0.2:1234
      */
-    HOST("elasticsearch.host"),
+    HOST("jnosql.elasticsearch.host"),
     /**
      * The user's credential.
      */
-    USER("elasticsearch.user"),
+    USER("jnosql.elasticsearch.user"),
     /**
      * The password's credential
      */
-    PASSWORD("elasticsearch.password");
+    PASSWORD("jnosql.elasticsearch.password");
 
     private final String configuration;
 

@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -41,29 +41,28 @@ import static java.nio.file.Files.readAllBytes;
 
 
 /**
- * The elasticsearch implementation to {@link DocumentCollectionManagerFactory} that returns:
- * {@link ElasticsearchDocumentCollectionManager}
+ * The elasticsearch implementation to {@link DocumentManagerFactory} that returns:
+ * {@link ElasticsearchDocumentManager}
  * If the database does not exist, it tries to read a json mapping from the database name.
- * Eg: {@link ElasticsearchDocumentCollectionManagerFactory#get(String)} with database, if does not exist it tries to
+ * Eg: {@link ElasticsearchDocumentManagerFactory#apply(String)}} with database, if does not exist it tries to
  * read a "/database.json" file. The file must have the mapping to elasticsearch.
  */
-public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
+public class ElasticsearchDocumentManagerFactory implements DocumentManagerFactory {
 
 
     private final RestHighLevelClient client;
 
-    ElasticsearchDocumentCollectionManagerFactory(RestHighLevelClient client) {
+    ElasticsearchDocumentManagerFactory(RestHighLevelClient client) {
         this.client = client;
     }
 
 
-
     @Override
-    public ElasticsearchDocumentCollectionManager get(String database) throws UnsupportedOperationException, NullPointerException {
+    public ElasticsearchDocumentManager apply(String database) throws UnsupportedOperationException, NullPointerException {
         Objects.requireNonNull(database, "database is required");
 
         initDatabase(database);
-        return new DefaultElasticsearchDocumentCollectionManager(client, database);
+        return new DefaultElasticsearchDocumentManager(client, database);
     }
 
     private byte[] getBytes(URL url) {
@@ -82,7 +81,7 @@ public class ElasticsearchDocumentCollectionManagerFactory implements DocumentCo
     }
 
     private void createIndex(String database) {
-        InputStream stream = ElasticsearchDocumentCollectionManagerFactory.class.getResourceAsStream('/' + database + ".json");
+        InputStream stream = ElasticsearchDocumentManagerFactory.class.getResourceAsStream('/' + database + ".json");
         if (Objects.nonNull(stream)) {
             try {
                 RestClient lowLevelClient = client.getLowLevelClient();

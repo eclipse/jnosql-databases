@@ -43,18 +43,23 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
 
 /**
- * The Default implementation of {@link ElasticsearchDocumentCollectionManager}
+ * The Default implementation of {@link ElasticsearchDocumentManager}
  */
-class DefaultElasticsearchDocumentCollectionManager implements ElasticsearchDocumentCollectionManager {
+class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManager {
 
 
     private final RestHighLevelClient client;
 
     private final String index;
 
-    DefaultElasticsearchDocumentCollectionManager(RestHighLevelClient client, String index) {
+    DefaultElasticsearchDocumentManager(RestHighLevelClient client, String index) {
         this.client = client;
         this.index = index;
+    }
+
+    @Override
+    public String getName() {
+        return index;
     }
 
     @Override

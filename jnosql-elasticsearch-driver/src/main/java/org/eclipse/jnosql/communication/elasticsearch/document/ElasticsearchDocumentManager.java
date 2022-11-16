@@ -14,17 +14,26 @@
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentManager;
+import org.elasticsearch.index.query.QueryBuilder;
 
-public class ElasticsearchDocumentCollectionManagerFactoryTest {
+import java.util.stream.Stream;
 
+/**
+ * The ES implementation of {@link DocumentManager}
+ */
+public interface ElasticsearchDocumentManager extends DocumentManager {
 
-    @Test
-    public void shouldCreateEntityManager() {
-        ElasticsearchDocumentCollectionManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
-        assertNotNull(factory.get("database"));
-    }
+    /**
+     * Find entities from {@link QueryBuilder}
+     *
+     * @param query the query
+     * @return the objects from query
+     * @throws NullPointerException when query is null
+     */
+     Stream<DocumentEntity> search(QueryBuilder query) throws NullPointerException;
+
 
 }
