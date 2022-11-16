@@ -40,8 +40,15 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
 
     private final IMap map;
 
-    DefaultHazelcastBucketManager(IMap map) {
+    private final String bucket;
+    DefaultHazelcastBucketManager(IMap map, String bucket) {
         this.map = map;
+        this.bucket = bucket;
+    }
+
+    @Override
+    public String getName() {
+        return bucket;
     }
 
     @Override

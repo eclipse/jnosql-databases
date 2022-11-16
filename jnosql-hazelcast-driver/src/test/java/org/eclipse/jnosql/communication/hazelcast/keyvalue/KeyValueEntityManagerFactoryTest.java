@@ -15,6 +15,7 @@
 
 package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.keyvalue.BucketManager;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
@@ -36,12 +37,12 @@ public class KeyValueEntityManagerFactoryTest {
     @BeforeEach
     public void setUp() {
         KeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
-        managerFactory = configuration.get();
+        managerFactory = configuration.apply(Settings.builder().build());
     }
 
     @Test
     public void shouldCreateKeyValueEntityManager(){
-        BucketManager keyValueEntityManager = managerFactory.getBucketManager(BUCKET_NAME);
+        BucketManager keyValueEntityManager = managerFactory.apply(BUCKET_NAME);
         assertNotNull(keyValueEntityManager);
     }
 

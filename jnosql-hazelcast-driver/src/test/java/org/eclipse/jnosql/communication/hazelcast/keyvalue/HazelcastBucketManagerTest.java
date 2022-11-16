@@ -52,7 +52,7 @@ public class HazelcastBucketManagerTest {
     @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = KeyValueEntityManagerFactoryUtils.get();
-        keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
+        keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
     @Test

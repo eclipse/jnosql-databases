@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
+import jakarta.nosql.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,7 @@ public class DefaultHazelcastBucketManagerFactoryTest {
     @BeforeEach
     public void setUp() {
         HazelcastKeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
-        managerFactory = configuration.get();
+        managerFactory = configuration.apply(Settings.builder().build());
     }
 
 
