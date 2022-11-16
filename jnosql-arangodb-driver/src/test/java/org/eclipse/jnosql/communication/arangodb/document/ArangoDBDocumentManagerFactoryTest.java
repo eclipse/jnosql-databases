@@ -15,15 +15,15 @@
 
 package org.eclipse.jnosql.communication.arangodb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ArangoDBDocumentCollectionManagerFactoryTest {
+public class ArangoDBDocumentManagerFactoryTest {
 
-    private ArangoDBDocumentCollectionManagerFactory managerFactory;
+    private ArangoDBDocumentManagerFactory managerFactory;
 
     @BeforeEach
     public void setUp() {
@@ -32,7 +32,7 @@ public class ArangoDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        DocumentCollectionManager database = managerFactory.get("database");
+        DocumentManager database = managerFactory.apply("database");
         assertNotNull(database);
     }
 

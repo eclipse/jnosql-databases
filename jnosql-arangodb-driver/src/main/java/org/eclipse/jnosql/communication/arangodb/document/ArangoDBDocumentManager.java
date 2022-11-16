@@ -14,17 +14,17 @@
  */
 package org.eclipse.jnosql.communication.arangodb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentManager;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * The ArangoDB implementation of {@link DocumentCollectionManager} it does not support to TTL methods:
- * <p>{@link DocumentCollectionManager#insert(DocumentEntity)}</p>
+ * The ArangoDB implementation of {@link DocumentManager} it does not support to TTL methods:
+ * <p>{@link DocumentManager#insert(DocumentEntity)}</p>
  */
-public interface ArangoDBDocumentCollectionManager extends DocumentCollectionManager {
+public interface ArangoDBDocumentManager extends DocumentManager {
 
     /**
      * Executes ArangoDB query language, AQL.

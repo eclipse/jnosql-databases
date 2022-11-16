@@ -16,21 +16,21 @@ package org.eclipse.jnosql.communication.arangodb.document;
 
 
 import com.arangodb.ArangoDB;
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 
-final class ArangoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
+final class ArangoDBDocumentManagerFactory implements DocumentManagerFactory {
 
 
     private final ArangoDB arangoDB;
 
-    ArangoDBDocumentCollectionManagerFactory(ArangoDB arangoDB) {
+    ArangoDBDocumentManagerFactory(ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
     }
 
     @Override
-    public ArangoDBDocumentCollectionManager get(String database) {
+    public ArangoDBDocumentManager apply(String database) {
         ArangoDBUtil.checkDatabase(database, arangoDB);
-        return new DefaultArangoDBDocumentCollectionManager(database, arangoDB);
+        return new DefaultArangoDBDocumentManager(database, arangoDB);
     }
 
     @Override

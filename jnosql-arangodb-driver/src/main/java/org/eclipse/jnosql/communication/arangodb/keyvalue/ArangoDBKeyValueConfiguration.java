@@ -33,16 +33,9 @@ import java.util.Map;
 public final class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
         implements KeyValueConfiguration {
 
-    @Override
-    public ArangoDBBucketManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(ArangoDBConfigurations.FILE_CONFIGURATION.get());
-        SettingsBuilder builder = Settings.builder();
-        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
-        return get(builder.build());
-    }
 
     @Override
-    public ArangoDBBucketManagerFactory get(Settings settings) {
+    public ArangoDBBucketManagerFactory apply(Settings settings) {
         ArangoDB arangoDB = getArangoDB(settings);
         return new ArangoDBBucketManagerFactory(arangoDB);
     }

@@ -39,7 +39,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static org.eclipse.jnosql.communication.arangodb.document.ArangoDBUtil.getBaseDocument;
 
-class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollectionManager {
+class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
 
     public static final String KEY = "_key";
@@ -52,9 +52,14 @@ class DefaultArangoDBDocumentCollectionManager implements ArangoDBDocumentCollec
 
     private final ValueWriter writerField = ValueWriterDecorator.getInstance();
 
-    DefaultArangoDBDocumentCollectionManager(String database, ArangoDB arangoDB) {
+    DefaultArangoDBDocumentManager(String database, ArangoDB arangoDB) {
         this.database = database;
         this.arangoDB = arangoDB;
+    }
+
+    @Override
+    public String getName() {
+        return database;
     }
 
     @Override

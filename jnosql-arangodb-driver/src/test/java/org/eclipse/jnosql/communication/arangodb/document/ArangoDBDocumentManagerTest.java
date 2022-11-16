@@ -44,11 +44,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArangoDBDocumentCollectionManagerTest {
+public class ArangoDBDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     private static final String DATABASE = "database";
-    private ArangoDBDocumentCollectionManager entityManager;
+    private ArangoDBDocumentManager entityManager;
     private Random random;
     private String KEY_NAME = "_key";
 
@@ -193,7 +193,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Test
     public void shouldReadFromDifferentBaseDocumentUsingInstance() {
         entityManager.insert(getEntity());
-        ArangoDB arangoDB = DefaultArangoDBDocumentCollectionManager.class.cast(entityManager).getArangoDB();
+        ArangoDB arangoDB = DefaultArangoDBDocumentManager.class.cast(entityManager).getArangoDB();
         arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(new Person());
         DocumentQuery select = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(select).collect(Collectors.toList());
@@ -203,7 +203,7 @@ public class ArangoDBDocumentCollectionManagerTest {
     @Test
     public void shouldReadFromDifferentBaseDocumentUsingMap() {
         entityManager.insert(getEntity());
-        ArangoDB arangoDB = DefaultArangoDBDocumentCollectionManager.class.cast(entityManager).getArangoDB();
+        ArangoDB arangoDB = DefaultArangoDBDocumentManager.class.cast(entityManager).getArangoDB();
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");

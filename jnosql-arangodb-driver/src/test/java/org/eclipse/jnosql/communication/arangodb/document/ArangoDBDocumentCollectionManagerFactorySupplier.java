@@ -21,7 +21,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.function.Supplier;
 
-enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<ArangoDBDocumentCollectionManagerFactory> {
+enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<ArangoDBDocumentManagerFactory> {
 
     INSTANCE;
 
@@ -37,7 +37,7 @@ enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<Arango
     }
 
     @Override
-    public ArangoDBDocumentCollectionManagerFactory get() {
+    public ArangoDBDocumentManagerFactory get() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
         return configuration.get();
