@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 import org.eclipse.jnosql.communication.couchdb.document.configuration.CouchDBDocumentTcConfiguration;
 
@@ -23,9 +23,9 @@ public class CouchDBDocumentCollectionManagerSupplier implements DocumentCollect
     private static final String DATABASE = "tck-database";
 
     @Override
-    public DocumentCollectionManager get() {
-        final CouchDBDocumentCollectionManagerFactory factory = CouchDBDocumentTcConfiguration.INSTANCE.get();
-        return factory.get(DATABASE);
+    public DocumentManager get() {
+        final CouchDBDocumentManagerFactory factory = CouchDBDocumentTcConfiguration.INSTANCE.get();
+        return factory.apply(DATABASE);
     }
 
 }

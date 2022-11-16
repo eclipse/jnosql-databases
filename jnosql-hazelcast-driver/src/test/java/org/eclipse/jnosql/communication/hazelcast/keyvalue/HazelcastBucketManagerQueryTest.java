@@ -42,7 +42,7 @@ public class HazelcastBucketManagerQueryTest {
     @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = KeyValueEntityManagerFactoryUtils.get();
-        bucketManager = (HazelcastBucketManager) keyValueEntityManagerFactory.getBucketManager("movies-entity");
+        bucketManager = (HazelcastBucketManager) keyValueEntityManagerFactory.apply("movies-entity");
 
         bucketManager.put("matrix", new Movie("Matrix", 1999, false));
         bucketManager.put("star_wars", new Movie("Star Wars: The Last Jedi", 2017, true));

@@ -25,6 +25,6 @@ public class RiakBucketManagerSupplier implements BucketManagerSupplier {
     @Override
     public BucketManager get() {
         final BucketManagerFactory factory = RiakTestUtils.get();
-        return factory.getBucketManager(BUCKET);
+        return factory.apply(BUCKET);
     }
 }

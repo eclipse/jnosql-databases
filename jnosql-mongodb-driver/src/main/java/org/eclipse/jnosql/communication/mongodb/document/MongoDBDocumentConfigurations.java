@@ -28,27 +28,27 @@ public enum MongoDBDocumentConfigurations implements Supplier<String> {
     /**
      * The database host as prefix. E.g.: mongodb.host.1=localhost:27017
      */
-    HOST("mongodb.host"),
+    HOST("jnosql.mongodb.host"),
     /**
      * The user's credential.
      */
-    USER("mongodb.user"),
+    USER("jnosql.mongodb.user"),
     /**
      * The password's credential
      */
-    PASSWORD("mongodb.password"),
+    PASSWORD("jnosql.mongodb.password"),
     /**
      * MongoDB's connection string
      */
-    URL("mongodb.url"),
+    URL("jnosql.mongodb.url"),
     /**
      * The source where the user is defined.
      */
-    AUTHENTICATION_SOURCE("mongodb.authentication.source"),
+    AUTHENTICATION_SOURCE("jnosql.mongodb.authentication.source"),
     /**
      * Authentication mechanisms {@link com.mongodb.AuthenticationMechanism}
      */
-    AUTHENTICATION_MECHANISM("mongodb.authentication.mechanism");
+    AUTHENTICATION_MECHANISM("jnosql.mongodb.authentication.mechanism");
 
     private final String configuration;
 

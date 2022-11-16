@@ -17,12 +17,9 @@ package org.eclipse.jnosql.communication.couchbase;
 
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -32,8 +29,6 @@ import static java.util.Arrays.asList;
  * The configuration base to all configuration implementation on couchbase
  */
 public abstract class CouchbaseConfiguration {
-
-    private static final String FILE_CONFIGURATION = "couchbase.properties";
 
     protected String host;
 
@@ -48,13 +43,6 @@ public abstract class CouchbaseConfiguration {
     protected String collection;
     protected List<String> collections = new ArrayList<>();
 
-    public CouchbaseConfiguration() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        SettingsBuilder builder = Settings.builder();
-        configuration.forEach((key, value) -> builder.put(key, value));
-        Settings settings = builder.build();
-        update(settings);
-    }
 
     protected void update(Settings settings) {
         this.host = getHost(settings);

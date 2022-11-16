@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.communication.arangodb.keyvalue;
 
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -41,7 +42,7 @@ enum BucketManagerFactorySupplier implements Supplier<BucketManagerFactory> {
     public BucketManagerFactory get() {
 
         ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
-        configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());
-        return configuration.get();
+        configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
+        return configuration.apply(Settings.builder().build());
     }
 }

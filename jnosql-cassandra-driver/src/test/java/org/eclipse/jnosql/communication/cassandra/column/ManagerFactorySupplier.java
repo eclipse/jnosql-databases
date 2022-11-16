@@ -17,6 +17,7 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import jakarta.nosql.Settings;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
+import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
@@ -24,31 +25,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public enum ManagerFactorySupplier implements Supplier<CassandraColumnFamilyManagerFactory> {
+public enum ManagerFactorySupplier implements Supplier<CassandraColumnManagerFactory> {
 
     INSTANCE;
 
-    private final GenericContainer cassandra =
-            new GenericContainer("cassandra:latest")
-                    .withExposedPorts(9042)
-                    .withEnv("JVM_OPTS","-Xms256m -Xmx512m")
-                    .waitingFor(Wait.defaultWaitStrategy());
+    private final CassandraContainer cassandra =
+            (CassandraContainer) new CassandraContainer("cassandra:latest")
+                    .withExposedPorts(9042);
 
     {
         cassandra.start();
     }
 
     @Override
-    public CassandraColumnFamilyManagerFactory get() {
+    public CassandraColumnManagerFactory get() {
         Settings settings = getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        return cassandraConfiguration.get(settings);
+        return cassandraConfiguration.apply(settings);
     }
 
     Settings getSettings() {
-        Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from(CassandraConfiguration.CASSANDRA_FILE_CONFIGURATION));
-        configuration.put("cassandra.host-1", cassandra.getContainerIpAddress());
-        configuration.put("cassandra.port", cassandra.getFirstMappedPort());
+        Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from("cassandra.properties"));
+        configuration.put(CassandraConfigurations.HOST.get()+".1", cassandra.getHost());
+        configuration.put(CassandraConfigurations.PORT.get(), cassandra.getFirstMappedPort());
         return Settings.of(configuration);
     }
 }

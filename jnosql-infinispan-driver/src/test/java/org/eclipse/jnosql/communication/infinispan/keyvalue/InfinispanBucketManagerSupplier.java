@@ -26,6 +26,6 @@ public class InfinispanBucketManagerSupplier implements BucketManagerSupplier {
     @Override
     public BucketManager get() {
         final BucketManagerFactory factory = KeyValueEntityManagerFactoryUtils.get();
-        return factory.getBucketManager(BUCKET);
+        return factory.apply(BUCKET);
     }
 }

@@ -54,7 +54,7 @@ public class MemcachedBucketManagerTest {
     @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = BucketManagerFactorySupplier.INSTANCE.get();
-        keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
+        keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
 

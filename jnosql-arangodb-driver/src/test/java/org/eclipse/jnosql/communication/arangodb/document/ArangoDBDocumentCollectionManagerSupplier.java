@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.arangodb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 
 public class ArangoDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
@@ -22,8 +22,8 @@ public class ArangoDBDocumentCollectionManagerSupplier implements DocumentCollec
     private static final String DATABASE = "tck-database";
 
     @Override
-    public DocumentCollectionManager get() {
-        return ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE.get().get(DATABASE);
+    public DocumentManager get() {
+        return ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE.get().apply(DATABASE);
     }
 
 }

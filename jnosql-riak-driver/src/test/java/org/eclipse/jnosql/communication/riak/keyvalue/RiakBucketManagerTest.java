@@ -51,7 +51,7 @@ public class RiakBucketManagerTest {
     @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = RiakTestUtils.get();
-        keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
+        keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
     @Test

@@ -29,7 +29,6 @@ public class DynamoDBBuilderASync implements DynamoDBBuilder {
 
     private final DynamoDbAsyncClientBuilder dynamoDB = DynamoDbAsyncClient.builder();
 
-
     private String awsAccessKey;
     private String awsSecretAccess;
 

@@ -35,8 +35,16 @@ public class InfinispanBucketManager implements BucketManager {
 
     private final BasicCache cache;
 
-    InfinispanBucketManager(BasicCache cache) {
+    private final String bucket;
+
+    InfinispanBucketManager(BasicCache cache, String bucket) {
         this.cache = cache;
+        this.bucket = bucket;
+    }
+
+    @Override
+    public String getName() {
+        return bucket;
     }
 
     @Override

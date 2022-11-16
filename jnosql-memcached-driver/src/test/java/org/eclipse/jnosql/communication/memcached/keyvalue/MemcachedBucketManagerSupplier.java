@@ -25,6 +25,6 @@ public class MemcachedBucketManagerSupplier implements BucketManagerSupplier {
     @Override
     public BucketManager get() {
         final BucketManagerFactory factory = BucketManagerFactorySupplier.INSTANCE.get();
-        return factory.getBucketManager(BUCKET);
+        return factory.apply(BUCKET);
     }
 }

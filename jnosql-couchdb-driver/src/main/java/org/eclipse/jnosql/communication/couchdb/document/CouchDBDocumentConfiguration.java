@@ -18,34 +18,32 @@ package org.eclipse.jnosql.communication.couchdb.document;
 
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
+
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.COMPRESSION;
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.CONNECTION_TIMEOUT;
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.ENABLE_SSL;
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.MAX_CACHE_ENTRIES;
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.MAX_CONNECTIONS;
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES;
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.PORT;
+import static org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations.SOCKET_TIMEOUT;
 
 /**
  * The CouchDB implementation of {@link DocumentConfiguration}  that returns
- * {@link CouchDBDocumentCollectionManagerFactory}.
+ * {@link CouchDBDocumentManagerFactory}.
  * @see CouchDBConfigurations
  */
 public class CouchDBDocumentConfiguration implements DocumentConfiguration {
 
 
-    private static final String FILE_CONFIGURATION = "couchdb.properties";
+
 
     @Override
-    public CouchDBDocumentCollectionManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        SettingsBuilder builder = Settings.builder();
-        configuration.forEach((key, value) -> builder.put(key, value));
-        return get(builder.build());
-    }
-
-    @Override
-    public CouchDBDocumentCollectionManagerFactory get(Settings settings) {
+    public CouchDBDocumentManagerFactory apply(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
         CouchDBHttpConfigurationBuilder configuration = new CouchDBHttpConfigurationBuilder();
 
@@ -58,14 +56,18 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration {
         settings.getSupplier(Arrays.asList(CouchDBConfigurations.PASSWORD, Configurations.PASSWORD))
                 .map(Object::toString)
                 .ifPresent(configuration::withPassword);
-        settings.computeIfPresent(CouchDBConfigurations.PORT, (k, v) -> configuration.withPort(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_CONNECTIONS, (k, v) -> configuration.withMaxConnections(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.CONNECTION_TIMEOUT, (k, v) -> configuration.withConnectionTimeout(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.SOCKET_TIMEOUT, (k, v) -> configuration.withSocketTimeout(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES, (k, v) -> configuration.withMaxObjectSizeBytes(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.MAX_CACHE_ENTRIES, (k, v) -> configuration.withMaxCacheEntries(Integer.parseInt(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.ENABLE_SSL, (k, v) -> configuration.withEnableSSL(Boolean.parseBoolean(v.toString())));
-        settings.computeIfPresent(CouchDBConfigurations.COMPRESSION, (k, v) -> configuration.withCompression(Boolean.parseBoolean(v.toString())));
-        return new CouchDBDocumentCollectionManagerFactory(configuration.build());
+
+        settings.get(PORT, Integer.class).ifPresent(configuration::withPort);
+        settings.get(MAX_CONNECTIONS, Integer.class).ifPresent(configuration::withMaxConnections);
+        settings.get(CONNECTION_TIMEOUT, Integer.class).ifPresent(configuration::withConnectionTimeout);
+
+        settings.get(SOCKET_TIMEOUT, Integer.class).ifPresent(configuration::withSocketTimeout);
+        settings.get(MAX_OBJECT_SIZE_BYTES, Integer.class).ifPresent(configuration::withMaxObjectSizeBytes);
+        settings.get(MAX_CACHE_ENTRIES, Integer.class).ifPresent(configuration::withMaxCacheEntries);
+
+        settings.get(ENABLE_SSL, Boolean.class).ifPresent(configuration::withEnableSSL);
+        settings.get(COMPRESSION, Boolean.class).ifPresent(configuration::withCompression);
+
+        return new CouchDBDocumentManagerFactory(configuration.build());
     }
 }

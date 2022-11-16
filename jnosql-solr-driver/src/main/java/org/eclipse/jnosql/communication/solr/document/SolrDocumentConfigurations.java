@@ -28,15 +28,19 @@ public enum SolrDocumentConfigurations implements Supplier<String> {
     /**
      * Database's host. It is a prefix to enumerate hosts. E.g.: solr.host.1=HOST
      */
-    HOST("solr.host"),
+    HOST("jnosql.solr.host"),
     /**
      * The user's credential.
      */
-    USER("solr.user"),
+    USER("jnosql.solr.user"),
     /**
      * The password's credential
      */
-    PASSWORD("solr.password");
+    PASSWORD("jnosql.solr.password"),
+    /**
+     * Define if each operation Apache Solr will commit automatically, true by default.
+     */
+    AUTOMATIC_COMMIT("jnosql.solr.automatic.commit");
 
     private final String configuration;
 

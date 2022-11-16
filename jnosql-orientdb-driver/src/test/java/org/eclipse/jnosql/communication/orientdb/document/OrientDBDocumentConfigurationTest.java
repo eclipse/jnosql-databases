@@ -15,8 +15,9 @@
 
 package org.eclipse.jnosql.communication.orientdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,20 +32,14 @@ public class OrientDBDocumentConfigurationTest {
         configuration.setHost("172.17.0.2");
         configuration.setUser("root");
         configuration.setPassword("rootpwd");
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        DocumentManagerFactory managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 
-    @Test
-    public void shouldCreateByConfigurationFile() {
-        OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldThrowExceptionWhenSettingsIsNull() {
-        assertThrows(NullPointerException.class, () -> new OrientDBDocumentConfiguration().get(null));
+        assertThrows(NullPointerException.class, () -> new OrientDBDocumentConfiguration().apply(null));
     }
 
     @Test

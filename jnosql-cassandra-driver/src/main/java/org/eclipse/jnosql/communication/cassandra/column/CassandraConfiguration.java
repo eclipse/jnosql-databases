@@ -16,10 +16,8 @@
 package org.eclipse.jnosql.communication.cassandra.column;
 
 
-import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The Cassandra implementation to {@link ColumnConfiguration}  that returns
- * {@link CassandraColumnFamilyManagerFactory}
+ * {@link CassandraColumnManagerFactory}
  * This configuration reads "diana-cassandra.properties" files and has the following configuration:
  * <p>cassandra.host-: The Cassandra host as prefix, you can set how much you want just setting the number order,
  * eg: cassandra.host-1 = host, cassandra.host-2 = host2</p>
@@ -44,36 +42,22 @@ import static java.util.Objects.requireNonNull;
  */
 public final class CassandraConfiguration implements ColumnConfiguration {
 
-    static final String CASSANDRA_FILE_CONFIGURATION = "diana-cassandra.properties";
 
-
-    private CassandraColumnFamilyManagerFactory getManagerFactory(Map<String, String> configurations) {
+    private CassandraColumnManagerFactory getManagerFactory(Map<String, String> configurations) {
         requireNonNull(configurations);
         CassandraProperties properties = CassandraProperties.of(configurations);
         ExecutorService executorService = properties.createExecutorService();
-        return new CassandraColumnFamilyManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
+        return new CassandraColumnManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
     }
 
-    public CassandraColumnFamilyManagerFactory getEntityManagerFactory(CqlSessionBuilder sessionBuilder) {
-        requireNonNull(sessionBuilder, "sessionBuilder is required");
-
-        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
-        CassandraProperties properties = CassandraProperties.of(configuration);
-        ExecutorService executorService = properties.createExecutorService();
-        return new CassandraColumnFamilyManagerFactory(sessionBuilder, properties.getQueries(), executorService);
-    }
 
     @Override
-    public CassandraColumnFamilyManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(CASSANDRA_FILE_CONFIGURATION);
-        return getManagerFactory(configuration);
-    }
-
-    @Override
-    public CassandraColumnFamilyManagerFactory get(Settings settings) throws NullPointerException {
+    public CassandraColumnManagerFactory apply(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
         Map<String, String> configurations = new HashMap<>();
-        settings.forEach((key, value) -> configurations.put(key, value.toString()));
+        for (String key : settings.keySet()) {
+            configurations.put(key, settings.get(key, String.class).orElseThrow());
+        }
         return getManagerFactory(configurations);
     }
 

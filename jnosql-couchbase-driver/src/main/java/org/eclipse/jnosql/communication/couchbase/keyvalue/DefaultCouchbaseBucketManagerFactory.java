@@ -54,7 +54,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
 
 
     @Override
-    public CouchbaseBucketManager getBucketManager(String bucketName) {
+    public CouchbaseBucketManager apply(String bucketName) {
         requireNonNull(bucketName, "bucket is required");
         Bucket bucket = cluster.bucket(bucketName);
         String scopeName = settings.getScope().orElseGet(() -> bucket.defaultScope().name());

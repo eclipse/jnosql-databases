@@ -14,14 +14,14 @@
  */
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 
 public class RavenDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
 
     @Override
-    public DocumentCollectionManager get() {
-        return DocumentConfigurationUtils.INSTANCE.get().get("database");
+    public DocumentManager get() {
+        return DocumentConfigurationUtils.INSTANCE.get().apply("database");
     }
 
 }

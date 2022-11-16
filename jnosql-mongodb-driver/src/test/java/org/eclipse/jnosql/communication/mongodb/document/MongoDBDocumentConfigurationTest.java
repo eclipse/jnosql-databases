@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,25 +29,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MongoDBDocumentConfigurationTest {
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
+    public void shouldCreateDocumentManagerFactoryByMap() {
         Map<String, String> map = new HashMap<>();
         map.put("mongodb-server-host-1", "172.17.0.2:27017");
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get(map);
+        DocumentManagerFactory managerFactory = configuration.get(map);
         assertNotNull(managerFactory);
     }
 
-    @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
-        DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldReturnErrorWhendSettingsIsNull() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        assertThrows(NullPointerException.class, () -> configuration.get(null));
+        assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
     @Test

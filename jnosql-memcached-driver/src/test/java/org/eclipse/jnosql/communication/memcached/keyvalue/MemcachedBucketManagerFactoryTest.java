@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.communication.memcached.keyvalue;
 
+import jakarta.nosql.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,9 +27,11 @@ public class MemcachedBucketManagerFactoryTest {
     @BeforeEach
     public void setUp() {
         MemcachedKeyValueConfiguration configuration = new MemcachedKeyValueConfiguration();
-        managerFactory = configuration.get();
+        Settings settings = Settings.builder()
+                .put(MemcachedConfigurations.HOST.get()+".1", "localhost:11211")
+                .build();
+        managerFactory = configuration.apply(settings);
     }
-
 
     @Test
     public void shouldReturnErrorList() {

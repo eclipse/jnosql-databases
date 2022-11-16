@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-enum ElasticsearchDocumentCollectionManagerFactorySupplier implements Supplier<ElasticsearchDocumentCollectionManagerFactory> {
+enum ElasticsearchDocumentCollectionManagerFactorySupplier implements Supplier<ElasticsearchDocumentManagerFactory> {
 
     INSTANCE;
 
@@ -39,12 +39,11 @@ enum ElasticsearchDocumentCollectionManagerFactorySupplier implements Supplier<E
 
 
     @Override
-    public ElasticsearchDocumentCollectionManagerFactory get() {
+    public ElasticsearchDocumentManagerFactory get() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         Map<String, Object> settings = new HashMap<>();
-        settings.put("elasticsearch.host.1", es.getContainerIpAddress() + ':' + es.getFirstMappedPort());
-        settings.put("elasticsearch.cluster.name", "elasticsearch");
-        return configuration.get(Settings.of(settings));
+        settings.put(ElasticsearchConfigurations.HOST.get()+".1", es.getHost() + ':' + es.getFirstMappedPort());
+        return configuration.apply(Settings.of(settings));
     }
 
 }

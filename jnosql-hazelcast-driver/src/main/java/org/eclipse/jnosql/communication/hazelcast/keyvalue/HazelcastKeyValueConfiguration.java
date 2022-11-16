@@ -24,7 +24,6 @@ import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +41,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
 
-    private static final String HAZELCAST_FILE_CONFIGURATION = "diana-hazelcast.properties";
     private static final String DEFAULT_INSTANCE = "hazelcast-instanceName";
 
 
@@ -56,7 +54,7 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
         Objects.requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
         configurations.forEach((key, value) -> builder.put(key, value));
-        return get(builder.build());
+        return apply(builder.build());
     }
 
     /**
@@ -71,22 +69,16 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
         return new DefaultHazelcastBucketManagerFactory(hazelcastInstance);
     }
 
-    @Override
-    public HazelcastBucketManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(HAZELCAST_FILE_CONFIGURATION);
-        return get(configuration);
-    }
 
     @Override
-    public HazelcastBucketManagerFactory get(Settings settings) {
+    public HazelcastBucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
 
         List<String> servers = settings.prefixSupplier(Arrays.asList(
                 HazelcastConfigurations.HOST, Configurations.HOST))
                 .stream().map(Object::toString)
                 .collect(Collectors.toList());
-        String instance = settings.getSupplier(Arrays.asList(
-                HazelcastConfigurations.INSTANCE)).map(Object::toString)
+        String instance = settings.get(HazelcastConfigurations.INSTANCE).map(Object::toString)
                 .orElse(DEFAULT_INSTANCE);
         Config config = new Config(instance);
 

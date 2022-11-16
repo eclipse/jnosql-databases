@@ -33,18 +33,18 @@ public class DefaultCouchbaseBucketManagerFactoryTest {
     @BeforeEach
     public void init() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
-        factory = configuration.get();
+        factory = configuration.apply(CouchbaseUtil.getSettings());
     }
 
     @Test
     public void shouldReturnManager() {
-        BucketManager database = factory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
+        BucketManager database = factory.apply(CouchbaseUtil.BUCKET_NAME);
         assertNotNull(database);
     }
 
     @Test
     public void shouldReturnError() {
-        assertThrows(NullPointerException.class, () -> factory.getBucketManager(null));
+        assertThrows(NullPointerException.class, () -> factory.apply(null));
     }
 
 

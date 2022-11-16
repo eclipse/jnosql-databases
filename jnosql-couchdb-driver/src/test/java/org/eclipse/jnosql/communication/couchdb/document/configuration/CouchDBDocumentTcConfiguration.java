@@ -16,17 +16,16 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document.configuration;
 
-import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations;
-import org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentCollectionManagerFactory;
 import org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentConfiguration;
+import org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 
 import java.util.function.Supplier;
 
-public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentCollectionManagerFactory> {
+public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentManagerFactory> {
 
     INSTANCE;
 
@@ -38,13 +37,13 @@ public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentCo
     }
 
     @Override
-    public CouchDBDocumentCollectionManagerFactory get() {
+    public CouchDBDocumentManagerFactory get() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
         SettingsBuilder builder = Settings.builder();
-        builder.put(CouchDBConfigurations.PORT.get(), couchDB.getFirstMappedPort());
-        builder.put(Configurations.USER.get(), "admin");
-        builder.put(Configurations.PASSWORD.get(), "password");
-        return configuration.get(builder.build());
+        builder.put(CouchDBConfigurations.PORT, couchDB.getFirstMappedPort());
+        builder.put(CouchDBConfigurations.USER, "admin");
+        builder.put(CouchDBConfigurations.PASSWORD, "password");
+        return configuration.apply(builder.build());
     }
 
 }

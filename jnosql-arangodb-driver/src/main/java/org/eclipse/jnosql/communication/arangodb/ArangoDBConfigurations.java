@@ -30,44 +30,43 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     /**
      * The database host, where you need to put the port split by colons. E.g., localhost:8529
      */
-    HOST("arangodb.host"),
+    HOST("jnosql.arangodb.host"),
     /**
      * The user's credential.
      */
-    USER("arangodb.user"),
+    USER("jnosql.arangodb.user"),
     /**
      * The password's credential
      */
-    PASSWORD("arangodb.password"),
+    PASSWORD("jnosql.arangodb.password"),
     /**
      * The connection and request timeout in milliseconds.
      */
-    TIMEOUT("arangodb.timeout"),
+    TIMEOUT("jnosql.arangodb.timeout"),
     /**
      * The chunk size when {@link com.arangodb.Protocol} is used.
      */
-    CHUCK_SIZE("arangodb.chuck.size"),
+    CHUCK_SIZE("jnosql.arangodb.chuck.size"),
     /**
      * The true SSL will be used when connecting to an ArangoDB server.
      */
-    USER_SSL("arangodb.user.ssl"),
+    USER_SSL("jnosql.arangodb.user.ssl"),
     /**
      *The {@link com.arangodb.entity.LoadBalancingStrategy}
      */
-    LOAD_BALANCING("arangodb.load.balancing.strategy"),
+    LOAD_BALANCING("jnosql.arangodb.load.balancing.strategy"),
     /**
      * The {@link com.arangodb.Protocol}
      */
-    PROTOCOL("arangodb.protocol"),
+    PROTOCOL("jnosql.arangodb.protocol"),
     /**
      * The maximum number of connections the built in connection pool will open per host.
      */
-    MAX_CONNECTIONS("arangodb.connections.max"),
+    MAX_CONNECTIONS("jnosql.arangodb.connections.max"),
     /**
      *Set hosts split by comma
      */
-    HOST_LIST("arangodb.acquire.host.list"),
-    FILE_CONFIGURATION("diana-arangodb.properties");
+    HOST_LIST("jnosql.arangodb.acquire.host.list");
     private final String configuration;
 
     ArangoDBConfigurations(String configuration) {

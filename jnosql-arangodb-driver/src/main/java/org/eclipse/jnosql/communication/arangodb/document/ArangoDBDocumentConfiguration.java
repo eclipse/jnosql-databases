@@ -17,19 +17,15 @@ package org.eclipse.jnosql.communication.arangodb.document;
 
 import com.arangodb.ArangoDB;
 import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfigurations;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
-
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
 /**
  * The implementation of {@link DocumentConfiguration}
- * that returns {@link ArangoDBDocumentCollectionManagerFactory}.
+ * that returns {@link ArangoDBDocumentManagerFactory}.
  *
  * @see ArangoDBConfiguration
  * @see ArangoDBConfigurations
@@ -39,19 +35,11 @@ public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
         implements DocumentConfiguration {
 
     @Override
-    public ArangoDBDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
-        Map<String, String> configuration = ConfigurationReader.from(ArangoDBConfigurations.FILE_CONFIGURATION.get());
-        SettingsBuilder builder = Settings.builder();
-        configuration.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
-        return get(builder.build());
-    }
-
-    @Override
-    public ArangoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public ArangoDBDocumentManagerFactory apply(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
         ArangoDB arangoDB = getArangoDB(settings);
-        return new ArangoDBDocumentCollectionManagerFactory(arangoDB);
+        return new ArangoDBDocumentManagerFactory(arangoDB);
     }
 
 }

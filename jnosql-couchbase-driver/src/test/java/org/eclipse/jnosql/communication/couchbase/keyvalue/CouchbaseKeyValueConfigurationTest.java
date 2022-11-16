@@ -16,6 +16,7 @@ package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class CouchbaseKeyValueConfigurationTest {
 
     @Test
     public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.get();
+        BucketManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
         assertNotNull(managerFactory);
     }
 

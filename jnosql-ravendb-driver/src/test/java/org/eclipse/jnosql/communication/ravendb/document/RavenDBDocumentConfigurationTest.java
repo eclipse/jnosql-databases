@@ -16,8 +16,8 @@
 package org.eclipse.jnosql.communication.ravendb.document;
 
 import jakarta.nosql.Settings;
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -33,22 +33,15 @@ public class RavenDBDocumentConfigurationTest {
         Map<String, Object> map = new HashMap<>();
         map.put("ravendb-server-host-1", "172.17.0.2:8080");
         RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get(Settings.of(map));
+        DocumentManagerFactory managerFactory = configuration.apply(Settings.of(map));
         assertNotNull(managerFactory);
     }
 
-
-    @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
-        DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldReturnErrorWhendSettingsIsNull() {
         DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        assertThrows(NullPointerException.class, () -> configuration.get(null));
+        assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
 

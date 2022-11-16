@@ -21,12 +21,13 @@ import jakarta.nosql.keyvalue.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
 /**
  * The riak implementation to {@link BucketManagerFactory} that returns {@link RiakBucketManager}
- * This implementation just has support to {@link RiakBucketManagerFactory#getBucketManager(String)}
+ * This implementation just has support to {@link RiakBucketManagerFactory#apply(String)}
  * So, these metdhos will returns {@link UnsupportedOperationException}
  * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getSet(String, Class)}</p>
@@ -42,13 +43,13 @@ public class RiakBucketManagerFactory implements BucketManagerFactory {
     }
 
     @Override
-    public RiakBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
-
+    public RiakBucketManager apply(String bucketName) throws UnsupportedOperationException {
+        Objects.requireNonNull(bucketName, "bucketName is required");
         cluster.start();
         RiakClient riakClient = new RiakClient(cluster);
         Namespace quotesBucket = new Namespace(bucketName);
 
-        return new RiakBucketManager(riakClient, quotesBucket);
+        return new RiakBucketManager(riakClient, quotesBucket, bucketName);
     }
 
     @Override

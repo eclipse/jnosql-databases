@@ -14,14 +14,14 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 
 public class SolrDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
 
 
     @Override
-    public DocumentCollectionManager get() {
+    public DocumentManager get() {
         return ManagerFactorySupplier.INSTANCE.get("database");
     }
 

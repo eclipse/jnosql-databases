@@ -59,6 +59,11 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
+    public String getName() {
+        return bucketName;
+    }
+
+    @Override
     public <K, V> void put(K key, V value) {
         requireNonNull(key, "key is required");
         requireNonNull(value, "value is required");

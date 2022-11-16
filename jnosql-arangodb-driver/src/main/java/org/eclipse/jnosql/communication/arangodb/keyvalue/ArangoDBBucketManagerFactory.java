@@ -42,7 +42,7 @@ public class ArangoDBBucketManagerFactory implements BucketManagerFactory {
     }
 
     @Override
-    public ArangoDBBucketManager getBucketManager(String bucketName) throws UnsupportedOperationException {
+    public ArangoDBBucketManager apply(String bucketName) throws UnsupportedOperationException {
         return getBucketManager(bucketName, DEFAULT_NAMESPACE);
     }
 

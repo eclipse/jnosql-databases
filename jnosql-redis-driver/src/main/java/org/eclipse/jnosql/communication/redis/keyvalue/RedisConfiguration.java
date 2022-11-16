@@ -20,7 +20,6 @@ import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -35,7 +34,6 @@ import static java.util.Arrays.asList;
  */
 public final class RedisConfiguration implements KeyValueConfiguration {
 
-    private static final String FILE_CONFIGURATION = "diana-redis.properties";
     private static final int DEFAULT_PORT = 6379;
     private static final int DEFAULT_TIMEOUT = 2000;
     private static final int DEFAULT_DATABASE = 0;
@@ -55,7 +53,7 @@ public final class RedisConfiguration implements KeyValueConfiguration {
         Objects.requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
         configurations.forEach((key, value) -> builder.put(key, value));
-        return get(builder.build());
+        return apply(builder.build());
     }
 
     /**
@@ -69,13 +67,7 @@ public final class RedisConfiguration implements KeyValueConfiguration {
     }
 
     @Override
-    public RedisBucketManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        return getManagerFactory(configuration);
-    }
-
-    @Override
-    public RedisBucketManagerFactory get(Settings settings) {
+    public RedisBucketManagerFactory apply(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
 
         JedisPoolConfig poolConfig = getJedisPoolConfig(settings);

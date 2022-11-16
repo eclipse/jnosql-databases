@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.orientdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 
 public class OrientDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
@@ -22,8 +22,8 @@ public class OrientDBDocumentCollectionManagerSupplier implements DocumentCollec
     private static final String DATABASE = "tck-database";
 
     @Override
-    public DocumentCollectionManager get() {
-        return DocumentConfigurationUtils.get().get(Database.DATABASE);
+    public DocumentManager get() {
+        return DocumentConfigurationUtils.get().apply(Database.DATABASE);
     }
 
 }

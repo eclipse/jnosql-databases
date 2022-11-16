@@ -52,11 +52,11 @@ class DefaultCouchDBDocumentCollectionManagerTest {
 
     public static final String COLLECTION_NAME = "person";
 
-    private CouchDBDocumentCollectionManager entityManager;
+    private CouchDBDocumentManager entityManager;
 
     {
-        CouchDBDocumentCollectionManagerFactory managerFactory = INSTANCE.get();
-        entityManager = managerFactory.get("people");
+        CouchDBDocumentManagerFactory managerFactory = INSTANCE.get();
+        entityManager = managerFactory.apply("people");
     }
 
     @BeforeEach

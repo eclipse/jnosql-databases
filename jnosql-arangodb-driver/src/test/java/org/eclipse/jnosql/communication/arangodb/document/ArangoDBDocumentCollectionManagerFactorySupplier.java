@@ -16,12 +16,13 @@
 package org.eclipse.jnosql.communication.arangodb.document;
 
 
+import jakarta.nosql.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.function.Supplier;
 
-enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<ArangoDBDocumentCollectionManagerFactory> {
+enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<ArangoDBDocumentManagerFactory> {
 
     INSTANCE;
 
@@ -37,9 +38,9 @@ enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<Arango
     }
 
     @Override
-    public ArangoDBDocumentCollectionManagerFactory get() {
+    public ArangoDBDocumentManagerFactory get() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
-        configuration.addHost(arangodb.getContainerIpAddress(), arangodb.getFirstMappedPort());
-        return configuration.get();
+        configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
+        return configuration.apply(Settings.builder().build());
     }
 }

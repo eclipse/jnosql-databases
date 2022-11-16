@@ -20,11 +20,8 @@ public final class DocumentConfigurationUtils {
     private DocumentConfigurationUtils() {
     }
 
-    public static OrientDBDocumentCollectionManagerFactory get() {
+    public static OrientDBDocumentManagerFactory get() {
         return ManagerFactorySupplier.INSTANCE.get();
     }
 
-    public static OrientDBDocumentCollectionManagerFactory getAsync() {
-        return ManagerFactorySupplier.INSTANCE.get();
-    }
 }

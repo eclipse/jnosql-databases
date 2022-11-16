@@ -29,9 +29,9 @@ interface QueryExecutor {
         return QueryExecutorType.DEFAULT;
     }
 
-    Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager);
+    Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnManager manager);
 
     Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
-                                 DefaultCassandraColumnFamilyManager manager);
+                                 DefaultCassandraColumnManager manager);
 
 }

@@ -38,14 +38,8 @@ public class KeyValueConfigurationTest {
     @Test
     public void shouldCreateKeyValueFactory() {
         Map<String, Object> map = new HashMap<>();
-        map.put("memcached.host.1","localhost:11211");
-        BucketManagerFactory managerFactory = configuration.get(Settings.of(map));
-        assertNotNull(managerFactory);
-    }
-
-    @Test
-    public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.get();
+        map.put(MemcachedConfigurations.HOST.get()+".1","localhost:11211");
+        BucketManagerFactory managerFactory = configuration.apply(Settings.of(map));
         assertNotNull(managerFactory);
     }
 

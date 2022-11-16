@@ -18,11 +18,11 @@ import java.util.function.Supplier;
 
 public enum  DynamoDBConfigurations implements Supplier<String> {
 
-    ENDPOINT("dynamodb.endpoint"),
-    REGION("dynamodb.region"),
-    PROFILE("dynamodb.profile"),
-    AWS_ACCESSKEY("dynamodb.awsaccesskey"),
-    AWS_SECRET_ACCESS("dynamodb.secretaccess");
+    ENDPOINT("jnosql.dynamodb.endpoint"),
+    REGION("jnosql.dynamodb.region"),
+    PROFILE("jnosql.dynamodb.profile"),
+    AWS_ACCESSKEY("jnosql.dynamodb.awsaccesskey"),
+    AWS_SECRET_ACCESS("jnosql.dynamodb.secretaccess");
 
     private final String configuration;
 

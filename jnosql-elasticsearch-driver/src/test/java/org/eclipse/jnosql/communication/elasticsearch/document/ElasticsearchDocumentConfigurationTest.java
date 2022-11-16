@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -25,13 +25,13 @@ public class ElasticsearchDocumentConfigurationTest {
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
-        DocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        DocumentManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
-        DocumentCollectionManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        DocumentManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
         assertNotNull(managerFactory);
     }
 

@@ -37,51 +37,43 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The MongoDB implementation to {@link DocumentConfiguration}
- * that returns  {@link MongoDBDocumentCollectionManagerFactory}
+ * that returns  {@link MongoDBDocumentManagerFactory}
  * @see MongoDBDocumentConfigurations
  */
 public class MongoDBDocumentConfiguration implements DocumentConfiguration {
-
-    static final String FILE_CONFIGURATION = "diana-mongodb.properties";
 
     static final int DEFAULT_PORT = 27017;
 
 
     /**
-     * Creates a {@link MongoDBDocumentCollectionManagerFactory} from map configurations
+     * Creates a {@link MongoDBDocumentManagerFactory} from map configurations
      *
      * @param configurations the configurations map
      * @return a MongoDBDocumentCollectionManagerFactory instance
      * @throws NullPointerException when the configurations is null
      */
-    public MongoDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
+    public MongoDBDocumentManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
         configurations.forEach(builder::put);
-        return get(builder.build());
+        return apply(builder.build());
     }
 
     /**
-     * Creates a {@link MongoDBDocumentCollectionManagerFactory} from mongoClient
+     * Creates a {@link MongoDBDocumentManagerFactory} from mongoClient
      *
      * @param mongoClient the mongo client {@link MongoClient}
      * @return a MongoDBDocumentCollectionManagerFactory instance
      * @throws NullPointerException when the mongoClient is null
      */
-    public MongoDBDocumentCollectionManagerFactory get(MongoClient mongoClient) throws NullPointerException {
+    public MongoDBDocumentManagerFactory get(MongoClient mongoClient) throws NullPointerException {
         requireNonNull(mongoClient, "mongo client is required");
-        return new MongoDBDocumentCollectionManagerFactory(mongoClient);
+        return new MongoDBDocumentManagerFactory(mongoClient);
     }
 
-    @Override
-    public MongoDBDocumentCollectionManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        return get(configuration);
-
-    }
 
     @Override
-    public MongoDBDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public MongoDBDocumentManagerFactory apply(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
         List<ServerAddress> servers = settings
@@ -102,8 +94,8 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
                     .applyConnectionString(c)
                     .build())
                     .map(MongoClients::create)
-                    .map(MongoDBDocumentCollectionManagerFactory::new)
-                    .orElseGet(() -> new MongoDBDocumentCollectionManagerFactory(MongoClients.create()));
+                    .map(MongoDBDocumentManagerFactory::new)
+                    .orElseGet(() -> new MongoDBDocumentManagerFactory(MongoClients.create()));
         }
 
         Optional<MongoCredential> credential = MongoAuthentication.of(settings);
@@ -114,10 +106,10 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
                 MongoClientSettings.builder()
                         .applyToClusterSettings(builder -> builder.hosts(servers))).build();
 
-        return new MongoDBDocumentCollectionManagerFactory(MongoClients.create(mongoClientSettings));
+        return new MongoDBDocumentManagerFactory(MongoClients.create(mongoClientSettings));
     }
 
-    public MongoDBDocumentCollectionManagerFactory get(String pathFileConfig) throws NullPointerException {
+    public MongoDBDocumentManagerFactory get(String pathFileConfig) throws NullPointerException {
         requireNonNull(pathFileConfig, "settings is required");
 
         Map<String, String> configuration = ConfigurationReader.from(pathFileConfig);

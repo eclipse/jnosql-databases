@@ -40,7 +40,7 @@ public class RedisBucketManagerFactoryTest {
 
     @Test
     public void shouldCreateKeyValueEntityManager() {
-        BucketManager keyValueEntityManager = managerFactory.getBucketManager(BUCKET_NAME);
+        BucketManager keyValueEntityManager = managerFactory.apply(BUCKET_NAME);
         assertNotNull(keyValueEntityManager);
     }
 

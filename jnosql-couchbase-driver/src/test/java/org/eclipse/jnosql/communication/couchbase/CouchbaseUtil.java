@@ -14,10 +14,24 @@
  */
 package org.eclipse.jnosql.communication.couchbase;
 
+import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.driver.ConfigurationReader;
+
+import java.util.Map;
+
 public final class CouchbaseUtil {
 
     public static final String BUCKET_NAME = "jnosql";
 
+    private static final String FILE_CONFIGURATION = "couchbase.properties";
+
     private CouchbaseUtil() {
+    }
+
+    public static Settings getSettings() {
+        Map<String, String> map = ConfigurationReader.from(CouchbaseUtil.FILE_CONFIGURATION);
+        Settings.SettingsBuilder builder = Settings.builder();
+        map.forEach((k, v) -> builder.put(k, v));
+        return builder.build();
     }
 }

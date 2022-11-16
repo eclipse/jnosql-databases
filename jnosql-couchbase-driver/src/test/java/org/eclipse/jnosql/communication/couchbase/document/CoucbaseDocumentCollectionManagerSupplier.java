@@ -14,19 +14,24 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.Settings;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.driver.ConfigurationReader;
+
+import java.util.Map;
 
 public class CoucbaseDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
 
 
     @Override
-    public DocumentCollectionManager get() {
+    public DocumentManager get() {
         CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
-        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        return managerFactory.get(CouchbaseUtil.BUCKET_NAME);
+        Settings settings = CouchbaseUtil.getSettings();
+        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
+        return managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
 }

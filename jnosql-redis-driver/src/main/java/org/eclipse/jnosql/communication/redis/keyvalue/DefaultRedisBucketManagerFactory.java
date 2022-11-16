@@ -37,7 +37,7 @@ class DefaultRedisBucketManagerFactory implements RedisBucketManagerFactory {
 
 
     @Override
-    public RedisBucketManager getBucketManager(String bucketName) {
+    public RedisBucketManager apply(String bucketName) {
         requireNonNull(bucketName, "bucket name is required");
 
         return new RedisBucketManager(bucketName, JSON, jedisPool.getResource());

@@ -15,6 +15,7 @@
 
 package org.eclipse.jnosql.communication.hbase.column;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -27,13 +28,13 @@ public class HBaseColumnConfigurationTest {
     @Test
     public void shouldCreatesColumnFamilyManagerFactory() {
         ColumnConfiguration configuration = new HBaseColumnConfiguration();
-        assertNotNull(configuration.get());
+        assertNotNull(configuration.apply(Settings.builder().build()));
     }
 
     @Test
     public void shouldCreatesColumnFamilyManagerFactoryFromConfiguration() {
         ColumnConfiguration configuration = new HBaseColumnConfiguration();
-        assertNotNull(configuration.get());
+        assertNotNull(configuration.apply(Settings.builder().build()));
     }
 
     @Test

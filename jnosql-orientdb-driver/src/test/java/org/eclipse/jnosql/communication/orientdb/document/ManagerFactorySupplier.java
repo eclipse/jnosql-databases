@@ -15,10 +15,11 @@
 package org.eclipse.jnosql.communication.orientdb.document;
 
 import com.orientechnologies.orient.core.db.ODatabaseType;
+import jakarta.nosql.Settings;
 
 import java.util.function.Supplier;
 
-public enum ManagerFactorySupplier implements Supplier<OrientDBDocumentCollectionManagerFactory> {
+public enum ManagerFactorySupplier implements Supplier<OrientDBDocumentManagerFactory> {
 
     INSTANCE;
 
@@ -33,7 +34,7 @@ public enum ManagerFactorySupplier implements Supplier<OrientDBDocumentCollectio
     }
 
     @Override
-    public OrientDBDocumentCollectionManagerFactory get() {
-        return configuration.get();
+    public OrientDBDocumentManagerFactory get() {
+        return configuration.apply(Settings.builder().build());
     }
 }

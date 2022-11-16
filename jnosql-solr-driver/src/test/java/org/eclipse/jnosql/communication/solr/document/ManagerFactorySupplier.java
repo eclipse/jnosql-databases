@@ -16,15 +16,22 @@
 package org.eclipse.jnosql.communication.solr.document;
 
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.Settings;
+import jakarta.nosql.document.DocumentManagerFactory;
 
 public enum ManagerFactorySupplier {
 
     INSTANCE;
 
-    public SolrDocumentCollectionManager get(String database) {
+    public SolrDocumentManager get(String database) {
         SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
-        final DocumentCollectionManagerFactory managerFactory = configuration.get();
-        return managerFactory.get(database);
+        final SolrDocumentManagerFactory managerFactory = configuration.apply(getSettings());
+        return managerFactory.apply(database);
+    }
+
+    public Settings getSettings() {
+        return Settings.builder()
+                .put(SolrDocumentConfigurations.HOST.get()+".1", "localhost:27017")
+                .build();
     }
 }

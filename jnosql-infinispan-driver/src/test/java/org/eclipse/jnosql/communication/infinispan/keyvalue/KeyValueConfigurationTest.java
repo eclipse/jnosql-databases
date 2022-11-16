@@ -39,10 +39,4 @@ public class KeyValueConfigurationTest {
         assertNotNull(managerFactory);
     }
 
-    @Test
-    public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.get();
-        assertNotNull(managerFactory);
-    }
-
 }

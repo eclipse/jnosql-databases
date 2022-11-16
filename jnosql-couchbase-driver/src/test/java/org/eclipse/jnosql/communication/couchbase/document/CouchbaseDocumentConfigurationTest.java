@@ -14,10 +14,16 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
+import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -26,15 +32,16 @@ public class CouchbaseDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
 
-        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
+
+        DocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        DocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
         assertNotNull(managerFactory);
     }
 

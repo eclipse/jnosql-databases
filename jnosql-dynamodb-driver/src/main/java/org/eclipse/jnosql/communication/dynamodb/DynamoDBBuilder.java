@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.communication.dynamodb;
 
 public interface DynamoDBBuilder {
-
     void endpoint(String endpoint);
 
     void region(String region);

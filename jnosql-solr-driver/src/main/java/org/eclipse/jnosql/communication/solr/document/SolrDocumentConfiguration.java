@@ -19,57 +19,48 @@ import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
 
 /**
  * The Apache Solr implementation to {@link DocumentConfiguration}
- * that returns  {@link SolrDocumentCollectionManagerFactory}
+ * that returns  {@link SolrDocumentManagerFactory}
  * @see SolrDocumentConfigurations
  */
 public class SolrDocumentConfiguration implements DocumentConfiguration {
-
-    static final String FILE_CONFIGURATION = "diana-solr.properties";
 
 
     private static final String DEFAULT_HOST = "http://localhost:8983/solr/";
 
     /**
-     * Creates a {@link SolrDocumentCollectionManagerFactory} from mongoClient
+     * Creates a {@link SolrDocumentManagerFactory} from mongoClient
      *
      * @param solrClient the mongo client {@link HttpSolrClient}
      * @return a SolrDocumentCollectionManagerFactory instance
      * @throws NullPointerException when the mongoClient is null
      */
-    public SolrDocumentCollectionManagerFactory get(HttpSolrClient solrClient) throws NullPointerException {
+    public SolrDocumentManagerFactory get(HttpSolrClient solrClient) throws NullPointerException {
         requireNonNull(solrClient, "solrClient is required");
-        return new SolrDocumentCollectionManagerFactory(solrClient);
+        return new SolrDocumentManagerFactory(solrClient, true);
     }
 
-    @Override
-    public SolrDocumentCollectionManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        return get(Settings.of(new HashMap<>(configuration)));
-
-    }
 
     @Override
-    public SolrDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public SolrDocumentManagerFactory apply(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
 
         String host = settings.getSupplier(Arrays.asList(SolrDocumentConfigurations.HOST,
                         Configurations.HOST)).map(Object::toString).orElse(DEFAULT_HOST);
 
+        boolean automaticCommit = settings.getOrDefault(SolrDocumentConfigurations.AUTOMATIC_COMMIT, true);
+
         final HttpSolrClient solrClient = new HttpSolrClient.Builder(host).build();
         solrClient.setParser(new XMLResponseParser());
-        return new SolrDocumentCollectionManagerFactory(solrClient);
+        return new SolrDocumentManagerFactory(solrClient, automaticCommit);
 
     }
 
