@@ -17,15 +17,15 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.search.SearchQuery;
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentManager;
 
 import java.util.stream.Stream;
 
 /**
- * The couchbase implementation of {@link DocumentCollectionManager}
+ * The couchbase implementation of {@link DocumentManager}
  */
-public interface CouchbaseDocumentCollectionManager extends DocumentCollectionManager {
+public interface CouchbaseDocumentManager extends DocumentManager {
 
     /**
      * Executes the N1QL with params and then result que result

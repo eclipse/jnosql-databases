@@ -31,12 +31,7 @@ public class CouchbaseKeyValueConfiguration extends CouchbaseConfiguration
 
 
     @Override
-    public CouchbaseBucketManagerFactory get() {
-        return new DefaultCouchbaseBucketManagerFactory(toCouchbaseSettings());
-    }
-
-    @Override
-    public CouchbaseBucketManagerFactory get(Settings settings) {
+    public CouchbaseBucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
         CouchbaseKeyValueConfiguration configuration = new CouchbaseKeyValueConfiguration();
         configuration.update(settings);

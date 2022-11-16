@@ -16,7 +16,7 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 
 /**
- * An exception when {@link CouchbaseDocumentCollectionManager} tries to both update and insert, but it does not found
+ * An exception when {@link CouchbaseDocumentManager} tries to both update and insert, but it does not found
  * The column with the name "_id".
  */
 public class CouchbaseNoKeyFoundException extends RuntimeException {

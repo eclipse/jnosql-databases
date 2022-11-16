@@ -33,8 +33,6 @@ import static java.util.Arrays.asList;
  */
 public abstract class CouchbaseConfiguration {
 
-    private static final String FILE_CONFIGURATION = "couchbase.properties";
-
     protected String host;
 
     protected String user;
@@ -48,13 +46,6 @@ public abstract class CouchbaseConfiguration {
     protected String collection;
     protected List<String> collections = new ArrayList<>();
 
-    public CouchbaseConfiguration() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        SettingsBuilder builder = Settings.builder();
-        configuration.forEach((key, value) -> builder.put(key, value));
-        Settings settings = builder.build();
-        update(settings);
-    }
 
     protected void update(Settings settings) {
         this.host = getHost(settings);

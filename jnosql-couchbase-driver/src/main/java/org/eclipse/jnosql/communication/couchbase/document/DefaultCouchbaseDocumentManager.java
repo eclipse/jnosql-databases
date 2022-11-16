@@ -46,21 +46,26 @@ import static org.eclipse.jnosql.communication.couchbase.document.EntityConverte
 import static org.eclipse.jnosql.communication.couchbase.document.EntityConverter.convert;
 
 /**
- * The default implementation of {@link CouchbaseDocumentCollectionManager}
+ * The default implementation of {@link CouchbaseDocumentManager}
  */
-class DefaultCouchbaseDocumentCollectionManager implements CouchbaseDocumentCollectionManager {
+class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultCouchbaseDocumentCollectionManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DefaultCouchbaseDocumentManager.class.getName());
 
     private final Bucket bucket;
     private final String database;
 
     private final Cluster cluster;
 
-    DefaultCouchbaseDocumentCollectionManager(Cluster cluster, String database) {
+    DefaultCouchbaseDocumentManager(Cluster cluster, String database) {
         this.bucket = cluster.bucket(database);
         this.database = database;
         this.cluster = cluster;
+    }
+
+    @Override
+    public String getName() {
+        return database;
     }
 
     @Override

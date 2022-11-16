@@ -14,13 +14,18 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
+import jakarta.nosql.Settings;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
+import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CouchbaseDocumentCollectionManagerFactoryTest {
+public class CouchbaseDocumentManagerFactoryTest {
 
     private CouchbaseDocumentConfiguration configuration;
 
@@ -32,7 +37,8 @@ public class CouchbaseDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        CouchbaseDocumentCollectionManagerFactory factory = configuration.get();
-        assertNotNull(factory.get(CouchbaseUtil.BUCKET_NAME));
+        CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
+        CouchbaseDocumentManagerFactory factory = configuration.apply(CouchbaseUtil.getSettings());
+        assertNotNull(factory.apply(CouchbaseUtil.BUCKET_NAME));
     }
 }

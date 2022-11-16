@@ -24,24 +24,20 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The couchbase implementation of {@link DocumentConfiguration}  that returns
- * {@link CouchbaseDocumentCollectionManagerFactory}.
+ * {@link CouchbaseDocumentManagerFactory}.
  * @see CouchbaseConfigurations
  */
 public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
         implements DocumentConfiguration {
 
-    @Override
-    public CouchbaseDocumentCollectionManagerFactory get() throws UnsupportedOperationException {
-        return new CouchbaseDocumentCollectionManagerFactory(toCouchbaseSettings());
-    }
 
     @Override
-    public CouchbaseDocumentCollectionManagerFactory get(Settings settings) throws NullPointerException {
+    public CouchbaseDocumentManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
 
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         configuration.update(settings);
-        return new CouchbaseDocumentCollectionManagerFactory(configuration.toCouchbaseSettings());
+        return new CouchbaseDocumentManagerFactory(configuration.toCouchbaseSettings());
     }
 
 }

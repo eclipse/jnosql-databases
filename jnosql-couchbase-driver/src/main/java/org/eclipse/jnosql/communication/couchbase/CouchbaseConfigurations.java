@@ -30,38 +30,38 @@ public enum CouchbaseConfigurations implements Supplier<String> {
     /**
      * The host at the database.
      */
-    HOST("couchbase.host"),
+    HOST("jnosql.couchbase.host"),
 
     /**
      * The user's credential.
      */
-    USER("couchbase.user"),
+    USER("jnosql.couchbase.user"),
 
     /**
      * The password's credential
      */
-    PASSWORD("couchbase.password"),
+    PASSWORD("jnosql.couchbase.password"),
     /**
      * The scope to use at couchbase otherwise, it will use the default.
      */
-    SCOPE("couchbase.scope"),
+    SCOPE("jnosql.couchbase.scope"),
     /**
      * couchbase collection split by a comma.
      * At the start-up of a {@link CouchbaseConfiguration}, there is this option to check if
      * these collections exist; if not, it will create using the default settings.
      */
-    COLLECTIONS("couchbase.collections"),
+    COLLECTIONS("jnosql.couchbase.collections"),
     /**
      * A default couchbase collection.
      * When it is not defined the default value comes from {@link Bucket#defaultCollection()}
      */
-    COLLECTION("couchbase.collection"),
+    COLLECTION("jnosql.couchbase.collection"),
     /**
      * A couchbase collection index.
      * At the start-up of a {@link CouchbaseConfiguration}, it will read this property to check if the index does exist,
      * if not it will create combined by scope and the database.
      */
-    INDEX("couchbase.index");
+    INDEX("jnosql.couchbase.index");
 
     private final String configuration;
 

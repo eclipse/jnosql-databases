@@ -17,6 +17,7 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.core.error.DocumentExistsException;
 import com.couchbase.client.core.error.DocumentNotFoundException;
+import jakarta.nosql.Settings;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
@@ -44,19 +45,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DocumentQueryTest {
 
     public static final String COLLECTION_NAME = "person";
-    private CouchbaseDocumentCollectionManager entityManager;
+    private CouchbaseDocumentManager entityManager;
     private static CouchbaseDocumentConfiguration configuration;
 
     {
-        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
+        Settings settings = CouchbaseUtil.getSettings();
+
+        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
+        entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterEach() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
-        BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
+        BucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.apply(CouchbaseUtil.BUCKET_NAME);
         try {
             keyValueEntityManager.delete("id");
             keyValueEntityManager.delete("id2");
@@ -70,8 +73,9 @@ public class DocumentQueryTest {
     @BeforeAll
     public static void beforeEach() {
         configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
-        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        CouchbaseDocumentCollectionManager entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
+        Settings settings = CouchbaseUtil.getSettings();
+        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
+        CouchbaseDocumentManager entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
 
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name")));

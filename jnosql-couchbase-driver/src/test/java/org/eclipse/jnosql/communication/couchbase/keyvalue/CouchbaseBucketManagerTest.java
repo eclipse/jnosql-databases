@@ -55,15 +55,15 @@ public class CouchbaseBucketManagerTest {
     @BeforeEach
     public void init() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
-        factory = configuration.get();
-        manager = factory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
+        factory = configuration.apply(CouchbaseUtil.getSettings());
+        manager = factory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterClass() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
-        BucketManagerFactory keyValueEntityManagerFactory = configuration.get();
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
+        BucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
+        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.apply(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.delete(KEY_OTAVIO);
         keyValueEntityManager.delete(KEY_SORO);
     }

@@ -24,7 +24,7 @@ public class CouchbaseBucketManagerSupplier implements BucketManagerSupplier {
     @Override
     public BucketManager get() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
-        final CouchbaseBucketManagerFactory factory = configuration.get();
-        return factory.getBucketManager(CouchbaseUtil.BUCKET_NAME);
+        final CouchbaseBucketManagerFactory factory = configuration.apply(CouchbaseUtil.getSettings());
+        return factory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 }

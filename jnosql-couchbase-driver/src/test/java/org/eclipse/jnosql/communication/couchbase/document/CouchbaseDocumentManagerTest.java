@@ -16,6 +16,7 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.json.JsonObject;
+import jakarta.nosql.Settings;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
@@ -27,6 +28,7 @@ import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseBucketManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,22 +51,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class CouchbaseDocumentCollectionManagerTest {
+public class CouchbaseDocumentManagerTest {
 
     public static final String COLLECTION_PERSON_NAME = "person";
     public static final String COLLECTION_APP_NAME = "AppointmentBook";
-    private CouchbaseDocumentCollectionManager entityManager;
+    private CouchbaseDocumentManager entityManager;
 
     {
         CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
-        CouchbaseDocumentCollectionManagerFactory managerFactory = configuration.get();
-        entityManager = managerFactory.get(CouchbaseUtil.BUCKET_NAME);
+
+        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
+        entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterEach
     public void afterEach() {
         CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
-        CouchbaseBucketManagerFactory keyValueEntityManagerFactory = configuration.get();
+        CouchbaseBucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
 
         try {
             BucketManager keyValueEntityManager = keyValueEntityManagerFactory

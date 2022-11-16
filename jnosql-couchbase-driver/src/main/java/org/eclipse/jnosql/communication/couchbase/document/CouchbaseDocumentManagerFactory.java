@@ -16,25 +16,25 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 
 import com.couchbase.client.java.Cluster;
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseSettings;
 
 import java.util.Objects;
 
-public class CouchbaseDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory{
+public class CouchbaseDocumentManagerFactory implements DocumentManagerFactory {
 
 
     private final CouchbaseSettings settings;
     private final Cluster cluster;
-    CouchbaseDocumentCollectionManagerFactory(CouchbaseSettings settings) {
+    CouchbaseDocumentManagerFactory(CouchbaseSettings settings) {
         this.settings = settings;
         this.cluster = settings.getCluster();
     }
 
     @Override
-    public CouchbaseDocumentCollectionManager get(String database)  {
+    public CouchbaseDocumentManager apply(String database)  {
         Objects.requireNonNull(database, "database is required");
-        return new DefaultCouchbaseDocumentCollectionManager(cluster, database);
+        return new DefaultCouchbaseDocumentManager(cluster, database);
     }
 
 
