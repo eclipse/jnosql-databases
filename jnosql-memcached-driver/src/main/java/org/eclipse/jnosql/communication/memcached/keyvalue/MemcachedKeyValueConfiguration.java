@@ -25,14 +25,11 @@ import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.auth.AuthDescriptor;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -48,16 +45,9 @@ import static java.util.Optional.ofNullable;
  */
 public class MemcachedKeyValueConfiguration implements KeyValueConfiguration {
 
-    public static final String FILE_CONFIGURATION = "diana-memcached.properties";
 
     @Override
-    public MemcachedBucketManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        return get(Settings.of(new HashMap<>(configuration)));
-    }
-
-    @Override
-    public MemcachedBucketManagerFactory get(Settings settings) {
+    public MemcachedBucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
         ConnectionFactoryBuilder factoryBuilder = new ConnectionFactoryBuilder();
 

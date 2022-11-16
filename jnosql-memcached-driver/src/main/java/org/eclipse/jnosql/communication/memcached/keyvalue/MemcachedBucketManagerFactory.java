@@ -32,7 +32,7 @@ final class MemcachedBucketManagerFactory implements BucketManagerFactory {
     }
 
     @Override
-    public MemcachedBucketManager getBucketManager(String bucketName) {
+    public MemcachedBucketManager apply(String bucketName) {
         Objects.requireNonNull(bucketName, "bucketName is required");
         return new MemcachedBucketManager(client, bucketName);
     }
