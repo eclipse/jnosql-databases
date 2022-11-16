@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.column.ColumnFamilyManager;
-import jakarta.nosql.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.ColumnManager;
+import jakarta.nosql.column.ColumnManagerFactory;
 import jakarta.nosql.tck.communication.driver.column.ColumnFamilyManagerSupplier;
 
 public class CassandraColumnFamilyManagerSupplier implements ColumnFamilyManagerSupplier {
@@ -23,9 +23,9 @@ public class CassandraColumnFamilyManagerSupplier implements ColumnFamilyManager
     private static final String KEY_SPACE = "newKeySpace";
 
     @Override
-    public ColumnFamilyManager get() {
-        ColumnFamilyManagerFactory factory = ManagerFactorySupplier.INSTANCE.get();
-        return factory.get(KEY_SPACE);
+    public ColumnManager get() {
+        ColumnManagerFactory factory = ManagerFactorySupplier.INSTANCE.get();
+        return factory.apply(KEY_SPACE);
     }
 
 }

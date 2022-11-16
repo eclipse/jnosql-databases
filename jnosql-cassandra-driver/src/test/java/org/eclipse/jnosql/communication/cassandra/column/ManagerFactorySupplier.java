@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public enum ManagerFactorySupplier implements Supplier<CassandraColumnFamilyManagerFactory> {
+public enum ManagerFactorySupplier implements Supplier<CassandraColumnManagerFactory> {
 
     INSTANCE;
 
@@ -39,15 +39,15 @@ public enum ManagerFactorySupplier implements Supplier<CassandraColumnFamilyMana
     }
 
     @Override
-    public CassandraColumnFamilyManagerFactory get() {
+    public CassandraColumnManagerFactory get() {
         Settings settings = getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        return cassandraConfiguration.get(settings);
+        return cassandraConfiguration.apply(settings);
     }
 
     Settings getSettings() {
-        Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from(CassandraConfiguration.CASSANDRA_FILE_CONFIGURATION));
-        configuration.put("cassandra.host-1", cassandra.getContainerIpAddress());
+        Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from("cassandra.properties"));
+        configuration.put("cassandra.host.1", cassandra.getHost());
         configuration.put("cassandra.port", cassandra.getFirstMappedPort());
         return Settings.of(configuration);
     }

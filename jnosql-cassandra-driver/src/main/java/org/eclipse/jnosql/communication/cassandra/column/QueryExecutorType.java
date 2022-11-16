@@ -31,13 +31,13 @@ import java.util.stream.Stream;
 enum QueryExecutorType implements QueryExecutor {
     PAGING_STATE {
         @Override
-        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
+        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnManager manager) {
             return execute(keyspace, query, null, manager);
         }
 
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
-                                            DefaultCassandraColumnFamilyManager manager) {
+                                            DefaultCassandraColumnManager manager) {
 
             CassandraQuery query = CassandraQuery.class.cast(q);
 
@@ -74,13 +74,13 @@ enum QueryExecutorType implements QueryExecutor {
     },
     DEFAULT {
         @Override
-        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnFamilyManager manager) {
+        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnManager manager) {
             return execute(keyspace, query, null, manager);
         }
 
         @Override
         public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
-                                            DefaultCassandraColumnFamilyManager manager) {
+                                            DefaultCassandraColumnManager manager) {
 
             Select cassandraSelect = QueryUtils.select(query, keyspace);
 

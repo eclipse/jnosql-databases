@@ -56,20 +56,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CassandraColumnFamilyManagerTest {
+public class CassandraColumnManagerTest {
 
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
-    private CassandraColumnFamilyManager entityManager;
+    private CassandraColumnManager entityManager;
 
     @BeforeEach
     public void setUp() {
-        CassandraColumnFamilyManagerFactory managerFactory = ManagerFactorySupplier.INSTANCE.get();
-        entityManager = managerFactory.get(Constants.KEY_SPACE);
+        CassandraColumnManagerFactory managerFactory = ManagerFactorySupplier.INSTANCE.get();
+        entityManager = managerFactory.apply(Constants.KEY_SPACE);
     }
 
     @AfterEach
     public void afterEach() {
-        DefaultCassandraColumnFamilyManager cassandraColumnFamilyManager = DefaultCassandraColumnFamilyManager.class.cast(entityManager);
+        DefaultCassandraColumnManager cassandraColumnFamilyManager = DefaultCassandraColumnManager.class.cast(entityManager);
         CqlSession session = cassandraColumnFamilyManager.getSession();
         if (!session.isClosed()) {
             entityManager.cql("DROP TABLE IF EXISTS " + Constants.KEY_SPACE + '.' + Constants.COLUMN_FAMILY);
@@ -79,7 +79,7 @@ public class CassandraColumnFamilyManagerTest {
     @Test
     public void shouldClose() throws Exception {
         entityManager.close();
-        DefaultCassandraColumnFamilyManager cassandraColumnFamilyManager = DefaultCassandraColumnFamilyManager.class.cast(entityManager);
+        DefaultCassandraColumnManager cassandraColumnFamilyManager = DefaultCassandraColumnManager.class.cast(entityManager);
         CqlSession session = cassandraColumnFamilyManager.getSession();
         assertTrue(session.isClosed());
     }

@@ -18,21 +18,21 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
-import jakarta.nosql.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.ColumnManagerFactory;
 
 import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- * The Cassandra implementation to {@link ColumnFamilyManagerFactory}
+ * The Cassandra implementation to {@link ColumnManagerFactory}
  */
-public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerFactory {
+public class CassandraColumnManagerFactory implements ColumnManagerFactory {
 
     private final CqlSessionBuilder sessionBuilder;
 
     private final Executor executor;
 
-    CassandraColumnFamilyManagerFactory(final CqlSessionBuilder sessionBuilder, List<String> queries, Executor executor) {
+    CassandraColumnManagerFactory(final CqlSessionBuilder sessionBuilder, List<String> queries, Executor executor) {
         this.sessionBuilder = sessionBuilder;
         this.executor = executor;
         load(queries);
@@ -45,8 +45,8 @@ public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerF
     }
 
     @Override
-    public CassandraColumnFamilyManager get(String database) {
-        return new DefaultCassandraColumnFamilyManager(sessionBuilder.build(), executor, database);
+    public CassandraColumnManager apply(String database) {
+        return new DefaultCassandraColumnManager(sessionBuilder.build(), executor, database);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class CassandraColumnFamilyManagerFactory implements ColumnFamilyManagerF
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CassandraColumnFamilyManagerFactory{");
+        final StringBuilder sb = new StringBuilder("CassandraColumnManagerFactory{");
         sb.append("cluster=").append(sessionBuilder);
         sb.append(", executor=").append(executor);
         sb.append('}');

@@ -17,16 +17,16 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.column.ColumnFamilyManager;
+import jakarta.nosql.column.ColumnManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CassandraColumnFamilyManagerFactoryTest {
+public class CassandraColumnManagerFactoryTest {
 
-    private CassandraColumnFamilyManagerFactory subject;
+    private CassandraColumnManagerFactory subject;
 
     @BeforeEach
     public void setUp() {
@@ -36,20 +36,20 @@ public class CassandraColumnFamilyManagerFactoryTest {
         builder.put("cassandra.port", settings.get("cassandra.port").get().toString());
         builder.put("cassandra.query.1", " CREATE KEYSPACE IF NOT EXISTS newKeySpace WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        subject = cassandraConfiguration.get(builder.build());
+        subject = cassandraConfiguration.apply(builder.build());
     }
 
     @Test
     public void shouldReturnErrorWhenSettingsIsNull() {
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        assertThrows(NullPointerException.class, () -> cassandraConfiguration.get(null));
+        assertThrows(NullPointerException.class, () -> cassandraConfiguration.apply(null));
 
-        assertThrows(NullPointerException.class, () -> cassandraConfiguration.get(null));
+        assertThrows(NullPointerException.class, () -> cassandraConfiguration.apply(null));
     }
 
     @Test
     public void shouldReturnEntityManager() {
-        ColumnFamilyManager columnEntityManager = subject.get(Constants.KEY_SPACE);
+        ColumnManager columnEntityManager = subject.apply(Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 

@@ -20,7 +20,7 @@ import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnFamilyManager;
+import jakarta.nosql.column.ColumnManager;
 import jakarta.nosql.column.ColumnQuery;
 
 import java.time.Duration;
@@ -28,14 +28,14 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * The Cassandra implementation of {@link ColumnFamilyManager}, that supports all methods and also supports
+ * The Cassandra implementation of {@link ColumnManager}, that supports all methods and also supports
  * CQL and ConsistencyLevel.
- * <p>{@link CassandraColumnFamilyManager#select(ColumnQuery, ConsistencyLevel)}</p>
- * <p>{@link CassandraColumnFamilyManager#cql(String)}</p>
- * <p>{@link CassandraColumnFamilyManager#nativeQueryPrepare(String)}</p>
- * <p>{@link CassandraColumnFamilyManager#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnManager#select(ColumnQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnManager#cql(String)}</p>
+ * <p>{@link CassandraColumnManager#nativeQueryPrepare(String)}</p>
+ * <p>{@link CassandraColumnManager#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
  */
-public interface CassandraColumnFamilyManager extends ColumnFamilyManager {
+public interface CassandraColumnManager extends ColumnManager {
 
 
     /**

@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
-import jakarta.nosql.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.ColumnManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ public class CassandraConfigurationTest {
     public void shouldCreateDocumentEntityManagerFactoryFromSettings() {
         Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
+        ColumnManagerFactory entityManagerFactory = cassandraConfiguration.apply(settings);
         assertNotNull(entityManagerFactory);
     }
 
@@ -38,7 +38,7 @@ public class CassandraConfigurationTest {
     public void shouldCreateDocumentEntityManagerFactoryFromFile() {
         Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
-        ColumnFamilyManagerFactory entityManagerFactory = cassandraConfiguration.get(settings);
+        ColumnManagerFactory entityManagerFactory = cassandraConfiguration.apply(settings);
         assertNotNull(entityManagerFactory);
     }
 

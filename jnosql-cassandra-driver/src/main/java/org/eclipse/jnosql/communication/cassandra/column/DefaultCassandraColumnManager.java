@@ -40,7 +40,7 @@ import java.util.stream.StreamSupport;
 import static java.util.Objects.requireNonNull;
 
 
-class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManager {
+class DefaultCassandraColumnManager implements CassandraColumnManager {
 
     private final CqlSession session;
 
@@ -48,10 +48,15 @@ class DefaultCassandraColumnFamilyManager implements CassandraColumnFamilyManage
 
     private final String keyspace;
 
-    DefaultCassandraColumnFamilyManager(CqlSession session, Executor executor, String keyspace) {
+    DefaultCassandraColumnManager(CqlSession session, Executor executor, String keyspace) {
         this.session = session;
         this.executor = executor;
         this.keyspace = keyspace;
+    }
+
+    @Override
+    public String getName() {
+        return keyspace;
     }
 
     @Override
