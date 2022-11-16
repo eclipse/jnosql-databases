@@ -17,46 +17,31 @@ package org.eclipse.jnosql.communication.ravendb.document;
 
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
 
 /**
  * The RavenDB implementation to both {@link DocumentConfiguration}
- * that returns  {@link RavenDBDocumentCollectionManagerFactory}
+ * that returns  {@link RavenDBDocumentManagerFactory}
  *
  */
 public class RavenDBDocumentConfiguration implements DocumentConfiguration {
 
-    private static final String FILE_CONFIGURATION = "diana-ravendb.properties";
+
+    public static final String HOST = "jnosql.ravendb.host";
 
     @Override
-    public RavenDBDocumentCollectionManagerFactory get() {
-        Map<String, String> configuration = ConfigurationReader.from(FILE_CONFIGURATION);
-        return get(configuration);
-    }
-
-    @Override
-    public RavenDBDocumentCollectionManagerFactory get(Settings settings) {
+    public RavenDBDocumentManagerFactory apply(Settings settings) {
         requireNonNull(settings, "configurations is required");
 
-        String[] servers = settings.prefix(Arrays.asList("ravendb.host", Configurations.HOST.get()))
+        String[] servers = settings.prefix(Arrays.asList(HOST, Configurations.HOST.get()))
                 .stream().map(Object::toString)
                 .toArray(String[]::new);
-        return new RavenDBDocumentCollectionManagerFactory(servers);
+        return new RavenDBDocumentManagerFactory(servers);
     }
 
-    private RavenDBDocumentCollectionManagerFactory get(Map<String, String> configurations) throws NullPointerException {
-        requireNonNull(configurations, "configurations is required");
-
-        SettingsBuilder builder = Settings.builder();
-        configurations.entrySet().stream().forEach(e -> builder.put(e.getKey(), e.getValue()));
-        return get(builder.build());
-    }
 }

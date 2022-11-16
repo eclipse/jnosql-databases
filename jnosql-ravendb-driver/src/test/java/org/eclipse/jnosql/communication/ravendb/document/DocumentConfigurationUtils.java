@@ -16,18 +16,24 @@
 package org.eclipse.jnosql.communication.ravendb.document;
 
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentManagerFactory;
 
 import java.util.function.Supplier;
 
-public enum  DocumentConfigurationUtils implements Supplier<DocumentCollectionManagerFactory> {
+public enum  DocumentConfigurationUtils implements Supplier<DocumentManagerFactory> {
 
 INSTANCE;
 
-    public DocumentCollectionManagerFactory get() {
+    public DocumentManagerFactory get() {
         DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        return configuration.get();
+        return configuration.apply(getSettings());
+    }
+
+    public Settings getSettings() {
+        return Settings.builder()
+                .put(RavenDBDocumentConfiguration.HOST, "http://localhost:8080").build();
     }
 
 }

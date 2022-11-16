@@ -16,9 +16,9 @@
 package org.eclipse.jnosql.communication.ravendb.document;
 
 import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.document.DocumentQuery;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.queries.Query;
@@ -44,19 +44,27 @@ import static net.ravendb.client.Constants.Documents.Metadata.COLLECTION;
 import static net.ravendb.client.Constants.Documents.Metadata.EXPIRES;
 
 /**
- * The RavenDB implementation to {@link DocumentCollectionManager} that does not support TTL methods
- * <p>{@link RavenDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
+ * The RavenDB implementation to {@link DocumentManager} that does not support TTL methods
+ * <p>{@link RavenDBDocumentManager#insert(DocumentEntity, Duration)}</p>
  */
-public class RavenDBDocumentCollectionManager implements DocumentCollectionManager {
+public class RavenDBDocumentManager implements DocumentManager {
 
 
     private final DocumentStore store;
 
+    private final String database;
 
-    RavenDBDocumentCollectionManager(DocumentStore store) {
+
+    RavenDBDocumentManager(DocumentStore store, String database) {
         this.store = store;
         this.store.initialize();
+        this.database = database;
 
+    }
+
+    @Override
+    public String getName() {
+        return database;
     }
 
     @Override

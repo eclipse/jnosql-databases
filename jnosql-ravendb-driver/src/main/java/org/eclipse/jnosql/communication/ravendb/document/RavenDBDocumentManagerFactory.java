@@ -15,30 +15,28 @@
 
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 import net.ravendb.client.documents.DocumentStore;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * The RavenDB implementation to {@link DocumentCollectionManagerFactory}
+ * The RavenDB implementation to {@link DocumentManagerFactory}
  */
-public class RavenDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
+public class RavenDBDocumentManagerFactory implements DocumentManagerFactory {
 
     private final String[] hosts;
 
-
-
-    RavenDBDocumentCollectionManagerFactory(String[] hosts) {
+    RavenDBDocumentManagerFactory(String[] hosts) {
         this.hosts = hosts;
     }
 
     @Override
-    public RavenDBDocumentCollectionManager get(String database) {
+    public RavenDBDocumentManager apply(String database) {
         Objects.requireNonNull(database, "database is required");
         DocumentStore documentStore = new DocumentStore(hosts, database);
-        return new RavenDBDocumentCollectionManager(documentStore);
+        return new RavenDBDocumentManager(documentStore, database);
     }
 
 
@@ -49,7 +47,7 @@ public class RavenDBDocumentCollectionManagerFactory implements DocumentCollecti
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("RavenDBDocumentCollectionManagerFactory{");
+        final StringBuilder sb = new StringBuilder("RavenDBDocumentManagerFactory{");
         sb.append("hosts=").append(Arrays.toString(hosts));
         sb.append('}');
         return sb.toString();

@@ -23,7 +23,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RavenDBDocumentCollectionManagerFactoryTest {
+public class RavenDBDocumentManagerFactoryTest {
 
     private static RavenDBDocumentConfiguration configuration;
 
@@ -34,13 +34,13 @@ public class RavenDBDocumentCollectionManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        RavenDBDocumentCollectionManagerFactory ravenDBFactory = configuration.get();
-        assertNotNull(ravenDBFactory.get("database"));
+        RavenDBDocumentManagerFactory ravenDBFactory = configuration.apply(DocumentConfigurationUtils.INSTANCE.getSettings());
+        assertNotNull(ravenDBFactory.apply("database"));
     }
 
     @Test
     public void shouldReturnNPEWhenSettingsIsNull() {
-        assertThrows(NullPointerException.class, () -> configuration.get(null));
+        assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
 
