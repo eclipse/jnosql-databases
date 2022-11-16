@@ -17,7 +17,7 @@ package org.eclipse.jnosql.communication.mongodb.document;
 
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
@@ -47,10 +47,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDBDocumentCollectionManagerTest {
+public class MongoDBDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static DocumentCollectionManager entityManager;
+    private static DocumentManager entityManager;
 
     @BeforeAll
     public static void setUp() throws IOException {

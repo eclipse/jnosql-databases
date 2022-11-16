@@ -44,7 +44,6 @@ class MongoAuthenticationTest {
         assertThrows(CommunicationException.class, () -> MongoAuthentication.of(settings));
 
     }
-
     @Test
     public void shouldReturnOneAuthentication() {
         Settings settings = Settings.builder()

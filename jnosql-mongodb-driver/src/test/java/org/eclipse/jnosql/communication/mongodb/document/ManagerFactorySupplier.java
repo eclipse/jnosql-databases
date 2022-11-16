@@ -37,18 +37,18 @@ public enum ManagerFactorySupplier  {
         mongodb.start();
     }
 
-    public MongoDBDocumentCollectionManager get(String database) {
+    public MongoDBDocumentManager get(String database) {
         Settings settings = getSettings();
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        MongoDBDocumentCollectionManagerFactory factory = configuration.get(settings);
-        return factory.get(database);
+        MongoDBDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply(database);
     }
 
 
     private Settings getSettings() {
         Map<String,Object> settings = new HashMap<>();
-        String host = mongodb.getContainerIpAddress() + ":" + mongodb.getFirstMappedPort();
-        settings.put("mongodb.host.1", host);
+        String host = mongodb.getHost() + ":" + mongodb.getFirstMappedPort();
+        settings.put(MongoDBDocumentConfigurations.HOST.get()+".1", host);
         return Settings.of(settings);
     }
 

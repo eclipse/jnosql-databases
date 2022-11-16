@@ -16,22 +16,25 @@
 package org.eclipse.jnosql.communication.mongodb.document;
 
 import com.mongodb.client.MongoClient;
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
+
+import java.util.Objects;
 
 /**
- * The mongodb implementation to {@link DocumentCollectionManagerFactory}
+ * The mongodb implementation to {@link DocumentManagerFactory}
  */
-public class MongoDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
+public class MongoDBDocumentManagerFactory implements DocumentManagerFactory {
 
     private final MongoClient mongoClient;
 
-    MongoDBDocumentCollectionManagerFactory(MongoClient mongoClient) {
+    MongoDBDocumentManagerFactory(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
     }
 
     @Override
-    public MongoDBDocumentCollectionManager get(String database) {
-        return new MongoDBDocumentCollectionManager(mongoClient.getDatabase(database));
+    public MongoDBDocumentManager apply(String database) {
+        Objects.requireNonNull(database, "database is required");
+        return new MongoDBDocumentManager(mongoClient.getDatabase(database), database);
     }
 
 
@@ -42,7 +45,7 @@ public class MongoDBDocumentCollectionManagerFactory implements DocumentCollecti
 
     @Override
     public String toString() {
-       return "MongoDBDocumentCollectionManagerFactory{" + "mongoClient=" + mongoClient +
+       return "MongoDBDocumentManagerFactory{" + "mongoClient=" + mongoClient +
                 '}';
     }
 }

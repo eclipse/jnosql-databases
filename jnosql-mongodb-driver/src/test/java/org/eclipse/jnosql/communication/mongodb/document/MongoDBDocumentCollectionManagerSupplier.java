@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
 
 public class MongoDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
@@ -22,7 +22,7 @@ public class MongoDBDocumentCollectionManagerSupplier implements DocumentCollect
     private static final String DATABASE = "tck-database";
 
     @Override
-    public DocumentCollectionManager get() {
+    public DocumentManager get() {
         return ManagerFactorySupplier.INSTANCE.get(DATABASE);
     }
 

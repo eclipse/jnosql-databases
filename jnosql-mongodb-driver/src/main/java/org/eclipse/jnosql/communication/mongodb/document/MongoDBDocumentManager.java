@@ -24,9 +24,9 @@ import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.nosql.Sort;
 import jakarta.nosql.SortType;
-import jakarta.nosql.document.DocumentCollectionManager;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
+import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.document.DocumentQuery;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
@@ -47,20 +47,27 @@ import static org.eclipse.jnosql.communication.mongodb.document.MongoDBUtils.ID_
 import static org.eclipse.jnosql.communication.mongodb.document.MongoDBUtils.getDocument;
 
 /**
- * The mongodb implementation to {@link DocumentCollectionManager} that does not support TTL methods
- * <p>{@link MongoDBDocumentCollectionManager#insert(DocumentEntity, Duration)}</p>
+ * The mongodb implementation to {@link DocumentManager} that does not support TTL methods
+ * <p>{@link MongoDBDocumentManager#insert(DocumentEntity, Duration)}</p>
  */
-public class MongoDBDocumentCollectionManager implements DocumentCollectionManager {
+public class MongoDBDocumentManager implements DocumentManager {
 
     private static final BsonDocument EMPTY = new BsonDocument();
 
     private final MongoDatabase mongoDatabase;
 
+    private final String database;
 
-    MongoDBDocumentCollectionManager(MongoDatabase mongoDatabase) {
+    MongoDBDocumentManager(MongoDatabase mongoDatabase, String database) {
         this.mongoDatabase = mongoDatabase;
+        this.database = database;
     }
 
+
+    @Override
+    public String getName() {
+        return database;
+    }
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
