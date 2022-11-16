@@ -24,7 +24,6 @@ import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,8 +78,7 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
                 HazelcastConfigurations.HOST, Configurations.HOST))
                 .stream().map(Object::toString)
                 .collect(Collectors.toList());
-        String instance = settings.getSupplier(Arrays.asList(
-                HazelcastConfigurations.INSTANCE)).map(Object::toString)
+        String instance = settings.get(HazelcastConfigurations.INSTANCE).map(Object::toString)
                 .orElse(DEFAULT_INSTANCE);
         Config config = new Config(instance);
 
