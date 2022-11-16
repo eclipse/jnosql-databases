@@ -27,7 +27,7 @@ import java.util.Set;
 
 /**
  * The riak implementation to {@link BucketManagerFactory} that returns {@link RiakBucketManager}
- * This implementation just has support to {@link RiakBucketManagerFactory#getBucketManager(String)}
+ * This implementation just has support to {@link RiakBucketManagerFactory#apply(String)}
  * So, these metdhos will returns {@link UnsupportedOperationException}
  * <p>{@link BucketManagerFactory#getList(String, Class)}</p>
  * <p>{@link BucketManagerFactory#getSet(String, Class)}</p>
