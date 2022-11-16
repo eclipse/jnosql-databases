@@ -16,6 +16,7 @@ package org.eclipse.jnosql.communication.arangodb.document;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
@@ -67,7 +68,8 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         String collectionName = entity.getName();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
-        DocumentCreateEntity<BaseDocument> arandoDocument = arangoDB.db(database).collection(collectionName).insertDocument(baseDocument);
+        DocumentCreateEntity<BaseDocument> arandoDocument = arangoDB.db(DbName.of(database))
+                .collection(collectionName).insertDocument(baseDocument);
         updateEntity(entity, arandoDocument.getKey(), arandoDocument.getId(), arandoDocument.getRev());
         return entity;
     }
@@ -77,7 +79,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         String collectionName = entity.getName();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
-        DocumentUpdateEntity<BaseDocument> arandoDocument = arangoDB.db(database)
+        DocumentUpdateEntity<BaseDocument> arandoDocument = arangoDB.db(DbName.of(database))
                 .collection(collectionName).updateDocument(baseDocument.getKey(), baseDocument);
         updateEntity(entity, arandoDocument.getKey(), arandoDocument.getId(), arandoDocument.getRev());
         return entity;
@@ -99,7 +101,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         }
 
         AQLQueryResult delete = QueryAQLConverter.delete(query);
-        arangoDB.db(database).query(delete.getQuery(), delete.getValues(),
+        arangoDB.db(DbName.of(database)).query(delete.getQuery(), delete.getValues(),
                 null, BaseDocument.class);
     }
 
@@ -108,7 +110,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         requireNonNull(query, "query is required");
 
         AQLQueryResult result = QueryAQLConverter.select(query);
-        ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.getQuery(),
+        ArangoCursor<BaseDocument> documents = arangoDB.db(DbName.of(database)).query(result.getQuery(),
                 result.getValues(), null, BaseDocument.class);
 
         return StreamSupport.stream(documents.spliterator(), false)
@@ -119,7 +121,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     public long count(String documentCollection) {
         Objects.requireNonNull(documentCollection, "document collection is required");
         String aql = "RETURN LENGTH(" + documentCollection + ")";
-        ArangoCursor<Object> query = arangoDB.db(database).query(aql, emptyMap(), null, Object.class);
+        ArangoCursor<Object> query = arangoDB.db(DbName.of(database)).query(aql, emptyMap(), null, Object.class);
         return StreamSupport.stream(query.spliterator(), false).findFirst().map(Long.class::cast).orElse(0L);
     }
 
@@ -128,7 +130,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     public Stream<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException {
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
-        ArangoCursor<BaseDocument> result = arangoDB.db(database).query(query, values, null, BaseDocument.class);
+        ArangoCursor<BaseDocument> result = arangoDB.db(DbName.of(database)).query(query, values, null, BaseDocument.class);
         return StreamSupport.stream(result.spliterator(), false)
                 .map(ArangoDBUtil::toEntity);
 
@@ -139,7 +141,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
         requireNonNull(typeClass, "typeClass is required");
-        ArangoCursor<T> result = arangoDB.db(database).query(query, values, null, typeClass);
+        ArangoCursor<T> result = arangoDB.db(DbName.of(database)).query(query, values, null, typeClass);
         return StreamSupport.stream(result.spliterator(), false);
     }
 
@@ -147,7 +149,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     public <T> Stream<T> aql(String query, Class<T> typeClass) {
         requireNonNull(query, "query is required");
         requireNonNull(typeClass, "typeClass is required");
-        ArangoCursor<T> result = arangoDB.db(database).query(query, emptyMap(), null, typeClass);
+        ArangoCursor<T> result = arangoDB.db(DbName.of(database)).query(query, emptyMap(), null, typeClass);
         return StreamSupport.stream(result.spliterator(), false);
     }
 
