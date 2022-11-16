@@ -32,7 +32,7 @@ public class DynamoDBBucketManagerFactory implements BucketManagerFactory {
     }
 
     @Override
-    public DynamoDBBucketManager getBucketManager(String bucketName) {
+    public DynamoDBBucketManager apply(String bucketName) {
 
         return getBucketManager(bucketName, null, null);
     }

@@ -14,31 +14,33 @@
  */
 package org.eclipse.jnosql.communication.dynamodb;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.dynamodb.keyvalue.DynamoDBKeyValueConfiguration;
 import org.testcontainers.containers.GenericContainer;
 
 public class DynamoDBTestUtils {
-	
-	  private static GenericContainer dynamodb =
-	            new GenericContainer("amazon/dynamodb-local:latest")
-	                    .withExposedPorts(8000)
-	                    .withEnv("AWS_ACCESS_KEY_ID", "aws --profile default configure get aws_access_key_id")
-	                    .withEnv("AWS_SECRET_ACCESS_KEY", "aws --profile default configure get aws_secret_access_key");
-	                    //.withCommand("--rm");
-	  					
-	                   // .waitingFor(Wait.forHttp("/")
-	                     //       .forStatusCode(200));
-	  
-	  
-	public static BucketManagerFactory get() {
-		dynamodb.start();
-		DynamoDBKeyValueConfiguration configuration = new DynamoDBKeyValueConfiguration();
-		configuration.setEndPoint("http://"+dynamodb.getContainerIpAddress()+":"+dynamodb.getFirstMappedPort());
-		return configuration.get();
-	}
-	
-	public static void shutDown() {
-		dynamodb.close();
-	}
+
+    private static GenericContainer dynamodb =
+            new GenericContainer("amazon/dynamodb-local:latest")
+                    .withExposedPorts(8000)
+                    .withEnv("AWS_ACCESS_KEY_ID", "aws --profile default configure get aws_access_key_id")
+                    .withEnv("AWS_SECRET_ACCESS_KEY", "aws --profile default configure get aws_secret_access_key");
+    //.withCommand("--rm");
+
+    // .waitingFor(Wait.forHttp("/")
+    //       .forStatusCode(200));
+
+
+    public static BucketManagerFactory get() {
+        dynamodb.start();
+        DynamoDBKeyValueConfiguration configuration = new DynamoDBKeyValueConfiguration();
+        String endpoint = "http://" + dynamodb.getHost() + ":" + dynamodb.getFirstMappedPort();
+        return configuration.apply(Settings.builder()
+                .put(DynamoDBConfigurations.ENDPOINT, endpoint).build());
+    }
+
+    public static void shutDown() {
+        dynamodb.close();
+    }
 }

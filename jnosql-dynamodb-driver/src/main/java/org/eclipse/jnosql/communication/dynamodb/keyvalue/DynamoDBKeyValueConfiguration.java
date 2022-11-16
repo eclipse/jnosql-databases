@@ -23,12 +23,7 @@ public class DynamoDBKeyValueConfiguration extends DynamoDBConfiguration
         implements KeyValueConfiguration {
 
     @Override
-    public DynamoDBBucketManagerFactory get() {
-        return new DynamoDBBucketManagerFactory(builder.build());
-    }
-
-    @Override
-    public DynamoDBBucketManagerFactory get(Settings settings) {
+    public DynamoDBBucketManagerFactory apply(Settings settings) {
         DynamoDbClient dynamoDB = getDynamoDB(settings);
         return new DynamoDBBucketManagerFactory(dynamoDB);
     }

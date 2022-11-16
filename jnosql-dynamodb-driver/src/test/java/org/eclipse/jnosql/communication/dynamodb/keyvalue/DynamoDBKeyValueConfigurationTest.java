@@ -31,11 +31,6 @@ public class DynamoDBKeyValueConfigurationTest {
 		configuration = new DynamoDBKeyValueConfiguration();
 	}
 
-	@Test
-	public void shouldCreateKeyValueFactoryFromFile() {
-		BucketManagerFactory managerFactory = configuration.get();
-		assertNotNull(managerFactory);
-	}
 
 	@Test
 	public void shouldReturnFromConfiguration() {

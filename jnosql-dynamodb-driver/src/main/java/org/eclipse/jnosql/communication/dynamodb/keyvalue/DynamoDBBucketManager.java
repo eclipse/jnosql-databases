@@ -48,6 +48,11 @@ public class DynamoDBBucketManager implements BucketManager {
     }
 
     @Override
+    public String getName() {
+        return tableName;
+    }
+
+    @Override
     public <K, V> void put(K key, V value) throws NullPointerException {
         client.putItem(PutItemRequest.builder().tableName(tableName).item(DynamoDBUtils.createAttributeValues(key, value)).build());
     }

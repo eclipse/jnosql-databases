@@ -53,7 +53,7 @@ public class DynamoDBKeyValueEntityManagerTest {
     @BeforeEach
     public void init() {
         keyValueEntityManagerFactory = DynamoDBTestUtils.get();
-        keyValueEntityManager = keyValueEntityManagerFactory.getBucketManager("users-entity");
+        keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
 
