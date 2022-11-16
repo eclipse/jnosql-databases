@@ -17,6 +17,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 === Removed
 - Remove all deprecated settings class
+- Remove the configuration option to read from a local file
 
 == [1.0.0-b4] - 2022-06-04
 
