@@ -58,6 +58,11 @@ public class ArangoDBBucketManager implements BucketManager {
     }
 
     @Override
+    public String getName() {
+        return bucketName;
+    }
+
+    @Override
     public <K, V> void put(K key, V value) throws NullPointerException {
         Objects.requireNonNull(key, "Key is required");
         Objects.requireNonNull(value, "value is required");
