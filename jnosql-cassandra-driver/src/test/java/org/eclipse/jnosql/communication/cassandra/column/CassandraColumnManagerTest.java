@@ -61,8 +61,8 @@ public class CassandraColumnManagerTest {
     public static final ConsistencyLevel CONSISTENCY_LEVEL = ConsistencyLevel.ONE;
     private CassandraColumnManager entityManager;
 
-    @BeforeEach
-    public void setUp() {
+
+    {
         CassandraColumnManagerFactory managerFactory = ManagerFactorySupplier.INSTANCE.get();
         entityManager = managerFactory.apply(Constants.KEY_SPACE);
     }
