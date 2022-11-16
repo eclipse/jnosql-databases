@@ -13,6 +13,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 === Changed
 - Move the default documentation to ASCIIDOC
+- Refactoring the properties settings to start with `jnosql`as prefix
+
+=== Removed
+- Remove all deprecated settings class
 
 == [1.0.0-b4] - 2022-06-04
 
