@@ -15,7 +15,8 @@
 
 package org.eclipse.jnosql.communication.arangodb.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.Settings;
+import jakarta.nosql.document.DocumentManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class ArangoDBDocumentConfigurationTest {
     public void shouldCreateDocumentCollectionManagerFactory() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost("localhost", 8529);
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        DocumentManagerFactory managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 

@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.communication.arangodb.keyvalue;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.keyvalue.BucketManagerFactory;
 import jakarta.nosql.keyvalue.KeyValueConfiguration;
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +35,7 @@ public class ArangoDBConfigurationTest {
 
     @Test
     public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.get();
+        BucketManagerFactory managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 

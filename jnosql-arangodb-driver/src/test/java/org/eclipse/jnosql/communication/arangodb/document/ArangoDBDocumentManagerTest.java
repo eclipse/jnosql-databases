@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.communication.arangodb.document;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
@@ -50,12 +51,12 @@ public class ArangoDBDocumentManagerTest {
     private static final String DATABASE = "database";
     private ArangoDBDocumentManager entityManager;
     private Random random;
-    private String KEY_NAME = "_key";
+    private final String KEY_NAME = "_key";
 
     @BeforeEach
     public void setUp() {
         random = new Random();
-        entityManager = ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE.get().get(DATABASE);
+        entityManager = ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE.get().apply(DATABASE);
         entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
     }
 
@@ -207,7 +208,7 @@ public class ArangoDBDocumentManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(map);
+        arangoDB.db(DbName.of(DATABASE)).collection(COLLECTION_NAME).insertDocument(map);
         DocumentQuery select = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(select).collect(Collectors.toList());
         assertFalse(entities.isEmpty());

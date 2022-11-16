@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.communication.arangodb.document;
 
 
+import jakarta.nosql.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
@@ -40,6 +41,6 @@ enum ArangoDBDocumentCollectionManagerFactorySupplier implements Supplier<Arango
     public ArangoDBDocumentManagerFactory get() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
-        return configuration.get();
+        return configuration.apply(Settings.builder().build());
     }
 }
