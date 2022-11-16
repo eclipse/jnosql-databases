@@ -72,7 +72,8 @@ public class CassandraColumnManagerTest {
         DefaultCassandraColumnManager cassandraColumnFamilyManager = DefaultCassandraColumnManager.class.cast(entityManager);
         CqlSession session = cassandraColumnFamilyManager.getSession();
         if (!session.isClosed()) {
-            entityManager.cql("DROP TABLE IF EXISTS " + Constants.KEY_SPACE + '.' + Constants.COLUMN_FAMILY);
+            entityManager.cql("TRUNCATE " + Constants.KEY_SPACE + '.' + Constants.COLUMN_FAMILY);
+            entityManager.cql("TRUNCATE " + Constants.KEY_SPACE + '.' + "users");
         }
     }
 
