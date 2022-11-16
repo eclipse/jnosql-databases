@@ -16,12 +16,12 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManager;
+import jakarta.nosql.document.DocumentManager;
 
 /**
- * A couchdb extension where it does provide a {@link CouchDBDocumentCollectionManager#count()} feature.
+ * A couchdb extension where it does provide a {@link CouchDBDocumentManager#count()} feature.
  */
-public interface CouchDBDocumentCollectionManager extends DocumentCollectionManager {
+public interface CouchDBDocumentManager extends DocumentManager {
 
     /**
      * Returns the number of elements of database

@@ -30,55 +30,55 @@ public enum  CouchDBConfigurations implements Supplier<String> {
     /**
      * The port connection to a client connect. The default value is "5984"
      */
-    PORT("couchdb.port"),
+    PORT("jnosql.couchdb.port"),
 
     /**
      * The max of connection that the couchdb client have. The default value is "20"
      */
-    MAX_CONNECTIONS("couchdb.max.connections"),
+    MAX_CONNECTIONS("jnosql.couchdb.max.connections"),
 
     /**
      * The timeout in milliseconds used when requesting a connection. The default value is "1000".
      */
-    CONNECTION_TIMEOUT("couchdb.connection.timeout"),
+    CONNECTION_TIMEOUT("jnosql.couchdb.connection.timeout"),
 
     /**
      * The socket timeout in milliseconds, which is the timeout for waiting for data or, put differently,
      *  a maximum period inactivity between two consecutive data packets). The default value is "10000".
      */
-    SOCKET_TIMEOUT("couchdb.socket.timeout"),
+    SOCKET_TIMEOUT("jnosql.couchdb.socket.timeout"),
 
     /**
      *  The current maximum response body size that will be cached. The value is "8192".
      */
-    MAX_OBJECT_SIZE_BYTES("couchdb.max.object.size.bytes"),
+    MAX_OBJECT_SIZE_BYTES("jnosql.couchdb.max.object.size.bytes"),
 
     /**
      * The maximum number of cache entries the cache will retain. The default value is "1000".
      */
-    MAX_CACHE_ENTRIES("couchdb.max.cache.entries"),
+    MAX_CACHE_ENTRIES("jnosql.couchdb.max.cache.entries"),
     /**
      * The host at the database.
      */
-    HOST("couchdb.host"),
+    HOST("jnosql.couchdb.host"),
     /**
      * The user's credential.
      */
-    USER("couchdb.username"),
+    USER("jnosql.couchdb.username"),
 
     /**
      * The password's credential
      */
-    PASSWORD("couchdb.password"),
+    PASSWORD("jnosql.couchdb.password"),
     /**
      *If the request use a https or a http.
      */
-    ENABLE_SSL("couchdb.enable.ssl"),
+    ENABLE_SSL("jnosql.couchdb.enable.ssl"),
 
     /**
      * Determines whether compressed entities should be decompressed automatically.
      */
-    COMPRESSION("couchdb.compression");
+    COMPRESSION("jnosql.couchdb.compression");
 
     private final String configuration;
 

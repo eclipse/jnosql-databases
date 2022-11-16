@@ -16,26 +16,26 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.document.DocumentManagerFactory;
 
 import java.util.Objects;
 
-public class CouchDBDocumentCollectionManagerFactory implements DocumentCollectionManagerFactory {
+public class CouchDBDocumentManagerFactory implements DocumentManagerFactory {
 
 
     private final CouchDBHttpConfiguration configuration;
 
-    CouchDBDocumentCollectionManagerFactory(CouchDBHttpConfiguration configuration) {
+    CouchDBDocumentManagerFactory(CouchDBHttpConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
-    public CouchDBDocumentCollectionManager get(String database) {
+    public CouchDBDocumentManager apply(String database) {
         Objects.requireNonNull(database, "database is required");
 
         CouchDBHttpClient client = configuration.getClient(database);
         client.createDatabase();
-        return new DefaultCouchDBDocumentCollectionManager(client);
+        return new DefaultCouchDBDocumentCollectionManager(client, database);
     }
 
 

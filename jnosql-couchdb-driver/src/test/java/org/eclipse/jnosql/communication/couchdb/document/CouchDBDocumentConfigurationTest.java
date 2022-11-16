@@ -16,8 +16,9 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
+import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
+import jakarta.nosql.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,14 +29,14 @@ class CouchDBDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByMap() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        DocumentManagerFactory managerFactory = configuration.apply(Settings.settings());
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldCreateDocumentCollectionManagerFactoryByFile() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
+        DocumentManagerFactory managerFactory = configuration.apply(Settings.settings());
         assertNotNull(managerFactory);
     }
 

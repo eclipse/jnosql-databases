@@ -26,13 +26,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentCollectionManager {
+class DefaultCouchDBDocumentCollectionManager implements CouchDBDocumentManager {
 
 
     private final CouchDBHttpClient connector;
 
-    DefaultCouchDBDocumentCollectionManager(CouchDBHttpClient connector) {
+    private final String name;
+
+    DefaultCouchDBDocumentCollectionManager(CouchDBHttpClient connector, String name) {
         this.connector = connector;
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
