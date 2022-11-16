@@ -14,7 +14,8 @@
  */
 package org.eclipse.jnosql.communication.hbase.column;
 
-import jakarta.nosql.column.ColumnFamilyManager;
+import jakarta.nosql.Settings;
+import jakarta.nosql.column.ColumnManager;
 import jakarta.nosql.tck.communication.driver.column.ColumnFamilyManagerSupplier;
 
 public class HBaseColumnFamilyManagerSupplier implements ColumnFamilyManagerSupplier {
@@ -23,11 +24,11 @@ public class HBaseColumnFamilyManagerSupplier implements ColumnFamilyManagerSupp
     public static final String FAMILY = "person";
 
     @Override
-    public ColumnFamilyManager get() {
+    public ColumnManager get() {
         HBaseColumnConfiguration configuration = new HBaseColumnConfiguration();
         configuration.add(FAMILY);
-        final HBaseColumnFamilyManagerFactory factory = configuration.get();
-        return factory.get(DATABASE);
+        final HBaseColumnManagerFactory factory = configuration.apply(Settings.builder().build());
+        return factory.apply(DATABASE);
     }
 
 }

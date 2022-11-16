@@ -23,7 +23,7 @@ import jakarta.nosql.column.Column;
 import jakarta.nosql.column.ColumnCondition;
 import jakarta.nosql.column.ColumnDeleteQuery;
 import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnFamilyManager;
+import jakarta.nosql.column.ColumnManager;
 import jakarta.nosql.column.ColumnQuery;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.Delete;
@@ -50,11 +50,11 @@ import static jakarta.nosql.Condition.OR;
 import static java.util.stream.Collectors.toList;
 
 /**
- * The Hbase implementation to {@link ColumnFamilyManager}.
+ * The Hbase implementation to {@link ColumnManager}.
  * It does not support TTL methods
- * <p>{@link HBaseColumnFamilyManager#insert(ColumnEntity, Duration)}</p>
+ * <p>{@link HBaseColumnManager#insert(ColumnEntity, Duration)}</p>
  */
-public class HBaseColumnFamilyManager implements ColumnFamilyManager {
+public class HBaseColumnManager implements ColumnManager {
 
     private static final String KEY_REQUIRED_ERROR = "\"To save an entity is necessary to have an row, a Column that has a blank name. Documents.of(\\\"\\\", keyValue);\"";
 
@@ -62,10 +62,18 @@ public class HBaseColumnFamilyManager implements ColumnFamilyManager {
     private final Table table;
     private final ValueWriter writerField = ValueWriterDecorator.getInstance();
 
+    private final String database;
 
-    HBaseColumnFamilyManager(Connection connection, Table table) {
+
+    HBaseColumnManager(Connection connection, Table table, String database) {
         this.connection = connection;
         this.table = table;
+        this.database = database;
+    }
+
+    @Override
+    public String getName() {
+        return database;
     }
 
     @Override

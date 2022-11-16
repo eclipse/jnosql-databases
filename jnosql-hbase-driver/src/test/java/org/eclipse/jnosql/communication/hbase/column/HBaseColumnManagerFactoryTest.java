@@ -15,19 +15,20 @@
 
 package org.eclipse.jnosql.communication.hbase.column;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
-import jakarta.nosql.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.ColumnManagerFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertNotNull;
 
 
-public class HBaseColumnFamilyManagerFactoryTest {
+public class HBaseColumnManagerFactoryTest {
     private ColumnConfiguration configuration = new HBaseColumnConfiguration();
 
     @Test
     public void shouldCreateColumnFamilyManager() {
-        ColumnFamilyManagerFactory managerFactory = configuration.get();
+        ColumnManagerFactory managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 

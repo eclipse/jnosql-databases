@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HBaseColumnFamilyManagerTest {
+public class HBaseFamilyManagerTest {
 
     private static final String DATA_BASE = "database";
     public static final String FAMILY = "person";

@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.hbase.column;
 
 
-import jakarta.nosql.column.ColumnFamilyManagerFactory;
+import jakarta.nosql.column.ColumnManagerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
@@ -32,19 +32,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFactory {
+public class HBaseColumnManagerFactory implements ColumnManagerFactory {
 
     private final Configuration configuration;
 
     private final List<String> families;
 
-    HBaseColumnFamilyManagerFactory(Configuration configuration, List<String> families) {
+    HBaseColumnManagerFactory(Configuration configuration, List<String> families) {
         this.configuration = configuration;
         this.families = families;
     }
 
     @Override
-    public HBaseColumnFamilyManager get(String database) {
+    public HBaseColumnManager apply(String database) {
         try {
             Connection connection = ConnectionFactory.createConnection(configuration);
             Admin admin = connection.getAdmin();
@@ -55,7 +55,7 @@ public class HBaseColumnFamilyManagerFactory implements ColumnFamilyManagerFacto
                 createTable(admin, tableName);
             }
             Table table = connection.getTable(tableName);
-            return new HBaseColumnFamilyManager(connection, table);
+            return new HBaseColumnManager(connection, table, database);
         } catch (IOException e) {
             throw new HBaseException("A error happened when try to create ColumnFamilyManager", e);
         }

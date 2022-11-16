@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Configuration to HBase that returns {@link HBaseColumnFamilyManagerFactory}
+ * Configuration to HBase that returns {@link HBaseColumnManagerFactory}
  * <p>hbase.family.n: as prefix to add family, eg: hbase,family.1=column-family</p>
  */
 public class HBaseColumnConfiguration implements ColumnConfiguration {
@@ -77,18 +77,14 @@ public class HBaseColumnConfiguration implements ColumnConfiguration {
     }
 
 
-    @Override
-    public HBaseColumnFamilyManagerFactory get() {
-        return new HBaseColumnFamilyManagerFactory(configuration, families);
-    }
 
     @Override
-    public HBaseColumnFamilyManagerFactory get(Settings settings) throws NullPointerException {
+    public HBaseColumnManagerFactory apply(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
         List<String> families = settings.prefix(HbaseConfigurations.FAMILY)
                 .stream().map(Object::toString).collect(Collectors.toList());
-        return new HBaseColumnFamilyManagerFactory(configuration, families);
+        return new HBaseColumnManagerFactory(configuration, families);
     }
 
     @Override
