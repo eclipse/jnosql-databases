@@ -30,47 +30,47 @@ public enum RedisConfigurations implements Supplier<String> {
     /**
      * The database host
      */
-    HOST("redis.host"),
+    HOST("jnosql.redis.host"),
     /**
      * The database port
      */
-    PORT("redis.port"),
+    PORT("jnosql.redis.port"),
     /**
      * The redis timeout, the default value 2000 on milliseconds
      */
-    TIMEOUT("redis.timeout"),
+    TIMEOUT("jnosql.redis.timeout"),
     /**
      * The password's credential
      */
-    PASSWORD("redis.password"),
+    PASSWORD("jnosql.redis.password"),
     /**
      * The redis database number, the default value is 0
      */
-    DATABASE("redis.database"),
+    DATABASE("jnosql.redis.database"),
     /**
      * The client's name
      */
-    CLIENT_NAME("redis.client.name"),
+    CLIENT_NAME("jnosql.redis.client.name"),
     /**
      * The value for the maxTotal configuration attribute for pools created with this configuration instance.
      * The max number of thread to {@link redis.clients.jedis.JedisPoolConfig}, the default value 1000
      */
-    MAX_TOTAL("redis.max.total"),
+    MAX_TOTAL("jnosql.redis.max.total"),
     /**
      * The value for the maxIdle configuration attribute for pools created with this configuration instance.
      * The max idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 10
      */
-    MAX_IDLE("redis.max.idle"),
+    MAX_IDLE("jnosql.redis.max.idle"),
     /**
      * The value for the minIdle configuration attribute for pools created with this configuration instance.
      * The min idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 1
      */
-    MIN_IDLE("redis.min.idle"),
+    MIN_IDLE("jnosql.redis.min.idle"),
     /**
      * The value for the {@code maxWait} configuration attribute for pools created with this configuration instance.
      * The max wait on millis on {@link redis.clients.jedis.JedisPoolConfig}, the default value 3000
      */
-    MAX_WAIT_MILLIS("redis.max.wait.millis");
+    MAX_WAIT_MILLIS("jnosql.redis.max.wait.millis");
 
     private final String configuration;
 
