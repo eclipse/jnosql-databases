@@ -15,27 +15,19 @@
 
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentCollectionManagerFactory;
 import jakarta.nosql.document.DocumentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SolrDocumentConfigurationTest {
 
-    @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
-        DocumentConfiguration configuration = new SolrDocumentConfiguration();
-        DocumentCollectionManagerFactory managerFactory = configuration.get();
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldReturnErrorWhendSettingsIsNull() {
         DocumentConfiguration configuration = new SolrDocumentConfiguration();
-        assertThrows(NullPointerException.class, () -> configuration.get(null));
+        assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
 
