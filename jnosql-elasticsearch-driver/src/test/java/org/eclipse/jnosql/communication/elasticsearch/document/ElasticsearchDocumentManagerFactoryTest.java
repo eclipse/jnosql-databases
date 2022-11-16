@@ -23,7 +23,7 @@ public class ElasticsearchDocumentManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        ElasticsearchDocumentManagerFactory factory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        ElasticsearchDocumentManagerFactory factory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
         assertNotNull(factory.apply("database"));
     }
 

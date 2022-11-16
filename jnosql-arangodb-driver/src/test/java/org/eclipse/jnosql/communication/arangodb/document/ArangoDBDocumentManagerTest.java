@@ -56,7 +56,7 @@ public class ArangoDBDocumentManagerTest {
     @BeforeEach
     public void setUp() {
         random = new Random();
-        entityManager = ArangoDBDocumentCollectionManagerFactorySupplier.INSTANCE.get().apply(DATABASE);
+        entityManager = ArangoDBDocumentManagerFactorySupplier.INSTANCE.get().apply(DATABASE);
         entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
     }
 

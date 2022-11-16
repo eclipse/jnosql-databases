@@ -12,18 +12,17 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.mongodb.document;
+package org.eclipse.jnosql.communication.solr.document;
 
 import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentManagerSupplier;
 
-public class MongoDBDocumentManagerSupplier implements DocumentManagerSupplier {
+public class SolrDocumentManagerSupplier implements DocumentManagerSupplier {
 
-    private static final String DATABASE = "tck-database";
 
     @Override
     public DocumentManager get() {
-        return ManagerFactorySupplier.INSTANCE.get(DATABASE);
+        return ManagerFactorySupplier.INSTANCE.get("database");
     }
 
 }

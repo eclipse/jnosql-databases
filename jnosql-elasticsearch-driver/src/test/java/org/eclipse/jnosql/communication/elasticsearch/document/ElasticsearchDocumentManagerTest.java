@@ -51,7 +51,7 @@ public class ElasticsearchDocumentManagerTest {
 
     @BeforeEach
     public void setUp() {
-        ElasticsearchDocumentManagerFactory managerFactory = ElasticsearchDocumentCollectionManagerFactorySupplier.INSTANCE.get();
+        ElasticsearchDocumentManagerFactory managerFactory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
         entityManager = managerFactory.apply(DocumentEntityGerator.INDEX);
 
         DocumentDeleteQuery deleteQuery = DocumentDeleteQuery.delete().from("person").build();

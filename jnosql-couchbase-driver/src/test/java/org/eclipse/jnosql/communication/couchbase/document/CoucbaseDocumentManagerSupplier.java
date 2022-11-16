@@ -12,16 +12,23 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.ravendb.document;
+package org.eclipse.jnosql.communication.couchbase.document;
 
+import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentManager;
 import jakarta.nosql.tck.communication.driver.document.DocumentCollectionManagerSupplier;
+import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
+import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 
-public class RavenDBDocumentCollectionManagerSupplier implements DocumentCollectionManagerSupplier {
+public class CoucbaseDocumentManagerSupplier implements DocumentCollectionManagerSupplier {
+
 
     @Override
     public DocumentManager get() {
-        return DocumentConfigurationUtils.INSTANCE.get().apply("database");
+        CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
+        Settings settings = CouchbaseUtil.getSettings();
+        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
+        return managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
 }
