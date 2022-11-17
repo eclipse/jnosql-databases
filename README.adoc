@@ -898,7 +898,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |Configuration property |Description
 
 |`jnosql.solr.host`
-|Database's host. It is a prefix to enumerate hosts. E.g.: solr.host.1=HOST
+|Database's host. It is a prefix to enumerate hosts. E.g.: jnosql.solr.host.1=HOST
 
 |`jnosql.solr.user`
 |The user's userID.

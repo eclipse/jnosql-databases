@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  */
 public enum SolrDocumentConfigurations implements Supplier<String> {
     /**
-     * Database's host. It is a prefix to enumerate hosts. E.g.: solr.host.1=HOST
+     * Database's host. It is a prefix to enumerate hosts. E.g.: jnosql.solr.host.1=HOST
      */
     HOST("jnosql.solr.host"),
     /**
