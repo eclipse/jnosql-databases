@@ -441,7 +441,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |Configuration property |Description
 
 |`jnosql.hbase.family`
-|The Column family prefixes. E.g.: hbase.family.1=<FAMILY>
+|The Column family prefixes. E.g.: jnosql.hbase.family.1=<FAMILY>
 
 |===
 
