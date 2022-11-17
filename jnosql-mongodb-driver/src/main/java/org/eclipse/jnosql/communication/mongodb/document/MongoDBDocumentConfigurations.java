@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  */
 public enum MongoDBDocumentConfigurations implements Supplier<String> {
     /**
-     * The database host as prefix. E.g.: mongodb.host.1=localhost:27017
+     * The database host as prefix. E.g.: jnosql.mongodb.host.1=localhost:27017
      */
     HOST("jnosql.mongodb.host"),
     /**
