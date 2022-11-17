@@ -484,10 +484,10 @@ Please note that you can establish properties using the https://microprofile.io/
 |Configuration property |Description
 
 |`jnosql.infinispan.host`
-|Database's host. It is a prefix to enumerate hosts. E.g.: infinispan.host.1=HOST
+|Database's host. It is a prefix to enumerate hosts. E.g.: jnosql.infinispan.host.1=HOST
 
 |`jnosql.infinispan.config`
-|The Infinispan configuration path. E.g.: infinispan.config=infinispan.xml
+|The Infinispan configuration path. E.g.: jnosql.infinispan.config=infinispan.xml
 
 |===
 
