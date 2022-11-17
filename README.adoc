@@ -38,7 +38,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |Configuration property |Description
 
 |`jnosql.jnosql.arangodb.host`
-|The database host, where you need to put the port split by colons. E.g., localhost:8529
+|The database host, where you need to put the port split by colons. E.g.: jnosql.jnosql.arangodb.host=localhost:8529
 
 |`jnosql.arangodb.user`
 |The user's userID.
