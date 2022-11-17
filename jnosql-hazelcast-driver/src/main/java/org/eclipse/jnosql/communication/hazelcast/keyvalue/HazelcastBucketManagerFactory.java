@@ -29,6 +29,14 @@ import java.util.Set;
 public interface HazelcastBucketManagerFactory extends BucketManagerFactory {
 
     /**
+     * Return the {@link HazelcastBucketManager} instance
+     * @param bucket the function argument
+     * @return the {@link HazelcastBucketManager} instance
+     * @throws NullPointerException when the bucket is null
+     */
+    @Override
+    HazelcastBucketManager apply(String bucket);
+    /**
      * Creates a {@link List} from bucket name
      *
      * @param bucketName a bucket name
