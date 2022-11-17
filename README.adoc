@@ -573,7 +573,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |The user's password.
 
 |`jnosql.memcached.host`
-|Database's host. It is a prefix to enumerate hosts. E.g.: memcached.host.1=localhost:11211
+|Database's host. It is a prefix to enumerate hosts. E.g.: jnosql.memcached.host.1=localhost:11211
 
 |===
 
