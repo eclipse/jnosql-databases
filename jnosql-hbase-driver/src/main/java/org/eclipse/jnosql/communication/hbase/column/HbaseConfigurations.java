@@ -27,7 +27,7 @@ public enum  HbaseConfigurations implements Supplier<String> {
 
 
     /**
-     * The Column family prefixes. E.g.: hbase.family.1=FAMILY
+     * The Column family prefixes. E.g.: jnosql.hbase.family.1=FAMILY
      */
     FAMILY("jnosql.hbase.family");
 

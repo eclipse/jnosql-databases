@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.arangodb.document;
 import com.arangodb.ArangoDB;
 import jakarta.nosql.document.DocumentManagerFactory;
 
-final class ArangoDBDocumentManagerFactory implements DocumentManagerFactory {
+public final class ArangoDBDocumentManagerFactory implements DocumentManagerFactory {
 
 
     private final ArangoDB arangoDB;

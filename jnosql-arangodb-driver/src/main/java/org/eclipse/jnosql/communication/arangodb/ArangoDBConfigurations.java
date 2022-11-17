@@ -28,7 +28,7 @@ public enum ArangoDBConfigurations implements Supplier<String> {
 
 
     /**
-     * The database host, where you need to put the port split by colons. E.g., localhost:8529
+     * The database host, where you need to put the port split by colons. E.g.: jnosql.arangodb.host=localhost:8529
      */
     HOST("jnosql.arangodb.host"),
     /**

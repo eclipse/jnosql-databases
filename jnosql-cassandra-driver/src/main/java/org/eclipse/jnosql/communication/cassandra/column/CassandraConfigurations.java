@@ -35,7 +35,7 @@ public enum CassandraConfigurations implements Supplier<String> {
      */
     PASSWORD("jnosql.cassandra.password"),
     /**
-     * Database's host. It is a prefix to enumerate hosts. E.g.: cassandra.host.1=localhost
+     * Database's host. It is a prefix to enumerate hosts. E.g.: jnosql.cassandra.host.1=localhost
      */
     HOST("jnosql.cassandra.host"),
     /**
@@ -47,7 +47,7 @@ public enum CassandraConfigurations implements Supplier<String> {
      */
     PORT("jnosql.cassandra.port"),
     /**
-     * The Cassandra CQL to execute when the configuration starts. It uses as a prefix. E.g.: cassandra.query.1=CQL
+     * The Cassandra CQL to execute when the configuration starts. It uses as a prefix. E.g.: jnosql.cassandra.query.1=CQL
      */
     QUERY("jnosql.cassandra.query"),
     /**

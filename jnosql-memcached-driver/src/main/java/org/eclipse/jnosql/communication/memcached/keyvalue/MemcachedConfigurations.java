@@ -79,7 +79,7 @@ public enum MemcachedConfigurations implements Supplier<String> {
      */
     PASSWORD("jnosql.memcached.password"),
     /**
-     * Database's host. It is a prefix to enumerate hosts. E.g.: memcached.host.1=localhost:11211
+     * Database's host. It is a prefix to enumerate hosts. E.g.: jnosql.memcached.host.1=localhost:11211
      */
     HOST("jnosql.memcached.host");
 
