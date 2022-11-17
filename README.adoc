@@ -383,7 +383,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |The instance name uniquely identifying the hazelcast instance created by this configuration. This name is used in different scenarios, such as identifying the hazelcast instance when running multiple instances in the same JVM.
 
 |`jnosql.hazelcast.host`
-|Database's host. It is a prefix to enumerate hosts. E.g.: hazelcast.host.1=localhost
+|Database's host. It is a prefix to enumerate hosts. E.g.: jnosql.hazelcast.host.1=localhost
 
 |`jnosql.hazelcast.port`
 |The database port
