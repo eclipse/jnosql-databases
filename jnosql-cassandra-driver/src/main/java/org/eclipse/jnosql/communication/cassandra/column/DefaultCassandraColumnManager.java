@@ -230,10 +230,10 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CassandraColumnFamilyManager{");
-        sb.append("session=").append(session);
-        sb.append('}');
-        return sb.toString();
+        return "DefaultCassandraColumnManager{" +
+                "session=" + session +
+                ", keyspace='" + keyspace + '\'' +
+                '}';
     }
 }
 

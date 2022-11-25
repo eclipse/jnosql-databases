@@ -26,19 +26,19 @@ public class HBaseColumnConfigurationTest {
 
 
     @Test
-    public void shouldCreatesColumnFamilyManagerFactory() {
+    public void shouldCreatesColumnManagerFactory() {
         ColumnConfiguration configuration = new HBaseColumnConfiguration();
         assertNotNull(configuration.apply(Settings.builder().build()));
     }
 
     @Test
-    public void shouldCreatesColumnFamilyManagerFactoryFromConfiguration() {
+    public void shouldCreatesColumnManagerFactoryFromConfiguration() {
         ColumnConfiguration configuration = new HBaseColumnConfiguration();
         assertNotNull(configuration.apply(Settings.builder().build()));
     }
 
     @Test
-    public void shouldReturnErrorCreatesColumnFamilyManagerFactory() {
+    public void shouldReturnErrorCreatesColumnManagerFactory() {
         assertThrows(NullPointerException.class, () -> new HBaseColumnConfiguration(null));
     }
 }

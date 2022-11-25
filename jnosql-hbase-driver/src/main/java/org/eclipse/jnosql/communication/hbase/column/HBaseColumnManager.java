@@ -242,13 +242,12 @@ public class HBaseColumnManager implements ColumnManager {
         }
     }
 
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("HBaseColumnFamilyManager{");
-        sb.append("connection=").append(connection);
-        sb.append('}');
-        return sb.toString();
+        return "HBaseColumnManager{" +
+                "table=" + table +
+                ", database='" + database + '\'' +
+                '}';
     }
-
-
 }

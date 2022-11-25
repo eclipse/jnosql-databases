@@ -45,21 +45,21 @@ public class HBaseFamilyManagerTest {
 
     private ColumnManagerFactory managerFactory;
 
-    private ColumnManager columnFamilyManager;
+    private ColumnManager manager;
 
     @BeforeEach
     public void setUp() {
         HBaseColumnConfiguration configuration = new HBaseColumnConfiguration();
         configuration.add(FAMILY);
         managerFactory = configuration.apply(Settings.builder().build());
-        columnFamilyManager = managerFactory.apply(DATA_BASE);
+        manager = managerFactory.apply(DATA_BASE);
     }
 
 
     @Test
     public void shouldSave() {
         ColumnEntity entity = createEntity();
-        columnFamilyManager.insert(entity);
+        manager.insert(entity);
     }
 
     @Test
@@ -68,15 +68,15 @@ public class HBaseFamilyManagerTest {
         entity.add(Column.of("id", "otaviojava"));
         entity.add(Column.of("age", 26));
         entity.add(Column.of("country", "Brazil"));
-        assertThrows(HBaseException.class, () -> columnFamilyManager.insert(entity));
+        assertThrows(HBaseException.class, () -> manager.insert(entity));
     }
 
     @Test
     public void shouldFind() {
-        columnFamilyManager.insert(createEntity());
+        manager.insert(createEntity());
 
         ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
-        List<ColumnEntity> columnFamilyEntities = columnFamilyManager.select(query).collect(Collectors.toList());
+        List<ColumnEntity> columnFamilyEntities = manager.select(query).collect(Collectors.toList());
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
@@ -87,31 +87,31 @@ public class HBaseFamilyManagerTest {
 
     @Test
     public void shouldFindInBatch() {
-        columnFamilyManager.insert(createEntity());
-        columnFamilyManager.insert(createEntity2());
+        manager.insert(createEntity());
+        manager.insert(createEntity2());
 
         ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava")
                 .or(ID_FIELD).eq("poliana").build();
 
-        List<ColumnEntity> entities = columnFamilyManager.select(query).collect(Collectors.toList());
+        List<ColumnEntity> entities = manager.select(query).collect(Collectors.toList());
         assertEquals(Integer.valueOf(2), Integer.valueOf(entities.size()));
 
     }
 
     @Test
     public void shouldDeleteEntity() {
-        columnFamilyManager.insert(createEntity());
+        manager.insert(createEntity());
         ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
         ColumnDeleteQuery deleteQuery = delete().from(FAMILY).where(ID_FIELD).eq("otaviojava").build();
-        columnFamilyManager.delete(deleteQuery);
-        List<ColumnEntity> entities = columnFamilyManager.select(query).collect(Collectors.toList());
+        manager.delete(deleteQuery);
+        List<ColumnEntity> entities = manager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
     }
 
     @Test
     public void shouldDeleteEntities() {
-        columnFamilyManager.insert(createEntity());
-        columnFamilyManager.insert(createEntity2());
+        manager.insert(createEntity());
+        manager.insert(createEntity2());
 
         ColumnQuery query = select().from(FAMILY).where(ID_FIELD).eq("otaviojava")
                 .or(ID_FIELD).eq("poliana").build();
@@ -119,8 +119,8 @@ public class HBaseFamilyManagerTest {
         ColumnDeleteQuery deleteQuery = delete().from(FAMILY).where(ID_FIELD).eq("otaviojava")
                 .or(ID_FIELD).eq("poliana").build();
 
-        columnFamilyManager.delete(deleteQuery);
-        List<ColumnEntity> entities = columnFamilyManager.select(query).collect(Collectors.toList());
+        manager.delete(deleteQuery);
+        List<ColumnEntity> entities = manager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
     }
 

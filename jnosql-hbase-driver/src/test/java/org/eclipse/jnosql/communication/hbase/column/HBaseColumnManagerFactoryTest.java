@@ -27,7 +27,7 @@ public class HBaseColumnManagerFactoryTest {
     private ColumnConfiguration configuration = new HBaseColumnConfiguration();
 
     @Test
-    public void shouldCreateColumnFamilyManager() {
+    public void shouldCreateColumnManager() {
         ColumnManagerFactory managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }

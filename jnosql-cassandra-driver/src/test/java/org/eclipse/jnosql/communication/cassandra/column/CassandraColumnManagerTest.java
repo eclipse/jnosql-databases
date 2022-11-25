@@ -69,8 +69,8 @@ public class CassandraColumnManagerTest {
 
     @AfterEach
     public void afterEach() {
-        DefaultCassandraColumnManager cassandraColumnFamilyManager = DefaultCassandraColumnManager.class.cast(entityManager);
-        CqlSession session = cassandraColumnFamilyManager.getSession();
+        DefaultCassandraColumnManager manager = DefaultCassandraColumnManager.class.cast(entityManager);
+        CqlSession session = manager.getSession();
         if (!session.isClosed()) {
             entityManager.cql("TRUNCATE " + Constants.KEY_SPACE + '.' + Constants.COLUMN_FAMILY);
             entityManager.cql("TRUNCATE " + Constants.KEY_SPACE + '.' + "users");
@@ -80,8 +80,8 @@ public class CassandraColumnManagerTest {
     @Test
     public void shouldClose() throws Exception {
         entityManager.close();
-        DefaultCassandraColumnManager cassandraColumnFamilyManager = DefaultCassandraColumnManager.class.cast(entityManager);
-        CqlSession session = cassandraColumnFamilyManager.getSession();
+        DefaultCassandraColumnManager manager = DefaultCassandraColumnManager.class.cast(entityManager);
+        CqlSession session = manager.getSession();
         assertTrue(session.isClosed());
     }
 

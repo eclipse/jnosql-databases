@@ -57,7 +57,7 @@ public class HBaseColumnManagerFactory implements ColumnManagerFactory {
             Table table = connection.getTable(tableName);
             return new HBaseColumnManager(connection, table, database);
         } catch (IOException e) {
-            throw new HBaseException("A error happened when try to create ColumnFamilyManager", e);
+            throw new HBaseException("A error happened when try to create ColumnManager", e);
         }
     }
 
