@@ -41,7 +41,6 @@ public class CouchDBDocumentConfiguration implements DocumentConfiguration {
 
 
 
-
     @Override
     public CouchDBDocumentManagerFactory apply(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");

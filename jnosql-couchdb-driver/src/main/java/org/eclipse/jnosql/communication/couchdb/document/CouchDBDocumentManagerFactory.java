@@ -35,7 +35,7 @@ public class CouchDBDocumentManagerFactory implements DocumentManagerFactory {
 
         CouchDBHttpClient client = configuration.getClient(database);
         client.createDatabase();
-        return new DefaultCouchDBDocumentCollectionManager(client, database);
+        return new DefaultCouchDBDocumentManager(client, database);
     }
 
 
