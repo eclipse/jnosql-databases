@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class OrientDBDocumentConfigurationTest {
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactory() {
+    public void shouldCreateDocumentManagerFactory() {
         OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
         configuration.setHost("172.17.0.2");
         configuration.setUser("root");

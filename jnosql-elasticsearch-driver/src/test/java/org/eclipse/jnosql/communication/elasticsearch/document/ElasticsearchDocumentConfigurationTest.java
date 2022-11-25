@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ElasticsearchDocumentConfigurationTest {
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
+    public void shouldCreateDocumentManagerFactoryByMap() {
         DocumentManagerFactory managerFactory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
         assertNotNull(managerFactory);
     }
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
+    public void shouldCreateDocumentManagerFactoryByFile() {
         DocumentManagerFactory managerFactory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
         assertNotNull(managerFactory);
     }

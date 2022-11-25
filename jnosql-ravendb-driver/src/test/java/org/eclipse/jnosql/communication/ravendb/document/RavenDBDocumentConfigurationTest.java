@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RavenDBDocumentConfigurationTest {
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
+    public void shouldCreateDocumentManagerFactoryByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("ravendb-server-host-1", "172.17.0.2:8080");
         RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();

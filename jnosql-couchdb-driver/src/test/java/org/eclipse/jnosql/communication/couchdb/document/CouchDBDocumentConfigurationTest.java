@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class CouchDBDocumentConfigurationTest {
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
+    public void shouldCreateDocumentManagerFactoryByMap() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
         DocumentManagerFactory managerFactory = configuration.apply(Settings.settings());
         assertNotNull(managerFactory);
     }
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
+    public void shouldCreateDocumentManagerFactoryByFile() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
         DocumentManagerFactory managerFactory = configuration.apply(Settings.settings());
         assertNotNull(managerFactory);

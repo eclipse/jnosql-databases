@@ -39,7 +39,7 @@ public class SolrDocumentConfiguration implements DocumentConfiguration {
      * Creates a {@link SolrDocumentManagerFactory} from mongoClient
      *
      * @param solrClient the mongo client {@link HttpSolrClient}
-     * @return a SolrDocumentCollectionManagerFactory instance
+     * @return a SolrDocumentManagerFactory instance
      * @throws NullPointerException when the mongoClient is null
      */
     public SolrDocumentManagerFactory get(HttpSolrClient solrClient) throws NullPointerException {

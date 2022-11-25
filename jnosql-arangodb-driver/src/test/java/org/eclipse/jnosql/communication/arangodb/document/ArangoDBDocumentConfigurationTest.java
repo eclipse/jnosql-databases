@@ -27,7 +27,7 @@ public class ArangoDBDocumentConfigurationTest {
 
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactory() {
+    public void shouldCreateDocumentManagerFactory() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost("localhost", 8529);
         DocumentManagerFactory managerFactory = configuration.apply(Settings.builder().build());

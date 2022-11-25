@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CouchbaseDocumentConfigurationTest {
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByMap() {
+    public void shouldCreateDocumentManagerFactoryByMap() {
 
         CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
 
@@ -39,7 +39,7 @@ public class CouchbaseDocumentConfigurationTest {
     }
 
     @Test
-    public void shouldCreateDocumentCollectionManagerFactoryByFile() {
+    public void shouldCreateDocumentManagerFactoryByFile() {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
         DocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
         assertNotNull(managerFactory);

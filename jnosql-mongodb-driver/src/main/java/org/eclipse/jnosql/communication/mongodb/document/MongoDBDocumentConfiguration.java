@@ -49,7 +49,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
      * Creates a {@link MongoDBDocumentManagerFactory} from map configurations
      *
      * @param configurations the configurations map
-     * @return a MongoDBDocumentCollectionManagerFactory instance
+     * @return a MongoDBDocumentManagerFactory instance
      * @throws NullPointerException when the configurations is null
      */
     public MongoDBDocumentManagerFactory get(Map<String, String> configurations) throws NullPointerException {
@@ -63,7 +63,7 @@ public class MongoDBDocumentConfiguration implements DocumentConfiguration {
      * Creates a {@link MongoDBDocumentManagerFactory} from mongoClient
      *
      * @param mongoClient the mongo client {@link MongoClient}
-     * @return a MongoDBDocumentCollectionManagerFactory instance
+     * @return a MongoDBDocumentManagerFactory instance
      * @throws NullPointerException when the mongoClient is null
      */
     public MongoDBDocumentManagerFactory get(MongoClient mongoClient) throws NullPointerException {
