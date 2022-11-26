@@ -27,15 +27,19 @@ import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.result.SearchResult;
 import com.couchbase.client.java.search.result.SearchRow;
+import jakarta.nosql.Sort;
 import jakarta.nosql.document.Document;
+import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -135,21 +139,13 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
 
-
         Collection collection = bucket.collection(query.getDocumentCollection());
-
-        QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
-        if (nonNull(delete.getStatement())) {
-            ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
-            bucket.query(n1qlQuery);
-        }
-
-        if (!delete.getKeys().isEmpty()) {
-            delete.getKeys()
-                    .stream()
-                    .map(s -> getPrefix(query.getDocumentCollection(), s))
-                    .forEach(bucket::remove);
-        }
+        DocumentQuery delete = DeleteQueryWrapper.of(query);
+        Stream<DocumentEntity> entities = select(delete);
+        entities.map(d -> d.find(ID_FIELD))
+                .filter(Objects::nonNull)
+                .map(Objects::toString)
+                .forEach(collection::remove);
 
     }
 
@@ -207,7 +203,6 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
         QueryResult query = cluster.query(n1ql);
         return EntityConverter.convert(query.rowsAsObject(), database);
     }
-
 
 
     @Override
