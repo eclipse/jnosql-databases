@@ -135,9 +135,9 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
         Collection collection = bucket.collection(query.getDocumentCollection());
         DocumentQuery delete = DeleteQueryWrapper.of(query);
         Stream<DocumentEntity> entities = select(delete);
-        entities.map(d -> d.find(ID_FIELD))
+        entities.flatMap(d -> d.find(ID_FIELD).stream())
                 .filter(Objects::nonNull)
-                .map(Objects::toString)
+                .map(d -> d.get(String.class))
                 .forEach(collection::remove);
 
     }
