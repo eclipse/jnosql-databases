@@ -113,36 +113,36 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
     }
 
     @Override
-    public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
+    public <T> Queue<T> getQueue(String bucketName, Class<T> type) {
         requireNonNull(bucketName, "bucketName is required");
-        requireNonNull(clazz, "valueValue is required");
+        requireNonNull(type, "type is required");
 
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
 
-        return new com.couchbase.client.java.datastructures.CouchbaseQueue<>(bucketName + QUEUE, collection, clazz,
+        return new com.couchbase.client.java.datastructures.CouchbaseQueue<>(bucketName + QUEUE, collection, type,
                 QueueOptions.queueOptions());
 
     }
 
     @Override
-    public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
+    public <T> Set<T> getSet(String bucketName, Class<T> type) {
         requireNonNull(bucketName, "bucketName is required");
-        requireNonNull(clazz, "valueValue is required");
+        requireNonNull(type, "type is required");
 
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
 
-        return new CouchbaseArraySet<>(bucketName + SET, collection, clazz, ArraySetOptions.arraySetOptions());
+        return new CouchbaseArraySet<>(bucketName + SET, collection, type, ArraySetOptions.arraySetOptions());
     }
 
     @Override
-    public <T> List<T> getList(String bucketName, Class<T> clazz) {
+    public <T> List<T> getList(String bucketName, Class<T> type) {
         requireNonNull(bucketName, "bucketName is required");
-        requireNonNull(clazz, "valueValue is required");
+        requireNonNull(type, "type is required");
         Bucket bucket = this.cluster.bucket(bucketName);
         Collection collection = bucket.collection(bucketName);
-        return new CouchbaseArrayList<>(bucketName + LIST, collection, clazz, ArrayListOptions.arrayListOptions());
+        return new CouchbaseArrayList<>(bucketName + LIST, collection, type, ArrayListOptions.arrayListOptions());
     }
 
 
