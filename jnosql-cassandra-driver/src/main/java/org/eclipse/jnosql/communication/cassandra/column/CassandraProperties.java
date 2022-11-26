@@ -17,13 +17,11 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
-import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.Settings.SettingsBuilder;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -83,8 +81,7 @@ class CassandraProperties {
         Settings settings = builder.build();
 
         CassandraProperties cp = new CassandraProperties();
-        settings.prefixSupplier(Arrays.asList(CassandraConfigurations.HOST,
-                Configurations.HOST)).stream()
+        settings.prefix(CassandraConfigurations.HOST).stream()
                 .map(Object::toString).forEach(cp::addNodes);
 
         settings.prefix(CassandraConfigurations.QUERY)
@@ -98,10 +95,10 @@ class CassandraProperties {
         cp.dataCenter = settings.get(CassandraConfigurations.DATA_CENTER).map(Object::toString)
                 .orElse(DEFAULT_DATA_CENTER);
 
-        cp.user = settings.getSupplier(Arrays.asList(Configurations.USER, CassandraConfigurations.USER))
+        cp.user = settings.get(CassandraConfigurations.USER)
                 .map(Object::toString);
-        cp.password = settings.getSupplier(Arrays.asList(Configurations.PASSWORD,
-                        CassandraConfigurations.PASSWORD))
+
+        cp.password = settings.get(CassandraConfigurations.PASSWORD)
                 .map(Object::toString);
         return cp;
     }
