@@ -20,8 +20,10 @@ import jakarta.nosql.Settings;
 import jakarta.nosql.column.ColumnConfiguration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -47,7 +49,12 @@ public final class CassandraConfiguration implements ColumnConfiguration {
         requireNonNull(settings, "settings is required");
         Map<String, String> configurations = new HashMap<>();
 
-        for (String key : settings.keySet()) {
+        List<String> keys = settings.keySet()
+                .stream()
+                .filter(k -> k.startsWith("jnosql."))
+                .collect(Collectors.toUnmodifiableList());
+
+        for (String key : keys) {
             settings.get(key, String.class).ifPresent(v -> configurations.put(key, v));
         }
         return getManagerFactory(configurations);
