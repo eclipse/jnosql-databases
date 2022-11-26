@@ -16,7 +16,6 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.client.java.search.SearchQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentManager;
 
