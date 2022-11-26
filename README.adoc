@@ -551,7 +551,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |`jnosql.memcached.max.block.time`
 |The maximum amount of time (in milliseconds) a client is willing to wait for space to become available in an output queue.
 
-|`jnosql.memcached.timeout
+|`jnosql.memcached.timeout`
 |The default operation timeout in milliseconds.
 
 |`jnosql.memcached.read.buffer.size`
