@@ -30,8 +30,8 @@ public interface CouchbaseDocumentManager extends DocumentManager {
     /**
      * Executes the N1QL with params and then result que result
      *
-     * @param n1ql the query
-     * @param params    the params
+     * @param n1ql   the query
+     * @param params the params
      * @return the query result
      * @throws NullPointerException when either n1ql or params are null
      */
@@ -47,13 +47,4 @@ public interface CouchbaseDocumentManager extends DocumentManager {
      */
     Stream<DocumentEntity> n1qlQuery(String n1ql) throws NullPointerException;
 
-
-    /**
-     * Searches in Couchbase using Full Text Search
-     *
-     * @param query the query to be used
-     * @return the elements from the query
-     * @throws NullPointerException when either the query or index are null
-     */
-    Stream<DocumentEntity> search(SearchQuery query) throws NullPointerException;
 }

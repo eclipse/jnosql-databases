@@ -25,6 +25,8 @@ import com.couchbase.client.java.kv.InsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.search.SearchQuery;
+import com.couchbase.client.java.search.result.SearchResult;
+import com.couchbase.client.java.search.result.SearchRow;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
@@ -136,18 +138,18 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
 
         Collection collection = bucket.collection(query.getDocumentCollection());
 
-//        QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
-//        if (nonNull(delete.getStatement())) {
-//            ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
-//            bucket.query(n1qlQuery);
-//        }
-//
-//        if (!delete.getKeys().isEmpty()) {
-//            delete.getKeys()
-//                    .stream()
-//                    .map(s -> getPrefix(query.getDocumentCollection(), s))
-//                    .forEach(bucket::remove);
-//        }
+        QueryConverter.QueryConverterResult delete = QueryConverter.delete(query, database);
+        if (nonNull(delete.getStatement())) {
+            ParameterizedN1qlQuery n1qlQuery = N1qlQuery.parameterized(delete.getStatement(), delete.getParams());
+            bucket.query(n1qlQuery);
+        }
+
+        if (!delete.getKeys().isEmpty()) {
+            delete.getKeys()
+                    .stream()
+                    .map(s -> getPrefix(query.getDocumentCollection(), s))
+                    .forEach(bucket::remove);
+        }
 
     }
 
@@ -207,12 +209,6 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
 
-    @Override
-    public Stream<DocumentEntity> search(SearchQuery query) throws NullPointerException {
-        requireNonNull(query, "query is required");
-
-        return null;
-    }
 
     @Override
     public void close() {
