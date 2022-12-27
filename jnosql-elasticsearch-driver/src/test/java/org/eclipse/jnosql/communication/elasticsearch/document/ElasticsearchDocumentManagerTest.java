@@ -14,13 +14,14 @@
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,13 +37,7 @@ import static jakarta.nosql.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ElasticsearchDocumentManagerTest {
 
@@ -82,7 +77,7 @@ public class ElasticsearchDocumentManagerTest {
         DocumentEntity entity = DocumentEntityGerator.getEntity();
         entityManager.insert(entity);
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).build();
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         List<DocumentEntity> result = entityManager.select(query).collect(Collectors.toList());
         assertFalse(result.isEmpty());
     }
@@ -101,8 +96,13 @@ public class ElasticsearchDocumentManagerTest {
     public void shouldUserSearchBuilder() throws InterruptedException {
         DocumentEntity entity = DocumentEntityGerator.getEntity();
         entityManager.insert(entity);
-        TermQueryBuilder query = termQuery("name", "Poliana");
-        SECONDS.sleep(1L);
+
+        SECONDS.sleep(2l); // it's required in order to avoid an eventual inconsistency
+
+        var query = new SearchRequest.Builder()
+                .index(DocumentEntityGerator.COLLECTION_NAME)
+                .query(TermQuery.of(tq -> tq.field("name").value("Poliana"))._toQuery());
+
         List<DocumentEntity> account = entityManager.search(query).collect(Collectors.toList());
         assertFalse(account.isEmpty());
     }
@@ -115,24 +115,27 @@ public class ElasticsearchDocumentManagerTest {
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
 
         DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         entityManager.delete(deleteQuery);
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         System.out.println(entities);
         assertTrue(entities.isEmpty());
     }
 
     @Test
-    public void shouldRemoveEntityById() {
+    public void shouldRemoveEntityById() throws InterruptedException {
         DocumentEntity documentEntity = entityManager.insert(DocumentEntityGerator.getEntity());
         Document id = documentEntity.find("_id").get();
+        SECONDS.sleep(1); // it's required in order to avoid an eventual inconsistency
 
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
 
         entityManager.delete(deleteQuery);
+
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
@@ -142,7 +145,7 @@ public class ElasticsearchDocumentManagerTest {
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         List<Document> names = entities.stream().map(e -> e.find("name").get())
@@ -172,7 +175,7 @@ public class ElasticsearchDocumentManagerTest {
         otavio.add("name", "otavio");
         otavio.add("_id", "id2");
         entityManager.insert(Arrays.asList(poliana, otavio));
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         DocumentQuery query = DocumentQuery.select().from("person").orderBy("name").asc().build();
         String[] names = entityManager.select(query).map(d -> d.find("name"))
                 .filter(Optional::isPresent)
@@ -191,7 +194,7 @@ public class ElasticsearchDocumentManagerTest {
         otavio.add("name", "otavio");
         otavio.add("_id", "id2");
         entityManager.insert(Arrays.asList(poliana, otavio));
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         DocumentQuery query = DocumentQuery.select().from("person").orderBy("name").desc().build();
         String[] names = entityManager.select(query).map(d -> d.find("name"))
                 .filter(Optional::isPresent)
@@ -208,20 +211,20 @@ public class ElasticsearchDocumentManagerTest {
         entityManager.insert(DocumentEntityGerator.getEntity());
 
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).build();
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
 
     @Test
-    public void shouldSaveSubDocument() {
+    public void shouldSaveSubDocument() throws InterruptedException {
         DocumentEntity entity = DocumentEntityGerator.getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
 
-
+        SECONDS.sleep(1); // it's required in order to avoid an eventual inconsistency
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.singleResult(query).get();
         Document subDocument = entityFound.find("phones").get();
@@ -231,11 +234,13 @@ public class ElasticsearchDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() {
+    public void shouldSaveSubDocument2() throws InterruptedException {
         DocumentEntity entity = DocumentEntityGerator.getEntity();
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
+
+        SECONDS.sleep(1); // it's required in order to avoid an eventual inconsistency
 
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
@@ -254,11 +259,12 @@ public class ElasticsearchDocumentManagerTest {
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
+    public void shouldRetrieveListSubdocumentList() throws InterruptedException {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(key.getName()).eq(key.get()).build();
 
+        SECONDS.sleep(2); // it's required in order to avoid an eventual inconsistency
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
 
@@ -275,7 +281,7 @@ public class ElasticsearchDocumentManagerTest {
         entity2.add(Document.of("_id", "test"));
         entityManager.insert(entity);
         entityManager.insert(entity2);
-        SECONDS.sleep(1L);
+        SECONDS.sleep(1l); // it's required in order to avoid an eventual inconsistency
         assertTrue(entityManager.count(DocumentEntityGerator.COLLECTION_NAME) > 0);
     }
 

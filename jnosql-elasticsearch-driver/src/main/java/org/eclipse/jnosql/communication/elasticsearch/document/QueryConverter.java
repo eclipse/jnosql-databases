@@ -15,28 +15,26 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.json.JsonData;
 import jakarta.nosql.Condition;
 import jakarta.nosql.TypeReference;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
-import org.elasticsearch.index.query.QueryBuilder;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static jakarta.nosql.Condition.EQUALS;
 import static jakarta.nosql.Condition.IN;
+import static org.eclipse.jnosql.communication.elasticsearch.document.EntityConverter.ENTITY;
 import static org.eclipse.jnosql.communication.elasticsearch.document.EntityConverter.ID_FIELD;
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 final class QueryConverter {
 
@@ -47,14 +45,30 @@ final class QueryConverter {
 
     static QueryConverterResult select(DocumentQuery query) {
         List<String> ids = new ArrayList<>();
-        return query.getCondition()
+
+        Query.Builder nameCondition = Optional.of(query.getDocumentCollection())
+                .map(collection -> new Query.Builder().term(q -> q
+                        .field(ENTITY).value(collection)))
+                .map(Query.Builder.class::cast)
+                .orElse(null);
+
+        Query.Builder queryConditions = query.getCondition()
                 .map(c -> getCondition(c, ids))
-                .map(q -> new QueryConverterResult(q, ids))
-                .orElse(new QueryConverterResult(null, ids));
+                .orElse(null);
+
+
+        Query.Builder builder = Stream.of(nameCondition, queryConditions)
+                .filter(Objects::nonNull)
+                .reduce((c1, c2) -> (Query.Builder) new Query.Builder().bool(BoolQuery.of(b -> b
+                        .must(c1.build(), c2.build()))))
+                .orElse(null);
+
+        return new QueryConverterResult(builder, ids);
+
     }
 
 
-    private static QueryBuilder getCondition(DocumentCondition condition, List<String> ids) {
+    private static Query.Builder getCondition(DocumentCondition condition, List<String> ids) {
         Document document = condition.getDocument();
 
         if (!NOT_APPENDABLE.contains(condition.getCondition()) && isIdField(document)) {
@@ -70,41 +84,71 @@ final class QueryConverter {
 
         switch (condition.getCondition()) {
             case EQUALS:
-                return termQuery(document.getName(), ValueUtil.convert(document.getValue()));
+                return (Query.Builder) new Query.Builder()
+                        .term(TermQuery.of(tq -> tq
+                                .field(document.getName())
+                                .value(v -> v
+                                        .anyValue(JsonData.of(document.getValue().get())))));
             case LESSER_THAN:
-                return rangeQuery(document.getName()).lt(ValueUtil.convert(document.getValue()));
+                return (Query.Builder) new Query.Builder()
+                        .range(RangeQuery.of(rq -> rq
+                                .field(document.getName())
+                                .lt(JsonData.of(document.getValue().get()))));
             case LESSER_EQUALS_THAN:
-                return rangeQuery(document.getName()).lte(ValueUtil.convert(document.getValue()));
+                return (Query.Builder) new Query.Builder()
+                        .range(RangeQuery.of(rq -> rq
+                                .field(document.getName())
+                                .lte(JsonData.of(document.getValue().get()))));
             case GREATER_THAN:
-                return rangeQuery(document.getName()).gt(ValueUtil.convert(document.getValue()));
+                return (Query.Builder) new Query.Builder()
+                        .range(RangeQuery.of(rq -> rq
+                                .field(document.getName())
+                                .gt(JsonData.of(document.getValue().get()))));
             case GREATER_EQUALS_THAN:
-                return rangeQuery(document.getName()).gte(ValueUtil.convert(document.getValue()));
+                return (Query.Builder) new Query.Builder()
+                        .range(RangeQuery.of(rq -> rq
+                                .field(document.getName())
+                                .gte(JsonData.of(document.getValue().get()))));
             case LIKE:
-                return matchQuery(document.getName(), ValueUtil.convert(document.getValue()));
+                return (Query.Builder) new Query.Builder()
+                        .queryString(QueryStringQuery.of(rq -> rq
+                                .query(document.getValue().get(String.class))
+                                .allowLeadingWildcard(true)
+                                .fields(document.getName())));
             case IN:
-                return termsQuery(document.getName(), ValueUtil.convertToList(document.getValue()));
+                return (Query.Builder) new Query.Builder()
+                        .term(TermQuery.of(tq -> tq
+                                .field(document.getName())
+                                .value(v -> v
+                                        .anyValue(JsonData.of(ValueUtil.convertToList(document.getValue()))))));
             case AND:
                 return document.get(new TypeReference<List<DocumentCondition>>() {
-                })
+                        })
                         .stream()
                         .map(d -> getCondition(d, ids))
                         .filter(Objects::nonNull)
-                        .reduce((d1, d2) -> boolQuery().filter(d1).filter(d2))
-                        .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
-
+                        .reduce((d1, d2) -> (Query.Builder) new Query.Builder()
+                                .bool(BoolQuery.of(bq -> bq
+                                        .must(List.of(d1.build(), d2.build()))))
+                        ).orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
 
             case OR:
                 return document.get(new TypeReference<List<DocumentCondition>>() {
-                })
+                        })
                         .stream()
                         .map(d -> getCondition(d, ids))
-                        .reduce((d1, d2) -> boolQuery().should(d1).should(d2))
-                        .orElseThrow(() -> new IllegalStateException("An or condition cannot be empty"));
+                        .filter(Objects::nonNull)
+                        .reduce((d1, d2) -> (Query.Builder) new Query.Builder()
+                                .bool(BoolQuery.of(bq -> bq
+                                        .should(List.of(d1.build(), d2.build())))))
+                        .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
             case NOT:
                 DocumentCondition dc = document.get(DocumentCondition.class);
-                return boolQuery().mustNot(getCondition(dc, ids));
+                return (Query.Builder) new Query.Builder()
+                        .bool(BoolQuery.of(bq -> bq
+                                .mustNot(getCondition(dc, ids).build())));
             default:
-                throw new IllegalStateException("This condition is not supported at coubhbase: " + condition.getCondition());
+                throw new IllegalStateException("This condition is not supported at elasticsearch: " + condition.getCondition());
         }
     }
 

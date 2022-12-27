@@ -28,7 +28,12 @@
     <description>The Eclipse JNoSQL communication layer implementation to Eclasticsearch</description>
 
     <properties>
-        <es.version>7.17.6</es.version>
+        <es.version>8.5.3</es.version>
+<!--        <maven.surefire.plugin.version>3.0.0-M7</maven.surefire.plugin.version>-->
+        <weld.se.core.version>3.1.9.Final</weld.se.core.version>
+        <yasson.version>1.0.11</yasson.version>
+        <microprofile.config.version>2.0.1</microprofile.config.version>
+        <smallrye.config.version>2.12.1</smallrye.config.version>
     </properties>
     <dependencies>
         <dependency>
@@ -42,16 +47,64 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
             <version>${es.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.json</groupId>
+                    <artifactId>jakarta.json-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.parsson</groupId>
+                    <artifactId>parsson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>jakarta.nosql.tck.communication.driver</groupId>
             <artifactId>driver-tck-document</artifactId>
             <version>${jakarta.nosql.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>9.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.1.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-api</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
+            <version>2.0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.json</artifactId>
+            <version>2.0.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>3.0.4</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

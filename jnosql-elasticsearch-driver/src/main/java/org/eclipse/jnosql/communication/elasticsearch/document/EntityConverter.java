@@ -15,22 +15,21 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
-import org.elasticsearch.action.get.MultiGetItemResponse;
-import org.elasticsearch.action.get.MultiGetRequest;
-import org.elasticsearch.action.get.MultiGetResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -49,7 +48,6 @@ final class EntityConverter {
     private EntityConverter() {
     }
 
-
     static Map<String, Object> getMap(DocumentEntity entity) {
         Map<String, Object> jsonObject = new HashMap<>();
 
@@ -60,7 +58,7 @@ final class EntityConverter {
         return jsonObject;
     }
 
-    static Stream<DocumentEntity> query(DocumentQuery query, RestHighLevelClient client, String index) {
+    static Stream<DocumentEntity> query(DocumentQuery query, ElasticsearchClient client, String index) {
         QueryConverterResult select = QueryConverter.select(query);
 
         try {
@@ -72,23 +70,20 @@ final class EntityConverter {
             if (select.hasStatement()) {
                 statementQueryStream = executeStatement(query, client, index, select);
             }
-            return Stream.concat(idQueryStream, statementQueryStream);
+            return Stream.concat(idQueryStream, statementQueryStream).distinct();
         } catch (IOException e) {
             throw new ElasticsearchException("An error to execute a query on elasticsearch", e);
         }
     }
 
-    private static Stream<DocumentEntity> executeStatement(DocumentQuery query, RestHighLevelClient client, String index,
+    private static Stream<DocumentEntity> executeStatement(DocumentQuery query,  ElasticsearchClient client, String index,
                                                            QueryConverterResult select) throws IOException {
-        SearchRequest searchRequest = new SearchRequest(index);
+        SearchRequest.Builder searchRequest = buildSearchRequestBuilder(query, select);
+        searchRequest.index(index);
 
-        setQueryBuilder(query, select, searchRequest);
-        SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
-        return Stream.of(response.getHits())
-                .flatMap(h -> Stream.of(h.getHits()))
-                .map(ElasticsearchEntry::of)
-                .filter(ElasticsearchEntry::isNotEmpty)
-                .map(ElasticsearchEntry::toEntity);
+        SearchResponse<Map> searchResponse = client.search(searchRequest.build(), Map.class);
+
+        return getDocumentEntityStream(client, searchResponse);
     }
 
 
@@ -128,41 +123,49 @@ final class EntityConverter {
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
-    private static Stream<DocumentEntity> executeId(RestHighLevelClient client, String index,
+    private static Stream<DocumentEntity> executeId(ElasticsearchClient client, String index,
                                                     QueryConverterResult select) throws IOException {
 
-        MultiGetRequest multiGetRequest = new MultiGetRequest();
+        List<Query> ids = select.getIds().stream()
+                .map(id -> MatchQuery.of(m -> m
+                        .field(EntityConverter.ID_FIELD)
+                        .query(id))._toQuery()
+                ).collect(toList());
 
-        select.getIds().stream()
-                .map(id -> new MultiGetRequest.Item(index, id))
-                .forEach(multiGetRequest::add);
+        SearchRequest searchRequest = SearchRequest.of(sb -> sb
+                .index(index)
+                .query(BoolQuery.of(q -> q
+                        .should(ids))._toQuery()));
+        SearchResponse<Map> responses = client.search(searchRequest, Map.class);
 
-        MultiGetResponse responses = client.mget(multiGetRequest, RequestOptions.DEFAULT);
-        return Stream.of(responses.getResponses())
-                .map(MultiGetItemResponse::getResponse)
-                .map(ElasticsearchEntry::of)
+        return getDocumentEntityStream(client, responses);
+
+    }
+
+    static Stream<DocumentEntity> getDocumentEntityStream(ElasticsearchClient client, SearchResponse<Map> responses) {
+        return responses.hits().hits().stream()
+                .map(hits -> ElasticsearchEntry.of(hits.id(), hits.source()))
                 .filter(ElasticsearchEntry::isNotEmpty)
                 .map(ElasticsearchEntry::toEntity);
-
     }
 
-    private static void setQueryBuilder(DocumentQuery query, QueryConverterResult select, SearchRequest searchRequest) {
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    private static SearchRequest.Builder buildSearchRequestBuilder(DocumentQuery query, QueryConverterResult select) {
+        SearchRequest.Builder searchBuilder = new SearchRequest.Builder();
 
         if (select.hasQuery()) {
-            searchSourceBuilder.query(select.getStatement());
+            searchBuilder.query(select.getStatement().build());
         }
-        feedBuilder(query, searchSourceBuilder);
 
-        searchRequest.source(searchSourceBuilder);
+        feedBuilder(query, searchBuilder);
+        return searchBuilder;
     }
 
-    private static void feedBuilder(DocumentQuery query, SearchSourceBuilder searchSource) {
+    private static void feedBuilder(DocumentQuery query, SearchRequest.Builder searchSource) {
         query.getSorts().forEach(d -> {
             if (ASC.equals(d.getType())) {
-                searchSource.sort(d.getName(), SortOrder.ASC);
+                searchSource.sort(s -> s.field(f -> f.field(d.getName()).order(SortOrder.Asc)));
             } else {
-                searchSource.sort(d.getName(), SortOrder.DESC);
+                searchSource.sort(s -> s.field(f -> f.field(d.getName()).order(SortOrder.Desc)));
             }
         });
 

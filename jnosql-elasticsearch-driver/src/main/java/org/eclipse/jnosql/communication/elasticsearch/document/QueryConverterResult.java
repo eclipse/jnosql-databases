@@ -14,24 +14,24 @@
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
-import org.elasticsearch.index.query.QueryBuilder;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 
 import java.util.List;
 
 class QueryConverterResult {
 
 
-    private final QueryBuilder statement;
+    private final Query.Builder statement;
 
     private final List<String> ids;
 
-    QueryConverterResult(QueryBuilder statement, List<String> ids) {
+    QueryConverterResult(Query.Builder statement, List<String> ids) {
         this.statement = statement;
         this.ids = ids;
     }
 
 
-    QueryBuilder getStatement() {
+    Query.Builder getStatement() {
         return statement;
     }
 

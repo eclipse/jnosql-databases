@@ -15,20 +15,19 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.CountRequest;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.bulk.DeleteOperation;
 import jakarta.nosql.CommunicationException;
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -40,7 +39,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.StreamSupport.stream;
 
 /**
  * The Default implementation of {@link ElasticsearchDocumentManager}
@@ -48,11 +46,11 @@ import static java.util.stream.StreamSupport.stream;
 class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManager {
 
 
-    private final RestHighLevelClient client;
+    private final ElasticsearchClient client;
 
     private final String index;
 
-    DefaultElasticsearchDocumentManager(RestHighLevelClient client, String index) {
+    public DefaultElasticsearchDocumentManager(ElasticsearchClient client, String index) {
         this.client = client;
         this.index = index;
     }
@@ -68,13 +66,15 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
         Document id = entity.find(EntityConverter.ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = EntityConverter.getMap(entity);
-        IndexRequest request = new IndexRequest(index).id(id.get(String.class)).source(jsonObject);
         try {
-            client.index(request, RequestOptions.DEFAULT);
+            var indexRequest = IndexRequest.of(b ->
+                    b.index(index)
+                            .id(id.get(String.class)).document(jsonObject)
+            );
+            client.index(indexRequest);
         } catch (IOException e) {
             throw new ElasticsearchException("An error to insert in Elastic search", e);
         }
-
         return entity;
     }
 
@@ -123,15 +123,19 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
             return;
         }
 
-        BulkRequest bulk = new BulkRequest();
+        BulkRequest.Builder bulkRequest = new BulkRequest.Builder();
 
         entities.stream()
                 .map(entity -> entity.find(EntityConverter.ID_FIELD).get().get(String.class))
-                .map(id -> new DeleteRequest(index, id))
-                .forEach(bulk::add);
-
+                .forEach(id ->
+                        bulkRequest.operations(op -> op
+                                .delete(DeleteOperation.of(dp -> dp
+                                        .index(index)
+                                        .id(id)))
+                        )
+                );
         try {
-            client.bulk(bulk, RequestOptions.DEFAULT);
+            client.bulk(bulkRequest.build());
         } catch (IOException e) {
             throw new ElasticsearchException("An error to delete entities on elasticsearch", e);
         }
@@ -146,33 +150,24 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
 
     @Override
     public long count(String documentCollection) {
-        Objects.requireNonNull(documentCollection, "query is required");
-        SearchRequest searchRequest = new SearchRequest(index);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.size(0);
+        Objects.requireNonNull(documentCollection, "documentCollection is required");
         try {
-            SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
-            return search.getHits().getTotalHits().value;
+            return client.count(CountRequest.of(s -> s.index(index)
+                    .query(MatchQuery.of(m -> m
+                            .field(EntityConverter.ENTITY)
+                            .query(documentCollection))._toQuery()))).count();
         } catch (IOException e) {
             throw new CommunicationException("Error on ES when try to execute count to document collection:" + documentCollection, e);
         }
     }
 
     @Override
-    public Stream<DocumentEntity> search(QueryBuilder query) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
-
+    public Stream<DocumentEntity> search(SearchRequest.Builder queryBuilder) {
+        Objects.requireNonNull(queryBuilder, "queryBuilder is required");
         try {
-            SearchRequest searchRequest = new SearchRequest(index);
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.query(query);
-            searchRequest.source(searchSourceBuilder);
-            SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
-
-            return stream(search.getHits().spliterator(), false)
-                    .map(ElasticsearchEntry::of)
-                    .filter(ElasticsearchEntry::isNotEmpty)
-                    .map(ElasticsearchEntry::toEntity);
+            SearchRequest query = queryBuilder.build();
+            SearchResponse<Map> responses = client.search(query, Map.class);
+            return EntityConverter.getDocumentEntityStream(client, responses);
         } catch (IOException e) {
             throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
         }
@@ -181,7 +176,7 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
     @Override
     public void close() {
         try {
-            client.close();
+            client._transport().close();
         } catch (IOException e) {
             throw new ElasticsearchException("An error when close the client", e);
         }
