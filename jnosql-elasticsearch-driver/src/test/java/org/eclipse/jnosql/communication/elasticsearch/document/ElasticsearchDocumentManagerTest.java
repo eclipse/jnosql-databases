@@ -388,8 +388,7 @@ public class ElasticsearchDocumentManagerTest {
 
         List<List<Document>> contacts = documentEntity.find("contacts")
                 .orElseThrow()
-                .get(new TypeReference<>() {
-                });
+                .get(List.class);
 
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
