@@ -52,9 +52,9 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
 
     private static final int DEFAULT_PORT = 9200;
 
-    private List<HttpHost> httpHosts = new ArrayList<>();
+    private final List<HttpHost> httpHosts = new ArrayList<>();
 
-    private List<Header> headers = new ArrayList<>();
+    private final List<Header> headers = new ArrayList<>();
 
 
     public ElasticsearchDocumentConfiguration() {
@@ -93,7 +93,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
                 .forEach(httpHosts::add);
 
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[0]));
-        builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
+        builder.setDefaultHeaders(headers.toArray(Header[]::new));
 
         final Optional<String> username = settings
                 .getSupplier(asList(Configurations.USER,

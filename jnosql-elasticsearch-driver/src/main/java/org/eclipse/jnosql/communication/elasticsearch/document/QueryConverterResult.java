@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
@@ -20,7 +21,6 @@ import java.util.List;
 
 class QueryConverterResult {
 
-
     private final Query.Builder statement;
 
     private final List<String> ids;
@@ -29,7 +29,6 @@ class QueryConverterResult {
         this.statement = statement;
         this.ids = ids;
     }
-
 
     Query.Builder getStatement() {
         return statement;

@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
@@ -126,7 +127,7 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
         BulkRequest.Builder bulkRequest = new BulkRequest.Builder();
 
         entities.stream()
-                .map(entity -> entity.find(EntityConverter.ID_FIELD).get().get(String.class))
+                .map(entity -> entity.find(EntityConverter.ID_FIELD).orElseThrow().get(String.class))
                 .forEach(id ->
                         bulkRequest.operations(op -> op
                                 .delete(DeleteOperation.of(dp -> dp
@@ -162,11 +163,10 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
     }
 
     @Override
-    public Stream<DocumentEntity> search(SearchRequest.Builder queryBuilder) {
-        Objects.requireNonNull(queryBuilder, "queryBuilder is required");
+    public Stream<DocumentEntity> search(SearchRequest query) {
+        Objects.requireNonNull(query, "query is required");
         try {
-            SearchRequest query = queryBuilder.build();
-            SearchResponse<Map> responses = client.search(query, Map.class);
+            var responses = client.search(query, Map.class);
             return EntityConverter.getDocumentEntityStream(client, responses);
         } catch (IOException e) {
             throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
