@@ -12,16 +12,10 @@
  *
  *   Otavio Santana
  *   Alessandro Moscatelli
- *   Maximillian Arruda
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.json.JsonpMapper;
-import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
@@ -33,6 +27,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.elasticsearch.client.RestHighLevelClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +47,9 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
 
     private static final int DEFAULT_PORT = 9200;
 
-    private final List<HttpHost> httpHosts = new ArrayList<>();
+    private List<HttpHost> httpHosts = new ArrayList<>();
 
-    private final List<Header> headers = new ArrayList<>();
+    private List<Header> headers = new ArrayList<>();
 
 
     public ElasticsearchDocumentConfiguration() {
@@ -93,7 +88,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
                 .forEach(httpHosts::add);
 
         RestClientBuilder builder = RestClient.builder(httpHosts.toArray(new HttpHost[0]));
-        builder.setDefaultHeaders(headers.toArray(Header[]::new));
+        builder.setDefaultHeaders(headers.stream().toArray(Header[]::new));
 
         final Optional<String> username = settings
                 .getSupplier(asList(Configurations.USER,
@@ -113,7 +108,8 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
                     .setDefaultCredentialsProvider(credentialsProvider));
         }
 
-        return this.get(builder);
+        RestHighLevelClient client = new RestHighLevelClient(builder);
+        return new ElasticsearchDocumentManagerFactory(client);
     }
 
     /**
@@ -125,60 +121,18 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
      */
     public ElasticsearchDocumentManagerFactory get(RestClientBuilder builder) {
         Objects.requireNonNull(builder, "builder is required");
-        return this.get(builder, new JsonbJsonpMapper());
+        RestHighLevelClient client = new RestHighLevelClient(builder);
+        return new ElasticsearchDocumentManagerFactory(client);
     }
 
     /**
      * returns an {@link ElasticsearchDocumentManagerFactory} instance
      *
-     * @param builder    the builder {@link RestClientBuilder}
-     * @param jsonMapper the jsonMapper {@link JsonpMapper}
-     * @return a manager factory instance
-     * @throws NullPointerException when transport is null or jsonMapper is null
-     */
-    public ElasticsearchDocumentManagerFactory get(RestClientBuilder builder, JsonpMapper jsonMapper) {
-        Objects.requireNonNull(builder, "builder is required");
-        Objects.requireNonNull(jsonMapper, "jsonMapper is required");
-        RestClient restClient = builder.build();
-        return get(restClient,jsonMapper);
-    }
-
-    /**
-     * returns an {@link ElasticsearchDocumentManagerFactory} instance
-     *
-     * @param restClient    the restClient {@link RestClient}
-     * @param jsonMapper the jsonMapper {@link JsonpMapper}
-     * @return a manager factory instance
-     * @throws NullPointerException when restClient is null or jsonMapper is null
-     */
-    public ElasticsearchDocumentManagerFactory get(RestClient restClient, JsonpMapper jsonMapper) {
-        Objects.requireNonNull(restClient, "restClient is required");
-        Objects.requireNonNull(jsonMapper, "jsonMapper is required");
-        var transport = new RestClientTransport(restClient, jsonMapper);
-        return this.get(transport);
-    }
-
-    /**
-     * returns an {@link ElasticsearchDocumentManagerFactory} instance
-     *
-     * @param transport the transport {@link ElasticsearchTransport}
-     * @return a manager factory instance
-     * @throws NullPointerException when transport is null
-     */
-    public ElasticsearchDocumentManagerFactory get(ElasticsearchTransport transport) {
-        Objects.requireNonNull(transport, "transport is required");
-        ElasticsearchClient client = new ElasticsearchClient(transport);
-        return this.get(client);
-    }
-
-    /**
-     * returns an {@link ElasticsearchDocumentManagerFactory} instance
-     *
-     * @param client the client {@link ElasticsearchClient}
+     * @param client the client {@link RestHighLevelClient}
      * @return a manager factory instance
      * @throws NullPointerException when client is null
      */
-    public ElasticsearchDocumentManagerFactory get(ElasticsearchClient client) {
+    public ElasticsearchDocumentManagerFactory get(RestHighLevelClient client) {
         Objects.requireNonNull(client, "client is required");
         return new ElasticsearchDocumentManagerFactory(client);
     }

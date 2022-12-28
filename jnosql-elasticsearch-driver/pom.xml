@@ -12,7 +12,6 @@
   ~   Contributors:
   ~
   ~   Otavio Santana
-  ~   Maximillian Arruda
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -29,6 +28,8 @@
     <description>The Eclipse JNoSQL communication layer implementation to Elasticsearch</description>
 
     <properties>
+        <es.version>7.17.6</es.version>
+        <elasticsearch-java.version>8.5.3</elasticsearch-java.version>
         <es.version>8.5.3</es.version>
         <yasson.version>2.0.2</yasson.version>
         <awaitility.version>4.2.0</awaitility.version>
@@ -48,20 +49,19 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>${es.version}</version>
+        </dependency>
+        <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
-            <version>${es.version}</version>
+            <version>${elasticsearch-java.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.nosql.tck.communication.driver</groupId>
             <artifactId>driver-tck-document</artifactId>
             <version>${jakarta.nosql.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
