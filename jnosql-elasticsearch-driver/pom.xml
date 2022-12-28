@@ -30,7 +30,6 @@
     <properties>
         <es.version>7.17.6</es.version>
         <elasticsearch-java.version>8.5.3</elasticsearch-java.version>
-        <es.version>8.5.3</es.version>
         <yasson.version>2.0.2</yasson.version>
         <awaitility.version>4.2.0</awaitility.version>
         <jakarta.json.version>2.0.1</jakarta.json.version>
@@ -62,6 +61,12 @@
             <groupId>jakarta.nosql.tck.communication.driver</groupId>
             <artifactId>driver-tck-document</artifactId>
             <version>${jakarta.nosql.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

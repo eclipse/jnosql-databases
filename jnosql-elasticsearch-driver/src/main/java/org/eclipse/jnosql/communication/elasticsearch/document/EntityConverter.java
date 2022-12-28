@@ -77,7 +77,7 @@ final class EntityConverter {
         }
     }
 
-    private static Stream<DocumentEntity> executeStatement(DocumentQuery query,  ElasticsearchClient client, String index,
+    private static Stream<DocumentEntity> executeStatement(DocumentQuery query, ElasticsearchClient client, String index,
                                                            QueryConverterResult select) throws IOException {
         SearchRequest.Builder searchRequest = buildSearchRequestBuilder(query, select);
         searchRequest.index(index);
@@ -86,7 +86,6 @@ final class EntityConverter {
 
         return getDocumentEntityStream(client, searchResponse);
     }
-
 
 
     private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
