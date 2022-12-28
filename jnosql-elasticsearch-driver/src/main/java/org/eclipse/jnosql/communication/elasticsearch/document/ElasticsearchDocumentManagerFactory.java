@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 

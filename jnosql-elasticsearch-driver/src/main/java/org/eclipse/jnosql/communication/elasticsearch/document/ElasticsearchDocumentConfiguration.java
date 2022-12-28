@@ -12,6 +12,7 @@
  *
  *   Otavio Santana
  *   Alessandro Moscatelli
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
