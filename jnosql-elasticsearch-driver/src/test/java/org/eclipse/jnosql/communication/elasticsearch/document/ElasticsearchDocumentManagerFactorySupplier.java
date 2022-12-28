@@ -28,6 +28,7 @@ enum ElasticsearchDocumentManagerFactorySupplier implements Supplier<Elasticsear
 
     private final GenericContainer es =
             new GenericContainer("docker.elastic.co/elasticsearch/elasticsearch:8.5.3")
+                    .withReuse(true)
                     .withExposedPorts(9200, 9300)
                     .withEnv("discovery.type", "single-node")
                     .withEnv("ES_JAVA_OPTS","-Xms1g -Xmx1g")
