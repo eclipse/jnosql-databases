@@ -35,9 +35,6 @@
         <jakarta.json.version>2.0.1</jakarta.json.version>
         <jakarta.json.bind.version>2.0.0</jakarta.json.bind.version>
         <jakarta.annotation.version>1.3.5</jakarta.annotation.version>
-        <geronimo-json_1.1_spec.version>1.0</geronimo-json_1.1_spec.version>
-        <johnzon-jsonb.version>1.1.4</johnzon-jsonb.version>
-        <javax.json.bind.version>1.0</javax.json.bind.version>
     </properties>
     <dependencies>
         <dependency>
@@ -54,39 +51,11 @@
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
             <version>${es.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>jakarta.json</groupId>
-                    <artifactId>jakarta.json-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.parsson</groupId>
-                    <artifactId>parsson</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>jakarta.nosql.tck.communication.driver</groupId>
             <artifactId>driver-tck-document</artifactId>
             <version>${jakarta.nosql.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-json_1.1_spec</artifactId>
-            <version>${geronimo-json_1.1_spec.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>johnzon-jsonb</artifactId>
-            <version>${johnzon-jsonb.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.json.bind</groupId>
-            <artifactId>javax.json.bind-api</artifactId>
-            <version>${javax.json.bind.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -96,19 +65,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    <dependenciesToScan>
-                        <dependency>jakarta.nosql.tck.communication.driver:driver-tck-document</dependency>
-                    </dependenciesToScan>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
