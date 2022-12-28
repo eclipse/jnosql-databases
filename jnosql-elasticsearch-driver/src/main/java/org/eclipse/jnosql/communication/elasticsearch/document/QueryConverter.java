@@ -15,11 +15,11 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.json.JsonData;
 import jakarta.nosql.Condition;
 import jakarta.nosql.TypeReference;
@@ -28,7 +28,12 @@ import jakarta.nosql.document.DocumentCondition;
 import jakarta.nosql.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static jakarta.nosql.Condition.EQUALS;
@@ -116,11 +121,16 @@ final class QueryConverter {
                                 .allowLeadingWildcard(true)
                                 .fields(document.getName())));
             case IN:
-                return (Query.Builder) new Query.Builder()
-                        .term(TermQuery.of(tq -> tq
-                                .field(document.getName())
-                                .value(v -> v
-                                        .anyValue(JsonData.of(ValueUtil.convertToList(document.getValue()))))));
+                return (Query.Builder) ValueUtil.convertToList(document.getValue())
+                        .stream()
+                        .map(val -> new Query.Builder()
+                                .term(TermQuery.of(tq -> tq
+                                        .field(document.getName())
+                                        .value(v -> v.anyValue(JsonData.of(val))))))
+                        .reduce((d1, d2) -> new Query.Builder()
+                                .bool(BoolQuery.of(bq -> bq
+                                        .should(List.of(d1.build(), d2.build())))))
+                        .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
             case AND:
                 return document.get(new TypeReference<List<DocumentCondition>>() {
                         })
@@ -144,9 +154,11 @@ final class QueryConverter {
                         .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
             case NOT:
                 DocumentCondition dc = document.get(DocumentCondition.class);
+                Query.Builder queryBuilder = Optional.ofNullable(getCondition(dc, ids))
+                        .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
                 return (Query.Builder) new Query.Builder()
                         .bool(BoolQuery.of(bq -> bq
-                                .mustNot(getCondition(dc, ids).build())));
+                                .mustNot(queryBuilder.build())));
             default:
                 throw new IllegalStateException("This condition is not supported at elasticsearch: " + condition.getCondition());
         }
