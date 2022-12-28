@@ -29,6 +29,7 @@
 
     <properties>
         <es.version>7.17.6</es.version>
+        <elasticsearch-java.version>8.5.3</elasticsearch-java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -47,25 +48,15 @@
             <version>${es.version}</version>
         </dependency>
         <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>${elasticsearch-java.version}</version>
+        </dependency>
+        <dependency>
             <groupId>jakarta.nosql.tck.communication.driver</groupId>
             <artifactId>driver-tck-document</artifactId>
             <version>${jakarta.nosql.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    <dependenciesToScan>
-                        <dependency>jakarta.nosql.tck.communication.driver:driver-tck-document</dependency>
-                    </dependenciesToScan>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

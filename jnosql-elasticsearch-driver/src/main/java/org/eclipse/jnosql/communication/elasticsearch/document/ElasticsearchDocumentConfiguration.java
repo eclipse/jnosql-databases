@@ -25,9 +25,11 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClientBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +110,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
                     .setDefaultCredentialsProvider(credentialsProvider));
         }
 
-        RestHighLevelClient client = new RestHighLevelClient(builder);
-        return new ElasticsearchDocumentManagerFactory(client);
+        return this.get(builder);
     }
 
     /**
@@ -121,7 +122,12 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
      */
     public ElasticsearchDocumentManagerFactory get(RestClientBuilder builder) {
         Objects.requireNonNull(builder, "builder is required");
-        RestHighLevelClient client = new RestHighLevelClient(builder);
+        RestClient httpClient = builder.build();
+
+        RestHighLevelClient client = new RestHighLevelClientBuilder(httpClient)
+                .setApiCompatibilityMode(true)
+                .build();
+
         return new ElasticsearchDocumentManagerFactory(client);
     }
 
