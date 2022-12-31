@@ -11,13 +11,13 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
 import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentEntity;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.search.SearchHit;
 
 import java.util.ArrayList;
@@ -65,6 +65,7 @@ class ElasticsearchEntry {
                 .collect(Collectors.toList());
         DocumentEntity entity = DocumentEntity.of(collection, documents);
         entity.remove(ID_FIELD);
+        entity.remove(ENTITY);
         entity.add(id);
         return entity;
     }
@@ -95,13 +96,11 @@ class ElasticsearchEntry {
                         .allMatch(Map.class::isInstance);
     }
 
-
-    static ElasticsearchEntry of(SearchHit searchHit) {
-        return new ElasticsearchEntry(searchHit.getId(),
-                searchHit.getSourceAsMap());
+    static ElasticsearchEntry of(String id, Map<String, Object> data) {
+        return new ElasticsearchEntry(id, data);
     }
 
-    static ElasticsearchEntry of(GetResponse searchHit) {
+    static ElasticsearchEntry of(SearchHit searchHit) {
         return new ElasticsearchEntry(searchHit.getId(),
                 searchHit.getSourceAsMap());
     }

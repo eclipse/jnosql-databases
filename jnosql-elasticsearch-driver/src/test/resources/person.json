@@ -8,7 +8,6 @@
           "type": "custom",
           "tokenizer": "whitespace",
           "filter": [
-            "standard",
             "lowercase",
             "asciifolding"
           ]
@@ -21,23 +20,21 @@
     }
   },
   "mappings": {
-    "_doc": {
-      "properties": {
-        "username": {
-          "type": "keyword"
-        },
-        "name": {
-          "type": "keyword"
-        },
-        "email": {
-          "type": "keyword"
-        },
-        "description": {
-          "type": "keyword"
-        },
-        "created": {
-          "type": "keyword"
-        }
+    "properties": {
+      "username": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "email": {
+        "type": "keyword"
+      },
+      "description": {
+        "type": "keyword"
+      },
+      "created": {
+        "type": "keyword"
       }
     }
   }

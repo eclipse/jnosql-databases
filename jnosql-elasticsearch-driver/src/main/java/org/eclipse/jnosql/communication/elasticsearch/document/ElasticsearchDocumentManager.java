@@ -11,10 +11,12 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentManager;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -27,13 +29,21 @@ import java.util.stream.Stream;
 public interface ElasticsearchDocumentManager extends DocumentManager {
 
     /**
+     * Find entities from {@link SearchRequest}
+     *
+     * @param query the search request builder
+     * @return the objects from search
+     * @throws NullPointerException when the search request builder is null
+     */
+    Stream<DocumentEntity> search(SearchRequest query) throws NullPointerException;
+
+    /**
      * Find entities from {@link QueryBuilder}
      *
      * @param query the query
      * @return the objects from query
      * @throws NullPointerException when query is null
      */
-     Stream<DocumentEntity> search(QueryBuilder query) throws NullPointerException;
-
+    Stream<DocumentEntity> search(QueryBuilder query) throws NullPointerException;
 
 }

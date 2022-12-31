@@ -16,6 +16,9 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import jakarta.nosql.Configurations;
 import jakarta.nosql.Settings;
 import jakarta.nosql.document.DocumentConfiguration;
@@ -27,7 +30,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClientBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,34 +111,17 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
                     .setDefaultCredentialsProvider(credentialsProvider));
         }
 
-        RestHighLevelClient client = new RestHighLevelClient(builder);
-        return new ElasticsearchDocumentManagerFactory(client);
-    }
+        RestClient httpClient = builder.build();
 
-    /**
-     * returns an {@link ElasticsearchDocumentManagerFactory} instance
-     *
-     * @param builder the builder {@link RestClientBuilder}
-     * @return a manager factory instance
-     * @throws NullPointerException when builder is null
-     */
-    public ElasticsearchDocumentManagerFactory get(RestClientBuilder builder) {
-        Objects.requireNonNull(builder, "builder is required");
-        RestHighLevelClient client = new RestHighLevelClient(builder);
-        return new ElasticsearchDocumentManagerFactory(client);
-    }
+        var restHighLevelClient = new RestHighLevelClientBuilder(httpClient)
+                .setApiCompatibilityMode(true)
+                .build();
 
-    /**
-     * returns an {@link ElasticsearchDocumentManagerFactory} instance
-     *
-     * @param client the client {@link RestHighLevelClient}
-     * @return a manager factory instance
-     * @throws NullPointerException when client is null
-     */
-    public ElasticsearchDocumentManagerFactory get(RestHighLevelClient client) {
-        Objects.requireNonNull(client, "client is required");
-        return new ElasticsearchDocumentManagerFactory(client);
-    }
+        var transport = new RestClientTransport(httpClient, new JsonbJsonpMapper());
 
+        var elasticsearchClient = new ElasticsearchClient(transport);
+
+        return new ElasticsearchDocumentManagerFactory(restHighLevelClient, elasticsearchClient);
+    }
 
 }

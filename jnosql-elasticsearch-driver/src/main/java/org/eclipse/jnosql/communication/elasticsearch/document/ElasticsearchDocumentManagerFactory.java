@@ -15,30 +15,15 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.OpenRequest;
 import jakarta.nosql.document.DocumentManagerFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Objects;
-
-import static java.lang.Boolean.TRUE;
-import static java.nio.file.Files.readAllBytes;
-
 
 /**
  * The elasticsearch implementation to {@link DocumentManagerFactory} that returns:
@@ -50,10 +35,12 @@ import static java.nio.file.Files.readAllBytes;
 public class ElasticsearchDocumentManagerFactory implements DocumentManagerFactory {
 
 
-    private final RestHighLevelClient client;
+    private final RestHighLevelClient restHighLevelClient;
+    private final ElasticsearchClient elasticsearchClient;
 
-    ElasticsearchDocumentManagerFactory(RestHighLevelClient client) {
-        this.client = client;
+    ElasticsearchDocumentManagerFactory(RestHighLevelClient restHighLevelClient, ElasticsearchClient elasticsearchClient) {
+        this.restHighLevelClient = restHighLevelClient;
+        this.elasticsearchClient = elasticsearchClient;
     }
 
 
@@ -62,15 +49,7 @@ public class ElasticsearchDocumentManagerFactory implements DocumentManagerFacto
         Objects.requireNonNull(database, "database is required");
 
         initDatabase(database);
-        return new DefaultElasticsearchDocumentManager(client, database);
-    }
-
-    private byte[] getBytes(URL url) {
-        try {
-            return readAllBytes(Paths.get(url.toURI()));
-        } catch (IOException | URISyntaxException e) {
-            throw new ElasticsearchException("An error when read the database mapping", e);
-        }
+        return new DefaultElasticsearchDocumentManager(restHighLevelClient, elasticsearchClient, database);
     }
 
     private void initDatabase(String database) {
@@ -84,47 +63,32 @@ public class ElasticsearchDocumentManagerFactory implements DocumentManagerFacto
         InputStream stream = ElasticsearchDocumentManagerFactory.class.getResourceAsStream('/' + database + ".json");
         if (Objects.nonNull(stream)) {
             try {
-                RestClient lowLevelClient = client.getLowLevelClient();
-                HttpEntity entity = new NStringEntity(getMappging(stream), ContentType.APPLICATION_JSON);
-                Request request = new Request("PUT", database);
-                request.addParameter("include_type_name", TRUE.toString());
-                request.setEntity(entity);
-
-                lowLevelClient.performRequest(request);
+                CreateIndexRequest request = CreateIndexRequest.of(
+                        b -> b.index(database).withJson(stream)
+                );
+                elasticsearchClient.indices().create(request);
             } catch (Exception ex) {
                 throw new ElasticsearchException("Error when create a new mapping", ex);
             }
         } else {
             try {
-                CreateIndexRequest request = new CreateIndexRequest(database);
-                client.indices().create(request, RequestOptions.DEFAULT);
+                CreateIndexRequest request = CreateIndexRequest.of(
+                        b -> b.index(database)
+                );
+                elasticsearchClient.indices().create(request);
             } catch (Exception ex) {
                 throw new ElasticsearchException("Error when create a new mapping", ex);
             }
         }
     }
 
-    private String getMappging(InputStream stream) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        byte[] data = new byte[1024];
-        while ((nRead = stream.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-        buffer.flush();
-        byte[] byteArray = buffer.toByteArray();
-
-        return new String(byteArray, StandardCharsets.UTF_8);
-    }
-
     private boolean isExists(String database) {
         try {
-            client.indices().open(new OpenIndexRequest(database), RequestOptions.DEFAULT);
+            elasticsearchClient.indices().open(OpenRequest.of(b -> b.index(database)));
             return true;
         } catch (IOException e) {
             throw new ElasticsearchException("And error on admin access to verify if the database exists", e);
-        } catch (ElasticsearchStatusException e) {
+        } catch (co.elastic.clients.elasticsearch._types.ElasticsearchException e) {
             return false;
         }
     }
@@ -132,9 +96,9 @@ public class ElasticsearchDocumentManagerFactory implements DocumentManagerFacto
     @Override
     public void close() {
         try {
-            client.close();
+            elasticsearchClient._transport().close();
         } catch (IOException e) {
-            throw new ElasticsearchException("An error when close the RestHighLevelClient client", e);
+            throw new ElasticsearchException("An error when close the elasticsearchClient client", e);
         }
     }
 }
