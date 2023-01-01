@@ -30,7 +30,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClientBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,15 +112,11 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
 
         RestClient httpClient = builder.build();
 
-        var restHighLevelClient = new RestHighLevelClientBuilder(httpClient)
-                .setApiCompatibilityMode(true)
-                .build();
-
         var transport = new RestClientTransport(httpClient, new JsonbJsonpMapper());
 
         var elasticsearchClient = new ElasticsearchClient(transport);
 
-        return new ElasticsearchDocumentManagerFactory(restHighLevelClient, elasticsearchClient);
+        return new ElasticsearchDocumentManagerFactory(elasticsearchClient);
     }
 
 }
