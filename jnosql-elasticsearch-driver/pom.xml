@@ -28,7 +28,6 @@
     <description>The Eclipse JNoSQL communication layer implementation to Elasticsearch</description>
 
     <properties>
-        <es.version>7.17.6</es.version>
         <elasticsearch-java.version>8.5.3</elasticsearch-java.version>
         <yasson.version>2.0.2</yasson.version>
         <awaitility.version>4.2.0</awaitility.version>
@@ -46,11 +45,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>jnosql-communication-driver-commons</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>${es.version}</version>
         </dependency>
         <dependency>
             <groupId>co.elastic.clients</groupId>
