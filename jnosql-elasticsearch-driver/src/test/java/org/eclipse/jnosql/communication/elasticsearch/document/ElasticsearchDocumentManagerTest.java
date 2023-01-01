@@ -22,8 +22,6 @@ import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
 import org.awaitility.Awaitility;
 import org.eclipse.jnosql.communication.document.Documents;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +42,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.eclipse.jnosql.communication.elasticsearch.document.EntityConverter.ID_FIELD;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -69,10 +66,6 @@ public class ElasticsearchDocumentManagerTest {
         return () -> entityManager.search(query).count();
     }
 
-    @NotNull
-    private Callable<Long> numberOfEntitiesFrom(QueryBuilder query) {
-        return () -> entityManager.search(query).count();
-    }
 
     @NotNull
     private Callable<Long> numberOfEntitiesFrom(DocumentQuery query) {
@@ -187,20 +180,6 @@ public class ElasticsearchDocumentManagerTest {
         assertThat(entityManager.search(query)
                 .collect(Collectors.toList())).contains(entity);
 
-    }
-
-    @Test
-    public void shouldUserQueryBuilder() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
-        entityManager.insert(entity);
-
-        TermQueryBuilder query = termQuery("name", "Poliana");
-
-        // it's required in order to avoid an eventual inconsistency
-        await().until(numberOfEntitiesFrom(query),equalTo(1l));
-
-        assertThat(entityManager.search(query)
-                .collect(Collectors.toList())).contains(entity);
     }
 
 
