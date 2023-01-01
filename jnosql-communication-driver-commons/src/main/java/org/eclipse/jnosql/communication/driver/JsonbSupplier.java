@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.driver;
 
-import javax.json.bind.Jsonb;
+import jakarta.json.bind.Jsonb;
 import java.util.function.Supplier;
 
 /**

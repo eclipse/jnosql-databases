@@ -17,7 +17,7 @@ package org.eclipse.jnosql.communication.driver;
 import jakarta.nosql.TypeSupplier;
 import jakarta.nosql.Value;
 
-import javax.json.bind.Jsonb;
+import jakarta.json.bind.Jsonb;
 import java.util.Objects;
 
 

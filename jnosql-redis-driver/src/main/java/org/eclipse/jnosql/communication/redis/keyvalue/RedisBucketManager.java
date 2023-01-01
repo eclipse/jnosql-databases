@@ -22,7 +22,7 @@ import jakarta.nosql.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.ValueJSON;
 import redis.clients.jedis.Jedis;
 
-import javax.json.bind.Jsonb;
+import jakarta.json.bind.Jsonb;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;

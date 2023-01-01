@@ -19,7 +19,7 @@ package org.eclipse.jnosql.communication.couchdb.document;
 import jakarta.nosql.document.DocumentQuery;
 import org.junit.jupiter.params.ParameterizedTest;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 import java.util.Arrays;
 
 import static jakarta.nosql.document.DocumentQuery.select;

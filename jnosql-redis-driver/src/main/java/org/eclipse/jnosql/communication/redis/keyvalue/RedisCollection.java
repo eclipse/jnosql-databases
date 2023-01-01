@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.redis.keyvalue;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import redis.clients.jedis.Jedis;
 
-import javax.json.bind.Jsonb;
+import jakarta.json.bind.Jsonb;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;

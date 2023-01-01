@@ -16,7 +16,7 @@ package org.eclipse.jnosql.communication.driver;
 
 import org.junit.jupiter.api.Test;
 
-import javax.json.bind.Jsonb;
+import jakarta.json.bind.Jsonb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
