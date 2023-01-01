@@ -50,7 +50,7 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
 
     private final String index;
 
-    public DefaultElasticsearchDocumentManager(ElasticsearchClient elasticsearchClient, String index) {
+    DefaultElasticsearchDocumentManager(ElasticsearchClient elasticsearchClient, String index) {
         this.elasticsearchClient = elasticsearchClient;
         this.index = index;
     }
