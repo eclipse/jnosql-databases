@@ -11,6 +11,11 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 === Changed
 
 - Update ES library to version 8.5
+- Update Jakarta API to after the Big-bang
+
+=== Removed
+
+- Remove Stream<DocumentEntity> search(QueryBuilder query) in ElasticsearchDocumentManager
 
 == [1.0.0.4-b5] - 2022-12-22
 
