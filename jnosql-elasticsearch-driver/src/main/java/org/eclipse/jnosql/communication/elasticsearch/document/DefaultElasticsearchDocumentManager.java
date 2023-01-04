@@ -28,10 +28,6 @@ import jakarta.nosql.document.Document;
 import jakarta.nosql.document.DocumentDeleteQuery;
 import jakarta.nosql.document.DocumentEntity;
 import jakarta.nosql.document.DocumentQuery;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -50,13 +46,11 @@ import static java.util.Objects.requireNonNull;
 class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManager {
 
 
-    private final RestHighLevelClient restHighLevelClient;
     private final ElasticsearchClient elasticsearchClient;
 
     private final String index;
 
-    public DefaultElasticsearchDocumentManager(RestHighLevelClient restHighLevelClient, ElasticsearchClient elasticsearchClient, String index) {
-        this.restHighLevelClient = restHighLevelClient;
+    DefaultElasticsearchDocumentManager(ElasticsearchClient elasticsearchClient, String index) {
         this.elasticsearchClient = elasticsearchClient;
         this.index = index;
     }
@@ -177,25 +171,6 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
         }
     }
 
-    @Override
-    public Stream<DocumentEntity> search(QueryBuilder query) throws NullPointerException {
-        Objects.requireNonNull(query, "query is required");
-
-        try {
-            var searchRequest = new org.elasticsearch.action.search.SearchRequest(index);
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.query(query);
-            searchRequest.source(searchSourceBuilder);
-            org.elasticsearch.action.search.SearchResponse search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-
-            return StreamSupport.stream(search.getHits().spliterator(), false)
-                    .map(ElasticsearchEntry::of)
-                    .filter(ElasticsearchEntry::isNotEmpty)
-                    .map(ElasticsearchEntry::toEntity);
-        } catch (IOException e) {
-            throw new ElasticsearchException("An error when do search from QueryBuilder on elasticsearch", e);
-        }
-    }
     @Override
     public void close() {
         try {

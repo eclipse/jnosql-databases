@@ -19,7 +19,6 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.OpenRequest;
 import jakarta.nosql.document.DocumentManagerFactory;
-import org.elasticsearch.client.RestHighLevelClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,11 +34,9 @@ import java.util.Objects;
 public class ElasticsearchDocumentManagerFactory implements DocumentManagerFactory {
 
 
-    private final RestHighLevelClient restHighLevelClient;
     private final ElasticsearchClient elasticsearchClient;
 
-    ElasticsearchDocumentManagerFactory(RestHighLevelClient restHighLevelClient, ElasticsearchClient elasticsearchClient) {
-        this.restHighLevelClient = restHighLevelClient;
+    ElasticsearchDocumentManagerFactory(ElasticsearchClient elasticsearchClient) {
         this.elasticsearchClient = elasticsearchClient;
     }
 
@@ -49,7 +46,7 @@ public class ElasticsearchDocumentManagerFactory implements DocumentManagerFacto
         Objects.requireNonNull(database, "database is required");
 
         initDatabase(database);
-        return new DefaultElasticsearchDocumentManager(restHighLevelClient, elasticsearchClient, database);
+        return new DefaultElasticsearchDocumentManager(elasticsearchClient, database);
     }
 
     private void initDatabase(String database) {

@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
-import javax.json.bind.Jsonb;
+import jakarta.json.bind.Jsonb;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

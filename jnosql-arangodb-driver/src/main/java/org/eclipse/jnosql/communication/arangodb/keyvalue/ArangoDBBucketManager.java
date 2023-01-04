@@ -24,7 +24,7 @@ import jakarta.nosql.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.driver.ValueJSON;
 
-import javax.json.bind.Jsonb;
+import jakarta.json.bind.Jsonb;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;

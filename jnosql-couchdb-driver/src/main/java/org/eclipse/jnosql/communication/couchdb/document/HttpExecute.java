@@ -33,8 +33,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 
-import javax.json.JsonObject;
-import javax.json.bind.Jsonb;
+import jakarta.json.JsonObject;
+import jakarta.json.bind.Jsonb;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
