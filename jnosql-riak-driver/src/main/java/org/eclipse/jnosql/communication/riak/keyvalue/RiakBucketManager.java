@@ -71,8 +71,8 @@ public class RiakBucketManager implements BucketManager {
     public void put(KeyValueEntity entity, Duration ttl)
             throws NullPointerException, UnsupportedOperationException {
 
-        Object key = entity.getKey();
-        Object value = entity.getValue();
+        Object key = entity.key();
+        Object value = entity.value();
 
         StoreValue storeValue = createStoreValue(key, value, nameSpace, ttl);
 

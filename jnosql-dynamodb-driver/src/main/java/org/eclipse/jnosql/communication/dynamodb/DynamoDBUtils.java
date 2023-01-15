@@ -70,7 +70,7 @@ public class DynamoDBUtils {
     }
 
     public static <K, V> Map<String, AttributeValue> createAttributeValues(KeyValueEntity entity) {
-        return createAttributeValues(entity.getKey(), entity.getValue());
+        return createAttributeValues(entity.key(), entity.value());
     }
 
     public static <K> Collection<Map<String, AttributeValue>> createAttributeValues(Iterable<KeyValueEntity> entities) {

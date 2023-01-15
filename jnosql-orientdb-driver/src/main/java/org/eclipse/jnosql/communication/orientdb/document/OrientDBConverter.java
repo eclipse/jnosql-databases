@@ -109,17 +109,17 @@ final class OrientDBConverter {
     }
 
     private static void toDocument(Map<String, Object> entityValues, Document document) {
-        Object value = ValueUtil.convert(document.getValue());
+        Object value = ValueUtil.convert(document.value());
         if (Document.class.isInstance(value)) {
             Document subDocument = Document.class.cast(value);
-            entityValues.put(document.getName(), singletonMap(subDocument.getName(), subDocument.get()));
+            entityValues.put(document.name(), singletonMap(subDocument.name(), subDocument.get()));
         } else if (isDocumentIterable(value)) {
-            entityValues.put(document.getName(), getMap(value));
+            entityValues.put(document.name(), getMap(value));
         } else if (isSudDocumentList(value)) {
-            entityValues.put(document.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
+            entityValues.put(document.name(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
                     .map(OrientDBConverter::getMap).collect(toList()));
         } else {
-            entityValues.put(document.getName(), value);
+            entityValues.put(document.name(), value);
         }
     }
 

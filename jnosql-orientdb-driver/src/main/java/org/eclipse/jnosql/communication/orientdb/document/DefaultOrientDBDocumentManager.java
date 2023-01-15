@@ -62,7 +62,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     public DocumentEntity insert(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
         try (ODatabaseSession tx = pool.acquire()) {
-            ODocument document = new ODocument(entity.getName());
+            ODocument document = new ODocument(entity.name());
             toMap(entity).forEach(document::field);
             try {
                 tx.save(document);

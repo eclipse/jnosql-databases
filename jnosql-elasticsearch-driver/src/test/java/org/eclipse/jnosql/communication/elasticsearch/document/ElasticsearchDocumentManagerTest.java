@@ -113,8 +113,8 @@ public class ElasticsearchDocumentManagerTest {
 
         Document id = documentEntity.find(ID_FIELD).get();
         DocumentQuery query = DocumentQuery.select()
-                .from(documentEntity.getName())
-                .where(id.getName()).eq(id.getValue())
+                .from(documentEntity.name())
+                .where(id.name()).eq(id.value())
                 .build();
 
         // it's required in order to avoid an eventual inconsistency
@@ -149,7 +149,7 @@ public class ElasticsearchDocumentManagerTest {
 
         DocumentQuery query = select()
                 .from(DocumentEntityGerator.COLLECTION_NAME)
-                .where(id.getName())
+                .where(id.name())
                 .eq(id.get())
                 .build();
 
@@ -187,12 +187,12 @@ public class ElasticsearchDocumentManagerTest {
     public void shouldRemoveEntityByName() {
         DocumentEntity documentEntity = entityManager.insert(DocumentEntityGerator.getEntity());
         Document name = documentEntity.find("name").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(name.name()).eq(name.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
-        DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(name.name()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
 
         // it's required in order to avoid an eventual inconsistency
@@ -205,13 +205,13 @@ public class ElasticsearchDocumentManagerTest {
         DocumentEntity documentEntity = entityManager.insert(DocumentEntityGerator.getEntity());
 
         Document id = documentEntity.find("_id").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
 
-        DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
 
         // it's required in order to avoid an eventual inconsistency
@@ -225,7 +225,7 @@ public class ElasticsearchDocumentManagerTest {
         Document name = entity.find("name").get();
         DocumentQuery query = select().
                 from(DocumentEntityGerator.COLLECTION_NAME).
-                where(name.getName())
+                where(name.name())
                 .eq(name.get())
                 .build();
 
@@ -246,7 +246,7 @@ public class ElasticsearchDocumentManagerTest {
 
         DocumentQuery query = select()
                 .from(DocumentEntityGerator.COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
+                .where(id.name()).eq(id.get())
                 .build();
 
         // it's required in order to avoid an eventual inconsistency
@@ -330,7 +330,7 @@ public class ElasticsearchDocumentManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
 
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1l));
@@ -357,7 +357,7 @@ public class ElasticsearchDocumentManagerTest {
         Document id = entitySaved.find("_id").get();
         DocumentQuery query = select().
                 from(DocumentEntityGerator.COLLECTION_NAME).
-                where(id.getName()).eq(id.get())
+                where(id.name()).eq(id.get())
                 .build();
 
         // it's required in order to avoid an eventual inconsistency
@@ -379,7 +379,7 @@ public class ElasticsearchDocumentManagerTest {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
 
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(key.getName()).eq(key.get()).build();
+        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(key.name()).eq(key.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1l));

@@ -57,7 +57,7 @@ final class EntityConverter {
         Map<String, Object> entityMap = new HashMap<>();
 
         entity.documents().stream()
-                .filter(d -> !ID_FIELD.equals(d.getName()))
+                .filter(d -> !ID_FIELD.equals(d.name()))
                 .forEach(feedJSON(entityMap));
         return entityMap;
     }
@@ -65,18 +65,18 @@ final class EntityConverter {
 
     private static Consumer<Document> feedJSON(Map<String, Object> map) {
         return d -> {
-            Object value = ValueUtil.convert(d.getValue());
+            Object value = ValueUtil.convert(d.value());
             if (value instanceof Document) {
                 Document subDocument = Document.class.cast(value);
-                map.put(d.getName(), singletonMap(subDocument.getName(), subDocument.get()));
+                map.put(d.name(), singletonMap(subDocument.name(), subDocument.get()));
             } else if (isSudDocument(value)) {
                 Map<String, Object> subDocument = getMap(value);
-                map.put(d.getName(), subDocument);
+                map.put(d.name(), subDocument);
             } else if (isSudDocumentList(value)) {
-                map.put(d.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
+                map.put(d.name(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
                         .map(EntityConverter::getMap).collect(toList()));
             } else {
-                map.put(d.getName(), value);
+                map.put(d.name(), value);
             }
         };
     }
@@ -90,7 +90,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(jakarta.nosql.document.Document.class::isInstance);
+                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

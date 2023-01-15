@@ -16,6 +16,7 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
+import jakarta.data.repository.Direction;
 import jakarta.data.repository.Sort;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.document.Document;
@@ -28,13 +29,13 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
 final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
-
 
 
     @Override
@@ -72,7 +73,8 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
     }
 
     private JsonObject createSortObject(Sort sort) {
-        return Json.createObjectBuilder().add(sort.getName(), sort.getType().name().toLowerCase(Locale.US)).build();
+        return Json.createObjectBuilder().add(sort.property(), sort.isAscending() ? Direction.ASC.name().toLowerCase(Locale.US)
+                : Direction.DESC.name().toLowerCase(Locale.US)).build();
     }
 
     private JsonObject getSelector(DocumentQuery documentQuery) {
@@ -84,8 +86,8 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
 
     private void appendCondition(DocumentCondition condition, JsonObjectBuilder selector) {
         Document document = condition.document();
-        String name = document.getName();
-        Object value = ValueUtil.convert(document.getValue());
+        String name = document.name();
+        Object value = ValueUtil.convert(document.value());
 
         switch (condition.condition()) {
             case EQUALS:
@@ -104,7 +106,7 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 appendCondition(CouchDBConstant.LTE_CONDITION, name, value, selector);
                 return;
             case IN:
-                appendCondition(CouchDBConstant.IN_CONDITION, name, getArray(document.getValue()), selector);
+                appendCondition(CouchDBConstant.IN_CONDITION, name, getArray(document.value()), selector);
                 return;
             case NOT:
                 appendNot(selector, value);

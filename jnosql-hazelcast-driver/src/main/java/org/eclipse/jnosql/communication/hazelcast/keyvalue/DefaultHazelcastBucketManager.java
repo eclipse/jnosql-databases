@@ -58,12 +58,12 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
 
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
-        map.put(entity.getKey(), entity.getValue());
+        map.put(entity.key(), entity.value());
     }
 
     @Override
     public void put(KeyValueEntity entity, Duration ttl) {
-        map.put(entity.getKey(), entity.getValue(), ttl.toMillis(), TimeUnit.MILLISECONDS);
+        map.put(entity.key(), entity.value(), ttl.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override

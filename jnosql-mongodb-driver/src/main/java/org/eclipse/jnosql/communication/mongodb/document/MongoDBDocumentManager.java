@@ -23,7 +23,6 @@ import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.data.repository.Sort;
-import org.eclipse.jnosql.communication.SortType;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
@@ -72,12 +71,12 @@ public class MongoDBDocumentManager implements DocumentManager {
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
-        String collectionName = entity.getName();
+        String collectionName = entity.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document document = getDocument(entity);
         collection.insertOne(document);
         boolean hasNotId = entity.documents().stream()
-                .map(jakarta.nosql.document.Document::getName).noneMatch(k -> k.equals(ID_FIELD));
+                .map(org.eclipse.jnosql.communication.document.Document::name).noneMatch(k -> k.equals(ID_FIELD));
         if (hasNotId) {
             entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
         }
@@ -113,10 +112,10 @@ public class MongoDBDocumentManager implements DocumentManager {
         Objects.requireNonNull(entity, "entity is required");
 
         DocumentEntity copy = entity.copy();
-        String collectionName = entity.getName();
+        String collectionName = entity.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document id = copy.find(ID_FIELD)
-                .map(d -> new Document(d.getName(), d.getValue().get()))
+                .map(d -> new Document(d.name(), d.value().get()))
                 .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
                         "the field `id` is required"));
         copy.remove(ID_FIELD);
@@ -229,8 +228,7 @@ public class MongoDBDocumentManager implements DocumentManager {
     }
 
     private Bson getSort(Sort sort) {
-        boolean isAscending = SortType.ASC.equals(sort.getType());
-        return isAscending ? Sorts.ascending(sort.getName()) : Sorts.descending(sort.getName());
+        return sort.isAscending() ? Sorts.ascending(sort.property()) : Sorts.descending(sort.property());
     }
 
     @Override

@@ -59,7 +59,7 @@ public class DynamoDBBucketManager implements BucketManager {
 
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
-        put(entity.getKey(), entity.getValue());
+        put(entity.key(), entity.value());
     }
 
     @Override

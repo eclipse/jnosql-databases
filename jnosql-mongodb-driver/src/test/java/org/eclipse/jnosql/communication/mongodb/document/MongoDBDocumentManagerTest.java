@@ -66,7 +66,7 @@ public class MongoDBDocumentManagerTest {
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.documents().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
+        assertTrue(documentEntity.documents().stream().map(Document::name).anyMatch(s -> s.equals("_id")));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class MongoDBDocumentManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
-                .and(id.get().getName()).eq(id.get().get())
+                .and(id.get().name()).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -397,7 +397,7 @@ public class MongoDBDocumentManagerTest {
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
+                .where(id.name()).eq(id.get())
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
@@ -466,7 +466,7 @@ public class MongoDBDocumentManagerTest {
         DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from("AppointmentBook")
-                .where(key.getName())
+                .where(key.name())
                 .eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
@@ -492,8 +492,8 @@ public class MongoDBDocumentManagerTest {
         entity.add("money", money);
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document id = documentEntity.find("_id").get();
-        DocumentQuery query = DocumentQuery.select().from(documentEntity.getName())
-                .where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = DocumentQuery.select().from(documentEntity.name())
+                .where(id.name()).eq(id.get()).build();
 
         DocumentEntity result = entityManager.singleResult(query).get();
         assertEquals(money, result.find("money").get().get(Money.class));

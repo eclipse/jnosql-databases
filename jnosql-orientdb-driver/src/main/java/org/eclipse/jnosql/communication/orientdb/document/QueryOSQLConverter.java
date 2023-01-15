@@ -17,6 +17,7 @@ package org.eclipse.jnosql.communication.orientdb.document;
 
 
 import com.orientechnologies.orient.core.id.ORecordId;
+import jakarta.data.repository.Direction;
 import jakarta.data.repository.Sort;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
@@ -131,14 +132,14 @@ final class QueryOSQLConverter {
     private static void appendCondition(StringBuilder query, List<Object> params,
                                         Document document, String condition, List<ORecordId> ids) {
 
-        if(OrientDBConverter.RID_FIELD.equals(document.getName())) {
+        if(OrientDBConverter.RID_FIELD.equals(document.name())) {
             ids.add(new ORecordId(document.get(String.class)));
             return;
         }
-        query.append(document.getName())
+        query.append(document.name())
                 .append(condition).append(PARAM_APPENDER);
         if(IN.equals(condition)) {
-            params.add(ValueUtil.convertToList(document.getValue()));
+            params.add(ValueUtil.convertToList(document.value()));
         } else {
             params.add(document.get());
         }
@@ -149,9 +150,9 @@ final class QueryOSQLConverter {
         String separator = SPACE;
         for (Sort sort : sorts) {
             query.append(separator)
-                    .append(sort.getName())
+                    .append(sort.property())
                     .append(SPACE)
-                    .append(sort.getType());
+                    .append(sort.isAscending()? Direction.ASC: Direction.DESC);
             separator = ", ";
         }
     }

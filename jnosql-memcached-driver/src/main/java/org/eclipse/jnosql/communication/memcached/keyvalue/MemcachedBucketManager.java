@@ -42,7 +42,7 @@ final class MemcachedBucketManager implements BucketManager {
     @Override
     public void put(KeyValueEntity entity) {
         requireNonNull(entity, "entity is required");
-        put(entity.getKey(), entity.getValue());
+        put(entity.key(), entity.value());
     }
 
 
@@ -63,7 +63,7 @@ final class MemcachedBucketManager implements BucketManager {
     public void put(KeyValueEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        set(entity.getKey(), entity.getValue(), (int) ttl.getSeconds());
+        set(entity.key(), entity.value(), (int) ttl.getSeconds());
     }
 
     @Override

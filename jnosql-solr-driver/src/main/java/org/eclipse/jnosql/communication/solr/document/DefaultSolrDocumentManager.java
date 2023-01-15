@@ -15,6 +15,7 @@
 
 package org.eclipse.jnosql.communication.solr.document;
 
+import jakarta.data.repository.Direction;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
@@ -142,7 +143,8 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
                 solrQuery.setRows((int) query.limit());
             }
             final List<SortClause> sorts = query.sorts().stream()
-                    .map(s -> new SortClause(s.getName(), s.getType().name().toLowerCase(Locale.US)))
+                    .map(s -> new SortClause(s.property(), s.isAscending()? Direction.ASC.name().toLowerCase(Locale.US):
+                            Direction.DESC.name().toLowerCase(Locale.US)))
                     .collect(toList());
             solrQuery.setSorts(sorts);
             final QueryResponse response = solrClient.query(solrQuery);

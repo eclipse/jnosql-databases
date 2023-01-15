@@ -90,7 +90,7 @@ class HttpExecute {
     public DocumentEntity insert(String database, DocumentEntity entity) {
         Map<String, Object> map = new HashMap<>(entity.toMap());
         String id = map.getOrDefault(CouchDBConstant.ID, "").toString();
-        map.put(CouchDBConstant.ENTITY, entity.getName());
+        map.put(CouchDBConstant.ENTITY, entity.name());
         try {
             HttpEntityEnclosingRequestBase request;
             if (id.isEmpty()) {

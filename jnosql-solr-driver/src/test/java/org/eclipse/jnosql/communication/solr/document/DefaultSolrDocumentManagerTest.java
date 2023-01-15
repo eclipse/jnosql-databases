@@ -140,7 +140,7 @@ public class DefaultSolrDocumentManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
-                .and(id.get().getName()).eq(id.get().get())
+                .and(id.get().name()).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());

@@ -53,13 +53,10 @@ class DocumentQueryConverter {
 
     private static QueryResult appendRavenQuery(DocumentQuery query, List<String> ids, IDocumentQuery<HashMap> ravenQuery) {
         Consumer<Sort> sortConsumer = s -> {
-            switch (s.getType()) {
-                case DESC:
-                    ravenQuery.orderByDescending(s.getName());
-                    return;
-                case ASC:
-                default:
-                    ravenQuery.orderBy(s.getName());
+            if(s.isDescending()){
+                ravenQuery.orderByDescending(s.property());
+            } else {
+                ravenQuery.orderBy(s.property());
             }
         };
         query.sorts().forEach(sortConsumer);
@@ -77,7 +74,7 @@ class DocumentQueryConverter {
     private static void feedQuery(IDocumentQuery<HashMap> ravenQuery, DocumentCondition condition, List<String> ids) {
         Document document = condition.document();
         Object value = document.get();
-        String name = document.getName();
+        String name = document.name();
 
         if (EntityConverter.ID_FIELD.equals(name)) {
             if (value instanceof Iterable) {
@@ -106,7 +103,7 @@ class DocumentQueryConverter {
                 ravenQuery.whereLessThanOrEqual(name, value);
                 return;
             case IN:
-                ravenQuery.whereIn(name, ValueUtil.convertToList(document.getValue()));
+                ravenQuery.whereIn(name, ValueUtil.convertToList(document.value()));
                 return;
             case NOT:
                 ravenQuery.negateNext();
@@ -115,13 +112,13 @@ class DocumentQueryConverter {
             case LIKE:
                 throw new UnsupportedOperationException("Raven does not support LIKE Operator");
             case AND:
-                condition.document().getValue()
+                condition.document().value()
                         .get(new TypeReference<List<DocumentCondition>>() {
                         })
                         .forEach(c -> feedQuery(ravenQuery.andAlso(), c, ids));
                 return;
             case OR:
-                condition.document().getValue()
+                condition.document().value()
                         .get(new TypeReference<List<DocumentCondition>>() {
                         })
                         .forEach(c -> feedQuery(ravenQuery.orElse(), c, ids));

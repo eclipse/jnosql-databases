@@ -60,32 +60,32 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public long getLimit() {
+    public long limit() {
         return query.limit();
     }
 
     @Override
-    public long getSkip() {
+    public long skip() {
         return query.skip();
     }
 
     @Override
-    public String getDocumentCollection() {
+    public String name() {
         return query.name();
     }
 
     @Override
-    public Optional<DocumentCondition> getCondition() {
+    public Optional<DocumentCondition> condition() {
         return query.condition();
     }
 
     @Override
-    public List<Sort> getSorts() {
+    public List<Sort> sorts() {
         return query.sorts();
     }
 
     @Override
-    public List<String> getDocuments() {
+    public List<String> documents() {
         return query.documents();
     }
 

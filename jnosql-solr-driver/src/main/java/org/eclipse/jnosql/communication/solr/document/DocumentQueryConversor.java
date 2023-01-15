@@ -50,23 +50,23 @@ final class DocumentQueryConversor {
 
     private static String convert(DocumentCondition condition) {
         Document document = condition.document();
-        Object value = ValueUtil.convert(document.getValue());
+        Object value = ValueUtil.convert(document.value());
 
         switch (condition.condition()) {
             case EQUALS:
             case LIKE:
-                return document.getName() + ':' + value;
+                return document.name() + ':' + value;
             case GREATER_EQUALS_THAN:
             case GREATER_THAN:
-                return document.getName() + ":[" + value + " TO *]";
+                return document.name() + ":[" + value + " TO *]";
             case LESSER_EQUALS_THAN:
             case LESSER_THAN:
-                return document.getName() + ":[* TO " + value + "]";
+                return document.name() + ":[* TO " + value + "]";
             case IN:
-                final String inConditions = ValueUtil.convertToList(document.getValue())
+                final String inConditions = ValueUtil.convertToList(document.value())
                         .stream()
                         .map(Object::toString).collect(Collectors.joining(" OR "));
-                return document.getName() + ":(" + inConditions + ')';
+                return document.name() + ":(" + inConditions + ')';
             case NOT:
                 return " NOT " + convert(document.get(DocumentCondition.class));
 
@@ -85,7 +85,7 @@ final class DocumentQueryConversor {
     }
 
     private static List<DocumentCondition> getDocumentConditions(DocumentCondition condition) {
-        return condition.document().getValue().get(new TypeReference<>() {
+        return condition.document().value().get(new TypeReference<>() {
         });
     }
 

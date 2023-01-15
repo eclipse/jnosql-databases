@@ -170,7 +170,7 @@ public class RavenDBDocumentManager implements DocumentManager {
 
 
     private void insert(DocumentEntity entity, LocalDateTime time, IDocumentSession session) {
-        String collection = entity.getName();
+        String collection = entity.name();
 
         Map<String, Object> entityMap = EntityConverter.getMap(entity);
         String id = entity.find(EntityConverter.ID_FIELD)
