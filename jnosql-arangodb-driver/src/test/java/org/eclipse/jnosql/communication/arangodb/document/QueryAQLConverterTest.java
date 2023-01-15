@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryAQLConverterTest {

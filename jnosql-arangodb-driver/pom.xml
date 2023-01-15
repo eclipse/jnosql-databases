@@ -51,33 +51,5 @@
             <artifactId>arangodb-java-driver</artifactId>
             <version>${arango.driver}</version>
         </dependency>
-        <dependency>
-            <groupId>jakarta.nosql.tck.communication.driver</groupId>
-            <artifactId>driver-tck-key-value</artifactId>
-            <version>${jakarta.nosql.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.nosql.tck.communication.driver</groupId>
-            <artifactId>driver-tck-document</artifactId>
-            <version>${jakarta.nosql.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    <dependenciesToScan>
-                        <dependency>jakarta.nosql.tck.communication.driver:driver-tck-key-value</dependency>
-                        <dependency>jakarta.nosql.tck.communication.driver:driver-tck-document</dependency>
-                    </dependenciesToScan>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

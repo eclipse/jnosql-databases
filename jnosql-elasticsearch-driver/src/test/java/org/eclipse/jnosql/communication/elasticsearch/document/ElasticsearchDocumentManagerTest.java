@@ -34,8 +34,8 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;

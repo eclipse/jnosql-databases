@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 
 public class MongoDBQueryTest {
 

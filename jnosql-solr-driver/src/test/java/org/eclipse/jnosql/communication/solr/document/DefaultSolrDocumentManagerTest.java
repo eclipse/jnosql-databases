@@ -37,8 +37,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,7 +62,7 @@ public class DefaultSolrDocumentManagerTest {
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.documents().stream().map(Document::getName).anyMatch(s -> s.equals(ID)));
+        assertTrue(documentEntity.documents().stream().map(Document::name).anyMatch(s -> s.equals(ID)));
     }
 
     @Test

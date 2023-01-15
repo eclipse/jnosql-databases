@@ -139,7 +139,7 @@ public final class ArangoDBUtil {
 
         if (Document.class.isInstance(val)) {
             Document document = Document.class.cast(val);
-            return singletonMap(document.getName(), convert(document.getValue()));
+            return singletonMap(document.name(), convert(document.value()));
         }
         if (isSudDocument(val)) {
             return getMap(val);
