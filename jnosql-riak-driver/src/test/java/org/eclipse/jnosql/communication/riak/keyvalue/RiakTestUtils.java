@@ -16,8 +16,8 @@ package org.eclipse.jnosql.communication.riak.keyvalue;
 
 
 import com.basho.riak.client.core.RiakNode;
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 
 public final class RiakTestUtils {
 

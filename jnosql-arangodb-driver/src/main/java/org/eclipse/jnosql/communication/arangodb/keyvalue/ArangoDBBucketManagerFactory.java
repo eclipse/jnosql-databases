@@ -15,8 +15,9 @@
 package org.eclipse.jnosql.communication.arangodb.keyvalue;
 
 import com.arangodb.ArangoDB;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.arangodb.document.ArangoDBUtil;
+
 
 import java.util.List;
 import java.util.Map;

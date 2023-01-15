@@ -15,16 +15,16 @@
 package org.eclipse.jnosql.communication.hbase.column;
 
 
-import jakarta.nosql.Condition;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.Value;
-import jakarta.nosql.ValueWriter;
-import jakarta.nosql.column.Column;
-import jakarta.nosql.column.ColumnCondition;
-import jakarta.nosql.column.ColumnDeleteQuery;
-import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnManager;
-import jakarta.nosql.column.ColumnQuery;
+import org.eclipse.jnosql.communication.Condition;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.ValueWriter;
+import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.column.ColumnCondition;
+import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.ColumnManager;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
@@ -32,7 +32,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.eclipse.jnosql.communication.writer.ValueWriterDecorator;
+import org.eclipse.jnosql.communication.ValueWriterDecorator;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -138,7 +138,7 @@ public class HBaseColumnManager implements ColumnManager {
     @Override
     public void delete(ColumnDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
-        ColumnCondition condition = query.getCondition()
+        ColumnCondition condition = query.condition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         checkedCondition(condition);
         List<String> values = new ArrayList<>();
@@ -161,7 +161,7 @@ public class HBaseColumnManager implements ColumnManager {
     @Override
     public Stream<ColumnEntity> select(ColumnQuery query) {
         Objects.requireNonNull(query, "query is required");
-        ColumnCondition condition = query.getCondition()
+        ColumnCondition condition = query.condition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         checkedCondition(condition);
         return Stream.of(findById(condition))
@@ -210,7 +210,7 @@ public class HBaseColumnManager implements ColumnManager {
 
 
     private void convert(ColumnCondition columnCondition, List<String> values) {
-        Condition condition = columnCondition.getCondition();
+        Condition condition = columnCondition.condition();
 
         if (OR.equals(condition)) {
             columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
@@ -227,7 +227,7 @@ public class HBaseColumnManager implements ColumnManager {
 
     private void checkedCondition(ColumnCondition columnCondition) {
 
-        Condition condition = columnCondition.getCondition();
+        Condition condition = columnCondition.condition();
         if (OR.equals(condition)) {
             List<ColumnCondition> columnConditions = columnCondition.getColumn().get(new TypeReference<>() {
             });

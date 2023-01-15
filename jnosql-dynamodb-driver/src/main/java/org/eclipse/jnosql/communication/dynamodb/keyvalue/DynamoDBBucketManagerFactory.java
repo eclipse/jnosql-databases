@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.dynamodb.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.dynamodb.DynamoTableUtils;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 

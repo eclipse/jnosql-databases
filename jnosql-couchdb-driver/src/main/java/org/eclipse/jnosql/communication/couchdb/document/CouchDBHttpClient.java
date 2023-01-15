@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.CommunicationException;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.CommunicationException;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.io.IOException;

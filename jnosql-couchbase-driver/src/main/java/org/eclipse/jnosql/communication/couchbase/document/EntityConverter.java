@@ -17,8 +17,8 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonArray;
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;

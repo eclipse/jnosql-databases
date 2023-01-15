@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.couchdb.document;
 
 
-import jakarta.nosql.CommunicationException;
+import org.eclipse.jnosql.communication.CommunicationException;
 
 class CouchDBHttpClientException extends CommunicationException {
 

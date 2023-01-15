@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.infinispan.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

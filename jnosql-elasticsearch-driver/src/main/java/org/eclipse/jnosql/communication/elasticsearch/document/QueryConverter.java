@@ -22,11 +22,11 @@ import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.json.JsonData;
-import jakarta.nosql.Condition;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.Condition;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -52,13 +52,13 @@ final class QueryConverter {
     static QueryConverterResult select(DocumentQuery query) {
         List<String> ids = new ArrayList<>();
 
-        Query.Builder nameCondition = Optional.of(query.getDocumentCollection())
+        Query.Builder nameCondition = Optional.of(query.name())
                 .map(collection -> new Query.Builder().term(q -> q
                         .field(ENTITY).value(collection)))
                 .map(Query.Builder.class::cast)
                 .orElse(null);
 
-        Query.Builder queryConditions = query.getCondition()
+        Query.Builder queryConditions = query.condition()
                 .map(c -> getCondition(c, ids))
                 .orElse(null);
 
@@ -75,20 +75,20 @@ final class QueryConverter {
 
 
     private static Query.Builder getCondition(DocumentCondition condition, List<String> ids) {
-        Document document = condition.getDocument();
+        Document document = condition.document();
 
-        if (!NOT_APPENDABLE.contains(condition.getCondition()) && isIdField(document)) {
-            if (IN.equals(condition.getCondition())) {
+        if (!NOT_APPENDABLE.contains(condition.condition()) && isIdField(document)) {
+            if (IN.equals(condition.condition())) {
                 ids.addAll(document.get(new TypeReference<List<String>>() {
                 }));
-            } else if (EQUALS.equals(condition.getCondition())) {
+            } else if (EQUALS.equals(condition.condition())) {
                 ids.add(document.get(String.class));
             }
 
             return null;
         }
 
-        switch (condition.getCondition()) {
+        switch (condition.condition()) {
             case EQUALS:
                 return (Query.Builder) new Query.Builder()
                         .term(TermQuery.of(tq -> tq
@@ -161,7 +161,7 @@ final class QueryConverter {
                         .bool(BoolQuery.of(bq -> bq
                                 .mustNot(queryBuilder.build())));
             default:
-                throw new IllegalStateException("This condition is not supported at elasticsearch: " + condition.getCondition());
+                throw new IllegalStateException("This condition is not supported at elasticsearch: " + condition.condition());
         }
     }
 

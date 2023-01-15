@@ -15,11 +15,11 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.awaitility.Awaitility;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.jetbrains.annotations.NotNull;

@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.arangodb.document;
 
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

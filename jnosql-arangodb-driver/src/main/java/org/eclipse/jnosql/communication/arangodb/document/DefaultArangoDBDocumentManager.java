@@ -20,13 +20,13 @@ import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
-import jakarta.nosql.ValueWriter;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
-import org.eclipse.jnosql.communication.writer.ValueWriterDecorator;
+import org.eclipse.jnosql.communication.ValueWriter;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.ValueWriterDecorator;
 
 import java.time.Duration;
 import java.util.Map;
@@ -65,7 +65,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
-        String collectionName = entity.getName();
+        String collectionName = entity.name();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
         DocumentCreateEntity<BaseDocument> arandoDocument = arangoDB.db(DbName.of(database))
@@ -76,7 +76,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
-        String collectionName = entity.getName();
+        String collectionName = entity.name();
         checkCollection(collectionName);
         BaseDocument baseDocument = getBaseDocument(entity);
         DocumentUpdateEntity<BaseDocument> arandoDocument = arangoDB.db(DbName.of(database))
@@ -96,7 +96,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     @Override
     public void delete(DocumentDeleteQuery query) {
         requireNonNull(query, "query is required");
-        if (checkCondition(query.getCondition())) {
+        if (checkCondition(query.condition())) {
             return;
         }
 

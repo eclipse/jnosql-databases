@@ -15,9 +15,9 @@
 package org.eclipse.jnosql.communication.driver;
 
 
-import jakarta.nosql.Value;
-import jakarta.nosql.ValueWriter;
-import org.eclipse.jnosql.communication.writer.ValueWriterDecorator;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.ValueWriter;
+import org.eclipse.jnosql.communication.ValueWriterDecorator;
 
 import java.util.ArrayList;
 import java.util.Collections;

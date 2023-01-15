@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.Value;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.Documents;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.Documents;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;

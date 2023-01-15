@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.column.ColumnManager;
-import jakarta.nosql.column.ColumnManagerFactory;
-import jakarta.nosql.tck.communication.driver.column.ColumnManagerSupplier;
+import org.eclipse.jnosql.communication.column.ColumnManager;
+import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
+import org.eclipse.jnosql.communication.tck.communication.driver.column.ColumnManagerSupplier;
 
 public class CassandraColumnManagerSupplier implements ColumnManagerSupplier {
 

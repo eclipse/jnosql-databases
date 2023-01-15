@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.tck.communication.driver.keyvalue.BucketManagerSupplier;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.tck.communication.driver.keyvalue.BucketManagerSupplier;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 

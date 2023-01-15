@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.dynamodb;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.dynamodb.keyvalue.DynamoDBKeyValueConfiguration;
 import org.testcontainers.containers.GenericContainer;
 

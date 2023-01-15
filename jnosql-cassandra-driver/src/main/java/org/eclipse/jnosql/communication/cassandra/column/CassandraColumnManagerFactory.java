@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
-import jakarta.nosql.column.ColumnManagerFactory;
+import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
 
 import java.util.List;
 import java.util.concurrent.Executor;

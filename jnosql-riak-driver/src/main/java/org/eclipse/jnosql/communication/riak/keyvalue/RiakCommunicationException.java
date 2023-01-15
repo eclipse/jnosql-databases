@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.riak.keyvalue;
 
 
-import jakarta.nosql.CommunicationException;
+import org.eclipse.jnosql.communication.CommunicationException;
 
 /**
  * The riak exception to Diana project

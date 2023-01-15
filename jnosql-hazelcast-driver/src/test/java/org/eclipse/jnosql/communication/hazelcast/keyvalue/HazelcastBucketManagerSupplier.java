@@ -14,11 +14,11 @@
  */
 package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
-import jakarta.nosql.tck.communication.driver.keyvalue.BucketManagerSupplier;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.tck.communication.driver.keyvalue.BucketManagerSupplier;
 
 public class HazelcastBucketManagerSupplier implements BucketManagerSupplier {
 

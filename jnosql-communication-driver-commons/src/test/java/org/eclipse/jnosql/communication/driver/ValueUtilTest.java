@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.driver;
 
-import jakarta.nosql.Value;
+import org.eclipse.jnosql.communication.Value;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

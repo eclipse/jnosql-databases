@@ -15,11 +15,11 @@
 
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.queries.Query;
 import net.ravendb.client.documents.session.IDocumentQuery;

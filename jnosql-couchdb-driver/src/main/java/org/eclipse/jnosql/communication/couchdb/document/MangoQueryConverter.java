@@ -16,11 +16,11 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.Value;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import jakarta.json.Json;
@@ -44,17 +44,17 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
         if (!documentQuery.getDocuments().isEmpty()) {
             select.add(CouchDBConstant.FIELDS_QUERY, Json.createArrayBuilder(documentQuery.getDocuments()).build());
         }
-        if (documentQuery.getLimit() > 0) {
-            select.add(CouchDBConstant.LIMIT_QUERY, documentQuery.getLimit());
+        if (documentQuery.limit() > 0) {
+            select.add(CouchDBConstant.LIMIT_QUERY, documentQuery.limit());
         }
 
-        if (documentQuery.getSkip() > 0) {
-            select.add(CouchDBConstant.SKIP_QUERY, documentQuery.getSkip());
+        if (documentQuery.skip() > 0) {
+            select.add(CouchDBConstant.SKIP_QUERY, documentQuery.skip());
         }
 
-        if (!documentQuery.getSorts().isEmpty()) {
+        if (!documentQuery.sorts().isEmpty()) {
             JsonArrayBuilder sorts = Json.createArrayBuilder();
-            documentQuery.getSorts().stream().map(this::createSortObject).forEach(sorts::add);
+            documentQuery.sorts().stream().map(this::createSortObject).forEach(sorts::add);
             select.add(CouchDBConstant.SORT_QUERY, sorts.build());
         }
 
@@ -77,17 +77,17 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
 
     private JsonObject getSelector(DocumentQuery documentQuery) {
         JsonObjectBuilder selector = Json.createObjectBuilder();
-        selector.add(CouchDBConstant.ENTITY, documentQuery.getDocumentCollection());
-        documentQuery.getCondition().ifPresent(d -> appendCondition(d, selector));
+        selector.add(CouchDBConstant.ENTITY, documentQuery.name());
+        documentQuery.condition().ifPresent(d -> appendCondition(d, selector));
         return selector.build();
     }
 
     private void appendCondition(DocumentCondition condition, JsonObjectBuilder selector) {
-        Document document = condition.getDocument();
+        Document document = condition.document();
         String name = document.getName();
         Object value = ValueUtil.convert(document.getValue());
 
-        switch (condition.getCondition()) {
+        switch (condition.condition()) {
             case EQUALS:
                 appendCondition(selector, name, value);
                 return;
@@ -116,7 +116,7 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 appendCombination(selector, value, CouchDBConstant.OR_CONDITION);
                 return;
             default:
-                throw new UnsupportedOperationException("This operation is not supported at couchdb: " + condition.getCondition());
+                throw new UnsupportedOperationException("This operation is not supported at couchdb: " + condition.condition());
 
         }
     }

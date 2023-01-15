@@ -15,9 +15,9 @@
  */
 package org.eclipse.jnosql.communication.dynamodb.keyvalue;
 
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.ValueJSON;
 import org.eclipse.jnosql.communication.dynamodb.ConfigurationAmazonEntity;
 import org.eclipse.jnosql.communication.dynamodb.DynamoDBUtils;

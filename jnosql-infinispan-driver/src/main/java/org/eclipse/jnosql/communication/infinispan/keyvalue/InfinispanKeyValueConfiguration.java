@@ -15,10 +15,10 @@
 
 package org.eclipse.jnosql.communication.infinispan.keyvalue;
 
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.Settings.SettingsBuilder;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;

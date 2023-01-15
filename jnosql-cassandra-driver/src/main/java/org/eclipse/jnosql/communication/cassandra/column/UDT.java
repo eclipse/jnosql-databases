@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.cassandra.column;
 
 
-import jakarta.nosql.column.Column;
+import org.eclipse.jnosql.communication.column.Column;
 
 /**
  * A Cassandra user data type, this interface does not support both Value alias method:

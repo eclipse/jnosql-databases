@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.tck.communication.driver.document.DocumentManagerSupplier;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.tck.communication.driver.document.DocumentManagerSupplier;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 

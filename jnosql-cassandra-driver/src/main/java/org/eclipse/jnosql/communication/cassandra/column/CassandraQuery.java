@@ -16,9 +16,9 @@
  */
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.column.ColumnCondition;
-import jakarta.nosql.column.ColumnQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.column.ColumnCondition;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -88,12 +88,12 @@ public final class CassandraQuery implements ColumnQuery {
 
     @Override
     public long getLimit() {
-        return query.getLimit();
+        return query.limit();
     }
 
     @Override
     public long getSkip() {
-        return query.getSkip();
+        return query.skip();
     }
 
     @Override
@@ -103,12 +103,12 @@ public final class CassandraQuery implements ColumnQuery {
 
     @Override
     public Optional<ColumnCondition> getCondition() {
-        return query.getCondition();
+        return query.condition();
     }
 
     @Override
     public List<Sort> getSorts() {
-        return query.getSorts();
+        return query.sorts();
     }
 
     @Override

@@ -16,8 +16,8 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document.configuration;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.Settings.SettingsBuilder;
 import org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations;
 import org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentConfiguration;
 import org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentManagerFactory;

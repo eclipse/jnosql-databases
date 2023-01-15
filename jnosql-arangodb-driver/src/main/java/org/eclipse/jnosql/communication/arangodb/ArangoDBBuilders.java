@@ -16,8 +16,9 @@ package org.eclipse.jnosql.communication.arangodb;
 
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Configurations;
+
+import org.eclipse.jnosql.communication.Settings;
 
 import java.util.Arrays;
 import java.util.List;

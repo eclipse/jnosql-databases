@@ -16,9 +16,9 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -61,27 +61,27 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
 
     @Override
     public long getLimit() {
-        return query.getLimit();
+        return query.limit();
     }
 
     @Override
     public long getSkip() {
-        return query.getSkip();
+        return query.skip();
     }
 
     @Override
     public String getDocumentCollection() {
-        return query.getDocumentCollection();
+        return query.name();
     }
 
     @Override
     public Optional<DocumentCondition> getCondition() {
-        return query.getCondition();
+        return query.condition();
     }
 
     @Override
     public List<Sort> getSorts() {
-        return query.getSorts();
+        return query.sorts();
     }
 
     @Override

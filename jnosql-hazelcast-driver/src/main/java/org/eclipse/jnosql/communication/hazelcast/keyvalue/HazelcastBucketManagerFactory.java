@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
 
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;

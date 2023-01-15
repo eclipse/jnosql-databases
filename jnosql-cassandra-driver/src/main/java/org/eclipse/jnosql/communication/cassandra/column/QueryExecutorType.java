@@ -19,8 +19,8 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
-import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnQuery;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -84,8 +84,8 @@ enum QueryExecutorType implements QueryExecutor {
 
             Select cassandraSelect = QueryUtils.select(query, keyspace);
 
-            if (query.getLimit() > 0 && query.getSkip() == 0) {
-                cassandraSelect = cassandraSelect.limit((int) query.getLimit());
+            if (query.limit() > 0 && query.skip() == 0) {
+                cassandraSelect = cassandraSelect.limit((int) query.limit());
             }
 
             SimpleStatement select = cassandraSelect.build();
@@ -93,8 +93,8 @@ enum QueryExecutorType implements QueryExecutor {
                 select = select.setConsistencyLevel(level);
             }
             ResultSet resultSet = manager.getSession().execute(select);
-            if (query.getLimit() > 0 && query.getSkip() > 0) {
-                return resultSet.all().stream().skip(query.getSkip()).limit(query.getLimit()).map(CassandraConverter::toDocumentEntity);
+            if (query.limit() > 0 && query.skip() > 0) {
+                return resultSet.all().stream().skip(query.skip()).limit(query.limit()).map(CassandraConverter::toDocumentEntity);
             }
             return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
         }

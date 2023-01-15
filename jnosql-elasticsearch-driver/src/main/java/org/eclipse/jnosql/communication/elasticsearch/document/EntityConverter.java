@@ -23,9 +23,9 @@ import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.io.IOException;
@@ -161,7 +161,7 @@ final class EntityConverter {
     }
 
     private static void feedBuilder(DocumentQuery query, SearchRequest.Builder searchSource) {
-        query.getSorts().forEach(d -> {
+        query.sorts().forEach(d -> {
             if (ASC.equals(d.getType())) {
                 searchSource.sort(s -> s.field(f -> f.field(d.getName()).order(SortOrder.Asc)));
             } else {
@@ -169,8 +169,8 @@ final class EntityConverter {
             }
         });
 
-        int from = (int) query.getSkip();
-        int size = (int) query.getLimit();
+        int from = (int) query.skip();
+        int size = (int) query.limit();
         if (from > 0) {
             searchSource.from(from);
         }

@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.memcached.keyvalue;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 

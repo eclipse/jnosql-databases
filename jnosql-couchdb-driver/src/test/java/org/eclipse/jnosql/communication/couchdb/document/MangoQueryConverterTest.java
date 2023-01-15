@@ -16,7 +16,7 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.junit.jupiter.params.ParameterizedTest;
 
 import jakarta.json.JsonObject;

@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.memcached.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
-import jakarta.nosql.tck.communication.driver.keyvalue.BucketManagerSupplier;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.tck.communication.driver.keyvalue.BucketManagerSupplier;
 
 public class MemcachedBucketManagerSupplier implements BucketManagerSupplier {
 

@@ -15,8 +15,8 @@
 package org.eclipse.jnosql.communication.cassandra.column;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
-import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnQuery;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 
 import java.util.stream.Stream;
 

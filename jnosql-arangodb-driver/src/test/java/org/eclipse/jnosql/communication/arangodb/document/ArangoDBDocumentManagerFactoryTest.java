@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.arangodb.document;
 
-import jakarta.nosql.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

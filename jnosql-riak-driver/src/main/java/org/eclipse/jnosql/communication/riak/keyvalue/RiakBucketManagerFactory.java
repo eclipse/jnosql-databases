@@ -17,7 +17,7 @@ package org.eclipse.jnosql.communication.riak.keyvalue;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.query.Namespace;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;

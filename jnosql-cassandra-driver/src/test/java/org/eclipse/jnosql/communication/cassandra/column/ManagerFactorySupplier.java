@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;

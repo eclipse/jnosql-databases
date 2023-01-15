@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.ValueReader;
+import org.eclipse.jnosql.communication.ValueReader;
 import org.bson.types.Binary;
 
 /**

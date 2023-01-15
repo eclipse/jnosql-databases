@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.cassandra.column;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.delete.Delete;
 import com.datastax.oss.driver.api.querybuilder.delete.DeleteSelection;
-import jakarta.nosql.column.ColumnDeleteQuery;
+import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
 
 final class DeleteQueryConverter {
     private DeleteQueryConverter() {
@@ -32,7 +32,7 @@ final class DeleteQueryConverter {
             deleteSelection = deleteSelection.column(QueryUtils.getName(column));
         }
 
-        final Delete delete = deleteSelection.where(Relations.createClause(query.getCondition().orElse(null)));
+        final Delete delete = deleteSelection.where(Relations.createClause(query.condition().orElse(null)));
         return delete;
     }
 }

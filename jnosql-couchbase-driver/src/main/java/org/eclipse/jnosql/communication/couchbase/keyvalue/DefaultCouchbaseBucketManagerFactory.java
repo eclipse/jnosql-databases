@@ -23,7 +23,7 @@ import com.couchbase.client.java.kv.ArrayListOptions;
 import com.couchbase.client.java.kv.ArraySetOptions;
 import com.couchbase.client.java.kv.MapOptions;
 import com.couchbase.client.java.kv.QueueOptions;
-import jakarta.nosql.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseSettings;
 
 import java.util.List;

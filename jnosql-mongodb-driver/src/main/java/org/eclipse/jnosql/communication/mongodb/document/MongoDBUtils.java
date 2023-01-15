@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.Value;
-import jakarta.nosql.document.DocumentEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.eclipse.jnosql.communication.driver.ValueUtil;

@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.column.Column;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.column.Column;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

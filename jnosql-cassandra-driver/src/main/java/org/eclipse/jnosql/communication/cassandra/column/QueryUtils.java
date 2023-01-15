@@ -36,13 +36,13 @@ import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
 import com.datastax.oss.protocol.internal.ProtocolConstants;
-import jakarta.nosql.CommunicationException;
-import jakarta.nosql.Sort;
-import jakarta.nosql.SortType;
-import jakarta.nosql.Value;
-import jakarta.nosql.column.Column;
-import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnQuery;
+import org.eclipse.jnosql.communication.CommunicationException;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.SortType;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.time.Duration;
@@ -94,8 +94,8 @@ final class QueryUtils {
             select = QueryBuilder.selectFrom(keyspace, columnFamily).columns(columns);
         }
 
-        select = select.where(Relations.createClause(query.getCondition().orElse(null)));
-        final Map<String, ClusteringOrder> sort = query.getSorts().stream()
+        select = select.where(Relations.createClause(query.condition().orElse(null)));
+        final Map<String, ClusteringOrder> sort = query.sorts().stream()
                 .collect(Collectors.toMap(Sort::getName, mapSort()));
         select = select.orderBy(sort);
         return select;

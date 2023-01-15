@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.driver;
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.Value;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.Value;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

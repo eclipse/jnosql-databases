@@ -15,10 +15,10 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,24 +53,24 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         n1ql.append("from ")
                 .append(database).append(".")
                 .append(scope).append(".")
-                .append(query.getDocumentCollection());
+                .append(query.name());
 
-        query.getCondition().ifPresent(c -> {
+        query.condition().ifPresent(c -> {
             n1ql.append(" WHERE ");
             condition(c, n1ql, params, ids);
         });
 
-        if (query.getLimit() > 0) {
-            n1ql.append(" LIMIT ").append(query.getLimit());
+        if (query.limit() > 0) {
+            n1ql.append(" LIMIT ").append(query.limit());
         }
 
-        if (query.getSkip() > 0) {
-            n1ql.append(" OFFSET ").append(query.getSkip());
+        if (query.skip() > 0) {
+            n1ql.append(" OFFSET ").append(query.skip());
         }
 
-        if (!query.getSorts().isEmpty()) {
+        if (!query.sorts().isEmpty()) {
             n1ql.append(" ORDER BY ");
-            String order = query.getSorts().stream()
+            String order = query.sorts().stream()
                     .map(s -> s.getName() + " " + s.getType().name())
                     .collect(Collectors.joining(", "));
             n1ql.append(order);
@@ -81,8 +81,8 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
 
 
     private void condition(DocumentCondition condition, StringBuilder n1ql, JsonObject params, List<String> ids) {
-        Document document = condition.getDocument();
-        switch (condition.getCondition()) {
+        Document document = condition.document();
+        switch (condition.condition()) {
             case EQUALS:
                 if (document.getName().equals(ID_FIELD)) {
                     ids.add(document.get(String.class));
@@ -129,7 +129,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                 predicateBetween(n1ql, params, document);
                 return;
             default:
-                throw new UnsupportedOperationException("There is not support condition for " + condition.getCondition());
+                throw new UnsupportedOperationException("There is not support condition for " + condition.condition());
         }
     }
 

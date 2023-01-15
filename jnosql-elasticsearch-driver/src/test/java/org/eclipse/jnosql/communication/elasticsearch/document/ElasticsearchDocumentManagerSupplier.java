@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.tck.communication.driver.document.DocumentManagerSupplier;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.tck.communication.driver.document.DocumentManagerSupplier;
 
 public class ElasticsearchDocumentManagerSupplier implements DocumentManagerSupplier {
 

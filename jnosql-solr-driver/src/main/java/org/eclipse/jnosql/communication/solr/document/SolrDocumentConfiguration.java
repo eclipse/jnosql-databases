@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
-import jakarta.nosql.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 

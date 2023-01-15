@@ -15,8 +15,8 @@
 package org.eclipse.jnosql.communication.hbase.column;
 
 
-import jakarta.nosql.column.Column;
-import jakarta.nosql.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
 

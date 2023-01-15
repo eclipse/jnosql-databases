@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.memcached.keyvalue;
 
-import jakarta.nosql.CommunicationException;
+import org.eclipse.jnosql.communication.CommunicationException;
 
 class MemcachedException extends CommunicationException {
 

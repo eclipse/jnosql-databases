@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.hbase.column;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.column.ColumnManager;
-import jakarta.nosql.tck.communication.driver.column.ColumnManagerSupplier;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.column.ColumnManager;
+import org.eclipse.jnosql.communication.tck.communication.driver.column.ColumnManagerSupplier;
 
 public class HBaseColumnManagerSupplier implements ColumnManagerSupplier {
 

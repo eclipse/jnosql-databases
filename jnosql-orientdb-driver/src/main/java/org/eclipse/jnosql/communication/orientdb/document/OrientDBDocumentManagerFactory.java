@@ -19,7 +19,7 @@ import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
-import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;

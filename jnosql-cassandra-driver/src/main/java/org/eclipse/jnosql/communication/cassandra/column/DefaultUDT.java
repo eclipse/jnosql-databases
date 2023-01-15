@@ -15,9 +15,9 @@
 package org.eclipse.jnosql.communication.cassandra.column;
 
 
-import jakarta.nosql.TypeSupplier;
-import jakarta.nosql.Value;
-import jakarta.nosql.column.Column;
+import org.eclipse.jnosql.communication.TypeSupplier;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.column.Column;
 
 import java.util.List;
 import java.util.Objects;

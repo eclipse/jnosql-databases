@@ -17,9 +17,9 @@ package org.eclipse.jnosql.communication.mongodb.document;
 
 
 import com.mongodb.client.model.Filters;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
@@ -32,9 +32,9 @@ final class DocumentQueryConversor {
     }
 
     public static Bson convert(DocumentCondition condition) {
-        Document document = condition.getDocument();
+        Document document = condition.document();
         Object value = ValueUtil.convert(document.getValue());
-        switch (condition.getCondition()) {
+        switch (condition.condition()) {
             case EQUALS:
                 return Filters.eq(document.getName(), value);
             case GREATER_THAN:
@@ -53,17 +53,17 @@ final class DocumentQueryConversor {
             case LIKE:
                 return Filters.regex(document.getName(), value.toString());
             case AND:
-                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<>() {
+                List<DocumentCondition> andList = condition.document().getValue().get(new TypeReference<>() {
                 });
                 return Filters.and(andList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
             case OR:
-                List<DocumentCondition> orList = condition.getDocument().getValue().get(new TypeReference<>() {
+                List<DocumentCondition> orList = condition.document().getValue().get(new TypeReference<>() {
                 });
                 return Filters.or(orList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
             default:
-                throw new UnsupportedOperationException("The condition " + condition.getCondition()
+                throw new UnsupportedOperationException("The condition " + condition.condition()
                         + " is not supported from mongoDB diana driver");
         }
     }

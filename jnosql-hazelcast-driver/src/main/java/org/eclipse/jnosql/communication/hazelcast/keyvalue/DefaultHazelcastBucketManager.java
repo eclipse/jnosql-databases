@@ -17,8 +17,8 @@ package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.impl.predicates.SqlPredicate;
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Collection;

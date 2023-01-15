@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.orientdb.document;
 
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

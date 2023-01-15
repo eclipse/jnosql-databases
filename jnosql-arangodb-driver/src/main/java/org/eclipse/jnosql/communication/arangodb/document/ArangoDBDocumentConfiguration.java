@@ -16,10 +16,11 @@
 package org.eclipse.jnosql.communication.arangodb.document;
 
 import com.arangodb.ArangoDB;
-import jakarta.nosql.Settings;
-import jakarta.nosql.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfigurations;
+
 
 import static java.util.Objects.requireNonNull;
 

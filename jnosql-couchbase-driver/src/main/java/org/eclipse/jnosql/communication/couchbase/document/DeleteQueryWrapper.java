@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,12 +43,12 @@ final class DeleteQueryWrapper implements DocumentQuery {
 
     @Override
     public String getDocumentCollection() {
-        return query.getDocumentCollection();
+        return query.name();
     }
 
     @Override
     public Optional<DocumentCondition> getCondition() {
-        return this.query.getCondition();
+        return this.query.condition();
     }
 
     @Override

@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.infinispan.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.infinispan.commons.api.BasicCacheContainer;
 
 import java.util.List;

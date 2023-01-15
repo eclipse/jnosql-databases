@@ -16,7 +16,7 @@
 
 package org.eclipse.jnosql.communication.dynamodb;
 
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 
 final class DynamoDBBuilders {
 

@@ -20,10 +20,10 @@ import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.Settings.SettingsBuilder;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 
 import java.util.Arrays;
 import java.util.List;

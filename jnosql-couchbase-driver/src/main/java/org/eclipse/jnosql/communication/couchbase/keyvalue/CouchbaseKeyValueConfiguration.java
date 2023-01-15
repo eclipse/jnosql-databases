@@ -15,8 +15,8 @@
 package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseConfigurations;
 

@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 import java.util.Objects;

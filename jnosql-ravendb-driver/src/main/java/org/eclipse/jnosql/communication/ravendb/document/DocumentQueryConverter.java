@@ -15,11 +15,11 @@
 
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import net.ravendb.client.documents.queries.Query;
 import net.ravendb.client.documents.session.IDocumentQuery;
 import net.ravendb.client.documents.session.IDocumentSession;
@@ -40,10 +40,10 @@ class DocumentQueryConverter {
     public static QueryResult createQuery(IDocumentSession session, DocumentQuery query) {
 
         List<String> ids = new ArrayList<>();
-        IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(query.getDocumentCollection()));
-        query.getCondition().ifPresent(c -> feedQuery(ravenQuery, c, ids));
+        IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(query.name()));
+        query.condition().ifPresent(c -> feedQuery(ravenQuery, c, ids));
 
-        if (!ids.isEmpty() && query.getCondition().isPresent()) {
+        if (!ids.isEmpty() && query.condition().isPresent()) {
             return new QueryResult(ids, null);
         } else {
             return appendRavenQuery(query, ids, ravenQuery);
@@ -62,20 +62,20 @@ class DocumentQueryConverter {
                     ravenQuery.orderBy(s.getName());
             }
         };
-        query.getSorts().forEach(sortConsumer);
+        query.sorts().forEach(sortConsumer);
 
-        if (query.getSkip() > 0) {
-            ravenQuery.skip((int) query.getSkip());
+        if (query.skip() > 0) {
+            ravenQuery.skip((int) query.skip());
         }
 
-        if (query.getLimit() > 0) {
-            ravenQuery.take((int) query.getLimit());
+        if (query.limit() > 0) {
+            ravenQuery.take((int) query.limit());
         }
         return new QueryResult(ids, ravenQuery);
     }
 
     private static void feedQuery(IDocumentQuery<HashMap> ravenQuery, DocumentCondition condition, List<String> ids) {
-        Document document = condition.getDocument();
+        Document document = condition.document();
         Object value = document.get();
         String name = document.getName();
 
@@ -89,7 +89,7 @@ class DocumentQueryConverter {
             return;
         }
 
-        switch (condition.getCondition()) {
+        switch (condition.condition()) {
             case EQUALS:
                 ravenQuery.whereEquals(name, value);
                 return;
@@ -115,19 +115,19 @@ class DocumentQueryConverter {
             case LIKE:
                 throw new UnsupportedOperationException("Raven does not support LIKE Operator");
             case AND:
-                condition.getDocument().getValue()
+                condition.document().getValue()
                         .get(new TypeReference<List<DocumentCondition>>() {
                         })
                         .forEach(c -> feedQuery(ravenQuery.andAlso(), c, ids));
                 return;
             case OR:
-                condition.getDocument().getValue()
+                condition.document().getValue()
                         .get(new TypeReference<List<DocumentCondition>>() {
                         })
                         .forEach(c -> feedQuery(ravenQuery.orElse(), c, ids));
                 return;
             default:
-                throw new UnsupportedOperationException("The condition " + condition.getCondition()
+                throw new UnsupportedOperationException("The condition " + condition.condition()
                         + " is not supported from ravendb diana driver");
         }
     }
