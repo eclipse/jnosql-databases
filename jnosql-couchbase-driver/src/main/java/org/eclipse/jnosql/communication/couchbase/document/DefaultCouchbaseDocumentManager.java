@@ -70,12 +70,12 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        entity.add(COLLECTION_FIELD, entity.getName());
+        entity.add(COLLECTION_FIELD, entity.name());
         JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        Collection collection = bucket.collection(entity.getName());
+        Collection collection = bucket.collection(entity.name());
         collection.insert(id.get(String.class), json);
         return entity;
     }
@@ -88,7 +88,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        Collection collection = bucket.collection(entity.getName());
+        Collection collection = bucket.collection(entity.name());
         collection.insert(id.get(String.class), json, InsertOptions.insertOptions().expiry(ttl));
         return entity;
     }
@@ -111,12 +111,12 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
-        entity.add(COLLECTION_FIELD, entity.getName());
+        entity.add(COLLECTION_FIELD, entity.name());
         JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        Collection collection = bucket.collection(entity.getName());
+        Collection collection = bucket.collection(entity.name());
         collection.upsert(id.get(String.class), json);
         return entity;
     }

@@ -104,7 +104,7 @@ public class DocumentQueryTest {
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.getName()).eq(name.get())
+                .where(name.name()).eq(name.get())
                 .limit(2L)
                 .build();
 
@@ -121,7 +121,7 @@ public class DocumentQueryTest {
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.getName()).eq(name.get())
+                .where(name.name()).eq(name.get())
                 .skip(1L)
                 .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -137,7 +137,7 @@ public class DocumentQueryTest {
 
         Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.getName()).eq(name.get())
+                .where(name.name()).eq(name.get())
                 .skip(2L)
                 .limit(2L)
                 .build();
@@ -168,7 +168,7 @@ public class DocumentQueryTest {
                 Document.of("name", "name"), Document.of("_key", "person:id4")));
 
         Document name = entity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(name.name()).eq(name.get()).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
@@ -183,7 +183,7 @@ public class DocumentQueryTest {
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         List<String> result = entities.stream()
                 .flatMap(e -> e.documents().stream())
-                .filter(d -> "name".equals(d.getName()))
+                .filter(d -> "name".equals(d.name()))
                 .map(d -> d.get(String.class))
                 .collect(Collectors.toList());
 
@@ -203,7 +203,7 @@ public class DocumentQueryTest {
                 .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         List<String> result = entities.stream().flatMap(e -> e.documents().stream())
-                .filter(d -> "name".equals(d.getName()))
+                .filter(d -> "name".equals(d.name()))
                 .map(d -> d.get(String.class))
                 .collect(Collectors.toList());
 
@@ -218,7 +218,7 @@ public class DocumentQueryTest {
         Document id = entity.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
+                .where(id.name()).eq(id.get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());

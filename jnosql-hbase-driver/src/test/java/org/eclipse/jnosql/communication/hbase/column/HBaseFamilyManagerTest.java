@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static jakarta.nosql.column.ColumnDeleteQuery.delete;
-import static jakarta.nosql.column.ColumnQuery.select;
+import static org.eclipse.jnosql.communication.column.ColumnDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -80,7 +80,7 @@ public class HBaseFamilyManagerTest {
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
-        assertEquals(FAMILY, entity.getName());
+        assertEquals(FAMILY, entity.name());
         assertThat(entity.columns()).contains(Column.of(ID_FIELD, "otaviojava"),
                 Column.of("age", "26"), Column.of("country", "Brazil"));
     }

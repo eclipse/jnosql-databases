@@ -17,7 +17,8 @@ package org.eclipse.jnosql.communication.cassandra.column;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
-import org.eclipse.jnosql.communication.NonUniqueResultException;
+
+import jakarta.data.exceptions.NonUniqueResultException;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
@@ -42,8 +43,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static jakarta.nosql.column.ColumnDeleteQuery.delete;
-import static jakarta.nosql.column.ColumnQuery.select;
+import static org.eclipse.jnosql.communication.column.ColumnDeleteQuery.delete;
+
+import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
+
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -197,7 +200,7 @@ public class CassandraColumnManagerTest {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity);
 
-        ColumnQuery query = select().from(columnEntity.getName()).build();
+        ColumnQuery query = select().from(columnEntity.name()).build();
         List<ColumnEntity> entities = entityManager.select(query).collect(toList());
         assertFalse(entities.isEmpty());
     }
@@ -206,10 +209,10 @@ public class CassandraColumnManagerTest {
     public void shouldReturnSingleResult() {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity);
-        ColumnQuery query = select().from(columnEntity.getName()).where("id").eq(10L).build();
+        ColumnQuery query = select().from(columnEntity.name()).where("id").eq(10L).build();
         Optional<ColumnEntity> entity = entityManager.singleResult(query);
 
-        query = select().from(columnEntity.getName()).where("id").eq(-10L).build();
+        query = select().from(columnEntity.name()).where("id").eq(-10L).build();
         entity = entityManager.singleResult(query);
         assertFalse(entity.isPresent());
 
@@ -239,9 +242,9 @@ public class CassandraColumnManagerTest {
         List<ColumnEntity> columnEntity = entityManager.select(query).collect(toList());
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).columns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()))
+        assertThat(columns.stream().map(Column::name).collect(toList()))
                 .contains("name", "version", "options", "id");
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList())).contains
+        assertThat(columns.stream().map(Column::value).map(Value::get).collect(toList())).contains
                 ("Cassandra", 3.2, asList(1, 2, 3), 10L);
 
     }
@@ -254,8 +257,8 @@ public class CassandraColumnManagerTest {
         List<ColumnEntity> columnEntity = entityManager.select(query, CONSISTENCY_LEVEL).collect(toList());
         assertFalse(columnEntity.isEmpty());
         List<Column> columns = columnEntity.get(0).columns();
-        assertThat(columns.stream().map(Column::getName).collect(toList())).contains("name", "version", "options", "id");
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
+        assertThat(columns.stream().map(Column::name).collect(toList())).contains("name", "version", "options", "id");
+        assertThat(columns.stream().map(Column::value).map(Value::get).collect(toList()))
                 .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
 
     }
@@ -267,8 +270,8 @@ public class CassandraColumnManagerTest {
                 .collect(toList());
         assertFalse(entities.isEmpty());
         List<Column> columns = entities.get(0).columns();
-        assertThat(columns.stream().map(Column::getName).collect(toList())).contains("name", "version", "options", "id");
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
+        assertThat(columns.stream().map(Column::name).collect(toList())).contains("name", "version", "options", "id");
+        assertThat(columns.stream().map(Column::value).map(Value::get).collect(toList()))
                 .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
     }
 
@@ -279,9 +282,9 @@ public class CassandraColumnManagerTest {
         List<ColumnEntity> entities = entityManager.cql(query, singletonMap("id", 10L)).collect(toList());
         assertFalse(entities.isEmpty());
         List<Column> columns = entities.get(0).columns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()))
+        assertThat(columns.stream().map(Column::name).collect(toList()))
                 .contains("name", "version", "options", "id");
-        assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
+        assertThat(columns.stream().map(Column::value).map(Value::get).collect(toList()))
                 .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
     }
 
@@ -292,9 +295,9 @@ public class CassandraColumnManagerTest {
         preparedStatement.bind(10L);
         List<ColumnEntity> entities = preparedStatement.executeQuery().collect(toList());
         List<Column> columns = entities.get(0).columns();
-        assertThat(columns.stream().map(Column::getName).collect(toList()))
+        assertThat(columns.stream().map(Column::name).collect(toList()))
                 .contains("name", "version", "options", "id");
-        assertThat(columns.stream().map(Column::getValue).map(Value::get)
+        assertThat(columns.stream().map(Column::value).map(Value::get)
                 .collect(toList())).contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
     }
 
@@ -372,7 +375,7 @@ public class CassandraColumnManagerTest {
         Column column = columnEntity.find("name").get();
         udt = UDT.class.cast(column);
         List<Column> udtColumns = (List<Column>) udt.get();
-        assertEquals("name", udt.getName());
+        assertEquals("name", udt.name());
         assertEquals("fullname", udt.getUserType());
         assertThat(udtColumns).contains(Column.of("firstname", "Ada"),
                 Column.of("lastname", "Lovelace"));
@@ -397,7 +400,7 @@ public class CassandraColumnManagerTest {
         Column column = columnEntity.find("name").get();
         udt = UDT.class.cast(column);
         List<Column> udtColumns = (List<Column>) udt.get();
-        assertEquals("name", udt.getName());
+        assertEquals("name", udt.name());
         assertEquals("fullname", udt.getUserType());
         assertThat(udtColumns).contains(Column.of("firstname", "Ioda"));
     }

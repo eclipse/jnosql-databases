@@ -59,7 +59,7 @@ final class EntityConverter {
                                 }
                             }
                             List<Document> documents = toDocuments(map);
-                            Optional<Document> entityDocument = documents.stream().filter(d -> COLLECTION_FIELD.equals(d.getName())).findFirst();
+                            Optional<Document> entityDocument = documents.stream().filter(d -> COLLECTION_FIELD.equals(d.name())).findFirst();
                             String collection = entityDocument.map(d -> d.get(String.class)).orElse(database);
                             return DocumentEntity.of(collection, documents);
                         });
@@ -110,13 +110,13 @@ final class EntityConverter {
 
     private static Consumer<Document> toJsonObject(JsonObject jsonObject) {
         return d -> {
-            Object value = ValueUtil.convert(d.getValue());
+            Object value = ValueUtil.convert(d.value());
             if (Document.class.isInstance(value)) {
                 convertDocument(jsonObject, d, value);
             } else if (Iterable.class.isInstance(value)) {
                 convertIterable(jsonObject, d, value);
             } else {
-                jsonObject.put(d.getName(), value);
+                jsonObject.put(d.name(), value);
             }
         };
     }
@@ -124,7 +124,7 @@ final class EntityConverter {
 
     private static void convertDocument(JsonObject jsonObject, Document d, Object value) {
         Document document = Document.class.cast(value);
-        jsonObject.put(d.getName(), Collections.singletonMap(document.getName(), document.get()));
+        jsonObject.put(d.name(), Collections.singletonMap(document.name(), document.get()));
     }
 
     private static void convertIterable(JsonObject jsonObject, Document document, Object value) {
@@ -133,7 +133,7 @@ final class EntityConverter {
         Iterable.class.cast(value).forEach(element -> {
             if (Document.class.isInstance(element)) {
                 Document subdocument = Document.class.cast(element);
-                map.put(subdocument.getName(), subdocument.get());
+                map.put(subdocument.name(), subdocument.get());
             } else if (isSudDocument(element)) {
                 JsonObject subJson = JsonObject.create();
 
@@ -145,9 +145,9 @@ final class EntityConverter {
             }
         });
         if (array.isEmpty()) {
-            jsonObject.put(document.getName(), map);
+            jsonObject.put(document.name(), map);
         } else {
-            jsonObject.put(document.getName(), array);
+            jsonObject.put(document.name(), array);
         }
     }
 
@@ -157,7 +157,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(jakarta.nosql.document.Document.class::isInstance);
+                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
     }
 
 }

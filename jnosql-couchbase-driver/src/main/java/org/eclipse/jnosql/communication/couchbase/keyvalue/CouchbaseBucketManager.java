@@ -74,15 +74,15 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        put(entity.getKey(), convert(Value.of(entity.getValue())));
+        put(entity.key(), convert(Value.of(entity.value())));
     }
 
     @Override
     public void put(KeyValueEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        String key = entity.getKey(String.class);
-        Object value = convert(Value.of(entity.getValue()));
+        String key = entity.key(String.class);
+        Object value = convert(Value.of(entity.value()));
         collection.upsert(key, value, UpsertOptions.upsertOptions().expiry(ttl));
 
     }

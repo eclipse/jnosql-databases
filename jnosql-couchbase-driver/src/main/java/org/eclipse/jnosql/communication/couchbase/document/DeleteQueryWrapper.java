@@ -32,32 +32,32 @@ final class DeleteQueryWrapper implements DocumentQuery {
     }
 
     @Override
-    public long getLimit() {
+    public long limit() {
         return 0;
     }
 
     @Override
-    public long getSkip() {
+    public long skip() {
         return 0;
     }
 
     @Override
-    public String getDocumentCollection() {
+    public String name() {
         return query.name();
     }
 
     @Override
-    public Optional<DocumentCondition> getCondition() {
+    public Optional<DocumentCondition> condition() {
         return this.query.condition();
     }
 
     @Override
-    public List<Sort> getSorts() {
+    public List<Sort> sorts() {
         return Collections.emptyList();
     }
 
     @Override
-    public List<String> getDocuments() {
+    public List<String> documents() {
         return Collections.emptyList();
     }
 
