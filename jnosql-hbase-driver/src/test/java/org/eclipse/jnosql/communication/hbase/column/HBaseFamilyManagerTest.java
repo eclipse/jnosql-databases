@@ -81,7 +81,7 @@ public class HBaseFamilyManagerTest {
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
         assertEquals(FAMILY, entity.getName());
-        assertThat(entity.getColumns()).contains(Column.of(ID_FIELD, "otaviojava"),
+        assertThat(entity.columns()).contains(Column.of(ID_FIELD, "otaviojava"),
                 Column.of("age", "26"), Column.of("country", "Brazil"));
     }
 

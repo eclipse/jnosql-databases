@@ -56,7 +56,7 @@ final class EntityConverter {
 
         Map<String, Object> entityMap = new HashMap<>();
 
-        entity.getDocuments().stream()
+        entity.documents().stream()
                 .filter(d -> !ID_FIELD.equals(d.getName()))
                 .forEach(feedJSON(entityMap));
         return entityMap;

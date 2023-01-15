@@ -182,7 +182,7 @@ public class DocumentQueryTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         List<String> result = entities.stream()
-                .flatMap(e -> e.getDocuments().stream())
+                .flatMap(e -> e.documents().stream())
                 .filter(d -> "name".equals(d.getName()))
                 .map(d -> d.get(String.class))
                 .collect(Collectors.toList());
@@ -202,7 +202,7 @@ public class DocumentQueryTest {
                 .orderBy("name").desc()
                 .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
+        List<String> result = entities.stream().flatMap(e -> e.documents().stream())
                 .filter(d -> "name".equals(d.getName()))
                 .map(d -> d.get(String.class))
                 .collect(Collectors.toList());

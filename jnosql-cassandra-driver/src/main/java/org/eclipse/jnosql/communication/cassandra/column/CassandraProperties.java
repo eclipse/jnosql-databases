@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.cassandra.column;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.Settings.SettingsBuilder;
+import org.eclipse.jnosql.communication.SettingsBuilder;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

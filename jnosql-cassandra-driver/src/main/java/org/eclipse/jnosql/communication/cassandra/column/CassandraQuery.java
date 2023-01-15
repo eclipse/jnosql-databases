@@ -87,33 +87,33 @@ public final class CassandraQuery implements ColumnQuery {
     }
 
     @Override
-    public long getLimit() {
+    public long limit() {
         return query.limit();
     }
 
     @Override
-    public long getSkip() {
+    public long skip() {
         return query.skip();
     }
 
     @Override
-    public String getColumnFamily() {
-        return query.getColumnFamily();
+    public String name() {
+        return query.name();
     }
 
     @Override
-    public Optional<ColumnCondition> getCondition() {
+    public Optional<ColumnCondition> condition() {
         return query.condition();
     }
 
     @Override
-    public List<Sort> getSorts() {
+    public List<Sort> sorts() {
         return query.sorts();
     }
 
     @Override
-    public List<String> getColumns() {
-        return query.getColumns();
+    public List<String> columns() {
+        return query.columns();
     }
 
     @Override

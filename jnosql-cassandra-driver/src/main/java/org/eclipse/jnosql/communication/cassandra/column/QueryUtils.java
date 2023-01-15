@@ -38,7 +38,6 @@ import com.datastax.oss.driver.api.querybuilder.term.Term;
 import com.datastax.oss.protocol.internal.ProtocolConstants;
 import org.eclipse.jnosql.communication.CommunicationException;
 import jakarta.data.repository.Sort;
-import org.eclipse.jnosql.communication.SortType;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnEntity;
@@ -66,11 +65,11 @@ final class QueryUtils {
     static Insert insert(ColumnEntity entity, String keyspace, CqlSession session, Duration duration) {
 
         Map<String, Term> values = new HashMap<>();
-        InsertInto insert = QueryBuilder.insertInto(keyspace, entity.getName());
-        entity.getColumns().stream()
+        InsertInto insert = QueryBuilder.insertInto(keyspace, entity.name());
+        entity.columns().stream()
                 .forEach(c -> {
                     if (UDT.class.isInstance(c)) {
-                        insertUDT(UDT.class.cast(c), keyspace, entity.getName(), session, values);
+                        insertUDT(UDT.class.cast(c), keyspace, entity.name(), session, values);
                     } else {
                         insertSingleField(c, values);
                     }
@@ -84,8 +83,8 @@ final class QueryUtils {
     }
 
     public static Select select(ColumnQuery query, String keyspace) {
-        String columnFamily = query.getColumnFamily();
-        final List<String> columns = query.getColumns();
+        String columnFamily = query.name();
+        final List<String> columns = query.columns();
 
         Select select = null;
         if (columns.isEmpty()) {
@@ -96,14 +95,13 @@ final class QueryUtils {
 
         select = select.where(Relations.createClause(query.condition().orElse(null)));
         final Map<String, ClusteringOrder> sort = query.sorts().stream()
-                .collect(Collectors.toMap(Sort::getName, mapSort()));
+                .collect(Collectors.toMap(Sort::property, mapSort()));
         select = select.orderBy(sort);
         return select;
     }
 
     private static Function<Sort, ClusteringOrder> mapSort() {
-        return s -> SortType.ASC.equals(s.getType()) ? ClusteringOrder.ASC :
-                ClusteringOrder.DESC;
+        return s -> s.isAscending() ? ClusteringOrder.ASC : ClusteringOrder.DESC;
     }
 
     private static void insertUDT(UDT udt, String keyspace, String columnFamily, CqlSession session,
@@ -137,11 +135,11 @@ final class QueryUtils {
         for (Object object : elements) {
             if (Column.class.isInstance(object)) {
                 Column column = Column.class.cast(object);
-                Object convert = ValueUtil.convert(column.getValue());
+                Object convert = ValueUtil.convert(column.value());
 
-                final int index = udtNames.indexOf(column.getName());
+                final int index = udtNames.indexOf(column.name());
                 if (index < 0) {
-                    throw new CommunicationException("This field has not been found: " + column.getName() +
+                    throw new CommunicationException("This field has not been found: " + column.name() +
                             " the fields available are " + udtNames + " in the UDT type " + userType.getName()
                             .asCql(true) + " at the keyspace " + userType.getKeyspace());
                 }
@@ -178,7 +176,7 @@ final class QueryUtils {
             CodecRegistry.DEFAULT.codecFor(value);
             values.put(getName(column), QueryBuilder.literal(value));
         } catch (CodecNotFoundException exp) {
-            values.put(getName(column), QueryBuilder.literal(ValueUtil.convert(column.getValue())));
+            values.put(getName(column), QueryBuilder.literal(ValueUtil.convert(column.value())));
         }
     }
 
@@ -188,7 +186,7 @@ final class QueryUtils {
     }
 
     static String getName(Column column) {
-        return getName(column.getName());
+        return getName(column.name());
     }
 
     static String getName(String name) {

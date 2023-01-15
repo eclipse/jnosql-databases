@@ -70,7 +70,7 @@ public class ArangoDBDocumentManagerTest {
         DocumentEntity entity = getEntity();
 
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals(KEY_NAME)));
+        assertTrue(documentEntity.documents().stream().map(Document::getName).anyMatch(s -> s.equals(KEY_NAME)));
     }
 
     @Test

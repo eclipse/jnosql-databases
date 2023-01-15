@@ -76,7 +76,7 @@ public class RavenDBDocumentManagerTest {
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = manager.insert(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
+        assertTrue(documentEntity.documents().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
     }
 
     @Test

@@ -38,7 +38,7 @@ final class SolrUtils {
     static SolrInputDocument getDocument(DocumentEntity entity) {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ENTITY, entity.getName());
-        entity.getDocuments().stream().forEach(d -> document.addField(d.getName(), convert(d.getValue())));
+        entity.documents().stream().forEach(d -> document.addField(d.getName(), convert(d.getValue())));
         return document;
     }
 

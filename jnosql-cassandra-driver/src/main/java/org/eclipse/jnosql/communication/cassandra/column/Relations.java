@@ -48,7 +48,7 @@ final class Relations {
 
     private static void load(ColumnCondition columnCondition, List<Relation> relations) {
 
-        Column column = columnCondition.getColumn();
+        Column column = columnCondition.column();
         Condition condition = columnCondition.condition();
 
         switch (condition) {

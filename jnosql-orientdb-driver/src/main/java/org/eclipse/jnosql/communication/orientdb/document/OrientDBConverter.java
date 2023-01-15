@@ -101,7 +101,7 @@ final class OrientDBConverter {
 
     public static Map<String, Object> toMap(DocumentEntity entity) {
         Map<String, Object> entityValues = new HashMap<>();
-        for (Document document : entity.getDocuments()) {
+        for (Document document : entity.documents()) {
             toDocument(entityValues, document);
         }
 

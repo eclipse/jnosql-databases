@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonObject;
+import jakarta.data.repository.Direction;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;
@@ -71,7 +72,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         if (!query.sorts().isEmpty()) {
             n1ql.append(" ORDER BY ");
             String order = query.sorts().stream()
-                    .map(s -> s.getName() + " " + s.getType().name())
+                    .map(s -> s.property() + " " + (s.isAscending() ? Direction.ASC : Direction.DESC))
                     .collect(Collectors.joining(", "));
             n1ql.append(order);
         }
@@ -84,14 +85,14 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         Document document = condition.document();
         switch (condition.condition()) {
             case EQUALS:
-                if (document.getName().equals(ID_FIELD)) {
+                if (document.name().equals(ID_FIELD)) {
                     ids.add(document.get(String.class));
                 } else {
                     predicate(n1ql, " = ", document, params);
                 }
                 return;
             case IN:
-                if (document.getName().equals(ID_FIELD)) {
+                if (document.name().equals(ID_FIELD)) {
                     ids.addAll(document.get(new TypeReference<List<String>>() {
                     }));
                 } else {
@@ -136,13 +137,13 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     private void predicateBetween(StringBuilder n1ql, JsonObject params, Document document) {
         n1ql.append(" BETWEEN ");
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = '\'' + document.getName() + '\'';
+        String name = '\'' + document.name() + '\'';
 
         List<Object> values = new ArrayList<>();
         ((Iterable<?>) document.get()).forEach(values::add);
 
-        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
-        String param2 = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param2 = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         n1ql.append(name).append(" ").append(param).append(" AND ").append(param2);
         params.put(param, values.get(0));
         params.put(param2, values.get(1));
@@ -163,15 +164,15 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                            Document document,
                            JsonObject params) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = '\'' + document.getName() + '\'';
+        String name = '\'' + document.name() + '\'';
         Object value = document.get();
-        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         n1ql.append(name).append(condition).append(param);
         params.put(param, value);
     }
 
     private String select() {
-        String documents = query.getDocuments().stream()
+        String documents = query.documents().stream()
                 .collect(Collectors.joining(", "));
         if (documents.isBlank()) {
             return "*";

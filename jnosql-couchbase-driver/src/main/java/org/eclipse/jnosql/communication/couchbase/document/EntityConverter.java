@@ -103,7 +103,7 @@ final class EntityConverter {
         requireNonNull(entity, "entity is required");
 
         JsonObject jsonObject = JsonObject.create();
-        entity.getDocuments().stream()
+        entity.documents().stream()
                 .forEach(toJsonObject(jsonObject));
         return jsonObject;
     }

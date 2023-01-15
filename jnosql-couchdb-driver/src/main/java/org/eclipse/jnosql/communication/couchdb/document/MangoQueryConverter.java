@@ -41,8 +41,8 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
     public JsonObject apply(DocumentQuery documentQuery) {
         JsonObjectBuilder select = Json.createObjectBuilder();
 
-        if (!documentQuery.getDocuments().isEmpty()) {
-            select.add(CouchDBConstant.FIELDS_QUERY, Json.createArrayBuilder(documentQuery.getDocuments()).build());
+        if (!documentQuery.documents().isEmpty()) {
+            select.add(CouchDBConstant.FIELDS_QUERY, Json.createArrayBuilder(documentQuery.documents()).build());
         }
         if (documentQuery.limit() > 0) {
             select.add(CouchDBConstant.LIMIT_QUERY, documentQuery.limit());

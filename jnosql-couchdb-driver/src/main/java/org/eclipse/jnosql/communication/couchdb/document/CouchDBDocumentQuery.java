@@ -86,7 +86,7 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
 
     @Override
     public List<String> getDocuments() {
-        return query.getDocuments();
+        return query.documents();
     }
 
     @Override

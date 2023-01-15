@@ -61,7 +61,7 @@ public class DefaultSolrDocumentManagerTest {
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals(ID)));
+        assertTrue(documentEntity.documents().stream().map(Document::getName).anyMatch(s -> s.equals(ID)));
     }
 
     @Test

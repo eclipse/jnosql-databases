@@ -76,7 +76,7 @@ public class MongoDBDocumentManager implements DocumentManager {
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document document = getDocument(entity);
         collection.insertOne(document);
-        boolean hasNotId = entity.getDocuments().stream()
+        boolean hasNotId = entity.documents().stream()
                 .map(jakarta.nosql.document.Document::getName).noneMatch(k -> k.equals(ID_FIELD));
         if (hasNotId) {
             entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
@@ -152,7 +152,7 @@ public class MongoDBDocumentManager implements DocumentManager {
         Bson mongoDBQuery = query.condition().map(DocumentQueryConversor::convert).orElse(EMPTY);
 
         FindIterable<Document> documents = collection.find(mongoDBQuery);
-        documents.projection(Projections.include(query.getDocuments()));
+        documents.projection(Projections.include(query.documents()));
         if (query.skip() > 0) {
             documents.skip((int) query.skip());
         }

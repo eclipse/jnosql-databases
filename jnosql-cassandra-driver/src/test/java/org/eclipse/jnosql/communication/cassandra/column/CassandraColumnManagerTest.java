@@ -238,7 +238,7 @@ public class CassandraColumnManagerTest {
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).where("id").eq(10L).build();
         List<ColumnEntity> columnEntity = entityManager.select(query).collect(toList());
         assertFalse(columnEntity.isEmpty());
-        List<Column> columns = columnEntity.get(0).getColumns();
+        List<Column> columns = columnEntity.get(0).columns();
         assertThat(columns.stream().map(Column::getName).collect(toList()))
                 .contains("name", "version", "options", "id");
         assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList())).contains
@@ -253,7 +253,7 @@ public class CassandraColumnManagerTest {
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).where("id").eq(10L).build();
         List<ColumnEntity> columnEntity = entityManager.select(query, CONSISTENCY_LEVEL).collect(toList());
         assertFalse(columnEntity.isEmpty());
-        List<Column> columns = columnEntity.get(0).getColumns();
+        List<Column> columns = columnEntity.get(0).columns();
         assertThat(columns.stream().map(Column::getName).collect(toList())).contains("name", "version", "options", "id");
         assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
                 .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
@@ -266,7 +266,7 @@ public class CassandraColumnManagerTest {
         List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;")
                 .collect(toList());
         assertFalse(entities.isEmpty());
-        List<Column> columns = entities.get(0).getColumns();
+        List<Column> columns = entities.get(0).columns();
         assertThat(columns.stream().map(Column::getName).collect(toList())).contains("name", "version", "options", "id");
         assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
                 .contains("Cassandra", 3.2, asList(1, 2, 3), 10L);
@@ -278,7 +278,7 @@ public class CassandraColumnManagerTest {
         String query = "select * from newKeySpace.newColumnFamily where id = :id;";
         List<ColumnEntity> entities = entityManager.cql(query, singletonMap("id", 10L)).collect(toList());
         assertFalse(entities.isEmpty());
-        List<Column> columns = entities.get(0).getColumns();
+        List<Column> columns = entities.get(0).columns();
         assertThat(columns.stream().map(Column::getName).collect(toList()))
                 .contains("name", "version", "options", "id");
         assertThat(columns.stream().map(Column::getValue).map(Value::get).collect(toList()))
@@ -291,7 +291,7 @@ public class CassandraColumnManagerTest {
         CassandraPreparedStatement preparedStatement = entityManager.nativeQueryPrepare("select * from newKeySpace.newColumnFamily where id=?");
         preparedStatement.bind(10L);
         List<ColumnEntity> entities = preparedStatement.executeQuery().collect(toList());
-        List<Column> columns = entities.get(0).getColumns();
+        List<Column> columns = entities.get(0).columns();
         assertThat(columns.stream().map(Column::getName).collect(toList()))
                 .contains("name", "version", "options", "id");
         assertThat(columns.stream().map(Column::getValue).map(Value::get)

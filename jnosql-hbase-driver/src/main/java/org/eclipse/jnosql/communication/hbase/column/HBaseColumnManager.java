@@ -44,9 +44,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static jakarta.nosql.Condition.EQUALS;
-import static jakarta.nosql.Condition.IN;
-import static jakarta.nosql.Condition.OR;
+
+import static org.eclipse.jnosql.communication.Condition.EQUALS;
+import static org.eclipse.jnosql.communication.Condition.IN;
+import static org.eclipse.jnosql.communication.Condition.OR;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -79,18 +80,18 @@ public class HBaseColumnManager implements ColumnManager {
     @Override
     public ColumnEntity insert(ColumnEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
-        String family = entity.getName();
-        List<Column> columns = entity.getColumns();
+        String family = entity.name();
+        List<Column> columns = entity.columns();
         if (columns.isEmpty()) {
             return entity;
         }
         Column columnID = entity.find(HBaseUtils.KEY_COLUMN).orElseThrow(() -> new HBaseException(KEY_REQUIRED_ERROR));
 
-        Put put = new Put(Bytes.toBytes(valueToString(columnID.getValue())));
+        Put put = new Put(Bytes.toBytes(valueToString(columnID.value())));
         columns.stream().filter(Predicate.isEqual(columnID).negate()).forEach(column ->
                 put.addColumn(Bytes.toBytes(family),
-                        Bytes.toBytes(column.getName()),
-                        Bytes.toBytes(valueToString(column.getValue()))));
+                        Bytes.toBytes(column.name()),
+                        Bytes.toBytes(valueToString(column.value()))));
         try {
             table.put(put);
         } catch (IOException e) {
@@ -213,13 +214,13 @@ public class HBaseColumnManager implements ColumnManager {
         Condition condition = columnCondition.condition();
 
         if (OR.equals(condition)) {
-            columnCondition.getColumn().get(new TypeReference<List<ColumnCondition>>() {
+            columnCondition.column().get(new TypeReference<List<ColumnCondition>>() {
             }).forEach(c -> convert(c, values));
         } else if (IN.equals(condition)) {
-            values.addAll(columnCondition.getColumn().get(new TypeReference<List<String>>() {
+            values.addAll(columnCondition.column().get(new TypeReference<List<String>>() {
             }));
         } else if (EQUALS.equals(condition)) {
-            values.add(valueToString(columnCondition.getColumn().getValue()));
+            values.add(valueToString(columnCondition.column().value()));
         }
 
 
@@ -229,7 +230,7 @@ public class HBaseColumnManager implements ColumnManager {
 
         Condition condition = columnCondition.condition();
         if (OR.equals(condition)) {
-            List<ColumnCondition> columnConditions = columnCondition.getColumn().get(new TypeReference<>() {
+            List<ColumnCondition> columnConditions = columnCondition.column().get(new TypeReference<>() {
             });
             for (ColumnCondition cc : columnConditions) {
                 checkedCondition(cc);

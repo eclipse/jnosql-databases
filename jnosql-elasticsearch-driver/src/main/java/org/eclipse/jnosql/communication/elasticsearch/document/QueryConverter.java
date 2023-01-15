@@ -37,8 +37,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static jakarta.nosql.Condition.EQUALS;
-import static jakarta.nosql.Condition.IN;
+import static org.eclipse.jnosql.communication.Condition.EQUALS;
+import static org.eclipse.jnosql.communication.Condition.IN;
 import static org.eclipse.jnosql.communication.elasticsearch.document.EntityConverter.ENTITY;
 import static org.eclipse.jnosql.communication.elasticsearch.document.EntityConverter.ID_FIELD;
 
@@ -92,41 +92,41 @@ final class QueryConverter {
             case EQUALS:
                 return (Query.Builder) new Query.Builder()
                         .term(TermQuery.of(tq -> tq
-                                .field(document.getName())
+                                .field(document.name())
                                 .value(v -> v
-                                        .anyValue(JsonData.of(document.getValue().get())))));
+                                        .anyValue(JsonData.of(document.value().get())))));
             case LESSER_THAN:
                 return (Query.Builder) new Query.Builder()
                         .range(RangeQuery.of(rq -> rq
-                                .field(document.getName())
-                                .lt(JsonData.of(document.getValue().get()))));
+                                .field(document.name())
+                                .lt(JsonData.of(document.value().get()))));
             case LESSER_EQUALS_THAN:
                 return (Query.Builder) new Query.Builder()
                         .range(RangeQuery.of(rq -> rq
-                                .field(document.getName())
-                                .lte(JsonData.of(document.getValue().get()))));
+                                .field(document.name())
+                                .lte(JsonData.of(document.value().get()))));
             case GREATER_THAN:
                 return (Query.Builder) new Query.Builder()
                         .range(RangeQuery.of(rq -> rq
-                                .field(document.getName())
-                                .gt(JsonData.of(document.getValue().get()))));
+                                .field(document.name())
+                                .gt(JsonData.of(document.value().get()))));
             case GREATER_EQUALS_THAN:
                 return (Query.Builder) new Query.Builder()
                         .range(RangeQuery.of(rq -> rq
-                                .field(document.getName())
-                                .gte(JsonData.of(document.getValue().get()))));
+                                .field(document.name())
+                                .gte(JsonData.of(document.value().get()))));
             case LIKE:
                 return (Query.Builder) new Query.Builder()
                         .queryString(QueryStringQuery.of(rq -> rq
-                                .query(document.getValue().get(String.class))
+                                .query(document.value().get(String.class))
                                 .allowLeadingWildcard(true)
-                                .fields(document.getName())));
+                                .fields(document.name())));
             case IN:
-                return (Query.Builder) ValueUtil.convertToList(document.getValue())
+                return (Query.Builder) ValueUtil.convertToList(document.value())
                         .stream()
                         .map(val -> new Query.Builder()
                                 .term(TermQuery.of(tq -> tq
-                                        .field(document.getName())
+                                        .field(document.name())
                                         .value(v -> v.anyValue(JsonData.of(val))))))
                         .reduce((d1, d2) -> new Query.Builder()
                                 .bool(BoolQuery.of(bq -> bq
@@ -166,7 +166,7 @@ final class QueryConverter {
     }
 
     private static boolean isIdField(Document document) {
-        return ID_FIELD.equals(document.getName());
+        return ID_FIELD.equals(document.name());
     }
 
 

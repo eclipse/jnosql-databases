@@ -52,7 +52,7 @@ final class EntityConverter {
     static Map<String, Object> getMap(DocumentEntity entity) {
         Map<String, Object> jsonObject = new HashMap<>();
 
-        entity.getDocuments().stream()
+        entity.documents().stream()
                 .filter(d -> !d.getName().equals(ID_FIELD))
                 .forEach(feedJSON(jsonObject));
         jsonObject.put(ENTITY, entity.getName());

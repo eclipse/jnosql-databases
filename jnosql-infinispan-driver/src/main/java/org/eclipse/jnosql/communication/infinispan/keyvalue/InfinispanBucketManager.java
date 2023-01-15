@@ -54,12 +54,12 @@ public class InfinispanBucketManager implements BucketManager {
 
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
-        cache.put(entity.getKey(), entity.getValue());
+        cache.put(entity.key(), entity.value());
     }
 
     @Override
     public void put(KeyValueEntity entity, Duration ttl) {
-        cache.put(entity.getKey(), entity.getValue(), ttl.toMillis(), TimeUnit.MILLISECONDS);
+        cache.put(entity.key(), entity.value(), ttl.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override

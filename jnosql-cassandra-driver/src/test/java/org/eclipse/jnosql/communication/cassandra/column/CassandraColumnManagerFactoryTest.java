@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.communication.cassandra.column;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.Settings.SettingsBuilder;
+import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.eclipse.jnosql.communication.column.ColumnManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
