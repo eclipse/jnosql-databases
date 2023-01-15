@@ -68,7 +68,7 @@ final class Relations {
                 relations.add(Relation.column(QueryUtils.getName(column)).isLessThanOrEqualTo(getTerm(column)));
                 return;
             case IN:
-                relations.add(Relation.column(QueryUtils.getName(column)).in(getIinValue(column.getValue())));
+                relations.add(Relation.column(QueryUtils.getName(column)).in(getIinValue(column.value())));
                 return;
             case LIKE:
                 relations.add(Relation.column(QueryUtils.getName(column)).like(getTerm(column)));
@@ -84,7 +84,7 @@ final class Relations {
     }
 
     private static Term getTerm(Column column) {
-        return literal(ValueUtil.convert(column.getValue()));
+        return literal(ValueUtil.convert(column.value()));
     }
 
     private static Term[] getIinValue(Value value) {

@@ -25,7 +25,7 @@ final class DeleteQueryConverter {
     }
 
     static Delete delete(ColumnDeleteQuery query, String keyspace) {
-        final String columnFamily = query.getColumnFamily();
+        final String columnFamily = query.name();
         DeleteSelection deleteSelection = QueryBuilder.deleteFrom(keyspace, columnFamily);
 
         for (String column : query.columns()) {
