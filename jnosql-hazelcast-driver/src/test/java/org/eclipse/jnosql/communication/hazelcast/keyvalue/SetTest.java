@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SetTest {
@@ -45,7 +46,7 @@ public class SetTest {
     public void shouldAddUsers() {
         assertTrue(users.isEmpty());
         users.add(userOtavioJava);
-        assertTrue(users.size() == 1);
+        assertEquals(1, users.size());
 
         users.remove(userOtavioJava);
         assertTrue(users.isEmpty());
@@ -65,14 +66,14 @@ public class SetTest {
         for (User user: users) {
             count++;
         }
-        assertTrue(count == 2);
+        assertEquals(2, count);
         users.remove(userOtavioJava);
         users.remove(felipe);
         count = 0;
         for (User user: users) {
             count++;
         }
-        assertTrue(count == 0);
+        assertEquals(0, count);
     }
 
     @AfterEach

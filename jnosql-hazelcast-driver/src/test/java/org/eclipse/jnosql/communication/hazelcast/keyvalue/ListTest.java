@@ -70,7 +70,7 @@ public class ListTest {
 
         fruits.add(banana);
         fruits.add(0, orange);
-        assertTrue(fruits.size() == 2);
+        assertEquals(2, fruits.size());
 
         assertEquals(fruits.get(0).getName(), "orange");
         assertEquals(fruits.get(1).getName(), "banana");
@@ -93,12 +93,12 @@ public class ListTest {
         fruits.add(banana);
         fruits.add(new ProductCart("watermellon", BigDecimal.ONE));
         fruits.add(banana);
-        assertTrue(fruits.indexOf(banana) == 1);
-        assertTrue(fruits.lastIndexOf(banana) == 3);
+        assertEquals(1, fruits.indexOf(banana));
+        assertEquals(3, fruits.lastIndexOf(banana));
 
         assertTrue(fruits.contains(banana));
-        assertTrue(fruits.indexOf(melon) == -1);
-        assertTrue(fruits.lastIndexOf(melon) == -1);
+        assertEquals(-1, fruits.indexOf(melon));
+        assertEquals(-1, fruits.lastIndexOf(melon));
     }
 
     @Test
@@ -123,14 +123,14 @@ public class ListTest {
         for (ProductCart fruiCart: fruits) {
             count++;
         }
-        assertTrue(count == 2);
+        assertEquals(2, count);
         fruits.remove(0);
         fruits.remove(0);
         count = 0;
         for (ProductCart fruiCart: fruits) {
             count++;
         }
-        assertTrue(count == 0);
+        assertEquals(0, count);
     }
     @AfterEach
     public  void end() {

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,7 +46,7 @@ public class RedisSetTest {
     @Test
     public void shouldAddUsers() {
         users.add(userOtavioJava);
-        assertTrue(users.size() == 1);
+        assertEquals(1, users.size());
     }
 
     @Test
@@ -54,7 +55,7 @@ public class RedisSetTest {
         users.add(felipe);
         users.remove(felipe);
 
-        assertTrue(users.size() == 1);
+        assertEquals(1, users.size());
         assertThat(users).isNotIn(felipe);
    }
 
@@ -64,7 +65,7 @@ public class RedisSetTest {
         users.add(felipe);
         users.removeAll(Arrays.asList(felipe, userOtavioJava));
 
-        assertTrue(users.size() == 0);
+        assertEquals(0, users.size());
     }
 
     @SuppressWarnings("unused")
@@ -79,7 +80,7 @@ public class RedisSetTest {
         for (User user : users) {
             count++;
         }
-        assertTrue(count == 2);
+        assertEquals(2, count);
     }
 
     @Test
@@ -99,7 +100,7 @@ public class RedisSetTest {
     public void shouldReturnSize() {
         users.add(userOtavioJava);
         users.add(felipe);
-        assertTrue(users.size() == 2);
+        assertEquals(2, users.size());
     }
 
     @Test

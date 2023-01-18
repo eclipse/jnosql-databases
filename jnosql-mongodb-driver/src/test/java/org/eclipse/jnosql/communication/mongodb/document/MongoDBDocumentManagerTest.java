@@ -41,6 +41,7 @@ import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.dele
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -157,7 +158,7 @@ public class MongoDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
@@ -174,7 +175,7 @@ public class MongoDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
@@ -192,7 +193,7 @@ public class MongoDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entitiesFound.size() == 1);
+        assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound).contains(entities.get(0));
     }
 
@@ -209,7 +210,7 @@ public class MongoDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).contains(entities.get(0), entities.get(2));
     }
 
@@ -226,7 +227,7 @@ public class MongoDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entitiesFound.size() == 2);
+        assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).contains(entities.get(0), entities.get(2));
     }
 
@@ -425,7 +426,7 @@ public class MongoDBDocumentManagerTest {
         DocumentEntity documentEntity = entities.get(0);
         assertEquals(id, documentEntity.find("_id").get().get());
 
-        assertTrue(Arrays.equals(contents, (byte[]) documentEntity.find("contents").get().get()));
+        assertArrayEquals(contents, (byte[]) documentEntity.find("contents").get().get());
 
     }
 

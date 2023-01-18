@@ -54,7 +54,7 @@ public class RedisMapStringTest {
         String species = vertebrates.get(MAMMALS);
         assertNotNull(species);
         assertEquals(MAMMALS, vertebrates.get(MAMMALS));
-        assertTrue(vertebrates.size() == 1);
+        assertEquals(1, vertebrates.size());
     }
 
     @Test
@@ -76,12 +76,12 @@ public class RedisMapStringTest {
         Set<String> keys = vertebrates.keySet();
         Collection<String> collectionSpecies = vertebrates.values();
 
-        assertTrue(keys.size() == 3);
-        assertTrue(collectionSpecies.size() == 3);
+        assertEquals(3, keys.size());
+        assertEquals(3, collectionSpecies.size());
         assertNotNull(vertebrates.remove(MAMMALS));
         assertNull(vertebrates.remove(MAMMALS));
         assertNull(vertebrates.get(MAMMALS));
-        assertTrue(vertebrates.size() == 2);
+        assertEquals(2, vertebrates.size());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class RedisMapStringTest {
         vertebrates.put(AMPHIBIANS, AMPHIBIANS);
 
         vertebrates.remove(FISHES);
-        assertTrue(vertebrates.size() == 2);
+        assertEquals(2, vertebrates.size());
         assertThat(vertebrates).isNotIn(FISHES);
     }
 

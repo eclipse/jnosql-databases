@@ -55,7 +55,7 @@ public class MapTest {
         Species species = vertebrates.get("mammals");
         assertNotNull(species);
         assertEquals(species.getAnimals().get(0), mammals.getAnimals().get(0));
-        assertTrue(vertebrates.size() == 1);
+        assertEquals(1, vertebrates.size());
     }
 
     @Test
@@ -82,12 +82,12 @@ public class MapTest {
         Set<String> keys = vertebrates.keySet();
         Collection<Species> collectionSpecies = vertebrates.values();
 
-        assertTrue(keys.size() == 3);
-        assertTrue(collectionSpecies.size() == 3);
+        assertEquals(3, keys.size());
+        assertEquals(3, collectionSpecies.size());
         assertNotNull(vertebrates.remove("mammals"));
         assertNull(vertebrates.remove("mammals"));
         assertNull(vertebrates.get("mammals"));
-        assertTrue(vertebrates.size() == 2);
+        assertEquals(2, vertebrates.size());
     }
 
     @AfterEach

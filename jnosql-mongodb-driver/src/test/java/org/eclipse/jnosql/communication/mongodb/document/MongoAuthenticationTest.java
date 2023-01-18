@@ -29,6 +29,7 @@ import static org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentC
 import static org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfigurations.AUTHENTICATION_SOURCE;
 import static org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfigurations.PASSWORD;
 import static org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfigurations.USER;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,7 +55,7 @@ class MongoAuthenticationTest {
 
         MongoCredential credential = MongoAuthentication.of(settings).get();
         assertEquals("database", credential.getSource());
-        assertTrue(Arrays.equals("password".toCharArray(), credential.getPassword()));
+        assertArrayEquals("password".toCharArray(), credential.getPassword());
         assertEquals("user", credential.getUserName());
         assertNull(credential.getMechanism());
 
@@ -102,7 +103,7 @@ class MongoAuthenticationTest {
 
         MongoCredential credential = MongoAuthentication.of(settings).get();
         assertEquals("database", credential.getSource());
-        assertTrue(Arrays.equals("password".toCharArray(), credential.getPassword()));
+        assertArrayEquals("password".toCharArray(), credential.getPassword());
         assertEquals("user", credential.getUserName());
         assertEquals(SCRAM_SHA_1.getMechanismName(), credential.getMechanism());
     }
@@ -118,7 +119,7 @@ class MongoAuthenticationTest {
 
         MongoCredential credential = MongoAuthentication.of(settings).get();
         assertEquals("database", credential.getSource());
-        assertTrue(Arrays.equals("password".toCharArray(), credential.getPassword()));
+        assertArrayEquals("password".toCharArray(), credential.getPassword());
         assertEquals("user", credential.getUserName());
         assertEquals(SCRAM_SHA_256.getMechanismName(), credential.getMechanism());
     }

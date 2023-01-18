@@ -62,14 +62,14 @@ public class RedisListStringTest {
     @Test
     public void shouldAddAll() {
         fruits.addAll(Arrays.asList("banana", "orange"));
-        assertTrue(fruits.size() == 2);
+        assertEquals(2, fruits.size());
     }
 
     @Test
     public void shouldSetList() {
         fruits.add("banana");
         fruits.add(0, "orange");
-        assertTrue(fruits.size() == 2);
+        assertEquals(2, fruits.size());
 
         assertEquals(fruits.get(0), "orange");
         assertEquals(fruits.get(1), "banana");
@@ -96,12 +96,12 @@ public class RedisListStringTest {
         fruits.add("banana");
         fruits.add("watermellon");
         fruits.add("banana");
-        assertTrue(fruits.indexOf("banana") == 1);
-        assertTrue(fruits.lastIndexOf("banana") == 3);
+        assertEquals(1, fruits.indexOf("banana"));
+        assertEquals(3, fruits.lastIndexOf("banana"));
 
         assertTrue(fruits.contains("banana"));
-        assertTrue(fruits.indexOf("melon") == -1);
-        assertTrue(fruits.lastIndexOf("melon") == -1);
+        assertEquals(-1, fruits.indexOf("melon"));
+        assertEquals(-1, fruits.lastIndexOf("melon"));
     }
 
     @Test
@@ -125,14 +125,14 @@ public class RedisListStringTest {
         for (String fruiCart : fruits) {
             count++;
         }
-        assertTrue(count == 2);
+        assertEquals(2, count);
         fruits.remove(0);
         fruits.remove(0);
         count = 0;
         for (String fruiCart : fruits) {
             count++;
         }
-        assertTrue(count == 0);
+        assertEquals(0, count);
     }
 
     @Test

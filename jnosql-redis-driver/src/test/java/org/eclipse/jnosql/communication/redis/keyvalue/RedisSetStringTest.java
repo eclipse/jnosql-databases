@@ -43,7 +43,7 @@ public class RedisSetStringTest {
     @Test
     public void shouldAddUsers() {
         users.add("otaviojava");
-        assertTrue(users.size() == 1);
+        assertEquals(1, users.size());
 
         String user = users.iterator().next();
         assertEquals("otaviojava", user);
@@ -69,14 +69,14 @@ public class RedisSetStringTest {
         for (String user : users) {
             count++;
         }
-        assertTrue(count == 2);
+        assertEquals(2, count);
         users.remove("otaviojava");
         users.remove("felipe");
         count = 0;
         for (String user : users) {
             count++;
         }
-        assertTrue(count == 0);
+        assertEquals(0, count);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class RedisSetStringTest {
         users.add("otaviojava");
         users.add("furlaneto");
         users.add("joao");
-        assertTrue(users.size() == 3);
+        assertEquals(3, users.size());
     }
     
     @AfterEach

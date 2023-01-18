@@ -238,7 +238,7 @@ public class OrientDBDocumentManagerTest {
         DocumentQuery query2 = select().from(COLLECTION_NAME)
                 .where("age").gt(24)
                 .build();
-        assertTrue(entityManager.select(query2).collect(Collectors.toList()).size() == 1);
+        assertEquals(1, entityManager.select(query2).collect(Collectors.toList()).size());
     }
 
     @Test
@@ -255,7 +255,7 @@ public class OrientDBDocumentManagerTest {
         DocumentQuery query2 = select().from(COLLECTION_NAME)
                 .where("age").lt(26)
                 .build();
-        assertTrue(entityManager.select(query2).collect(Collectors.toList()).size() == 1);
+        assertEquals(1, entityManager.select(query2).collect(Collectors.toList()).size());
     }
 
     @Test
@@ -272,12 +272,12 @@ public class OrientDBDocumentManagerTest {
         DocumentQuery query2 = select().from(COLLECTION_NAME)
                 .where("age").lte(25)
                 .build();
-        assertTrue(entityManager.select(query2).collect(Collectors.toList()).size() == 1);
+        assertEquals(1, entityManager.select(query2).collect(Collectors.toList()).size());
 
         DocumentQuery query3 = select().from(COLLECTION_NAME)
                 .where("age").lte(26)
                 .build();
-        assertTrue(entityManager.select(query3).collect(Collectors.toList()).size() == 1);
+        assertEquals(1, entityManager.select(query3).collect(Collectors.toList()).size());
     }
 
     @Test
@@ -287,7 +287,7 @@ public class OrientDBDocumentManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("city").in(asList("Salvador", "Assis"))
                 .build();
-        assertTrue(entityManager.select(query).collect(Collectors.toList()).size() == 2);
+        assertEquals(2, entityManager.select(query).collect(Collectors.toList()).size());
 
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
                 .where("city").in(asList("Salvador", "Assis", "Sao Paulo"))
@@ -307,7 +307,7 @@ public class OrientDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entities.size() == 2);
+        assertEquals(2, entities.size());
         assertThat(entities, containsInAnyOrder(entitiesSaved.get(0), entitiesSaved.get(1)));
     }
 
@@ -320,7 +320,7 @@ public class OrientDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entities.size() == 2);
+        assertEquals(2, entities.size());
         assertThat(entities, containsInAnyOrder(entitiesSaved.get(0), entitiesSaved.get(1)));
     }
 
@@ -333,7 +333,7 @@ public class OrientDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entities.size() == 2);
+        assertEquals(2, entities.size());
     }
 
     @Test
@@ -345,7 +345,7 @@ public class OrientDBDocumentManagerTest {
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        assertTrue(entities.size() == 2);
+        assertEquals(2, entities.size());
     }
 
     @Test

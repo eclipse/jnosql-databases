@@ -47,7 +47,7 @@ public class QueueTest {
     @Test
     public void shouldPushInTheLine() {
         assertTrue(lineBank.add(new LineBank("Otavio", 25)));
-        assertTrue(lineBank.size() ==1);
+        assertEquals(1, lineBank.size());
         LineBank otavio = lineBank.poll();
         assertEquals(otavio.getPerson().getName(), "Otavio");
         assertNull(lineBank.poll());
@@ -94,14 +94,14 @@ public class QueueTest {
         for (LineBank line: lineBank) {
             count++;
         }
-        assertTrue(count == 2);
+        assertEquals(2, count);
         lineBank.remove();
         lineBank.remove();
         count = 0;
         for (LineBank line: lineBank) {
             count++;
         }
-        assertTrue(count == 0);
+        assertEquals(0, count);
     }
     @AfterEach
     public void dispose() {

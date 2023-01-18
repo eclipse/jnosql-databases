@@ -103,7 +103,7 @@ public class DefaultSortedSetTest {
     public void shouldRemoveMember() {
         sortedSet.add(BRAZIL, 10);
         sortedSet.remove(BRAZIL);
-        assertTrue(sortedSet.size() == 0);
+        assertEquals(0, sortedSet.size());
     }
 
     @Test
@@ -111,7 +111,7 @@ public class DefaultSortedSetTest {
         sortedSet.add(BRAZIL, 10);
         sortedSet.expire(Duration.ofSeconds(1));
         Thread.sleep(2_000L);
-        assertTrue(sortedSet.size() == 0);
+        assertEquals(0, sortedSet.size());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class DefaultSortedSetTest {
         sortedSet.expire(Duration.ofSeconds(1));
         sortedSet.persist();
         Thread.sleep(2_000L);
-        assertTrue(sortedSet.size() == 1);
+        assertEquals(1, sortedSet.size());
     }
 
     @Test

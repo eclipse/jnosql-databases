@@ -45,7 +45,7 @@ public class RedisQueueStringTest {
     @Test
     public void shouldPushInTheLine() {
         assertTrue(lineBank.add("Otavio"));
-        assertTrue(lineBank.size() == 1);
+        assertEquals(1, lineBank.size());
         String otavio = lineBank.poll();
         assertEquals(otavio, "Otavio");
         assertNull(lineBank.poll());
@@ -93,14 +93,14 @@ public class RedisQueueStringTest {
         for (String line : lineBank) {
             count++;
         }
-        assertTrue(count == 2);
+        assertEquals(2, count);
         lineBank.remove();
         lineBank.remove();
         count = 0;
         for (String line : lineBank) {
             count++;
         }
-        assertTrue(count == 0);
+        assertEquals(0, count);
     }
 
     @Test
