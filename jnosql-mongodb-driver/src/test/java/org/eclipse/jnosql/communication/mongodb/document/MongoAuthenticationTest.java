@@ -20,8 +20,6 @@ import org.eclipse.jnosql.communication.CommunicationException;
 import org.eclipse.jnosql.communication.Settings;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 import static com.mongodb.AuthenticationMechanism.GSSAPI;
 import static com.mongodb.AuthenticationMechanism.SCRAM_SHA_1;
 import static com.mongodb.AuthenticationMechanism.SCRAM_SHA_256;
@@ -33,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MongoAuthenticationTest {
 
