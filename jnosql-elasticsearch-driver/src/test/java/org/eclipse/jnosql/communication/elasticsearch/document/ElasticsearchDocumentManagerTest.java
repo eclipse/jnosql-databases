@@ -136,7 +136,7 @@ public class ElasticsearchDocumentManagerTest {
                 .build();
 
         // it's required in order to avoid an eventual inconsistency
-        await().until(numberOfEntitiesFrom(query), greaterThan(0l));
+        await().until(numberOfEntitiesFrom(query), greaterThan(0L));
     }
 
 
@@ -175,7 +175,7 @@ public class ElasticsearchDocumentManagerTest {
                 .query(q -> q.term(tq -> tq.field("name").value("Poliana"))));
 
         // it's required in order to avoid an eventual inconsistency
-        await().until(numberOfEntitiesFrom(query),equalTo(1l));
+        await().until(numberOfEntitiesFrom(query),equalTo(1L));
 
         assertThat(entityManager.search(query)
                 .collect(Collectors.toList())).contains(entity);
@@ -230,7 +230,7 @@ public class ElasticsearchDocumentManagerTest {
                 .build();
 
         // it's required in order to avoid an eventual inconsistency
-        await().until(numberOfEntitiesFrom(query), equalTo(1l));
+        await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
@@ -333,7 +333,7 @@ public class ElasticsearchDocumentManagerTest {
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
-        await().until(numberOfEntitiesFrom(query), equalTo(1l));
+        await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
         DocumentEntity entityFound = entityManager.singleResult(query).get();
         Document subDocument = entityFound.find("phones").get();
@@ -361,7 +361,7 @@ public class ElasticsearchDocumentManagerTest {
                 .build();
 
         // it's required in order to avoid an eventual inconsistency
-        await().until(numberOfEntitiesFrom(query), equalTo(1l));
+        await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
         DocumentEntity entityFound = entityManager.select(query)
                 .collect(Collectors.toList())
@@ -382,7 +382,7 @@ public class ElasticsearchDocumentManagerTest {
         DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(key.name()).eq(key.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
-        await().until(numberOfEntitiesFrom(query), equalTo(1l));
+        await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
         DocumentEntity documentEntity = entityManager.singleResult(query).orElse(null);
         assertNotNull(documentEntity);
@@ -405,7 +405,7 @@ public class ElasticsearchDocumentManagerTest {
 
         // it's required in order to avoid an eventual inconsistency
         await().until(() -> entityManager.count(DocumentEntityGerator.COLLECTION_NAME),
-                equalTo(2l));
+                equalTo(2L));
     }
 
     private DocumentEntity createSubdocumentList() {

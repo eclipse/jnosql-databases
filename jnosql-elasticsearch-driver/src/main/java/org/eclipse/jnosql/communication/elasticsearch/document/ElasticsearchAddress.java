@@ -36,7 +36,7 @@ final class ElasticsearchAddress {
             String[] values = address.split(":");
             this.host = new HttpHost(
                     values[0],
-                    values.length == 2 ? Integer.valueOf(values[1]) : defaultPort
+                    values.length == 2 ? Integer.parseInt(values[1]) : defaultPort
             );
         }
     }

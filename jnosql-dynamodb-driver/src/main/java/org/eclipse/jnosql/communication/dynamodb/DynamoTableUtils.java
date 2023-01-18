@@ -69,13 +69,13 @@ public final class DynamoTableUtils {
 
         ProvisionedThroughput.Builder provisionedThroughputBuilder = ProvisionedThroughput.builder();
 
-        if (readCapacityUnits != null && readCapacityUnits.longValue() > 0) {
+        if (readCapacityUnits != null && readCapacityUnits > 0) {
             provisionedThroughputBuilder.readCapacityUnits(readCapacityUnits);
         } else {
             provisionedThroughputBuilder.readCapacityUnits(READ_CAPACITY_UNITS);
         }
 
-        if (writeCapacityUnit != null && writeCapacityUnit.longValue() > 0) {
+        if (writeCapacityUnit != null && writeCapacityUnit > 0) {
             provisionedThroughputBuilder.writeCapacityUnits(writeCapacityUnit);
         } else {
             provisionedThroughputBuilder.writeCapacityUnits(READ_CAPACITY_UNITS);

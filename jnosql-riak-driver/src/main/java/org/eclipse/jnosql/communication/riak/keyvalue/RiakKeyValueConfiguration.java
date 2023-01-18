@@ -95,7 +95,7 @@ public class RiakKeyValueConfiguration implements KeyValueConfiguration {
             } else {
                 return new RiakNode.Builder()
                         .withRemoteAddress(values[0])
-                        .withRemotePort(Integer.valueOf(values[1]))
+                        .withRemotePort(Integer.parseInt(values[1]))
                         .build();
             }
         };
