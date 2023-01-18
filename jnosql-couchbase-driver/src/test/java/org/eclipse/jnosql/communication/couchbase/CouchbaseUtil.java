@@ -32,7 +32,7 @@ public final class CouchbaseUtil {
     public static Settings getSettings() {
         Map<String, String> map = ConfigurationReader.from(CouchbaseUtil.FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
-        map.forEach((k, v) -> builder.put(k, v));
+        map.forEach(builder::put);
         return builder.build();
     }
 }

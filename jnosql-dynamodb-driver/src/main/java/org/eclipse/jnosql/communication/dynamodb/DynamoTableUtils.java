@@ -44,12 +44,10 @@ public final class DynamoTableUtils {
         KeySchemaElement.Builder keySchemaElementBuilder = KeySchemaElement.builder();
 
         keys
-                .entrySet()
-                .forEach(
-                        es -> {
-                            keySchemaElementBuilder.attributeName(es.getKey());
-                            keySchemaElementBuilder.keyType(es.getValue());
-                        });
+                .forEach((key, value) -> {
+                    keySchemaElementBuilder.attributeName(key);
+                    keySchemaElementBuilder.keyType(value);
+                });
 
         return keySchemaElementBuilder.build();
     }
@@ -59,13 +57,10 @@ public final class DynamoTableUtils {
         AttributeDefinition.Builder attributeDefinitionBuilder = AttributeDefinition.builder();
 
         attributes
-                .entrySet()
-                .forEach(
-                        es -> {
-                            attributeDefinitionBuilder.attributeName(es.getKey());
-                            attributeDefinitionBuilder.attributeType(es.getValue());
-                        }
-                );
+                .forEach((key, value) -> {
+                    attributeDefinitionBuilder.attributeName(key);
+                    attributeDefinitionBuilder.attributeType(value);
+                });
 
         return attributeDefinitionBuilder.build();
     }

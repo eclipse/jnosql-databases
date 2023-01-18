@@ -53,7 +53,7 @@ public class HazelcastKeyValueConfiguration implements KeyValueConfiguration {
     public HazelcastBucketManagerFactory get(Map<String, String> configurations) throws NullPointerException {
         Objects.requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
-        configurations.forEach((key, value) -> builder.put(key, value));
+        configurations.forEach(builder::put);
         return apply(builder.build());
     }
 

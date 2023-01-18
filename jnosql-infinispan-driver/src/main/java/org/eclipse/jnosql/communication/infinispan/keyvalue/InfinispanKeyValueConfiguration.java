@@ -51,7 +51,7 @@ public class InfinispanKeyValueConfiguration implements KeyValueConfiguration {
     public InfinispanBucketManagerFactory get(Map<String, String> configurations) {
         requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
-        configurations.forEach((key, value) -> builder.put(key, value));
+        configurations.forEach(builder::put);
         return apply(builder.build());
     }
 

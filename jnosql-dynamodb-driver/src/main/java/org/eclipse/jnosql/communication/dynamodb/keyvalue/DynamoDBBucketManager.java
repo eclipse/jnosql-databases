@@ -29,6 +29,7 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class DynamoDBBucketManager implements BucketManager {
 
     private DynamoDbClient client;
     private String tableName;
-    private static final Function<AttributeValue, String> TO_JSON = e -> e.s();
+    private static final Function<AttributeValue, String> TO_JSON = AttributeValue::s;
 
     public DynamoDBBucketManager(DynamoDbClient client, String tableName) {
         this.client = client;
@@ -103,7 +104,7 @@ public class DynamoDBBucketManager implements BucketManager {
                 .responses()
                 .values()
                 .stream()
-                .flatMap(l -> l.stream())
+                .flatMap(Collection::stream)
                 .map(v -> v.get(ConfigurationAmazonEntity.VALUE))
                 .map(TO_JSON)
                 .map(ValueJSON::of)

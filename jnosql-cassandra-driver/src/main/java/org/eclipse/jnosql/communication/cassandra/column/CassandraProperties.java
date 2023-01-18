@@ -77,7 +77,7 @@ class CassandraProperties {
 
     public static CassandraProperties of(Map<String, String> configurations) {
         SettingsBuilder builder = Settings.builder();
-        configurations.forEach((key, value) -> builder.put(key, value));
+        configurations.forEach(builder::put);
         Settings settings = builder.build();
 
         CassandraProperties cp = new CassandraProperties();

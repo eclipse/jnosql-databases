@@ -76,7 +76,7 @@ public class DynamoDBUtils {
     public static <K> Collection<Map<String, AttributeValue>> createAttributeValues(Iterable<KeyValueEntity> entities) {
 
         return StreamSupport.stream(entities.spliterator(), false)
-                .map(e -> createAttributeValues(e))
+                .map(DynamoDBUtils::createAttributeValues)
                 .collect(Collectors.toList());
     }
 
@@ -103,7 +103,7 @@ public class DynamoDBUtils {
     public static <K> Map<String, AttributeValue> create(Iterable<K> keys) {
 
         Map<String, AttributeValue> map = StreamSupport.stream(keys.spliterator(), false)
-                .map(e -> e.toString())
+                .map(Object::toString)
                 .collect(Collectors.toMap(Function.identity(), k -> attributeValueBuilder.s(k).build()));
 
         return Collections.unmodifiableMap(map);

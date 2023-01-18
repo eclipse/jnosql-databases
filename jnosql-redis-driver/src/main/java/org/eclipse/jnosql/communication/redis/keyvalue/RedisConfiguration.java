@@ -52,7 +52,7 @@ public final class RedisConfiguration implements KeyValueConfiguration {
     public RedisBucketManagerFactory getManagerFactory(Map<String, String> configurations) {
         Objects.requireNonNull(configurations, "configurations is required");
         SettingsBuilder builder = Settings.builder();
-        configurations.forEach((key, value) -> builder.put(key, value));
+        configurations.forEach(builder::put);
         return apply(builder.build());
     }
 
