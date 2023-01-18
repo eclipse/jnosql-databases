@@ -69,27 +69,27 @@ public final class CouchbaseSettings {
 
 
     /**
-     * Returns the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
+     * Returns the host {@link org.eclipse.jnosql.communication.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
      *
-     * @return the host {@link jakarta.nosql.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
+     * @return the host {@link org.eclipse.jnosql.communication.Configurations#HOST} or {@link CouchbaseConfigurations#HOST}
      */
     public String getHost() {
         return host;
     }
 
     /**
-     * Returns the user {@link jakarta.nosql.Configurations#USER} or {@link CouchbaseConfigurations#USER}
+     * Returns the user {@link org.eclipse.jnosql.communication.Configurations#USER} or {@link CouchbaseConfigurations#USER}
      *
-     * @return the user {@link jakarta.nosql.Configurations#USER} or {@link CouchbaseConfigurations#USER}
+     * @return the user {@link org.eclipse.jnosql.communication.Configurations#USER} or {@link CouchbaseConfigurations#USER}
      */
     public String getUser() {
         return user;
     }
 
     /**
-     * Returns the password {@link jakarta.nosql.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
+     * Returns the password {@link org.eclipse.jnosql.communication.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
      *
-     * @return the password {@link jakarta.nosql.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
+     * @return the password {@link org.eclipse.jnosql.communication.Configurations#PASSWORD} or {@link CouchbaseConfigurations#PASSWORD}
      */
     public String getPassword() {
         return password;
