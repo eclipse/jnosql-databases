@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

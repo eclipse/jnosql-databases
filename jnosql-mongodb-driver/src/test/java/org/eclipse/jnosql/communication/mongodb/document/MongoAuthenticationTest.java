@@ -16,8 +16,8 @@ package org.eclipse.jnosql.communication.mongodb.document;
 
 import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoCredential;
-import jakarta.nosql.CommunicationException;
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.CommunicationException;
+import org.eclipse.jnosql.communication.Settings;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

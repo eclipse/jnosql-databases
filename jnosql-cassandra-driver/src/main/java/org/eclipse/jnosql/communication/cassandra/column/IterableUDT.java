@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.TypeSupplier;
-import jakarta.nosql.Value;
-import jakarta.nosql.column.Column;
+import org.eclipse.jnosql.communication.TypeSupplier;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.column.Column;
 
 import java.util.Objects;
 
@@ -38,12 +38,12 @@ class IterableUDT implements UDT {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public Value getValue() {
+    public Value value() {
         return Value.of(columns);
     }
 
@@ -79,7 +79,7 @@ class IterableUDT implements UDT {
             return false;
         }
         UDT udt = (UDT) o;
-        return Objects.equals(name, udt.getName()) &&
+        return Objects.equals(name, udt.name()) &&
                 Objects.equals(userType, udt.getUserType()) &&
                 Objects.equals(columns, udt.get());
     }

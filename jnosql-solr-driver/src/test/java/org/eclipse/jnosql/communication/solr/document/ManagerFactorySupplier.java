@@ -16,8 +16,8 @@
 package org.eclipse.jnosql.communication.solr.document;
 
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 public enum ManagerFactorySupplier {
 

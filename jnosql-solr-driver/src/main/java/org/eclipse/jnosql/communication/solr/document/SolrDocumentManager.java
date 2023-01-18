@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentManager;
 
 import java.time.Duration;
 import java.util.List;

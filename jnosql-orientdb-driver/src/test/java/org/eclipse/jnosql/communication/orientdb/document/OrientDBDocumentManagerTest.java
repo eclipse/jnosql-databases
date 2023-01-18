@@ -15,11 +15,11 @@
  */
 package org.eclipse.jnosql.communication.orientdb.document;
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,8 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.awaitility.Awaitility.await;
@@ -85,13 +85,13 @@ public class OrientDBDocumentManagerTest {
         entityManager.update(entity);
 
         Document id = entity.find(OrientDBConverter.RID_FIELD).get();
-        DocumentQuery query = select().from(entity.getName())
-                .where(id.getName()).eq(id.get())
+        DocumentQuery query = select().from(entity.name())
+                .where(id.name()).eq(id.get())
                 .build();
         Optional<DocumentEntity> updated = entityManager.singleResult(query);
 
         assertTrue(updated.isPresent());
-        assertEquals(newField, updated.get().find(newField.getName()).get());
+        assertEquals(newField, updated.get().find(newField.name()).get());
     }
 
     @Test
@@ -103,13 +103,13 @@ public class OrientDBDocumentManagerTest {
         entityManager.update(entity);
 
         Document id = entity.find(OrientDBConverter.RID_FIELD).get();
-        DocumentQuery query = select().from(entity.getName())
-                .where(id.getName()).eq(id.get())
+        DocumentQuery query = select().from(entity.name())
+                .where(id.name()).eq(id.get())
                 .build();
         Optional<DocumentEntity> updated = entityManager.singleResult(query);
 
         assertTrue(updated.isPresent());
-        assertEquals(newField, updated.get().find(newField.getName()).get());
+        assertEquals(newField, updated.get().find(newField.name()).get());
     }
 
     @Test
@@ -118,8 +118,8 @@ public class OrientDBDocumentManagerTest {
 
         Document id = documentEntity.find("name").get();
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
@@ -129,7 +129,7 @@ public class OrientDBDocumentManagerTest {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find("name").get();
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -164,7 +164,7 @@ public class OrientDBDocumentManagerTest {
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<>() {
@@ -178,7 +178,7 @@ public class OrientDBDocumentManagerTest {
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<>() {
@@ -469,7 +469,7 @@ public class OrientDBDocumentManagerTest {
     public void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
+        DocumentQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);

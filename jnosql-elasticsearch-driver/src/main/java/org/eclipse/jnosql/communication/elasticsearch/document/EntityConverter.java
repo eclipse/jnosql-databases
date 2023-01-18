@@ -23,9 +23,9 @@ import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.io.IOException;
@@ -36,7 +36,6 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static jakarta.nosql.SortType.ASC;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
@@ -52,10 +51,10 @@ final class EntityConverter {
     static Map<String, Object> getMap(DocumentEntity entity) {
         Map<String, Object> jsonObject = new HashMap<>();
 
-        entity.getDocuments().stream()
-                .filter(d -> !d.getName().equals(ID_FIELD))
+        entity.documents().stream()
+                .filter(d -> !d.name().equals(ID_FIELD))
                 .forEach(feedJSON(jsonObject));
-        jsonObject.put(ENTITY, entity.getName());
+        jsonObject.put(ENTITY, entity.name());
         return jsonObject;
     }
 
@@ -90,18 +89,18 @@ final class EntityConverter {
 
     private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
         return d -> {
-            Object value = ValueUtil.convert(d.getValue());
+            Object value = ValueUtil.convert(d.value());
             if (value instanceof Document) {
                 Document subDocument = Document.class.cast(value);
-                jsonObject.put(d.getName(), singletonMap(subDocument.getName(), subDocument.get()));
+                jsonObject.put(d.name(), singletonMap(subDocument.name(), subDocument.get()));
             } else if (isSudDocument(value)) {
                 Map<String, Object> subDocument = getMap(value);
-                jsonObject.put(d.getName(), subDocument);
+                jsonObject.put(d.name(), subDocument);
             } else if (isSudDocumentList(value)) {
-                jsonObject.put(d.getName(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
+                jsonObject.put(d.name(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
                         .map(EntityConverter::getMap).collect(toList()));
             } else {
-                jsonObject.put(d.getName(), value);
+                jsonObject.put(d.name(), value);
             }
         };
     }
@@ -115,7 +114,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(jakarta.nosql.document.Document.class::isInstance);
+                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {
@@ -161,16 +160,16 @@ final class EntityConverter {
     }
 
     private static void feedBuilder(DocumentQuery query, SearchRequest.Builder searchSource) {
-        query.getSorts().forEach(d -> {
-            if (ASC.equals(d.getType())) {
-                searchSource.sort(s -> s.field(f -> f.field(d.getName()).order(SortOrder.Asc)));
+        query.sorts().forEach(d -> {
+            if (d.isAscending()) {
+                searchSource.sort(s -> s.field(f -> f.field(d.property()).order(SortOrder.Asc)));
             } else {
-                searchSource.sort(s -> s.field(f -> f.field(d.getName()).order(SortOrder.Desc)));
+                searchSource.sort(s -> s.field(f -> f.field(d.property()).order(SortOrder.Desc)));
             }
         });
 
-        int from = (int) query.getSkip();
-        int size = (int) query.getLimit();
+        int from = (int) query.skip();
+        int size = (int) query.limit();
         if (from > 0) {
             searchSource.from(from);
         }

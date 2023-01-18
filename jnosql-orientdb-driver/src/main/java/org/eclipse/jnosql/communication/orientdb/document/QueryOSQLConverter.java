@@ -17,11 +17,12 @@ package org.eclipse.jnosql.communication.orientdb.document;
 
 
 import com.orientechnologies.orient.core.id.ORecordId;
-import jakarta.nosql.Sort;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Direction;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -53,15 +54,15 @@ final class QueryOSQLConverter {
         List<Object> params = new java.util.ArrayList<>();
         List<ORecordId> ids = new ArrayList<>();
         query.append("SELECT FROM ");
-        query.append(documentQuery.getDocumentCollection());
+        query.append(documentQuery.name());
 
-        if (documentQuery.getCondition().isPresent()) {
+        if (documentQuery.condition().isPresent()) {
             query.append(WHERE);
-            definesCondition(documentQuery.getCondition().get(), query, params, 0, ids);
+            definesCondition(documentQuery.condition().get(), query, params, 0, ids);
         }
 
-        if (!documentQuery.getSorts().isEmpty()) {
-            appendSort(documentQuery.getSorts(), query);
+        if (!documentQuery.sorts().isEmpty()) {
+            appendSort(documentQuery.sorts(), query);
         }
 
         appendPagination(documentQuery, query);
@@ -71,8 +72,8 @@ final class QueryOSQLConverter {
     private static void definesCondition(DocumentCondition condition, StringBuilder query, List<Object> params,
                                          int counter, List<ORecordId> ids) {
 
-        Document document = condition.getDocument();
-        switch (condition.getCondition()) {
+        Document document = condition.document();
+        switch (condition.condition()) {
             case IN:
                 appendCondition(query, params, document, IN, ids);
                 return;
@@ -120,7 +121,7 @@ final class QueryOSQLConverter {
                 query.append(")");
                 return;
             default:
-                throw new IllegalArgumentException("Orient DB has not support to the condition " + condition.getCondition());
+                throw new IllegalArgumentException("Orient DB has not support to the condition " + condition.condition());
         }
     }
 
@@ -131,14 +132,14 @@ final class QueryOSQLConverter {
     private static void appendCondition(StringBuilder query, List<Object> params,
                                         Document document, String condition, List<ORecordId> ids) {
 
-        if(OrientDBConverter.RID_FIELD.equals(document.getName())) {
+        if(OrientDBConverter.RID_FIELD.equals(document.name())) {
             ids.add(new ORecordId(document.get(String.class)));
             return;
         }
-        query.append(document.getName())
+        query.append(document.name())
                 .append(condition).append(PARAM_APPENDER);
         if(IN.equals(condition)) {
-            params.add(ValueUtil.convertToList(document.getValue()));
+            params.add(ValueUtil.convertToList(document.value()));
         } else {
             params.add(document.get());
         }
@@ -149,20 +150,20 @@ final class QueryOSQLConverter {
         String separator = SPACE;
         for (Sort sort : sorts) {
             query.append(separator)
-                    .append(sort.getName())
+                    .append(sort.property())
                     .append(SPACE)
-                    .append(sort.getType());
+                    .append(sort.isAscending()? Direction.ASC: Direction.DESC);
             separator = ", ";
         }
     }
 
     private static void appendPagination(DocumentQuery documentQuery, StringBuilder query) {
-        if (documentQuery.getSkip() > 0) {
-            query.append(SKIP).append(documentQuery.getSkip());
+        if (documentQuery.skip() > 0) {
+            query.append(SKIP).append(documentQuery.skip());
         }
 
-        if (documentQuery.getLimit() > 0) {
-            query.append(LIMIT).append(documentQuery.getLimit());
+        if (documentQuery.limit() > 0) {
+            query.append(LIMIT).append(documentQuery.limit());
         }
     }
 

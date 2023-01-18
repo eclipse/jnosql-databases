@@ -17,9 +17,9 @@ package org.eclipse.jnosql.communication.mongodb.document;
 
 
 import com.mongodb.client.model.Filters;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
@@ -32,38 +32,38 @@ final class DocumentQueryConversor {
     }
 
     public static Bson convert(DocumentCondition condition) {
-        Document document = condition.getDocument();
-        Object value = ValueUtil.convert(document.getValue());
-        switch (condition.getCondition()) {
+        Document document = condition.document();
+        Object value = ValueUtil.convert(document.value());
+        switch (condition.condition()) {
             case EQUALS:
-                return Filters.eq(document.getName(), value);
+                return Filters.eq(document.name(), value);
             case GREATER_THAN:
-                return Filters.gt(document.getName(), value);
+                return Filters.gt(document.name(), value);
             case GREATER_EQUALS_THAN:
-                return Filters.gte(document.getName(), value);
+                return Filters.gte(document.name(), value);
             case LESSER_THAN:
-                return Filters.lt(document.getName(), value);
+                return Filters.lt(document.name(), value);
             case LESSER_EQUALS_THAN:
-                return Filters.lte(document.getName(), value);
+                return Filters.lte(document.name(), value);
             case IN:
-                List<Object> inList = ValueUtil.convertToList(document.getValue());
-                return Filters.in(document.getName(), inList.toArray());
+                List<Object> inList = ValueUtil.convertToList(document.value());
+                return Filters.in(document.name(), inList.toArray());
             case NOT:
                 return Filters.not(convert(document.get(DocumentCondition.class)));
             case LIKE:
-                return Filters.regex(document.getName(), value.toString());
+                return Filters.regex(document.name(), value.toString());
             case AND:
-                List<DocumentCondition> andList = condition.getDocument().getValue().get(new TypeReference<>() {
+                List<DocumentCondition> andList = condition.document().value().get(new TypeReference<>() {
                 });
                 return Filters.and(andList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
             case OR:
-                List<DocumentCondition> orList = condition.getDocument().getValue().get(new TypeReference<>() {
+                List<DocumentCondition> orList = condition.document().value().get(new TypeReference<>() {
                 });
                 return Filters.or(orList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
             default:
-                throw new UnsupportedOperationException("The condition " + condition.getCondition()
+                throw new UnsupportedOperationException("The condition " + condition.condition()
                         + " is not supported from mongoDB diana driver");
         }
     }

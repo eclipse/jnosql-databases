@@ -15,7 +15,7 @@
  */
 package org.eclipse.jnosql.communication.orientdb.document;
 
-import jakarta.nosql.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 
 import static java.util.Objects.requireNonNull;
 

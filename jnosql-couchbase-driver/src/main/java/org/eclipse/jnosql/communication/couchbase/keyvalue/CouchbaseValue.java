@@ -16,8 +16,8 @@ package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 import com.couchbase.client.java.codec.TypeRef;
 import com.couchbase.client.java.kv.GetResult;
-import jakarta.nosql.TypeSupplier;
-import jakarta.nosql.Value;
+import org.eclipse.jnosql.communication.TypeSupplier;
+import org.eclipse.jnosql.communication.Value;
 
 import java.lang.reflect.Type;
 import java.util.Objects;

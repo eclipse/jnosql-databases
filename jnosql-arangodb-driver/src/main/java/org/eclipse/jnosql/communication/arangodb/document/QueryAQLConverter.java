@@ -14,12 +14,14 @@
  */
 package org.eclipse.jnosql.communication.arangodb.document;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Direction;
+
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.Collections;
@@ -53,8 +55,8 @@ final class QueryAQLConverter {
 
     public static AQLQueryResult delete(DocumentDeleteQuery query) throws NullPointerException {
 
-        return convert(query.getDocumentCollection(),
-                query.getCondition(),
+        return convert(query.name(),
+                query.condition(),
                 Collections.emptyList(),
                 0L,
                 0L,
@@ -63,11 +65,11 @@ final class QueryAQLConverter {
 
     public static AQLQueryResult select(DocumentQuery query) throws NullPointerException {
 
-        return convert(query.getDocumentCollection(),
-                query.getCondition(),
-                query.getSorts(),
-                query.getSkip(),
-                query.getLimit(),
+        return convert(query.name(),
+                query.condition(),
+                query.sorts(),
+                query.skip(),
+                query.limit(),
                 RETURN, false);
 
     }
@@ -112,8 +114,8 @@ final class QueryAQLConverter {
         for (Sort sort : sorts) {
             aql.append(separator)
                     .append(entity).append('.')
-                    .append(sort.getName())
-                    .append(SEPARATOR).append(sort.getType());
+                    .append(sort.property())
+                    .append(SEPARATOR).append(sort.isAscending() ? Direction.ASC : Direction.DESC);
             separator = " , ";
         }
     }
@@ -123,8 +125,8 @@ final class QueryAQLConverter {
                                          Map<String, Object> params,
                                          char entity, int counter) {
 
-        Document document = condition.getDocument();
-        switch (condition.getCondition()) {
+        Document document = condition.document();
+        switch (condition.condition()) {
             case IN:
                 appendCondition(aql, params, entity, document, IN);
                 return;
@@ -173,7 +175,7 @@ final class QueryAQLConverter {
                 definesCondition(documentCondition, aql, params, entity, ++counter);
                 return;
             default:
-                throw new IllegalArgumentException("The condition does not support in AQL: " + condition.getCondition());
+                throw new IllegalArgumentException("The condition does not support in AQL: " + condition.condition());
         }
     }
 
@@ -183,11 +185,11 @@ final class QueryAQLConverter {
 
     private static void appendCondition(StringBuilder aql, Map<String, Object> params,
                                         char entity, Document document, String condition) {
-        String nameParam = getNameParam(document.getName(), params);
-        aql.append(SEPARATOR).append(entity).append('.').append(document.getName())
+        String nameParam = getNameParam(document.name(), params);
+        aql.append(SEPARATOR).append(entity).append('.').append(document.name())
                 .append(condition).append(PARAM_APPENDER).append(nameParam);
-        if(IN.equals(condition)) {
-            params.put(nameParam, ValueUtil.convertToList(document.getValue()));
+        if (IN.equals(condition)) {
+            params.put(nameParam, ValueUtil.convertToList(document.value()));
         } else {
             params.put(nameParam, document.get());
         }

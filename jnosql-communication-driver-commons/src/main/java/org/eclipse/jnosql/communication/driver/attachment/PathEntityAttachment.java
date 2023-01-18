@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.driver.attachment;
 
-import jakarta.nosql.CommunicationException;
+import org.eclipse.jnosql.communication.CommunicationException;
 
 import java.io.IOException;
 import java.io.InputStream;

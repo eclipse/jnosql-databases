@@ -22,9 +22,9 @@ import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.FetchValue.Response;
 import com.basho.riak.client.api.commands.kv.StoreValue;
 import com.basho.riak.client.core.query.Namespace;
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.ValueJSON;
 
 import java.time.Duration;
@@ -71,8 +71,8 @@ public class RiakBucketManager implements BucketManager {
     public void put(KeyValueEntity entity, Duration ttl)
             throws NullPointerException, UnsupportedOperationException {
 
-        Object key = entity.getKey();
-        Object value = entity.getValue();
+        Object key = entity.key();
+        Object value = entity.value();
 
         StoreValue storeValue = createStoreValue(key, value, nameSpace, ttl);
 

@@ -15,9 +15,10 @@
 
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Direction;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -135,14 +136,15 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
             SolrQuery solrQuery = new SolrQuery();
             final String queryExpression = DocumentQueryConversor.convert(query);
             solrQuery.set("q", queryExpression);
-            if (query.getSkip() > 0) {
-                solrQuery.setStart((int) query.getSkip());
+            if (query.skip() > 0) {
+                solrQuery.setStart((int) query.skip());
             }
-            if (query.getLimit() > 0) {
-                solrQuery.setRows((int) query.getLimit());
+            if (query.limit() > 0) {
+                solrQuery.setRows((int) query.limit());
             }
-            final List<SortClause> sorts = query.getSorts().stream()
-                    .map(s -> new SortClause(s.getName(), s.getType().name().toLowerCase(Locale.US)))
+            final List<SortClause> sorts = query.sorts().stream()
+                    .map(s -> new SortClause(s.property(), s.isAscending()? Direction.ASC.name().toLowerCase(Locale.US):
+                            Direction.DESC.name().toLowerCase(Locale.US)))
                     .collect(toList());
             solrQuery.setSorts(sorts);
             final QueryResponse response = solrClient.query(solrQuery);

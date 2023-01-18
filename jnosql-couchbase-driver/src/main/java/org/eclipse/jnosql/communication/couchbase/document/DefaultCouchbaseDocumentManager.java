@@ -24,10 +24,10 @@ import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.InsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -70,12 +70,12 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        entity.add(COLLECTION_FIELD, entity.getName());
+        entity.add(COLLECTION_FIELD, entity.name());
         JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        Collection collection = bucket.collection(entity.getName());
+        Collection collection = bucket.collection(entity.name());
         collection.insert(id.get(String.class), json);
         return entity;
     }
@@ -88,7 +88,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        Collection collection = bucket.collection(entity.getName());
+        Collection collection = bucket.collection(entity.name());
         collection.insert(id.get(String.class), json, InsertOptions.insertOptions().expiry(ttl));
         return entity;
     }
@@ -111,12 +111,12 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
-        entity.add(COLLECTION_FIELD, entity.getName());
+        entity.add(COLLECTION_FIELD, entity.name());
         JsonObject json = convert(entity);
         Document id = entity.find(ID_FIELD)
                 .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
 
-        Collection collection = bucket.collection(entity.getName());
+        Collection collection = bucket.collection(entity.name());
         collection.upsert(id.get(String.class), json);
         return entity;
     }
@@ -132,7 +132,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
 
-        Collection collection = bucket.collection(query.getDocumentCollection());
+        Collection collection = bucket.collection(query.name());
         DocumentQuery delete = DeleteQueryWrapper.of(query);
         Stream<DocumentEntity> entities = select(delete);
         entities.flatMap(d -> d.find(ID_FIELD).stream())
@@ -149,7 +149,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
         List<JsonObject> jsons = new ArrayList<>();
 
         if (n1QLQuery.hasIds()) {
-            Collection collection = bucket.collection(query.getDocumentCollection());
+            Collection collection = bucket.collection(query.name());
             for (String id : n1QLQuery.getIds()) {
                 try {
                     GetResult result = collection.get(id);

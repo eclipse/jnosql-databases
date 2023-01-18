@@ -20,10 +20,10 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.SettingsBuilder;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 
 import java.util.Arrays;

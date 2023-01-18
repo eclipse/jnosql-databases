@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.infinispan.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.infinispan.keyvalue.model.Species;
 import org.eclipse.jnosql.communication.infinispan.keyvalue.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.AfterEach;

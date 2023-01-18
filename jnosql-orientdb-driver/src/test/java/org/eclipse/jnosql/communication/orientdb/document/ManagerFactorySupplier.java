@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.orientdb.document;
 
 import com.orientechnologies.orient.core.db.ODatabaseType;
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 
 import java.util.function.Supplier;
 

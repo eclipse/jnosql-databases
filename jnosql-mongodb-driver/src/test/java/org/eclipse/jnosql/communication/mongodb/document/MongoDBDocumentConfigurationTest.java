@@ -15,8 +15,8 @@
 
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.document.DocumentManagerFactory;
-import jakarta.nosql.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

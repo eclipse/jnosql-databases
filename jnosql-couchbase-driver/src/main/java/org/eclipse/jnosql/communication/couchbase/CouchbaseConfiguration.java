@@ -15,8 +15,8 @@
 package org.eclipse.jnosql.communication.couchbase;
 
 
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
 
 import java.util.ArrayList;
 import java.util.List;

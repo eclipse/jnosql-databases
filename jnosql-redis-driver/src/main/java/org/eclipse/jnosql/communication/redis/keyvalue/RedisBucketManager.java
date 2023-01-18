@@ -16,9 +16,9 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.ValueJSON;
 import redis.clients.jedis.Jedis;
 
@@ -61,13 +61,13 @@ public class RedisBucketManager implements BucketManager {
 
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
-        put(entity.getKey(), entity.getValue());
+        put(entity.key(), entity.value());
     }
 
     @Override
     public void put(KeyValueEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         put(entity);
-        String valideKey = RedisUtils.createKeyWithNameSpace(entity.getKey().toString(), nameSpace);
+        String valideKey = RedisUtils.createKeyWithNameSpace(entity.key().toString(), nameSpace);
         jedis.expire(valideKey, (int) ttl.getSeconds());
     }
 
@@ -79,7 +79,7 @@ public class RedisBucketManager implements BucketManager {
     @Override
     public void put(Iterable<KeyValueEntity> entities, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         StreamSupport.stream(entities.spliterator(), false).forEach(this::put);
-        StreamSupport.stream(entities.spliterator(), false).map(KeyValueEntity::getKey)
+        StreamSupport.stream(entities.spliterator(), false).map(KeyValueEntity::key)
                 .map(k -> RedisUtils.createKeyWithNameSpace(k.toString(), nameSpace))
                 .forEach(k -> jedis.expire(k, (int) ttl.getSeconds()));
     }

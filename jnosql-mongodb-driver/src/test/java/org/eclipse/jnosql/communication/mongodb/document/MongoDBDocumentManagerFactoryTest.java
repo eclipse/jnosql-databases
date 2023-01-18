@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.communication.mongodb.document;
 
 import com.mongodb.client.MongoClient;
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

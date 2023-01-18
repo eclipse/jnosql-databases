@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 

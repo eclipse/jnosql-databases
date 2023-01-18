@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document.type;
 
-import jakarta.nosql.ValueReader;
+import org.eclipse.jnosql.communication.ValueReader;
 
 public class MoneyValueReader implements ValueReader {
 

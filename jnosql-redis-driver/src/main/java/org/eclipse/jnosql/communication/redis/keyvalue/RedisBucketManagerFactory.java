@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 
 /**
  * The redis implementation to {@link BucketManagerFactory} where returns {@link RedisBucketManager}

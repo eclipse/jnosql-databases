@@ -16,8 +16,8 @@
 package org.eclipse.jnosql.communication.cassandra.column;
 
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.column.ColumnConfiguration;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.column.ColumnConfiguration;
 
 import java.util.HashMap;
 import java.util.List;

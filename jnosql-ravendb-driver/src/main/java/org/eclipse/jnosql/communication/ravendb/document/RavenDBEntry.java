@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 
 import java.util.ArrayList;
 import java.util.List;

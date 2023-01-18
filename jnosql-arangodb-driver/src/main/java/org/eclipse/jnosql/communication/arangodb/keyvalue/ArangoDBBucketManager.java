@@ -18,13 +18,16 @@ package org.eclipse.jnosql.communication.arangodb.keyvalue;
 import com.arangodb.ArangoDB;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.driver.ValueJSON;
 
 import jakarta.json.bind.Jsonb;
+
+
+
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
@@ -79,7 +82,7 @@ public class ArangoDBBucketManager implements BucketManager {
 
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
-        put(entity.getKey(), entity.getValue());
+        put(entity.key(), entity.value());
     }
 
 

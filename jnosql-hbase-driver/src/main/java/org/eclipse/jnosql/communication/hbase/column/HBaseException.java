@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.hbase.column;
 
 
-import jakarta.nosql.CommunicationException;
+import org.eclipse.jnosql.communication.CommunicationException;
 
 /**
  * The Hbase exception to diana implementation

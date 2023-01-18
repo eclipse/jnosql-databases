@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.hbase.column;
 
 
-import jakarta.nosql.column.Column;
+import org.eclipse.jnosql.communication.column.Column;
 
 final class HBaseUtils {
 

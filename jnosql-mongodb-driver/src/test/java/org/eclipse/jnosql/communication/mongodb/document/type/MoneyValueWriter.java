@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document.type;
 
-import jakarta.nosql.ValueWriter;
+import org.eclipse.jnosql.communication.ValueWriter;
 
 public class MoneyValueWriter implements ValueWriter<Money, String> {
 

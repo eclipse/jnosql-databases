@@ -19,9 +19,9 @@ import com.arangodb.ArangoDB;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
-import jakarta.nosql.Value;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -50,8 +50,8 @@ public final class ArangoDBUtil {
     public static final String ID = "_id";
     public static final String REV = "_rev";
 
-    private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> ValueUtil.convert(cast(d).getValue());
+    private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).name();
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> ValueUtil.convert(cast(d).value());
 
 
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
@@ -102,8 +102,8 @@ public final class ArangoDBUtil {
 
     static BaseDocument getBaseDocument(DocumentEntity entity) {
         Map<String, Object> map = new HashMap<>();
-        for (Document document : entity.getDocuments()) {
-            map.put(document.getName(), convert(document.getValue()));
+        for (Document document : entity.documents()) {
+            map.put(document.name(), convert(document.value()));
         }
         return new BaseDocument(map);
     }
@@ -139,7 +139,7 @@ public final class ArangoDBUtil {
 
         if (Document.class.isInstance(val)) {
             Document document = Document.class.cast(val);
-            return singletonMap(document.getName(), convert(document.getValue()));
+            return singletonMap(document.name(), convert(document.value()));
         }
         if (isSudDocument(val)) {
             return getMap(val);
@@ -163,11 +163,11 @@ public final class ArangoDBUtil {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(jakarta.nosql.document.Document.class::isInstance);
+                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
     }
 
-    private static jakarta.nosql.document.Document cast(Object document) {
-        return jakarta.nosql.document.Document.class.cast(document);
+    private static org.eclipse.jnosql.communication.document.Document cast(Object document) {
+        return org.eclipse.jnosql.communication.document.Document.class.cast(document);
     }
 
 }

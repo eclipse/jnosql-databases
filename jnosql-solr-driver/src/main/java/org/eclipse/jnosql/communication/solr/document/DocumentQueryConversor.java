@@ -16,11 +16,11 @@
 package org.eclipse.jnosql.communication.solr.document;
 
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.List;
@@ -35,38 +35,38 @@ final class DocumentQueryConversor {
 
 
     static String convert(DocumentQuery query) {
-        String rootCondition = SolrUtils.ENTITY + ':' + query.getDocumentCollection();
-        return rootCondition + query.getCondition()
+        String rootCondition = SolrUtils.ENTITY + ':' + query.name();
+        return rootCondition + query.condition()
                 .map(DocumentQueryConversor::convert)
                 .map(s -> " AND " + s).orElse("");
     }
 
     static String convert(DocumentDeleteQuery query) {
-        String rootCondition = SolrUtils.ENTITY + ':' + query.getDocumentCollection();
-        return rootCondition + query.getCondition()
+        String rootCondition = SolrUtils.ENTITY + ':' + query.name();
+        return rootCondition + query.condition()
                 .map(DocumentQueryConversor::convert)
                 .map(s -> " AND " + s).orElse("");
     }
 
     private static String convert(DocumentCondition condition) {
-        Document document = condition.getDocument();
-        Object value = ValueUtil.convert(document.getValue());
+        Document document = condition.document();
+        Object value = ValueUtil.convert(document.value());
 
-        switch (condition.getCondition()) {
+        switch (condition.condition()) {
             case EQUALS:
             case LIKE:
-                return document.getName() + ':' + value;
+                return document.name() + ':' + value;
             case GREATER_EQUALS_THAN:
             case GREATER_THAN:
-                return document.getName() + ":[" + value + " TO *]";
+                return document.name() + ":[" + value + " TO *]";
             case LESSER_EQUALS_THAN:
             case LESSER_THAN:
-                return document.getName() + ":[* TO " + value + "]";
+                return document.name() + ":[* TO " + value + "]";
             case IN:
-                final String inConditions = ValueUtil.convertToList(document.getValue())
+                final String inConditions = ValueUtil.convertToList(document.value())
                         .stream()
                         .map(Object::toString).collect(Collectors.joining(" OR "));
-                return document.getName() + ":(" + inConditions + ')';
+                return document.name() + ":(" + inConditions + ')';
             case NOT:
                 return " NOT " + convert(document.get(DocumentCondition.class));
 
@@ -79,13 +79,13 @@ final class DocumentQueryConversor {
                         .map(DocumentQueryConversor::convert)
                         .collect(Collectors.joining(" OR "));
             default:
-                throw new UnsupportedOperationException("The condition " + condition.getCondition()
+                throw new UnsupportedOperationException("The condition " + condition.condition()
                         + " is not supported from mongoDB diana driver");
         }
     }
 
     private static List<DocumentCondition> getDocumentConditions(DocumentCondition condition) {
-        return condition.getDocument().getValue().get(new TypeReference<>() {
+        return condition.document().value().get(new TypeReference<>() {
         });
     }
 

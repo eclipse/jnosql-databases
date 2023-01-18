@@ -16,13 +16,13 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.nosql.Settings;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
-import jakarta.nosql.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseBucketManagerFactory;
@@ -41,8 +41,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -117,9 +117,9 @@ public class CouchbaseDocumentManagerTest {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Document name = documentEntity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(name.name()).eq(name.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_PERSON_NAME)
-                .where(name.getName()).eq(name.get()).build();
+                .where(name.name()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
@@ -131,7 +131,7 @@ public class CouchbaseDocumentManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
 
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<>() {
@@ -146,7 +146,7 @@ public class CouchbaseDocumentManagerTest {
         DocumentEntity entitySaved = entityManager.insert(entity);
         Thread.sleep(1_00L);
         Document id = entitySaved.find("_id").get();
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
         List<Document> documents = subDocument.get(new TypeReference<>() {
@@ -166,7 +166,7 @@ public class CouchbaseDocumentManagerTest {
         entityManager.insert(entity);
         Document id = entity.find("_id").get();
         Thread.sleep(1_000L);
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.singleResult(query).get();
         Optional<Document> foods = entityFound.find("foods");
         Set<String> setFoods = foods.get().get(new TypeReference<>() {
@@ -185,7 +185,7 @@ public class CouchbaseDocumentManagerTest {
     public void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
-        DocumentQuery query = select().from(COLLECTION_APP_NAME).where(key.getName()).eq(key.get()).build();
+        DocumentQuery query = select().from(COLLECTION_APP_NAME).where(key.name()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);

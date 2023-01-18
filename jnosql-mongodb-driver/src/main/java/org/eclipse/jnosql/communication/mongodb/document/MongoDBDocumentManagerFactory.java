@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.communication.mongodb.document;
 
 import com.mongodb.client.MongoClient;
-import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 import java.util.Objects;
 

@@ -16,9 +16,9 @@
  */
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.column.ColumnCondition;
-import jakarta.nosql.column.ColumnQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.column.ColumnCondition;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -87,33 +87,33 @@ public final class CassandraQuery implements ColumnQuery {
     }
 
     @Override
-    public long getLimit() {
-        return query.getLimit();
+    public long limit() {
+        return query.limit();
     }
 
     @Override
-    public long getSkip() {
-        return query.getSkip();
+    public long skip() {
+        return query.skip();
     }
 
     @Override
-    public String getColumnFamily() {
-        return query.getColumnFamily();
+    public String name() {
+        return query.name();
     }
 
     @Override
-    public Optional<ColumnCondition> getCondition() {
-        return query.getCondition();
+    public Optional<ColumnCondition> condition() {
+        return query.condition();
     }
 
     @Override
-    public List<Sort> getSorts() {
-        return query.getSorts();
+    public List<Sort> sorts() {
+        return query.sorts();
     }
 
     @Override
-    public List<String> getColumns() {
-        return query.getColumns();
+    public List<String> columns() {
+        return query.columns();
     }
 
     @Override

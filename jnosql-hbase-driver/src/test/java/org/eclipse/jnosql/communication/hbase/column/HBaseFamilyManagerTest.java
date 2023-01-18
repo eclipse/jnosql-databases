@@ -15,21 +15,21 @@
 
 package org.eclipse.jnosql.communication.hbase.column;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.column.Column;
-import jakarta.nosql.column.ColumnDeleteQuery;
-import jakarta.nosql.column.ColumnEntity;
-import jakarta.nosql.column.ColumnManager;
-import jakarta.nosql.column.ColumnManagerFactory;
-import jakarta.nosql.column.ColumnQuery;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.ColumnManager;
+import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static jakarta.nosql.column.ColumnDeleteQuery.delete;
-import static jakarta.nosql.column.ColumnQuery.select;
+import static org.eclipse.jnosql.communication.column.ColumnDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -80,8 +80,8 @@ public class HBaseFamilyManagerTest {
         assertNotNull(columnFamilyEntities);
         assertFalse(columnFamilyEntities.isEmpty());
         ColumnEntity entity = columnFamilyEntities.get(0);
-        assertEquals(FAMILY, entity.getName());
-        assertThat(entity.getColumns()).contains(Column.of(ID_FIELD, "otaviojava"),
+        assertEquals(FAMILY, entity.name());
+        assertThat(entity.columns()).contains(Column.of(ID_FIELD, "otaviojava"),
                 Column.of("age", "26"), Column.of("country", "Brazil"));
     }
 

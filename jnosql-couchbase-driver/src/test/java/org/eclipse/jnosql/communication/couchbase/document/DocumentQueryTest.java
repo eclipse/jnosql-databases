@@ -17,12 +17,12 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.core.error.DocumentExistsException;
 import com.couchbase.client.core.error.DocumentNotFoundException;
-import jakarta.nosql.Settings;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -104,7 +104,7 @@ public class DocumentQueryTest {
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.getName()).eq(name.get())
+                .where(name.name()).eq(name.get())
                 .limit(2L)
                 .build();
 
@@ -121,7 +121,7 @@ public class DocumentQueryTest {
         Document name = entity.find("name").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.getName()).eq(name.get())
+                .where(name.name()).eq(name.get())
                 .skip(1L)
                 .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -137,7 +137,7 @@ public class DocumentQueryTest {
 
         Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.getName()).eq(name.get())
+                .where(name.name()).eq(name.get())
                 .skip(2L)
                 .limit(2L)
                 .build();
@@ -168,7 +168,7 @@ public class DocumentQueryTest {
                 Document.of("name", "name"), Document.of("_key", "person:id4")));
 
         Document name = entity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(name.name()).eq(name.get()).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
@@ -182,8 +182,8 @@ public class DocumentQueryTest {
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         List<String> result = entities.stream()
-                .flatMap(e -> e.getDocuments().stream())
-                .filter(d -> "name".equals(d.getName()))
+                .flatMap(e -> e.documents().stream())
+                .filter(d -> "name".equals(d.name()))
                 .map(d -> d.get(String.class))
                 .collect(Collectors.toList());
 
@@ -202,8 +202,8 @@ public class DocumentQueryTest {
                 .orderBy("name").desc()
                 .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        List<String> result = entities.stream().flatMap(e -> e.getDocuments().stream())
-                .filter(d -> "name".equals(d.getName()))
+        List<String> result = entities.stream().flatMap(e -> e.documents().stream())
+                .filter(d -> "name".equals(d.name()))
                 .map(d -> d.get(String.class))
                 .collect(Collectors.toList());
 
@@ -218,7 +218,7 @@ public class DocumentQueryTest {
         Document id = entity.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
+                .where(id.name()).eq(id.get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());

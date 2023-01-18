@@ -16,6 +16,8 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 === Removed
 
 - Remove Stream<DocumentEntity> search(QueryBuilder query) in ElasticsearchDocumentManager
+- Remove Jakarta NoSQL reference
+- Remove TCK reference
 
 == [1.0.0.4-b5] - 2022-12-22
 

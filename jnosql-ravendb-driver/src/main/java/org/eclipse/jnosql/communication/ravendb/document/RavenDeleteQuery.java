@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.Sort;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,32 +35,32 @@ final class RavenDeleteQuery implements DocumentQuery {
     }
 
     @Override
-    public long getLimit() {
+    public long limit() {
         return 0;
     }
 
     @Override
-    public long getSkip() {
+    public long skip() {
         return 0;
     }
 
     @Override
-    public String getDocumentCollection() {
-        return query.getDocumentCollection();
+    public String name() {
+        return query.name();
     }
 
     @Override
-    public Optional<DocumentCondition> getCondition() {
-        return query.getCondition();
+    public Optional<DocumentCondition> condition() {
+        return query.condition();
     }
 
     @Override
-    public List<Sort> getSorts() {
+    public List<Sort> sorts() {
         return Collections.emptyList();
     }
 
     @Override
-    public List<String> getDocuments() {
+    public List<String> documents() {
         return Collections.emptyList();
     }
 }

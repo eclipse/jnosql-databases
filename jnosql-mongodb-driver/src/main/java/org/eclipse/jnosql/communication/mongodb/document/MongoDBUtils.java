@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.Value;
-import jakarta.nosql.document.DocumentEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
@@ -35,24 +35,24 @@ import static java.util.stream.StreamSupport.stream;
 final class MongoDBUtils {
     static final String ID_FIELD = "_id";
 
-    private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).getName();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> MongoDBUtils.convert(cast(d).getValue());
+    private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).name();
+    private static final Function<Object, Object> VALUE_DOCUMENT = d -> MongoDBUtils.convert(cast(d).value());
 
     private MongoDBUtils() {
     }
 
     static Document getDocument(DocumentEntity entity) {
         Document document = new Document();
-        entity.getDocuments().forEach(d -> document.append(d.getName(), convert(d.getValue())));
+        entity.documents().forEach(d -> document.append(d.name(), convert(d.value())));
         return document;
     }
 
     private static Object convert(Value value) {
         Object val = ValueUtil.convert(value);
-        if (val instanceof jakarta.nosql.document.Document) {
-            jakarta.nosql.document.Document subDocument = (jakarta.nosql.document.Document) val;
-            Object converted = convert(subDocument.getValue());
-            return new Document(subDocument.getName(), converted);
+        if (val instanceof org.eclipse.jnosql.communication.document.Document) {
+            org.eclipse.jnosql.communication.document.Document subDocument = (org.eclipse.jnosql.communication.document.Document) val;
+            Object converted = convert(subDocument.value());
+            return new Document(subDocument.name(), converted);
         }
         if (isSudDocument(val)) {
             return getMap(val);
@@ -65,28 +65,28 @@ final class MongoDBUtils {
     }
 
 
-    public static List<jakarta.nosql.document.Document> of(Map<String, ?> values) {
+    public static List<org.eclipse.jnosql.communication.document.Document> of(Map<String, ?> values) {
         Predicate<String> isNotNull = s -> values.get(s) != null;
-        Function<String, jakarta.nosql.document.Document> documentMap = key -> {
+        Function<String, org.eclipse.jnosql.communication.document.Document> documentMap = key -> {
             Object value = values.get(key);
             return getDocument(key, value);
         };
         return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
     }
 
-    private static jakarta.nosql.document.Document getDocument(String key, Object value) {
+    private static org.eclipse.jnosql.communication.document.Document getDocument(String key, Object value) {
         if (value instanceof Document) {
-            return jakarta.nosql.document.Document.of(key, of(Document.class.cast(value)));
+            return org.eclipse.jnosql.communication.document.Document.of(key, of(Document.class.cast(value)));
         } else if (isDocumentIterable(value)) {
-            List<List<jakarta.nosql.document.Document>> documents = new ArrayList<>();
+            List<List<org.eclipse.jnosql.communication.document.Document>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
                 Map<?, ?> map = Map.class.cast(object);
                 documents.add(map.entrySet().stream().map(e -> getDocument(e.getKey().toString(), e.getValue())).collect(toList()));
             }
-            return jakarta.nosql.document.Document.of(key, documents);
+            return org.eclipse.jnosql.communication.document.Document.of(key, documents);
         }
 
-        return jakarta.nosql.document.Document.of(key, Value.of(convertValue(value)));
+        return org.eclipse.jnosql.communication.document.Document.of(key, Value.of(convertValue(value)));
     }
 
     private static Object convertValue(Object value) {
@@ -107,13 +107,13 @@ final class MongoDBUtils {
                 .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
     }
 
-    private static jakarta.nosql.document.Document cast(Object document) {
-        return jakarta.nosql.document.Document.class.cast(document);
+    private static org.eclipse.jnosql.communication.document.Document cast(Object document) {
+        return org.eclipse.jnosql.communication.document.Document.class.cast(document);
     }
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(jakarta.nosql.document.Document.class::isInstance);
+                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

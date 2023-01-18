@@ -17,11 +17,11 @@ package org.eclipse.jnosql.communication.cassandra.column;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.relation.Relation;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
-import jakarta.nosql.Condition;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.Value;
-import jakarta.nosql.column.Column;
-import jakarta.nosql.column.ColumnCondition;
+import org.eclipse.jnosql.communication.Condition;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.column.ColumnCondition;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;
@@ -48,8 +48,8 @@ final class Relations {
 
     private static void load(ColumnCondition columnCondition, List<Relation> relations) {
 
-        Column column = columnCondition.getColumn();
-        Condition condition = columnCondition.getCondition();
+        Column column = columnCondition.column();
+        Condition condition = columnCondition.condition();
 
         switch (condition) {
             case EQUALS:
@@ -68,7 +68,7 @@ final class Relations {
                 relations.add(Relation.column(QueryUtils.getName(column)).isLessThanOrEqualTo(getTerm(column)));
                 return;
             case IN:
-                relations.add(Relation.column(QueryUtils.getName(column)).in(getIinValue(column.getValue())));
+                relations.add(Relation.column(QueryUtils.getName(column)).in(getIinValue(column.value())));
                 return;
             case LIKE:
                 relations.add(Relation.column(QueryUtils.getName(column)).like(getTerm(column)));
@@ -84,7 +84,7 @@ final class Relations {
     }
 
     private static Term getTerm(Column column) {
-        return literal(ValueUtil.convert(column.getValue()));
+        return literal(ValueUtil.convert(column.value()));
     }
 
     private static Term[] getIinValue(Value value) {

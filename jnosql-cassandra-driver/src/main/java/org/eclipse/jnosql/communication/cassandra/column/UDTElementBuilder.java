@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.cassandra.column;
 
-import jakarta.nosql.column.Column;
+import org.eclipse.jnosql.communication.column.Column;
 
 public interface UDTElementBuilder {
 

@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 

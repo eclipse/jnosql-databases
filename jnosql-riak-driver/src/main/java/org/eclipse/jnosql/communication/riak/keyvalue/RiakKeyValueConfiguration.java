@@ -17,9 +17,9 @@ package org.eclipse.jnosql.communication.riak.keyvalue;
 
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;

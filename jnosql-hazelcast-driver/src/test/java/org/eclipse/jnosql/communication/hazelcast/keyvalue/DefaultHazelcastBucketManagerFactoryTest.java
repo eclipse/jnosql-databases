@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

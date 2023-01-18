@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
-import jakarta.nosql.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.hazelcast.keyvalue.util.KeyValueEntityManagerFactoryUtils;
 import org.eclipse.jnosql.communication.hazelcast.keyvalue.model.Species;
 import org.junit.jupiter.api.AfterEach;

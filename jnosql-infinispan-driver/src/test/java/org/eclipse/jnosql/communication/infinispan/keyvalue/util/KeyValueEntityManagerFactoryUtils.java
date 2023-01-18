@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.infinispan.keyvalue.util;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.BucketManagerFactory;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanConfigurations;
 import org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanKeyValueConfiguration;
 

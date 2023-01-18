@@ -16,10 +16,10 @@
 package org.eclipse.jnosql.communication.redis.keyvalue;
 
 
-import jakarta.nosql.Configurations;
-import jakarta.nosql.Settings;
-import jakarta.nosql.Settings.SettingsBuilder;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.SettingsBuilder;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 

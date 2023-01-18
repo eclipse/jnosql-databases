@@ -15,10 +15,11 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentCondition;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Direction;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,25 +54,25 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         n1ql.append("from ")
                 .append(database).append(".")
                 .append(scope).append(".")
-                .append(query.getDocumentCollection());
+                .append(query.name());
 
-        query.getCondition().ifPresent(c -> {
+        query.condition().ifPresent(c -> {
             n1ql.append(" WHERE ");
             condition(c, n1ql, params, ids);
         });
 
-        if (query.getLimit() > 0) {
-            n1ql.append(" LIMIT ").append(query.getLimit());
+        if (query.limit() > 0) {
+            n1ql.append(" LIMIT ").append(query.limit());
         }
 
-        if (query.getSkip() > 0) {
-            n1ql.append(" OFFSET ").append(query.getSkip());
+        if (query.skip() > 0) {
+            n1ql.append(" OFFSET ").append(query.skip());
         }
 
-        if (!query.getSorts().isEmpty()) {
+        if (!query.sorts().isEmpty()) {
             n1ql.append(" ORDER BY ");
-            String order = query.getSorts().stream()
-                    .map(s -> s.getName() + " " + s.getType().name())
+            String order = query.sorts().stream()
+                    .map(s -> s.property() + " " + (s.isAscending() ? Direction.ASC : Direction.DESC))
                     .collect(Collectors.joining(", "));
             n1ql.append(order);
         }
@@ -81,17 +82,17 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
 
 
     private void condition(DocumentCondition condition, StringBuilder n1ql, JsonObject params, List<String> ids) {
-        Document document = condition.getDocument();
-        switch (condition.getCondition()) {
+        Document document = condition.document();
+        switch (condition.condition()) {
             case EQUALS:
-                if (document.getName().equals(ID_FIELD)) {
+                if (document.name().equals(ID_FIELD)) {
                     ids.add(document.get(String.class));
                 } else {
                     predicate(n1ql, " = ", document, params);
                 }
                 return;
             case IN:
-                if (document.getName().equals(ID_FIELD)) {
+                if (document.name().equals(ID_FIELD)) {
                     ids.addAll(document.get(new TypeReference<List<String>>() {
                     }));
                 } else {
@@ -129,20 +130,20 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                 predicateBetween(n1ql, params, document);
                 return;
             default:
-                throw new UnsupportedOperationException("There is not support condition for " + condition.getCondition());
+                throw new UnsupportedOperationException("There is not support condition for " + condition.condition());
         }
     }
 
     private void predicateBetween(StringBuilder n1ql, JsonObject params, Document document) {
         n1ql.append(" BETWEEN ");
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = '\'' + document.getName() + '\'';
+        String name = '\'' + document.name() + '\'';
 
         List<Object> values = new ArrayList<>();
         ((Iterable<?>) document.get()).forEach(values::add);
 
-        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
-        String param2 = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param2 = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         n1ql.append(name).append(" ").append(param).append(" AND ").append(param2);
         params.put(param, values.get(0));
         params.put(param2, values.get(1));
@@ -163,15 +164,15 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                            Document document,
                            JsonObject params) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = '\'' + document.getName() + '\'';
+        String name = '\'' + document.name() + '\'';
         Object value = document.get();
-        String param = "$".concat(document.getName()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         n1ql.append(name).append(condition).append(param);
         params.put(param, value);
     }
 
     private String select() {
-        String documents = query.getDocuments().stream()
+        String documents = query.documents().stream()
                 .collect(Collectors.joining(", "));
         if (documents.isBlank()) {
             return "*";

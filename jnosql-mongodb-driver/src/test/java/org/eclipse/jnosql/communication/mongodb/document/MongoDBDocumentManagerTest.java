@@ -15,12 +15,12 @@
 
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.mongodb.document.type.Money;
 import org.junit.jupiter.api.Assertions;
@@ -37,8 +37,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,7 +66,7 @@ public class MongoDBDocumentManagerTest {
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
+        assertTrue(documentEntity.documents().stream().map(Document::name).anyMatch(s -> s.equals("_id")));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class MongoDBDocumentManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
-                .and(id.get().getName()).eq(id.get().get())
+                .and(id.get().name()).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -397,7 +397,7 @@ public class MongoDBDocumentManagerTest {
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
+                .where(id.name()).eq(id.get())
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
@@ -466,7 +466,7 @@ public class MongoDBDocumentManagerTest {
         DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from("AppointmentBook")
-                .where(key.getName())
+                .where(key.name())
                 .eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
@@ -492,8 +492,8 @@ public class MongoDBDocumentManagerTest {
         entity.add("money", money);
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document id = documentEntity.find("_id").get();
-        DocumentQuery query = DocumentQuery.select().from(documentEntity.getName())
-                .where(id.getName()).eq(id.get()).build();
+        DocumentQuery query = DocumentQuery.select().from(documentEntity.name())
+                .where(id.name()).eq(id.get()).build();
 
         DocumentEntity result = entityManager.singleResult(query).get();
         assertEquals(money, result.find("money").get().get(Money.class));

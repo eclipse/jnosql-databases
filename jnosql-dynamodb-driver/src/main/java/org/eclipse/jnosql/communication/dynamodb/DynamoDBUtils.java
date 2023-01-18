@@ -15,7 +15,7 @@
  */
 package org.eclipse.jnosql.communication.dynamodb;
 
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
@@ -70,7 +70,7 @@ public class DynamoDBUtils {
     }
 
     public static <K, V> Map<String, AttributeValue> createAttributeValues(KeyValueEntity entity) {
-        return createAttributeValues(entity.getKey(), entity.getValue());
+        return createAttributeValues(entity.key(), entity.value());
     }
 
     public static <K> Collection<Map<String, AttributeValue>> createAttributeValues(Iterable<KeyValueEntity> entities) {

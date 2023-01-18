@@ -15,12 +15,12 @@
 
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,8 +38,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,7 +76,7 @@ public class RavenDBDocumentManagerTest {
     public void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = manager.insert(entity);
-        assertTrue(documentEntity.getDocuments().stream().map(Document::getName).anyMatch(s -> s.equals("_id")));
+        assertTrue(documentEntity.documents().stream().map(Document::name).anyMatch(s -> s.equals("_id")));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class RavenDBDocumentManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
-                .and(id.get().getName()).eq(id.get().get())
+                .and(id.get().name()).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = manager.select(query)
@@ -297,7 +297,7 @@ public class RavenDBDocumentManagerTest {
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
+                .where(id.name()).eq(id.get())
                 .build();
         DocumentEntity entityFound = manager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
@@ -319,7 +319,7 @@ public class RavenDBDocumentManagerTest {
         DocumentEntity entity = manager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from(APPOINTMENT_BOOK)
-                .where(key.getName())
+                .where(key.name())
                 .eq(key.get()).build();
 
         DocumentEntity documentEntity = manager.singleResult(query).get();

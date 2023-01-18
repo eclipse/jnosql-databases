@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -90,7 +90,7 @@ class HttpExecute {
     public DocumentEntity insert(String database, DocumentEntity entity) {
         Map<String, Object> map = new HashMap<>(entity.toMap());
         String id = map.getOrDefault(CouchDBConstant.ID, "").toString();
-        map.put(CouchDBConstant.ENTITY, entity.getName());
+        map.put(CouchDBConstant.ENTITY, entity.name());
         try {
             HttpEntityEnclosingRequestBase request;
             if (id.isEmpty()) {

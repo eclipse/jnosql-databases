@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.elasticsearch.document;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.OpenRequest;
-import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;

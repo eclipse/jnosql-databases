@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.communication.dynamodb;
 
-import jakarta.nosql.Settings;
+import org.eclipse.jnosql.communication.Settings;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClientBuilder;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;

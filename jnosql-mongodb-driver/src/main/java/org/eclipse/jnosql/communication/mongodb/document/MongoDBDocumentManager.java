@@ -22,12 +22,11 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
-import jakarta.nosql.Sort;
-import jakarta.nosql.SortType;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.document.DocumentQuery;
+import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.Document;
@@ -72,12 +71,12 @@ public class MongoDBDocumentManager implements DocumentManager {
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
-        String collectionName = entity.getName();
+        String collectionName = entity.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document document = getDocument(entity);
         collection.insertOne(document);
-        boolean hasNotId = entity.getDocuments().stream()
-                .map(jakarta.nosql.document.Document::getName).noneMatch(k -> k.equals(ID_FIELD));
+        boolean hasNotId = entity.documents().stream()
+                .map(org.eclipse.jnosql.communication.document.Document::name).noneMatch(k -> k.equals(ID_FIELD));
         if (hasNotId) {
             entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
         }
@@ -113,10 +112,10 @@ public class MongoDBDocumentManager implements DocumentManager {
         Objects.requireNonNull(entity, "entity is required");
 
         DocumentEntity copy = entity.copy();
-        String collectionName = entity.getName();
+        String collectionName = entity.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document id = copy.find(ID_FIELD)
-                .map(d -> new Document(d.getName(), d.getValue().get()))
+                .map(d -> new Document(d.name(), d.value().get()))
                 .orElseThrow(() -> new UnsupportedOperationException("To update this DocumentEntity " +
                         "the field `id` is required"));
         copy.remove(ID_FIELD);
@@ -137,9 +136,9 @@ public class MongoDBDocumentManager implements DocumentManager {
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
 
-        String collectionName = query.getDocumentCollection();
+        String collectionName = query.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
+        Bson mongoDBQuery = query.condition().map(DocumentQueryConversor::convert).orElse(EMPTY);
         collection.deleteMany(mongoDBQuery);
     }
 
@@ -147,21 +146,21 @@ public class MongoDBDocumentManager implements DocumentManager {
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
-        String collectionName = query.getDocumentCollection();
+        String collectionName = query.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        Bson mongoDBQuery = query.getCondition().map(DocumentQueryConversor::convert).orElse(EMPTY);
+        Bson mongoDBQuery = query.condition().map(DocumentQueryConversor::convert).orElse(EMPTY);
 
         FindIterable<Document> documents = collection.find(mongoDBQuery);
-        documents.projection(Projections.include(query.getDocuments()));
-        if (query.getSkip() > 0) {
-            documents.skip((int) query.getSkip());
+        documents.projection(Projections.include(query.documents()));
+        if (query.skip() > 0) {
+            documents.skip((int) query.skip());
         }
 
-        if (query.getLimit() > 0) {
-            documents.limit((int) query.getLimit());
+        if (query.limit() > 0) {
+            documents.limit((int) query.limit());
         }
 
-        query.getSorts().stream().map(this::getSort).forEach(documents::sort);
+        query.sorts().stream().map(this::getSort).forEach(documents::sort);
 
         return stream(documents.spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds));
@@ -229,8 +228,7 @@ public class MongoDBDocumentManager implements DocumentManager {
     }
 
     private Bson getSort(Sort sort) {
-        boolean isAscending = SortType.ASC.equals(sort.getType());
-        return isAscending ? Sorts.ascending(sort.getName()) : Sorts.descending(sort.getName());
+        return sort.isAscending() ? Sorts.ascending(sort.property()) : Sorts.descending(sort.property());
     }
 
     @Override

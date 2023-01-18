@@ -16,8 +16,8 @@
 package org.eclipse.jnosql.communication.hazelcast.keyvalue;
 
 import com.hazelcast.query.Predicate;
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 
 import java.util.Collection;
 import java.util.Map;

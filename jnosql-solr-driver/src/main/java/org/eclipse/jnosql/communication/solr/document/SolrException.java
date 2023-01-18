@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
-import jakarta.nosql.CommunicationException;
+import org.eclipse.jnosql.communication.CommunicationException;
 
 /**
  * Root of exception on Solr/Jakarta NoSQL integration

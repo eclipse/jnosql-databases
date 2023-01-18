@@ -15,9 +15,9 @@
 package org.eclipse.jnosql.communication.orientdb.document;
 
 
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentManager;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.Map;
 import java.util.stream.Stream;

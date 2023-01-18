@@ -16,10 +16,11 @@ package org.eclipse.jnosql.communication.arangodb.keyvalue;
 
 
 import com.arangodb.ArangoDB;
-import jakarta.nosql.Settings;
-import jakarta.nosql.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfiguration;
 import org.eclipse.jnosql.communication.arangodb.ArangoDBConfigurations;
+
 
 /**
  * The ArangoDB implementation to {@link KeyValueConfiguration}

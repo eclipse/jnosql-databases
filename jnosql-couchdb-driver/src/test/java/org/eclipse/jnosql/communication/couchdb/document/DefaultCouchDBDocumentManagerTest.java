@@ -16,11 +16,11 @@
  */
 package org.eclipse.jnosql.communication.couchdb.document;
 
-import jakarta.nosql.TypeReference;
-import jakarta.nosql.document.Document;
-import jakarta.nosql.document.DocumentDeleteQuery;
-import jakarta.nosql.document.DocumentEntity;
-import jakarta.nosql.document.DocumentQuery;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,8 +36,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static jakarta.nosql.document.DocumentDeleteQuery.delete;
-import static jakarta.nosql.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.couchdb.document.configuration.CouchDBDocumentTcConfiguration.INSTANCE;
@@ -135,9 +135,9 @@ class DefaultCouchDBDocumentManagerTest {
         entity = entityManager.insert(entity);
 
         Document name = entity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(name.getName()).eq(name.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(name.name()).eq(name.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
-                .where(name.getName()).eq(name.get()).build();
+                .where(name.name()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
@@ -203,7 +203,7 @@ class DefaultCouchDBDocumentManagerTest {
     public void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find(CouchDBConstant.ID).get();
-        DocumentQuery query = select().from("AppointmentBook").where(key.getName()).eq(key.get()).build();
+        DocumentQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
 
         DocumentEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
@@ -238,7 +238,7 @@ class DefaultCouchDBDocumentManagerTest {
         Document id = entitySaved.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.getName()).eq(id.get())
+                .where(id.name()).eq(id.get())
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();

@@ -15,9 +15,9 @@
 
 package org.eclipse.jnosql.communication.ravendb.document;
 
-import jakarta.nosql.Settings;
-import jakarta.nosql.document.DocumentConfiguration;
-import jakarta.nosql.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

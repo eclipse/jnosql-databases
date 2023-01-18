@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.hbase.column;
 
 
-import jakarta.nosql.column.ColumnManagerFactory;
+import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;

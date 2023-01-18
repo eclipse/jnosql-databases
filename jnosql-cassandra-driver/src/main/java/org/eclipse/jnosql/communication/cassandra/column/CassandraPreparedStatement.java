@@ -18,7 +18,7 @@ package org.eclipse.jnosql.communication.cassandra.column;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
-import jakarta.nosql.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
 
 import java.util.stream.Stream;
 

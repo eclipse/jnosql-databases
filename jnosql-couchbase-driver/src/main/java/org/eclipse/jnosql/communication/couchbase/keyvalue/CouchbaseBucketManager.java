@@ -21,9 +21,9 @@ import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
 import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.UpsertOptions;
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -74,15 +74,15 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        put(entity.getKey(), convert(Value.of(entity.getValue())));
+        put(entity.key(), convert(Value.of(entity.value())));
     }
 
     @Override
     public void put(KeyValueEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        String key = entity.getKey(String.class);
-        Object value = convert(Value.of(entity.getValue()));
+        String key = entity.key(String.class);
+        Object value = convert(Value.of(entity.value()));
         collection.upsert(key, value, UpsertOptions.upsertOptions().expiry(ttl));
 
     }

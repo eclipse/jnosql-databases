@@ -15,9 +15,9 @@
 
 package org.eclipse.jnosql.communication.infinispan.keyvalue;
 
-import jakarta.nosql.Value;
-import jakarta.nosql.keyvalue.BucketManager;
-import jakarta.nosql.keyvalue.KeyValueEntity;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.infinispan.commons.api.BasicCache;
 
 import java.time.Duration;
@@ -54,12 +54,12 @@ public class InfinispanBucketManager implements BucketManager {
 
     @Override
     public void put(KeyValueEntity entity) throws NullPointerException {
-        cache.put(entity.getKey(), entity.getValue());
+        cache.put(entity.key(), entity.value());
     }
 
     @Override
     public void put(KeyValueEntity entity, Duration ttl) {
-        cache.put(entity.getKey(), entity.getValue(), ttl.toMillis(), TimeUnit.MILLISECONDS);
+        cache.put(entity.key(), entity.value(), ttl.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override
