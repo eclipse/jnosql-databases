@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * It implements {@link Supplier}, where its it returns the property name that might be
  * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
  *
- * @see jakarta.nosql.Settings
+ * @see org.eclipse.jnosql.communication.Settings
  */
 public enum MongoDBDocumentConfigurations implements Supplier<String> {
     /**
