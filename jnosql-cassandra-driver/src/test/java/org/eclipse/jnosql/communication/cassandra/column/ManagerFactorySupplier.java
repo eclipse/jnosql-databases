@@ -18,8 +18,6 @@ package org.eclipse.jnosql.communication.cassandra.column;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.testcontainers.containers.CassandraContainer;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -32,7 +32,6 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.memcached.keyvalue.BucketManagerFactorySupplier.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

@@ -14,16 +14,12 @@
  */
 package org.eclipse.jnosql.communication.couchbase.document;
 
-import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

@@ -16,7 +16,6 @@ package org.eclipse.jnosql.communication.couchbase.document;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.json.JsonObject;
-import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -28,7 +27,6 @@ import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseBucketManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.document.Documents;
-import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

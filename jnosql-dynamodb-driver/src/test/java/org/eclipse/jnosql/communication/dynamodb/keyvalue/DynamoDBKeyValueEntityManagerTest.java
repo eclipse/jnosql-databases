@@ -18,7 +18,6 @@ import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.dynamodb.DynamoDBTestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

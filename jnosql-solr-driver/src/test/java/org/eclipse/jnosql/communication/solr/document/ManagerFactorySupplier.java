@@ -17,7 +17,6 @@ package org.eclipse.jnosql.communication.solr.document;
 
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 public enum ManagerFactorySupplier {
 
