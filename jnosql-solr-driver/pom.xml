@@ -27,9 +27,8 @@
     <description>The Eclipse JNoSQL communication layer implementation to Apache Solr</description>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-document</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
