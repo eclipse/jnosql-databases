@@ -92,12 +92,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>jakarta.nosql</groupId>
-            <artifactId>nosql-core</artifactId>
-            <version>${jakarta.nosql.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers.version}</version>
