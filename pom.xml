@@ -65,27 +65,27 @@
             <dependency>
                 <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-core</artifactId>
-                <version>${jakarta.nosql.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-column</artifactId>
-                <version>${jakarta.nosql.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-document</artifactId>
-                <version>${jakarta.nosql.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-key-value</artifactId>
-                <version>${jakarta.nosql.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-query</artifactId>
-                <version>${jakarta.nosql.version}</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
