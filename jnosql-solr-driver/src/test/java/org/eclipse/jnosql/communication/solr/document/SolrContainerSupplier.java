@@ -28,7 +28,6 @@ enum SolrContainerSupplier implements Supplier<SolrDocumentManager> {
 
     {
         container = new SolrContainer(SOLR_IMAGE)
-                .withCollection("person")
                 .withCollection(COLLECTION);
         container.start();
     }
