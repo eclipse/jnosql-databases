@@ -15,11 +15,11 @@
 package org.eclipse.jnosql.communication.solr.document;
 
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.impl.XMLResponseParser;
 
 import java.util.Arrays;
 

@@ -16,17 +16,16 @@
 package org.eclipse.jnosql.communication.solr.document;
 
 import jakarta.data.repository.Direction;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.io.IOException;
 import java.time.Duration;
