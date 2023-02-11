@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 Contributors to the Eclipse Foundation
+ *  Copyright (c) 2023 Contributors to the Eclipse Foundation
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -12,25 +12,42 @@
  *
  *   Otavio Santana
  */
-
 package org.eclipse.jnosql.communication.solr.document;
 
-
 import org.eclipse.jnosql.communication.Settings;
+import org.testcontainers.containers.SolrContainer;
 
-public enum ManagerFactorySupplier {
+import java.util.function.Supplier;
 
+enum SolrContainerSupplier implements Supplier<SolrDocumentManager> {
     INSTANCE;
 
-    public SolrDocumentManager get(String database) {
-        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
-        final SolrDocumentManagerFactory managerFactory = configuration.apply(getSettings());
-        return managerFactory.apply(database);
+    private static final String SOLR_IMAGE = "solr:9.1.1";
+    private static final String COLLECTION = "database";
+    private final SolrContainer container;
+
+    {
+        container = new SolrContainer(SOLR_IMAGE)
+                .withCollection(COLLECTION);
+        container.start();
     }
 
-    public Settings getSettings() {
+    @Override
+    public SolrDocumentManager get() {
+        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
+        final SolrDocumentManagerFactory managerFactory = configuration.apply(getSettings());
+        return managerFactory.apply(COLLECTION);
+    }
+
+    private Settings getSettings() {
         return Settings.builder()
-                .put(SolrDocumentConfigurations.HOST.get()+".1", "localhost:27017")
+                .put(SolrDocumentConfigurations.HOST.get(), SolrContainerSupplier.INSTANCE.getHost())
                 .build();
     }
+
+    private String getHost() {
+        return "http://" + container.getHost() + ":" + container.getSolrPort()+  "/solr";
+    }
+
+
 }

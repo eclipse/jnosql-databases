@@ -16,16 +16,16 @@
 package org.eclipse.jnosql.communication.solr.document;
 
 import jakarta.data.repository.Direction;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -44,13 +44,13 @@ import static java.util.stream.Collectors.toList;
  */
 class DefaultSolrDocumentManager implements SolrDocumentManager {
 
-    private final HttpSolrClient solrClient;
+    private final Http2SolrClient solrClient;
 
     private final String database;
 
     private final boolean automaticCommit;
 
-    DefaultSolrDocumentManager(HttpSolrClient solrClient, String database, boolean automaticCommit) {
+    DefaultSolrDocumentManager(Http2SolrClient solrClient, String database, boolean automaticCommit) {
         this.solrClient = solrClient;
         this.database = database;
         this.automaticCommit = automaticCommit;

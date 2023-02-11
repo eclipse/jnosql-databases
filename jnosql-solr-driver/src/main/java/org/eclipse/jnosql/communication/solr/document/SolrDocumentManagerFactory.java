@@ -15,8 +15,8 @@
 
 package org.eclipse.jnosql.communication.solr.document;
 
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 import java.util.Objects;
 
@@ -25,11 +25,11 @@ import java.util.Objects;
  */
 public class SolrDocumentManagerFactory implements DocumentManagerFactory {
 
-    private final HttpSolrClient solrClient;
+    private final Http2SolrClient solrClient;
 
     private final boolean automaticCommit;
 
-    SolrDocumentManagerFactory(HttpSolrClient solrClient, boolean automaticCommit) {
+    SolrDocumentManagerFactory(Http2SolrClient solrClient, boolean automaticCommit) {
         this.solrClient = solrClient;
         this.automaticCommit = automaticCommit;
     }
@@ -38,7 +38,7 @@ public class SolrDocumentManagerFactory implements DocumentManagerFactory {
     public SolrDocumentManager apply(String database) {
         Objects.requireNonNull(database, "database is required");
         final String baseURL = solrClient.getBaseURL() + '/' + database;
-        return new DefaultSolrDocumentManager(new HttpSolrClient.Builder(baseURL).build(), database, automaticCommit);
+        return new DefaultSolrDocumentManager(new Http2SolrClient.Builder(baseURL).build(), database, automaticCommit);
     }
 
 
