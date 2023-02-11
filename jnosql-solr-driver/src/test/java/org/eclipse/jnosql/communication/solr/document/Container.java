@@ -23,7 +23,9 @@ enum Container {
     private final SolrContainer container;
 
     {
-        container = new SolrContainer(SOLR_IMAGE);
+        container = new SolrContainer(SOLR_IMAGE)
+                .withCollection("person")
+                .withCollection("database");
         container.start();
     }
 
