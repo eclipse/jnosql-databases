@@ -16,7 +16,7 @@ package org.eclipse.jnosql.communication.solr.document;
 
 import org.testcontainers.containers.SolrContainer;
 
-public enum Container {
+enum Container {
     INSTANCE;
 
     private static final String SOLR_IMAGE = "solr:9.1.1";
@@ -28,6 +28,6 @@ public enum Container {
     }
 
     public String getHost() {
-        return "http://" + container.getHost() + ":" + container.getSolrPort() + "/solr";
+        return "http://" + container.getHost() + ":" + container.getSolrPort()+  "/solr";
     }
 }
