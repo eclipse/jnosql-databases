@@ -37,11 +37,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,7 +54,7 @@ public class DefaultSolrDocumentManagerTest {
 
     @BeforeAll
     public static void setUp() {
-        entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+        entityManager = SolrContainerSupplier.INSTANCE.get();
     }
 
     @Test
