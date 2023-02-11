@@ -14,22 +14,41 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
+import org.eclipse.jnosql.communication.Settings;
 import org.testcontainers.containers.SolrContainer;
 
-enum Container {
+import java.util.function.Supplier;
+
+enum SolrContainerSupplier implements Supplier<SolrDocumentManager> {
     INSTANCE;
 
     private static final String SOLR_IMAGE = "solr:9.1.1";
+    private static final String COLLECTION = "database";
     private final SolrContainer container;
 
     {
         container = new SolrContainer(SOLR_IMAGE)
                 .withCollection("person")
-                .withCollection("database");
+                .withCollection(COLLECTION);
         container.start();
     }
 
-    public String getHost() {
+    @Override
+    public SolrDocumentManager get() {
+        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
+        final SolrDocumentManagerFactory managerFactory = configuration.apply(getSettings());
+        return managerFactory.apply(COLLECTION);
+    }
+
+    private Settings getSettings() {
+        return Settings.builder()
+                .put(SolrDocumentConfigurations.HOST.get(), SolrContainerSupplier.INSTANCE.getHost())
+                .build();
+    }
+
+    private String getHost() {
         return "http://" + container.getHost() + ":" + container.getSolrPort()+  "/solr";
     }
+
+
 }
