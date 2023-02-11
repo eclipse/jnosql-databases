@@ -30,7 +30,7 @@ public enum ManagerFactorySupplier {
 
     public Settings getSettings() {
         return Settings.builder()
-                .put(SolrDocumentConfigurations.HOST.get(), Container.INSTANCE.getHost())
+                .put(SolrDocumentConfigurations.HOST.get(), SolrContainerSupplier.INSTANCE.getHost())
                 .build();
     }
 }
