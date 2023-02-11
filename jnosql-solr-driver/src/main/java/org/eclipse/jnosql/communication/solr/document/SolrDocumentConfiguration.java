@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.communication.solr.document;
 
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
@@ -42,7 +43,7 @@ public class SolrDocumentConfiguration implements DocumentConfiguration {
      * @return a SolrDocumentManagerFactory instance
      * @throws NullPointerException when the mongoClient is null
      */
-    public SolrDocumentManagerFactory get(HttpSolrClient solrClient) throws NullPointerException {
+    public SolrDocumentManagerFactory get(Http2SolrClient solrClient) throws NullPointerException {
         requireNonNull(solrClient, "solrClient is required");
         return new SolrDocumentManagerFactory(solrClient, true);
     }
@@ -58,7 +59,7 @@ public class SolrDocumentConfiguration implements DocumentConfiguration {
 
         boolean automaticCommit = settings.getOrDefault(SolrDocumentConfigurations.AUTOMATIC_COMMIT, true);
 
-        final HttpSolrClient solrClient = new HttpSolrClient.Builder(host).build();
+        final Http2SolrClient solrClient = new Http2SolrClient.Builder(host).build();
         solrClient.setParser(new XMLResponseParser());
         return new SolrDocumentManagerFactory(solrClient, automaticCommit);
 

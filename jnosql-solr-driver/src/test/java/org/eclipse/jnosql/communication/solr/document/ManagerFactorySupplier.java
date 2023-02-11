@@ -30,7 +30,7 @@ public enum ManagerFactorySupplier {
 
     public Settings getSettings() {
         return Settings.builder()
-                .put(SolrDocumentConfigurations.HOST.get()+".1", "localhost:27017")
+                .put(SolrDocumentConfigurations.HOST.get(), Container.INSTANCE.getHost())
                 .build();
     }
 }
