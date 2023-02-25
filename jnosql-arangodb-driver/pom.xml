@@ -28,7 +28,7 @@
     <description>The Eclipse JNoSQL communication layer to AranboDB</description>
 
     <properties>
-        <arango.driver>6.19.0</arango.driver>
+        <arango.driver>6.20.0</arango.driver>
     </properties>
     <dependencies>
         <dependency>
