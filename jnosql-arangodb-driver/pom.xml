@@ -25,7 +25,7 @@
     </parent>
 
     <artifactId>jnosql-arangodb-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer to AranboDB</description>
+    <description>The Eclipse JNoSQL communication layer to ArangoDB</description>
 
     <properties>
         <arango.driver>6.20.0</arango.driver>
