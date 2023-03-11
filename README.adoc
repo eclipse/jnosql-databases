@@ -24,7 +24,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-arangodb-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -99,7 +99,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-cassandra-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -161,7 +161,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-couchbase-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -238,7 +238,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-couchdb-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -317,7 +317,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-elasticsearch-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -366,7 +366,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-hazelcast-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -427,7 +427,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-hbase-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -470,7 +470,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-infinispan-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -520,7 +520,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-memcached-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -604,7 +604,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-mongodb-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -666,7 +666,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-orientdb-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -723,7 +723,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-ravendb-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -767,7 +767,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-redis-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -838,7 +838,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-redis-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
@@ -884,7 +884,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.communication</groupId>
   <artifactId>jnosql-solr-driver</artifactId>
-  <version>1.0.0-b5</version>
+  <version>1.0.0-b6</version>
 </dependency>
 ----
 
