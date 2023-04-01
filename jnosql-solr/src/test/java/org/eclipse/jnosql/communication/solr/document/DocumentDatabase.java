@@ -19,7 +19,7 @@ import org.testcontainers.containers.SolrContainer;
 
 import java.util.function.Supplier;
 
-enum SolrContainerSupplier implements Supplier<SolrDocumentManager> {
+enum DocumentDatabase implements Supplier<SolrDocumentManager> {
     INSTANCE;
 
     private static final String SOLR_IMAGE = "solr:9.1.1";
@@ -41,7 +41,7 @@ enum SolrContainerSupplier implements Supplier<SolrDocumentManager> {
 
     private Settings getSettings() {
         return Settings.builder()
-                .put(SolrDocumentConfigurations.HOST.get(), SolrContainerSupplier.INSTANCE.getHost())
+                .put(SolrDocumentConfigurations.HOST.get(), DocumentDatabase.INSTANCE.getHost())
                 .build();
     }
 

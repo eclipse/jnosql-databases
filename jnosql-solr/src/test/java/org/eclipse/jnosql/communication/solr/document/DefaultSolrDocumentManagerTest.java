@@ -58,7 +58,7 @@ public class DefaultSolrDocumentManagerTest {
 
     @BeforeAll
     public static void setUp() {
-        entityManager = SolrContainerSupplier.INSTANCE.get();
+        entityManager = DocumentDatabase.INSTANCE.get();
     }
 
     @Test
