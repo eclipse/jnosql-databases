@@ -19,13 +19,13 @@ import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConf
 import org.testcontainers.couchbase.BucketDefinition;
 import org.testcontainers.couchbase.CouchbaseContainer;
 
-public enum DatabaseContainer {
+public enum Database {
 
     INSTANCE;
 
     private CouchbaseContainer container;
 
-    DatabaseContainer() {
+    Database() {
         //TODO create couchbase container to run all tests instead of run an outside container
         BucketDefinition bucketDefinition = new BucketDefinition(CouchbaseUtil.BUCKET_NAME)
                 .withPrimaryIndex(true)

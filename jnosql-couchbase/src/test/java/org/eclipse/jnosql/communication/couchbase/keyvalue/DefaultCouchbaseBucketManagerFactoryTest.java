@@ -16,7 +16,7 @@ package org.eclipse.jnosql.communication.couchbase.keyvalue;
 
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
-import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.couchbase.Database;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class DefaultCouchbaseBucketManagerFactoryTest {
 
     @BeforeEach
     public void init() {
-        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
         factory = configuration.apply(CouchbaseUtil.getSettings());
     }
 

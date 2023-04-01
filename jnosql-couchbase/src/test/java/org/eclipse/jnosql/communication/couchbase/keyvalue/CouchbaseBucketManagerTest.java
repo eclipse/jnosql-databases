@@ -20,7 +20,7 @@ import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
-import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.couchbase.Database;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,14 +57,14 @@ public class CouchbaseBucketManagerTest {
 
     @BeforeEach
     public void init() {
-        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
         factory = configuration.apply(CouchbaseUtil.getSettings());
         manager = factory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterClass() {
-        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.apply(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.delete(KEY_OTAVIO);

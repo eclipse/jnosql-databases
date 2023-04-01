@@ -23,7 +23,7 @@ import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
-import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.couchbase.Database;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseBucketManagerFactory;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.document.Documents;
@@ -60,7 +60,7 @@ public class CouchbaseDocumentManagerTest {
     private CouchbaseDocumentManager entityManager;
 
     {
-        CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
+        CouchbaseDocumentConfiguration configuration = Database.INSTANCE.getDocumentConfiguration();
 
         CouchbaseDocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
         entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
@@ -68,7 +68,7 @@ public class CouchbaseDocumentManagerTest {
 
     @AfterEach
     public void afterEach() {
-        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
         CouchbaseBucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
 
         try {

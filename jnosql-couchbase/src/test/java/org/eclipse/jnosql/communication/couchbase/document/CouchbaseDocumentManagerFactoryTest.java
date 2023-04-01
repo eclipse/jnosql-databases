@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.communication.couchbase.document;
 
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
-import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.couchbase.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -37,7 +37,7 @@ public class CouchbaseDocumentManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        CouchbaseDocumentConfiguration configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
+        CouchbaseDocumentConfiguration configuration = Database.INSTANCE.getDocumentConfiguration();
         CouchbaseDocumentManagerFactory factory = configuration.apply(CouchbaseUtil.getSettings());
         assertNotNull(factory.apply(CouchbaseUtil.BUCKET_NAME));
     }

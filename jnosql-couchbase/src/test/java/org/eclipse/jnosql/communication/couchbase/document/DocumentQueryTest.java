@@ -23,7 +23,7 @@ import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
+import org.eclipse.jnosql.communication.couchbase.Database;
 import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration;
 import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
@@ -61,7 +61,7 @@ public class DocumentQueryTest {
 
     @AfterAll
     public static void afterEach() {
-        CouchbaseKeyValueConfiguration configuration = DatabaseContainer.INSTANCE.getKeyValueConfiguration();
+        CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
         BucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.apply(CouchbaseUtil.BUCKET_NAME);
         try {
@@ -76,7 +76,7 @@ public class DocumentQueryTest {
 
     @BeforeAll
     public static void beforeEach() {
-        configuration = DatabaseContainer.INSTANCE.getDocumentConfiguration();
+        configuration = Database.INSTANCE.getDocumentConfiguration();
         Settings settings = CouchbaseUtil.getSettings();
         CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
         CouchbaseDocumentManager entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
