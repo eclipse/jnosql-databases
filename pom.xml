@@ -87,6 +87,21 @@
                 <artifactId>jnosql-communication-query</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.jnosql.mapping</groupId>
+                <artifactId>jnosql-mapping-document</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jnosql.mapping</groupId>
+                <artifactId>jnosql-mapping-column</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jnosql.mapping</groupId>
+                <artifactId>jnosql-mapping-key-value</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
