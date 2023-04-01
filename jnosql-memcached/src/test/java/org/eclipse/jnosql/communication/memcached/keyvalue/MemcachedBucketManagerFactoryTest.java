@@ -17,9 +17,13 @@ package org.eclipse.jnosql.communication.memcached.keyvalue;
 import org.eclipse.jnosql.communication.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class MemcachedBucketManagerFactoryTest {
 
     private MemcachedBucketManagerFactory managerFactory;

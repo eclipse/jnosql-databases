@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,7 +36,10 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class MongoDBQueryTest {
 
     public static final String COLLECTION_NAME = "person";

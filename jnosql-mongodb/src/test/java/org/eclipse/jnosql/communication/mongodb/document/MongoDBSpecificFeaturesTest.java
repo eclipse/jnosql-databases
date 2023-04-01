@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -38,8 +39,11 @@ import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class MongoDBSpecificFeaturesTest {
 
     public static final String COLLECTION_NAME = "person";

@@ -29,6 +29,7 @@ import org.eclipse.jnosql.communication.couchbase.CouchbaseUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,10 +39,13 @@ import java.util.stream.Collectors;
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class DocumentQueryTest {
 
     public static final String COLLECTION_NAME = "person";

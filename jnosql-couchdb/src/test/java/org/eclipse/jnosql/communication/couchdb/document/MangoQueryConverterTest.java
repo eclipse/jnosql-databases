@@ -25,6 +25,7 @@ import java.util.Arrays;
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 class MangoQueryConverterTest {
 
     private MangoQueryConverter converter = new MangoQueryConverter();

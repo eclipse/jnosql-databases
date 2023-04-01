@@ -25,6 +25,7 @@ import org.eclipse.jnosql.communication.document.Documents;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.eclipse.jnosql.communication.elasticsearch.document.EntityConverter.ID_FIELD;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -52,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class ElasticsearchDocumentManagerTest {
 
     private ElasticsearchDocumentManager entityManager;

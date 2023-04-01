@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.communication.mongodb.document;
 
-import org.eclipse.jnosql.communication.ValueReader;
 import org.bson.types.Binary;
+import org.eclipse.jnosql.communication.ValueReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

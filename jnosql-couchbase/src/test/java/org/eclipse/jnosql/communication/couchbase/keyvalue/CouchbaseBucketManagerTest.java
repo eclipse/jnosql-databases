@@ -24,6 +24,7 @@ import org.eclipse.jnosql.communication.couchbase.DatabaseContainer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.time.Duration;
 import java.util.List;
@@ -33,11 +34,13 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class CouchbaseBucketManagerTest {
 
     private static final String KEY_SORO = "soro";

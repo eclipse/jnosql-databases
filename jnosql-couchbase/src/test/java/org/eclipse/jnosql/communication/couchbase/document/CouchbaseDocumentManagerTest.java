@@ -29,6 +29,7 @@ import org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConf
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,12 +44,15 @@ import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.dele
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class CouchbaseDocumentManagerTest {
 
     public static final String COLLECTION_PERSON_NAME = "person";

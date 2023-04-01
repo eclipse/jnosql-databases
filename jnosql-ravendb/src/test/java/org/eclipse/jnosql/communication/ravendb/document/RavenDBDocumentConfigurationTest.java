@@ -39,7 +39,7 @@ public class RavenDBDocumentConfigurationTest {
 
 
     @Test
-    public void shouldReturnErrorWhendSettingsIsNull() {
+    public void shouldReturnErrorWhenSettingsIsNull() {
         DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
