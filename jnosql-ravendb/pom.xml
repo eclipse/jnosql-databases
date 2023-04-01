@@ -23,15 +23,15 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-ravendb-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer implementation to RavenDB</description>
+    <artifactId>jnosql-ravendb</artifactId>
+    <description>The Eclipse JNoSQL layer to RavenDB</description>
 
     <properties>
         <monbodb.driver>3.6.3</monbodb.driver>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-document</artifactId>
         </dependency>
         <dependency>

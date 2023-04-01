@@ -24,15 +24,15 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-cassandra-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer to Cassandra</description>
+    <artifactId>jnosql-cassandra</artifactId>
+    <description>The Eclipse JNoSQL layer to Cassandra</description>
 
     <properties>
         <casandra.driver.version>4.15.0</casandra.driver.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-column</artifactId>
         </dependency>
         <dependency>

@@ -23,8 +23,8 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-orientdb-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer implementation to OrientDB</description>
+    <artifactId>jnosql-orientdb</artifactId>
+    <description>The Eclipse JNoSQL layer implementation to OrientDB</description>
 
     <dependencies>
         <dependency>
@@ -38,7 +38,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-document</artifactId>
         </dependency>
     </dependencies>

@@ -19,11 +19,11 @@
 	</parent>
 
 
-	<artifactId>jnosql-dynamodb-driver</artifactId>
+	<artifactId>jnosql-dynamodb</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.eclipse.jnosql.databases</groupId>
+			<groupId>org.eclipse.jnosql.communication</groupId>
 			<artifactId>jnosql-communication-key-value</artifactId>
 		</dependency>
 		<dependency>

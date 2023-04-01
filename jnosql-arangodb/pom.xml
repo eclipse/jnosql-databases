@@ -24,19 +24,19 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-arangodb-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer to ArangoDB</description>
+    <artifactId>jnosql-arangodb</artifactId>
+    <description>The Eclipse JNoSQL layer to ArangoDB</description>
 
     <properties>
         <arango.driver>6.20.0</arango.driver>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-document</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-key-value</artifactId>
         </dependency>
         <dependency>

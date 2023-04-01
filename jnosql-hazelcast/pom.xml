@@ -24,11 +24,11 @@
     </parent>
 
     <artifactId>jnosql-hazelcast-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer implementation to Hazelcast</description>
+    <description>The Eclipse JNoSQL layer to Hazelcast</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-key-value</artifactId>
         </dependency>
         <dependency>

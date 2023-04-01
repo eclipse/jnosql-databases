@@ -23,15 +23,15 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-mongodb-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer implementation to MongoDB</description>
+    <artifactId>jnosql-mongodb</artifactId>
+    <description>The Eclipse JNoSQL layer to MongoDB</description>
 
     <properties>
         <monbodb.driver>4.9.0</monbodb.driver>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-document</artifactId>
         </dependency>
         <dependency>

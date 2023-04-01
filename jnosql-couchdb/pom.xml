@@ -24,12 +24,12 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-couchdb-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer to Couchdb</description>
+    <artifactId>jnosql-couchdb</artifactId>
+    <description>The Eclipse JNoSQL layer to Couchdb</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-document</artifactId>
         </dependency>
         <dependency>

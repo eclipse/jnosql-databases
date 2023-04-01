@@ -23,12 +23,12 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-hbase-driver</artifactId>
-    <description>The Eclipse JNoSQL communication layer implementation to Hbase</description>
+    <artifactId>jnosql-hbase</artifactId>
+    <description>The Eclipse JNoSQL layer to Hbase</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-column</artifactId>
         </dependency>
         <dependency>
