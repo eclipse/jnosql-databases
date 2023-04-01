@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public enum ManagerFactorySupplier  {
+public enum DocumentDatabase {
 
     INSTANCE;
 

@@ -47,7 +47,7 @@ public class MongoDBQueryTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+        entityManager = DocumentDatabase.INSTANCE.get("database");
     }
 
     @BeforeEach

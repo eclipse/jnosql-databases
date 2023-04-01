@@ -51,7 +51,7 @@ public class MongoDBSpecificFeaturesTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        entityManager = ManagerFactorySupplier.INSTANCE.get("database");
+        entityManager = DocumentDatabase.INSTANCE.get("database");
     }
 
     @BeforeEach
