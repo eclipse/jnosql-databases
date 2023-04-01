@@ -24,11 +24,11 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.eclipse.jnosql.communication</groupId>
-    <artifactId>jnosql-communication-driver</artifactId>
+    <groupId>org.eclipse.jnosql.databases</groupId>
+    <artifactId>jnosql-databases-parent</artifactId>
     <packaging>pom</packaging>
 
-    <description>The Eclipse JNoSQL communication layer, Diana, implementations</description>
+    <description>The Eclipse JNoSQL databases vendors</description>
 
     <scm>
         <connection>scm:git:git://github.com/eclipse/jnosql-communication-driver.git</connection>
