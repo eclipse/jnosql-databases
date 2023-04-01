@@ -31,7 +31,7 @@ public class ArangoDBDocumentManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        managerFactory = ArangoDBDocumentManagerFactorySupplier.INSTANCE.get();
+        managerFactory = DocumentDatabase.INSTANCE.get();
     }
 
     @Test

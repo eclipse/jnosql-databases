@@ -12,17 +12,17 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.arangodb.keyvalue;
+
+package org.eclipse.jnosql.communication.arangodb.document;
 
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.function.Supplier;
 
-enum BucketManagerFactorySupplier implements Supplier<BucketManagerFactory> {
+enum DocumentDatabase implements Supplier<ArangoDBDocumentManagerFactory> {
 
     INSTANCE;
 
@@ -33,15 +33,13 @@ enum BucketManagerFactorySupplier implements Supplier<BucketManagerFactory> {
                     .waitingFor(Wait.forHttp("/")
                             .forStatusCode(200));
 
-
     {
         arangodb.start();
     }
 
     @Override
-    public BucketManagerFactory get() {
-
-        ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
+    public ArangoDBDocumentManagerFactory get() {
+        ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
         return configuration.apply(Settings.builder().build());
     }

@@ -51,7 +51,7 @@ public class ArangoDBKeyValueEntityManagerTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = BucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyvalueDatabase.INSTANCE.get();
         keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
