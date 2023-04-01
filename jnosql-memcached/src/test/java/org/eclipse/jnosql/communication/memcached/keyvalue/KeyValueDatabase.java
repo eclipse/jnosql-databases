@@ -21,7 +21,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.function.Supplier;
 
-public enum BucketManagerFactorySupplier implements Supplier<BucketManagerFactory> {
+public enum KeyValueDatabase implements Supplier<BucketManagerFactory> {
 
     INSTANCE;
 

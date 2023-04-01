@@ -23,7 +23,6 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATIO
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class MemcachedBucketManagerFactoryTest {
 
     private MemcachedBucketManagerFactory managerFactory;
