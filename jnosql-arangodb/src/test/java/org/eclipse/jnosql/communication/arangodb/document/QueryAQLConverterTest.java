@@ -21,9 +21,11 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import java.util.Map;
 
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@EnabledIfSystemProperty(named = "jnosql.test.integration", matches = "true")
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class QueryAQLConverterTest {
 
     @Test

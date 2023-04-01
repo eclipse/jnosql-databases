@@ -16,16 +16,17 @@
 package org.eclipse.jnosql.communication.arangodb.document;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.driver.IntegrationTest;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@EnabledIfSystemProperty(named = IntegrationTest.INTEGRATION, matches = IntegrationTest.INTEGRATION)
+@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class ArangoDBDocumentConfigurationTest {
 
 
