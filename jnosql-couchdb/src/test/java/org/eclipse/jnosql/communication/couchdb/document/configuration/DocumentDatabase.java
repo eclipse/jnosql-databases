@@ -25,7 +25,7 @@ import org.testcontainers.containers.GenericContainer;
 
 import java.util.function.Supplier;
 
-public enum CouchDBDocumentTcConfiguration implements Supplier<CouchDBDocumentManagerFactory> {
+public enum DocumentDatabase implements Supplier<CouchDBDocumentManagerFactory> {
 
     INSTANCE;
 

@@ -41,7 +41,7 @@ import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.dele
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.couchdb.document.configuration.CouchDBDocumentTcConfiguration.INSTANCE;
+import static org.eclipse.jnosql.communication.couchdb.document.configuration.DocumentDatabase.INSTANCE;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
