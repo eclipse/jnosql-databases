@@ -1,9 +1,7 @@
-= Communications Driver API
+= Eclipse JNoSQL databases
 :toc: auto
 
-The Eclipse JNoSQL Communications API is a collection of implementations from the https://github.com/eclipse-ee4j/nosql[Jakarta NoSQL] specification.
-
-In the NoSQL communication layer, you can make an analogy with JDBC.
+The Eclipse JNoSQL Database API is a collection of implementations from the https://github.com/eclipse-ee4j/nosql[Jakarta NoSQL] specification.
 
 == ArangoDB
 
@@ -22,8 +20,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-arangodb-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-arangodb</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -97,8 +95,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-cassandra-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-cassandra</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -159,8 +157,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-couchbase-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-couchbase</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -236,8 +234,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-couchdb-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-couchdb</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -315,8 +313,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-elasticsearch-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-elasticsearch</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -364,8 +362,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-hazelcast-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-hazelcast</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -425,8 +423,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-hbase-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-hbase</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -468,8 +466,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-infinispan-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-infinispan</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -518,8 +516,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-memcached-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-memcached</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -602,8 +600,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-mongodb-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-mongodb</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -664,8 +662,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-orientdb-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-orientdb</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -721,8 +719,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-ravendb-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-ravendb</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -765,8 +763,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-redis-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-redis</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -836,8 +834,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-redis-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-redis</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -882,8 +880,8 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
-  <artifactId>jnosql-solr-driver</artifactId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-solr</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
 ----
@@ -925,6 +923,19 @@ We are very happy you are interested in helping us and there are plenty ways you
 
 - https://github.com/eclipse/jnosql/issues[**Open an Issue:**]  Recommend improvements, changes and report bugs
 
+== Contributing
+
+The integration tests on databases primarily integrate with the https://www.testcontainers.org/[Testcontainers], requiring a more powerful computer.
+
+Those tests are disabled by default; thus, if you want to run only the integration tests:
+
+[source,bash]
+----
+mvn test -Djnosql.test.integration=true
+----
+
+Those will run the unit with integration test.
+
 - **Open a Pull Request:** If you feel like you can even make changes to our source code and suggest them, just check out our link:CONTRIBUTING.adoc[contributing guide] to learn about the development process, how to suggest bugfixes and improvements.
 
 == Want to Contribute a New Driver?
@@ -932,7 +943,7 @@ We are very happy you are interested in helping us and there are plenty ways you
 As an open-source project, you're free to create any driver, and you're welcome to join and participate in the process.
 To add a new driver, we have a few requirements:
 
-* Run Java 11 and Java 17
+* Run Java 17
 * Include the documentation driver in the README file.
 * Cover the driver with tests and preferences with TestContainer.
 * Please pay attention to the documentation. This includes JavaDoc

@@ -24,40 +24,41 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.eclipse.jnosql.communication</groupId>
-    <artifactId>jnosql-communication-driver</artifactId>
+    <groupId>org.eclipse.jnosql.databases</groupId>
+    <artifactId>jnosql-databases-parent</artifactId>
     <packaging>pom</packaging>
 
-    <description>The Eclipse JNoSQL communication layer, Diana, implementations</description>
+    <description>The Eclipse JNoSQL databases vendors</description>
 
     <scm>
-        <connection>scm:git:git://github.com/eclipse/jnosql-communication-driver.git</connection>
-        <developerConnection>scm:git:ssh://github.com:eclipse/jnosql-communication-driver.git</developerConnection>
-        <url>https://github.com/eclipse/jnosql-communication-driver</url>
+        <connection>scm:git:git://github.com/eclipse/jnosql-databases-driver.git</connection>
+        <developerConnection>scm:git:ssh://github.com:eclipse/jnosql-databases-driver.git</developerConnection>
+        <url>https://github.com/eclipse/jnosql-databases-driver</url>
     </scm>
 
     <properties>
         <testcontainers.version>1.17.6</testcontainers.version>
+        <jnosql.test.integration>false</jnosql.test.integration>
     </properties>
 
     <modules>
-        <module>jnosql-communication-driver-commons</module>
-        <module>jnosql-arangodb-driver</module>
-        <module>jnosql-cassandra-driver</module>
-        <module>jnosql-couchbase-driver</module>
-        <module>jnosql-couchdb-driver</module>
-        <module>jnosql-dynamodb-driver</module>
-        <module>jnosql-elasticsearch-driver</module>
-        <module>jnosql-hazelcast-driver</module>
-        <module>jnosql-hbase-driver</module>
-        <module>jnosql-infinispan-driver</module>
-        <module>jnosql-memcached-driver</module>
-        <module>jnosql-mongodb-driver</module>
-        <module>jnosql-orientdb-driver</module>
-        <module>jnosql-ravendb-driver</module>
-        <module>jnosql-redis-driver</module>
-        <module>jnosql-riak-driver</module>
-        <module>jnosql-solr-driver</module>
+        <module>jnosql-database-commons</module>
+        <module>jnosql-arangodb</module>
+        <module>jnosql-cassandra</module>
+        <module>jnosql-couchbase</module>
+        <module>jnosql-couchdb</module>
+        <module>jnosql-dynamodb</module>
+        <module>jnosql-elasticsearch</module>
+        <module>jnosql-hazelcast</module>
+        <module>jnosql-hbase</module>
+        <module>jnosql-infinispan</module>
+        <module>jnosql-memcached</module>
+        <module>jnosql-mongodb</module>
+        <module>jnosql-orientdb</module>
+        <module>jnosql-ravendb</module>
+        <module>jnosql-redis</module>
+        <module>jnosql-riak</module>
+        <module>jnosql-solr</module>
     </modules>
 
     <dependencyManagement>
@@ -85,6 +86,21 @@
             <dependency>
                 <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-query</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jnosql.mapping</groupId>
+                <artifactId>jnosql-mapping-document</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jnosql.mapping</groupId>
+                <artifactId>jnosql-mapping-column</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jnosql.mapping</groupId>
+                <artifactId>jnosql-mapping-key-value</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
