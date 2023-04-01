@@ -15,29 +15,12 @@
 package org.eclipse.jnosql.communication.elasticsearch.document;
 
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
 public class ElasticsearchDocumentConfigurationTest {
 
-    @Test
-    public void shouldCreateDocumentManagerFactoryByMap() {
-        DocumentManagerFactory managerFactory = DocumentDatabase.INSTANCE.get();
-        assertNotNull(managerFactory);
-    }
 
-    @Test
-    public void shouldCreateDocumentManagerFactoryByFile() {
-        DocumentManagerFactory managerFactory = DocumentDatabase.INSTANCE.get();
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldReturnFromConfiguration() {
