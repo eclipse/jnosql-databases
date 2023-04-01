@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 Contributors to the Eclipse Foundation
+ *  Copyright (c) 2023 Contributors to the Eclipse Foundation
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -12,41 +12,42 @@
  *
  *   Otavio Santana
  */
-
-package org.eclipse.jnosql.communication.arangodb.document;
+package org.eclipse.jnosql.communication.arangodb.keyvalue;
 
 import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ArangoDBDocumentConfigurationTest {
-
+public class ArangoDBKeyValueConfigurationTest {
 
     @Test
     public void shouldCreateDocumentManagerFactory() {
-        ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
+        ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
         configuration.addHost("localhost", 8529);
-        DocumentManagerFactory managerFactory = configuration.apply(Settings.builder().build());
+        BucketManagerFactory managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldReturnFromConfiguration() {
-        ArangoDBDocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        ArangoDBKeyValueConfiguration configuration = new ArangoDBKeyValueConfiguration();
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
+        assertThat(configuration).isInstanceOf(ArangoDBKeyValueConfiguration.class);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        ArangoDBDocumentConfiguration configuration = DocumentConfiguration
-                .getConfiguration(ArangoDBDocumentConfiguration.class);
+        ArangoDBKeyValueConfiguration configuration = KeyValueConfiguration
+                .getConfiguration(ArangoDBKeyValueConfiguration.class);
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
+        assertThat(configuration).isInstanceOf(ArangoDBKeyValueConfiguration.class);
     }
-
 }
