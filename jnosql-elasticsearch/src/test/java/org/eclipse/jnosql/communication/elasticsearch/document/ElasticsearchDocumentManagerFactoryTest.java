@@ -27,7 +27,7 @@ public class ElasticsearchDocumentManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        ElasticsearchDocumentManagerFactory factory = ElasticsearchDocumentManagerFactorySupplier.INSTANCE.get();
+        ElasticsearchDocumentManagerFactory factory = DocumentDatabase.INSTANCE.get();
         assertNotNull(factory.apply("database"));
     }
 

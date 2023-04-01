@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-enum ElasticsearchDocumentManagerFactorySupplier implements Supplier<ElasticsearchDocumentManagerFactory> {
+enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFactory> {
 
     INSTANCE;
 
