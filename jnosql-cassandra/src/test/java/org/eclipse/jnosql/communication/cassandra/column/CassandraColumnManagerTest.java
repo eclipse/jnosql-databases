@@ -69,7 +69,7 @@ public class CassandraColumnManagerTest {
 
 
     {
-        CassandraColumnManagerFactory managerFactory = ManagerFactorySupplier.INSTANCE.get();
+        CassandraColumnManagerFactory managerFactory = ColumnDatabase.INSTANCE.get();
         entityManager = managerFactory.apply(Constants.KEY_SPACE);
     }
 

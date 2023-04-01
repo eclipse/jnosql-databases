@@ -34,7 +34,7 @@ public class CassandraColumnManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
+        Settings settings = ColumnDatabase.INSTANCE.getSettings();
         SettingsBuilder builder = Settings.builder();
         builder.put(CassandraConfigurations.HOST.get() + ".1", settings.get(CassandraConfigurations.HOST.get() + ".1")
                 .get().toString());

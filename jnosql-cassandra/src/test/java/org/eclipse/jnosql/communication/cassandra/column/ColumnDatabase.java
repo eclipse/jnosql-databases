@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public enum ManagerFactorySupplier implements Supplier<CassandraColumnManagerFactory> {
+enum ColumnDatabase implements Supplier<CassandraColumnManagerFactory> {
 
     INSTANCE;
 

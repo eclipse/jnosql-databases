@@ -32,7 +32,7 @@ public class CassandraConfigurationTest {
 
     @Test
     public void shouldCreateDocumentEntityManagerFactoryFromSettings() {
-        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
+        Settings settings = ColumnDatabase.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         ColumnManagerFactory entityManagerFactory = cassandraConfiguration.apply(settings);
         assertNotNull(entityManagerFactory);
@@ -40,7 +40,7 @@ public class CassandraConfigurationTest {
 
     @Test
     public void shouldCreateDocumentEntityManagerFactoryFromFile() {
-        Settings settings = ManagerFactorySupplier.INSTANCE.getSettings();
+        Settings settings = ColumnDatabase.INSTANCE.getSettings();
         CassandraConfiguration cassandraConfiguration = new CassandraConfiguration();
         ColumnManagerFactory entityManagerFactory = cassandraConfiguration.apply(settings);
         assertNotNull(entityManagerFactory);
