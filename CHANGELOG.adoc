@@ -8,6 +8,12 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == [Unreleased]
 
+=== Changed
+
+- Define integration test and disable it by default
+- Rename project to databases
+- Define container nomenclature
+
 == [1.0.0-b6] - 2023-03-11
 
 === Changed
