@@ -63,27 +63,27 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.eclipse.jnosql.databases</groupId>
+                <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jnosql.databases</groupId>
+                <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-column</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jnosql.databases</groupId>
+                <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-document</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jnosql.databases</groupId>
+                <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-key-value</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jnosql.databases</groupId>
+                <groupId>org.eclipse.jnosql.communication</groupId>
                 <artifactId>jnosql-communication-query</artifactId>
                 <version>${project.version}</version>
             </dependency>
