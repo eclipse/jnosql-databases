@@ -923,6 +923,19 @@ We are very happy you are interested in helping us and there are plenty ways you
 
 - https://github.com/eclipse/jnosql/issues[**Open an Issue:**]  Recommend improvements, changes and report bugs
 
+== Contributing
+
+The integration tests on databases primarily integrate with the https://www.testcontainers.org/[Testcontainers], requiring a more powerful computer.
+
+Those tests are disabled by default; thus, if you want to run only the integration tests:
+
+[source,bash]
+----
+mvn test -Djnosql.test.integration=true
+----
+
+Those will run the unit with integration test.
+
 - **Open a Pull Request:** If you feel like you can even make changes to our source code and suggest them, just check out our link:CONTRIBUTING.adoc[contributing guide] to learn about the development process, how to suggest bugfixes and improvements.
 
 == Want to Contribute a New Driver?
@@ -930,7 +943,7 @@ We are very happy you are interested in helping us and there are plenty ways you
 As an open-source project, you're free to create any driver, and you're welcome to join and participate in the process.
 To add a new driver, we have a few requirements:
 
-* Run Java 11 and Java 17
+* Run Java 17
 * Include the documentation driver in the README file.
 * Cover the driver with tests and preferences with TestContainer.
 * Please pay attention to the documentation. This includes JavaDoc
