@@ -23,7 +23,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-communication-driver-commons</artifactId>
+    <artifactId>jnosql-database-commons</artifactId>
 
     <dependencies>
         <dependency>
