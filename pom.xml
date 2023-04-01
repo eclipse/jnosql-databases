@@ -38,6 +38,7 @@
 
     <properties>
         <testcontainers.version>1.17.6</testcontainers.version>
+        <jnosql.test.integration>false</jnosql.test.integration>
     </properties>
 
     <modules>
