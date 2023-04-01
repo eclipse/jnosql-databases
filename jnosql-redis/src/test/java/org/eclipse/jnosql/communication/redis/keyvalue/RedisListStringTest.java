@@ -44,7 +44,7 @@ public class RedisListStringTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyValueDatabase.INSTANCE.get();
         fruits = keyValueEntityManagerFactory.getList(FRUITS, String.class);
     }
 

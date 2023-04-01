@@ -55,7 +55,7 @@ public class RedisBucketManagerTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyValueDatabase.INSTANCE.get();
         keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 

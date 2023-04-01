@@ -42,7 +42,7 @@ public class RedisQueueStringTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyValueDatabase.INSTANCE.get();
         lineBank = keyValueEntityManagerFactory.getQueue("physical-bank-string", String.class);
     }
 

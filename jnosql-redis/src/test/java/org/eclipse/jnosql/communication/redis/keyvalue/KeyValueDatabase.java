@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public enum RedisBucketManagerFactorySupplier implements Supplier<RedisBucketManagerFactory> {
+public enum KeyValueDatabase implements Supplier<RedisBucketManagerFactory> {
     INSTANCE;
 
     private final GenericContainer redis =

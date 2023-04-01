@@ -43,7 +43,7 @@ public class RedisSetTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyValueDatabase.INSTANCE.get();
         users = keyValueEntityManagerFactory.getSet("social-media", User.class);
     }
 

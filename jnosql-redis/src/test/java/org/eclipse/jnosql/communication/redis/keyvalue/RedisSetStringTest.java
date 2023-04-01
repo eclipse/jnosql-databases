@@ -40,7 +40,7 @@ public class RedisSetStringTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyValueDatabase.INSTANCE.get();
         users = keyValueEntityManagerFactory.getSet("social-media-string", String.class);
     }
 

@@ -48,7 +48,7 @@ public class RedisMapStringTest {
 
     @BeforeEach
     public void init() {
-        entityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        entityManagerFactory = KeyValueDatabase.INSTANCE.get();
         vertebrates = entityManagerFactory.getMap(BUCKET_NAME, String.class, String.class);
     }
 

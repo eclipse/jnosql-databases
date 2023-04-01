@@ -34,7 +34,7 @@ public class DefaultCounterTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyValueDatabase.INSTANCE.get();
         counter = keyValueEntityManagerFactory.getCounter("counter-redis");
         counter.delete();
     }

@@ -39,7 +39,7 @@ public class RedisBucketManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        managerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();;
+        managerFactory = KeyValueDatabase.INSTANCE.get();;
     }
 
     @Test

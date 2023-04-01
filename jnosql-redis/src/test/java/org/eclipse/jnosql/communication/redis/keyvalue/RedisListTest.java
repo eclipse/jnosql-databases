@@ -51,7 +51,7 @@ public class RedisListTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = RedisBucketManagerFactorySupplier.INSTANCE.get();
+        keyValueEntityManagerFactory = KeyValueDatabase.INSTANCE.get();
         fruits = keyValueEntityManagerFactory.getList(FRUITS, ProductCart.class);
     }
 
