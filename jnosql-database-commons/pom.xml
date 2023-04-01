@@ -27,7 +27,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.databases</groupId>
+            <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-core</artifactId>
             <scope>provided</scope>
         </dependency>
