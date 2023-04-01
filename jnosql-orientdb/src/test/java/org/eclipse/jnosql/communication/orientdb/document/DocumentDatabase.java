@@ -19,7 +19,7 @@ import org.eclipse.jnosql.communication.Settings;
 
 import java.util.function.Supplier;
 
-public enum ManagerFactorySupplier implements Supplier<OrientDBDocumentManagerFactory> {
+public enum DocumentDatabase implements Supplier<OrientDBDocumentManagerFactory> {
 
     INSTANCE;
 

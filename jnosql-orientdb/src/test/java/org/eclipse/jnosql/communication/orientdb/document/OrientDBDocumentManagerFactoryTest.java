@@ -31,7 +31,7 @@ public class OrientDBDocumentManagerFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        managerFactory = DocumentConfigurationUtils.get();
+        managerFactory = DocumentDatabase.INSTANCE.get();
     }
 
     @Test
