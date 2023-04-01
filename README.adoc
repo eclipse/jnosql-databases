@@ -22,7 +22,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-arangodb-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -97,7 +97,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-cassandra-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -159,7 +159,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-couchbase-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -236,7 +236,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-couchdb-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -315,7 +315,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-elasticsearch-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -364,7 +364,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-hazelcast-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -425,7 +425,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-hbase-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -468,7 +468,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-infinispan-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -518,7 +518,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-memcached-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -602,7 +602,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-mongodb-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -664,7 +664,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-orientdb-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -721,7 +721,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-ravendb-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -765,7 +765,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-redis-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -836,7 +836,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-redis-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
@@ -882,7 +882,7 @@ You can use either the Maven or Gradle dependencies:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.eclipse.jnosql.communication</groupId>
+  <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-solr-driver</artifactId>
   <version>1.0.0-b6</version>
 </dependency>
