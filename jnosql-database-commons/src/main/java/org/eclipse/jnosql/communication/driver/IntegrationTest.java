@@ -19,7 +19,7 @@ package org.eclipse.jnosql.communication.driver;
  * For now, we'll leave this test variable here since the cost of creating a project for a single configuration
  * is too high. And there isn't a big cost of this class on runtime.
  */
-public final class Database {
+public final class IntegrationTest {
 
     /**
      * The {@link System#getProperty(String)} key to find
@@ -31,6 +31,6 @@ public final class Database {
      */
     public final static String INTEGRATION_MATCHES = "true";
 
-    private Database() {
+    private IntegrationTest() {
     }
 }

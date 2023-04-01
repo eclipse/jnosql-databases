@@ -18,11 +18,14 @@ package org.eclipse.jnosql.communication.arangodb.document;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.driver.IntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIfSystemProperty(named = IntegrationTest.INTEGRATION, matches = IntegrationTest.INTEGRATION)
 public class ArangoDBDocumentConfigurationTest {
 
 

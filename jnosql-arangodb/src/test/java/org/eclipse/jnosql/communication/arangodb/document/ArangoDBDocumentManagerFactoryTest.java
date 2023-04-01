@@ -18,9 +18,11 @@ package org.eclipse.jnosql.communication.arangodb.document;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIfSystemProperty(named = "jnosql.test.integration", matches = "true")
 public class ArangoDBDocumentManagerFactoryTest {
 
     private ArangoDBDocumentManagerFactory managerFactory;

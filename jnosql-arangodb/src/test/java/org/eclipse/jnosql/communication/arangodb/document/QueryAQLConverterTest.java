@@ -16,12 +16,14 @@ package org.eclipse.jnosql.communication.arangodb.document;
 
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Map;
 
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@EnabledIfSystemProperty(named = "jnosql.test.integration", matches = "true")
 public class QueryAQLConverterTest {
 
     @Test
