@@ -1,9 +1,7 @@
-= Communications Driver API
+= Eclipse JNoSQL databases
 :toc: auto
 
-The Eclipse JNoSQL Communications API is a collection of implementations from the https://github.com/eclipse-ee4j/nosql[Jakarta NoSQL] specification.
-
-In the NoSQL communication layer, you can make an analogy with JDBC.
+The Eclipse JNoSQL Database API is a collection of implementations from the https://github.com/eclipse-ee4j/nosql[Jakarta NoSQL] specification.
 
 == ArangoDB
 
