@@ -12,7 +12,9 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 - Define integration test and disable it by default
 - Rename project to databases
-- Define container nomenclature
+- Define container nomenclature to integrate test
+- Update package name convention to `org.jnosql.databases.[DATABASE].[LAYER]`
+- Integrate the mapping layer on this repository
 
 == [1.0.0-b6] - 2023-03-11
 
