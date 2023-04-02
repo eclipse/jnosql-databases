@@ -14,13 +14,13 @@
  *   Otavio Santana
  *
  */
-package org.eclipse.jnosql.communication.couchdb.document.configuration;
+package org.eclipse.jnosql.databases.couchdb.communication.configuration;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
-import org.eclipse.jnosql.communication.couchdb.document.CouchDBConfigurations;
-import org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentConfiguration;
-import org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentManagerFactory;
+import org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations;
+import org.eclipse.jnosql.databases.couchdb.communication.CouchDBDocumentConfiguration;
+import org.eclipse.jnosql.databases.couchdb.communication.CouchDBDocumentManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 
 import java.util.function.Supplier;

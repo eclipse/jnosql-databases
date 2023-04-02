@@ -13,7 +13,7 @@
  *   Otavio Santana
  *
  */
-package org.eclipse.jnosql.communication.couchdb.document;
+package org.eclipse.jnosql.databases.couchdb.communication;
 
 final class CouchDBConstant {
 

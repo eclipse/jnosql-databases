@@ -14,7 +14,7 @@
  *   Otavio Santana
  *
  */
-package org.eclipse.jnosql.communication.couchdb.document;
+package org.eclipse.jnosql.databases.couchdb.communication;
 
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
@@ -22,6 +22,7 @@ import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.databases.couchdb.communication.configuration.DocumentDatabase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,6 @@ import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.dele
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.couchdb.document.configuration.DocumentDatabase.INSTANCE;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,7 +59,7 @@ class DefaultCouchDBDocumentManagerTest {
     private CouchDBDocumentManager entityManager;
 
     {
-        CouchDBDocumentManagerFactory managerFactory = INSTANCE.get();
+        CouchDBDocumentManagerFactory managerFactory = DocumentDatabase.INSTANCE.get();
         entityManager = managerFactory.apply("people");
     }
 

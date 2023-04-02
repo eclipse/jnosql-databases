@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.couchdb.document;
+package org.eclipse.jnosql.databases.couchdb.communication;
 
 import org.eclipse.jnosql.communication.CommunicationException;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;

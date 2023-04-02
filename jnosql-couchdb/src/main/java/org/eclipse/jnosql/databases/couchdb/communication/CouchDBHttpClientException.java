@@ -12,8 +12,19 @@
  *
  *   Otavio Santana
  */
+package org.eclipse.jnosql.databases.couchdb.communication;
 
-/**
- * This package has the Apache Couchdb document implementation
- */
-package org.eclipse.jnosql.communication.couchdb.document;
+
+import org.eclipse.jnosql.communication.CommunicationException;
+
+class CouchDBHttpClientException extends CommunicationException {
+
+    public CouchDBHttpClientException(String message) {
+        super(message);
+    }
+
+    public CouchDBHttpClientException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+}
