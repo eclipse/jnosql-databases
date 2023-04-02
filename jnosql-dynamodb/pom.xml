@@ -9,38 +9,42 @@
 	~ ~ Otavio Santana -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.eclipse.jnosql.databases</groupId>
-		<artifactId>jnosql-databases-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.eclipse.jnosql.databases</groupId>
+        <artifactId>jnosql-databases-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
 
-	<artifactId>jnosql-dynamodb</artifactId>
+    <artifactId>jnosql-dynamodb</artifactId>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.jnosql.communication</groupId>
-			<artifactId>jnosql-communication-key-value</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jnosql-database-commons</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-    		<artifactId>dynamodb</artifactId>
-    		<version>2.15.40</version>
-		</dependency>
-		<dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.jnosql.communication</groupId>
+            <artifactId>jnosql-communication-key-value</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jnosql.mapping</groupId>
+            <artifactId>jnosql-mapping-document</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jnosql-database-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>dynamodb</artifactId>
+            <version>2.15.40</version>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 </project>
