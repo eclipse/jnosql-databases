@@ -12,22 +12,21 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.hbase.column;
+package org.eclipse.jnosql.databases.hbase.communication;
 
 
-import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.CommunicationException;
 
-final class HBaseUtils {
+/**
+ * The Hbase exception to diana implementation
+ */
+public class HBaseException extends CommunicationException {
 
-    static final String KEY_COLUMN = "_id";
-
-    private HBaseUtils() {
+    HBaseException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-
-    static Column getKey(Object value) {
-        return Column.of(KEY_COLUMN, value);
+    HBaseException(String message) {
+        super(message);
     }
-
-
 }

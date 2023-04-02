@@ -21,4 +21,4 @@
  * collection of empty or unimportant data, such as finding the 50 largest items in a group of 2 billion records, or
  * finding the non-zero items representing less than 0.1% of a huge collection).
  */
-package org.eclipse.jnosql.communication.hbase;
+package org.eclipse.jnosql.databases.hbase;

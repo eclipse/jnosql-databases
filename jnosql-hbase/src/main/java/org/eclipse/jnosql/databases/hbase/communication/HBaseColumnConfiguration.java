@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.hbase.column;
+package org.eclipse.jnosql.databases.hbase.communication;
 
 
 import org.eclipse.jnosql.communication.Settings;

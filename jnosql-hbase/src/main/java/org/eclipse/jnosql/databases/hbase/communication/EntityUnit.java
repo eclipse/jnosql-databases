@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.hbase.column;
+package org.eclipse.jnosql.databases.hbase.communication;
 
 
 import org.eclipse.jnosql.communication.column.Column;
@@ -27,7 +27,6 @@ import static org.apache.hadoop.hbase.CellUtil.cloneFamily;
 import static org.apache.hadoop.hbase.CellUtil.cloneQualifier;
 import static org.apache.hadoop.hbase.CellUtil.cloneRow;
 import static org.apache.hadoop.hbase.CellUtil.cloneValue;
-import static org.eclipse.jnosql.communication.hbase.column.HBaseUtils.getKey;
 
 class EntityUnit {
 
@@ -61,7 +60,7 @@ class EntityUnit {
     public ColumnEntity toEntity() {
         ColumnEntity entity = ColumnEntity.of(columnFamily);
         entity.addAll(columns);
-        entity.add(getKey(rowKey));
+        entity.add(HBaseUtils.getKey(rowKey));
         return entity;
     }
 

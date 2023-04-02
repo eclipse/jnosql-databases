@@ -13,27 +13,36 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.hbase.column;
+package org.eclipse.jnosql.databases.hbase.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.column.ColumnConfiguration;
-import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-public class HBaseColumnManagerFactoryTest {
-    private ColumnConfiguration configuration = new HBaseColumnConfiguration();
+public class HBaseColumnConfigurationTest {
+
 
     @Test
-    public void shouldCreateColumnManager() {
-        ColumnManagerFactory managerFactory = configuration.apply(Settings.builder().build());
-        assertNotNull(managerFactory);
+    public void shouldCreatesColumnManagerFactory() {
+        ColumnConfiguration configuration = new HBaseColumnConfiguration();
+        assertNotNull(configuration.apply(Settings.builder().build()));
     }
 
+    @Test
+    public void shouldCreatesColumnManagerFactoryFromConfiguration() {
+        ColumnConfiguration configuration = new HBaseColumnConfiguration();
+        assertNotNull(configuration.apply(Settings.builder().build()));
+    }
+
+    @Test
+    public void shouldReturnErrorCreatesColumnManagerFactory() {
+        assertThrows(NullPointerException.class, () -> new HBaseColumnConfiguration(null));
+    }
 }

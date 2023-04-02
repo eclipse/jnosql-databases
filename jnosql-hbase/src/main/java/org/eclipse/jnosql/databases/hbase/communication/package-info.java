@@ -16,4 +16,4 @@
 /**
  * This package has all the hbase implementation to column
  */
-package org.eclipse.jnosql.communication.hbase.column;
+package org.eclipse.jnosql.databases.hbase.communication;
