@@ -142,6 +142,96 @@ jnosql.cassandra.query-1=<CQL-QUERY>
 jnosql.cassandra.query.2=<CQL-QUERY-2>
 ----
 
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<CassandraColumnManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<CassandraColumnManager> {
+
+    @Produces
+    public CassandraColumnManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        CassandraConfiguration configuration = new CassandraConfiguration();
+        CassandraColumnManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+=== Repository
+
+The ```CassandraRepository``` interface is an extension of the ```Repository``` interface that allows execution of CQL and Consistency Level via the ```@CQL``` annotation.
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends CassandraRepository<Person, String> {
+
+    @CQL("select * from Person")
+    List<Person> findAll();
+
+    @CQL("select * from Person where name = ?")
+    List<Person> findByName(String name);
+
+    @CQL("select * from Person where age = :age")
+    List<Person> findByAge(@Param("age") Integer age);
+ }
+----
+
+
+=== @UDT
+
+The ```@UDT``` annotation is a mapping annotation that allows defining a field to be stored as a user-defined type in Cassandra.
+
+[source,java]
+----
+@Entity
+public class Person {
+
+    @Id("name")
+    private String name;
+
+    @Column
+    private Integer age;
+
+    @UDT("address")
+    @Column
+    private Address home;
+ }
+----
+
+=== Converts
+
+* TimestampConverter: That converts to/from java.util.Date
+* LocalDateConverter: That converts to/from com.datastax.driver.core.LocalDate
+
+[source,java]
+----
+    @Column
+    @Convert(value = TimestampConverter.class)
+    private LocalDateTime localDateTime;
+
+    @Column
+    @Convert(value = LocalDateConverter.class)
+    private Calendar calendar;
+----
+
+=== Template
+
+The ```CassandraTemplate``` interface is a specialization of ```ColumnTemplate``` interface that allows using CQL.
+
+[source,java]
+----
+@Inject
+CassandraTemplate template;
+...
+template.save(person, ConsistencyLevel.ONE);
+----
+
 == Couchbase
 
 image::https://jnosql.github.io/img/logos/couchbase.svg[Couchbase Project,align="center"width=25%,height=25%]
