@@ -40,7 +40,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static org.eclipse.jnosql.databases.couchbase.communication.EntityConverter.convert;
 
 /**
  * The default implementation of {@link CouchbaseDocumentManager}
