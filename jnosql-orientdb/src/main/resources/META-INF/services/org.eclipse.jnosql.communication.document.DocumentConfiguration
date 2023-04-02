@@ -1,1 +1,1 @@
-org.eclipse.jnosql.communication.orientdb.document.OrientDBDocumentConfiguration
+org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentConfiguration
