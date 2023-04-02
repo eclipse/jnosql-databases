@@ -16,11 +16,9 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.driver.ValueJSON;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.communication.driver.ValueJSON;
-import org.eclipse.jnosql.databases.dynamodb.communication.ConfigurationAmazonEntity;
-import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBUtils;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
