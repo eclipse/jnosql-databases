@@ -13,53 +13,57 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.infinispan.keyvalue.model;
+package org.eclipse.jnosql.databases.infinispan.communication.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 
+public class ProductCart implements Serializable {
 
-public class Person implements Serializable {
-
-    private static final long serialVersionUID = 5089852596376703955L;
+    private static final long serialVersionUID = 4087960613230439836L;
 
     private final String name;
 
-    private final Integer age;
+    private final BigDecimal price;
 
     public String getName() {
         return name;
     }
 
-    public Integer getAge() {
-        return age;
+    public BigDecimal getPrice() {
+        return price;
     }
 
 
-    public Person(String name, Integer age) {
+    public ProductCart(String name, BigDecimal price) {
         this.name = name;
-        this.age = age;
+        this.price = price;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return Objects.equals(name, person.name) &&
-                Objects.equals(age, person.age);
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ProductCart that = (ProductCart) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(price, that.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age);
+        return Objects.hash(name, price);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Person{");
+        final StringBuilder sb = new StringBuilder("ProductCart{");
         sb.append("name='").append(name).append('\'');
-        sb.append(", age=").append(age);
+        sb.append(", price=").append(price);
         sb.append('}');
         return sb.toString();
     }

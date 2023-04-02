@@ -12,7 +12,7 @@
  *
  *   The Infinispan Team
  */
-package org.eclipse.jnosql.communication.infinispan.keyvalue;
+package org.eclipse.jnosql.databases.infinispan.communication;
 
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.junit.jupiter.api.BeforeEach;

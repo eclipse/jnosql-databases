@@ -23,4 +23,4 @@
  * <li>Works on AWS, Azure, Google Cloud and OpenShift.</li>
  * </ul>
  */
-package org.eclipse.jnosql.communication.infinispan;
+package org.eclipse.jnosql.databases.infinispan;

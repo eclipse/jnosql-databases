@@ -13,42 +13,43 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.infinispan.keyvalue.model;
+package org.eclipse.jnosql.databases.infinispan.communication.model;
+
 
 import java.io.Serializable;
 import java.util.Objects;
 
+public class LineBank implements Serializable {
 
-public class User implements Serializable {
 
-    private final String nickName;
+    private final Person person;
 
-    public User(String nickName) {
-        this.nickName = nickName;
-
+    public Person getPerson() {
+        return person;
     }
 
-    public String getNickName() {
-        return nickName;
+    public LineBank(String name, Integer age) {
+        this.person = new Person(name, age);
+
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(nickName, user.nickName);
+        LineBank lineBank = (LineBank) o;
+        return Objects.equals(person, lineBank.person);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(nickName);
+        return Objects.hash(person);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("nickName='").append(nickName).append('\'');
+        final StringBuilder sb = new StringBuilder("LineBank{");
+        sb.append("person=").append(person);
         sb.append('}');
         return sb.toString();
     }

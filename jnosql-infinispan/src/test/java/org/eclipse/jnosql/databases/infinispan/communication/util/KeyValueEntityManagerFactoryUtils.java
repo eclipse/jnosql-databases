@@ -12,13 +12,13 @@
  *
  *   The Infinispan Team
  */
-package org.eclipse.jnosql.communication.infinispan.keyvalue.util;
+package org.eclipse.jnosql.databases.infinispan.communication.util;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
-import org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanConfigurations;
-import org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanKeyValueConfiguration;
+import org.eclipse.jnosql.databases.infinispan.communication.InfinispanConfigurations;
+import org.eclipse.jnosql.databases.infinispan.communication.InfinispanKeyValueConfiguration;
 
 
 public class KeyValueEntityManagerFactoryUtils {

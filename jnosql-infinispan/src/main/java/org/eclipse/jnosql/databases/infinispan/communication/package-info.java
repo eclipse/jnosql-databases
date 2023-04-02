@@ -13,4 +13,4 @@
  *   The Infinispan Team
  */
 
-package org.eclipse.jnosql.communication.infinispan.keyvalue;
+package org.eclipse.jnosql.databases.infinispan.communication;

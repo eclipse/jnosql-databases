@@ -13,32 +13,25 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.infinispan.keyvalue.model;
+package org.eclipse.jnosql.databases.infinispan.communication.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
-public class ProductCart implements Serializable {
+public class Species implements Serializable {
 
-    private static final long serialVersionUID = 4087960613230439836L;
+    private static final long serialVersionUID = -1493508757572337719L;
 
-    private final String name;
+    private final List<String> animals;
 
-    private final BigDecimal price;
-
-    public String getName() {
-        return name;
+    public Species(String... animals) {
+        this.animals = Arrays.asList(animals);
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-
-    public ProductCart(String name, BigDecimal price) {
-        this.name = name;
-        this.price = price;
+    public List<String> getAnimals() {
+        return animals;
     }
 
     @Override
@@ -49,21 +42,19 @@ public class ProductCart implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ProductCart that = (ProductCart) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(price, that.price);
+        Species species = (Species) o;
+        return Objects.equals(animals, species.animals);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, price);
+        return Objects.hashCode(animals);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ProductCart{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", price=").append(price);
+        final StringBuilder sb = new StringBuilder("Species{");
+        sb.append("animals=").append(animals);
         sb.append('}');
         return sb.toString();
     }

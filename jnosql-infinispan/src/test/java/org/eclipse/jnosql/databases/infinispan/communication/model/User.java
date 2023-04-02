@@ -13,48 +13,42 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.infinispan.keyvalue.model;
+package org.eclipse.jnosql.databases.infinispan.communication.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
-public class Species implements Serializable {
 
-    private static final long serialVersionUID = -1493508757572337719L;
+public class User implements Serializable {
 
-    private final List<String> animals;
+    private final String nickName;
 
-    public Species(String... animals) {
-        this.animals = Arrays.asList(animals);
+    public User(String nickName) {
+        this.nickName = nickName;
+
     }
 
-    public List<String> getAnimals() {
-        return animals;
+    public String getNickName() {
+        return nickName;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Species species = (Species) o;
-        return Objects.equals(animals, species.animals);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(nickName, user.nickName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(animals);
+        return Objects.hashCode(nickName);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Species{");
-        sb.append("animals=").append(animals);
+        final StringBuilder sb = new StringBuilder("User{");
+        sb.append("nickName='").append(nickName).append('\'');
         sb.append('}');
         return sb.toString();
     }

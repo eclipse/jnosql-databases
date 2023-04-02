@@ -13,11 +13,11 @@
  *   The Infinispan Team
  */
 
-package org.eclipse.jnosql.communication.infinispan.keyvalue;
+package org.eclipse.jnosql.databases.infinispan.communication;
 
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.communication.infinispan.keyvalue.model.Species;
-import org.eclipse.jnosql.communication.infinispan.keyvalue.util.KeyValueEntityManagerFactoryUtils;
+import org.eclipse.jnosql.databases.infinispan.communication.model.Species;
+import org.eclipse.jnosql.databases.infinispan.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
