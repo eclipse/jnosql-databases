@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.jnosql.mapping</groupId>
-            <artifactId>jnosql-mapping-document</artifactId>
+            <artifactId>jnosql-mapping-key-value</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
