@@ -15,9 +15,9 @@ import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.cassandra.column.CassandraColumnManager;
-import org.eclipse.jnosql.communication.cassandra.column.CassandraColumnManagerFactory;
-import org.eclipse.jnosql.communication.cassandra.column.CassandraConfiguration;
+import org.eclipse.jnosql.databases.cassandra.communication.column.CassandraColumnManager;
+import org.eclipse.jnosql.databases.cassandra.communication.column.CassandraColumnManagerFactory;
+import org.eclipse.jnosql.databases.cassandra.communication.column.CassandraConfiguration;
 import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
 
 import java.util.Optional;
