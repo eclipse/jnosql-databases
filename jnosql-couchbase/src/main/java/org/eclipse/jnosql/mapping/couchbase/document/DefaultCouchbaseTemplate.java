@@ -20,7 +20,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentManager;
+import org.eclipse.jnosql.databases.couchbase.CouchbaseDocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;

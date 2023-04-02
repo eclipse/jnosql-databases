@@ -15,9 +15,9 @@ import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentConfiguration;
-import org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentManager;
-import org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentManagerFactory;
+import org.eclipse.jnosql.databases.couchbase.CouchbaseDocumentConfiguration;
+import org.eclipse.jnosql.databases.couchbase.CouchbaseDocumentManager;
+import org.eclipse.jnosql.databases.couchbase.CouchbaseDocumentManagerFactory;
 import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
 
 import java.util.Optional;

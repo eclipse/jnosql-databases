@@ -17,7 +17,7 @@ package org.eclipse.jnosql.mapping.couchbase.document;
 import com.couchbase.client.java.json.JsonObject;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentManager;
+import org.eclipse.jnosql.databases.couchbase.CouchbaseDocumentManager;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.mapping.Convert;
