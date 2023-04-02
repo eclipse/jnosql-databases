@@ -1,1 +1,1 @@
-org.eclipse.jnosql.cassandra.databases.communication.column.CassandraConfiguration
+org.eclipse.jnosql.databases.cassandra.communication.column.CassandraConfiguration
