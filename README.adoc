@@ -1050,8 +1050,15 @@ To add a new driver, we have a few requirements:
 * Include the documentation driver in the README file.
 * Cover the driver with tests and preferences with TestContainer.
 * Please pay attention to the documentation. This includes JavaDoc
-* Include a class to represent and contain the properties.
-** A nomenclature is the <DATABASE>Configurations, e.g., CassandraConfigurations, MongoDBConfigurations
+* Include a class to represent and contain the properties. In general, those are `enum`
+** A nomenclature is the <DATABASE>Configurations, e.g., CassandraConfigurations, MongoDBConfigurations.
+** The package name will follow the terminology: `org.jnosql.databases.[DATABASE].[LAYER].[TYPE]`
+*** E.g., Give a database called "Ada" that is a column type, the package name will be: `org.eclipse.jnosql.databases.ada.communication.column` for the driver layer and `org.eclipse.jnosql.databases.ada.mapping.column` for the mapping.
+*** You can include the database in a single project if a NoSQL supports multiple database types.
+* It is crucial to have an integration test with the database; please annotate those `EnabledIfSystemProperty` and check the integration session to know more.
+* Create a `Supplier` class on the mapping layer that will produce a specific Manager instance using Microprofile. Check: `ColumnManagerSupplier``DocumentManagerSupplier` classes to get more information.
+
+
 
 == Graph Drivers
 
