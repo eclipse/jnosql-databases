@@ -23,7 +23,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-hazelcast-driver</artifactId>
+    <artifactId>jnosql-hazelcast</artifactId>
     <description>The Eclipse JNoSQL layer to Hazelcast</description>
 
     <dependencies>

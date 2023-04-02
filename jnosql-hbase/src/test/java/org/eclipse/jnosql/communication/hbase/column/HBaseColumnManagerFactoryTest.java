@@ -21,12 +21,12 @@ import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.junit.Assert.assertNotNull;
 
 
-@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
+@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class HBaseColumnManagerFactoryTest {
     private ColumnConfiguration configuration = new HBaseColumnConfiguration();
 

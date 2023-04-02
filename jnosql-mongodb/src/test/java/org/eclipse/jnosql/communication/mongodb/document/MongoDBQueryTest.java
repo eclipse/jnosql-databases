@@ -36,10 +36,10 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 
-@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
+@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class MongoDBQueryTest {
 
     public static final String COLLECTION_NAME = "person";

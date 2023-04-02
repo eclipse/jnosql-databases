@@ -24,12 +24,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.List;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
+@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class DefaultCouchbaseBucketManagerFactoryTest {
 
     private CouchbaseBucketManagerFactory factory;

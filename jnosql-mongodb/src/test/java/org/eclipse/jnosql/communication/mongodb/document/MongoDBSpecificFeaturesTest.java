@@ -39,11 +39,11 @@ import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
+@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class MongoDBSpecificFeaturesTest {
 
     public static final String COLLECTION_NAME = "person";

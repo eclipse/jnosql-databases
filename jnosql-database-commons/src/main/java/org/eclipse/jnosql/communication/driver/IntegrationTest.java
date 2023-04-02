@@ -24,12 +24,12 @@ public final class IntegrationTest {
     /**
      * The {@link System#getProperty(String)} key to find
      */
-    public final static String INTEGRATION = "jnosql.test.integration";
+    public final static String NAMED = "jnosql.test.integration";
 
     /**
      * The match value on the integration test
      */
-    public final static String INTEGRATION_MATCHES = "true";
+    public final static String MATCHES = "true";
 
     private IntegrationTest() {
     }

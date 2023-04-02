@@ -39,13 +39,13 @@ import java.util.stream.Collectors;
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.INTEGRATION_MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = INTEGRATION, matches = INTEGRATION_MATCHES)
+@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class DocumentQueryTest {
 
     public static final String COLLECTION_NAME = "person";
