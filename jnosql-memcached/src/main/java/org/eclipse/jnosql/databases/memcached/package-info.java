@@ -22,4 +22,4 @@
  * Memcached's APIs provide a very large hash table distributed across multiple machines.
  * When the table is full, subsequent inserts cause older data to be purged in least recently used (LRU) order.
  */
-package org.eclipse.jnosql.communication.memcached;
+package org.eclipse.jnosql.databases.memcached;

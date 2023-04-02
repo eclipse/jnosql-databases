@@ -1,1 +1,1 @@
-org.eclipse.jnosql.communication.memcached.keyvalue.MemcachedKeyValueConfiguration
+org.eclipse.jnosql.databases.memcached.communication.MemcachedKeyValueConfiguration

@@ -12,8 +12,13 @@
  *
  *   Otavio Santana
  */
+package org.eclipse.jnosql.databases.memcached.communication;
 
-/**
- * The key-value implementation to memcached
- */
-package org.eclipse.jnosql.communication.memcached.keyvalue;
+import org.eclipse.jnosql.communication.CommunicationException;
+
+class MemcachedException extends CommunicationException {
+
+    MemcachedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

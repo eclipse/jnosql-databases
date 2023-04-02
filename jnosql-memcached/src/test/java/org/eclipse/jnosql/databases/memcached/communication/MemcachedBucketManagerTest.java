@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.memcached.keyvalue;
+package org.eclipse.jnosql.databases.memcached.communication;
 
 
 import org.eclipse.jnosql.communication.Value;
