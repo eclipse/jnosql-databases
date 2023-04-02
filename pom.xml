@@ -31,9 +31,9 @@
     <description>The Eclipse JNoSQL databases vendors</description>
 
     <scm>
-        <connection>scm:git:git://github.com/eclipse/jnosql-databases-driver.git</connection>
-        <developerConnection>scm:git:ssh://github.com:eclipse/jnosql-databases-driver.git</developerConnection>
-        <url>https://github.com/eclipse/jnosql-databases-driver</url>
+        <connection>scm:git:git://github.com/eclipse/jnosql-databases.git</connection>
+        <developerConnection>scm:git:ssh://github.com:eclipse/jnosql-databases.git</developerConnection>
+        <url>https://github.com/eclipse/jnosql-databases</url>
     </scm>
 
     <properties>
