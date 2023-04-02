@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.dynamodb;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;

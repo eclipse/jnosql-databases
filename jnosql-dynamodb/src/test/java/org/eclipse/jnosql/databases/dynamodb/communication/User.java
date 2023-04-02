@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.dynamodb.keyvalue;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import java.io.Serializable;
 import java.util.Objects;

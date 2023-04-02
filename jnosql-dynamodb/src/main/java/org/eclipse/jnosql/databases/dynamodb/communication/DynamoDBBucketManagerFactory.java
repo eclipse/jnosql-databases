@@ -12,10 +12,9 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.dynamodb.keyvalue;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.communication.dynamodb.DynamoTableUtils;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.List;

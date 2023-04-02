@@ -12,11 +12,10 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.dynamodb.keyvalue;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
-import org.eclipse.jnosql.communication.dynamodb.DynamoDBConfiguration;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 public class DynamoDBKeyValueConfiguration extends DynamoDBConfiguration

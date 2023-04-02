@@ -13,7 +13,7 @@
  *   Otavio Santana
  *   Alessandro Moscatelli
  */
-package org.eclipse.jnosql.communication.dynamodb;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
@@ -34,8 +34,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.eclipse.jnosql.communication.dynamodb.ConfigurationAmazonEntity.KEY;
-import static org.eclipse.jnosql.communication.dynamodb.ConfigurationAmazonEntity.VALUE;
+import static org.eclipse.jnosql.databases.dynamodb.communication.ConfigurationAmazonEntity.KEY;
+import static org.eclipse.jnosql.databases.dynamodb.communication.ConfigurationAmazonEntity.VALUE;
 
 public class DynamoDBUtils {
 

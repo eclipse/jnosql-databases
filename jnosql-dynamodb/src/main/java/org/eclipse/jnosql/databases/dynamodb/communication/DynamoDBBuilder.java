@@ -12,8 +12,17 @@
  *
  *   Otavio Santana
  */
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
-/**
- * The DynamoDB key-value implementation
- */
-package org.eclipse.jnosql.communication.dynamodb;
+public interface DynamoDBBuilder {
+    void endpoint(String endpoint);
+
+    void region(String region);
+
+    void profile(String profile);
+
+    void awsAccessKey(String awsAccessKey);
+
+    void awsSecretAccess(String awsSecretAccess);
+
+}

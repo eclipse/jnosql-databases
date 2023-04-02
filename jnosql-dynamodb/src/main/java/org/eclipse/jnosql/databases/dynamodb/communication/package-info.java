@@ -12,12 +12,8 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.dynamodb;
 
-public final class ConfigurationAmazonEntity {
-    public static final String KEY = "key";
-    public static final String VALUE = "value";
-
-    private ConfigurationAmazonEntity() {
-    }
-}
+/**
+ * The DynamoDB key-value implementation
+ */
+package org.eclipse.jnosql.databases.dynamodb.communication;

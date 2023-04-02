@@ -12,9 +12,10 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.dynamodb.keyvalue;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBKeyValueConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

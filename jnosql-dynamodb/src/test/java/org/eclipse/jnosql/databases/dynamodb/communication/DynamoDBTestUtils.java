@@ -12,11 +12,10 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.dynamodb;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.communication.dynamodb.keyvalue.DynamoDBKeyValueConfiguration;
 import org.testcontainers.containers.GenericContainer;
 
 public class DynamoDBTestUtils {

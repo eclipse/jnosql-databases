@@ -13,7 +13,7 @@
  *   Otavio Santana
  *   Alessandro Moscatelli
  */
-package org.eclipse.jnosql.communication.dynamodb;
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import java.util.ArrayList;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;

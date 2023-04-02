@@ -12,8 +12,12 @@
  *
  *   Otavio Santana
  */
+package org.eclipse.jnosql.databases.dynamodb.communication;
 
-/**
- * The DynamoDB key-value implementation
- */
-package org.eclipse.jnosql.communication.dynamodb.keyvalue;
+public final class ConfigurationAmazonEntity {
+    public static final String KEY = "key";
+    public static final String VALUE = "value";
+
+    private ConfigurationAmazonEntity() {
+    }
+}
