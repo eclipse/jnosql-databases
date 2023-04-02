@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.cassandra.mapping.column;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.cassandra.column.UDT;
+import org.eclipse.jnosql.databases.cassandra.communication.column.UDT;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnEntity;
 import org.eclipse.jnosql.databases.cassandra.mapping.column.model.Actor;
@@ -289,7 +289,7 @@ public class CassandraColumnEntityConverterTest {
         ColumnEntity entity = converter.toColumn(person);
         assertEquals("Person", entity.name());
         Column column = entity.find("home").get();
-        org.eclipse.jnosql.communication.cassandra.column.UDT udt = org.eclipse.jnosql.communication.cassandra.column.UDT.class.cast(column);
+        UDT udt = UDT.class.cast(column);
 
         assertEquals("address", udt.getUserType());
         assertEquals("home", udt.name());
