@@ -20,7 +20,7 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
-import org.eclipse.jnosql.communication.cassandra.column.CassandraColumnManager;
+import org.eclipse.jnosql.databases.cassandra.communication.column.CassandraColumnManager;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
 import org.eclipse.jnosql.communication.column.ColumnEntity;

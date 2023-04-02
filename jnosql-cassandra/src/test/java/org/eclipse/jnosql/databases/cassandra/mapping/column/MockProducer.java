@@ -19,9 +19,9 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.interceptor.Interceptor;
-import org.eclipse.jnosql.communication.cassandra.column.CassandraColumnManager;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.databases.cassandra.communication.column.CassandraColumnManager;
 import org.mockito.Mockito;
 
 import java.util.function.Supplier;
