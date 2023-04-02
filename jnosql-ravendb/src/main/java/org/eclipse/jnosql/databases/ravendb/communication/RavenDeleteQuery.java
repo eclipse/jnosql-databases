@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.ravendb.document;
+package org.eclipse.jnosql.databases.ravendb.communication;
 
 import jakarta.data.repository.Sort;
 import org.eclipse.jnosql.communication.document.DocumentCondition;

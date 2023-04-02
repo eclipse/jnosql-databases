@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.ravendb.document;
+package org.eclipse.jnosql.databases.ravendb.communication;
 
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import net.ravendb.client.documents.DocumentStore;

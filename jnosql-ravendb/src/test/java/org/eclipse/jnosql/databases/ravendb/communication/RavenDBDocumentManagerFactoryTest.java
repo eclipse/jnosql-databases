@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.ravendb.document;
+package org.eclipse.jnosql.databases.ravendb.communication;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

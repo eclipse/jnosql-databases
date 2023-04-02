@@ -16,4 +16,4 @@
 /**
  * The raven document implementation
  */
-package org.eclipse.jnosql.communication.ravendb.document;
+package org.eclipse.jnosql.databases.ravendb.communication;

@@ -13,27 +13,36 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.communication.ravendb.document;
-
+package org.eclipse.jnosql.databases.ravendb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.junit.jupiter.api.Test;
 
-import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.Map;
 
-public enum  DocumentConfigurationUtils implements Supplier<DocumentManagerFactory> {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-INSTANCE;
+public class RavenDBDocumentConfigurationTest {
 
-    public DocumentManagerFactory get() {
+    @Test
+    public void shouldCreateDocumentManagerFactoryByMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("ravendb-server-host-1", "172.17.0.2:8080");
+        RavenDBDocumentConfiguration configuration = new RavenDBDocumentConfiguration();
+        DocumentManagerFactory managerFactory = configuration.apply(Settings.of(map));
+        assertNotNull(managerFactory);
+    }
+
+
+    @Test
+    public void shouldReturnErrorWhenSettingsIsNull() {
         DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
-        return configuration.apply(getSettings());
+        assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
-    public Settings getSettings() {
-        return Settings.builder()
-                .put(RavenDBDocumentConfiguration.HOST, "http://localhost:8080").build();
-    }
 
 }

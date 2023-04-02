@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.ravendb.document;
+package org.eclipse.jnosql.databases.ravendb.communication;
 
 public enum ContactType {
     EMAIL, MOBILE, PHONE
