@@ -19,4 +19,4 @@
  * from Amazon's Dynamo paper with heavy influence from the CAP Theorem. Written in Erlang, Riak has fault
  * tolerance data replication and automatic data distribution across the cluster for performance and resilience.
  */
-package org.eclipse.jnosql.communication.riak;
+package org.eclipse.jnosql.databases.riak;

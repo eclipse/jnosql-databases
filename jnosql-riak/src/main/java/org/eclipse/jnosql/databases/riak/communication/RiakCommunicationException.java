@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.riak.keyvalue;
+package org.eclipse.jnosql.databases.riak.communication;
 
 
 import org.eclipse.jnosql.communication.CommunicationException;

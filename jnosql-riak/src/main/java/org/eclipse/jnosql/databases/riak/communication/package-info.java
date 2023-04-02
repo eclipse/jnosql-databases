@@ -15,4 +15,4 @@
 /**
  * The riak key-value implementation
  */
-package org.eclipse.jnosql.communication.riak.keyvalue;
+package org.eclipse.jnosql.databases.riak.communication;

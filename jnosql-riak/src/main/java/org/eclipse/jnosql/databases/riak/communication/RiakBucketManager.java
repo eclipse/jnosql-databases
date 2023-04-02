@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.communication.riak.keyvalue;
+package org.eclipse.jnosql.databases.riak.communication;
 
 
 import com.basho.riak.client.api.RiakClient;
@@ -34,9 +34,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
-import static org.eclipse.jnosql.communication.riak.keyvalue.RiakUtils.createDeleteValue;
-import static org.eclipse.jnosql.communication.riak.keyvalue.RiakUtils.createFetchValue;
-import static org.eclipse.jnosql.communication.riak.keyvalue.RiakUtils.createStoreValue;
 
 public class RiakBucketManager implements BucketManager {
 
@@ -74,7 +71,7 @@ public class RiakBucketManager implements BucketManager {
         Object key = entity.key();
         Object value = entity.value();
 
-        StoreValue storeValue = createStoreValue(key, value, nameSpace, ttl);
+        StoreValue storeValue = RiakUtils.createStoreValue(key, value, nameSpace, ttl);
 
         try {
             client.execute(storeValue);
@@ -102,7 +99,7 @@ public class RiakBucketManager implements BucketManager {
             throw new RiakCommunicationException("The Key is irregular", new IllegalStateException());
         }
 
-        FetchValue fetchValue = createFetchValue(nameSpace, key);
+        FetchValue fetchValue = RiakUtils.createFetchValue(nameSpace, key);
         try {
 
             FetchValue.Response response = client.execute(fetchValue);
@@ -150,7 +147,7 @@ public class RiakBucketManager implements BucketManager {
     @Override
     public <K> void delete(K key) throws NullPointerException {
 
-        DeleteValue deleteValue = createDeleteValue(nameSpace, key);
+        DeleteValue deleteValue = RiakUtils.createDeleteValue(nameSpace, key);
 
         try {
             client.execute(deleteValue);
