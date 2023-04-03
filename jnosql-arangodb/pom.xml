@@ -36,6 +36,14 @@
             <artifactId>jnosql-communication-document</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jnosql.mapping</groupId>
+            <artifactId>jnosql-mapping-document</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jnosql.mapping</groupId>
+            <artifactId>jnosql-mapping-key-value</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jnosql.communication</groupId>
             <artifactId>jnosql-communication-key-value</artifactId>
         </dependency>
@@ -48,6 +56,11 @@
             <groupId>com.arangodb</groupId>
             <artifactId>arangodb-java-driver</artifactId>
             <version>${arango.driver}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-junit5</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
