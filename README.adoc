@@ -70,17 +70,68 @@ This is an example using ArangoDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.arangodb.document.ArangoDBDocumentConfiguration
-jnosql.document.database=heroes
+jnosql.document.database=<DATABASE>
+jnosql.arangodb.host=localhost:8529
 ----
 
 This is an example using ArangoDB's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.keyvalue.database=heroes
-jnosql.keyvalue.provider=org.eclipse.jnosql.communication.arangodb.keyvalue.ArangoDBKeyValueConfiguration
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.arangodb.communication.ArangoDBKeyValueConfiguration
+jnosql.keyvalue.database=<DATABASE>
+jnosql.arangodb.host=localhost:8529
 ----
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<ArangoDBDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<ArangoDBDocumentManager> {
+
+    @Produces
+    public ArangoDBDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
+        ArangoDBDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+
+=== Repository
+
+The ```ArangoDBRepository``` interface is an extension of the ```Repository``` interface that allows execution of AQL via the ```@AQL``` annotation.
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends ArangoDBRepository<Person, String> {
+
+    @AQL("FOR p IN Person RETURN p")
+    List<Person> findAll();
+
+    @AQL("FOR p IN Person FILTER p.name = @name RETURN p")
+    List<Person> findByName(@Param("name") String name);
+}
+----
+
+=== Template
+
+The ```ArangoDBTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows using both synchronous and asynchronous AQL.
+
+[source,java]
+----
+@Inject
+private ArangoDBTemplate template;
+...
+List<Person> people = template.aql("FOR p IN Person FILTER p.name = @name RETURN p", params);
+----
+
 
 == Cassandra
 
