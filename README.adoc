@@ -70,6 +70,7 @@ This is an example using ArangoDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
+jnosql.document.provider=org.eclipse.jnosql.databases.arangodb.communication.ArangoDBDocumentConfiguration
 jnosql.document.database=<DATABASE>
 jnosql.arangodb.host=localhost:8529
 ----
