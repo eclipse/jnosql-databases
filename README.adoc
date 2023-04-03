@@ -136,10 +136,100 @@ This is an example using Cassandra with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.column.provider=org.eclipse.jnosql.communication.cassandra.column.CassandraConfiguration
+jnosql.column.provider=org.eclipse.jnosql.databases.cassandra.communication.CassandraConfiguration
 jnosql.column.database=developers
 jnosql.cassandra.query-1=<CQL-QUERY>
 jnosql.cassandra.query.2=<CQL-QUERY-2>
+----
+
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<CassandraColumnManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<CassandraColumnManager> {
+
+    @Produces
+    public CassandraColumnManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        CassandraConfiguration configuration = new CassandraConfiguration();
+        CassandraColumnManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+=== Repository
+
+The ```CassandraRepository``` interface is an extension of the ```Repository``` interface that allows execution of CQL and Consistency Level via the ```@CQL``` annotation.
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends CassandraRepository<Person, String> {
+
+    @CQL("select * from Person")
+    List<Person> findAll();
+
+    @CQL("select * from Person where name = ?")
+    List<Person> findByName(String name);
+
+    @CQL("select * from Person where age = :age")
+    List<Person> findByAge(@Param("age") Integer age);
+ }
+----
+
+
+=== @UDT
+
+The ```@UDT``` annotation is a mapping annotation that allows defining a field to be stored as a user-defined type in Cassandra.
+
+[source,java]
+----
+@Entity
+public class Person {
+
+    @Id("name")
+    private String name;
+
+    @Column
+    private Integer age;
+
+    @UDT("address")
+    @Column
+    private Address home;
+ }
+----
+
+=== Converts
+
+* TimestampConverter: That converts to/from java.util.Date
+* LocalDateConverter: That converts to/from com.datastax.driver.core.LocalDate
+
+[source,java]
+----
+    @Column
+    @Convert(value = TimestampConverter.class)
+    private LocalDateTime localDateTime;
+
+    @Column
+    @Convert(value = LocalDateConverter.class)
+    private Calendar calendar;
+----
+
+=== Template
+
+The ```CassandraTemplate``` interface is a specialization of ```ColumnTemplate``` interface that allows using CQL.
+
+[source,java]
+----
+@Inject
+CassandraTemplate template;
+...
+template.save(person, ConsistencyLevel.ONE);
 ----
 
 == Couchbase
@@ -201,7 +291,7 @@ This is an example using Couchbase's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.couchbase.document.CouchbaseDocumentConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.couchbase.communication.CouchbaseDocumentConfiguration
 jnosql.document.database=heroes
 jnosql.couchbase.host.1=localhost
 jnosql.couchbase.user=root
@@ -213,10 +303,59 @@ This is an example using Couchbase's Key-Value API with MicroProfile Config.
 [source,properties]
 ----
 jnosql.keyvalue.database=heroes
-jnosql.keyvalue.provider=org.eclipse.jnosql.communication.couchbase.keyvalue.CouchbaseKeyValueConfiguration
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.couchbase.communication.CouchbaseKeyValueConfiguration
 jnosql.couchbase.host.1=localhost
 jnosql.couchbase.user=root
 jnosql.couchbase.password=123456
+----
+
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<CouchbaseDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<CouchbaseDocumentManager> {
+
+    @Produces
+    public CouchbaseDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+        CouchbaseDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+=== Repository
+
+The ```CouchbaseRepository``` interface is an extension of the ```Repository``` interface that allows execution of N1QL via the ```@N1QL``` annotation.
+
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends CouchbaseRepository<Person, String> {
+
+@N1QL("select * from Person")
+List<Person> findAll();
+
+@N1QL("select * from Person where name = $name")
+List<Person> findByName(@Param("name") String name);
+
+}
+----
+
+
+=== Template
+
+The ```CouchbaseTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows using N1QL on both synchronous and asynchronous.
+
+[source,java]
+----
+List<Person> people = template.n1qlQuery("select * from Person where name = $name", params);
 ----
 
 == CouchDB
@@ -288,7 +427,7 @@ This is an example using CouchDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.couchdb.document.CouchDBDocumentConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.couchdb.communication.CouchDBDocumentConfiguration
 jnosql.document.database=heroes
 jnosql.couchdb.host=localhost
 jnosql.couchdb.username=admin
@@ -343,8 +482,43 @@ This is an example using Elasticsearch's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.elasticsearch.document.ElasticsearchDocumentConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.elasticsearch.communication.ElasticsearchDocumentConfiguration
 jnosql.document.database=developers
+----
+
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<ElasticsearchDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<ElasticsearchDocumentManager> {
+
+    @Produces
+    public ElasticsearchDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
+        ElasticsearchDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+
+=== Template
+
+The ```ElasticsearchTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows using a search engine on both synchronous and asynchronous.
+
+[source,java]
+----
+@Inject
+ElasticsearchTemplate template;
+...
+
+QueryBuilder queryBuilder = boolQuery().filter(termQuery("name", "Ada"));
+List<Person> people = template.search(queryBuilder, "Person");
 ----
 
 == Hazelcast
@@ -404,8 +578,55 @@ This is an example using Hazelcast's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.keyvalue.provider=org.eclipse.jnosql.communication.hazelcast.keyvalue.HazelcastKeyValueConfiguration
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.hazelcast.communication.HazelcastKeyValueConfiguration
 jnosql.keyvalue.database=heroes
+----
+
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<HazelcastBucketManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<HazelcastBucketManager> {
+
+    @Produces
+    public HazelcastBucketManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        HazelcastKeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
+        HazelcastBucketManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+
+=== Repository
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends HazelcastRepository<Person, String> {
+
+        @Query("active")
+        List<Person> findActive();
+
+        @Query("name = :name AND age = :age")
+        Set<Person> findByAgeAndInteger(@Param("name") String name, @Param("age") Integer age);
+    }
+----
+
+=== Template
+
+The ```HazelcastTemplate``` interface is a specialization of the ```KeyValueTemplate``` interface that allows execution of a Hazelcast query.
+
+[source,java]
+----
+Collection<Person> people = template.query("active");
+Collection<Person> people2 = template.query("age = :age", singletonMap("age", 10));
+Collection<Person> people3 = template.query(Predicates.equal("name",  "Poliana"));
 ----
 
 == HBase
@@ -447,7 +668,7 @@ This is an example using HBase's *Column Family* NoSQL API with MicroProfile Con
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.hbase.column.HBaseColumnConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.hbase.communication.HBaseColumnConfiguration
 jnosql.column.database=heroes
 ----
 
@@ -493,7 +714,7 @@ This is an example using Infinispan's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.keyvalue.provider=org.eclipse.jnosql.communication.infinispan.keyvalue.InfinispanKeyValueConfiguration
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.infinispan.communication.InfinispanKeyValueConfiguration
 jnosql.keyvalue.database=heroes
 jnosql.infinispan.config=infinispan.xml
 ----
@@ -579,7 +800,7 @@ This is an example using Memcached's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.keyvalue.provider=org.eclipse.jnosql.communication.memcached.keyvalue.MemcachedKeyValueConfiguration
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.memcached.communication.MemcachedKeyValueConfiguration
 jnosql.keyvalue.database=heroes
 jnosql.memcached.host.1=localhost:11211
 ----
@@ -641,7 +862,43 @@ This is an example using Mongodb's Document API with MicroProfile Config.
 ----
 jnosql.document.database=olympus
 jnosql.mongodb.host=localhost:27017
-jnosql.document.provider=org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfiguration
+----
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<MongoDBDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<MongoDBDocumentManager> {
+
+    @Produces
+    public MongoDBDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        MongoDBDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+
+=== Converter
+
+In this extension, you have the option to convert to/from the MongoDB ```ObjectID```.
+
+[source,java]
+----
+@Entity
+public class Music {
+
+    @Id
+    @Convert(ObjectIdConverter.class)
+    private String id;
+
+}
 ----
 
 == OrientDB
@@ -695,12 +952,66 @@ This is an example using OrientDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.orientdb.document.OrientDBDocumentConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentConfiguration
 jnosql.document.database=heroes
 jnosql.orientdb.host=localhost:27017
 jnosql.orientdb.user=root
 jnosql.orientdb.password=rootpwd
 jnosql.orientdb.storageType=plocal
+----
+
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<OrientDBDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<OrientDBDocumentManager> {
+
+    @Produces
+    public OrientDBDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        OrientDBDocumentConfiguration configuration = new OrientDBDocumentConfiguration();
+        OrientDBDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+=== Repository
+
+The ```OrientDBCrudRepository``` interface  is an extension of the ```Repository``` interface that allows execution of a SQL Query via the ```@SQL``` annotation.
+
+[source,java]
+----
+@Repository
+    interface PersonRepository extends OrientDBCrudRepository<Person, String> {
+
+        @SQL("select * from Person")
+        List<Person> findAll();
+
+        @SQL("select * from Person where name = ?")
+        List<Person> findByName(String name);
+
+        @SQL("select * from Person where age = :age")
+        List<Person> findByAge(@Param("age") Integer age);
+    }
+----
+
+=== Template
+
+The ```OrientDBTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows execution of a SQL query and live query on both synchronous and asynchronous.
+
+[source,java]
+----
+@Inject
+OrientDBTemplate template;
+...
+
+Stream<Person> stream = template.sql("select * from Person where name = ?", "Ada");
+template.live("select from Person where name = ?", callBack, "Ada");
 ----
 
 == RavenDB
@@ -743,7 +1054,7 @@ This is an example using RavenDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.ravendb.document.RavenDBDocumentConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.ravendb.communication.RavenDBDocumentConfiguration
 jnosql.document.database=heroes
 ----
 
@@ -814,7 +1125,7 @@ This is an example using Redis's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.keyvalue.provider=org.eclipse.jnosql.communication.redis.keyvalue.RedisConfiguration
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.redis.communication.RedisConfiguration
 jnosql.keyvalue.database=heroes
 ----
 
@@ -858,7 +1169,7 @@ This is an example using Riak's Key-Value API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.keyvalue.provider=org.eclipse.jnosql.communication.riak.keyvalue.RiakKeyValueConfiguration
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.riak.communication.RiakKeyValueConfiguration
 jnosql.keyvalue.database=heroes
 ----
 
@@ -913,8 +1224,57 @@ This is an example using Solr's Document API with MicroProfile Config.
 
 [source,properties]
 ----
-jnosql.document.provider=org.eclipse.jnosql.communication.solr.document.SolrDocumentConfiguration
+jnosql.document.provider=org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfiguration
 jnosql.document.database=heroes
+----
+
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<SolrDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<SolrDocumentManager> {
+
+    @Produces
+    public SolrDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        SolrDocumentConfiguration configuration = new SolrDocumentConfiguration();
+        SolrDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+=== Repository
+
+The ```SolrRepository``` interface is an extension of the ```Repository``` interface that allows using Solr query annotation that executes Solr query.
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends SolrRepository<Person, String> {
+
+    @Solr("select * from Person")
+    List<Person> findAll();
+
+    @Solr("select * from Person where name = $name")
+    List<Person> findByName(@Param("name") String name);
+}
+----
+
+=== Template
+
+The ```SolrTemplate``` interface is a specialization of the ```DocumentTemplate``` that allows execution of a Solr query.
+
+[source,java]
+----
+@Inject
+SolrTemplate template;
+...
+List<Person> people = template.solr("age:@age AND type:@type AND _entity:@entity", params);
 ----
 
 == Contributing
@@ -960,8 +1320,15 @@ To add a new driver, we have a few requirements:
 * Include the documentation driver in the README file.
 * Cover the driver with tests and preferences with TestContainer.
 * Please pay attention to the documentation. This includes JavaDoc
-* Include a class to represent and contain the properties.
-** A nomenclature is the <DATABASE>Configurations, e.g., CassandraConfigurations, MongoDBConfigurations
+* Include a class to represent and contain the properties. In general, those are `enum`
+** A nomenclature is the <DATABASE>Configurations, e.g., CassandraConfigurations, MongoDBConfigurations.
+** The package name will follow the terminology: `org.jnosql.databases.[DATABASE].[LAYER]`
+*** E.g., Give a database called "Ada" that is a column type, the package name will be: `org.eclipse.jnosql.databases.ada.communication` for the driver layer and `org.eclipse.jnosql.databases.ada.mapping` for the mapping.
+*** You can include the database in a single project if a NoSQL supports multiple database types.
+* It is crucial to have an integration test with the database; please annotate those `EnabledIfSystemProperty` and check the integration session to know more.
+* Create a `Supplier` class on the mapping layer that will produce a specific Manager instance using Microprofile. Check: `ColumnManagerSupplier``DocumentManagerSupplier` classes to get more information.
+
+
 
 == Graph Drivers
 
