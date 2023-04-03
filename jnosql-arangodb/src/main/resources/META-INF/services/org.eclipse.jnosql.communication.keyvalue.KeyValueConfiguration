@@ -1,1 +1,1 @@
-org.eclipse.jnosql.communication.arangodb.keyvalue.ArangoDBKeyValueConfiguration
+org.eclipse.jnosql.databases.arangodb.communication.keyvalue.ArangoDBKeyValueConfiguration
