@@ -32,6 +32,10 @@
             <artifactId>jnosql-communication-column</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jnosql.mapping</groupId>
+            <artifactId>jnosql-mapping-column</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jnosql-database-commons</artifactId>
             <version>${project.version}</version>
