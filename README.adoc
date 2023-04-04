@@ -106,7 +106,7 @@ public class ManagerSupplier implements Supplier<ArangoDBDocumentManager> {
 
 === Repository
 
-The ```ArangoDBRepository``` interface is an extension of the ```Repository``` interface that allows execution of AQL via the ```@AQL``` annotation.
+The ```ArangoDBRepository``` interface is an extension of the Repository interface that allows execution of AQL via the ```@AQL``` annotation. Also, it's possible to combine with ```@Param``` annotation to execute parameterized AQL queries:
 
 [source,java]
 ----
@@ -120,6 +120,36 @@ interface PersonRepository extends ArangoDBRepository<Person, String> {
     List<Person> findByName(@Param("name") String name);
 }
 ----
+
+=== @AQL
+
+The ```@AQL``` annotation is a mapping annotation that allows to define dynamic queries following link:https://www.arangodb.com/docs/stable/aql/[ArangoDB Query Languange] on ```ArangoDBRepository```.
+
+[source,java]
+----
+interface CarRepository extends ArangoDBRepository<Car, String> {
+
+        @AQL("FOR c IN Car RETURN c")
+        List<Car> findAll();
+
+}
+----
+
+=== @Param
+
+For parameterized queries, use the ```@Param``` annotation for binding the target argument to the parameter informing the named parameter like the below example:
+
+[source,java]
+----
+
+interface OrderRepository extends ArangoDBRepository<Order, String> {
+
+        @AQL("FOR o IN Order FILTER o.customer = @customer RETURN o")
+        List<Order> findByCustomer(@Param("customer") String customer);
+
+}
+----
+
 
 === Template
 
