@@ -155,7 +155,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public void close() {
-
+        arangoDB.shutdown();
     }
 
 
