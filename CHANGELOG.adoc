@@ -16,6 +16,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Update package name convention to `org.jnosql.databases.[DATABASE].[LAYER]`
 - Integrate the mapping layer on this repository
 
+=== Fixed
+
+- Fix the ArangoDBDocumentManager implementation to shut down the ArangoDB instance
+
 == [1.0.0-b6] - 2023-03-11
 
 === Changed
