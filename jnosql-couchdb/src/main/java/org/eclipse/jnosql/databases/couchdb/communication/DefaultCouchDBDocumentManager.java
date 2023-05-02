@@ -38,7 +38,7 @@ class DefaultCouchDBDocumentManager implements CouchDBDocumentManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

@@ -50,7 +50,7 @@ class DocumentManagerSupplier implements Supplier<CouchbaseDocumentManager> {
     }
 
     public void close(@Disposes CouchbaseDocumentManager manager) {
-        LOGGER.log(Level.FINEST, "Closing CouchbaseDocumentManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing CouchbaseDocumentManager resource, database name: " + manager.name());
         manager.close();
     }
 

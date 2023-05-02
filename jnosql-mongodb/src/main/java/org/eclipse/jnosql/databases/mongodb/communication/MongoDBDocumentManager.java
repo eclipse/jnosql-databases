@@ -64,7 +64,7 @@ public class MongoDBDocumentManager implements DocumentManager {
 
 
     @Override
-    public String getName() {
+    public String name() {
         return database;
     }
 

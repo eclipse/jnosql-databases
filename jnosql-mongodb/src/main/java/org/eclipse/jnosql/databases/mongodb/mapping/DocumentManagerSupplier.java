@@ -50,7 +50,7 @@ class DocumentManagerSupplier implements Supplier<MongoDBDocumentManager> {
     }
 
     public void close(@Disposes MongoDBDocumentManager manager) {
-        LOGGER.log(Level.FINEST, "Closing MongoDBDocumentManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing MongoDBDocumentManager resource, database name: " + manager.name());
         manager.close();
     }
 

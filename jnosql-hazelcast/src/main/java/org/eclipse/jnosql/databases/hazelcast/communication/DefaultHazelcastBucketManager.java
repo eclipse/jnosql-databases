@@ -47,7 +47,7 @@ class DefaultHazelcastBucketManager implements HazelcastBucketManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return bucket;
     }
 

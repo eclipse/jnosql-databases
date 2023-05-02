@@ -40,7 +40,7 @@ public class PathEntityAttachment implements EntityAttachment {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return path.getFileName().toString();
     }
 

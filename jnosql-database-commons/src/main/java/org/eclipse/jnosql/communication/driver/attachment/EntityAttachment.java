@@ -28,7 +28,7 @@ public interface EntityAttachment {
     /**
      * @return the file name of the attachment
      */
-    String getName();
+    String name();
     /**
      * @return the last modification date of the attachment, in ms since the epoch
      */
@@ -51,7 +51,7 @@ public interface EntityAttachment {
      * @return an ETag value for the current version of the content
      */
     default String getETag() {
-        return getName() + "-" + Long.toString(getLastModified(), 16); //$NON-NLS-1$
+        return name() + "-" + Long.toString(getLastModified(), 16); //$NON-NLS-1$
     }
     
     /**
