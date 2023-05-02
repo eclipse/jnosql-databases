@@ -44,12 +44,12 @@ class CassandraUDTType implements ColumnFieldValue {
     }
 
     @Override
-    public Object getValue() {
+    public Object value() {
         return value;
     }
 
     @Override
-    public FieldMapping getField() {
+    public FieldMapping field() {
         return field;
     }
 

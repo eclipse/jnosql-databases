@@ -77,7 +77,7 @@ public class AttachmentTest {
     }
     
     private void checkAttachment(EntityAttachment att, String name, String contentType, long lastModified) throws IOException {
-        assertEquals(name, att.getName());
+        assertEquals(name, att.name());
         assertEquals(contentType, att.getContentType());
         assertEquals(testData.length, att.getLength());
         assertEquals(lastModified, att.getLastModified());
