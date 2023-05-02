@@ -50,7 +50,7 @@ public class RiakBucketManager implements BucketManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return bucketName;
     }
 

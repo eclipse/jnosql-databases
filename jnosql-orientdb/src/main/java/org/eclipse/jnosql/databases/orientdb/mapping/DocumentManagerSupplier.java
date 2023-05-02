@@ -50,7 +50,7 @@ class DocumentManagerSupplier implements Supplier<OrientDBDocumentManager> {
     }
 
     public void close(@Disposes OrientDBDocumentManager manager) {
-        LOGGER.log(Level.FINEST, "Closing OrientDBDocumentManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing OrientDBDocumentManager resource, database name: " + manager.name());
         manager.close();
     }
 

@@ -50,7 +50,7 @@ class DocumentManagerSupplier implements Supplier<ElasticsearchDocumentManager> 
     }
 
     public void close(@Disposes ElasticsearchDocumentManager manager) {
-        LOGGER.log(Level.FINEST, "Closing ElasticsearchDocumentManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing ElasticsearchDocumentManager resource, database name: " + manager.name());
         manager.close();
     }
 

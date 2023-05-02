@@ -58,7 +58,7 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
 
 
     @Override
-    public String getName() {
+    public String name() {
         return database;
     }
 

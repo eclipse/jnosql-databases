@@ -54,7 +54,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return database;
     }
 

@@ -62,7 +62,7 @@ public class ArangoDBBucketManager implements BucketManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return bucketName;
     }
 

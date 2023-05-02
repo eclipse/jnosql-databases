@@ -50,7 +50,7 @@ class DocumentManagerSupplier implements Supplier<SolrDocumentManager> {
     }
 
     public void close(@Disposes SolrDocumentManager manager) {
-        LOGGER.log(Level.FINEST, "Closing SolrDocumentManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing SolrDocumentManager resource, database name: " + manager.name());
         manager.close();
     }
 

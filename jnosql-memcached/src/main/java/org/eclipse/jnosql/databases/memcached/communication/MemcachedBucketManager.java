@@ -47,7 +47,7 @@ final class MemcachedBucketManager implements BucketManager {
 
 
     @Override
-    public String getName() {
+    public String name() {
         return bucketName;
     }
 

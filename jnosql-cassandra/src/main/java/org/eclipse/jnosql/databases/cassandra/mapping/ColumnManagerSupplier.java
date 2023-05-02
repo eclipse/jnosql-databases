@@ -50,7 +50,7 @@ class ColumnManagerSupplier implements Supplier<CassandraColumnManager> {
     }
 
     public void close(@Disposes CassandraColumnManager manager) {
-        LOGGER.log(Level.FINEST, "Closing CassandraColumnManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing CassandraColumnManager resource, database name: " + manager.name());
         manager.close();
     }
 

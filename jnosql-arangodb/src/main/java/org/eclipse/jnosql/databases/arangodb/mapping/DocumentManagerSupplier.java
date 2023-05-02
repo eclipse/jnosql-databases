@@ -51,7 +51,7 @@ class DocumentManagerSupplier implements Supplier<ArangoDBDocumentManager> {
     }
 
     public void close(@Disposes ArangoDBDocumentManager manager) {
-        LOGGER.log(Level.FINEST, "Closing ArangoDBDocumentManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing ArangoDBDocumentManager resource, database name: " + manager.name());
         manager.close();
     }
 

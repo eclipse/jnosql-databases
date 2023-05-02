@@ -47,7 +47,7 @@ public class DynamoDBBucketManager implements BucketManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return tableName;
     }
 

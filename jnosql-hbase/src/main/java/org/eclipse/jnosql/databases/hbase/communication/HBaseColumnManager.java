@@ -73,7 +73,7 @@ public class HBaseColumnManager implements ColumnManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return database;
     }
 

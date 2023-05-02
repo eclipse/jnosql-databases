@@ -63,7 +63,7 @@ public class RavenDBDocumentManager implements DocumentManager {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return database;
     }
 

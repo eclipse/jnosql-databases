@@ -50,7 +50,7 @@ class BucketManagerSupplier implements Supplier<HazelcastBucketManager> {
     }
 
     public void close(@Disposes HazelcastBucketManager manager) {
-        LOGGER.log(Level.FINEST, "Closing HazelcastBucketManager resource, database name: " + manager.getName());
+        LOGGER.log(Level.FINEST, "Closing HazelcastBucketManager resource, database name: " + manager.name());
         manager.close();
     }
 
