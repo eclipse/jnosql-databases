@@ -167,6 +167,18 @@ public class MongoDBDocumentManager implements DocumentManager {
 
     }
 
+    @Override
+    public long count(String documentCollection) {
+        Objects.requireNonNull(documentCollection, "documentCollection is required");
+        MongoCollection<Document> collection = mongoDatabase.getCollection(documentCollection);
+        return collection.countDocuments();
+    }
+
+    @Override
+    public void close() {
+
+    }
+
     /**
      * Removes all documents from the collection that match the given query filter.
      * If no documents match, the collection is not modified.
@@ -218,23 +230,8 @@ public class MongoDBDocumentManager implements DocumentManager {
         return stream(documents.spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds));
     }
-
-
-    @Override
-    public long count(String documentCollection) {
-        Objects.requireNonNull(documentCollection, "documentCollection is required");
-        MongoCollection<Document> collection = mongoDatabase.getCollection(documentCollection);
-        return collection.countDocuments();
-    }
-
     private Bson getSort(Sort sort) {
         return sort.isAscending() ? Sorts.ascending(sort.property()) : Sorts.descending(sort.property());
     }
-
-    @Override
-    public void close() {
-
-    }
-
 
 }
