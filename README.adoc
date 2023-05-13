@@ -985,7 +985,7 @@ public class Music {
 
 === Template
 
-The ```MongoDBTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows MongoDB particular behavior.
+The ```MongoDBTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows MongoDB particular behavior such as delete and select elements using a `Bson` implementation.
 
 
 [source,java]
