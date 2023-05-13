@@ -990,6 +990,12 @@ The ```MongoDBTemplate``` interface is a specialization of the ```DocumentTempla
 
 [source,java]
 ----
+@Inject
+MongoDBTemplate template;
+...
+
+Bson filter = eq("name", "Poliana");
+Stream<Person> stream = template.select("Person", filter);
 ----
 
 == OrientDB
