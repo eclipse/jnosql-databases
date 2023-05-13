@@ -983,6 +983,15 @@ public class Music {
 }
 ----
 
+=== Template
+
+The ```MongoDBTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows MongoDB particular behavior.
+
+
+[source,java]
+----
+----
+
 == OrientDB
 
 image::https://jnosql.github.io/img/logos/orientdb.png[Orient Project,align="center" width=25%,height=25%]
