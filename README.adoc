@@ -995,7 +995,7 @@ MongoDBTemplate template;
 ...
 
 Bson filter = eq("name", "Poliana");
-Stream<Person> stream = template.select("Person", filter);
+Stream<Person> stream = template.select(Person.class , filter);
 ----
 
 == OrientDB
