@@ -15,6 +15,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Define container nomenclature to integrate test
 - Update package name convention to `org.jnosql.databases.[DATABASE].[LAYER]`
 - Integrate the mapping layer on this repository
+- Upgrade the AWS SDK for DynamoDB to version 2.20.65;
 
 === Fixed
 
