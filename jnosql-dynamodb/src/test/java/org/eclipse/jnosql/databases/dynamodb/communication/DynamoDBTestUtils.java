@@ -17,21 +17,21 @@ package org.eclipse.jnosql.databases.dynamodb.communication;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.wait.strategy.WaitStrategy;
 
-public class DynamoDBTestUtils {
+import java.util.function.Supplier;
 
-    private static GenericContainer dynamodb =
+public enum DynamoDBTestUtils implements Supplier<BucketManagerFactory> {
+
+    INSTANCE;
+
+    private final GenericContainer dynamodb =
             new GenericContainer("amazon/dynamodb-local:latest")
                     .withExposedPorts(8000)
-                    .withEnv("AWS_ACCESS_KEY_ID", "aws --profile default configure get aws_access_key_id")
-                    .withEnv("AWS_SECRET_ACCESS_KEY", "aws --profile default configure get aws_secret_access_key");
-    //.withCommand("--rm");
+                    .waitingFor(Wait.defaultWaitStrategy());
 
-    // .waitingFor(Wait.forHttp("/")
-    //       .forStatusCode(200));
-
-
-    public static BucketManagerFactory get() {
+    public BucketManagerFactory get() {
         dynamodb.start();
         DynamoDBKeyValueConfiguration configuration = new DynamoDBKeyValueConfiguration();
         String endpoint = "http://" + dynamodb.getHost() + ":" + dynamodb.getFirstMappedPort();
@@ -39,7 +39,7 @@ public class DynamoDBTestUtils {
                 .put(DynamoDBConfigurations.ENDPOINT, endpoint).build());
     }
 
-    public static void shutDown() {
+    public void shutDown() {
         dynamodb.close();
     }
 }

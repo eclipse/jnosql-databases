@@ -516,6 +516,62 @@ jnosql.couchdb.username=admin
 jnosql.couchdb.password=password
 ----
 
+== DynamoDB
+
+image::https://user-images.githubusercontent.com/6509926/70553550-f033b980-1b40-11ea-9192-759b3b1053b3.png[Redis Project,align="center" width=50%,height=50%]
+
+https://aws.amazon.com/dynamodb/[Amazon DynamoDB] is a fully managed, serverless, key-value NoSQL database designed to run high-performance applications at any scale. DynamoDB offers built-in security, continuous backups, automated multi-Region replication, in-memory caching, and data import and export tools.
+
+This driver provides support for the *Key-Value* NoSQL API.
+
+=== How To Install
+
+You can use either the Maven or Gradle dependencies:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-dynamodb</artifactId>
+  <version>1.0.0-b6</version>
+</dependency>
+----
+
+=== Configuration
+
+This API provides the ```DynamoDBConfigurations``` class to programmatically establish the credentials.
+Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
+
+[cols="DynamoDB"]
+|===
+|Configuration property |Description
+
+|`jnosql.dynamodb.endpoint`
+|DynamoDB’s URL
+
+|`jnosql.dynamodb.region`
+|Configure the region with which the application should communicate.
+
+|`jnosql.dynamodb.profile`
+| Define the name of the profile that should be used by this credentials provider.
+
+|`jnosql.dynamodb.awsaccesskey`
+|The AWS access key, used to identify the user interacting with AWS.
+
+|`jnosql.dynamodb.secretaccess`
+|The AWS secret access key, used to authenticate the user interacting with AWS.
+
+
+|===
+
+This is an example using DynamoDB's Key-Value API with MicroProfile Config.
+
+[source,properties]
+----
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBKeyValueConfiguration
+jnosql.keyvalue.database=heroes
+----
+
 == Elasticsearch
 
 image::https://jnosql.github.io/img/logos/elastic.svg[Elasticsearch Project,align="center"width=25%,height=25%]
@@ -1154,6 +1210,7 @@ This is an example using RavenDB's Document API with MicroProfile Config.
 jnosql.document.provider=org.eclipse.jnosql.databases.ravendb.communication.RavenDBDocumentConfiguration
 jnosql.document.database=heroes
 ----
+
 
 == Redis
 

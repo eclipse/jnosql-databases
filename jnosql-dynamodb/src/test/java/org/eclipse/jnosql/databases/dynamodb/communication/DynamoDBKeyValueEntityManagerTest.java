@@ -39,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class DynamoDBKeyValueEntityManagerTest {
-	
-	private BucketManager keyValueEntityManager;
+
+    private BucketManager keyValueEntityManager;
 
     private BucketManagerFactory keyValueEntityManagerFactory;
-    
+
     private DynamoDBKeyValueConfiguration configuration;
 
     private User userOtavio = new User("otavio");
@@ -54,7 +54,7 @@ public class DynamoDBKeyValueEntityManagerTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = DynamoDBTestUtils.get();
+        keyValueEntityManagerFactory = DynamoDBTestUtils.INSTANCE.get();
         keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
@@ -115,10 +115,10 @@ public class DynamoDBKeyValueEntityManagerTest {
         Iterable<Value> users = values;
         assertEquals(0L, StreamSupport.stream(keyValueEntityManager.get(keys).spliterator(), false).count());
     }
-    
+
     @AfterAll
     public static void shutDown() {
-    	DynamoDBTestUtils.shutDown();
+        DynamoDBTestUtils.INSTANCE.shutDown();
     }
 
 }
