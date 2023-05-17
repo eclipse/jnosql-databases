@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.mongodb.mapping;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
+import jakarta.inject.Inject;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
@@ -58,6 +59,7 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     DefaultMongoDBTemplate() {
     }
 
+    @Inject
     DefaultMongoDBTemplate(Instance<MongoDBDocumentManager> manager,
             DocumentEntityConverter converter,
             DocumentWorkflow workflow,
