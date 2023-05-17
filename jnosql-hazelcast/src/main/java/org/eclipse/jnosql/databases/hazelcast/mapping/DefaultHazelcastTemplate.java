@@ -34,18 +34,28 @@ import java.util.stream.Collectors;
 @Typed(HazelcastTemplate.class)
 class DefaultHazelcastTemplate extends AbstractKeyValueTemplate implements HazelcastTemplate {
 
-    @Inject
     private Instance<HazelcastBucketManager> manager;
 
-    @Inject
     private KeyValueWorkflow flow;
 
-    @Inject
     private KeyValueEntityConverter converter;
 
-    @Inject
+
     private KeyValueEventPersistManager persistManager;
 
+    DefaultHazelcastTemplate() {
+    }
+
+    @Inject
+    DefaultHazelcastTemplate(Instance<HazelcastBucketManager> manager,
+                                    KeyValueWorkflow flow,
+                                    KeyValueEntityConverter converter,
+                                    KeyValueEventPersistManager persistManager) {
+        this.manager = manager;
+        this.flow = flow;
+        this.converter = converter;
+        this.persistManager = persistManager;
+    }
 
     @Override
     public <T> Collection<T> sql(String query) {
