@@ -11,7 +11,6 @@
  *   Contributors:
  *
  *   Otavio Santana
- *   Alessandro Moscatelli
  */
 package org.eclipse.jnosql.databases.mongodb.integration;
 
@@ -24,11 +23,16 @@ import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnableAutoWeld
 @AddPackages(value = {Convert.class, DocumentEntityConverter.class})
 @AddPackages(Music.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
+@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class MongoDBTemplateIntegrationTest {
 }
