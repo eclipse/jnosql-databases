@@ -40,24 +40,18 @@ import java.util.stream.Stream;
 @Typed(MongoDBTemplate.class)
 class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDBTemplate {
 
-    private Instance<MongoDBDocumentManager> manager;
+    private final Instance<MongoDBDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final  DocumentEntityConverter converter;
 
-    private DocumentWorkflow workflow;
+    private final  DocumentWorkflow workflow;
 
-    private EntitiesMetadata entities;
+    private final  EntitiesMetadata entities;
 
-    private Converters converters;
+    private final  Converters converters;
 
-    private DocumentEventPersistManager persistManager;
+    private final  DocumentEventPersistManager persistManager;
 
-    /**
-     * To CDI only
-     */
-    @Deprecated
-    DefaultMongoDBTemplate() {
-    }
 
     @Inject
     DefaultMongoDBTemplate(Instance<MongoDBDocumentManager> manager,

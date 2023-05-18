@@ -47,9 +47,12 @@ public enum DocumentDatabase {
 
     private Settings getSettings() {
         Map<String,Object> settings = new HashMap<>();
-        String host = mongodb.getHost() + ":" + mongodb.getFirstMappedPort();
-        settings.put(MongoDBDocumentConfigurations.HOST.get()+".1", host);
+        settings.put(MongoDBDocumentConfigurations.HOST.get()+".1", host());
         return Settings.of(settings);
+    }
+
+    public String host() {
+        return mongodb.getHost() + ":" + mongodb.getFirstMappedPort();
     }
 
 }

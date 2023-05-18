@@ -19,7 +19,8 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 === Fixed
 
-- Fix the ArangoDBDocumentManager implementation to shut down the ArangoDB instance
+- Fix the ArangoDBDocumentManager implementation to shut down the ArangoDB instance.
+- Fix integration on MongoDBTemplate
 
 == [1.0.0-b6] - 2023-03-11
 
