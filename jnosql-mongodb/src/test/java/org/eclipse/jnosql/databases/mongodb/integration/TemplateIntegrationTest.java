@@ -15,28 +15,17 @@
 package org.eclipse.jnosql.databases.mongodb.integration;
 
 
-import jakarta.annotation.Priority;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Alternative;
-import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
-import jakarta.nosql.Template;
 import jakarta.nosql.document.DocumentTemplate;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
-import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManager;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
-import org.jboss.weld.junit5.auto.AddBeanClasses;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
-import org.jboss.weld.junit5.auto.ExcludeBean;
-import org.jboss.weld.junit5.auto.ExcludeBeanClasses;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -57,7 +46,7 @@ import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabas
 class TemplateIntegrationTest {
 
     @Inject
-    private Template template;
+    private DocumentTemplate template;
 
     static {
         INSTANCE.get("library");
@@ -76,12 +65,43 @@ class TemplateIntegrationTest {
 
     @Test
     public void shouldUpdate() {
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        assertThat(template.insert(book))
+                .isNotNull()
+                .isEqualTo(book);
+
+        Book updated = new Book(book.id(), book.title() + " updated", 2);
+
+        assertThat(template.update(updated))
+                .isNotNull()
+                .isNotEqualTo(book);
+
+        assertThat(template.find(Book.class, book.id()))
+                .isNotNull().get().isEqualTo(updated);
 
     }
 
     @Test
     public void shouldFindById() {
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        assertThat(template.insert(book))
+                .isNotNull()
+                .isEqualTo(book);
 
+        assertThat(template.find(Book.class, book.id()))
+                .isNotNull().get().isEqualTo(book);
+    }
+
+    @Test
+    public void shouldDelete() {
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        assertThat(template.insert(book))
+                .isNotNull()
+                .isEqualTo(book);
+
+        template.delete(Book.class, book.id());
+        assertThat(template.find(Book.class, book.id()))
+                .isNotNull().isEmpty();
     }
 
 
