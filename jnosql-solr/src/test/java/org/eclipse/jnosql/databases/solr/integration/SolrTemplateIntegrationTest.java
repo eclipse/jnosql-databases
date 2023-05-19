@@ -51,7 +51,7 @@ class SolrTemplateIntegrationTest {
 
     static {
         DocumentDatabase.INSTANCE.get();
-        System.setProperty(SolrDocumentConfigurations.HOST.get() + ".1", DocumentDatabase.INSTANCE.host());
+        System.setProperty(SolrDocumentConfigurations.HOST.get(), DocumentDatabase.INSTANCE.host());
         System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "database");
     }
 
