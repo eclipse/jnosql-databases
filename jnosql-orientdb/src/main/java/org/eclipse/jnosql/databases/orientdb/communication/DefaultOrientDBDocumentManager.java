@@ -115,6 +115,9 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
                 .orElseThrow(() -> new IllegalArgumentException("For updates at DocumentEntity"));
         try (ODatabaseSession tx = pool.acquire()) {
             ODocument record = tx.load(recordId);
+            entity.remove(RID_FIELD);
+            entity.remove(ID_FIELD);
+            entity.remove(VERSION_FIELD);
             toMap(entity).forEach(record::field);
             tx.save(record);
             updateEntity(entity, record);

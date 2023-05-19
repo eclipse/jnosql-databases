@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.orientdb.integration;
 
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.orientdb.communication.DocumentDatabase;
+import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentConfigurations;
 import org.eclipse.jnosql.databases.orientdb.mapping.OrientDBTemplate;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Optional;
 
+import static com.orientechnologies.orient.core.db.ODatabaseType.PLOCAL;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
@@ -50,7 +52,11 @@ class OrientDBTemplateIntegrationTest {
 
     static {
         DocumentDatabase.INSTANCE.get("library");
-        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
+        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "jnosql");
+        System.setProperty(OrientDBDocumentConfigurations.HOST.get(), "/tmp/db/");
+        System.setProperty(OrientDBDocumentConfigurations.USER.get(), "root");
+        System.setProperty(OrientDBDocumentConfigurations.PASSWORD.get(), "rootpwd");
+        System.setProperty(OrientDBDocumentConfigurations.STORAGE_TYPE.get(), PLOCAL.toString());
     }
     @Test
     public void shouldInsert() {

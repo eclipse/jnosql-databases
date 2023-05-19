@@ -84,6 +84,7 @@ final class OrientDBConverter {
                 .forEach(entity::add);
         entity.add(Document.of(RID_FIELD, document.field(RID_FIELD).toString()));
         entity.add(Document.of(VERSION_FIELD, document.getVersion()));
+        entity.add(Document.of(ID_FIELD, document.field(RID_FIELD).toString()));
         return entity;
     }
 
