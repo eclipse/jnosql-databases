@@ -20,7 +20,6 @@ import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.fetch.OFetchHelper;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
@@ -28,18 +27,19 @@ import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.glassfish.jaxb.core.v2.model.core.ID;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.ID_FIELD;
 import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.RID_FIELD;
 import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.VERSION_FIELD;
 import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.toMap;
@@ -105,12 +105,6 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
-        Optional<Document> rid = entity.find(RID_FIELD);
-        Optional<Document> id = entity.find("_id");
-        try (ODatabaseSession tx = pool.acquire()) {
-            ORecord document = tx.load((ORecord) rid.get());
-            updateEntity(entity, document);
-        }
         return insert(entity);
     }
 
@@ -221,5 +215,6 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
         ORecordId ridField = new ORecordId(save.getIdentity());
         entity.add(Document.of(RID_FIELD, ridField.toString()));
         entity.add(Document.of(VERSION_FIELD, save.getVersion()));
+        entity.add(Document.of(ID_FIELD, ridField.toString()));
     }
 }
