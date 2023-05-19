@@ -27,13 +27,13 @@ import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.glassfish.jaxb.core.v2.model.core.ID;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -105,7 +105,23 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
-        return insert(entity);
+
+        Optional<Document> rid = entity.find(RID_FIELD);
+        Optional<Document> id = entity.find(ID_FIELD);
+        ORecordId recordId = Stream.concat(rid.stream(), id.stream())
+                .map(d -> d.get(String.class))
+                .map(ORecordId::new)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("For updates at DocumentEntity"));
+        try (ODatabaseSession tx = pool.acquire()) {
+            ODocument record = tx.load(recordId);
+            toMap(entity).forEach(record::field);
+            tx.save(record);
+            updateEntity(entity, record);
+            return entity;
+        }
+
+
     }
 
     @Override
