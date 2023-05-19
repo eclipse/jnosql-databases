@@ -18,9 +18,11 @@ package org.eclipse.jnosql.databases.hazelcast.integration;
 import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.databases.hazelcast.communication.HazelcastConfigurations;
 import org.eclipse.jnosql.databases.hazelcast.communication.model.User;
 import org.eclipse.jnosql.databases.hazelcast.mapping.HazelcastTemplate;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.keyvalue.KeyValueEntityConverter;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -51,12 +53,15 @@ class HazelcastTemplateIntegrationTest {
     @Inject
     private HazelcastTemplate template;
 
+    static {
+        System.setProperty(MappingConfigurations.KEY_VALUE_DATABASE.get(), "library");
+    }
 
     @Test
     public void shouldPutValue() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.put(book);
-        Optional<Book> effective = template.get("otavio", Book.class);
+        Optional<Book> effective = template.get(book.id(), Book.class);
         assertThat(effective)
                 .isNotNull()
                 .isPresent()
@@ -67,7 +72,7 @@ class HazelcastTemplateIntegrationTest {
     public void shouldGet() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.put(book);
-        Optional<Book> effective = template.get("otavio", Book.class);
+        Optional<Book> effective = template.get(book.id(), Book.class);
         assertThat(effective)
                 .isNotNull()
                 .isPresent()
@@ -78,14 +83,14 @@ class HazelcastTemplateIntegrationTest {
     public void shouldDelete() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.put(book);
-        Optional<Book> effective = template.get("otavio", Book.class);
+        Optional<Book> effective = template.get(book.id(), Book.class);
         assertThat(effective)
                 .isNotNull()
                 .isPresent()
                 .get().isEqualTo(book);
         template.delete(Book.class, book.id());
 
-        assertThat(template.get("otavio", Book.class))
+        assertThat(template.get(book.id(), Book.class))
                 .isEmpty();
     }
 }
