@@ -18,8 +18,63 @@ import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
 
+import java.util.Objects;
+
 @Entity
-public record Book(@Id String id, @Column("title") String title, @Column("edition") int edition) {
+public class Book {
+    @Id
+    private String id;
+    @Column("title")
+    private String title;
+    @Column("edition")
+    private int edition;
 
+    public Book(String id, String title, int edition) {
+        this.id = id;
+        this.title = title;
+        this.edition = edition;
+    }
 
+    Book() {
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public String title() {
+        return title;
+    }
+
+    public int edition() {
+        return edition;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Book book = (Book) o;
+        return edition == book.edition
+                && Objects.equals(id, book.id)
+                && Objects.equals(title, book.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, edition);
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", edition=" + edition +
+                '}';
+    }
 }
