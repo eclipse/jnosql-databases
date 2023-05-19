@@ -34,23 +34,21 @@ import java.util.stream.Collectors;
 @Typed(HazelcastTemplate.class)
 class DefaultHazelcastTemplate extends AbstractKeyValueTemplate implements HazelcastTemplate {
 
-    private Instance<HazelcastBucketManager> manager;
+    private final Instance<HazelcastBucketManager> manager;
 
-    private KeyValueWorkflow flow;
+    private final KeyValueWorkflow flow;
 
-    private KeyValueEntityConverter converter;
+    private final KeyValueEntityConverter converter;
 
 
-    private KeyValueEventPersistManager persistManager;
+    private final KeyValueEventPersistManager persistManager;
 
-    DefaultHazelcastTemplate() {
-    }
 
     @Inject
     DefaultHazelcastTemplate(Instance<HazelcastBucketManager> manager,
-                                    KeyValueWorkflow flow,
-                                    KeyValueEntityConverter converter,
-                                    KeyValueEventPersistManager persistManager) {
+                             KeyValueWorkflow flow,
+                             KeyValueEntityConverter converter,
+                             KeyValueEventPersistManager persistManager) {
         this.manager = manager;
         this.flow = flow;
         this.converter = converter;
