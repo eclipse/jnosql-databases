@@ -42,7 +42,7 @@ class ColumnManagerSupplier implements Supplier<CassandraColumnManager> {
         CassandraColumnManagerFactory factory = configuration.apply(settings);
         Optional<String> database = settings.get(COLUMN_DATABASE, String.class);
         String db = database.orElseThrow(() -> new MappingException("Please, inform the database filling up the property "
-                + COLUMN_DATABASE));
+                + COLUMN_DATABASE.get()));
         CassandraColumnManager manager = factory.apply(db);
         LOGGER.log(Level.FINEST, "Starting  a CassandraColumnManager instance using Eclipse MicroProfile Config," +
                 " database name: " + db);

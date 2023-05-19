@@ -33,11 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.ID_FIELD;
 import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.RID_FIELD;
 import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.VERSION_FIELD;
 import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.toMap;
@@ -103,7 +105,26 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
-        return insert(entity);
+
+        Optional<Document> rid = entity.find(RID_FIELD);
+        Optional<Document> id = entity.find(ID_FIELD);
+        ORecordId recordId = Stream.concat(rid.stream(), id.stream())
+                .map(d -> d.get(String.class))
+                .map(ORecordId::new)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("For updates at DocumentEntity"));
+        try (ODatabaseSession tx = pool.acquire()) {
+            ODocument record = tx.load(recordId);
+            entity.remove(RID_FIELD);
+            entity.remove(ID_FIELD);
+            entity.remove(VERSION_FIELD);
+            toMap(entity).forEach(record::field);
+            tx.save(record);
+            updateEntity(entity, record);
+            return entity;
+        }
+
+
     }
 
     @Override
@@ -120,11 +141,18 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
         DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
         QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(selectQuery);
 
-        try (ODatabaseSession tx = pool.acquire();
-             OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
-            while (resultSet.hasNext()) {
-                OResult next = resultSet.next();
-                tx.delete(next.toElement().getIdentity());
+        try (ODatabaseSession tx = pool.acquire()) {
+
+            if (orientQuery.isRunQuery()) {
+                try (OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
+                    while (resultSet.hasNext()) {
+                        OResult result = resultSet.next();
+                        tx.delete(result.toElement().getIdentity());
+                    }
+                }
+            }
+            if (orientQuery.isLoad()) {
+                orientQuery.getIds().forEach(tx::delete);
             }
         }
 
@@ -146,6 +174,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
             if (orientQuery.isLoad()) {
                 orientQuery.getIds().stream().map(tx::load)
                         .map(o -> OrientDBConverter.convert((ODocument) o))
+                        .filter(Objects::nonNull)
                         .forEach(entities::add);
             }
             return entities.stream();
@@ -213,5 +242,6 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
         ORecordId ridField = new ORecordId(save.getIdentity());
         entity.add(Document.of(RID_FIELD, ridField.toString()));
         entity.add(Document.of(VERSION_FIELD, save.getVersion()));
+        entity.add(Document.of(ID_FIELD, ridField.toString()));
     }
 }

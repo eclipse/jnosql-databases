@@ -42,7 +42,7 @@ class DocumentManagerSupplier implements Supplier<SolrDocumentManager> {
         SolrDocumentManagerFactory factory = configuration.apply(settings);
         Optional<String> database = settings.get(DOCUMENT_DATABASE, String.class);
         String db = database.orElseThrow(() -> new MappingException("Please, inform the database filling up the property "
-                + DOCUMENT_DATABASE));
+                + DOCUMENT_DATABASE.get()));
         SolrDocumentManager manager = factory.apply(db);
         LOGGER.log(Level.FINEST, "Starting  a SolrDocumentManager instance using Eclipse MicroProfile Config," +
                 " database name: " + db);

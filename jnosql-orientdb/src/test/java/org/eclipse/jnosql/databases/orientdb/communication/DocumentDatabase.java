@@ -37,4 +37,9 @@ public enum DocumentDatabase implements Supplier<OrientDBDocumentManagerFactory>
     public OrientDBDocumentManagerFactory get() {
         return configuration.apply(Settings.builder().build());
     }
+
+    public OrientDBDocumentManager get(String database){
+        OrientDBDocumentManagerFactory managerFactory = get();
+        return managerFactory.apply(database);
+    }
 }

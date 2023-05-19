@@ -24,12 +24,12 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.function.Supplier;
 
-enum DocumentDatabase implements Supplier<ArangoDBDocumentManagerFactory> {
+public enum DocumentDatabase implements Supplier<ArangoDBDocumentManagerFactory> {
 
     INSTANCE;
 
-    private final GenericContainer arangodb =
-            new GenericContainer("arangodb/arangodb:latest")
+    private final GenericContainer<?> arangodb =
+            new GenericContainer<>("arangodb/arangodb:latest")
                     .withExposedPorts(8529)
                     .withEnv("ARANGO_NO_AUTH", "1")
                     .waitingFor(Wait.forHttp("/")
@@ -44,5 +44,14 @@ enum DocumentDatabase implements Supplier<ArangoDBDocumentManagerFactory> {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
         return configuration.apply(Settings.builder().build());
+    }
+
+    public ArangoDBDocumentManager get(String database) {
+        ArangoDBDocumentManagerFactory managerFactory = get();
+        return managerFactory.apply(database);
+    }
+
+    public String host() {
+        return arangodb.getHost() + ":" + arangodb.getFirstMappedPort();
     }
 }

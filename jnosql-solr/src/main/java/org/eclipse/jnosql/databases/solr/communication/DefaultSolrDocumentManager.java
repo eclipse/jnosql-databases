@@ -23,6 +23,8 @@ import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
@@ -106,6 +108,17 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
 
     @Override
     public DocumentEntity update(DocumentEntity entity) {
+        Objects.requireNonNull(entity, "entity is required");
+
+        Document id = entity.find("_id").orElseThrow(() ->
+                new IllegalArgumentException("The _id field is required for update"));
+
+        DocumentCondition condition = DocumentCondition.eq(id);
+        DocumentDeleteQuery query = DocumentDeleteQuery.builder()
+                .from(entity.name())
+                .where(condition).build();
+        delete(query);
+
         return insert(entity);
     }
 

@@ -38,13 +38,13 @@ final class QueryOSQLFactory {
 
     static QueryResult to(DocumentQuery documentQuery) {
         QueryOSQLConverter.Query query = QueryOSQLConverter.select(documentQuery);
-        return new QueryResult(query.getQuery(), query.getParams(), query.getIds());
+        return new QueryResult(query.query(), query.params(), query.ids());
     }
 
     static QueryResultAsync toAsync(DocumentQuery documentQuery, Consumer<Stream<ODocument>> callBack) {
         QueryOSQLConverter.Query query = QueryOSQLConverter.select(documentQuery);
 
-        return new QueryResultAsync(new OSQLAsynchQuery<>(query.getQuery(), new OCommandResultListener() {
+        return new QueryResultAsync(new OSQLAsynchQuery<>(query.query(), new OCommandResultListener() {
             private List<ODocument> documents = new ArrayList<>();
 
             @Override
@@ -63,12 +63,12 @@ final class QueryOSQLFactory {
             public Object getResult() {
                 return null;
             }
-        }), query.getParams());
+        }), query.params());
     }
 
     static QueryResult toLive(DocumentQuery documentQuery, OrientDBLiveCallback callbacks) {
         QueryOSQLConverter.Query query = QueryOSQLConverter.select(documentQuery);
-        return new QueryResult(query.getQuery(), query.getParams(), Collections.emptyList());
+        return new QueryResult(query.query(), query.params(), Collections.emptyList());
     }
 
     static QueryResultAsync toAsync(String query, Consumer<List<ODocument>> callBack, Object... params) {

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFactory> {
+public enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFactory> {
 
     INSTANCE;
 
@@ -45,8 +45,17 @@ enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFactory> {
     public ElasticsearchDocumentManagerFactory get() {
         ElasticsearchDocumentConfiguration configuration = new ElasticsearchDocumentConfiguration();
         Map<String, Object> settings = new HashMap<>();
-        settings.put(ElasticsearchConfigurations.HOST.get()+".1", es.getHost() + ':' + es.getFirstMappedPort());
+        settings.put(ElasticsearchConfigurations.HOST.get()+".1", host());
         return configuration.apply(Settings.of(settings));
+    }
+
+    public ElasticsearchDocumentManager get(String database){
+        ElasticsearchDocumentManagerFactory managerFactory = get();
+        return managerFactory.apply(database);
+    }
+
+    public String host() {
+        return es.getHost() + ':' + es.getFirstMappedPort();
     }
 
 }

@@ -110,8 +110,7 @@ public final class ArangoDBUtil {
 
     private static Document toDocument(String key, Map<String, Object> properties) {
         Object value = properties.get(key);
-        if (Map.class.isInstance(value)) {
-            Map map = Map.class.cast(value);
+        if (value instanceof Map map) {
             return Document.of(key, map.keySet()
                     .stream().map(k -> toDocument(k.toString(), map))
                     .collect(Collectors.toList()));

@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DefaultSolrDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    public static final String ID = "id";
+    public static final String ID = "_id";
     private static SolrDocumentManager entityManager;
 
     @BeforeAll

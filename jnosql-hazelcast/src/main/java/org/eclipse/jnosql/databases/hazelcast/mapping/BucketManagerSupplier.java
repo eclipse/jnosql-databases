@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.eclipse.jnosql.mapping.config.MappingConfigurations.DOCUMENT_DATABASE;
+import static org.eclipse.jnosql.mapping.config.MappingConfigurations.KEY_VALUE_DATABASE;
 
 @ApplicationScoped
 class BucketManagerSupplier implements Supplier<HazelcastBucketManager> {
@@ -40,9 +40,9 @@ class BucketManagerSupplier implements Supplier<HazelcastBucketManager> {
         Settings settings = MicroProfileSettings.INSTANCE;
         HazelcastKeyValueConfiguration configuration = new HazelcastKeyValueConfiguration();
         HazelcastBucketManagerFactory factory = configuration.apply(settings);
-        Optional<String> database = settings.get(DOCUMENT_DATABASE, String.class);
+        Optional<String> database = settings.get(KEY_VALUE_DATABASE, String.class);
         String db = database.orElseThrow(() -> new MappingException("Please, inform the database filling up the property "
-                + DOCUMENT_DATABASE));
+                + KEY_VALUE_DATABASE.get()));
         HazelcastBucketManager manager = factory.apply(db);
         LOGGER.log(Level.FINEST, "Starting  a HazelcastBucketManager instance using Eclipse MicroProfile Config," +
                 " database name: " + db);

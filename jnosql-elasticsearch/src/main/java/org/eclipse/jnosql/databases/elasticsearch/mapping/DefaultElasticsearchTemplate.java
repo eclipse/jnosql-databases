@@ -42,17 +42,17 @@ import java.util.stream.Stream;
 class DefaultElasticsearchTemplate extends AbstractDocumentTemplate
         implements ElasticsearchTemplate {
 
-    private Instance<ElasticsearchDocumentManager> manager;
+    private final Instance<ElasticsearchDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final  DocumentEntityConverter converter;
 
-    private DocumentWorkflow flow;
+    private final  DocumentWorkflow flow;
 
-    private DocumentEventPersistManager persistManager;
+    private final  DocumentEventPersistManager persistManager;
 
-    private EntitiesMetadata entities;
+    private final  EntitiesMetadata entities;
 
-    private Converters converters;
+    private final  Converters converters;
 
     @Inject
     DefaultElasticsearchTemplate(Instance<ElasticsearchDocumentManager> manager,
@@ -66,9 +66,6 @@ class DefaultElasticsearchTemplate extends AbstractDocumentTemplate
         this.persistManager = persistManager;
         this.entities = entities;
         this.converters = converters;
-    }
-
-    DefaultElasticsearchTemplate() {
     }
 
     @Override

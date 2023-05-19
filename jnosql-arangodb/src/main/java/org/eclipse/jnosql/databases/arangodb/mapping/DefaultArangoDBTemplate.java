@@ -40,17 +40,17 @@ import static java.util.Objects.requireNonNull;
 @ApplicationScoped
 class DefaultArangoDBTemplate extends AbstractDocumentTemplate implements ArangoDBTemplate {
 
-    private Instance<ArangoDBDocumentManager> manager;
+    private final Instance<ArangoDBDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final DocumentEntityConverter converter;
 
-    private DocumentWorkflow flow;
+    private final DocumentWorkflow flow;
 
-    private DocumentEventPersistManager persistManager;
+    private final DocumentEventPersistManager persistManager;
 
-    private EntitiesMetadata entities;
+    private final EntitiesMetadata entities;
 
-    private Converters converters;
+    private final Converters converters;
 
     @Inject
     DefaultArangoDBTemplate(Instance<ArangoDBDocumentManager> manager,
@@ -64,9 +64,6 @@ class DefaultArangoDBTemplate extends AbstractDocumentTemplate implements Arango
         this.persistManager = persistManager;
         this.entities = entities;
         this.converters = converters;
-    }
-
-    DefaultArangoDBTemplate() {
     }
 
     @Override

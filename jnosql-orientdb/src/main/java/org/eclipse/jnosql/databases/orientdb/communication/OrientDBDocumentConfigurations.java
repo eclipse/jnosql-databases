@@ -32,7 +32,7 @@ public enum OrientDBDocumentConfigurations implements Supplier<String> {
     /**
      * The user's credential.
      */
-    USER("jnosql.orientdb.-user"),
+    USER("jnosql.orientdb.user"),
     /**
      * The password's credential
      */

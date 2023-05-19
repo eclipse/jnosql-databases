@@ -61,7 +61,7 @@ final class SolrUtils {
                     final String entity = documents.stream()
                             .filter(d -> ENTITY.equals(d.name()))
                             .findFirst()
-                            .map(Document::name)
+                            .map(d -> d.get(String.class))
                             .orElseThrow(() -> new SolrException("The field _entity is required"));
                     return DocumentEntity.of(entity, documents);
                 }).collect(Collectors.toList());
