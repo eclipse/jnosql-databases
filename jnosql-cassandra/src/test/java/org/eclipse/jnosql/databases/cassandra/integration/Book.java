@@ -19,7 +19,7 @@ import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
 
 @Entity
-public record Book(@Id String id, @Column("title") String title, @Column("edition") int edition) {
+public record Book(@Id("id") String id, @Column("title") String title, @Column("edition") int edition) {
 
 
 }

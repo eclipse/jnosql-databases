@@ -12,16 +12,18 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.databases.mongodb.integration;
+package org.eclipse.jnosql.databases.cassandra.integration;
 
 
 import jakarta.inject.Inject;
-import jakarta.nosql.document.DocumentTemplate;
-import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
+import jakarta.nosql.column.ColumnTemplate;
+import org.eclipse.jnosql.communication.driver.ConfigurationReader;
+import org.eclipse.jnosql.databases.cassandra.communication.CassandraConfigurations;
+import org.eclipse.jnosql.databases.cassandra.communication.ColumnDatabase;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
+import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
@@ -29,29 +31,34 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
-import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabase.INSTANCE;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, DocumentEntityConverter.class})
+@AddPackages(value = {Convert.class, ColumnEntityConverter.class})
 @AddPackages(Book.class)
 @AddExtensions({EntityMetadataExtension.class,
-        DocumentExtension.class})
+        ColumnExtension.class})
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class TemplateIntegrationTest {
 
     @Inject
-    private DocumentTemplate template;
+    private ColumnTemplate template;
 
     static {
-        INSTANCE.get("library");
-        System.setProperty(MongoDBDocumentConfigurations.HOST.get() + ".1", INSTANCE.host());
-        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
+        Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from("mapping.properties"));
+        for (Map.Entry<String, Object> entry : configuration.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue().toString());
+        }
+        System.setProperty(MappingConfigurations.COLUMN_DATABASE.get(), "library");
+        System.setProperty(CassandraConfigurations.HOST.get()+".1", ColumnDatabase.INSTANCE.host());
+        System.setProperty(CassandraConfigurations.PORT.get(), Integer.toString(ColumnDatabase.INSTANCE.port()));
     }
 
     @Test

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-enum ColumnDatabase implements Supplier<CassandraColumnManagerFactory> {
+public enum ColumnDatabase implements Supplier<CassandraColumnManagerFactory> {
 
     INSTANCE;
 
@@ -42,10 +42,18 @@ enum ColumnDatabase implements Supplier<CassandraColumnManagerFactory> {
         return cassandraConfiguration.apply(settings);
     }
 
-    Settings getSettings() {
+    public Settings getSettings() {
         Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from("cassandra.properties"));
-        configuration.put(CassandraConfigurations.HOST.get()+".1", cassandra.getHost());
-        configuration.put(CassandraConfigurations.PORT.get(), cassandra.getFirstMappedPort());
+        configuration.put(CassandraConfigurations.HOST.get()+".1", host());
+        configuration.put(CassandraConfigurations.PORT.get(), port());
         return Settings.of(configuration);
+    }
+
+    public String host() {
+        return cassandra.getHost();
+    }
+
+    public int port() {
+        return cassandra.getFirstMappedPort();
     }
 }
