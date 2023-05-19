@@ -31,8 +31,8 @@ public class QueryOSQLConverterTest {
                 .where("name").eq("value").build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        String sql = convert.getQuery();
-        List<Object> values = convert.getParams();
+        String sql = convert.query();
+        List<Object> values = convert.params();
         assertEquals("value", values.get(0));
         assertEquals("SELECT FROM collection WHERE name = ?", sql);
     }
@@ -45,8 +45,8 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        String sql = convert.getQuery();
-        List<Object> values = convert.getParams();
+        String sql = convert.query();
+        List<Object> values = convert.params();
         assertEquals("value", values.get(0));
         assertEquals(10, values.get(1));
         assertEquals("SELECT FROM collection WHERE name = ? AND age <= ?", sql);
@@ -60,8 +60,8 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        String sql = convert.getQuery();
-        List<Object> values = convert.getParams();
+        String sql = convert.query();
+        List<Object> values = convert.params();
         assertEquals("value", values.get(0));
         assertEquals(10, values.get(1));
         assertEquals("SELECT FROM collection WHERE name = ? OR age <= ?", sql);
@@ -73,8 +73,8 @@ public class QueryOSQLConverterTest {
                 .where("name").not().eq("value").build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        String sql = convert.getQuery();
-        List<Object> values = convert.getParams();
+        String sql = convert.query();
+        List<Object> values = convert.params();
         assertEquals("value", values.get(0));
         assertEquals("SELECT FROM collection WHERE NOT (name = ?)", sql);
     }
@@ -87,8 +87,8 @@ public class QueryOSQLConverterTest {
                 .or("name").not().eq("Lucas").build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        String sql = convert.getQuery();
-        List<Object> values = convert.getParams();
+        String sql = convert.query();
+        List<Object> values = convert.params();
         assertEquals(3, values.size());
         assertEquals("Assis", values.get(0));
         assertEquals("Otavio", values.get(1));
@@ -103,7 +103,7 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        assertEquals("SELECT FROM collection SKIP 10", convert.getQuery());
+        assertEquals("SELECT FROM collection SKIP 10", convert.query());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        assertEquals("SELECT FROM collection LIMIT 100", convert.getQuery());
+        assertEquals("SELECT FROM collection LIMIT 100", convert.query());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        assertEquals("SELECT FROM collection SKIP 10 LIMIT 100", convert.getQuery());
+        assertEquals("SELECT FROM collection SKIP 10 LIMIT 100", convert.query());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        assertEquals("SELECT FROM collection ORDER BY name ASC", convert.getQuery());
+        assertEquals("SELECT FROM collection ORDER BY name ASC", convert.query());
     }
 
     @Test
@@ -144,7 +144,7 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        assertEquals("SELECT FROM collection ORDER BY name DESC", convert.getQuery());
+        assertEquals("SELECT FROM collection ORDER BY name DESC", convert.query());
     }
 
     @Test
@@ -155,6 +155,6 @@ public class QueryOSQLConverterTest {
                 .build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
-        assertEquals("SELECT FROM collection ORDER BY name ASC, age DESC", convert.getQuery());
+        assertEquals("SELECT FROM collection ORDER BY name ASC, age DESC", convert.query());
     }
 }
