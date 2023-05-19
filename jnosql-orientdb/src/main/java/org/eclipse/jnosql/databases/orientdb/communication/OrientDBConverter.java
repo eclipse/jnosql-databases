@@ -41,6 +41,8 @@ final class OrientDBConverter {
     static final String RID_FIELD = "@rid";
     static final String VERSION_FIELD = "@version";
 
+    static final String ID_FIELD = "_id";
+
     private OrientDBConverter() {
     }
 
@@ -70,6 +72,7 @@ final class OrientDBConverter {
         long clusterPosition = identity.getClusterPosition();
         entity.add(VERSION_FIELD, element.getVersion());
         entity.add(RID_FIELD, "#" + clusterId + ":" + clusterPosition);
+        entity.add(ID_FIELD,  "#" + clusterId + ":" + clusterPosition);
         return entity;
     }
 

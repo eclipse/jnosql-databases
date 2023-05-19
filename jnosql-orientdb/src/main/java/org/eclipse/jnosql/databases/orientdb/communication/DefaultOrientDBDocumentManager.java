@@ -20,6 +20,7 @@ import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.fetch.OFetchHelper;
 import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -103,6 +105,12 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "Entity is required");
+        Optional<Document> rid = entity.find(RID_FIELD);
+        Optional<Document> id = entity.find("_id");
+        try (ODatabaseSession tx = pool.acquire()) {
+            ORecord document = tx.load((ORecord) rid.get());
+            updateEntity(entity, document);
+        }
         return insert(entity);
     }
 
