@@ -141,11 +141,18 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
         DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
         QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(selectQuery);
 
-        try (ODatabaseSession tx = pool.acquire();
-             OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
-            while (resultSet.hasNext()) {
-                OResult next = resultSet.next();
-                tx.delete(next.toElement().getIdentity());
+        try (ODatabaseSession tx = pool.acquire()) {
+
+            if (orientQuery.isRunQuery()) {
+                try (OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
+                    while (resultSet.hasNext()) {
+                        OResult result = resultSet.next();
+                        tx.delete(result.toElement().getIdentity());
+                    }
+                }
+            }
+            if (orientQuery.isLoad()) {
+                orientQuery.getIds().forEach(tx::delete);
             }
         }
 
@@ -167,6 +174,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
             if (orientQuery.isLoad()) {
                 orientQuery.getIds().stream().map(tx::load)
                         .map(o -> OrientDBConverter.convert((ODocument) o))
+                        .filter(Objects::nonNull)
                         .forEach(entities::add);
             }
             return entities.stream();

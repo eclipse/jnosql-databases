@@ -102,7 +102,6 @@ class OrientDBTemplateIntegrationTest {
         assertThat(template.insert(book))
                 .isNotNull()
                 .isEqualTo(book);
-
         template.delete(Book.class, book.id());
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();

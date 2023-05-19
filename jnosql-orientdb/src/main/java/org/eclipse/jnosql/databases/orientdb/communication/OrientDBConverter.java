@@ -72,12 +72,15 @@ final class OrientDBConverter {
         long clusterPosition = identity.getClusterPosition();
         entity.add(VERSION_FIELD, element.getVersion());
         entity.add(RID_FIELD, "#" + clusterId + ":" + clusterPosition);
-        entity.add(ID_FIELD,  "#" + clusterId + ":" + clusterPosition);
+        entity.add(ID_FIELD, "#" + clusterId + ":" + clusterPosition);
         return entity;
     }
 
 
     static DocumentEntity convert(ODocument document) {
+        if (document == null) {
+            return null;
+        }
         DocumentEntity entity = DocumentEntity.of(document.getClassName());
         Stream.of(document.fieldNames())
                 .map(f -> Document.of(f, convert((Object) document.field(f))))
