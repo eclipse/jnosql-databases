@@ -28,6 +28,9 @@ import org.eclipse.jnosql.communication.driver.ValueUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.ID_FIELD;
+import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.RID_FIELD;
+
 final class QueryOSQLConverter {
 
     private static final String WHERE = " WHERE ";
@@ -132,13 +135,15 @@ final class QueryOSQLConverter {
     private static void appendCondition(StringBuilder query, List<Object> params,
                                         Document document, String condition, List<ORecordId> ids) {
 
-        if(OrientDBConverter.RID_FIELD.equals(document.name())) {
+        if (RID_FIELD.equals(document.name())
+                ||
+                ID_FIELD.equals(document.name())) {
             ids.add(new ORecordId(document.get(String.class)));
             return;
         }
         query.append(document.name())
                 .append(condition).append(PARAM_APPENDER);
-        if(IN.equals(condition)) {
+        if (IN.equals(condition)) {
             params.add(ValueUtil.convertToList(document.value()));
         } else {
             params.add(document.get());
@@ -152,7 +157,7 @@ final class QueryOSQLConverter {
             query.append(separator)
                     .append(sort.property())
                     .append(SPACE)
-                    .append(sort.isAscending()? Direction.ASC: Direction.DESC);
+                    .append(sort.isAscending() ? Direction.ASC : Direction.DESC);
             separator = ", ";
         }
     }
@@ -167,27 +172,6 @@ final class QueryOSQLConverter {
         }
     }
 
-    static class Query {
-        private final String query;
-        private final List<Object> params;
-        private List<ORecordId> ids;
-
-        Query(String query, List<Object> params,List<ORecordId> ids) {
-            this.query = query;
-            this.params = params;
-            this.ids = ids;
-        }
-
-        String getQuery() {
-            return query;
-        }
-
-        List<ORecordId> getIds() {
-            return ids;
-        }
-
-        List<Object> getParams() {
-            return params;
-        }
+    record Query(String query, List<Object> params, List<ORecordId> ids) {
     }
 }
