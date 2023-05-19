@@ -16,8 +16,9 @@ package org.eclipse.jnosql.databases.solr.integration;
 
 
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
-import org.eclipse.jnosql.databases.mongodb.mapping.MongoDBTemplate;
+import org.eclipse.jnosql.databases.solr.communication.DocumentDatabase;
+import org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfigurations;
+import org.eclipse.jnosql.databases.solr.mapping.SolrTemplate;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
@@ -35,24 +36,23 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
-import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabase.INSTANCE;
 
 @EnableAutoWeld
 @AddPackages(value = {Convert.class, DocumentEntityConverter.class})
 @AddPackages(Book.class)
-@AddPackages(MongoDBTemplate.class)
+@AddPackages(SolrTemplate.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class MongoDBTemplateIntegrationTest {
+class SolrTemplateIntegrationTest {
 
     @Inject
-    private MongoDBTemplate template;
+    private SolrTemplate template;
 
     static {
-        INSTANCE.get("library");
-        System.setProperty(MongoDBDocumentConfigurations.HOST.get() + ".1", INSTANCE.host());
-        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
+        DocumentDatabase.INSTANCE.get();
+        System.setProperty(SolrDocumentConfigurations.HOST.get() + ".1", DocumentDatabase.INSTANCE.host());
+        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "database");
     }
 
     @Test

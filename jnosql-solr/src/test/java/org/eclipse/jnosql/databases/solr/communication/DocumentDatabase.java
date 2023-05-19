@@ -19,7 +19,7 @@ import org.testcontainers.containers.SolrContainer;
 
 import java.util.function.Supplier;
 
-enum DocumentDatabase implements Supplier<SolrDocumentManager> {
+public enum DocumentDatabase implements Supplier<SolrDocumentManager> {
     INSTANCE;
 
     private static final String SOLR_IMAGE = "solr:9.1.1";
@@ -41,11 +41,11 @@ enum DocumentDatabase implements Supplier<SolrDocumentManager> {
 
     private Settings getSettings() {
         return Settings.builder()
-                .put(SolrDocumentConfigurations.HOST.get(), DocumentDatabase.INSTANCE.getHost())
+                .put(SolrDocumentConfigurations.HOST.get(), DocumentDatabase.INSTANCE.host())
                 .build();
     }
 
-    private String getHost() {
+    public String host() {
         return "http://" + container.getHost() + ":" + container.getSolrPort()+  "/solr";
     }
 

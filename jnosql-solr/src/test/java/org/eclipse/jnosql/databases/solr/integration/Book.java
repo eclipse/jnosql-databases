@@ -12,7 +12,7 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.databases.mongodb.integration;
+package org.eclipse.jnosql.databases.solr.integration;
 
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
