@@ -16,6 +16,7 @@ package org.eclipse.jnosql.databases.hazelcast.integration;
 
 
 import jakarta.inject.Inject;
+import jakarta.nosql.keyvalue.KeyValueTemplate;
 import org.eclipse.jnosql.databases.hazelcast.mapping.HazelcastTemplate;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
@@ -38,10 +39,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AddPackages(HazelcastTemplate.class)
 @AddExtensions({EntityMetadataExtension.class,
         KeyValueExtension.class})
-class HazelcastTemplateIntegrationTest {
+class KeyValueTemplateIntegrationTest {
 
     @Inject
-    private HazelcastTemplate template;
+    private KeyValueTemplate template;
 
     static {
         System.setProperty(MappingConfigurations.KEY_VALUE_DATABASE.get(), "library");
