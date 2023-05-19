@@ -43,7 +43,7 @@ class DocumentManagerSupplier implements Supplier<ArangoDBDocumentManager> {
         ArangoDBDocumentManagerFactory factory = configuration.apply(settings);
         Optional<String> database = settings.get(DOCUMENT_DATABASE, String.class);
         String db = database.orElseThrow(() -> new MappingException("Please, inform the database filling up the property "
-                + DOCUMENT_DATABASE));
+                + DOCUMENT_DATABASE.get()));
         ArangoDBDocumentManager manager = factory.apply(db);
         LOGGER.log(Level.FINEST, "Starting  a ArangoDBDocumentManager instance using Eclipse MicroProfile Config," +
                 " database name: " + db);
