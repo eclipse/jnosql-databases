@@ -20,13 +20,11 @@ import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
-import org.eclipse.jnosql.communication.ValueWriter;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.ValueWriterDecorator;
 
 import java.time.Duration;
 import java.util.Map;
@@ -49,8 +47,6 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     private final String database;
 
     private final ArangoDB arangoDB;
-
-    private final ValueWriter writerField = ValueWriterDecorator.getInstance();
 
     DefaultArangoDBDocumentManager(String database, ArangoDB arangoDB) {
         this.database = database;
