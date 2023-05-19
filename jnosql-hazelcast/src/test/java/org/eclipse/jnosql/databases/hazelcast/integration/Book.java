@@ -18,8 +18,10 @@ import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
 
+import java.io.Serializable;
+
 @Entity
-public record Book(@Id String id, @Column("title") String title, @Column("edition") int edition) {
+public record Book(@Id String id, @Column("title") String title, @Column("edition") int edition) implements Serializable {
 
 
 }
