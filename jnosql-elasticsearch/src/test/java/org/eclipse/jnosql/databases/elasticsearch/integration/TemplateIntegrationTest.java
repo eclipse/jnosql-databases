@@ -30,9 +30,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.databases.elasticsearch.communication.DocumentDatabase.INSTANCE;
@@ -58,9 +60,14 @@ class TemplateIntegrationTest {
     public void shouldInsert() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.insert(book);
-        Optional<Book> optional = template.find(Book.class, book.id());
-        assertThat(optional).isNotNull().isNotEmpty()
-                .get().isEqualTo(book);
+
+        AtomicReference<Book> reference = new AtomicReference<>();
+        await().until(() -> {
+            Optional<Book> optional = template.find(Book.class, book.id());
+            optional.ifPresent(reference::set);
+            return optional.isPresent();
+        });
+        assertThat(reference.get()).isNotNull().isEqualTo(book);
     }
 
     @Test
@@ -76,8 +83,13 @@ class TemplateIntegrationTest {
                 .isNotNull()
                 .isNotEqualTo(book);
 
-        assertThat(template.find(Book.class, book.id()))
-                .isNotNull().get().isEqualTo(updated);
+        AtomicReference<Book> reference = new AtomicReference<>();
+        await().until(() -> {
+            Optional<Book> optional = template.find(Book.class, book.id());
+            optional.ifPresent(reference::set);
+            return optional.isPresent();
+        });
+        assertThat(reference.get()).isNotNull().isEqualTo(updated);
 
     }
 
@@ -88,8 +100,14 @@ class TemplateIntegrationTest {
                 .isNotNull()
                 .isEqualTo(book);
 
-        assertThat(template.find(Book.class, book.id()))
-                .isNotNull().get().isEqualTo(book);
+        AtomicReference<Book> reference = new AtomicReference<>();
+        await().until(() -> {
+            Optional<Book> optional = template.find(Book.class, book.id());
+            optional.ifPresent(reference::set);
+            return optional.isPresent();
+        });
+
+        assertThat(reference.get()).isNotNull().isEqualTo(book);
     }
 
     @Test
@@ -103,6 +121,5 @@ class TemplateIntegrationTest {
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
     }
-
 
 }
