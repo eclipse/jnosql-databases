@@ -73,12 +73,17 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     public DocumentEntity update(DocumentEntity entity) {
         String collectionName = entity.name();
         checkCollection(collectionName);
+        String id = entity.find(ID, String.class)
+                .orElseThrow(() -> new IllegalArgumentException("The document does not provide" +
+                        " the _id column"));
+        feedKey(entity, id);
         BaseDocument baseDocument = ArangoDBUtil.getBaseDocument(entity);
         DocumentUpdateEntity<BaseDocument> arandoDocument = arangoDB.db(DbName.of(database))
                 .collection(collectionName).updateDocument(baseDocument.getKey(), baseDocument);
         updateEntity(entity, arandoDocument.getKey(), arandoDocument.getId(), arandoDocument.getRev());
         return entity;
     }
+
 
     @Override
     public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
@@ -190,6 +195,17 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         entity.add(Document.of(KEY, key));
         entity.add(Document.of(ID, id));
         entity.add(Document.of(REV, rev));
+    }
+
+    private static void feedKey(DocumentEntity entity, String id) {
+        if (entity.find(KEY).isEmpty()) {
+            String[] values = id.split("/");
+            if (values.length == 2) {
+                entity.add(KEY, values[1]);
+            } else {
+                entity.add(KEY, values[0]);
+            }
+        }
     }
 
     ArangoDB getArangoDB() {
