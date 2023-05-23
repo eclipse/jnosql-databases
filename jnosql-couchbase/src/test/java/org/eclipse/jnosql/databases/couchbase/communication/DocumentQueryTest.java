@@ -15,68 +15,60 @@
 package org.eclipse.jnosql.databases.couchbase.communication;
 
 
+import com.couchbase.client.core.env.TimeoutConfig;
 import com.couchbase.client.core.error.DocumentExistsException;
 import com.couchbase.client.core.error.DocumentNotFoundException;
-import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.awaitility.Awaitility.await;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class DocumentQueryTest {
 
     public static final String COLLECTION_NAME = "person";
-    private CouchbaseDocumentManager entityManager;
-    private static CouchbaseDocumentConfiguration configuration;
+    private static CouchbaseDocumentManager entityManager;
+    private static BucketManager keyValueEntityManager;
 
-    {
-        Settings settings = CouchbaseUtil.getSettings();
-
+    static {
+        var settings = Database.INSTANCE.getSettings();
+        var configuration = Database.INSTANCE.getDocumentConfiguration();
         CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
         entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
+        BucketManagerFactory keyValueEntityManagerFactory =
+                Database.INSTANCE.getKeyValueConfiguration().apply(settings);
+        keyValueEntityManager = keyValueEntityManagerFactory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
-    @AfterAll
-    public static void afterEach() {
-        CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
-        BucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
-        BucketManager keyValueEntityManager = keyValueEntityManagerFactory.apply(CouchbaseUtil.BUCKET_NAME);
-        try {
-            keyValueEntityManager.delete("id");
-            keyValueEntityManager.delete("id2");
-            keyValueEntityManager.delete("id3");
-            keyValueEntityManager.delete("id4");
-        } catch (DocumentNotFoundException exp) {
+    @AfterEach
+    public void afterEach() {
+        List.of("id", "id2", "id3", "id4")
+                .forEach(key -> ignoreException(() -> keyValueEntityManager.delete(key)));
 
-        }
+        await().atLeast(TimeoutConfig.DEFAULT_KV_DURABLE_TIMEOUT);
     }
 
-    @BeforeAll
-    public static void beforeEach() {
-        configuration = Database.INSTANCE.getDocumentConfiguration();
-        Settings settings = CouchbaseUtil.getSettings();
-        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
-        CouchbaseDocumentManager entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
+
+    @BeforeEach
+    public void beforeEach() {
 
         DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
                 , Document.of("name", "name")));
@@ -87,25 +79,25 @@ public class DocumentQueryTest {
         DocumentEntity entity4 = DocumentEntity.of("person", asList(Document.of("_id", "id4")
                 , Document.of("name", "name3")));
 
-        try {
-            entityManager.insert(Arrays.asList(entity, entity2, entity3, entity4));
-        } catch (DocumentExistsException exp) {
+        entityManager.update(Arrays.asList(entity, entity2, entity3, entity4));
 
-        }
-
+        await().atLeast(TimeoutConfig.DEFAULT_KV_DURABLE_TIMEOUT);
     }
 
+    private void ignoreException(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (DocumentNotFoundException
+                 | DocumentExistsException ex) {
+            //IGNORED
+        }
+    }
 
     @Test
     public void shouldShouldDefineLimit() {
 
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name")));
-
-        Document name = entity.find("name").get();
-
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.name()).eq(name.get())
+                .where("name").eq("name")
                 .limit(2L)
                 .build();
 
@@ -116,34 +108,28 @@ public class DocumentQueryTest {
 
     @Test
     public void shouldShouldDefineStart() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name")));
-
-        Document name = entity.find("name").get();
-
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.name()).eq(name.get())
+                .where("name").eq("name")
                 .skip(1L)
                 .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
-        assertEquals(3, entities.size());
+        assertEquals(2, entities.size());
 
     }
 
     @Test
     public void shouldShouldDefineLimitAndStart() {
 
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name")));
+        List<DocumentEntity> entities = entityManager.select(select().from(COLLECTION_NAME).build()).collect(Collectors.toList());
+        assertEquals(4, entities.size());
 
-        Document name = entity.find("name").get();
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(name.name()).eq(name.get())
-                .skip(2L)
+                .where("name").eq("name")
+                .skip(1L)
                 .limit(2L)
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
 
     }
@@ -151,25 +137,20 @@ public class DocumentQueryTest {
 
     @Test
     public void shouldSelectAll() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name")));
-
-
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        Optional<Document> name = entity.find("name");
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        assertTrue(entities.size() >= 4);
+        assertThat(entities).hasSize(4);
     }
 
 
     @Test
     public void shouldFindDocumentByName() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4"),
-                Document.of("name", "name"), Document.of("_key", "person:id4")));
 
-        Document name = entity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(name.name()).eq(name.get()).build();
+        DocumentQuery query = select().from(COLLECTION_NAME)
+                .where("name")
+                .eq("name")
+                .build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
@@ -194,15 +175,13 @@ public class DocumentQueryTest {
 
     @Test
     public void shouldFindDocumentByNameSortDesc() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id4")
-                , Document.of("name", "name3"), Document.of("_key", "person:id4")));
-
-        Optional<Document> name = entity.find("name");
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .orderBy("name").desc()
                 .build();
+
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+
         List<String> result = entities.stream().flatMap(e -> e.documents().stream())
                 .filter(d -> "name".equals(d.name()))
                 .map(d -> d.get(String.class))
@@ -214,16 +193,14 @@ public class DocumentQueryTest {
 
     @Test
     public void shouldFindDocumentById() {
-        DocumentEntity entity = DocumentEntity.of("person", asList(Document.of("_id", "id")
-                , Document.of("name", "name"), Document.of("_key", "person:id")));
-        Document id = entity.find("_id").get();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where(id.name()).eq(id.get())
+                .where("_id").eq("id")
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
+
     }
 
 }

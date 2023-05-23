@@ -157,7 +157,7 @@ public final class CouchbaseSettings {
         Objects.requireNonNull(database, "database is required");
 
         long start = System.currentTimeMillis();
-        LOGGER.log(Level.FINEST, "starting the setup with database: "  + database);
+        LOGGER.log(Level.FINEST, "starting the setup with database: " + database);
 
         try (Cluster cluster = getCluster()) {
 
@@ -165,7 +165,7 @@ public final class CouchbaseSettings {
             try {
                 buckets.getBucket(database);
             } catch (BucketNotFoundException exp) {
-                LOGGER.log(Level.FINEST, "The database/bucket does not exist, creating it: "  + database);
+                LOGGER.log(Level.FINEST, "The database/bucket does not exist, creating it: " + database);
                 buckets.createBucket(BucketSettings.create(database));
             }
             Bucket bucket = cluster.bucket(database);
@@ -190,11 +190,24 @@ public final class CouchbaseSettings {
                     queryIndexManager.createPrimaryIndex(database, createPrimaryQueryIndexOptions()
                             .scopeName(finalScope).collectionName(index));
                 }
+
+                for (String collection : collections) {
+                    queryIndexManager = cluster.queryIndexes();
+                    indexes = queryIndexManager.getAllIndexes(database, getAllQueryIndexesOptions()
+                            .scopeName(finalScope).collectionName(collection));
+                    if (indexes.isEmpty()) {
+                        LOGGER.log(Level.FINEST, "Index for " + collection + " collection does not exist, creating primary key with scope "
+                                + scope + " collection " + collection + " at database " + database);
+                        queryIndexManager.createPrimaryIndex(database, createPrimaryQueryIndexOptions()
+                                .scopeName(finalScope).collectionName(collection));
+                    }
+                }
+
             }
 
             long end = System.currentTimeMillis() - start;
-            LOGGER.log(Level.FINEST, "Finished the setup with database: "  + database + " end with millis "
-            + end);
+            LOGGER.log(Level.FINEST, "Finished the setup with database: " + database + " end with millis "
+                    + end);
         }
     }
 

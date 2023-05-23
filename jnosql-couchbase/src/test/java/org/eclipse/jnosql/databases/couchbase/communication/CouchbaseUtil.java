@@ -17,8 +17,13 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
+import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+
+import static org.eclipse.jnosql.databases.couchbase.communication.Database.INSTANCE;
 
 public final class CouchbaseUtil {
 
@@ -30,9 +35,32 @@ public final class CouchbaseUtil {
     }
 
     public static Settings getSettings() {
+        SettingsBuilder builder = getSettingsBuilder();
+        return builder.build();
+    }
+
+    public static SettingsBuilder getSettingsBuilder() {
         Map<String, String> map = ConfigurationReader.from(CouchbaseUtil.FILE_CONFIGURATION);
         SettingsBuilder builder = Settings.builder();
         map.forEach(builder::put);
-        return builder.build();
+        return builder;
     }
+
+    public static void systemPropertySetup(Consumer<CouchbaseSettings> consumer) {
+        Map<String, Object> configuration = new HashMap<>(ConfigurationReader.from("couchbase.properties"));
+        for (Map.Entry<String, Object> entry : configuration.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue().toString());
+        }
+        CouchbaseSettings couchbaseSettings = INSTANCE.getCouchbaseSettings();
+        System.setProperty(CouchbaseConfigurations.HOST.get(), couchbaseSettings.getHost());
+        consumer.accept(couchbaseSettings);
+    }
+
+    public static void systemPropertySetup() {
+        systemPropertySetup(settings -> {
+            System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), CouchbaseUtil.BUCKET_NAME);
+            System.setProperty(MappingConfigurations.DOCUMENT_PROVIDER.get(), CouchbaseDocumentConfiguration.class.getName());
+        });
+    }
+
 }

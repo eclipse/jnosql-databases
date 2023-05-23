@@ -18,9 +18,9 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -41,7 +41,7 @@ public abstract class CouchbaseConfiguration {
     protected String index;
 
     protected String collection;
-    protected List<String> collections = new ArrayList<>();
+    protected Set<String> collections = new LinkedHashSet<>();
 
 
     protected void update(Settings settings) {
@@ -75,8 +75,8 @@ public abstract class CouchbaseConfiguration {
                 .map(Object::toString).orElse(null);
     }
 
-    private List<String> getCollections(Settings settings) {
-        List<String> collections = new ArrayList<>();
+    private Set<String> getCollections(Settings settings) {
+        Set<String> collections = new LinkedHashSet<>();
         settings.get(CouchbaseConfigurations.COLLECTIONS)
                 .map(Object::toString).stream()
                 .flatMap(s -> Stream.of(s.split(",\\s*")))
@@ -159,7 +159,7 @@ public abstract class CouchbaseConfiguration {
      */
     public CouchbaseSettings toCouchbaseSettings() {
         return new CouchbaseSettings(this.host, this.user, this.password,
-                this.scope, this.index, this.collection, this.collections);
+                this.scope, this.index, this.collection, this.collections.stream().toList());
     }
 
     @Override

@@ -14,13 +14,14 @@
  */
 package org.eclipse.jnosql.databases.couchbase.communication;
 
+import org.assertj.core.api.Assertions;
+import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -32,8 +33,8 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,9 +44,9 @@ public class CouchbaseBucketManagerTest {
 
     private static final String KEY_SORO = "soro";
     private static final String KEY_OTAVIO = "otavio";
-    private BucketManager manager;
 
-    private BucketManagerFactory factory;
+    private static BucketManager manager;
+    private static BucketManagerFactory factory;
 
     private User userOtavio = new User(KEY_OTAVIO);
     private KeyValueEntity entityOtavio = KeyValueEntity.of(KEY_OTAVIO, Value.of(userOtavio));
@@ -53,17 +54,19 @@ public class CouchbaseBucketManagerTest {
     private User userSoro = new User(KEY_SORO);
     private KeyValueEntity soroEntity = KeyValueEntity.of(KEY_SORO, Value.of(userSoro));
 
-    @BeforeEach
-    public void init() {
+    @BeforeAll
+    public static void beforeAll() {
+        Settings settings = Database.INSTANCE.getSettings();
         CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
-        factory = configuration.apply(CouchbaseUtil.getSettings());
+        factory = configuration.apply(settings);
         manager = factory.apply(CouchbaseUtil.BUCKET_NAME);
     }
 
     @AfterAll
     public static void afterClass() {
+        Settings settings = Database.INSTANCE.getSettings();
         CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
-        BucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
+        BucketManagerFactory keyValueEntityManagerFactory = configuration.apply(settings);
         BucketManager keyValueEntityManager = keyValueEntityManagerFactory.apply(CouchbaseUtil.BUCKET_NAME);
         keyValueEntityManager.delete(KEY_OTAVIO);
         keyValueEntityManager.delete(KEY_SORO);
@@ -177,7 +180,6 @@ public class CouchbaseBucketManagerTest {
                 .map(value -> value.get(User.class)).collect(Collectors.toList()))
                 .contains(userOtavio, userSoro);
         manager.delete(keys);
-        Iterable<Value> users = values;
         assertEquals(0L, StreamSupport.stream(manager.get(keys).spliterator(), false).count());
     }
 

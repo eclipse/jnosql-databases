@@ -27,6 +27,7 @@ import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -67,8 +68,7 @@ public class CouchbaseBucketManager implements BucketManager {
     public <K, V> void put(K key, V value) {
         requireNonNull(key, "key is required");
         requireNonNull(value, "value is required");
-        collection.upsert(key.toString(), value);
-
+        waitBucketBeReadyAndGet(() -> collection.upsert(key.toString(), value));
     }
 
     @Override
@@ -78,13 +78,14 @@ public class CouchbaseBucketManager implements BucketManager {
     }
 
     @Override
-    public void put(KeyValueEntity entity, Duration ttl) {
+    public void put(final KeyValueEntity entity, final Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        String key = entity.key(String.class);
-        Object value = convert(Value.of(entity.value()));
-        collection.upsert(key, value, UpsertOptions.upsertOptions().expiry(ttl));
-
+        waitBucketBeReadyAndDo(() -> {
+            String key = entity.key(String.class);
+            Object value = convert(Value.of(entity.value()));
+            collection.upsert(key, value, UpsertOptions.upsertOptions().expiry(ttl));
+        });
     }
 
     @Override
@@ -104,8 +105,10 @@ public class CouchbaseBucketManager implements BucketManager {
     public <K> Optional<Value> get(K key) throws NullPointerException {
         requireNonNull(key, "key is required");
         try {
-            GetResult result = this.collection.get(key.toString());
-            return Optional.of(new CouchbaseValue(result));
+            return waitBucketBeReadyAndGet(() -> {
+                GetResult result = this.collection.get(key.toString());
+                return Optional.of(new CouchbaseValue(result));
+            });
         } catch (DocumentNotFoundException exp) {
             return Optional.empty();
         }
@@ -124,8 +127,20 @@ public class CouchbaseBucketManager implements BucketManager {
     @Override
     public <K> void delete(K key) {
         requireNonNull(key, "key is required");
-        collection.remove(key.toString());
+        waitBucketBeReadyAndDo(() -> collection.remove(key.toString()));
     }
+
+    private void waitBucketBeReadyAndDo(Runnable runnable) {
+        bucket.waitUntilReady(bucket.environment().timeoutConfig().kvDurableTimeout());
+        runnable.run();
+    }
+
+
+    private <T> T waitBucketBeReadyAndGet(Supplier<T> supplier) {
+        bucket.waitUntilReady(bucket.environment().timeoutConfig().kvDurableTimeout());
+        return supplier.get();
+    }
+
 
     @Override
     public <K> void delete(Iterable<K> keys) {

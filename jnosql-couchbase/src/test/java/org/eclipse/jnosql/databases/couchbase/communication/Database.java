@@ -14,28 +14,45 @@
  */
 package org.eclipse.jnosql.databases.couchbase.communication;
 
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.testcontainers.couchbase.BucketDefinition;
 import org.testcontainers.couchbase.CouchbaseContainer;
+
+import java.util.Optional;
 
 public enum Database {
 
     INSTANCE;
 
-    private CouchbaseContainer container;
+    private final CouchbaseContainer container;
+    private final CouchbaseSettings settings;
 
     Database() {
-        //TODO create couchbase container to run all tests instead of run an outside container
-        BucketDefinition bucketDefinition = new BucketDefinition(CouchbaseUtil.BUCKET_NAME)
-                .withPrimaryIndex(true)
-                .withReplicas(0)
+
+        Settings fileSettings = CouchbaseUtil.getSettings();
+
+        CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
+
+        var bucketName = CouchbaseUtil.BUCKET_NAME;
+
+        BucketDefinition bucketDefinition = new BucketDefinition(bucketName)
                 .withFlushEnabled(true);
+
         container = new CouchbaseContainer("couchbase/server")
                 .withBucket(bucketDefinition)
-                .withExposedPorts(8091, 8092, 8093, 8094, 11207, 11210, 11211, 18091, 18092, 18093);
+                .withCredentials(configuration.getUser(fileSettings), configuration.getPassword(fileSettings))
+                .withReuse(true);
+
         container.start();
-        CouchbaseDocumentConfiguration configuration = setup(new CouchbaseDocumentConfiguration());
-        CouchbaseSettings settings = configuration.toCouchbaseSettings();
-        settings.setUp("jnosql");
+
+        configuration.update(fileSettings);
+
+        setup(configuration, configuration.toCouchbaseSettings());
+
+        settings = configuration.toCouchbaseSettings();
+
+        settings.setUp(bucketName);
     }
 
     public CouchbaseDocumentConfiguration getDocumentConfiguration() {
@@ -49,9 +66,44 @@ public enum Database {
     }
 
     private <T extends CouchbaseConfiguration> T setup(T configuration) {
+        return setup(configuration, this.settings);
+    }
+
+    private <T extends CouchbaseConfiguration> T setup(T configuration, CouchbaseSettings settings) {
         configuration.setHost(container.getConnectionString());
         configuration.setUser(container.getUsername());
         configuration.setPassword(container.getPassword());
+        settings.getCollection().ifPresent(configuration::setCollection);
+        settings.getCollections().stream().toList().forEach(configuration::addCollection);
+        settings.getScope().ifPresent(configuration::setScope);
         return configuration;
     }
+
+    public CouchbaseSettings getCouchbaseSettings() {
+        return settings;
+    }
+
+    public Settings getSettings() {
+        return getSettingsBuilder().build();
+    }
+
+    public SettingsBuilder getSettingsBuilder() {
+        CouchbaseSettings couchbaseSettings = getCouchbaseSettings();
+        SettingsBuilder builder = CouchbaseUtil.getSettingsBuilder();
+        builder.put(CouchbaseConfigurations.HOST.get(), couchbaseSettings.getHost());
+        couchbaseSettings.getScope().ifPresent(scope ->
+                builder.put(CouchbaseConfigurations.SCOPE.get(), scope));
+        Optional.ofNullable(couchbaseSettings.getIndex()).ifPresent(index ->
+                builder.put(CouchbaseConfigurations.INDEX.get(), index));
+        if (!couchbaseSettings.getCollections().isEmpty()) {
+            builder.put(CouchbaseConfigurations.COLLECTIONS.get(),
+                    String.join(",", couchbaseSettings.getCollections()));
+        }
+        Optional.ofNullable(couchbaseSettings.getUser()).ifPresent(user ->
+                builder.put(CouchbaseConfigurations.USER.get(), couchbaseSettings.getUser()));
+        Optional.ofNullable(couchbaseSettings.getPassword()).ifPresent(password ->
+                builder.put(CouchbaseConfigurations.PASSWORD.get(), password));
+        return builder;
+    }
+
 }

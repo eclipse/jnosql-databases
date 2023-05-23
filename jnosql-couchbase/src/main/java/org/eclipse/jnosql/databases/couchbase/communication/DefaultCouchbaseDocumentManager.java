@@ -33,6 +33,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -67,27 +68,29 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     @Override
     public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
-        entity.add(EntityConverter.COLLECTION_FIELD, entity.name());
-        JsonObject json = EntityConverter.convert(entity);
-        Document id = entity.find(EntityConverter.ID_FIELD)
-                .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
-
-        Collection collection = bucket.collection(entity.name());
-        collection.insert(id.get(String.class), json);
-        return entity;
+        return waitBucketBeReadyAndGet(() -> {
+            entity.add(EntityConverter.COLLECTION_FIELD, entity.name());
+            JsonObject json = EntityConverter.convert(entity);
+            Document id = entity.find(EntityConverter.ID_FIELD)
+                    .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
+            Collection collection = bucket.collection(entity.name());
+            collection.insert(id.get(String.class), json);
+            return entity;
+        });
     }
 
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
-        JsonObject json = EntityConverter.convert(entity);
-        Document id = entity.find(EntityConverter.ID_FIELD)
-                .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
-
-        Collection collection = bucket.collection(entity.name());
-        collection.insert(id.get(String.class), json, InsertOptions.insertOptions().expiry(ttl));
-        return entity;
+        return waitBucketBeReadyAndGet(() -> {
+            JsonObject json = EntityConverter.convert(entity);
+            Document id = entity.find(EntityConverter.ID_FIELD)
+                    .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
+            Collection collection = bucket.collection(entity.name());
+            collection.insert(id.get(String.class), json, InsertOptions.insertOptions().expiry(ttl));
+            return entity;
+        });
     }
 
     @Override
@@ -108,14 +111,15 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     @Override
     public DocumentEntity update(DocumentEntity entity) {
         requireNonNull(entity, "entity is required");
-        entity.add(EntityConverter.COLLECTION_FIELD, entity.name());
-        JsonObject json = EntityConverter.convert(entity);
-        Document id = entity.find(EntityConverter.ID_FIELD)
-                .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
-
-        Collection collection = bucket.collection(entity.name());
-        collection.upsert(id.get(String.class), json);
-        return entity;
+        return waitBucketBeReadyAndGet(() -> {
+            entity.add(EntityConverter.COLLECTION_FIELD, entity.name());
+            JsonObject json = EntityConverter.convert(entity);
+            Document id = entity.find(EntityConverter.ID_FIELD)
+                    .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
+            Collection collection = bucket.collection(entity.name());
+            collection.upsert(id.get(String.class), json);
+            return entity;
+        });
     }
 
     @Override
@@ -127,47 +131,59 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
 
     @Override
     public void delete(DocumentDeleteQuery query) {
-        Objects.requireNonNull(query, "query is required");
+        waitBucketBeReadyAndDo(() -> {
+            Objects.requireNonNull(query, "query is required");
+            Collection collection = bucket.collection(query.name());
+            DocumentQuery delete = DeleteQueryWrapper.of(query);
+            Stream<DocumentEntity> entities = select(delete);
+            entities.flatMap(d -> d.find(EntityConverter.ID_FIELD).stream())
+                    .filter(Objects::nonNull)
+                    .map(d -> d.get(String.class))
+                    .forEach(collection::remove);
+        });
+    }
 
-        Collection collection = bucket.collection(query.name());
-        DocumentQuery delete = DeleteQueryWrapper.of(query);
-        Stream<DocumentEntity> entities = select(delete);
-        entities.flatMap(d -> d.find(EntityConverter.ID_FIELD).stream())
-                .filter(Objects::nonNull)
-                .map(d -> d.get(String.class))
-                .forEach(collection::remove);
+    private void waitBucketBeReadyAndDo(Runnable runnable) {
+        bucket.waitUntilReady(bucket.environment().timeoutConfig().kvDurableTimeout());
+        runnable.run();
+    }
 
+
+    private <T> T waitBucketBeReadyAndGet(Supplier<T> supplier) {
+        bucket.waitUntilReady(bucket.environment().timeoutConfig().kvDurableTimeout());
+        return supplier.get();
     }
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
+    public Stream<DocumentEntity> select(final DocumentQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
-        N1QLQuery n1QLQuery = N1QLBuilder.of(query, database, bucket.defaultScope().name()).get();
-        List<JsonObject> jsons = new ArrayList<>();
-
-        if (n1QLQuery.hasIds()) {
-            Collection collection = bucket.collection(query.name());
-            for (String id : n1QLQuery.getIds()) {
-                try {
-                    GetResult result = collection.get(id);
-                    jsons.add(result.contentAsObject());
-                } catch (DocumentNotFoundException exp) {
-                    LOGGER.log(Level.FINEST, "The id was not found: " + id);
+        return waitBucketBeReadyAndGet(() -> {
+            N1QLQuery n1QLQuery = N1QLBuilder.of(query, database, bucket.defaultScope().name()).get();
+            List<JsonObject> jsons = new ArrayList<>();
+            if (n1QLQuery.hasIds()) {
+                Collection collection = bucket.collection(query.name());
+                for (String id : n1QLQuery.getIds()) {
+                    try {
+                        GetResult result = collection.get(id);
+                        jsons.add(result.contentAsObject());
+                    } catch (DocumentNotFoundException exp) {
+                        LOGGER.log(Level.FINEST, "The id was not found: " + id);
+                    }
                 }
             }
-        }
 
-        if (!n1QLQuery.hasOnlyIds()) {
-            QueryResult result;
-            if (n1QLQuery.hasParameter()) {
-                result = cluster.query(n1QLQuery.getQuery());
-            } else {
-                result = cluster.query(n1QLQuery.getQuery(), QueryOptions
-                        .queryOptions().parameters(n1QLQuery.getParams()));
+            if (!n1QLQuery.hasOnlyIds()) {
+                QueryResult result;
+                if (n1QLQuery.hasParameter()) {
+                    result = cluster.query(n1QLQuery.getQuery());
+                } else {
+                    result = cluster.query(n1QLQuery.getQuery(), QueryOptions
+                            .queryOptions().parameters(n1QLQuery.getParams()));
+                }
+                jsons.addAll(result.rowsAsObject());
             }
-            jsons.addAll(result.rowsAsObject());
-        }
-        return EntityConverter.convert(jsons, database);
+            return EntityConverter.convert(jsons, database);
+        });
     }
 
     @Override
@@ -177,21 +193,24 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
 
 
     @Override
-    public Stream<DocumentEntity> n1qlQuery(String n1ql, JsonObject params) throws NullPointerException {
+    public Stream<DocumentEntity> n1qlQuery(final String n1ql, final JsonObject params) throws NullPointerException {
         requireNonNull(n1ql, "n1qlQuery is required");
         requireNonNull(params, "params is required");
-
-        QueryResult query = cluster.query(n1ql, QueryOptions
-                .queryOptions().parameters(params));
-        return EntityConverter.convert(query.rowsAsObject(), database);
+        return waitBucketBeReadyAndGet(() -> {
+            QueryResult query = cluster.query(n1ql, QueryOptions
+                    .queryOptions().parameters(params));
+            return EntityConverter.convert(query.rowsAsObject(), database);
+        });
     }
 
 
     @Override
     public Stream<DocumentEntity> n1qlQuery(String n1ql) throws NullPointerException {
         requireNonNull(n1ql, "n1qlQuery is required");
-        QueryResult query = cluster.query(n1ql);
-        return EntityConverter.convert(query.rowsAsObject(), database);
+        return waitBucketBeReadyAndGet(() -> {
+            QueryResult query = cluster.query(n1ql);
+            return EntityConverter.convert(query.rowsAsObject(), database);
+        });
     }
 
 
