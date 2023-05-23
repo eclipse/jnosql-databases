@@ -21,6 +21,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 - Fix the ArangoDBDocumentManager implementation to shut down the ArangoDB instance.
 - Fix integration on MongoDBTemplate
+- Fix DocumentQuery conversion to the N1QLQuery in order to follow the N1QL spec regarding identifiers declarations
 
 == [1.0.0-b6] - 2023-03-11
 
