@@ -135,7 +135,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     private void predicateBetween(StringBuilder n1ql, JsonObject params, Document document) {
         n1ql.append(" BETWEEN ");
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = '\'' + document.name() + '\'';
+        String name = identifierOf(document.name());
 
         List<Object> values = new ArrayList<>();
         ((Iterable<?>) document.get()).forEach(values::add);
@@ -162,11 +162,15 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                            Document document,
                            JsonObject params) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        String name = '\'' + document.name() + '\'';
+        String name = identifierOf(document.name());
         Object value = document.get();
         String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
         n1ql.append(name).append(condition).append(param);
         params.put(param, value);
+    }
+
+    private String identifierOf(String name) {
+        return ' ' + name + ' ';
     }
 
     private String select() {
