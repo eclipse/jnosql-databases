@@ -14,29 +14,23 @@
  */
 package org.eclipse.jnosql.databases.couchbase.communication;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.eclipse.jnosql.communication.Settings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class CouchbaseDocumentManagerFactoryTest {
 
-    private CouchbaseDocumentConfiguration configuration;
-
-    @BeforeEach
-    public void setUp() {
-        configuration = new CouchbaseDocumentConfiguration();
-
-    }
-
     @Test
     public void shouldCreateEntityManager() {
-        CouchbaseDocumentConfiguration configuration = Database.INSTANCE.getDocumentConfiguration();
-        CouchbaseDocumentManagerFactory factory = configuration.apply(CouchbaseUtil.getSettings());
+        Settings settings=Database.INSTANCE.getSettings();
+        CouchbaseDocumentConfiguration configuration =  new CouchbaseDocumentConfiguration();
+        CouchbaseDocumentManagerFactory factory = configuration.apply(settings);
         assertNotNull(factory.apply(CouchbaseUtil.BUCKET_NAME));
     }
+
 }
