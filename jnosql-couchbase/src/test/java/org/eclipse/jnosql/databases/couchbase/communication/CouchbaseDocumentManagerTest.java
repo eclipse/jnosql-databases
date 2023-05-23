@@ -16,14 +16,16 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.json.JsonObject;
+import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -36,14 +38,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.awaitility.Awaitility.await;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,35 +55,39 @@ public class CouchbaseDocumentManagerTest {
 
     public static final String COLLECTION_PERSON_NAME = "person";
     public static final String COLLECTION_APP_NAME = "AppointmentBook";
-    private CouchbaseDocumentManager entityManager;
+    private static Settings settings;
+    private static CouchbaseDocumentManager entityManager;
+    private static BucketManager keyValueEntityManagerForPerson;
+    private static BucketManager keyValueEntityManagerForAppointmentBook;
 
-    {
+    static {
+        settings = Database.INSTANCE.getSettings();
         CouchbaseDocumentConfiguration configuration = Database.INSTANCE.getDocumentConfiguration();
-
-        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
+        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(settings);
         entityManager = managerFactory.apply(CouchbaseUtil.BUCKET_NAME);
+
+        CouchbaseKeyValueConfiguration keyValueConfiguration = Database.INSTANCE.getKeyValueConfiguration();
+        CouchbaseBucketManagerFactory keyValueEntityManagerFactory = keyValueConfiguration.apply(settings);
+        keyValueEntityManagerForPerson = keyValueEntityManagerFactory
+                .getBucketManager(CouchbaseUtil.BUCKET_NAME, COLLECTION_PERSON_NAME);
+        keyValueEntityManagerForAppointmentBook = keyValueEntityManagerFactory
+                .getBucketManager(CouchbaseUtil.BUCKET_NAME, COLLECTION_APP_NAME);
     }
 
+    @BeforeEach
     @AfterEach
-    public void afterEach() {
-        CouchbaseKeyValueConfiguration configuration = Database.INSTANCE.getKeyValueConfiguration();
-        CouchbaseBucketManagerFactory keyValueEntityManagerFactory = configuration.apply(CouchbaseUtil.getSettings());
-
+    public void cleanUpData() throws InterruptedException {
         try {
-            BucketManager keyValueEntityManager = keyValueEntityManagerFactory
-                    .getBucketManager(CouchbaseUtil.BUCKET_NAME, COLLECTION_PERSON_NAME);
-            keyValueEntityManager.delete("id");
+            keyValueEntityManagerForPerson.delete("id");
         } catch (DocumentNotFoundException exp) {
             //IGNORE
         }
-
         try {
-            BucketManager keyValueEntityManager = keyValueEntityManagerFactory
-                    .getBucketManager(CouchbaseUtil.BUCKET_NAME, COLLECTION_APP_NAME);
-            keyValueEntityManager.delete("ids");
+            keyValueEntityManagerForAppointmentBook.delete("ids");
         } catch (DocumentNotFoundException exp) {
             //IGNORE
         }
+        Thread.sleep(1_000L);
     }
 
     @Test
@@ -128,7 +134,6 @@ public class CouchbaseDocumentManagerTest {
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
         Document id = entitySaved.find("_id").get();
-
         DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
         Document subDocument = entityFound.find("phones").get();
@@ -217,19 +222,25 @@ public class CouchbaseDocumentManagerTest {
     public void shouldRunN1Ql() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._default.person").collect(Collectors.toList());
-        assertFalse(entities.isEmpty());
+        await().until(() ->
+                !entityManager
+                        .n1qlQuery("select * from `jnosql`._default.person")
+                        .collect(Collectors.toList()).isEmpty()
+        );
     }
 
     @Test
     public void shouldRunN1QlParameters() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
-        JsonObject params = JsonObject.create().put("name", "Poliana");
-        List<DocumentEntity> entities = entityManager.n1qlQuery("select * from jnosql._default.person where name = $name",
-                params).collect(Collectors.toList());
-        assertNotNull(entities);
-        assertFalse(entities.isEmpty());
+
+        JsonObject params = JsonObject.create().put("name", entity.find("name", String.class).orElse(null));
+
+        await().until(() ->
+                !entityManager
+                        .n1qlQuery("select * from `jnosql`._default.person where name = $name", params)
+                        .collect(Collectors.toList()).isEmpty()
+        );
     }
 
 
