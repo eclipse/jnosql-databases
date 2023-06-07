@@ -68,11 +68,9 @@ public enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFac
                         .isTrue();
             });
         } catch (Exception e) {
-            if( e instanceof ElasticsearchException){
-                e.printStackTrace();
-                return;
+            if( !(e instanceof ElasticsearchException)) {
+                throw new RuntimeException(e);
             }
-            throw new RuntimeException(e);
         }
     }
 
