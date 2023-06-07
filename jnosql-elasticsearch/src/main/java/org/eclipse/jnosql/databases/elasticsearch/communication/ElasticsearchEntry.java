@@ -60,7 +60,8 @@ class ElasticsearchEntry {
         List<Document> documents = map.keySet().stream()
                 .map(k -> toDocument(k, map))
                 .collect(Collectors.toList());
-        DocumentEntity entity = DocumentEntity.of(collection, documents);
+        DocumentEntity entity = DocumentEntity.of(collection);
+        documents.forEach(d-> entity.add(d.name(),d.value()));
         entity.remove(EntityConverter.ID_FIELD);
         entity.remove(EntityConverter.ENTITY);
         entity.add(id);
