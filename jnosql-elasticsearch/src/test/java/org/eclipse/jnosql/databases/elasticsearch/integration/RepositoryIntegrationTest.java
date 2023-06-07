@@ -33,13 +33,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
@@ -51,11 +54,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class ElasticsearchTemplateIntegrationTest {
-
-    @Inject
-    private ElasticsearchTemplate template;
-
+class RepositoryIntegrationTest {
 
     public static final String INDEX = "library";
 
@@ -69,9 +68,12 @@ class ElasticsearchTemplateIntegrationTest {
     }
 
 
+    @Inject
+    private Library library;
+
     @BeforeEach
     @AfterEach
-    public void clearDatabase(){
+    public void clearDatabase() {
         DocumentDatabase.clearDatabase(INDEX);
     }
 
@@ -79,11 +81,11 @@ class ElasticsearchTemplateIntegrationTest {
     public void shouldInsert() {
         Author joshuaBloch = new Author("Joshua Bloch");
         Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
-        template.insert(book);
+        library.save(book);
 
         AtomicReference<Book> reference = new AtomicReference<>();
         await().until(() -> {
-            Optional<Book> optional = template.find(Book.class, book.id());
+            Optional<Book> optional = library.findById(book.id());
             optional.ifPresent(reference::set);
             return optional.isPresent();
         });
@@ -94,19 +96,19 @@ class ElasticsearchTemplateIntegrationTest {
     public void shouldUpdate() {
         Author joshuaBloch = new Author("Joshua Bloch");
         Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
-        assertThat(template.insert(book))
+        assertThat(library.save(book))
                 .isNotNull()
                 .isEqualTo(book);
 
-        Book updated = book.updateEdition(book.edition() + 1);
+        Book updated = book.updateEdition(2);
 
-        assertThat(template.update(updated))
+        assertThat(library.save(updated))
                 .isNotNull()
                 .isNotEqualTo(book);
 
         AtomicReference<Book> reference = new AtomicReference<>();
         await().until(() -> {
-            Optional<Book> optional = template.find(Book.class, book.id());
+            Optional<Book> optional = library.findById(book.id());
             optional.ifPresent(reference::set);
             return optional.isPresent();
         });
@@ -119,13 +121,13 @@ class ElasticsearchTemplateIntegrationTest {
         Author joshuaBloch = new Author("Joshua Bloch");
         Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
 
-        assertThat(template.insert(book))
+        assertThat(library.save(book))
                 .isNotNull()
                 .isEqualTo(book);
 
         AtomicReference<Book> reference = new AtomicReference<>();
         await().until(() -> {
-            Optional<Book> optional = template.find(Book.class, book.id());
+            Optional<Book> optional = library.findById(book.id());
             optional.ifPresent(reference::set);
             return optional.isPresent();
         });
@@ -137,13 +139,80 @@ class ElasticsearchTemplateIntegrationTest {
     public void shouldDelete() {
         Author joshuaBloch = new Author("Joshua Bloch");
         Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
-        assertThat(template.insert(book))
+        assertThat(library.save(book))
                 .isNotNull()
                 .isEqualTo(book);
 
-        template.delete(Book.class, book.id());
-        assertThat(template.find(Book.class, book.id()))
+
+        library.deleteById(book.id());
+
+        assertThat(library.findById(book.id()))
                 .isNotNull().isEmpty();
+    }
+
+
+    @Test
+    public void shouldFindByAuthorName() throws InterruptedException {
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
+
+        Set<Book> expectedBooks = Set.of(book, book.newEdition(), book.newEdition());
+        library.saveAll(expectedBooks);
+
+        await().until(() ->
+                !library.findByAuthorName(book.author().name()).toList().isEmpty());
+
+        var books = library.findByAuthorName(book.author().name()).toList();
+        assertThat(books)
+                .hasSize(3);
+
+        assertThat(books)
+                .containsAll(expectedBooks);
+    }
+
+    @Test
+    public void shouldFindByTitleLike() throws InterruptedException {
+        Author joshuaBloch = new Author("Joshua Bloch");
+
+        Book effectiveJava1stEdition = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
+        Book effectiveJava2ndEdition = effectiveJava1stEdition.newEdition();
+        Book effectiveJava3rdEdition = effectiveJava2ndEdition.newEdition();
+
+        Author elderMoraes = new Author("Elder Moraes");
+        Book jakartaEECookBook = new Book(randomUUID().toString(), "Jakarta EE CookBook", 1, elderMoraes);
+
+        Set<Book> allBooks = Set.of(jakartaEECookBook, effectiveJava1stEdition, effectiveJava2ndEdition, effectiveJava3rdEdition);
+
+        Set<Book> effectiveBooks = Set.of(effectiveJava1stEdition, effectiveJava2ndEdition, effectiveJava3rdEdition);
+
+        library.saveAll(allBooks);
+
+        AtomicReference<List<Book>> booksWithEffective = new AtomicReference<>();
+        await().until(() -> {
+            var books = library.findByTitleLike("Effective").toList();
+            booksWithEffective.set(books);
+            return !books.isEmpty();
+        });
+
+        AtomicReference<List<Book>> booksWithJa = new AtomicReference<>();
+        await().until(() -> {
+            var books = library.findByTitleLike("Ja*").toList();
+            booksWithJa.set(books);
+            return !books.isEmpty();
+        });
+
+        assertSoftly(softly -> {
+            assertThat(booksWithEffective.get())
+                    .as("returned book list with 'Effective' is not equals to the expected items ")
+                    .containsAll(effectiveBooks);
+        });
+
+
+        assertSoftly(softly -> {
+            assertThat(booksWithJa.get())
+                    .as("returned book list with 'Ja*' is not equals to the expected items ")
+                    .containsAll(allBooks);
+        });
     }
 
 

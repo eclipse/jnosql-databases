@@ -80,6 +80,12 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
 
     @Override
     public ElasticsearchDocumentManagerFactory apply(Settings settings) {
+        ElasticsearchClient elasticsearchClient = buildElasticsearchClient(settings);
+
+        return new ElasticsearchDocumentManagerFactory(elasticsearchClient);
+    }
+
+    public ElasticsearchClient buildElasticsearchClient(Settings settings) {
         requireNonNull(settings, "settings is required");
 
         settings.prefixSupplier(asList(ElasticsearchConfigurations.HOST, Configurations.HOST))
@@ -115,8 +121,7 @@ public class ElasticsearchDocumentConfiguration implements DocumentConfiguration
         var transport = new RestClientTransport(httpClient, new JsonbJsonpMapper());
 
         var elasticsearchClient = new ElasticsearchClient(transport);
-
-        return new ElasticsearchDocumentManagerFactory(elasticsearchClient);
+        return elasticsearchClient;
     }
 
 }

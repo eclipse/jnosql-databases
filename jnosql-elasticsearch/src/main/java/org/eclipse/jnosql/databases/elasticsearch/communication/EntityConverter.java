@@ -18,9 +18,6 @@ package org.eclipse.jnosql.databases.elasticsearch.communication;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import org.eclipse.jnosql.communication.document.Document;
@@ -30,7 +27,6 @@ import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -59,18 +55,14 @@ final class EntityConverter {
     }
 
     static Stream<DocumentEntity> query(DocumentQuery query, ElasticsearchClient client, String index) {
-        QueryConverterResult select = QueryConverter.select(query);
+        QueryConverterResult select = QueryConverter.select(client, index, query);
 
         try {
-            Stream<DocumentEntity> idQueryStream = Stream.empty();
             Stream<DocumentEntity> statementQueryStream = Stream.empty();
-            if (select.hasId()) {
-                idQueryStream = executeId(client, index, select);
-            }
             if (select.hasStatement()) {
                 statementQueryStream = executeStatement(query, client, index, select);
             }
-            return Stream.concat(idQueryStream, statementQueryStream).distinct();
+            return statementQueryStream.distinct();
         } catch (IOException e) {
             throw new ElasticsearchException("An error to execute a query on elasticsearch", e);
         }
@@ -120,25 +112,6 @@ final class EntityConverter {
     private static boolean isSudDocumentList(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
-    }
-
-    private static Stream<DocumentEntity> executeId(ElasticsearchClient client, String index,
-                                                    QueryConverterResult select) throws IOException {
-
-        List<Query> ids = select.getIds().stream()
-                .map(id -> MatchQuery.of(m -> m
-                        .field(EntityConverter.ID_FIELD)
-                        .query(id))._toQuery()
-                ).collect(toList());
-
-        SearchRequest searchRequest = SearchRequest.of(sb -> sb
-                .index(index)
-                .query(BoolQuery.of(q -> q
-                        .should(ids))._toQuery()));
-        SearchResponse<Map> responses = client.search(searchRequest, Map.class);
-
-        return getDocumentEntityStream(client, responses);
-
     }
 
     static Stream<DocumentEntity> getDocumentEntityStream(ElasticsearchClient client, SearchResponse<Map> responses) {

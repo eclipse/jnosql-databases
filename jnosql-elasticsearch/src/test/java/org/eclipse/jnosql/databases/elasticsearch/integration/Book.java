@@ -18,8 +18,85 @@ import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
 
+import java.util.Objects;
+import java.util.UUID;
+
 @Entity
-public record Book(@Id String id, @Column("title") String title, @Column("edition") int edition) {
+public final class Book {
+    @Id
+    private final String id;
+    @Column("title")
+    private final String title;
+    @Column("edition")
+    private final int edition;
+    @Column("author")
+    private final Author author;
+
+    public Book(
+            @Id String id,
+            @Column("title") String title,
+            @Column("edition") int edition,
+            @Column("author") Author author) {
+        this.id = id;
+        this.title = title;
+        this.edition = edition;
+        this.author = author;
+    }
+
+    public Book newEdition() {
+        return new Book(UUID.randomUUID().toString(),
+                this.title,
+                this.edition + 1,
+                this.author);
+    }
+
+    public Book updateEdition(int edition) {
+        return new Book(this.id,
+                this.title,
+                edition,
+                this.author);
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public String title() {
+        return title;
+    }
+
+    public int edition() {
+        return edition;
+    }
+
+    public Author author() {
+        return author;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (Book) obj;
+        return Objects.equals(this.id, that.id) &&
+                Objects.equals(this.title, that.title) &&
+                this.edition == that.edition &&
+                Objects.equals(this.author, that.author);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, edition, author);
+    }
+
+    @Override
+    public String toString() {
+        return "Book[" +
+                "id=" + id + ", " +
+                "title=" + title + ", " +
+                "edition=" + edition + ", " +
+                "author=" + author + ']';
+    }
 
 
 }

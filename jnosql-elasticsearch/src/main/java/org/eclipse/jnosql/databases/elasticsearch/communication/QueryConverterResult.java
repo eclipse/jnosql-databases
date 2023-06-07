@@ -17,33 +17,20 @@ package org.eclipse.jnosql.databases.elasticsearch.communication;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 
-import java.util.List;
-
 class QueryConverterResult {
 
     private final Query.Builder statement;
 
-    private final List<String> ids;
-
-    QueryConverterResult(Query.Builder statement, List<String> ids) {
+    QueryConverterResult(Query.Builder statement) {
         this.statement = statement;
-        this.ids = ids;
     }
 
     Query.Builder getStatement() {
         return statement;
     }
 
-    List<String> getIds() {
-        return ids;
-    }
-
-    public boolean hasId() {
-        return !ids.isEmpty();
-    }
-
     public boolean hasStatement() {
-        return statement != null || ids.isEmpty();
+        return statement != null;
     }
 
     public boolean hasQuery() {

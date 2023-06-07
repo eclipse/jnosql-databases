@@ -17,6 +17,8 @@ package org.eclipse.jnosql.databases.elasticsearch.integration;
 
 import jakarta.inject.Inject;
 import jakarta.nosql.document.DocumentTemplate;
+import org.awaitility.Awaitility;
+import org.eclipse.jnosql.databases.elasticsearch.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.elasticsearch.communication.ElasticsearchConfigurations;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
@@ -26,6 +28,8 @@ import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -33,11 +37,12 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
-import static org.eclipse.jnosql.databases.elasticsearch.communication.DocumentDatabase.INSTANCE;
 
 @EnableAutoWeld
 @AddPackages(value = {Convert.class, DocumentEntityConverter.class})
@@ -50,15 +55,28 @@ class TemplateIntegrationTest {
     @Inject
     private DocumentTemplate template;
 
+    public static final String INDEX = "library";
+
     static {
-        INSTANCE.get("library");
-        System.setProperty(ElasticsearchConfigurations.HOST.get() + ".1", INSTANCE.host());
-        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
+        DocumentDatabase instance = DocumentDatabase.INSTANCE;
+        instance.get("library");
+        System.setProperty(ElasticsearchConfigurations.HOST.get() + ".1", instance.host());
+        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), INDEX);
+        Awaitility.setDefaultPollDelay(100, MILLISECONDS);
+        Awaitility.setDefaultTimeout(60L, SECONDS);
+    }
+
+
+    @BeforeEach
+    @AfterEach
+    public void clearDatabase(){
+        DocumentDatabase.clearDatabase(INDEX);
     }
 
     @Test
     public void shouldInsert() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
         template.insert(book);
 
         AtomicReference<Book> reference = new AtomicReference<>();
@@ -72,12 +90,13 @@ class TemplateIntegrationTest {
 
     @Test
     public void shouldUpdate() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
         assertThat(template.insert(book))
                 .isNotNull()
                 .isEqualTo(book);
 
-        Book updated = new Book(book.id(), book.title() + " updated", 2);
+        Book updated = book.updateEdition(book.edition() + 1);
 
         assertThat(template.update(updated))
                 .isNotNull()
@@ -95,7 +114,8 @@ class TemplateIntegrationTest {
 
     @Test
     public void shouldFindById() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
         assertThat(template.insert(book))
                 .isNotNull()
                 .isEqualTo(book);
@@ -112,7 +132,8 @@ class TemplateIntegrationTest {
 
     @Test
     public void shouldDelete() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
         assertThat(template.insert(book))
                 .isNotNull()
                 .isEqualTo(book);
