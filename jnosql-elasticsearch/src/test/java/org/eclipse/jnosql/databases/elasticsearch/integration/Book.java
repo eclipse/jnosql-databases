@@ -53,7 +53,7 @@ public final class Book {
     public Book updateEdition(int edition) {
         return new Book(this.id,
                 this.title,
-                this.edition + 1,
+                edition,
                 this.author);
     }
 
