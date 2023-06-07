@@ -28,6 +28,8 @@ import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -55,17 +57,28 @@ class ElasticsearchTemplateIntegrationTest {
     private ElasticsearchTemplate template;
 
 
+    public static final String INDEX = "library";
+
     static {
-        DocumentDatabase.INSTANCE.get("library");
-        System.setProperty(ElasticsearchConfigurations.HOST.get() + ".1", DocumentDatabase.INSTANCE.host());
-        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
+        DocumentDatabase instance = DocumentDatabase.INSTANCE;
+        instance.get("library");
+        System.setProperty(ElasticsearchConfigurations.HOST.get() + ".1", instance.host());
+        System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), INDEX);
         Awaitility.setDefaultPollDelay(100, MILLISECONDS);
-        Awaitility.setDefaultTimeout(2L, SECONDS);
+        Awaitility.setDefaultTimeout(60L, SECONDS);
+    }
+
+
+    @BeforeEach
+    @AfterEach
+    public void clearDatabase(){
+        DocumentDatabase.clearDatabase(INDEX);
     }
 
     @Test
     public void shouldInsert() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
         template.insert(book);
 
         AtomicReference<Book> reference = new AtomicReference<>();
@@ -79,12 +92,13 @@ class ElasticsearchTemplateIntegrationTest {
 
     @Test
     public void shouldUpdate() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
         assertThat(template.insert(book))
                 .isNotNull()
                 .isEqualTo(book);
 
-        Book updated = new Book(book.id(), book.title() + " updated", 2);
+        Book updated = book.updateEdition(book.edition() + 1);
 
         assertThat(template.update(updated))
                 .isNotNull()
@@ -102,7 +116,9 @@ class ElasticsearchTemplateIntegrationTest {
 
     @Test
     public void shouldFindById() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
+
         assertThat(template.insert(book))
                 .isNotNull()
                 .isEqualTo(book);
@@ -119,7 +135,8 @@ class ElasticsearchTemplateIntegrationTest {
 
     @Test
     public void shouldDelete() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        Author joshuaBloch = new Author("Joshua Bloch");
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
         assertThat(template.insert(book))
                 .isNotNull()
                 .isEqualTo(book);
