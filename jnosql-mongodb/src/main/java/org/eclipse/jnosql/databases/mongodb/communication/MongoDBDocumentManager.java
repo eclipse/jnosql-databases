@@ -208,10 +208,9 @@ public class MongoDBDocumentManager implements DocumentManager {
     public Stream<Map<String, BsonValue>> aggregate(String collectionName, List<Bson> pipeline) {
         Objects.requireNonNull(pipeline, "filter is required");
         Objects.requireNonNull(collectionName, "collectionName is required");
-        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        AggregateIterable<Document> aggregate = collection.aggregate(pipeline);
-        return stream(aggregate.spliterator(), false)
-                .map(Document::toBsonDocument);
+        MongoCollection<BsonDocument> collection = mongoDatabase.getCollection(collectionName, BsonDocument.class);
+        AggregateIterable aggregate = collection.aggregate(pipeline);
+        return stream(aggregate.spliterator(), false);
     }
 
     /**
