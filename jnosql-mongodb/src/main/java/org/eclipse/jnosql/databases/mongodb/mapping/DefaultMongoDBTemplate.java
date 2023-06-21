@@ -42,24 +42,24 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
 
     private final Instance<MongoDBDocumentManager> manager;
 
-    private final  DocumentEntityConverter converter;
+    private final DocumentEntityConverter converter;
 
-    private final  DocumentWorkflow workflow;
+    private final DocumentWorkflow workflow;
 
-    private final  EntitiesMetadata entities;
+    private final EntitiesMetadata entities;
 
-    private final  Converters converters;
+    private final Converters converters;
 
-    private final  DocumentEventPersistManager persistManager;
+    private final DocumentEventPersistManager persistManager;
 
 
     @Inject
     DefaultMongoDBTemplate(Instance<MongoDBDocumentManager> manager,
-            DocumentEntityConverter converter,
-            DocumentWorkflow workflow,
-            EntitiesMetadata entities,
-            Converters converters,
-            DocumentEventPersistManager persistManager) {
+                           DocumentEntityConverter converter,
+                           DocumentWorkflow workflow,
+                           EntitiesMetadata entities,
+                           Converters converters,
+                           DocumentEventPersistManager persistManager) {
         this.manager = manager;
         this.converter = converter;
         this.workflow = workflow;
@@ -143,6 +143,21 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
         Objects.requireNonNull(pipeline, "pipeline is required");
         EntityMetadata entityMetadata = this.entities.get(entity);
         return this.getManager().aggregate(entityMetadata.name(), pipeline);
+    }
+
+    @Override
+    public long count(String collectionName, Bson filter) {
+        Objects.requireNonNull(collectionName, "collection name is required");
+        Objects.requireNonNull(filter, "filter is required");
+        return this.getManager().count(collectionName, filter);
+    }
+
+    @Override
+    public <T> long count(Class<T> entity, Bson filter) {
+        Objects.requireNonNull(entity, "entity is required");
+        Objects.requireNonNull(filter, "filter is required");
+        EntityMetadata entityMetadata = this.entities.get(entity);
+        return this.getManager().count(entityMetadata.name(), filter);
     }
 
 }
