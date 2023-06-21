@@ -229,8 +229,24 @@ public class MongoDBDocumentManager implements DocumentManager {
         return stream(documents.spliterator(), false).map(MongoDBUtils::of)
                 .map(ds -> DocumentEntity.of(collectionName, ds));
     }
+
     private Bson getSort(Sort sort) {
         return sort.isAscending() ? Sorts.ascending(sort.property()) : Sorts.descending(sort.property());
+    }
+
+    /**
+     * Returns the number of documents in the collection that match the given query filter.
+     *
+     * @param collectionName the collection name
+     * @param filter         the query filter
+     * @return the number of documents founded.
+     * @throws NullPointerException when filter or collectionName is null
+     */
+    public long count(String collectionName, Bson filter) {
+        Objects.requireNonNull(filter, "filter is required");
+        Objects.requireNonNull(collectionName, "collectionName is required");
+        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        return collection.countDocuments(filter);
     }
 
 }
