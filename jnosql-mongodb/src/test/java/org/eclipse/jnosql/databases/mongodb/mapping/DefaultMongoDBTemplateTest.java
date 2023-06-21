@@ -192,4 +192,33 @@ class DefaultMongoDBTemplateTest {
         Mockito.verify(manager).aggregate("Person", predicates);
     }
 
+    @Test
+    public void shouldCountByFilterWithCollectionName() {
+        var filter = eq("name", "Poliana");
+
+        template.count("Person", filter);
+
+        Mockito.verify(manager).count("Person", filter);
+    }
+
+    @Test
+    public void shouldCountByFilterWithEntity() {
+        var filter = eq("name", "Poliana");
+
+        template.count(Person.class, filter);
+
+        Mockito.verify(manager).count("Person", filter);
+    }
+
+    @Test
+    public void shouldReturnErrorOnCountByFilterMethod() {
+        var filter = eq("name", "Poliana");
+        assertThrows(NullPointerException.class, () -> template.count((String) null, null));
+        assertThrows(NullPointerException.class, () -> template.count((String) null, filter));
+        assertThrows(NullPointerException.class, () -> template.count("Person", null));
+        assertThrows(NullPointerException.class, () -> template.count((Class<Person>) null, null));
+        assertThrows(NullPointerException.class, () -> template.count((Class<Person>) null, filter));
+        assertThrows(NullPointerException.class, () -> template.count(Person.class, null));
+    }
+
 }
