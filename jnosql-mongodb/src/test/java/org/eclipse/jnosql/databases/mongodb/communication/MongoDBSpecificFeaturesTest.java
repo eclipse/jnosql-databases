@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
@@ -60,14 +61,14 @@ public class MongoDBSpecificFeaturesTest {
     }
 
     @Test
-    public void shouldReturnErrorOnSelectWhenThereIsNullParameter(){
+    public void shouldReturnErrorOnSelectWhenThereIsNullParameter() {
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.select(null, null));
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.select(COLLECTION_NAME, null));
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> entityManager.select(null,  eq("name", "Poliana")));
+                () -> entityManager.select(null, eq("name", "Poliana")));
     }
 
     @Test
@@ -81,14 +82,14 @@ public class MongoDBSpecificFeaturesTest {
     }
 
     @Test
-    public void shouldReturnErrorOnDeleteWhenThereIsNullParameter(){
+    public void shouldReturnErrorOnDeleteWhenThereIsNullParameter() {
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.delete(null, null));
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.delete(COLLECTION_NAME, null));
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> entityManager.delete(null,  eq("name", "Poliana")));
+                () -> entityManager.delete(null, eq("name", "Poliana")));
     }
 
     @Test
@@ -105,7 +106,7 @@ public class MongoDBSpecificFeaturesTest {
     }
 
     @Test
-    public void shouldReturnErrorOnAggregateWhenThereIsNullParameter(){
+    public void shouldReturnErrorOnAggregateWhenThereIsNullParameter() {
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.aggregate(null, null));
         Assertions.assertThrows(NullPointerException.class,
@@ -145,5 +146,33 @@ public class MongoDBSpecificFeaturesTest {
         documents.forEach(entity::add);
         return entity;
     }
+
+    @Test
+    public void shouldCountWithFilter() {
+
+        entityManager.insert(getEntity());
+        var filter = eq("name", "Poliana");
+        Assertions.assertEquals(1L, entityManager.count(COLLECTION_NAME, filter));
+
+        var filter2 = and(filter,eq("city", "Salvador"));
+        Assertions.assertEquals(1L, entityManager.count(COLLECTION_NAME, filter2));
+
+        var filter3 = and(filter,eq("city", "São Paulo"));
+        Assertions.assertEquals(0L, entityManager.count(COLLECTION_NAME, filter3));
+
+    }
+
+    @Test
+    public void shouldReturnErrorOnCountWithInvalidFilter() {
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.count(null, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.count(COLLECTION_NAME, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> entityManager.count(null, eq("name","Poliana")));
+
+    }
+
 
 }
