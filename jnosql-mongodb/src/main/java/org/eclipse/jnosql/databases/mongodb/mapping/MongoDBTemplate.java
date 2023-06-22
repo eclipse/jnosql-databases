@@ -88,12 +88,31 @@ public interface MongoDBTemplate extends JNoSQLDocumentTemplate {
     /**
      * Aggregates documents according to the specified aggregation pipeline.
      *
-     * @param entity the collection name
-     * @param <T>            the entity type
-     * @param pipeline       the aggregation pipeline
+     * @param entity   the collection name
+     * @param <T>      the entity type
+     * @param pipeline the aggregation pipeline
      * @return the number of documents deleted.
      * @throws NullPointerException when filter or entity is null
      */
     <T> Stream<Map<String, BsonValue>> aggregate(Class<T> entity, List<Bson> pipeline);
-    
+
+    /**
+     * Returns the number of items in the collection that match the given query filter.
+     *
+     * @param collectionName the collection name
+     * @param filter         the query
+     * @return the number of documents founded.
+     * @throws NullPointerException when filter or collectionName is null
+     */
+    long count(String collectionName, Bson filter);
+
+    /**
+     * Returns the number of items in the collection that match the given query filter.
+     *
+     * @param entity the entity type
+     * @param filter the filter
+     * @return the number of documents founded.
+     * @throws NullPointerException when filter or collectionName is null
+     */
+    <T> long count(Class<T> entity, Bson filter);
 }

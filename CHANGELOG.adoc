@@ -16,6 +16,8 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Update package name convention to `org.jnosql.databases.[DATABASE].[LAYER]`
 - Integrate the mapping layer on this repository
 - Upgrade the AWS SDK for DynamoDB to version 2.20.65;
+- Added to the JNoSQL MongoDB Database Implementation the MongoDB Aggregation support;
+- Added into the JNoSQL MongoDB Database Implementation a count method by Bson query filter
 
 === Fixed
 
