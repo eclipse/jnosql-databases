@@ -109,7 +109,7 @@ public interface MongoDBTemplate extends JNoSQLDocumentTemplate {
     /**
      * Returns the number of items in the collection that match the given query filter.
      *
-     * @param entity the collection name
+     * @param entity the entity type
      * @param filter the filter
      * @return the number of documents founded.
      * @throws NullPointerException when filter or collectionName is null
