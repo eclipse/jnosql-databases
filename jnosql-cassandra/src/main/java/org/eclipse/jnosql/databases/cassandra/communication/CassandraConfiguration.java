@@ -22,7 +22,6 @@ import org.eclipse.jnosql.communication.column.ColumnConfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -39,8 +38,7 @@ public final class CassandraConfiguration implements ColumnConfiguration {
     private CassandraColumnManagerFactory getManagerFactory(Map<String, String> configurations) {
         requireNonNull(configurations);
         CassandraProperties properties = CassandraProperties.of(configurations);
-        ExecutorService executorService = properties.createExecutorService();
-        return new CassandraColumnManagerFactory(properties.createCluster(), properties.getQueries(), executorService);
+        return new CassandraColumnManagerFactory(properties.createCluster(), properties.getQueries());
     }
 
 
