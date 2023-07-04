@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 class CassandraProperties {
 
@@ -69,10 +67,6 @@ class CassandraProperties {
             builder.withAuthCredentials(user.orElse(""), password.orElse(""));
         }
         return builder;
-    }
-
-    public ExecutorService createExecutorService() {
-        return Executors.newCachedThreadPool();
     }
 
     public static CassandraProperties of(Map<String, String> configurations) {

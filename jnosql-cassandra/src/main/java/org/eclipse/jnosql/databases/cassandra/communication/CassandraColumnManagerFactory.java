@@ -21,7 +21,6 @@ import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
 
 import java.util.List;
-import java.util.concurrent.Executor;
 
 /**
  * The Cassandra implementation to {@link ColumnManagerFactory}
@@ -30,11 +29,8 @@ public class CassandraColumnManagerFactory implements ColumnManagerFactory {
 
     private final CqlSessionBuilder sessionBuilder;
 
-    private final Executor executor;
-
-    CassandraColumnManagerFactory(final CqlSessionBuilder sessionBuilder, List<String> queries, Executor executor) {
+    CassandraColumnManagerFactory(final CqlSessionBuilder sessionBuilder, List<String> queries) {
         this.sessionBuilder = sessionBuilder;
-        this.executor = executor;
         load(queries);
     }
 
@@ -46,7 +42,7 @@ public class CassandraColumnManagerFactory implements ColumnManagerFactory {
 
     @Override
     public CassandraColumnManager apply(String database) {
-        return new DefaultCassandraColumnManager(sessionBuilder.build(), executor, database);
+        return new DefaultCassandraColumnManager(sessionBuilder.build(), database);
     }
 
     @Override
@@ -57,7 +53,6 @@ public class CassandraColumnManagerFactory implements ColumnManagerFactory {
     public String toString() {
         final StringBuilder sb = new StringBuilder("CassandraColumnManagerFactory{");
         sb.append("cluster=").append(sessionBuilder);
-        sb.append(", executor=").append(executor);
         sb.append('}');
         return sb.toString();
     }

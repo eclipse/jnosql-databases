@@ -32,7 +32,6 @@ import org.eclipse.jnosql.communication.column.ColumnQuery;
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -44,13 +43,10 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
 
     private final CqlSession session;
 
-    private final Executor executor;
-
     private final String keyspace;
 
-    DefaultCassandraColumnManager(CqlSession session, Executor executor, String keyspace) {
+    DefaultCassandraColumnManager(CqlSession session, String keyspace) {
         this.session = session;
-        this.executor = executor;
         this.keyspace = keyspace;
     }
 
