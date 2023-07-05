@@ -41,17 +41,17 @@ import static java.util.Objects.requireNonNull;
 @ApplicationScoped
 class DefaultSolrTemplate extends AbstractDocumentTemplate implements SolrTemplate {
 
-    private final Instance<SolrDocumentManager> manager;
+    private Instance<SolrDocumentManager> manager;
 
-    private final DocumentEntityConverter converter;
+    private DocumentEntityConverter converter;
 
-    private final DocumentWorkflow flow;
+    private DocumentWorkflow flow;
 
-    private final DocumentEventPersistManager persistManager;
+    private DocumentEventPersistManager persistManager;
 
-    private final EntitiesMetadata entities;
+    private EntitiesMetadata entities;
 
-    private final Converters converters;
+    private Converters converters;
 
     @Inject
     DefaultSolrTemplate(Instance<SolrDocumentManager> manager,
@@ -65,6 +65,9 @@ class DefaultSolrTemplate extends AbstractDocumentTemplate implements SolrTempla
         this.persistManager = persistManager;
         this.entities = entities;
         this.converters = converters;
+    }
+
+    DefaultSolrTemplate() {
     }
 
     @Override
