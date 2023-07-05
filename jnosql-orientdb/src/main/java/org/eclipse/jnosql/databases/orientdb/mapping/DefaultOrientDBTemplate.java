@@ -44,17 +44,17 @@ import java.util.stream.Stream;
 class DefaultOrientDBTemplate extends AbstractDocumentTemplate
         implements OrientDBTemplate {
 
-    private final Instance<OrientDBDocumentManager> manager;
+    private Instance<OrientDBDocumentManager> manager;
 
-    private final DocumentEntityConverter converter;
+    private DocumentEntityConverter converter;
 
-    private final DocumentWorkflow flow;
+    private DocumentWorkflow flow;
 
-    private final DocumentEventPersistManager persistManager;
+    private DocumentEventPersistManager persistManager;
 
-    private final EntitiesMetadata entities;
+    private EntitiesMetadata entities;
 
-    private final Converters converters;
+    private Converters converters;
 
     @Inject
     DefaultOrientDBTemplate(Instance<OrientDBDocumentManager> manager,
@@ -69,6 +69,9 @@ class DefaultOrientDBTemplate extends AbstractDocumentTemplate
         this.persistManager = persistManager;
         this.entities = entities;
         this.converters = converters;
+    }
+
+    DefaultOrientDBTemplate() {
     }
 
     @Override
