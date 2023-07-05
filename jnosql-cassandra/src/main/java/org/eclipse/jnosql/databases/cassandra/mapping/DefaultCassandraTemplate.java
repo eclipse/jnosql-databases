@@ -46,17 +46,17 @@ import java.util.stream.StreamSupport;
 @ApplicationScoped
 class DefaultCassandraTemplate extends AbstractColumnTemplate implements CassandraTemplate {
 
-    private final Instance<CassandraColumnManager> manager;
+    private Instance<CassandraColumnManager> manager;
 
-    private final CassandraColumnEntityConverter converter;
+    private CassandraColumnEntityConverter converter;
 
-    private final CassandraColumnWorkflow flow;
+    private CassandraColumnWorkflow flow;
 
-    private final ColumnEventPersistManager persistManager;
+    private ColumnEventPersistManager persistManager;
 
-    private final EntitiesMetadata entities;
+    private EntitiesMetadata entities;
 
-    private final Converters converters;
+    private Converters converters;
 
     @Inject
     DefaultCassandraTemplate(Instance<CassandraColumnManager> manager,
@@ -71,6 +71,9 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
         this.persistManager = persistManager;
         this.entities = entities;
         this.converters = converters;
+    }
+
+    DefaultCassandraTemplate() {
     }
 
     @Override
