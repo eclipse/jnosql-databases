@@ -23,9 +23,7 @@ import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
-import org.eclipse.jnosql.mapping.document.DocumentWorkflow;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
-import org.eclipse.jnosql.mapping.keyvalue.KeyValueWorkflow;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -45,19 +43,14 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, KeyValueWorkflow.class,
-        DocumentEntityConverter.class, AQL.class})
+@AddPackages(value = {Convert.class, DocumentEntityConverter.class, AQL.class})
 @AddPackages(MockProducer.class)
-@AddExtensions({EntityMetadataExtension.class, KeyValueExtension.class,
-        DocumentExtension.class, ArangoDBExtension.class})
+@AddExtensions({EntityMetadataExtension.class, DocumentExtension.class, ArangoDBExtension.class})
 @ExtendWith(MockitoExtension.class)
 public class DefaultArangoDBTemplateTest {
 
     @Inject
     private DocumentEntityConverter converter;
-
-    @Inject
-    private DocumentWorkflow flow;
 
     @Inject
     private DocumentEventPersistManager persistManager;
@@ -77,7 +70,7 @@ public class DefaultArangoDBTemplateTest {
         manager = Mockito.mock(ArangoDBDocumentManager.class);
         Instance instance = Mockito.mock(Instance.class);
         when(instance.get()).thenReturn(manager);
-        template = new DefaultArangoDBTemplate(instance, converter, flow, persistManager, entities, converters);
+        template = new DefaultArangoDBTemplate(instance, converter, persistManager, entities, converters);
 
         DocumentEntity entity = DocumentEntity.of("Person");
         entity.add(Document.of("_id", "Ada"));

@@ -25,7 +25,6 @@ import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
-import org.eclipse.jnosql.mapping.document.DocumentWorkflow;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 
 import java.util.Map;
@@ -44,8 +43,6 @@ class DefaultArangoDBTemplate extends AbstractDocumentTemplate implements Arango
 
     private DocumentEntityConverter converter;
 
-    private DocumentWorkflow flow;
-
     private DocumentEventPersistManager persistManager;
 
     private EntitiesMetadata entities;
@@ -54,13 +51,12 @@ class DefaultArangoDBTemplate extends AbstractDocumentTemplate implements Arango
 
     @Inject
     DefaultArangoDBTemplate(Instance<ArangoDBDocumentManager> manager,
-                            DocumentEntityConverter converter, DocumentWorkflow flow,
+                            DocumentEntityConverter converter,
                             DocumentEventPersistManager persistManager,
                             EntitiesMetadata entities,
                             Converters converters) {
         this.manager = manager;
         this.converter = converter;
-        this.flow = flow;
         this.persistManager = persistManager;
         this.entities = entities;
         this.converters = converters;
@@ -77,11 +73,6 @@ class DefaultArangoDBTemplate extends AbstractDocumentTemplate implements Arango
     @Override
     protected DocumentManager getManager() {
         return manager.get();
-    }
-
-    @Override
-    protected DocumentWorkflow getWorkflow() {
-        return flow;
     }
 
     @Override

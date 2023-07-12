@@ -31,7 +31,6 @@ import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.AbstractColumnTemplate;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.ColumnEventPersistManager;
-import org.eclipse.jnosql.mapping.column.ColumnWorkflow;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 
 import java.time.Duration;
@@ -50,8 +49,6 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
 
     private CassandraColumnEntityConverter converter;
 
-    private CassandraColumnWorkflow flow;
-
     private ColumnEventPersistManager persistManager;
 
     private EntitiesMetadata entities;
@@ -61,13 +58,11 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
     @Inject
     DefaultCassandraTemplate(Instance<CassandraColumnManager> manager,
                              CassandraColumnEntityConverter converter,
-                             CassandraColumnWorkflow flow,
                              ColumnEventPersistManager persistManager,
                              EntitiesMetadata entities,
                              Converters converters) {
         this.manager = manager;
         this.converter = converter;
-        this.flow = flow;
         this.persistManager = persistManager;
         this.entities = entities;
         this.converters = converters;
@@ -84,11 +79,6 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
     @Override
     protected ColumnManager getManager() {
         return manager.get();
-    }
-
-    @Override
-    protected ColumnWorkflow getFlow() {
-        return flow;
     }
 
     @Override
@@ -111,7 +101,7 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(level, "level is required");
         UnaryOperator<ColumnEntity> save = e -> manager.get().save(e, level);
-        return getFlow().flow(entity, save);
+        return persist(entity, save);
     }
 
     @Override
@@ -146,7 +136,7 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
         Objects.requireNonNull(ttl, "ttl is required");
         Objects.requireNonNull(level, "level is required");
         UnaryOperator<ColumnEntity> save = e -> manager.get().save(e, ttl, level);
-        return getFlow().flow(entity, save);
+        return persist(entity, save);
     }
 
     @Override

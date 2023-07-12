@@ -19,7 +19,6 @@ import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
-import org.eclipse.jnosql.mapping.keyvalue.KeyValueWorkflow;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -44,8 +43,7 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, KeyValueWorkflow.class,
-        DocumentEntityConverter.class, AQL.class})
+@AddPackages(value = {Convert.class, DocumentEntityConverter.class, AQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class, KeyValueExtension.class,
         DocumentExtension.class, ArangoDBExtension.class})
