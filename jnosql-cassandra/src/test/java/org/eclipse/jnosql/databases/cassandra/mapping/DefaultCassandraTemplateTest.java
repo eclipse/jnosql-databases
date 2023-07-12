@@ -27,8 +27,8 @@ import org.eclipse.jnosql.communication.column.ColumnEntity;
 import org.eclipse.jnosql.communication.column.ColumnQuery;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.ColumnEventPersistManager;
-import org.eclipse.jnosql.mapping.column.ColumnWorkflow;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -55,7 +55,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, ColumnWorkflow.class,
+@AddPackages(value = {Convert.class, ColumnEntityConverter.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,
@@ -64,9 +64,6 @@ public class DefaultCassandraTemplateTest {
 
     @Inject
     private CassandraColumnEntityConverter converter;
-
-    @Inject
-    private CassandraColumnWorkflow flow;
 
     @Inject
     private ColumnEventPersistManager persistManager;
@@ -86,7 +83,7 @@ public class DefaultCassandraTemplateTest {
         this.manager = mock(CassandraColumnManager.class);
         Instance instance = mock(Instance.class);
         when(instance.get()).thenReturn(manager);
-        template = new DefaultCassandraTemplate(instance, converter, flow, persistManager, entities, converters);
+        template = new DefaultCassandraTemplate(instance, converter, persistManager, entities, converters);
     }
 
     @Test
@@ -214,7 +211,7 @@ public class DefaultCassandraTemplateTest {
         List<Person> people = template.<Person>cql(cql).collect(Collectors.toList());
         Assertions.assertThat(people).contains(person);
     }
-    
+
     @Test
     public void shouldFindSimpleStatement() {
         SimpleStatement statement = QueryBuilder.selectFrom("Person").all().build();
