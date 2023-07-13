@@ -31,7 +31,7 @@ import org.eclipse.jnosql.databases.cassandra.mapping.model.Money;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Movie;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Worker;
 import org.eclipse.jnosql.mapping.Convert;
-import org.eclipse.jnosql.mapping.column.ColumnWorkflow;
+import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, ColumnWorkflow.class,
+@AddPackages(value = {Convert.class, JNoSQLColumnTemplate.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,
