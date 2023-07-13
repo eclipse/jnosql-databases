@@ -23,7 +23,6 @@ import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
-import org.eclipse.jnosql.mapping.document.DocumentWorkflow;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -52,9 +51,6 @@ public class DefaultSolrTemplateTest {
     private DocumentEntityConverter converter;
 
     @Inject
-    private DocumentWorkflow flow;
-
-    @Inject
     private DocumentEventPersistManager persistManager;
 
     @Inject
@@ -73,7 +69,7 @@ public class DefaultSolrTemplateTest {
         manager = Mockito.mock(SolrDocumentManager.class);
         Instance instance = Mockito.mock(Instance.class);
         when(instance.get()).thenReturn(manager);
-        template = new DefaultSolrTemplate(instance, converter, flow, persistManager, entities, converters);
+        template = new DefaultSolrTemplate(instance, converter, persistManager, entities, converters);
 
         DocumentEntity entity = DocumentEntity.of("Person");
         entity.add(Document.of("_id", "Ada"));

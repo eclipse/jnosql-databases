@@ -27,7 +27,6 @@ import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
-import org.eclipse.jnosql.mapping.document.DocumentWorkflow;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -61,9 +60,6 @@ class DefaultMongoDBTemplateTest {
     private DocumentEntityConverter converter;
 
     @Inject
-    private DocumentWorkflow flow;
-
-    @Inject
     private DocumentEventPersistManager persistManager;
 
     @Inject
@@ -81,7 +77,7 @@ class DefaultMongoDBTemplateTest {
         this.manager = mock(MongoDBDocumentManager.class);
         Instance instance = mock(Instance.class);
         when(instance.get()).thenReturn(manager);
-        template = new DefaultMongoDBTemplate(instance, converter, flow, entities, converters, persistManager);
+        template = new DefaultMongoDBTemplate(instance, converter, entities, converters, persistManager);
     }
 
     @Test

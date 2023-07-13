@@ -24,9 +24,8 @@ import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
-import org.eclipse.jnosql.mapping.document.DocumentWorkflow;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
-import org.eclipse.jnosql.mapping.keyvalue.KeyValueWorkflow;
+import org.eclipse.jnosql.mapping.keyvalue.AbstractKeyValueTemplate;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -40,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, KeyValueWorkflow.class,
+@AddPackages(value = {Convert.class, AbstractKeyValueTemplate.class,
         DocumentEntityConverter.class, N1QL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,
@@ -49,9 +48,6 @@ public class DefaultCouchbaseTemplateTest {
 
     @Inject
     private DocumentEntityConverter converter;
-
-    @Inject
-    private DocumentWorkflow flow;
 
     @Inject
     private DocumentEventPersistManager persistManager;
@@ -72,7 +68,7 @@ public class DefaultCouchbaseTemplateTest {
         manager = Mockito.mock(CouchbaseDocumentManager.class);
         Instance instance = Mockito.mock(Instance.class);
         when(instance.get()).thenReturn(manager);
-        template = new DefaultCouchbaseTemplate(instance, converter, flow, persistManager, entities, converters);
+        template = new DefaultCouchbaseTemplate(instance, converter, persistManager, entities, converters);
 
         DocumentEntity entity = DocumentEntity.of("Person");
         entity.add(Document.of("_id", "Ada"));

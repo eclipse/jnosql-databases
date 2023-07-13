@@ -26,7 +26,6 @@ import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
-import org.eclipse.jnosql.mapping.document.DocumentWorkflow;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadata;
 
@@ -44,8 +43,6 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
 
     private final DocumentEntityConverter converter;
 
-    private final DocumentWorkflow workflow;
-
     private final EntitiesMetadata entities;
 
     private final Converters converters;
@@ -56,16 +53,18 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     @Inject
     DefaultMongoDBTemplate(Instance<MongoDBDocumentManager> manager,
                            DocumentEntityConverter converter,
-                           DocumentWorkflow workflow,
                            EntitiesMetadata entities,
                            Converters converters,
                            DocumentEventPersistManager persistManager) {
         this.manager = manager;
         this.converter = converter;
-        this.workflow = workflow;
         this.entities = entities;
         this.converters = converters;
         this.persistManager = persistManager;
+    }
+
+    DefaultMongoDBTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
@@ -76,11 +75,6 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     @Override
     protected MongoDBDocumentManager getManager() {
         return manager.get();
-    }
-
-    @Override
-    protected DocumentWorkflow getWorkflow() {
-        return workflow;
     }
 
     @Override

@@ -24,7 +24,7 @@ import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.mapping.keyvalue.AbstractKeyValueTemplate;
 import org.eclipse.jnosql.mapping.keyvalue.KeyValueEntityConverter;
 import org.eclipse.jnosql.mapping.keyvalue.KeyValueEventPersistManager;
-import org.eclipse.jnosql.mapping.keyvalue.KeyValueWorkflow;
+
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,18 +36,14 @@ class DefaultHazelcastTemplate extends AbstractKeyValueTemplate implements Hazel
 
     private Instance<HazelcastBucketManager> manager;
 
-    private KeyValueWorkflow flow;
-
-    private KeyValueEntityConverter converter;
+     private KeyValueEntityConverter converter;
     private KeyValueEventPersistManager persistManager;
 
     @Inject
     DefaultHazelcastTemplate(Instance<HazelcastBucketManager> manager,
-                             KeyValueWorkflow flow,
                              KeyValueEntityConverter converter,
                              KeyValueEventPersistManager persistManager) {
         this.manager = manager;
-        this.flow = flow;
         this.converter = converter;
         this.persistManager = persistManager;
     }
@@ -78,11 +74,6 @@ class DefaultHazelcastTemplate extends AbstractKeyValueTemplate implements Hazel
     @Override
     protected BucketManager getManager() {
         return manager.get();
-    }
-
-    @Override
-    protected KeyValueWorkflow getFlow() {
-        return flow;
     }
 
     @Override

@@ -26,7 +26,6 @@ import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
-import org.eclipse.jnosql.mapping.document.DocumentWorkflow;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -60,9 +59,6 @@ public class DefaultElasticsearchTemplateTest {
     private DocumentEntityConverter converter;
 
     @Inject
-    private DocumentWorkflow flow;
-
-    @Inject
     private DocumentEventPersistManager persistManager;
 
     @Inject
@@ -81,7 +77,7 @@ public class DefaultElasticsearchTemplateTest {
         manager = Mockito.mock(ElasticsearchDocumentManager.class);
         Instance instance = Mockito.mock(Instance.class);
         when(instance.get()).thenReturn(manager);
-        template = new DefaultElasticsearchTemplate(instance, converter, flow, persistManager, entities, converters);
+        template = new DefaultElasticsearchTemplate(instance, converter, persistManager, entities, converters);
 
         DocumentEntity entity = DocumentEntity.of("Person");
         entity.add(Document.of("name", "Ada"));
@@ -114,12 +110,6 @@ public class DefaultElasticsearchTemplateTest {
         assertEquals(manager, template.getManager());
     }
 
-
-    @Test
-    public void shouldGetWorkflow() {
-        assertNotNull(template.getWorkflow());
-        assertEquals(flow, template.getWorkflow());
-    }
 
     @Test
     public void shouldGetPersistManager() {
