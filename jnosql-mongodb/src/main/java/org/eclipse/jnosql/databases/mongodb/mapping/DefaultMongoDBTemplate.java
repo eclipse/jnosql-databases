@@ -39,15 +39,15 @@ import java.util.stream.Stream;
 @Typed(MongoDBTemplate.class)
 class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDBTemplate {
 
-    private final Instance<MongoDBDocumentManager> manager;
+    private Instance<MongoDBDocumentManager> manager;
 
-    private final DocumentEntityConverter converter;
+    private DocumentEntityConverter converter;
 
-    private final EntitiesMetadata entities;
+    private EntitiesMetadata entities;
 
-    private final Converters converters;
+    private Converters converters;
 
-    private final DocumentEventPersistManager persistManager;
+    private DocumentEventPersistManager persistManager;
 
 
     @Inject
@@ -64,7 +64,7 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     }
 
     DefaultMongoDBTemplate() {
-        this(null, null, null, null, null);
+
     }
 
     @Override
