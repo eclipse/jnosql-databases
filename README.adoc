@@ -47,7 +47,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |`jnosql.arangodb.timeout`
 |The connection and request timeout in milliseconds.
 
-|`jnosql.arangodb.chuck.size`
+|`jnosql.arangodb.chunk.size`
 |The chunk size when Protocol is used.
 
 |`jnosql.arangodb.userSsl`
