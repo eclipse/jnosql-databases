@@ -42,7 +42,7 @@ final class ArangoDBBuilders {
 
         settings.get(ArangoDBConfigurations.CHUCK_SIZE)
                 .map(Object::toString).map(Integer::valueOf)
-                .ifPresent(arangoDB::chunksize);
+                .ifPresent(arangoDB::chunkSize);
 
         settings.get(ArangoDBConfigurations.MAX_CONNECTIONS)
                 .map(Object::toString).map(Integer::valueOf)
@@ -61,7 +61,7 @@ final class ArangoDBBuilders {
                 .ifPresent(arangoDB::loadBalancingStrategy);
 
         settings.get(ArangoDBConfigurations.PROTOCOL).map(Object::toString).map(Protocol::valueOf)
-                .ifPresent(arangoDB::useProtocol);
+                .ifPresent(arangoDB::protocol);
 
         settings.prefixSupplier(Arrays.asList(ArangoDBConfigurations.HOST, Configurations.HOST))
                 .stream()
