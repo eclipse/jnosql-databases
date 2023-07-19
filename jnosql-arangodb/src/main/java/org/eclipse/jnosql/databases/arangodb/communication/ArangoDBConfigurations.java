@@ -60,7 +60,7 @@ public enum ArangoDBConfigurations implements Supplier<String> {
      */
     PROTOCOL("jnosql.arangodb.protocol"),
     /**
-     * The maximum number of connections the built in connection pool will open per host.
+     * The maximum number of connections the built-in connection pool will open per host.
      */
     MAX_CONNECTIONS("jnosql.arangodb.connections.max"),
     /**
