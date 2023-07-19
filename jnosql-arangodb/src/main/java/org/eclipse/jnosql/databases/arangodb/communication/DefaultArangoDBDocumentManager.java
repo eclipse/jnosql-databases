@@ -122,7 +122,8 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         Objects.requireNonNull(documentCollection, "document collection is required");
         String aql = "RETURN LENGTH(" + documentCollection + ")";
         ArangoCursor<Object> query = arangoDB.db(database).query(aql, Object.class, emptyMap(), null);
-        return StreamSupport.stream(query.spliterator(), false).findFirst().map(Long.class::cast).orElse(0L);
+        return StreamSupport.stream(query.spliterator(), false).findFirst().map(Number.class::cast)
+                .map(Number::longValue).orElse(0L);
     }
 
 
