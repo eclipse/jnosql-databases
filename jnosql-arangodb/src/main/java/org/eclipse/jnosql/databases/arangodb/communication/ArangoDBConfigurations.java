@@ -46,7 +46,7 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     /**
      * The chunk size when {@link com.arangodb.Protocol} is used.
      */
-    CHUCK_SIZE("jnosql.arangodb.chuck.size"),
+    CHUNK_SIZE("jnosql.arangodb.chunk.size"),
     /**
      * The true SSL will be used when connecting to an ArangoDB server.
      */

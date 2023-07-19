@@ -40,7 +40,7 @@ final class ArangoDBBuilders {
         settings.get(ArangoDBConfigurations.TIMEOUT)
                 .map(Object::toString).map(Integer::valueOf).ifPresent(arangoDB::timeout);
 
-        settings.get(ArangoDBConfigurations.CHUCK_SIZE)
+        settings.get(ArangoDBConfigurations.CHUNK_SIZE)
                 .map(Object::toString).map(Integer::valueOf)
                 .ifPresent(arangoDB::chunkSize);
 
