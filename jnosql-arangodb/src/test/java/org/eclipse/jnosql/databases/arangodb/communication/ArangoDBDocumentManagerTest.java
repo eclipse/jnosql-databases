@@ -241,7 +241,7 @@ public class ArangoDBDocumentManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        entity.add(Document.of(KEY_NAME, random.nextLong()));
+        entity.add(Document.of(KEY_NAME, String.valueOf(random.nextLong())));
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
