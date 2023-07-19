@@ -18,6 +18,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Update MongoDB driver to version 4.10.1
 - Update Apache Solr driver to version 9.2.1
 - Update Testcontainer to version 1.18.3
+- Update ArangoDB API to the version 7.1.0
 
 == Fixed
 
