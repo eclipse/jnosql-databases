@@ -30,11 +30,11 @@ interface ArangoDBBuilder {
 
     void useSsl(boolean useSsl);
 
-    void chunksize(int chunksize);
+    void chunkSize(int chunkSize);
 
     void maxConnections(int maxConnections);
 
-    void useProtocol(Protocol protocol);
+    void protocol(Protocol protocol);
 
     void acquireHostList(boolean acquireHostList);
 
