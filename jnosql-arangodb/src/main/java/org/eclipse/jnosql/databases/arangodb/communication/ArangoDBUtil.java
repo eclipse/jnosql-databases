@@ -16,7 +16,6 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 
 import com.arangodb.ArangoDB;
-import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import org.eclipse.jnosql.communication.Value;
@@ -68,7 +67,7 @@ public final class ArangoDBUtil {
         try {
             Collection<String> databases = arangoDB.getDatabases();
             if (!databases.contains(database)) {
-                arangoDB.createDatabase(DbName.of(database));
+                arangoDB.createDatabase(database);
             }
         } catch (ArangoDBException e) {
             LOGGER.log(Level.WARNING, "Failed to create database: " + database, e);
@@ -77,12 +76,12 @@ public final class ArangoDBUtil {
 
     public static void checkCollection(String bucketName, ArangoDB arangoDB, String namespace) {
         checkDatabase(bucketName, arangoDB);
-        List<String> collections = arangoDB.db(DbName.of(bucketName))
+        List<String> collections = arangoDB.db(bucketName)
                 .getCollections().stream()
                 .map(CollectionEntity::getName)
                 .collect(toList());
         if (!collections.contains(namespace)) {
-            arangoDB.db(DbName.of(bucketName)).createCollection(namespace);
+            arangoDB.db(bucketName).createCollection(namespace);
         }
     }
 

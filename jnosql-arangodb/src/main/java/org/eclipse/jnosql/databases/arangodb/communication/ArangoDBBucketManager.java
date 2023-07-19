@@ -16,7 +16,7 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 
 import com.arangodb.ArangoDB;
-import com.arangodb.DbName;
+
 import com.arangodb.entity.BaseDocument;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
@@ -73,10 +73,10 @@ public class ArangoDBBucketManager implements BucketManager {
         BaseDocument baseDocument = new BaseDocument();
         baseDocument.setKey(key.toString());
         baseDocument.addAttribute(VALUE, JSONB.toJson(value));
-        if (arangoDB.db(DbName.of(bucketName)).collection(namespace).documentExists(key.toString())) {
-            arangoDB.db(DbName.of(bucketName)).collection(namespace).deleteDocument(key.toString());
+        if (arangoDB.db(bucketName).collection(namespace).documentExists(key.toString())) {
+            arangoDB.db(bucketName).collection(namespace).deleteDocument(key.toString());
         }
-        arangoDB.db(DbName.of(bucketName)).collection(namespace)
+        arangoDB.db(bucketName).collection(namespace)
                 .insertDocument(baseDocument);
     }
 
@@ -95,7 +95,7 @@ public class ArangoDBBucketManager implements BucketManager {
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
         Objects.requireNonNull(key, "Key is required");
-        BaseDocument entity = arangoDB.db(DbName.of(bucketName)).collection(namespace)
+        BaseDocument entity = arangoDB.db(bucketName).collection(namespace)
                 .getDocument(key.toString(), BaseDocument.class);
 
         return ofNullable(entity)
@@ -108,7 +108,7 @@ public class ArangoDBBucketManager implements BucketManager {
     public <K> Iterable<Value> get(Iterable<K> keys) throws NullPointerException {
         return stream(keys.spliterator(), false)
                 .map(Object::toString)
-                .map(k -> arangoDB.db(DbName.of(bucketName)).collection(namespace)
+                .map(k -> arangoDB.db(bucketName).collection(namespace)
                         .getDocument(k, BaseDocument.class))
                 .filter(Objects::nonNull)
                 .map(TO_JSON)
@@ -118,14 +118,14 @@ public class ArangoDBBucketManager implements BucketManager {
 
     @Override
     public <K> void delete(K key) throws NullPointerException {
-        arangoDB.db(DbName.of(bucketName)).collection(namespace).deleteDocument(key.toString());
+        arangoDB.db(bucketName).collection(namespace).deleteDocument(key.toString());
     }
 
     @Override
     public <K> void delete(Iterable<K> keys) throws NullPointerException {
         Objects.requireNonNull(keys, "Keys is required");
 
-        arangoDB.db(DbName.of(bucketName)).collection(namespace)
+        arangoDB.db(bucketName).collection(namespace)
                 .deleteDocuments(stream(keys.spliterator(), false)
                         .map(Object::toString).collect(toList()));
     }
