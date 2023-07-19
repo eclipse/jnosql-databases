@@ -221,7 +221,7 @@ public class ArangoDBDocumentManagerTest {
     @Test
     public void shouldExecuteAQLWithTypeParams() {
         entityManager.insert(getEntity());
-        String aql = "FOR a IN person FILTER a.name == @name RETURN a";
+        String aql = "FOR a IN person FILTER a.name == @name RETURN a.name";
         List<String> entities = entityManager.aql(aql,
                 singletonMap("name", "Poliana"), String.class).collect(Collectors.toList());
 
@@ -231,7 +231,7 @@ public class ArangoDBDocumentManagerTest {
     @Test
     public void shouldExecuteAQLWithType() {
         entityManager.insert(getEntity());
-        String aql = "FOR a IN person RETURN a";
+        String aql = "FOR a IN person RETURN a.name";
         List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
