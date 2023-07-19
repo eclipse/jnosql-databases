@@ -16,7 +16,6 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.DbName;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -200,7 +199,7 @@ public class ArangoDBDocumentManagerTest {
     public void shouldReadFromDifferentBaseDocumentUsingInstance() {
         entityManager.insert(getEntity());
         ArangoDB arangoDB = DefaultArangoDBDocumentManager.class.cast(entityManager).getArangoDB();
-        arangoDB.db(DbName.of(DATABASE)).collection(COLLECTION_NAME).insertDocument(new Person());
+        arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(new Person());
         DocumentQuery select = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(select).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
@@ -213,7 +212,7 @@ public class ArangoDBDocumentManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        arangoDB.db(DbName.of(DATABASE)).collection(COLLECTION_NAME).insertDocument(map);
+        arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(map);
         DocumentQuery select = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(select).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
@@ -222,7 +221,7 @@ public class ArangoDBDocumentManagerTest {
     @Test
     public void shouldExecuteAQLWithTypeParams() {
         entityManager.insert(getEntity());
-        String aql = "FOR a IN person FILTER a.name == @name RETURN a";
+        String aql = "FOR a IN person FILTER a.name == @name RETURN a.name";
         List<String> entities = entityManager.aql(aql,
                 singletonMap("name", "Poliana"), String.class).collect(Collectors.toList());
 
@@ -232,7 +231,7 @@ public class ArangoDBDocumentManagerTest {
     @Test
     public void shouldExecuteAQLWithType() {
         entityManager.insert(getEntity());
-        String aql = "FOR a IN person RETURN a";
+        String aql = "FOR a IN person RETURN a.name";
         List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
@@ -242,7 +241,7 @@ public class ArangoDBDocumentManagerTest {
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        entity.add(Document.of(KEY_NAME, random.nextLong()));
+        entity.add(Document.of(KEY_NAME, String.valueOf(random.nextLong())));
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;

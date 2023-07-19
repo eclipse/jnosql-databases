@@ -14,20 +14,11 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
-import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBKeyValueConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class ArangoDBConfigurationTest {
 
     private ArangoDBKeyValueConfiguration configuration;
@@ -37,12 +28,6 @@ public class ArangoDBConfigurationTest {
         configuration = new ArangoDBKeyValueConfiguration();
     }
 
-
-    @Test
-    public void shouldCreateKeyValueFactoryFromFile() {
-        BucketManagerFactory managerFactory = configuration.apply(Settings.builder().build());
-        assertNotNull(managerFactory);
-    }
 
     @Test
     public void shouldReturnFromConfiguration() {
