@@ -81,6 +81,7 @@ public class CouchbaseDocumentManagerTest {
     public void cleanUpData() throws InterruptedException {
         try {
             keyValueEntityManagerForPerson.delete("id");
+            keyValueEntityManagerForPerson.delete("id2");
         } catch (DocumentNotFoundException exp) {
             //IGNORE
         }

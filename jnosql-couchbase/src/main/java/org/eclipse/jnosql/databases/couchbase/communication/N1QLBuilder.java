@@ -151,10 +151,16 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     private void appendCondition(StringBuilder n1ql, JsonObject params,
                                  List<DocumentCondition> conditions,
                                  String condition, List<String> ids) {
+        int index = 0;
         for (DocumentCondition documentCondition : conditions) {
             StringBuilder query = new StringBuilder();
             condition(documentCondition, query, params, ids);
-            n1ql.append(condition).append(query);
+            if(index == 0){
+                 n1ql.append(" ").append(query);
+            } else {
+                 n1ql.append(condition).append(query);
+            }
+            index++;
         }
     }
 
