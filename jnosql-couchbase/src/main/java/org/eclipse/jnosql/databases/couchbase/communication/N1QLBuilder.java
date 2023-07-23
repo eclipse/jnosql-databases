@@ -59,13 +59,6 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
             condition(c, n1ql, params, ids);
         });
 
-        if (query.limit() > 0) {
-            n1ql.append(" LIMIT ").append(query.limit());
-        }
-
-        if (query.skip() > 0) {
-            n1ql.append(" OFFSET ").append(query.skip());
-        }
 
         if (!query.sorts().isEmpty()) {
             n1ql.append(" ORDER BY ");
@@ -73,6 +66,14 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                     .map(s -> s.property() + " " + (s.isAscending() ? Direction.ASC : Direction.DESC))
                     .collect(Collectors.joining(", "));
             n1ql.append(order);
+        }
+
+        if (query.limit() > 0) {
+            n1ql.append(" LIMIT ").append(query.limit());
+        }
+
+        if (query.skip() > 0) {
+            n1ql.append(" OFFSET ").append(query.skip());
         }
 
         return N1QLQuery.of(n1ql, params, ids);

@@ -16,6 +16,7 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.json.JsonObject;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -243,6 +245,20 @@ public class CouchbaseDocumentManagerTest {
         );
     }
 
+    @Test
+    public void shouldCreateLimitOrderQuery(){
+        DocumentEntity entity = getEntity();
+        entity.add("_id", "id2");
+        entityManager.insert(entity);
+        entityManager.insert(getEntity());
+
+        DocumentQuery query = DocumentQuery.select()
+                .from(COLLECTION_PERSON_NAME).where("name")
+                .eq("Poliana").and("city").eq("Salvador").limit(1).skip(1).build();
+        List<DocumentEntity> select = entityManager.select(query).toList();
+        Assertions.assertThat(select).flatMap(d -> d.find("name").stream().toList())
+                .containsOnly(Document.of("name", "Poliana"));
+    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_PERSON_NAME);
