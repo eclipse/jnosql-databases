@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class,
+@AddPackages(value = {Converters.class,
         DocumentEntityConverter.class, SQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,
