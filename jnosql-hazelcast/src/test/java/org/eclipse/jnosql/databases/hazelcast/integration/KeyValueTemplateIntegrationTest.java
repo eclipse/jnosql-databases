@@ -19,6 +19,7 @@ import jakarta.inject.Inject;
 import jakarta.nosql.keyvalue.KeyValueTemplate;
 import org.eclipse.jnosql.databases.hazelcast.mapping.HazelcastTemplate;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.keyvalue.KeyValueEntityConverter;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
@@ -34,7 +35,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, KeyValueEntityConverter.class})
+@AddPackages(value = {Converters.class, KeyValueEntityConverter.class})
 @AddPackages(Book.class)
 @AddPackages(HazelcastTemplate.class)
 @AddExtensions({EntityMetadataExtension.class,
