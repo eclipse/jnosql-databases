@@ -55,7 +55,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, ColumnEntityConverter.class,
+@AddPackages(value = {Converters.class, ColumnEntityConverter.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,
