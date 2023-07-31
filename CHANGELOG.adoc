@@ -22,7 +22,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Update Testcontainer to version 1.18.3
 - Update ArangoDB API to the version 7.1.0
 
-== Fixed
+=== Fixed
 
 - Added no-args constructor into the injectable beans
 
