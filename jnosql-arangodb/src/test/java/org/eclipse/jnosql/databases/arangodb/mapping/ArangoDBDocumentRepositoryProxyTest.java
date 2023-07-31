@@ -16,6 +16,7 @@ package org.eclipse.jnosql.databases.arangodb.mapping;
 
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, DocumentEntityConverter.class, AQL.class})
+@AddPackages(value = {Converters.class, DocumentEntityConverter.class, AQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class, KeyValueExtension.class,
         DocumentExtension.class, ArangoDBExtension.class})

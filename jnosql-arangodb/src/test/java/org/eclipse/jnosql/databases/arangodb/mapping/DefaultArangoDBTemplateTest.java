@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, DocumentEntityConverter.class, AQL.class})
+@AddPackages(value = {Converters.class, DocumentEntityConverter.class, AQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class, DocumentExtension.class, ArangoDBExtension.class})
 @ExtendWith(MockitoExtension.class)
