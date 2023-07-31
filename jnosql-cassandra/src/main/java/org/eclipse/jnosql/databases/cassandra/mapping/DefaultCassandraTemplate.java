@@ -31,7 +31,7 @@ import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.AbstractColumnTemplate;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.ColumnEventPersistManager;
-import org.eclipse.jnosql.mapping.reflection.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 
 import java.time.Duration;
 import java.util.Map;
