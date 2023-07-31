@@ -16,7 +16,7 @@ package org.eclipse.jnosql.databases.couchbase.mapping;
 
 import com.couchbase.client.java.json.JsonObject;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, AbstractKeyValueTemplate.class,
+@AddPackages(value = {Converters.class, AbstractKeyValueTemplate.class,
         DocumentEntityConverter.class, N1QL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,

@@ -60,7 +60,7 @@ Please note that you can establish properties using the https://microprofile.io/
 |The com.arangodb.Protocol as String
 
 |`jnosql.arangodb.connections.max`
-|The maximum number of connections the built in connection pool will open per host.
+|The maximum number of connections the built-in connection pool will open per host.
 
 |`jnosql.arangodb.acquire.host.list`
 |Set hosts split by comma

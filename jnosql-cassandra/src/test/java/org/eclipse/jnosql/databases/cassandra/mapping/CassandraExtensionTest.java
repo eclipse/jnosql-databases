@@ -16,6 +16,7 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, JNoSQLColumnTemplate.class,
+@AddPackages(value = {Converters.class, JNoSQLColumnTemplate.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,

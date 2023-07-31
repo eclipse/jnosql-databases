@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProducer;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, JNoSQLColumnTemplate.class,
+@AddPackages(value = {Converters.class, JNoSQLColumnTemplate.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,

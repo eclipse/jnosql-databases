@@ -19,6 +19,7 @@ import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, DocumentEntityConverter.class})
+@AddPackages(value = {Converters.class, DocumentEntityConverter.class})
 @AddPackages(Music.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})

@@ -18,7 +18,7 @@ import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.ColumnFieldValue;
-import org.eclipse.jnosql.mapping.reflection.FieldMapping;
+import org.eclipse.jnosql.mapping.metadata.FieldMetadata;
 import org.eclipse.jnosql.databases.cassandra.communication.UDT;
 
 import java.util.ArrayList;
@@ -34,10 +34,10 @@ class CassandraUDTType implements ColumnFieldValue {
 
     private final Object value;
 
-    private final FieldMapping field;
+    private final FieldMetadata field;
 
 
-    CassandraUDTType(String type, Object value, FieldMapping field) {
+    CassandraUDTType(String type, Object value, FieldMetadata field) {
         this.value = value;
         this.type = type;
         this.field = Objects.requireNonNull(field, "field is required");
@@ -49,7 +49,7 @@ class CassandraUDTType implements ColumnFieldValue {
     }
 
     @Override
-    public FieldMapping field() {
+    public FieldMetadata field() {
         return field;
     }
 
