@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class,
+@AddPackages(value = {Converters.class,
         DocumentEntityConverter.class, ElasticsearchTemplate.class})
 @AddPackages(Person.class)
 @AddExtensions({EntityMetadataExtension.class,
