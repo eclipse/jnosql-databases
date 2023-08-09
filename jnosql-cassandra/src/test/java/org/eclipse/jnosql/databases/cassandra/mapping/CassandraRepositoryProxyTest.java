@@ -16,12 +16,12 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProducer;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
-import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.reflection.Reflections;
+import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -44,6 +44,7 @@ import static org.mockito.Mockito.when;
 @AddPackages(value = {Converters.class, JNoSQLColumnTemplate.class,
         CQL.class})
 @AddPackages(MockProducer.class)
+@AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
         ColumnExtension.class, CassandraExtension.class})
 public class CassandraRepositoryProxyTest {

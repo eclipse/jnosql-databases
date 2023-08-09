@@ -18,7 +18,8 @@ import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
-import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.reflection.Reflections;
+import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -30,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @EnableAutoWeld
 @AddPackages(value = {Convert.class})
 @AddPackages(MockProducer.class)
+@AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class, KeyValueExtension.class,
         DocumentExtension.class, ArangoDBExtension.class})
 @ExtendWith(MockitoExtension.class)

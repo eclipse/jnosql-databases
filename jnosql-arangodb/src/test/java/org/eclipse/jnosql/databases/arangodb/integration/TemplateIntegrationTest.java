@@ -23,7 +23,8 @@ import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
-import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.reflection.Reflections;
+import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -42,6 +43,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 @AddPackages(Book.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
+@AddPackages(Reflections.class)
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class TemplateIntegrationTest {
 
