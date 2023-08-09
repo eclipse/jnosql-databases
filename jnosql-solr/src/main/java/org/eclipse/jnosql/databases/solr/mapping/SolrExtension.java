@@ -17,10 +17,7 @@ package org.eclipse.jnosql.databases.solr.mapping;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.inject.spi.Extension;
-import org.eclipse.jnosql.mapping.reflection.ClassScanner;
-
-import java.util.Collection;
-import java.util.HashSet;
+import org.eclipse.jnosql.mapping.metadata.ClassScanner;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -28,11 +25,9 @@ public class SolrExtension implements Extension {
 
     private static final Logger LOGGER = Logger.getLogger(SolrExtension.class.getName());
 
-    private final Collection<Class<?>> crudTypes = new HashSet<>();
-
 
     void onAfterBeanDiscovery(@Observes final AfterBeanDiscovery afterBeanDiscovery) {
-        ClassScanner scanner = ClassScanner.INSTANCE;
+        ClassScanner scanner = ClassScanner.load();
         Set<Class<?>> crudTypes = scanner.repositories(SolrRepository.class);
         LOGGER.info("Starting the onAfterBeanDiscovery with elements number: " + crudTypes.size());
 
