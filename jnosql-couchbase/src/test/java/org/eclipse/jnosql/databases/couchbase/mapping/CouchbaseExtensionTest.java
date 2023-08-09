@@ -15,12 +15,12 @@
 package org.eclipse.jnosql.databases.couchbase.mapping;
 
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.AbstractKeyValueTemplate;
-import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.reflection.Reflections;
+import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class, CouchbaseExtension.class})
+@AddPackages(Reflections.class)
 public class CouchbaseExtensionTest {
     @Inject
     private PersonRepository repository;
