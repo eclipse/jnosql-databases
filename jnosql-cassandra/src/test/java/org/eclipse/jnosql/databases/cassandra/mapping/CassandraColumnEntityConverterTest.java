@@ -30,11 +30,11 @@ import org.eclipse.jnosql.databases.cassandra.mapping.model.Job;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Money;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Movie;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Worker;
-import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
-import org.eclipse.jnosql.mapping.reflection.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.reflection.Reflections;
+import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -66,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @AddPackages(value = {Converters.class, JNoSQLColumnTemplate.class,
         CQL.class})
 @AddPackages(MockProducer.class)
+@AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
         ColumnExtension.class, CassandraExtension.class})
 public class CassandraColumnEntityConverterTest {
