@@ -23,9 +23,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @ApplicationScoped
-class BucketManagerSupplier implements Supplier<RedisBucketManagerFactory> {
+class BucketManagerFactorySupplier implements Supplier<RedisBucketManagerFactory> {
 
-    private static final Logger LOGGER = Logger.getLogger(BucketManagerSupplier.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BucketManagerFactorySupplier.class.getName());
 
     @Override
     @Produces
