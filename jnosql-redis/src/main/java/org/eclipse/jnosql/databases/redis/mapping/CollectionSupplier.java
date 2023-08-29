@@ -18,9 +18,6 @@ import org.eclipse.jnosql.databases.redis.communication.RedisBucketManagerFactor
 import org.eclipse.jnosql.databases.redis.communication.SortedSet;
 import org.eclipse.jnosql.mapping.keyvalue.KeyValueDatabase;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Set;
 
 @ApplicationScoped
 class CollectionSupplier {
