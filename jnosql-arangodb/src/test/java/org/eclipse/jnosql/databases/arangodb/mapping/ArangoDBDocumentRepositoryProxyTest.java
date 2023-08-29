@@ -20,6 +20,7 @@ import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -56,6 +57,12 @@ public class ArangoDBDocumentRepositoryProxyTest {
     @Inject
     private DocumentRepositoryProducer producer;
 
+    @Inject
+    private EntitiesMetadata entitiesMetadata;
+
+    @Inject
+    private Converters converters;
+
     private PersonRepository personRepository;
 
     @BeforeEach
@@ -64,7 +71,7 @@ public class ArangoDBDocumentRepositoryProxyTest {
 
         PersonRepository personRepository = producer.get(PersonRepository.class, template);
         ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy(template,
-                PersonRepository.class, personRepository);
+                PersonRepository.class, personRepository, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());

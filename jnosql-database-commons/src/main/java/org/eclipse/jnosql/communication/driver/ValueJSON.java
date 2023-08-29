@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.communication.driver;
 
+import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.TypeSupplier;
 import org.eclipse.jnosql.communication.Value;
 
-import jakarta.json.bind.Jsonb;
 import java.util.Objects;
 
 

@@ -18,7 +18,9 @@ import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.spi.AbstractBean;
 
 import java.lang.annotation.Annotation;
@@ -52,10 +54,11 @@ class ArangoDBRepositoryBean extends AbstractBean<ArangoDBRepository> {
     public ArangoDBRepository create(CreationalContext<ArangoDBRepository> creationalContext) {
         ArangoDBTemplate template = getInstance(ArangoDBTemplate.class);
         DocumentRepositoryProducer producer = getInstance(DocumentRepositoryProducer.class);
-
+        Converters converters = getInstance(Converters.class);
+        EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
         PageableRepository<Object, Object> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
 
-        ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy(template,type, repository);
+        ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy(template,type, repository, converters, entitiesMetadata);
         return (ArangoDBRepository) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);

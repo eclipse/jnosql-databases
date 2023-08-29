@@ -19,8 +19,8 @@ import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.databases.infinispan.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.eclipse.jnosql.databases.infinispan.communication.model.User;
+import org.eclipse.jnosql.databases.infinispan.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

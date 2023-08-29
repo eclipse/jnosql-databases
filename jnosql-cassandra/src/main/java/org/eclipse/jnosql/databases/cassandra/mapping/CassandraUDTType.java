@@ -15,11 +15,11 @@
 package org.eclipse.jnosql.databases.cassandra.mapping;
 
 import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.databases.cassandra.communication.UDT;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.ColumnFieldValue;
 import org.eclipse.jnosql.mapping.metadata.FieldMetadata;
-import org.eclipse.jnosql.databases.cassandra.communication.UDT;
 
 import java.util.ArrayList;
 import java.util.List;

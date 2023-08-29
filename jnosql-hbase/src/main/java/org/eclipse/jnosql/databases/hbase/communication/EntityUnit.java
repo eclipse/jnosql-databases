@@ -15,10 +15,10 @@
 package org.eclipse.jnosql.databases.hbase.communication;
 
 
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
+import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -19,7 +19,6 @@ import com.arangodb.ArangoDB;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 
-
 import static java.util.Objects.requireNonNull;
 
 /**

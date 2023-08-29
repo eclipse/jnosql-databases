@@ -15,16 +15,14 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.databases.arangodb.communication.AQLQueryResult;
-import org.eclipse.jnosql.databases.arangodb.communication.QueryAQLConverter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Map;
 
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)

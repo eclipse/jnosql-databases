@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.databases.memcached.communication;
 
+import net.spy.memcached.MemcachedClient;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import net.spy.memcached.MemcachedClient;
 
 import java.time.Duration;
 import java.util.Optional;

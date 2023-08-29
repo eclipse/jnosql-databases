@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 

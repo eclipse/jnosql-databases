@@ -36,8 +36,8 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class MongoDBQueryTest {

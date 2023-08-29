@@ -20,6 +20,7 @@ import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProducer;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -54,6 +55,12 @@ public class CassandraRepositoryProxyTest {
     @Inject
     private ColumnRepositoryProducer producer;
 
+    @Inject
+    private Converters converters;
+
+    @Inject
+    private EntitiesMetadata entitiesMetadata;
+
     private PersonRepository personRepository;
 
     @BeforeEach
@@ -61,7 +68,7 @@ public class CassandraRepositoryProxyTest {
         this.template = Mockito.mock(CassandraTemplate.class);
         PersonRepository personRepository = producer.get(PersonRepository.class, template);
         CassandraRepositoryProxy handler = new CassandraRepositoryProxy(template,
-                PersonRepository.class, personRepository);
+                PersonRepository.class, personRepository, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());

@@ -15,11 +15,6 @@
 
 package org.eclipse.jnosql.databases.ravendb.communication;
 
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import net.ravendb.client.documents.DocumentStore;
 import net.ravendb.client.documents.queries.Query;
 import net.ravendb.client.documents.session.IDocumentQuery;
@@ -27,6 +22,11 @@ import net.ravendb.client.documents.session.IDocumentSession;
 import net.ravendb.client.documents.session.IEnumerableQuery;
 import net.ravendb.client.documents.session.IMetadataDictionary;
 import net.ravendb.client.exceptions.RavenException;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.time.Clock;
 import java.time.Duration;

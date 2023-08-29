@@ -16,13 +16,13 @@
 package org.eclipse.jnosql.databases.redis.communication;
 
 
+import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.driver.ValueJSON;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.communication.driver.ValueJSON;
 import redis.clients.jedis.Jedis;
 
-import jakarta.json.bind.Jsonb;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;

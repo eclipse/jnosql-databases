@@ -18,17 +18,16 @@ package org.eclipse.jnosql.databases.couchdb.communication;
 
 import jakarta.data.repository.Direction;
 import jakarta.data.repository.Sort;
-import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
-
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.List;
 import java.util.Locale;

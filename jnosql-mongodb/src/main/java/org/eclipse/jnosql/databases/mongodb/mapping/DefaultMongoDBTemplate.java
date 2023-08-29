@@ -29,7 +29,6 @@ import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;

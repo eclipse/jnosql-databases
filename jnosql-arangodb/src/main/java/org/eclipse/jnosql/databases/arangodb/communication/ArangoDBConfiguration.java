@@ -19,7 +19,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.LoadBalancingStrategy;
 import org.eclipse.jnosql.communication.Settings;
 
-
 import static java.util.Objects.requireNonNull;
 
 /**

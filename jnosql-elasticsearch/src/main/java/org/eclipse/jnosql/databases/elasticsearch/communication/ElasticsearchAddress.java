@@ -15,10 +15,11 @@
  */
 package org.eclipse.jnosql.databases.elasticsearch.communication;
 
+import org.apache.http.HttpHost;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
-import org.apache.http.HttpHost;
 
 final class ElasticsearchAddress {
 

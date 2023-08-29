@@ -15,8 +15,8 @@
 
 package org.eclipse.jnosql.databases.ravendb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import net.ravendb.client.documents.DocumentStore;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 import java.util.Arrays;
 import java.util.Objects;

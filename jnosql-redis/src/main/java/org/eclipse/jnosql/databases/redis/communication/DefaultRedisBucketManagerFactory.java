@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.databases.redis.communication;
 
+import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import redis.clients.jedis.JedisPool;
 
-import jakarta.json.bind.Jsonb;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;

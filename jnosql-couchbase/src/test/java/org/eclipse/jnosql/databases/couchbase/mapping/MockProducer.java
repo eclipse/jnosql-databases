@@ -20,9 +20,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.interceptor.Interceptor;
-import org.eclipse.jnosql.databases.couchbase.communication.CouchbaseDocumentManager;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.databases.couchbase.communication.CouchbaseDocumentManager;
 import org.mockito.Mockito;
 
 import java.util.function.Supplier;

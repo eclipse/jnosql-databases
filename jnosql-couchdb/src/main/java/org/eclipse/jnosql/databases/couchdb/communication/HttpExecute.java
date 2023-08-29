@@ -14,9 +14,8 @@
  */
 package org.eclipse.jnosql.databases.couchdb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import jakarta.json.JsonObject;
+import jakarta.json.bind.Jsonb;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -30,11 +29,12 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 
-import jakarta.json.JsonObject;
-import jakarta.json.bind.Jsonb;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;

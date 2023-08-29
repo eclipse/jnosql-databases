@@ -16,13 +16,13 @@
  */
 package org.eclipse.jnosql.databases.couchdb.communication;
 
+import jakarta.json.Json;
+import jakarta.json.JsonReader;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
-import jakarta.json.Json;
-import jakarta.json.JsonReader;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;

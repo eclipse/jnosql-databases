@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.databases.ravendb.communication;
 
+import net.ravendb.client.Constants;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import net.ravendb.client.Constants;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.HashMap;

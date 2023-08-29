@@ -17,8 +17,8 @@ package org.eclipse.jnosql.databases.hazelcast.communication;
 import com.hazelcast.query.Predicate;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.eclipse.jnosql.databases.hazelcast.communication.model.Movie;
+import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

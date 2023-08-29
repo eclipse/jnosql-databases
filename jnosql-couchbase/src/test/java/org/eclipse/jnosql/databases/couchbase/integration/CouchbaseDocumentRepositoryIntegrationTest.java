@@ -16,7 +16,6 @@ package org.eclipse.jnosql.databases.couchbase.integration;
 
 
 import com.couchbase.client.core.env.TimeoutConfig;
-import com.couchbase.client.java.json.JsonObject;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.couchbase.communication.CouchbaseUtil;
 import org.eclipse.jnosql.databases.couchbase.mapping.CouchbaseExtension;
@@ -34,7 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;

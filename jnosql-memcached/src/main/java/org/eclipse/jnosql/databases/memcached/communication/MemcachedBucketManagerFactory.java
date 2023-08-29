@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.databases.memcached.communication;
 
-import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import net.spy.memcached.MemcachedClient;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 
 import java.util.List;
 import java.util.Map;

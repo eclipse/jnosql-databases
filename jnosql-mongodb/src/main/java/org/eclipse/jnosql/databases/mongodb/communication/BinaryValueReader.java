@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.databases.mongodb.communication;
 
-import org.eclipse.jnosql.communication.ValueReader;
 import org.bson.types.Binary;
+import org.eclipse.jnosql.communication.ValueReader;
 
 /**
  * An implementation of {@link ValueReader} of {@link Binary}
