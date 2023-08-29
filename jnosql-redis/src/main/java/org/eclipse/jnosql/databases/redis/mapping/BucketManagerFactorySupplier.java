@@ -13,7 +13,6 @@ import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.databases.redis.communication.RedisBucketManager;
 import org.eclipse.jnosql.databases.redis.communication.RedisBucketManagerFactory;
 import org.eclipse.jnosql.databases.redis.communication.RedisConfiguration;
 import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
@@ -36,8 +35,8 @@ class BucketManagerFactorySupplier implements Supplier<RedisBucketManagerFactory
         return configuration.apply(settings);
     }
 
-    public void close(@Disposes RedisBucketManager manager) {
-        LOGGER.log(Level.FINEST, "Closing RedisBucketManager resource, database name: " + manager.name());
-        manager.close();
+    public void close(@Disposes RedisBucketManagerFactory factory) {
+        LOGGER.log(Level.FINEST, "Closing RedisBucketManagerFactory resource");
+        factory.close();
     }
 }
