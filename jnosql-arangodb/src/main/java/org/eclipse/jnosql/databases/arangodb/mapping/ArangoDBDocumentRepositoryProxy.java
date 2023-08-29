@@ -16,6 +16,11 @@ package org.eclipse.jnosql.databases.arangodb.mapping;
 
 
 import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.query.AbstractDocumentRepositoryProxy;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.repository.DynamicReturn;
 
 import java.lang.reflect.InvocationHandler;
@@ -28,7 +33,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyMap;
 import static org.eclipse.jnosql.mapping.repository.DynamicReturn.toSingleResult;
 
-class ArangoDBDocumentRepositoryProxy<T> implements InvocationHandler {
+class ArangoDBDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
@@ -36,17 +41,52 @@ class ArangoDBDocumentRepositoryProxy<T> implements InvocationHandler {
 
     private final PageableRepository<?, ?> repository;
 
+    private final Class<?> repositoryType;
 
-    ArangoDBDocumentRepositoryProxy(ArangoDBTemplate template, Class<?> repositoryType, PageableRepository<?, ?> repository) {
+    private final Converters converters;
+
+    private EntityMetadata entityMetadata;
+
+    ArangoDBDocumentRepositoryProxy(ArangoDBTemplate template, Class<?> repositoryType,
+                                    PageableRepository<?, ?> repository, Converters converters,
+                                    EntitiesMetadata entitiesMetadata) {
         this.template = template;
         this.typeClass = Class.class.cast(ParameterizedType.class.cast(repositoryType.getGenericInterfaces()[0])
                 .getActualTypeArguments()[0]);
         this.repository = repository;
+        this.repositoryType = repositoryType;
+        this.converters = converters;
+        this.entityMetadata = entitiesMetadata.get(typeClass);
     }
 
 
     @Override
-    public Object invoke(Object o, Method method, Object[] args) throws Throwable {
+    protected PageableRepository getRepository() {
+        return repository;
+    }
+
+    @Override
+    protected Class<?> repositoryType() {
+        return repositoryType;
+    }
+
+    @Override
+    protected Converters getConverters() {
+        return converters;
+    }
+
+    @Override
+    protected EntityMetadata getEntityMetadata() {
+        return entityMetadata;
+    }
+
+    @Override
+    protected JNoSQLDocumentTemplate getTemplate() {
+        return template;
+    }
+
+    @Override
+    public Object invoke(Object instance, Method method, Object[] args) throws Throwable {
 
         AQL aql = method.getAnnotation(AQL.class);
         if (Objects.nonNull(aql)) {
@@ -64,8 +104,9 @@ class ArangoDBDocumentRepositoryProxy<T> implements InvocationHandler {
                     .withSingleResult(toSingleResult(method).apply(() -> result))
                     .build().execute();
         }
-        return method.invoke(repository, args);
+        return super.invoke(instance, method, args);
     }
+
 
 
 }
