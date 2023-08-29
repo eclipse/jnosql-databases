@@ -16,9 +16,13 @@ package org.eclipse.jnosql.databases.orientdb.mapping;
 
 
 import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.query.AbstractDocumentRepositoryProxy;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.repository.DynamicReturn;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
@@ -28,7 +32,7 @@ import java.util.stream.Stream;
 import static org.eclipse.jnosql.mapping.repository.DynamicReturn.toSingleResult;
 
 
-class OrientDBDocumentRepositoryProxy<T> implements InvocationHandler {
+class OrientDBDocumentRepositoryProxy<T> extends AbstractDocumentRepositoryProxy<T> {
 
     private final Class<T> typeClass;
 
@@ -36,14 +40,50 @@ class OrientDBDocumentRepositoryProxy<T> implements InvocationHandler {
 
     private final PageableRepository<?, ?> repository;
 
+    private final Class<?> repositoryType;
 
-    OrientDBDocumentRepositoryProxy(OrientDBTemplate template, Class<?> repositoryType, PageableRepository<?, ?> repository) {
+    private final Converters converters;
+
+    private final EntityMetadata entityMetadata;
+
+
+    OrientDBDocumentRepositoryProxy(OrientDBTemplate template, Class<?> repositoryType,
+                                    PageableRepository<?, ?> repository, Converters converters,
+                                    EntitiesMetadata entitiesMetadata) {
         this.template = template;
         this.typeClass = Class.class.cast(ParameterizedType.class.cast(repositoryType.getGenericInterfaces()[0])
                 .getActualTypeArguments()[0]);
         this.repository = repository;
+        this.repositoryType = repositoryType;
+        this.converters = converters;
+        this.entityMetadata = entitiesMetadata.get(typeClass);
     }
 
+
+    @Override
+    protected PageableRepository getRepository() {
+        return repository;
+    }
+
+    @Override
+    protected Class<?> repositoryType() {
+        return repositoryType;
+    }
+
+    @Override
+    protected Converters getConverters() {
+        return converters;
+    }
+
+    @Override
+    protected EntityMetadata getEntityMetadata() {
+        return entityMetadata;
+    }
+
+    @Override
+    protected JNoSQLDocumentTemplate getTemplate() {
+        return template;
+    }
 
     @Override
     public Object invoke(Object instance, Method method, Object[] args) throws Throwable {
@@ -68,8 +108,9 @@ class OrientDBDocumentRepositoryProxy<T> implements InvocationHandler {
                     .withSingleResult(toSingleResult(method).apply(() -> result))
                     .build().execute();
         }
-        return method.invoke(repository, args);
+        return super.invoke(instance, method, args);
     }
+
 
 
 }
