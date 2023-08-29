@@ -23,7 +23,6 @@ import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.repository.DynamicReturn;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
@@ -44,6 +43,8 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
 
     private final EntityMetadata entityMetadata;
 
+    private final Class<?> repositoryType;
+
     CassandraRepositoryProxy(CassandraTemplate template, Class<?> repositoryType,
                              PageableRepository<T, ?> repository,
                              Converters converters, EntitiesMetadata entitiesMetadata) {
@@ -54,6 +55,7 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
         this.repository = repository;
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
+        this.repositoryType = repositoryType;
     }
 
     @Override
@@ -64,6 +66,11 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
     @Override
     protected Converters getConverters() {
         return converters;
+    }
+
+    @Override
+    protected Class<?> repositoryType() {
+        return repositoryType;
     }
 
     @Override
