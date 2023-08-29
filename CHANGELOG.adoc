@@ -8,6 +8,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == [Unreleased]
 
+=== Fixed
+
+- Fixes Repositories specializations when use methods from CrudRepository
+
 === Added
 
 - Add BucketManagerFactory by injection to Redis
