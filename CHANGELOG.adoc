@@ -8,6 +8,13 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == [Unreleased]
 
+=== Added
+
+- Add BucketManagerFactory by injection to Redis
+
+=== Changed
+
+- Update Redisson to version 4.4.3
 == [1.0.1] - 2023-7-31
 
 === Changed
