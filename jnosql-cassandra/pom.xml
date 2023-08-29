@@ -28,7 +28,7 @@
     <description>The Eclipse JNoSQL layer to Cassandra</description>
 
     <properties>
-        <casandra.driver.version>4.16.0</casandra.driver.version>
+        <casandra.driver.version>4.17.0</casandra.driver.version>
     </properties>
     <dependencies>
         <dependency>
