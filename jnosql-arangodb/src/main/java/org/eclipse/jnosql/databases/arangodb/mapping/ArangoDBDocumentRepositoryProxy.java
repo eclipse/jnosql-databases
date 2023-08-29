@@ -23,7 +23,6 @@ import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.repository.DynamicReturn;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
@@ -33,7 +32,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyMap;
 import static org.eclipse.jnosql.mapping.repository.DynamicReturn.toSingleResult;
 
-class ArangoDBDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
+class ArangoDBDocumentRepositoryProxy<T> extends AbstractDocumentRepositoryProxy<T> {
 
     private final Class<T> typeClass;
 
@@ -45,7 +44,7 @@ class ArangoDBDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryPr
 
     private final Converters converters;
 
-    private EntityMetadata entityMetadata;
+    private final EntityMetadata entityMetadata;
 
     ArangoDBDocumentRepositoryProxy(ArangoDBTemplate template, Class<?> repositoryType,
                                     PageableRepository<?, ?> repository, Converters converters,

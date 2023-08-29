@@ -21,6 +21,7 @@ import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.AbstractKeyValueTemplate;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -55,6 +56,12 @@ public class CouchbaseDocumentRepositoryProxyTest {
     @Inject
     private DocumentRepositoryProducer producer;
 
+    @Inject
+    private Converters converters;
+
+    @Inject
+    private EntitiesMetadata entitiesMetadata;
+
     private PersonRepository personRepository;
 
 
@@ -63,7 +70,7 @@ public class CouchbaseDocumentRepositoryProxyTest {
         this.template = Mockito.mock(CouchbaseTemplate.class);
 
         CouchbaseDocumentRepositoryProxy handler = new CouchbaseDocumentRepositoryProxy(template,
-                PersonRepository.class, producer.get(PersonRepository.class, template));
+                PersonRepository.class, producer.get(PersonRepository.class, template), converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());

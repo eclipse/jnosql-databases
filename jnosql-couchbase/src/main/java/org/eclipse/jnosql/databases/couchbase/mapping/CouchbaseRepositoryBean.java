@@ -18,7 +18,9 @@ import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.spi.AbstractBean;
 
 import java.lang.annotation.Annotation;
@@ -54,7 +56,10 @@ class CouchbaseRepositoryBean extends AbstractBean<CouchbaseRepository> {
         CouchbaseTemplate template = getInstance(CouchbaseTemplate.class);
         DocumentRepositoryProducer producer = getInstance(DocumentRepositoryProducer.class);
         PageableRepository<Object, Object> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
-        CouchbaseDocumentRepositoryProxy handler = new CouchbaseDocumentRepositoryProxy(template, type, repository);
+        Converters converters = getInstance(Converters.class);
+        EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
+        CouchbaseDocumentRepositoryProxy handler = new CouchbaseDocumentRepositoryProxy(template, type, repository,
+                converters, entitiesMetadata);
         return (CouchbaseRepository) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
