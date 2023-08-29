@@ -26,7 +26,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.hazelcast.query.Predicates.*;
+import static com.hazelcast.query.Predicates.and;
+import static com.hazelcast.query.Predicates.equal;
+import static com.hazelcast.query.Predicates.greaterEqual;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

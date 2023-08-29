@@ -44,7 +44,12 @@ import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.dele
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class DefaultCouchDBDocumentManagerTest {

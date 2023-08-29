@@ -45,7 +45,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
-import static org.eclipse.jnosql.communication.Condition.*;
+import static org.eclipse.jnosql.communication.Condition.EQUALS;
+import static org.eclipse.jnosql.communication.Condition.IN;
+import static org.eclipse.jnosql.communication.Condition.OR;
 
 /**
  * The Hbase implementation to {@link ColumnManager}.

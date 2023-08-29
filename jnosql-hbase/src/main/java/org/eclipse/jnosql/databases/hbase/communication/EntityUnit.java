@@ -23,7 +23,10 @@ import org.eclipse.jnosql.communication.column.ColumnEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.hadoop.hbase.CellUtil.*;
+import static org.apache.hadoop.hbase.CellUtil.cloneFamily;
+import static org.apache.hadoop.hbase.CellUtil.cloneQualifier;
+import static org.apache.hadoop.hbase.CellUtil.cloneRow;
+import static org.apache.hadoop.hbase.CellUtil.cloneValue;
 
 class EntityUnit {
 

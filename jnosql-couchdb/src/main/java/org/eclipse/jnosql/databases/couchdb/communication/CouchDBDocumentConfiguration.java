@@ -23,7 +23,14 @@ import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.*;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.COMPRESSION;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.CONNECTION_TIMEOUT;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.ENABLE_SSL;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.MAX_CACHE_ENTRIES;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.MAX_CONNECTIONS;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.MAX_OBJECT_SIZE_BYTES;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.PORT;
+import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.SOCKET_TIMEOUT;
 
 /**
  * The CouchDB implementation of {@link DocumentConfiguration}  that returns
