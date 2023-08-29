@@ -17,8 +17,8 @@ package org.eclipse.jnosql.databases.hazelcast.communication;
 
 
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.eclipse.jnosql.databases.hazelcast.communication.model.LineBank;
+import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,10 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QueueTest {
 

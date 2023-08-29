@@ -15,16 +15,6 @@
 package org.eclipse.jnosql.databases.hbase.communication;
 
 
-import org.eclipse.jnosql.communication.Condition;
-import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.ValueWriter;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnCondition;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnManager;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
@@ -32,7 +22,17 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.eclipse.jnosql.communication.Condition;
+import org.eclipse.jnosql.communication.TypeReference;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.ValueWriter;
 import org.eclipse.jnosql.communication.ValueWriterDecorator;
+import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.column.ColumnCondition;
+import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
+import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.column.ColumnManager;
+import org.eclipse.jnosql.communication.column.ColumnQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -44,11 +44,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-
-import static org.eclipse.jnosql.communication.Condition.EQUALS;
-import static org.eclipse.jnosql.communication.Condition.IN;
-import static org.eclipse.jnosql.communication.Condition.OR;
 import static java.util.stream.Collectors.toList;
+import static org.eclipse.jnosql.communication.Condition.*;
 
 /**
  * The Hbase implementation to {@link ColumnManager}.

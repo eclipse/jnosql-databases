@@ -15,9 +15,6 @@
 package org.eclipse.jnosql.databases.memcached.communication;
 
 
-import org.eclipse.jnosql.communication.Configurations;
-import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
@@ -25,6 +22,9 @@ import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.auth.AuthDescriptor;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

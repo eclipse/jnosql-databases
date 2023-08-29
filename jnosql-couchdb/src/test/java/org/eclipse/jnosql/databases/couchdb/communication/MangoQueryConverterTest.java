@@ -16,10 +16,10 @@
  */
 package org.eclipse.jnosql.databases.couchdb.communication;
 
+import jakarta.json.JsonObject;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.junit.jupiter.params.ParameterizedTest;
 
-import jakarta.json.JsonObject;
 import java.util.Arrays;
 
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;

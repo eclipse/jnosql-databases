@@ -29,16 +29,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.column.ColumnDeleteQuery.delete;
 import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class HBaseFamilyManagerTest {

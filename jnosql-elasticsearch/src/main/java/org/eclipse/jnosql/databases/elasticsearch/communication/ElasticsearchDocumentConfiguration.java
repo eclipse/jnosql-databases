@@ -19,15 +19,15 @@ package org.eclipse.jnosql.databases.elasticsearch.communication;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import org.eclipse.jnosql.communication.Configurations;
-import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 

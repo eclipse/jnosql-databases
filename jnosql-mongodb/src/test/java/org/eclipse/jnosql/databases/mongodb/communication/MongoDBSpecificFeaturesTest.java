@@ -16,11 +16,11 @@ package org.eclipse.jnosql.databases.mongodb.communication;
 
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
+import org.bson.BsonValue;
+import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.bson.BsonValue;
-import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,8 +40,8 @@ import java.util.stream.Stream;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)

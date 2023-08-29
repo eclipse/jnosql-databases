@@ -17,7 +17,6 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
-
 import jakarta.data.exceptions.NonUniqueResultException;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.column.Column;
@@ -43,23 +42,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.eclipse.jnosql.communication.column.ColumnDeleteQuery.delete;
-
-import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
-
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.column.ColumnDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class CassandraColumnManagerTest {

@@ -39,10 +39,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.ID_FIELD;
-import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.RID_FIELD;
-import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.VERSION_FIELD;
-import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.toMap;
+import static org.eclipse.jnosql.databases.orientdb.communication.OrientDBConverter.*;
 
 class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
 

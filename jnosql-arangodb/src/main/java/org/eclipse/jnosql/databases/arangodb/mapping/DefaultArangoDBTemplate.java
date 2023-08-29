@@ -27,7 +27,6 @@ import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 
-
 import java.util.Map;
 import java.util.stream.Stream;
 

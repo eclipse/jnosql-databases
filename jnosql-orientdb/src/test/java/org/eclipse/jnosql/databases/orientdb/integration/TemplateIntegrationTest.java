@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.databases.orientdb.integration;
 
 
-import com.orientechnologies.orient.core.db.ODatabaseType;
 import jakarta.inject.Inject;
 import jakarta.nosql.document.DocumentTemplate;
 import org.eclipse.jnosql.databases.orientdb.communication.DocumentDatabase;

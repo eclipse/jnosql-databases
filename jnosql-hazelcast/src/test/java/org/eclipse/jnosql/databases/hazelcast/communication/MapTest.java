@@ -16,8 +16,8 @@
 package org.eclipse.jnosql.databases.hazelcast.communication;
 
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.eclipse.jnosql.databases.hazelcast.communication.model.Species;
+import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MapTest {
 

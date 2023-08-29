@@ -17,7 +17,6 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBKeyValueConfiguration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 

@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.databases.hbase.communication;
 
 
-import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
@@ -26,6 +25,7 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.client.TableDescriptor;
 import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
+import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;

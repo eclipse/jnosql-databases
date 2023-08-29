@@ -20,11 +20,11 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
-import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManager;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
 import org.eclipse.jnosql.communication.column.ColumnEntity;
 import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManager;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.ColumnEventPersistManager;
@@ -50,9 +50,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @EnableAutoWeld
 @AddPackages(value = {Converters.class, ColumnEntityConverter.class,

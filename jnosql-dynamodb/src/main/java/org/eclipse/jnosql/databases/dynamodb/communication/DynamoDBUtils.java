@@ -15,8 +15,9 @@
  */
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
+import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
@@ -24,7 +25,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
-import jakarta.json.bind.Jsonb;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

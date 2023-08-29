@@ -17,8 +17,8 @@ package org.eclipse.jnosql.databases.hazelcast.communication;
 import com.hazelcast.query.Predicate;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
-import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.eclipse.jnosql.databases.hazelcast.communication.model.Movie;
+import org.eclipse.jnosql.databases.hazelcast.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,9 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.hazelcast.query.Predicates.and;
-import static com.hazelcast.query.Predicates.equal;
-import static com.hazelcast.query.Predicates.greaterEqual;
+import static com.hazelcast.query.Predicates.*;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

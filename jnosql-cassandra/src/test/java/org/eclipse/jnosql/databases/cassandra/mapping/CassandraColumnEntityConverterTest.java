@@ -17,9 +17,9 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.databases.cassandra.communication.UDT;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.databases.cassandra.communication.UDT;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Actor;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.AppointmentBook;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Artist;
@@ -58,9 +58,7 @@ import java.util.stream.Stream;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnableAutoWeld
 @AddPackages(value = {Converters.class, JNoSQLColumnTemplate.class,

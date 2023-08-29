@@ -14,10 +14,10 @@
  */
 package org.eclipse.jnosql.databases.mongodb.communication;
 
-import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.bson.Document;
 import org.bson.types.Binary;
+import org.eclipse.jnosql.communication.Value;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;

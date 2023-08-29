@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.redis.communication;
 
 import jakarta.json.bind.annotation.JsonbCreator;
 import jakarta.json.bind.annotation.JsonbProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 

@@ -16,12 +16,9 @@ package org.eclipse.jnosql.databases.hazelcast.mapping;
 
 import jakarta.data.repository.PageableRepository;
 import jakarta.nosql.keyvalue.KeyValueTemplate;
-import org.eclipse.jnosql.mapping.keyvalue.query.AbstractKeyValueRepository;
 import org.eclipse.jnosql.mapping.keyvalue.query.AbstractKeyValueRepositoryProxy;
-import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.repository.DynamicReturn;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;

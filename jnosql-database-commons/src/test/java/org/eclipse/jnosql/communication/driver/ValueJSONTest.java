@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.communication.driver;
 
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.Value;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

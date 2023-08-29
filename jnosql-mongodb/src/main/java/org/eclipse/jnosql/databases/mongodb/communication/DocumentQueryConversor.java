@@ -17,10 +17,10 @@ package org.eclipse.jnosql.databases.mongodb.communication;
 
 
 import com.mongodb.client.model.Filters;
+import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.List;

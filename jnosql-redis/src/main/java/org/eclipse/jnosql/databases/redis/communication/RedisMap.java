@@ -15,10 +15,10 @@
 
 package org.eclipse.jnosql.databases.redis.communication;
 
+import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import redis.clients.jedis.Jedis;
 
-import jakarta.json.bind.Jsonb;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

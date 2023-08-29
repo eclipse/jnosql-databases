@@ -16,13 +16,13 @@
 package org.eclipse.jnosql.databases.ravendb.communication;
 
 import jakarta.data.repository.Sort;
+import net.ravendb.client.documents.queries.Query;
+import net.ravendb.client.documents.session.IDocumentQuery;
+import net.ravendb.client.documents.session.IDocumentSession;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
-import net.ravendb.client.documents.queries.Query;
-import net.ravendb.client.documents.session.IDocumentQuery;
-import net.ravendb.client.documents.session.IDocumentSession;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;

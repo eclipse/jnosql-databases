@@ -23,11 +23,9 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class DefaultSortedSetTest {

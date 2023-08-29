@@ -35,18 +35,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class ArangoDBDocumentManagerTest {

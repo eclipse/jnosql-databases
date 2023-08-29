@@ -19,8 +19,8 @@ import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import org.eclipse.jnosql.databases.infinispan.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.eclipse.jnosql.databases.infinispan.communication.model.User;
+import org.eclipse.jnosql.databases.infinispan.communication.util.KeyValueEntityManagerFactoryUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,10 +31,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KeyValueEntityManagerTest {
 

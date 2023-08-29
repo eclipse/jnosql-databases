@@ -18,7 +18,6 @@ package org.eclipse.jnosql.databases.infinispan.communication;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
-
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;

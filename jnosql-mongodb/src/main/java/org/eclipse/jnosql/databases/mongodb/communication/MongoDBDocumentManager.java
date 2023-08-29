@@ -23,14 +23,14 @@ import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.data.repository.Sort;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 
 import java.time.Duration;
