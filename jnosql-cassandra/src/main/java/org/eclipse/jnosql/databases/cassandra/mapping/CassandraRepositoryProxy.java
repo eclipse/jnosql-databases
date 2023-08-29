@@ -16,6 +16,11 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 
 
 import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
+import org.eclipse.jnosql.mapping.column.query.AbstractColumnRepositoryProxy;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.repository.DynamicReturn;
 
 import java.lang.reflect.InvocationHandler;
@@ -27,7 +32,7 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.mapping.repository.DynamicReturn.toSingleResult;
 
-class CassandraRepositoryProxy<T> implements InvocationHandler {
+class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>  {
 
     private final Class<T> typeClass;
 
@@ -35,16 +40,44 @@ class CassandraRepositoryProxy<T> implements InvocationHandler {
 
     private final PageableRepository<T,?> repository;
 
-    CassandraRepositoryProxy(CassandraTemplate template, Class<?> repositoryType, PageableRepository<T, ?> repository) {
+    private final Converters converters;
+
+    private final EntityMetadata entityMetadata;
+
+    CassandraRepositoryProxy(CassandraTemplate template, Class<?> repositoryType,
+                             PageableRepository<T, ?> repository,
+                             Converters converters, EntitiesMetadata entitiesMetadata) {
 
         this.template = template;
         this.typeClass = Class.class.cast(ParameterizedType.class.cast(repositoryType.getGenericInterfaces()[0])
                 .getActualTypeArguments()[0]);
         this.repository = repository;
+        this.converters = converters;
+        this.entityMetadata = entitiesMetadata.get(typeClass);
     }
 
     @Override
-    public Object invoke(Object o, Method method, Object[] args) throws Throwable {
+    protected PageableRepository getRepository() {
+        return repository;
+    }
+
+    @Override
+    protected Converters getConverters() {
+        return converters;
+    }
+
+    @Override
+    protected EntityMetadata getEntityMetadata() {
+        return null;
+    }
+
+    @Override
+    protected JNoSQLColumnTemplate getTemplate() {
+        return template;
+    }
+
+    @Override
+    public Object invoke(Object instance, Method method, Object[] args) throws Throwable {
 
         CQL cql = method.getAnnotation(CQL.class);
         if (Objects.nonNull(cql)) {
@@ -66,7 +99,7 @@ class CassandraRepositoryProxy<T> implements InvocationHandler {
                     .build().execute();
         }
 
-        return method.invoke(repository, args);
+        return super.invoke(instance, method, args);
     }
 
 }

@@ -18,7 +18,9 @@ import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProducer;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.spi.AbstractBean;
 
 import java.lang.annotation.Annotation;
@@ -52,7 +54,10 @@ class CassandraRepositoryBean extends AbstractBean<CassandraRepository> {
         CassandraTemplate template = getInstance(CassandraTemplate.class);
         ColumnRepositoryProducer producer = getInstance(ColumnRepositoryProducer.class);
         PageableRepository<?,?> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
-        CassandraRepositoryProxy handler = new CassandraRepositoryProxy(template, type, repository);
+        Converters converters = getInstance(Converters.class);
+        EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
+        CassandraRepositoryProxy handler = new CassandraRepositoryProxy(template, type, repository,
+                converters, entitiesMetadata);
         return (CassandraRepository) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
