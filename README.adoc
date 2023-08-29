@@ -1307,6 +1307,18 @@ products.increment();
 products.increment(3L);
 ----
 
+Using the same principle of the API you can inject using the `@KeyValueDatabase` qualifier.
+
+[source,java]
+----
+@Inject
+@KeyValueDatabase("counter")
+Counter counter;
+
+@Inject
+@KeyValueDatabase("game")
+SortedSet game;
+----
 == Riak
 
 image::https://jnosql.github.io/img/logos/riak.png[Riak Project,align="center" width=25%,height=25%]
