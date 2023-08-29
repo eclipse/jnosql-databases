@@ -1283,6 +1283,30 @@ jnosql.keyvalue.provider=org.eclipse.jnosql.databases.redis.communication.RedisC
 jnosql.keyvalue.database=heroes
 ----
 
+=== RedisBucketManagerFactory
+
+The ```RedisBucketManagerFactory``` is a specialization of the ```BucketManagerFactory``` that enables ranking and counter feature.
+
+[source,java]
+----
+@Inject
+RedisBucketManagerFactory factory;
+...
+SortedSet game = factory.getSortedSet("game");
+game.add("Otavio", 10);
+game.add("Luiz", 20);
+game.add("Ada", 30);
+game.add(Ranking.of("Poliana", 40));
+
+List<Ranking> ranking = game.getRanking();
+
+Counter home = factory.getCounter("home");
+Counter products = factory.getCounter("products");
+home.increment();
+products.increment();
+products.increment(3L);
+----
+
 == Riak
 
 image::https://jnosql.github.io/img/logos/riak.png[Riak Project,align="center" width=25%,height=25%]
