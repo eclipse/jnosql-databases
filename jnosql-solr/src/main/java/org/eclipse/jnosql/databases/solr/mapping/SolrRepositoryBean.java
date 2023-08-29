@@ -18,7 +18,9 @@ import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.spi.AbstractBean;
 
 import java.lang.annotation.Annotation;
@@ -54,7 +56,9 @@ class SolrRepositoryBean extends AbstractBean<SolrRepository> {
         SolrTemplate template = getInstance(SolrTemplate.class);
         DocumentRepositoryProducer producer = getInstance(DocumentRepositoryProducer.class);
         PageableRepository<Object, Object> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
-        SolrRepositoryProxy handler = new SolrRepositoryProxy(template, type, repository);
+        Converters converters = getInstance(Converters.class);
+        EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
+        SolrRepositoryProxy handler = new SolrRepositoryProxy(template, type, repository, converters, entitiesMetadata);
         return (SolrRepository) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);

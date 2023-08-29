@@ -19,6 +19,7 @@ import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -54,6 +55,12 @@ public class SolrRepositoryProxyTest {
     @Inject
     private DocumentRepositoryProducer producer;
 
+    @Inject
+    private Converters converters;
+
+    @Inject
+    private EntitiesMetadata entitiesMetadata;
+
     private PersonRepository personRepository;
 
     @BeforeEach
@@ -61,7 +68,7 @@ public class SolrRepositoryProxyTest {
         this.template = Mockito.mock(SolrTemplate.class);
 
         SolrRepositoryProxy handler = new SolrRepositoryProxy(template,
-                PersonRepository.class, producer.get(PersonRepository.class, template));
+                PersonRepository.class, producer.get(PersonRepository.class, template), converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());
