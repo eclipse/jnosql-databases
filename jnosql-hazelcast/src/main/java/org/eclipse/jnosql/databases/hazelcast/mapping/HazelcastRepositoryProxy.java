@@ -15,6 +15,10 @@
 package org.eclipse.jnosql.databases.hazelcast.mapping;
 
 import jakarta.data.repository.PageableRepository;
+import jakarta.nosql.keyvalue.KeyValueTemplate;
+import org.eclipse.jnosql.mapping.keyvalue.query.AbstractKeyValueRepository;
+import org.eclipse.jnosql.mapping.keyvalue.query.AbstractKeyValueRepositoryProxy;
+import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.repository.DynamicReturn;
 
 import java.lang.reflect.InvocationHandler;
@@ -26,7 +30,7 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.mapping.repository.DynamicReturn.toSingleResult;
 
-class HazelcastRepositoryProxy<T> implements InvocationHandler {
+class HazelcastRepositoryProxy<T> extends AbstractKeyValueRepositoryProxy<T> {
 
     private final HazelcastTemplate template;
 
@@ -34,12 +38,35 @@ class HazelcastRepositoryProxy<T> implements InvocationHandler {
 
     private final Class<T> typeClass;
 
+    private final Class<?> repositoryType;
+
 
     HazelcastRepositoryProxy(HazelcastTemplate template, Class<?> repositoryType, PageableRepository<?, ?> repository) {
         this.template = template;
         this.typeClass = Class.class.cast(ParameterizedType.class.cast(repositoryType.getGenericInterfaces()[0])
                 .getActualTypeArguments()[0]);
         this.repository = repository;
+        this.repositoryType = repositoryType;
+    }
+
+    @Override
+    protected PageableRepository getRepository() {
+        return repository;
+    }
+
+    @Override
+    protected KeyValueTemplate getTemplate() {
+        return template;
+    }
+
+    @Override
+    protected Class<T> getType() {
+        return typeClass;
+    }
+
+    @Override
+    protected Class<?> repositoryType() {
+        return repositoryType;
     }
 
     @Override
@@ -62,7 +89,8 @@ class HazelcastRepositoryProxy<T> implements InvocationHandler {
                     .withSingleResult(toSingleResult(method).apply(() -> result))
                     .build().execute();
         }
-        return method.invoke(repository, args);
+        return super.invoke(instance, method, args);
     }
+
 
 }

@@ -105,7 +105,7 @@ class CouchbaseDocumentRepositoryProxy<T>extends AbstractDocumentRepositoryProxy
                     .withSingleResult(toSingleResult(method).apply(() -> result))
                     .build().execute();
         }
-        return method.invoke(repository, args);
+        return super.invoke(instance, method, args);
     }
 
 
