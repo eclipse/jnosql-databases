@@ -68,7 +68,7 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
 
     @Override
     protected EntityMetadata getEntityMetadata() {
-        return null;
+        return entityMetadata;
     }
 
     @Override
