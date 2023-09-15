@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 
 import java.lang.reflect.InvocationTargetException;
 
-record EntrySerializer<T> (JsonSerializer<T> serializer, Class<T> type) {
+public record EntrySerializer<T> (JsonSerializer<T> serializer, Class<T> type) {
 
 
 
