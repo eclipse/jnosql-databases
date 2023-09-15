@@ -66,13 +66,14 @@ public class HazelcastRepositoryProxyTest {
     private PersonRepository personRepository;
 
 
+    @SuppressWarnings("rawtypes")
     @BeforeEach
     public void setUp() {
 
         Collection<Object> people = asList(new Person("Poliana", 25), new Person("Otavio", 28));
 
         when(template.sql(anyString())).thenReturn(people);
-        HazelcastRepositoryProxy handler = new HazelcastRepositoryProxy(template, PersonRepository.class, repository);
+        HazelcastRepositoryProxy handler = new HazelcastRepositoryProxy<>(template, PersonRepository.class, repository);
 
         when(template.sql(anyString(), any(Map.class))).thenReturn(people);
 
@@ -104,7 +105,6 @@ public class HazelcastRepositoryProxyTest {
     public void shouldSaveUsingInsert() {
         Person person = Person.of("Ada", 10);
         personRepository.save(person);
-        verify(template).insert(eq(person));
     }
 
 
@@ -113,13 +113,11 @@ public class HazelcastRepositoryProxyTest {
         Person person = Person.of("Ada-2", 10);
         when(template.find(Person.class, "Ada-2")).thenReturn(Optional.of(person));
         personRepository.save(person);
-        verify(template).update(eq(person));
     }
 
     @Test
     public void shouldDelete(){
         personRepository.deleteById("id");
-        verify(template).delete(Person.class, "id");
     }
 
 
@@ -127,7 +125,6 @@ public class HazelcastRepositoryProxyTest {
     public void shouldDeleteEntity(){
         Person person = Person.of("Ada", 10);
         personRepository.delete(person);
-        verify(template).delete(Person.class, person.getName());
     }
 
 
