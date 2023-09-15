@@ -95,17 +95,17 @@ public interface ArangoDBBuilder {
 
     /**
      * Adds an entry serializer to the builder.
-     *
+     * @param <T> The type of the entry serializer.
      * @param serializer The entry serializer to add.
      */
-    void add(EntrySerializer<?> serializer);
+    <T> void add(EntrySerializer<T> serializer);
 
     /**
      * Adds an entry deserializer to the builder.
-     *
+     *@param <T> The type of the entry deserializer.
      * @param deserializer The entry deserializer to add.
      */
-    void add(EntryDeserializer<?> deserializer);
+    <T> void add(EntryDeserializer<T> deserializer);
 
     /**
      * Checks if the builder has a serializer.
