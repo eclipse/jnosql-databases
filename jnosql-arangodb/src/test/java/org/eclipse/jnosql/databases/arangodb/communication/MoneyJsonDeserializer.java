@@ -22,13 +22,13 @@ public class MoneyJsonDeserializer extends JsonDeserializer<Money> {
         JsonNode currencyNode = rootNode.get("currency");
         JsonNode valueNode = rootNode.get("value");
         String currency = "USD";
-        BigDecimal amount = BigDecimal.ZERO;
+        double amount = 0D;
         if (currencyNode != null && currencyNode.isTextual()) {
             currency = currencyNode.asText();
         }
 
         if (valueNode != null && valueNode.isNumber()) {
-            amount = valueNode.decimalValue();
+            amount = valueNode.asDouble();
         }
 
         return new Money(currency, amount);

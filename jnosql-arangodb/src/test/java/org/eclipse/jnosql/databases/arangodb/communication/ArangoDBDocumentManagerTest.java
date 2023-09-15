@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -112,7 +114,7 @@ public class ArangoDBDocumentManagerTest {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find(KEY_NAME).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<DocumentEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
         DocumentEntity documentEntity = entities.get(0);
         assertEquals(entity.find(KEY_NAME).get().value().get(String.class), documentEntity.find(KEY_NAME).get()
@@ -235,6 +237,24 @@ public class ArangoDBDocumentManagerTest {
         assertFalse(entities.isEmpty());
     }
 
+    @Test
+    public void shouldExecuteCustom(){
+        DocumentEntity entity = getEntity();
+        entity.add("salary", new Money("USD", 1000));
+        entityManager.insert(entity);
+        Document id = entity.find("_id").orElseThrow();
+        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        List<DocumentEntity> entities = entityManager.select(query).toList();
+
+        Assertions.assertThat(entities)
+                .hasSize(1)
+                .isNotNull().isNotEmpty()
+                .flatMap(DocumentEntity::documents)
+                .hasSize(6);
+        DocumentEntity entity1 = entities.get(0);
+        Money money = entity1.find("salary").orElseThrow().get(Money.class);
+        assertEquals(new Money("USD", 1000), money);
+    }
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();

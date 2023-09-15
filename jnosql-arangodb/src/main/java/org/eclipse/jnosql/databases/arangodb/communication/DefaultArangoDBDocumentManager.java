@@ -62,9 +62,9 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         String collectionName = entity.name();
         checkCollection(collectionName);
         BaseDocument baseDocument = ArangoDBUtil.getBaseDocument(entity);
-        DocumentCreateEntity<Void> arandoDocument = arangoDB.db(database)
+        DocumentCreateEntity<Void> arangoDocument = arangoDB.db(database)
                 .collection(collectionName).insertDocument(baseDocument);
-        updateEntity(entity, arandoDocument.getKey(), arandoDocument.getId(), arandoDocument.getRev());
+        updateEntity(entity, arangoDocument.getKey(), arangoDocument.getId(), arangoDocument.getRev());
         return entity;
     }
 

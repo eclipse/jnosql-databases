@@ -14,7 +14,6 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import java.math.BigDecimal;
 
-record Money(String currency, BigDecimal amount) {
+record Money(String currency, double amount) {
 }
