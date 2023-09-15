@@ -31,15 +31,9 @@ record EntryDeserializer<T> (JsonDeserializer<T> serializer, Class<T> type) {
     static <T> EntryDeserializer<T> of(String name) throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        Objects.requireNonNull(name, "name is required");
-        Class<?> type = Class.forName(name);
-        if(!JsonDeserializer.class.isAssignableFrom(type)) {
-            throw new IllegalArgumentException(String.format("The class %s should extends JsonSerializer", name));
-        }
-        Class<T> entry= (Class<T>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[0];
-        Object instance = type.getConstructor().newInstance();
-
-        return new EntryDeserializer<>((JsonDeserializer<T>) instance, entry);
+        Entry<T> entry = Entry.of(name, JsonSerializer.class);
+        JsonDeserializer<T> deserializer = (JsonDeserializer<T>) entry.instance();
+        return new EntryDeserializer<>(deserializer, entry.type());
     }
 
 }

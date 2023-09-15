@@ -19,13 +19,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
-record Entry<T>(T type, Object instance) {
+record Entry<T>(Class<T> type, Object instance) {
 
     @SuppressWarnings("unchecked")
     static <T> Entry<T> of(String name, Class<?> target) throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
 
         Objects.requireNonNull(name, "name is required");
+        Objects.requireNonNull(target, "target is required");
+
         Class<?> type = Class.forName(name);
         if(!target.isAssignableFrom(type)) {
             throw new IllegalArgumentException(String.format("The class %s should extends %s", name, target.getName()));
@@ -33,7 +35,7 @@ record Entry<T>(T type, Object instance) {
         Class<T> entry= (Class<T>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[0];
         Object instance = type.getConstructor().newInstance();
 
-        return (Entry<T>) new Entry<>(entry, instance);
+        return new Entry<>(entry, instance);
     }
 
 }
