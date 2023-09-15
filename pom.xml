@@ -37,7 +37,7 @@
     </scm>
 
     <properties>
-        <testcontainers.version>1.9.0</testcontainers.version>
+        <testcontainers.version>1.19.0</testcontainers.version>
         <jnosql.test.integration>false</jnosql.test.integration>
     </properties>
 
