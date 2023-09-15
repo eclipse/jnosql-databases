@@ -12,5 +12,11 @@ public class MoneyJsonSerializer extends JsonSerializer<Money> {
     public void serialize(Money value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
             throws IOException {
 
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeFieldName("currency");
+        jsonGenerator.writeString(value.currency());
+        jsonGenerator.writeFieldName("value");
+        jsonGenerator.writeNumber(value.amount());
+        jsonGenerator.writeEndObject();
     }
 }
