@@ -70,9 +70,13 @@ public class Person {
 
     @Override
     public String toString() {
-        String sb = "Person{" + "name='" + name + '\'' +
+        return "Person{" +
+                "name='" + name + '\'' +
                 ", age=" + age +
                 '}';
-        return sb;
+    }
+
+    public static Person of(String name, Integer age) {
+        return new Person(name, age);
     }
 }

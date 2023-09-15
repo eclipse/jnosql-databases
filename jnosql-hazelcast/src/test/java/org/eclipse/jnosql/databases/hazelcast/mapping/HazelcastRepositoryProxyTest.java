@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -96,6 +98,36 @@ public class HazelcastRepositoryProxyTest {
         verify(template).sql("name = :name AND age = :age", params);
         assertNotNull(people);
         assertTrue(people.stream().allMatch(Person.class::isInstance));
+    }
+
+    @Test
+    public void shouldSaveUsingInsert() {
+        Person person = Person.of("Ada", 10);
+        personRepository.save(person);
+        verify(template).insert(eq(person));
+    }
+
+
+    @Test
+    public void shouldSaveUsingUpdate() {
+        Person person = Person.of("Ada-2", 10);
+        when(template.find(Person.class, "Ada-2")).thenReturn(Optional.of(person));
+        personRepository.save(person);
+        verify(template).update(eq(person));
+    }
+
+    @Test
+    public void shouldDelete(){
+        personRepository.deleteById("id");
+        verify(template).delete(Person.class, "id");
+    }
+
+
+    @Test
+    public void shouldDeleteEntity(){
+        Person person = Person.of("Ada", 10);
+        personRepository.delete(person);
+        verify(template).delete(Person.class, person.getName());
     }
 
 
