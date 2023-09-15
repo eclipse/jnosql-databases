@@ -82,9 +82,10 @@ public class Person {
 
     @Override
     public String toString() {
-        String sb = "Person{" + "name='" + name + '\'' +
+        return "Person{" +
+                "name='" + name + '\'' +
                 ", age=" + age +
+                ", home=" + home +
                 '}';
-        return sb;
     }
 }

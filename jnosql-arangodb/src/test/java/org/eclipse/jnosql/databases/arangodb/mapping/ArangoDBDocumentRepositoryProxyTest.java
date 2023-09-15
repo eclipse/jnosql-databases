@@ -35,6 +35,7 @@ import java.lang.reflect.Proxy;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,10 +101,19 @@ public class ArangoDBDocumentRepositoryProxyTest {
     }
 
     @Test
-    public void shouldSave() {
+    public void shouldSaveUsingInsert() {
         Person person = Person.of("Ada", 10);
         personRepository.save(person);
         verify(template).insert(eq(person));
+    }
+
+
+    @Test
+    public void shouldSaveUsingUpdate() {
+        Person person = Person.of("Ada-2", 10);
+        when(template.find(Person.class, "Ada-2")).thenReturn(Optional.of(person));
+        personRepository.save(person);
+        verify(template).update(eq(person));
     }
 
     @Test
