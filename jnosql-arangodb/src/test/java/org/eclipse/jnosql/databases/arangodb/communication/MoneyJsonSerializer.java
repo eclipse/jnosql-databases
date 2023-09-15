@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-public class MoneyJsonSerializer extends JsonSerializer<String> {
+public class MoneyJsonSerializer extends JsonSerializer<Money> {
 
     @Override
-    public void serialize(String s, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(Money value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+            throws IOException {
 
     }
 }

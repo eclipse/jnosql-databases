@@ -27,6 +27,7 @@ record EntrySerializer<T> (JsonSerializer<T> serializer, Class<T> type) {
 
     static <T> EntrySerializer<T> of(String name) throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
+
         Objects.requireNonNull(name, "name is required");
         Class<?> type = Class.forName(name);
         if(!type.isAssignableFrom(JsonSerializer.class)) {

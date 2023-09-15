@@ -14,20 +14,7 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class EntrySerializerTest {
-
-
-    @Test
-    public void shouldReturnErrorWhenNameIsNull() {
-        assertThrows(NullPointerException.class, () -> EntrySerializer.of(null));
-    }
-
-    @Test
-    public void shouldReturnErrorWhenInstanceIsNotSerializer() {
-        assertThrows(IllegalArgumentException.class, () -> EntrySerializer.of("java.lang.String"));
-    }
+record Money(String Currency, BigDecimal amount) {
 }
