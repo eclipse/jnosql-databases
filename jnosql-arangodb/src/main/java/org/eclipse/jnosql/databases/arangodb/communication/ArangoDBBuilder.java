@@ -15,8 +15,13 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ContentType;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
+import com.arangodb.serde.jackson.JacksonSerde;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,12 +135,12 @@ public final class ArangoDBBuilder {
     }
 
     /**
-     * Adds an entry serializer to the builder.
-     * @param <T> The type of the entry serializer.
-     * @param serializer The entry serializer to add.
+     * Adds an entry deserializer to the builder.
+     * @param <T> The type of the entry deserializer.
+     * @param serializer The entry deserializer to add.
      */
     public <T> void add(EntrySerializer<T> serializer){
-        Objects.requireNonNull(serializer, "serializer is required");
+        Objects.requireNonNull(serializer, "deserializer is required");
         this.serializers.add(serializer);
     }
 
@@ -150,11 +155,39 @@ public final class ArangoDBBuilder {
     }
 
     /**
-     * Checks if the builder has a serializer.
+     * Checks if the builder has a deserializer.
      *
-     * @return true if a serializer has been added, false otherwise.
+     * @return true if a deserializer has been added, false otherwise.
      */
     public boolean hasSerializer(){
         return !serializers.isEmpty() || !deserializers.isEmpty();
     }
+
+    /**
+     * Builds the ArangoDB connection.
+     *
+     * @return The ArangoDB connection.
+     */
+    public ArangoDB build() {
+        if (hasSerializer()) {
+            JacksonSerde serde = JacksonSerde.of(ContentType.JSON);
+            serde.configure(mapper -> {
+                SimpleModule module = new SimpleModule("JNoSQLModule");
+
+                serializers.forEach(s -> serializer(module, s));
+                deserializers.forEach(d -> deserializer(module, d));
+                mapper.registerModule(module);
+            });
+        }
+        return arangoDB.build();
+    }
+
+    private <T> void serializer(SimpleModule module, EntrySerializer<T> serializer) {
+        module.addSerializer(serializer.type(), serializer.serializer());
+    }
+
+    private <T> void deserializer(SimpleModule module, EntryDeserializer<T> serializer) {
+        module.addDeserializer(serializer.type(), serializer.deserializer());
+    }
+
 }

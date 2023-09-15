@@ -16,8 +16,7 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
-import java.lang.reflect.InvocationTargetException;
-public record EntryDeserializer<T> (JsonDeserializer<T> serializer, Class<T> type) {
+public record EntryDeserializer<T> (JsonDeserializer<T> deserializer, Class<T> type) {
 
 
     @SuppressWarnings("unchecked")

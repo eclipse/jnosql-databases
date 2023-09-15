@@ -39,7 +39,7 @@ class EntryDeserializerTest {
         assertNotNull(serializer);
 
         SoftAssertions.assertSoftly(s -> {
-            s.assertThat(serializer.serializer()).isNotNull().isInstanceOf(MoneyJsonDeserializer.class);
+            s.assertThat(serializer.deserializer()).isNotNull().isInstanceOf(MoneyJsonDeserializer.class);
             s.assertThat(serializer.type()).isEqualTo(Money.class);
         });
     }

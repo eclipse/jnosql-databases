@@ -104,7 +104,7 @@ public abstract class ArangoDBConfiguration {
 
 
     protected ArangoDB getArangoDB(Settings settings) {
-        ArangoDBBuilderSync aragonDB = new ArangoDBBuilderSync(builder);
+        ArangoDBBuilder aragonDB = new ArangoDBBuilder(builder);
         ArangoDBBuilders.load(settings, aragonDB);
         return aragonDB.build();
     }
