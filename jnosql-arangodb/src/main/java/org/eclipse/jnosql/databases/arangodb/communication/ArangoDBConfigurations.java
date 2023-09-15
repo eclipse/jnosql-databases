@@ -18,9 +18,9 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 import java.util.function.Supplier;
 
 /**
- * An enumeration to show the available options to connect to the ArangoDB database.
- * It implements {@link Supplier}, where its it returns the property name that might be
- * overwritten by the system environment using Eclipse Microprofile or Jakarta Config API.
+ * An enumeration representing various configuration options for connecting to the ArangoDB database.
+ * This enum implements the {@link Supplier} interface and provides the property name that can be
+ * overridden by the system environment using Eclipse MicroProfile or Jakarta Config API.
  *
  * @see org.eclipse.jnosql.communication.Settings
  */
@@ -28,53 +28,66 @@ public enum ArangoDBConfigurations implements Supplier<String> {
 
 
     /**
-     * The database host, where you need to put the port split by colons. E.g.: jnosql.arangodb.host=localhost:8529
+     * The database host, including the port number separated by a colon. For example: jnosql.arangodb.host=localhost:8529
      */
     HOST("jnosql.arangodb.host"),
+
     /**
-     * The user's credential.
+     * The username used for authentication.
      */
     USER("jnosql.arangodb.user"),
+
     /**
-     * The password's credential
+     * The password used for authentication.
      */
     PASSWORD("jnosql.arangodb.password"),
+
     /**
      * The connection and request timeout in milliseconds.
      */
     TIMEOUT("jnosql.arangodb.timeout"),
+
     /**
-     * The chunk size when {@link com.arangodb.Protocol} is used.
+     * The chunk size when using the {@link com.arangodb.Protocol}.
      */
     CHUNK_SIZE("jnosql.arangodb.chunk.size"),
+
     /**
-     * The true SSL will be used when connecting to an ArangoDB server.
+     * Specifies whether SSL should be enabled when connecting to an ArangoDB server.
      */
     USER_SSL("jnosql.arangodb.user.ssl"),
+
     /**
-     *The {@link com.arangodb.entity.LoadBalancingStrategy}
+     * The load balancing strategy to be used. See {@link com.arangodb.entity.LoadBalancingStrategy}.
      */
     LOAD_BALANCING("jnosql.arangodb.load.balancing.strategy"),
+
     /**
-     * The {@link com.arangodb.Protocol}
+     * The protocol to be used. See {@link com.arangodb.Protocol}.
      */
     PROTOCOL("jnosql.arangodb.protocol"),
+
     /**
      * The maximum number of connections the built-in connection pool will open per host.
      */
     MAX_CONNECTIONS("jnosql.arangodb.connections.max"),
+
     /**
-     *Set hosts split by comma
+     * A comma-separated list of host addresses.
      */
     HOST_LIST("jnosql.arangodb.acquire.host.list"),
-    /*
-     * Define the list of serializer classes that will be set in the ArangoDB.
-     * Those classes must extend {@link com.fasterxml.jackson.databind.JsonSerializer}. E.g.: jnosql.arangodb.serializer.1=my.pacage.MyCustomSerializer
+
+    /**
+     * Define the list of serializer classes that will be used by ArangoDB.
+     * These classes must extend {@link com.fasterxml.jackson.databind.JsonSerializer}.
+     * Example: jnosql.arangodb.serializer.1=my.package.MyCustomSerializer
      */
     SERIALIZER("jnosql.arangodb.serializer"),
-    /*
-     * Define the list of deserializer classes that will be set in the ArangoDB.
-     * Those classes must extend {@link com.fasterxml.jackson.databind.JsonDeserializer}. E.g.: jnosql.arangodb.deserializer.1=my.pacage.MyCustomDeserializer
+
+    /**
+     * Define the list of deserializer classes that will be used by ArangoDB.
+     * These classes must extend {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+     * Example: jnosql.arangodb.deserializer.1=my.package.MyCustomDeserializer
      */
     DESERIALIZER("jnosql.arangodb.deserializer");
     private final String configuration;
