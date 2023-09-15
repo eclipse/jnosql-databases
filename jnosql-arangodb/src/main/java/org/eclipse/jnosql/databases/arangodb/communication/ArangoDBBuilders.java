@@ -21,6 +21,7 @@ import org.eclipse.jnosql.communication.Settings;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 
@@ -70,7 +71,14 @@ final class ArangoDBBuilders {
                 .forEach(h -> host(arangoDB, h));
 
         settings.prefix(ArangoDBConfigurations.SERIALIZER)
-                .stream().map(EntrySerializer::of)
+                .stream().map(Objects::toString)
+                .map(EntrySerializer::of)
+                .forEach(arangoDB::add);
+
+        settings.prefix(ArangoDBConfigurations.DESERIALIZER)
+                .stream().map(Objects::toString)
+                .map(EntryDeserializer::of)
+                .forEach(arangoDB::add);
     }
 
 
