@@ -19,14 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
-enum SerializerUtils {
+record Entry<T>(T type, Object instance) {
 
-    INSTANCE;
-
-
-    record Entry<T>(T type, Object instance){
-
-    }
     @SuppressWarnings("unchecked")
     static <T> Entry<T> of(String name, Class<?> target) throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
