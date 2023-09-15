@@ -68,6 +68,9 @@ final class ArangoDBBuilders {
                 .map(ArangoDBHost::new)
                 .flatMap(h -> h.getHost().stream())
                 .forEach(h -> host(arangoDB, h));
+
+        settings.prefix(ArangoDBConfigurations.SERIALIZER)
+                .stream().map(EntrySerializer::of)
     }
 
 

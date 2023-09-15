@@ -23,8 +23,7 @@ public record EntrySerializer<T> (JsonSerializer<T> serializer, Class<T> type) {
 
 
     @SuppressWarnings("unchecked")
-    static <T> EntrySerializer<T> of(String name) throws ClassNotFoundException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException, IllegalAccessException {
+    static <T> EntrySerializer<T> of(String name)  {
 
         Entry<T> entry = Entry.of(name, JsonSerializer.class);
         JsonSerializer<T> serializer = (JsonSerializer<T>) entry.instance();

@@ -22,20 +22,23 @@ import java.util.Objects;
 record Entry<T>(Class<T> type, Object instance) {
 
     @SuppressWarnings("unchecked")
-    static <T> Entry<T> of(String name, Class<?> target) throws ClassNotFoundException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException, IllegalAccessException {
+    static <T> Entry<T> of(String name, Class<?> target)  {
 
         Objects.requireNonNull(name, "name is required");
         Objects.requireNonNull(target, "target is required");
-
-        Class<?> type = Class.forName(name);
-        if(!target.isAssignableFrom(type)) {
-            throw new IllegalArgumentException(String.format("The class %s should extends %s", name, target.getName()));
+        try {
+            Class<?> type = Class.forName(name);
+            if (!target.isAssignableFrom(type)) {
+                throw new IllegalArgumentException(String.format("The class %s should extends %s", name, target.getName()));
+            }
+            Class<T> entry = (Class<T>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[0];
+            Object instance = type.getConstructor().newInstance();
+            return new Entry<>(entry, instance);
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new IllegalStateException("An error when try to load the class: " + name, e);
         }
-        Class<T> entry= (Class<T>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[0];
-        Object instance = type.getConstructor().newInstance();
 
-        return new Entry<>(entry, instance);
     }
 
 }
