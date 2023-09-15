@@ -66,7 +66,17 @@ public enum ArangoDBConfigurations implements Supplier<String> {
     /**
      *Set hosts split by comma
      */
-    HOST_LIST("jnosql.arangodb.acquire.host.list");
+    HOST_LIST("jnosql.arangodb.acquire.host.list"),
+    /*
+     * Define the list of serializer classes that will be set in the ArangoDB.
+     * Those classes must extend {@link com.fasterxml.jackson.databind.JsonSerializer}. E.g.: jnosql.arangodb.serializer.1=my.pacage.MyCustomSerializer
+     */
+    SERIALIZER("jnosql.arangodb.serializer"),
+    /*
+     * Define the list of deserializer classes that will be set in the ArangoDB.
+     * Those classes must extend {@link com.fasterxml.jackson.databind.JsonDeserializer}. E.g.: jnosql.arangodb.deserializer.1=my.pacage.MyCustomDeserializer
+     */
+    DESERIALIZER("jnosql.arangodb.deserializer");
     private final String configuration;
 
     ArangoDBConfigurations(String configuration) {
