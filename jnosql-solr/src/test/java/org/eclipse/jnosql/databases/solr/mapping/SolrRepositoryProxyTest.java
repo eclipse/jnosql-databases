@@ -34,9 +34,11 @@ import java.lang.reflect.Proxy;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -93,6 +95,36 @@ public class SolrRepositoryProxyTest {
         Map<String, Object> value = captor.getValue();
 
         assertEquals("Ada", value.get("name"));
+    }
+
+    @Test
+    public void shouldSaveUsingInsert() {
+        Person person = Person.of("Ada", 10);
+        personRepository.save(person);
+        verify(template).insert(eq(person));
+    }
+
+
+    @Test
+    public void shouldSaveUsingUpdate() {
+        Person person = Person.of("Ada-2", 10);
+        when(template.find(Person.class, "Ada-2")).thenReturn(Optional.of(person));
+        personRepository.save(person);
+        verify(template).update(eq(person));
+    }
+
+    @Test
+    public void shouldDelete(){
+        personRepository.deleteById("id");
+        verify(template).delete(Person.class, "id");
+    }
+
+
+    @Test
+    public void shouldDeleteEntity(){
+        Person person = Person.of("Ada", 10);
+        personRepository.delete(person);
+        verify(template).delete(Person.class, person.getName());
     }
 
     interface PersonRepository extends SolrRepository<Person, String> {
