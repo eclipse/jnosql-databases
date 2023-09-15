@@ -18,12 +18,20 @@ import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * This interface defines methods for building configurations for ArangoDB connections.
  */
 public final class ArangoDBBuilder {
 
     private final ArangoDB.Builder arangoDB;
+
+    private final List<EntrySerializer<?>> serializers = new ArrayList<>();
+
+    private final List<EntryDeserializer<?>> deserializers = new ArrayList<>();
 
     ArangoDBBuilder(ArangoDB.Builder arangoDB) {
         this.arangoDB = arangoDB;
@@ -126,19 +134,27 @@ public final class ArangoDBBuilder {
      * @param <T> The type of the entry serializer.
      * @param serializer The entry serializer to add.
      */
-    <T> void add(EntrySerializer<T> serializer);
+    public <T> void add(EntrySerializer<T> serializer){
+        Objects.requireNonNull(serializer, "serializer is required");
+        this.serializers.add(serializer);
+    }
 
     /**
      * Adds an entry deserializer to the builder.
-     *@param <T> The type of the entry deserializer.
+     * @param <T> The type of the entry deserializer.
      * @param deserializer The entry deserializer to add.
      */
-    <T> void add(EntryDeserializer<T> deserializer);
+    public <T> void add(EntryDeserializer<T> deserializer){
+        Objects.requireNonNull(deserializer, "deserializer is required");
+        this.deserializers.add(deserializer);
+    }
 
     /**
      * Checks if the builder has a serializer.
      *
      * @return true if a serializer has been added, false otherwise.
      */
-    boolean hasSerializer();
+    public boolean hasSerializer(){
+        return !serializers.isEmpty() || !deserializers.isEmpty();
+    }
 }
