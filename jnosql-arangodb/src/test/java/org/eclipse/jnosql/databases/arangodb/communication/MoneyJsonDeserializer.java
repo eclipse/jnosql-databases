@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-class MoneyJsonDeserializer extends JsonDeserializer<Money> {
+public class MoneyJsonDeserializer extends JsonDeserializer<Money> {
 
     @Override
     public Money deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)

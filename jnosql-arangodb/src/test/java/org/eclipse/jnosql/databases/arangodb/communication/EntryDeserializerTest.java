@@ -34,7 +34,7 @@ class EntryDeserializerTest {
     }
 
     @Test
-    public void shouldCreateEntrySerializer() throws Exception {
+    public void shouldCreateEntryDeserializer() throws Exception {
         EntryDeserializer<Money> serializer = EntryDeserializer.of(MoneyJsonDeserializer.class.getName());
         assertNotNull(serializer);
 
