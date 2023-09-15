@@ -173,11 +173,11 @@ public final class ArangoDBBuilder {
             JacksonSerde serde = JacksonSerde.of(ContentType.JSON);
             serde.configure(mapper -> {
                 SimpleModule module = new SimpleModule("JNoSQLModule");
-
                 serializers.forEach(s -> serializer(module, s));
                 deserializers.forEach(d -> deserializer(module, d));
                 mapper.registerModule(module);
             });
+            this.arangoDB.serde(serde);
         }
         return arangoDB.build();
     }
