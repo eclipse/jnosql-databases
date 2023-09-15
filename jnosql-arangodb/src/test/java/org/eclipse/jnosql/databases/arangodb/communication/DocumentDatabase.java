@@ -44,7 +44,7 @@ public enum DocumentDatabase implements Supplier<ArangoDBDocumentManagerFactory>
         configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
         Settings settings = Settings.of(Map.of(ArangoDBConfigurations.SERIALIZER.get()+".1", MoneyJsonSerializer.class.getName(),
                 ArangoDBConfigurations.DESERIALIZER.get()+".1", MoneyJsonDeserializer.class.getName()));
-        return configuration.apply(Settings.builder().build());
+        return configuration.apply(settings);
     }
 
     public ArangoDBDocumentManager get(String database) {
