@@ -14,7 +14,9 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +30,17 @@ class EntrySerializerTest {
 
     @Test
     public void shouldReturnErrorWhenInstanceIsNotSerializer() {
-        assertThrows(IllegalArgumentException.class, () -> EntrySerializer.of("java.lang.String"));
+        assertThrows(IllegalArgumentException.class, () -> EntrySerializer.of(String.class.getName()));
+    }
+
+    @Test
+    public void shouldCreateEntrySerializer() throws Exception {
+        EntrySerializer<Money> serializer = EntrySerializer.of(MoneyJsonSerializer.class.getName());
+        assertNotNull(serializer);
+
+        SoftAssertions.assertSoftly(s -> {
+            s.assertThat(serializer.serializer()).isNotNull().isInstanceOf(MoneyJsonSerializer.class);
+            s.assertThat(serializer.type()).isEqualTo(Money.class);
+        });
     }
 }

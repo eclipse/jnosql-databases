@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 import com.fasterxml.jackson.databind.JsonSerializer;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
 record EntrySerializer<T> (JsonSerializer<T> serializer, Class<T> type) {
@@ -25,17 +26,19 @@ record EntrySerializer<T> (JsonSerializer<T> serializer, Class<T> type) {
 
 
 
+    @SuppressWarnings("unchecked")
     static <T> EntrySerializer<T> of(String name) throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
 
         Objects.requireNonNull(name, "name is required");
         Class<?> type = Class.forName(name);
-        if(!type.isAssignableFrom(JsonSerializer.class)) {
+        if(!JsonSerializer.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException(String.format("The class %s should extends JsonSerializer", name));
         }
+        Class<T> entry= (Class<T>) ((ParameterizedType) type.getGenericSuperclass()).getActualTypeArguments()[0];
         Object instance = type.getConstructor().newInstance();
 
-        return null;
+        return new EntrySerializer<>((JsonSerializer<T>) instance, entry);
     }
 
 }
