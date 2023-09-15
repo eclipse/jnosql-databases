@@ -39,4 +39,8 @@ interface ArangoDBBuilder {
     void acquireHostList(boolean acquireHostList);
 
     void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy);
+
+    void add(EntrySerializer<?> serializer);
+
+    void add(EntryDeserializer<?> deserializer);
 }
