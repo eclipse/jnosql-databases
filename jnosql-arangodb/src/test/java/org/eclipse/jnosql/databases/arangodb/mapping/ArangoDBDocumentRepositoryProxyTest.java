@@ -65,12 +65,13 @@ public class ArangoDBDocumentRepositoryProxyTest {
 
     private PersonRepository personRepository;
 
+    @SuppressWarnings("rawtypes")
     @BeforeEach
     public void setUp() {
         this.template = Mockito.mock(ArangoDBTemplate.class);
 
         PersonRepository personRepository = producer.get(PersonRepository.class, template);
-        ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy(template,
+        ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy<>(template,
                 PersonRepository.class, personRepository, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
@@ -97,6 +98,28 @@ public class ArangoDBDocumentRepositoryProxyTest {
         Map value = captor.getValue();
         assertEquals("Ada", value.get("name"));
     }
+
+    @Test
+    public void shouldSave() {
+        Person person = Person.of("Ada", 10);
+        personRepository.save(person);
+        verify(template).insert(eq(person));
+    }
+
+    @Test
+    public void shouldDelete(){
+        personRepository.deleteById("id");
+        verify(template).delete(Person.class, "id");
+    }
+
+
+    @Test
+    public void shouldDeleteEntity(){
+        Person person = Person.of("Ada", 10);
+        personRepository.delete(person);
+        verify(template).delete(Person.class, person.getName());
+    }
+
 
     interface PersonRepository extends ArangoDBRepository<Person, String> {
 
