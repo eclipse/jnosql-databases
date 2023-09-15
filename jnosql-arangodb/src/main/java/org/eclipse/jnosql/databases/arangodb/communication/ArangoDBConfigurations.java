@@ -82,7 +82,7 @@ public enum ArangoDBConfigurations implements Supplier<String> {
      * These classes must extend {@link com.fasterxml.jackson.databind.JsonSerializer}.
      * Example: jnosql.arangodb.deserializer.1=my.package.MyCustomSerializer
      */
-    SERIALIZER("jnosql.arangodb.deserializer"),
+    SERIALIZER("jnosql.arangodb.serializer"),
 
     /**
      * Define the list of deserializer classes that will be used by ArangoDB.

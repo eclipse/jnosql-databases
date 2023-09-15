@@ -20,6 +20,7 @@ import org.eclipse.jnosql.communication.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 public enum DocumentDatabase implements Supplier<ArangoDBDocumentManagerFactory> {
@@ -41,6 +42,8 @@ public enum DocumentDatabase implements Supplier<ArangoDBDocumentManagerFactory>
     public ArangoDBDocumentManagerFactory get() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost(arangodb.getHost(), arangodb.getFirstMappedPort());
+        Settings settings = Settings.of(Map.of(ArangoDBConfigurations.SERIALIZER.get()+".1", MoneyJsonSerializer.class.getName(),
+                ArangoDBConfigurations.DESERIALIZER.get()+".1", MoneyJsonDeserializer.class.getName()));
         return configuration.apply(Settings.builder().build());
     }
 
