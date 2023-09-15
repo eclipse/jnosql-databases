@@ -14,13 +14,20 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
+import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 
 /**
  * This interface defines methods for building configurations for ArangoDB connections.
  */
-public interface ArangoDBBuilder {
+public final class ArangoDBBuilder {
+
+    private final ArangoDB.Builder arangoDB;
+
+    ArangoDBBuilder(ArangoDB.Builder arangoDB) {
+        this.arangoDB = arangoDB;
+    }
 
     /**
      * Sets the host and port for the ArangoDB connection.
@@ -28,70 +35,91 @@ public interface ArangoDBBuilder {
      * @param host The host name or IP address.
      * @param port The port number.
      */
-    void host(String host, int port);
+    public void host(String host, int port){
+        arangoDB.host(host, port);
+    }
 
     /**
      * Sets the timeout for ArangoDB operations.
      *
      * @param timeout The timeout value in milliseconds.
      */
-    void timeout(int timeout);
+   public void timeout(int timeout){
+        arangoDB.timeout(timeout);
+    }
 
     /**
      * Sets the username for authentication.
      *
      * @param user The username.
      */
-    void user(String user);
+    public void user(String user){
+        arangoDB.user(user);
+    }
+
 
     /**
      * Sets the password for authentication.
      *
      * @param password The password.
      */
-    void password(String password);
+    public void password(String password) {
+        arangoDB.password(password);
+    }
 
     /**
      * Specifies whether to use SSL for the ArangoDB connection.
      *
      * @param useSsl true to use SSL, false otherwise.
      */
-    void useSsl(boolean useSsl);
+    public void useSsl(boolean useSsl){
+        arangoDB.useSsl(useSsl);
+    }
 
     /**
      * Sets the chunk size for data transfers.
      *
      * @param chunkSize The chunk size in bytes.
      */
-    void chunkSize(int chunkSize);
+    public void chunkSize(int chunkSize){
+        arangoDB.chunkSize(chunkSize);
+    }
 
     /**
      * Sets the maximum number of connections allowed.
      *
      * @param maxConnections The maximum number of connections.
      */
-    void maxConnections(int maxConnections);
+    public void maxConnections(int maxConnections) {
+        arangoDB.maxConnections(maxConnections);
+    }
 
     /**
      * Sets the protocol to be used for the ArangoDB connection.
      *
      * @param protocol The protocol.
      */
-    void protocol(Protocol protocol);
+    public void protocol(Protocol protocol){
+        arangoDB.protocol(protocol);
+    }
 
     /**
      * Specifies whether to acquire the list of available hosts.
      *
      * @param acquireHostList true to acquire host list, false otherwise.
      */
-    void acquireHostList(boolean acquireHostList);
+    public void acquireHostList(boolean acquireHostList){
+        arangoDB.acquireHostList(acquireHostList);
+    }
 
     /**
      * Sets the load balancing strategy for the connection.
      *
      * @param loadBalancingStrategy The load balancing strategy.
      */
-    void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy);
+    public void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy) {
+        arangoDB.loadBalancingStrategy(loadBalancingStrategy);
+    }
 
     /**
      * Adds an entry serializer to the builder.
