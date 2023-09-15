@@ -15,23 +15,16 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.util.Objects;
-
 record EntryDeserializer<T> (JsonDeserializer<T> serializer, Class<T> type) {
-
-
-
 
 
     @SuppressWarnings("unchecked")
     static <T> EntryDeserializer<T> of(String name) throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        Entry<T> entry = Entry.of(name, JsonSerializer.class);
+        Entry<T> entry = Entry.of(name, JsonDeserializer.class);
         JsonDeserializer<T> deserializer = (JsonDeserializer<T>) entry.instance();
         return new EntryDeserializer<>(deserializer, entry.type());
     }
