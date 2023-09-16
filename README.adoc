@@ -64,6 +64,12 @@ Please note that you can establish properties using the https://microprofile.io/
 
 |`jnosql.arangodb.acquire.host.list`
 |Set hosts split by comma
+
+|`jnosql.arangodb.serializer`
+|Define the list of deserializer classes that will be used by ArangoDB. These classes must extend `com.fasterxml.jackson.databind.JsonSerializer`. Example: jnosql.arangodb.deserializer.1=my.package.MyCustomSerializer
+
+|`jnosql.arangodb.deserializer`
+| Define the list of deserializer classes that will be used by ArangoDB. These classes must extend `com.fasterxml.jackson.databind.JsonDeserializer`. Example: jnosql.arangodb.deserializer.1=my.package.MyCustomDeserializer
 |===
 
 This is an example using ArangoDB's Document API with MicroProfile Config.
