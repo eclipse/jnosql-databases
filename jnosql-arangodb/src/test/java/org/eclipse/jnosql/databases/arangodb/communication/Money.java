@@ -15,8 +15,7 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(using = MoneyJsonSerializer.class)
+//@JsonSerialize(using = MoneyJsonSerializer.class)
 record Money(String currency, double amount) {
 }
