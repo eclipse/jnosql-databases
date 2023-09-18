@@ -201,6 +201,14 @@ public class CouchbaseDocumentManagerTest {
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
     }
 
+    @Test
+    public void shouldCount() {
+        DocumentEntity entity = getEntity();
+        entityManager.insert(entity);
+        long counted = entityManager.count(COLLECTION_PERSON_NAME);
+        assertTrue(counted > 0);
+    }
+
     private DocumentEntity createSubdocumentList() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_APP_NAME);
         entity.add(Document.of("_id", "ids"));
