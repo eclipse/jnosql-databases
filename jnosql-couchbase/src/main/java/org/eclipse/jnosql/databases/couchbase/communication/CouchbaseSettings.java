@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions.createPrimaryQueryIndexOptions;
 import static com.couchbase.client.java.manager.query.GetAllQueryIndexesOptions.getAllQueryIndexesOptions;
@@ -157,7 +158,7 @@ public final class CouchbaseSettings {
 
         Objects.requireNonNull(database, "database is required");
 
-        CouchbaseSettings settings=this;
+        CouchbaseSettings settings = this;
 
         var collections = settings.getCollections().stream().map(String::trim)
                 .filter(index -> !index.isBlank()).toList();
@@ -170,7 +171,7 @@ public final class CouchbaseSettings {
         var scope = settings.getScope();
 
         long start = System.currentTimeMillis();
-        LOGGER.log(Level.FINEST,"starting the setup with database: " + database);
+        LOGGER.log(Level.FINEST, "starting the setup with database: " + database);
 
         try (Cluster cluster = settings.getCluster()) {
 
@@ -178,7 +179,7 @@ public final class CouchbaseSettings {
             try {
                 buckets.getBucket(database);
             } catch (BucketNotFoundException exp) {
-                LOGGER.log(Level.FINEST,"The database/bucket does not exist, creating it: " + database);
+                LOGGER.log(Level.FINEST, "The database/bucket does not exist, creating it: " + database);
                 buckets.createBucket(BucketSettings.create(database));
             }
 
@@ -193,7 +194,7 @@ public final class CouchbaseSettings {
             ScopeSpec spec = scopes.stream().filter(s -> finalScope.equals(s.name()))
                     .findFirst().get();
 
-            collectionsToIndex.forEach(collection -> {
+            collections.forEach(collection -> {
                 if (spec.collections().stream().noneMatch(c -> collectionsToIndex.contains(c.name()))) {
                     manager.createCollection(CollectionSpec.create(collection, finalScope));
                 }
@@ -202,23 +203,26 @@ public final class CouchbaseSettings {
             waitUntilReady(bucket);
 
             if (!collectionsToIndex.isEmpty()) {
+
                 QueryIndexManager queryIndexManager = cluster.queryIndexes();
-                collections.stream()
-                        .filter(collectionsToIndex::contains)
+
+                Stream.concat(collectionsToIndex.stream(), collectionsToIndex.stream())
+                        .distinct()
                         .forEach(collection -> {
                             var allIndexes = queryIndexManager.getAllIndexes(database, getAllQueryIndexesOptions()
                                     .scopeName(finalScope).collectionName(collection));
                             if (allIndexes.isEmpty()) {
-                                LOGGER.log(Level.FINEST,"Index for " + collection + " collection does not exist, creating primary key with scope "
+                                LOGGER.log(Level.FINEST, "Index for " + collection + " collection does not exist, creating primary key with scope "
                                         + finalScope + " collection " + collection + " at database " + database);
                                 queryIndexManager.createPrimaryIndex(database, createPrimaryQueryIndexOptions()
                                         .scopeName(finalScope).collectionName(collection));
                             }
                         });
+
             }
 
             long end = System.currentTimeMillis() - start;
-            LOGGER.log(Level.FINEST,"Finished the setup with database: " + database + " end with millis "
+            LOGGER.log(Level.FINEST, "Finished the setup with database: " + database + " end with millis "
                     + end);
         }
 
