@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.databases.couchbase.communication;
 
@@ -22,15 +23,14 @@ import com.couchbase.client.java.manager.bucket.BucketSettings;
 import com.couchbase.client.java.manager.collection.CollectionManager;
 import com.couchbase.client.java.manager.collection.CollectionSpec;
 import com.couchbase.client.java.manager.collection.ScopeSpec;
-import com.couchbase.client.java.manager.query.QueryIndex;
 import com.couchbase.client.java.manager.query.QueryIndexManager;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions.createPrimaryQueryIndexOptions;
 import static com.couchbase.client.java.manager.query.GetAllQueryIndexesOptions.getAllQueryIndexesOptions;
@@ -154,61 +154,78 @@ public final class CouchbaseSettings {
      * @throws NullPointerException when parameter is null
      */
     public void setUp(String database) {
+
         Objects.requireNonNull(database, "database is required");
 
-        long start = System.currentTimeMillis();
-        LOGGER.log(Level.FINEST, "starting the setup with database: " + database);
+        CouchbaseSettings settings=this;
 
-        try (Cluster cluster = getCluster()) {
+        var collections = settings.getCollections().stream().map(String::trim)
+                .filter(index -> !index.isBlank()).toList();
+
+        var collectionsToIndex = Arrays
+                .stream(Optional.ofNullable(settings.getIndex()).orElse("").split(","))
+                .map(String::trim)
+                .filter(index -> !index.isBlank()).collect(Collectors.toSet());
+
+        var scope = settings.getScope();
+
+        long start = System.currentTimeMillis();
+        LOGGER.log(Level.FINEST,"starting the setup with database: " + database);
+
+        try (Cluster cluster = settings.getCluster()) {
 
             BucketManager buckets = cluster.buckets();
             try {
                 buckets.getBucket(database);
             } catch (BucketNotFoundException exp) {
-                LOGGER.log(Level.FINEST, "The database/bucket does not exist, creating it: " + database);
+                LOGGER.log(Level.FINEST,"The database/bucket does not exist, creating it: " + database);
                 buckets.createBucket(BucketSettings.create(database));
             }
+
             Bucket bucket = cluster.bucket(database);
 
+            waitUntilReady(bucket);
+
             CollectionManager manager = bucket.collections();
+
             List<ScopeSpec> scopes = manager.getAllScopes();
-            String finalScope = getScope().orElseGet(() -> bucket.defaultScope().name());
+            String finalScope = scope.orElseGet(() -> bucket.defaultScope().name());
             ScopeSpec spec = scopes.stream().filter(s -> finalScope.equals(s.name()))
                     .findFirst().get();
-            for (String collection : collections) {
-                if (spec.collections().stream().noneMatch(c -> collection.equals(c.name()))) {
+
+            collectionsToIndex.forEach(collection -> {
+                if (spec.collections().stream().noneMatch(c -> collectionsToIndex.contains(c.name()))) {
                     manager.createCollection(CollectionSpec.create(collection, finalScope));
                 }
-            }
-            if (index != null) {
+            });
+
+            waitUntilReady(bucket);
+
+            if (!collectionsToIndex.isEmpty()) {
                 QueryIndexManager queryIndexManager = cluster.queryIndexes();
-                List<QueryIndex> indexes = queryIndexManager.getAllIndexes(database, getAllQueryIndexesOptions()
-                        .scopeName(finalScope).collectionName(index));
-                if (indexes.isEmpty()) {
-                    LOGGER.log(Level.FINEST, "Index does not exist, creating primary key with scope "
-                            + scope + " collection " + index + " at database " + database);
-                    queryIndexManager.createPrimaryIndex(database, createPrimaryQueryIndexOptions()
-                            .scopeName(finalScope).collectionName(index));
-                }
-
-                for (String collection : collections) {
-                    queryIndexManager = cluster.queryIndexes();
-                    indexes = queryIndexManager.getAllIndexes(database, getAllQueryIndexesOptions()
-                            .scopeName(finalScope).collectionName(collection));
-                    if (indexes.isEmpty()) {
-                        LOGGER.log(Level.FINEST, "Index for " + collection + " collection does not exist, creating primary key with scope "
-                                + scope + " collection " + collection + " at database " + database);
-                        queryIndexManager.createPrimaryIndex(database, createPrimaryQueryIndexOptions()
-                                .scopeName(finalScope).collectionName(collection));
-                    }
-                }
-
+                collections.stream()
+                        .filter(collectionsToIndex::contains)
+                        .forEach(collection -> {
+                            var allIndexes = queryIndexManager.getAllIndexes(database, getAllQueryIndexesOptions()
+                                    .scopeName(finalScope).collectionName(collection));
+                            if (allIndexes.isEmpty()) {
+                                LOGGER.log(Level.FINEST,"Index for " + collection + " collection does not exist, creating primary key with scope "
+                                        + finalScope + " collection " + collection + " at database " + database);
+                                queryIndexManager.createPrimaryIndex(database, createPrimaryQueryIndexOptions()
+                                        .scopeName(finalScope).collectionName(collection));
+                            }
+                        });
             }
 
             long end = System.currentTimeMillis() - start;
-            LOGGER.log(Level.FINEST, "Finished the setup with database: " + database + " end with millis "
+            LOGGER.log(Level.FINEST,"Finished the setup with database: " + database + " end with millis "
                     + end);
         }
+
+    }
+
+    private void waitUntilReady(Bucket bucket) {
+        bucket.waitUntilReady(Duration.of(4, ChronoUnit.SECONDS));
     }
 
     @Override
