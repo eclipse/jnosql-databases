@@ -188,9 +188,20 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
 
     @Override
     public long count(String documentCollection) {
-        throw new UnsupportedOperationException("Couchbase does not support count method by document collection");
+        Objects.requireNonNull(documentCollection, "documentCollection is required");
+        return waitBucketBeReadyAndGet(() -> {
+            DocumentQuery countQuery = DocumentQuery
+                    .select("COUNT(*)").from(documentCollection).build();
+            N1QLQuery n1QLQuery = N1QLBuilder
+                    .of(countQuery, database, bucket.defaultScope().name()).get();
+            QueryResult query = cluster.query(n1QLQuery.getQuery());
+            List<JsonObject> result = query.rowsAsObject();
+            var count = result.stream().findFirst()
+                    .map(data -> data.getNumber("$1"))
+                    .orElse(0L);
+            return count.longValue();
+        });
     }
-
 
     @Override
     public Stream<DocumentEntity> n1qlQuery(final String n1ql, final JsonObject params) throws NullPointerException {
