@@ -158,22 +158,20 @@ public final class CouchbaseSettings {
 
         Objects.requireNonNull(database, "database is required");
 
-        CouchbaseSettings settings = this;
-
-        var collections = settings.getCollections().stream().map(String::trim)
+        var collections = getCollections().stream().map(String::trim)
                 .filter(index -> !index.isBlank()).toList();
 
         var collectionsToIndex = Arrays
-                .stream(Optional.ofNullable(settings.getIndex()).orElse("").split(","))
+                .stream(Optional.ofNullable(getIndex()).orElse("").split(","))
                 .map(String::trim)
                 .filter(index -> !index.isBlank()).collect(Collectors.toSet());
 
-        var scope = settings.getScope();
+        var scope = getScope();
 
         long start = System.currentTimeMillis();
         LOGGER.log(Level.FINEST, "starting the setup with database: " + database);
 
-        try (Cluster cluster = settings.getCluster()) {
+        try (Cluster cluster = getCluster()) {
 
             BucketManager buckets = cluster.buckets();
             try {
