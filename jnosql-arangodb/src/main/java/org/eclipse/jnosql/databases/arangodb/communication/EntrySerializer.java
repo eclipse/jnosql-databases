@@ -16,7 +16,6 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
 
-import java.lang.reflect.InvocationTargetException;
 
 public record EntrySerializer<T> (JsonSerializer<T> serializer, Class<T> type) {
 

@@ -19,8 +19,6 @@ import com.arangodb.ContentType;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.serde.jackson.JacksonSerde;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.util.ArrayList;
