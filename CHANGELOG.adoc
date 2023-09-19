@@ -11,6 +11,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 === Fixed
 
 - Fixes Repositories specializations when use methods from CrudRepository
+- Fixes in the Couchbase DocumentManager implementation to supports the count method
 
 === Added
 

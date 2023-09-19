@@ -15,3 +15,7 @@ test-output/
 /.idea
 .settings/
 **/.DS_Store
+
+# ignoring Quarkus plugin config files
+.quarkus
+.quarkus/**
