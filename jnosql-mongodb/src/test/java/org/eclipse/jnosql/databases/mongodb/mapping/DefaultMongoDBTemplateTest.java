@@ -169,10 +169,10 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     public void shouldAggregateWithCollectionName() {
-        List<Bson> predicates = Arrays.asList(
+        Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
-        );
+        };
 
         template.aggregate("Person", predicates);
         Mockito.verify(manager).aggregate("Person", predicates);
@@ -180,10 +180,10 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     public void shouldAggregateWithEntity() {
-        List<Bson> predicates = Arrays.asList(
+        Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
-        );
+        };
 
         template.aggregate(Person.class, predicates);
         Mockito.verify(manager).aggregate("Person", predicates);
