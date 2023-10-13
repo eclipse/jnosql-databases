@@ -83,7 +83,7 @@ public interface MongoDBTemplate extends JNoSQLDocumentTemplate {
      * @return the stream result
      * @throws NullPointerException when pipeline or collectionName is null
      */
-    Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson[] pipeline);
+    Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson... pipeline);
 
     /**
      * Aggregates documents according to the specified aggregation pipeline.
@@ -94,7 +94,7 @@ public interface MongoDBTemplate extends JNoSQLDocumentTemplate {
      * @return the stream result
      * @throws NullPointerException when pipeline or entity is null
      */
-    <T> Stream<Map<String, BsonValue>> aggregate(Class<T> entity, Bson[] pipeline);
+    <T> Stream<Map<String, BsonValue>> aggregate(Class<T> entity, Bson... pipeline);
 
     /**
      * Aggregates documents according to the specified aggregation pipeline.

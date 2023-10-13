@@ -206,7 +206,7 @@ public class MongoDBDocumentManager implements DocumentManager {
      * @return the stream of BSON Documents
      * @throws NullPointerException when filter or collectionName is null
      */
-    public Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson[] pipeline) {
+    public Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson... pipeline) {
         Objects.requireNonNull(pipeline, "filter is required");
         Objects.requireNonNull(collectionName, "collectionName is required");
         MongoCollection<BsonDocument> collection = mongoDatabase.getCollection(collectionName, BsonDocument.class);
