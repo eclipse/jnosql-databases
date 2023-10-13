@@ -74,7 +74,7 @@ final class MongoDBUtils {
         return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
     }
 
-    private static org.eclipse.jnosql.communication.document.Document getDocument(String key, Object value) {
+    public static org.eclipse.jnosql.communication.document.Document getDocument(String key, Object value) {
         if (value instanceof Document) {
             return org.eclipse.jnosql.communication.document.Document.of(key, of(Document.class.cast(value)));
         } else if (isDocumentIterable(value)) {

@@ -24,7 +24,6 @@ import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.data.repository.Sort;
 import org.bson.BsonDocument;
-import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -34,6 +33,7 @@ import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,6 +42,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import org.bson.BsonValue;
 import static org.eclipse.jnosql.databases.mongodb.communication.MongoDBUtils.ID_FIELD;
 import static org.eclipse.jnosql.databases.mongodb.communication.MongoDBUtils.getDocument;
 
@@ -202,15 +203,32 @@ public class MongoDBDocumentManager implements DocumentManager {
      *
      * @param collectionName the collection name
      * @param pipeline the aggregation pipeline
-     * @return the number of documents deleted.
+     * @return the stream of BSON Documents
      * @throws NullPointerException when filter or collectionName is null
      */
-    public Stream<Map<String, BsonValue>> aggregate(String collectionName, List<Bson> pipeline) {
+    public Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson[] pipeline) {
         Objects.requireNonNull(pipeline, "filter is required");
         Objects.requireNonNull(collectionName, "collectionName is required");
         MongoCollection<BsonDocument> collection = mongoDatabase.getCollection(collectionName, BsonDocument.class);
-        AggregateIterable aggregate = collection.aggregate(pipeline);
+        AggregateIterable aggregate = collection.aggregate(Arrays.asList(pipeline));
         return stream(aggregate.spliterator(), false);
+    }
+
+    /**
+     * Aggregates documents according to the specified aggregation pipeline.
+     *
+     * @param collectionName the collection name
+     * @param pipeline the aggregation pipeline
+     * @return the stream result
+     * @throws NullPointerException when pipeline or collectionName is null
+     */
+    public Stream<DocumentEntity> aggregate(String collectionName, List<Bson> pipeline) {
+        Objects.requireNonNull(pipeline, "pipeline is required");
+        Objects.requireNonNull(collectionName, "collectionName is required");
+        MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
+        AggregateIterable<Document> aggregate = collection.aggregate(pipeline);
+        return stream(aggregate.spliterator(), false).map(MongoDBUtils::of)
+                .map(ds -> DocumentEntity.of(collectionName, ds));
     }
 
     /**

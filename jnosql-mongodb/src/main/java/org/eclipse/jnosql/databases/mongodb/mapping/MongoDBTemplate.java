@@ -16,13 +16,13 @@
 package org.eclipse.jnosql.databases.mongodb.mapping;
 
 import jakarta.nosql.document.DocumentTemplate;
-import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.bson.BsonValue;
 
 /**
  * A MongoDB extension of {@link DocumentTemplate}
@@ -80,21 +80,43 @@ public interface MongoDBTemplate extends JNoSQLDocumentTemplate {
      *
      * @param collectionName the collection name
      * @param pipeline       the aggregation pipeline
-     * @return the number of documents deleted.
-     * @throws NullPointerException when filter or collectionName is null
+     * @return the stream result
+     * @throws NullPointerException when pipeline or collectionName is null
      */
-    Stream<Map<String, BsonValue>> aggregate(String collectionName, List<Bson> pipeline);
+    Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson[] pipeline);
 
     /**
      * Aggregates documents according to the specified aggregation pipeline.
      *
      * @param entity   the collection name
-     * @param <T>      the entity type
      * @param pipeline the aggregation pipeline
-     * @return the number of documents deleted.
-     * @throws NullPointerException when filter or entity is null
+     * @param <T>      the entity type
+     * @return the stream result
+     * @throws NullPointerException when pipeline or entity is null
      */
-    <T> Stream<Map<String, BsonValue>> aggregate(Class<T> entity, List<Bson> pipeline);
+    <T> Stream<Map<String, BsonValue>> aggregate(Class<T> entity, Bson[] pipeline);
+
+    /**
+     * Aggregates documents according to the specified aggregation pipeline.
+     *
+     * @param entity   the collection name
+     * @param pipeline the aggregation pipeline
+     * @param <T>      the entity type
+     * @return the stream result
+     * @throws NullPointerException when pipeline or entity is null
+     */
+    <T> Stream<T> aggregate(Class<T> entity, List<Bson> pipeline);
+
+    /**
+     * Aggregates documents according to the specified aggregation pipeline.
+     *
+     * @param collectionName the collection name
+     * @param pipeline       the aggregation pipeline
+     * @param <T>            the entity type
+     * @return the stream result
+     * @throws NullPointerException when pipeline or collectionName is null
+     */
+    <T> Stream<T> aggregate(String collectionName, List<Bson> pipeline);
 
     /**
      * Returns the number of items in the collection that match the given query filter.
