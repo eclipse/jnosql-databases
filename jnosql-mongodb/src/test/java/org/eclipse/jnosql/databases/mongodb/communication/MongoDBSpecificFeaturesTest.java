@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
@@ -135,6 +136,20 @@ public class MongoDBSpecificFeaturesTest {
 
     }
 
+    @Test
+    public void shouldAggregateEntity() {
+        List<Bson> predicates = Arrays.asList(
+                Aggregates.match(eq("name", "Poliana")),
+                Aggregates.limit(1)
+        );
+        entityManager.insert(getEntity());
+        Stream<DocumentEntity> aggregate = entityManager.aggregate(COLLECTION_NAME, predicates);
+        Assertions.assertNotNull(aggregate);
+        DocumentEntity result = aggregate.findFirst()
+                .orElseThrow(() -> new IllegalStateException("There is an issue with the aggregate test result"));
+
+        Assertions.assertNotNull(result);
+    }
 
     private DocumentEntity getEntity() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
