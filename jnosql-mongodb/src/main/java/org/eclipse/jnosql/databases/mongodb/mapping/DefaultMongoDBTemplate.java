@@ -18,7 +18,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.bson.BsonValue;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManager;
@@ -33,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
+import org.bson.BsonValue;
 
 
 @ApplicationScoped
@@ -125,18 +125,35 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     }
 
     @Override
-    public Stream<Map<String, BsonValue>> aggregate(String collectionName, List<Bson> pipeline) {
+    public Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson... pipeline) {
         Objects.requireNonNull(collectionName, "collectionName is required");
         Objects.requireNonNull(pipeline, "pipeline is required");
         return this.getManager().aggregate(collectionName, pipeline);
     }
 
     @Override
-    public <T> Stream<Map<String, BsonValue>> aggregate(Class<T> entity, List<Bson> pipeline) {
+    public <T> Stream<Map<String, BsonValue>> aggregate(Class<T> entity, Bson... pipeline) {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(pipeline, "pipeline is required");
         EntityMetadata entityMetadata = this.entities.get(entity);
         return this.getManager().aggregate(entityMetadata.name(), pipeline);
+    }
+
+    @Override
+    public <T> Stream<T> aggregate(String collectionName, List<Bson> pipeline) {
+        Objects.requireNonNull(collectionName, "collectionName is required");
+        Objects.requireNonNull(pipeline, "pipeline is required");
+        return this.getManager().aggregate(collectionName, pipeline)
+                .map(this.converter::toEntity);
+    }
+
+    @Override
+    public <T> Stream<T> aggregate(Class<T> entity, List<Bson> pipeline) {
+        Objects.requireNonNull(entity, "entity is required");
+        Objects.requireNonNull(pipeline, "pipeline is required");
+        EntityMetadata entityMetadata = this.entities.get(entity);
+        return this.getManager().aggregate(entityMetadata.name(), pipeline)
+                .map(this.converter::toEntity);
     }
 
     @Override

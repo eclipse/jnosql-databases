@@ -157,22 +157,22 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     public void shouldReturnErrorOnAggregateMethod() {
-        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, null));
-        assertThrows(NullPointerException.class, () -> template.aggregate("Collection", null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (List) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate("Collection", (List) null));
         assertThrows(NullPointerException.class, () -> template.aggregate((String) null,
                 Collections.singletonList(eq("name", "Poliana"))));
 
-        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, null));
+        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, (List) null));
         assertThrows(NullPointerException.class, () -> template.aggregate((Class<Object>) null,
                 Collections.singletonList(eq("name", "Poliana"))));
     }
 
     @Test
     public void shouldAggregateWithCollectionName() {
-        List<Bson> predicates = Arrays.asList(
+        Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
-        );
+        };
 
         template.aggregate("Person", predicates);
         Mockito.verify(manager).aggregate("Person", predicates);
@@ -180,10 +180,10 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     public void shouldAggregateWithEntity() {
-        List<Bson> predicates = Arrays.asList(
+        Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
-        );
+        };
 
         template.aggregate(Person.class, predicates);
         Mockito.verify(manager).aggregate("Person", predicates);
