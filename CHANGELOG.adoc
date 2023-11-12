@@ -18,6 +18,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Update OrienteDB library to version 3.2.24
 - Update ElastisSearch library to version 8.11.0
 - Update DynamoDB library to version 2.21.21
+- Update Couchbase library to version 3.4.11
 
 
 == [1.0.2] - 2023-10-01
