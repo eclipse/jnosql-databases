@@ -51,7 +51,7 @@ public class RedisQueueTest {
         assertTrue(lineBank.add(new LineBank("Otavio", 25)));
         assertEquals(1, lineBank.size());
         LineBank otavio = lineBank.poll();
-        assertEquals(otavio.getName(), "Otavio");
+        assertEquals(otavio.name(), "Otavio");
         assertNull(lineBank.poll());
         assertTrue(lineBank.isEmpty());
     }
@@ -63,7 +63,7 @@ public class RedisQueueTest {
         assertNotNull(otavio);
         assertNotNull(lineBank.peek());
         LineBank otavio2 = lineBank.remove();
-        assertEquals(otavio.getName(), otavio2.getName());
+        assertEquals(otavio.name(), otavio2.name());
         boolean happendException = false;
         try {
             lineBank.remove();

@@ -21,18 +21,12 @@ import jakarta.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
 
-public class User {
-
-    private final String nickName;
+public record User(String nickName) {
 
     @JsonbCreator
     public User(@JsonbProperty("nickName") String nickName) {
         this.nickName = nickName;
 
-    }
-
-    public String getNickName() {
-        return nickName;
     }
 
     @Override
@@ -41,11 +35,6 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(nickName, user.nickName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(nickName);
     }
 
     @Override

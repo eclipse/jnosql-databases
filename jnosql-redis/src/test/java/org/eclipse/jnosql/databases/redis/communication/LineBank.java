@@ -21,12 +21,7 @@ import jakarta.json.bind.annotation.JsonbProperty;
 
 import java.util.Objects;
 
-public class LineBank {
-
-
-    private final String name;
-
-    private final Integer age;
+public record LineBank(String name, Integer age) {
 
 
     @JsonbCreator
@@ -34,14 +29,6 @@ public class LineBank {
         this.name = name;
         this.age = age;
 
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Integer getAge() {
-        return age;
     }
 
     @Override
@@ -55,11 +42,6 @@ public class LineBank {
         LineBank lineBank = (LineBank) o;
         return Objects.equals(name, lineBank.name) &&
                 Objects.equals(age, lineBank.age);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, age);
     }
 
     @Override

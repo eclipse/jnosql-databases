@@ -125,7 +125,7 @@ final class EntityConverter {
         SearchRequest.Builder searchBuilder = new SearchRequest.Builder();
 
         if (select.hasQuery()) {
-            searchBuilder.query(select.getStatement().build());
+            searchBuilder.query(select.statement().build());
         }
 
         feedBuilder(query, searchBuilder);

@@ -17,17 +17,7 @@ package org.eclipse.jnosql.databases.elasticsearch.communication;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 
-class QueryConverterResult {
-
-    private final Query.Builder statement;
-
-    QueryConverterResult(Query.Builder statement) {
-        this.statement = statement;
-    }
-
-    Query.Builder getStatement() {
-        return statement;
-    }
+record QueryConverterResult(Query.Builder statement) {
 
     public boolean hasStatement() {
         return statement != null;
