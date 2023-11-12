@@ -95,7 +95,9 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     @Override
     public void delete(DocumentDeleteQuery query) {
         requireNonNull(query, "query is required");
-        if (checkCondition(query.condition())) {
+        if (query.condition().isEmpty()) {
+            AQLQueryResult delete = QueryAQLConverter.delete(query);
+            arangoDB.db(database).query(delete.getQuery(), BaseDocument.class);
             return;
         }
 
@@ -164,11 +166,6 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     private void checkCollection(String collectionName) {
         ArangoDBUtil.checkCollection(database, arangoDB, collectionName);
     }
-
-    private boolean checkCondition(Optional<DocumentCondition> query) {
-        return query.isEmpty();
-    }
-
 
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
