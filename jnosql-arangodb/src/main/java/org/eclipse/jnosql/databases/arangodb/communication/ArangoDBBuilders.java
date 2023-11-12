@@ -76,15 +76,10 @@ final class ArangoDBBuilders {
         arangoDB.host(values[0], Integer.parseInt(values[1]));
     }
 
-    private static class ArangoDBHost {
-        private final String hots;
-
-        private ArangoDBHost(String hots) {
-            this.hots = hots;
-        }
+    private record ArangoDBHost(String hots) {
 
         public List<String> getHost() {
-            return asList(this.hots.split(","));
+                return asList(this.hots.split(","));
+            }
         }
-    }
 }

@@ -101,12 +101,12 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
             if (query.condition().isEmpty()) {
                 AQLQueryResult delete = QueryAQLConverter.delete(query);
-                arangoDB.db(database).query(delete.getQuery(), BaseDocument.class);
+                arangoDB.db(database).query(delete.query(), BaseDocument.class);
                 return;
             }
 
             AQLQueryResult delete = QueryAQLConverter.delete(query);
-            arangoDB.db(database).query(delete.getQuery(), BaseDocument.class, delete.getValues(),
+            arangoDB.db(database).query(delete.query(), BaseDocument.class, delete.values(),
                     null);
         } catch (com.arangodb.ArangoDBException exception) {
             if (ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(exception.getErrorNum())) {
@@ -123,9 +123,9 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         requireNonNull(query, "query is required");
 
         AQLQueryResult result = QueryAQLConverter.select(query);
-        ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.getQuery(),
+        ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.query(),
                 BaseDocument.class,
-                result.getValues(), null);
+                result.values(), null);
 
         return StreamSupport.stream(documents.spliterator(), false)
                 .map(ArangoDBUtil::toEntity);

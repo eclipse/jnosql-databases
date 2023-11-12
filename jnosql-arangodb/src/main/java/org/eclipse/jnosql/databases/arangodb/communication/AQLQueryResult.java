@@ -16,23 +16,7 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import java.util.Map;
 
-class AQLQueryResult {
-    private final String query;
-
-    private final Map<String, Object> values;
-
-    public AQLQueryResult(String query, Map<String, Object> values) {
-        this.query = query;
-        this.values = values;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public Map<String, Object> getValues() {
-        return values;
-    }
+record AQLQueryResult(String query, Map<String, Object> values) {
 
 
 }
