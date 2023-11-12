@@ -20,7 +20,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
 import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
@@ -29,15 +28,19 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 
 class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
+    private static final Logger LOGGER = Logger.getLogger(DefaultArangoDBDocumentManager.class.getName());
 
     public static final String KEY = "_key";
     public static final String ID = "_id";
@@ -95,15 +98,25 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     @Override
     public void delete(DocumentDeleteQuery query) {
         requireNonNull(query, "query is required");
-        if (query.condition().isEmpty()) {
-            AQLQueryResult delete = QueryAQLConverter.delete(query);
-            arangoDB.db(database).query(delete.getQuery(), BaseDocument.class);
-            return;
-        }
+        try {
 
-        AQLQueryResult delete = QueryAQLConverter.delete(query);
-        arangoDB.db(database).query(delete.getQuery(), BaseDocument.class, delete.getValues(),
-                null);
+            if (query.condition().isEmpty()) {
+                AQLQueryResult delete = QueryAQLConverter.delete(query);
+                arangoDB.db(database).query(delete.getQuery(), BaseDocument.class);
+                return;
+            }
+
+            AQLQueryResult delete = QueryAQLConverter.delete(query);
+            arangoDB.db(database).query(delete.getQuery(), BaseDocument.class, delete.getValues(),
+                    null);
+        } catch (com.arangodb.ArangoDBException exception) {
+            if (ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(exception.getErrorNum())) {
+                LOGGER.log(Level.FINEST, exception, () -> "An error to run query, that is related to delete " +
+                        "a document collection that does not exist");
+            } else {
+                throw exception;
+            }
+        }
     }
 
     @Override
