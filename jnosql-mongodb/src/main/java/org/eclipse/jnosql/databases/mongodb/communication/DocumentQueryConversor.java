@@ -34,38 +34,33 @@ final class DocumentQueryConversor {
     public static Bson convert(DocumentCondition condition) {
         Document document = condition.document();
         Object value = ValueUtil.convert(document.value());
-        switch (condition.condition()) {
-            case EQUALS:
-                return Filters.eq(document.name(), value);
-            case GREATER_THAN:
-                return Filters.gt(document.name(), value);
-            case GREATER_EQUALS_THAN:
-                return Filters.gte(document.name(), value);
-            case LESSER_THAN:
-                return Filters.lt(document.name(), value);
-            case LESSER_EQUALS_THAN:
-                return Filters.lte(document.name(), value);
-            case IN:
+        return switch (condition.condition()) {
+            case EQUALS -> Filters.eq(document.name(), value);
+            case GREATER_THAN -> Filters.gt(document.name(), value);
+            case GREATER_EQUALS_THAN -> Filters.gte(document.name(), value);
+            case LESSER_THAN -> Filters.lt(document.name(), value);
+            case LESSER_EQUALS_THAN -> Filters.lte(document.name(), value);
+            case IN -> {
                 List<Object> inList = ValueUtil.convertToList(document.value());
-                return Filters.in(document.name(), inList.toArray());
-            case NOT:
-                return Filters.not(convert(document.get(DocumentCondition.class)));
-            case LIKE:
-                return Filters.regex(document.name(), value.toString());
-            case AND:
+                yield Filters.in(document.name(), inList.toArray());
+            }
+            case NOT -> Filters.not(convert(document.get(DocumentCondition.class)));
+            case LIKE -> Filters.regex(document.name(), value.toString());
+            case AND -> {
                 List<DocumentCondition> andList = condition.document().value().get(new TypeReference<>() {
                 });
-                return Filters.and(andList.stream()
+                yield Filters.and(andList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
-            case OR:
+            }
+            case OR -> {
                 List<DocumentCondition> orList = condition.document().value().get(new TypeReference<>() {
                 });
-                return Filters.or(orList.stream()
+                yield Filters.or(orList.stream()
                         .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
-            default:
-                throw new UnsupportedOperationException("The condition " + condition.condition()
-                        + " is not supported from mongoDB diana driver");
-        }
+            }
+            default -> throw new UnsupportedOperationException("The condition " + condition.condition()
+                    + " is not supported from mongoDB diana driver");
+        };
     }
 
 
