@@ -36,10 +36,9 @@ public record LineBank(String name, Integer age) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof LineBank)) {
+        if (!(o instanceof LineBank lineBank)) {
             return false;
         }
-        LineBank lineBank = (LineBank) o;
         return Objects.equals(name, lineBank.name) &&
                 Objects.equals(age, lineBank.age);
     }

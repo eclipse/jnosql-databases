@@ -49,8 +49,7 @@ final class MongoDBUtils {
 
     private static Object convert(Value value) {
         Object val = ValueUtil.convert(value);
-        if (val instanceof org.eclipse.jnosql.communication.document.Document) {
-            org.eclipse.jnosql.communication.document.Document subDocument = (org.eclipse.jnosql.communication.document.Document) val;
+        if (val instanceof org.eclipse.jnosql.communication.document.Document subDocument) {
             Object converted = convert(subDocument.value());
             return new Document(subDocument.name(), converted);
         }

@@ -43,10 +43,9 @@ class DefaultRanking implements Ranking {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Ranking)) {
+        if (!(o instanceof Ranking that)) {
             return false;
         }
-        Ranking that = (Ranking) o;
         return Objects.equals(point, that.getPoints()) &&
                 Objects.equals(member, that.getMember());
     }
