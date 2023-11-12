@@ -166,7 +166,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     }
 
     private boolean checkCondition(Optional<DocumentCondition> query) {
-        return !query.isPresent();
+        return query.isEmpty();
     }
 
 

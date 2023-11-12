@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -233,6 +234,18 @@ public class ArangoDBDocumentManagerTest {
         String aql = "FOR a IN person RETURN a.name";
         List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
+    }
+    @Test
+    public void shouldDeleteAll(){
+for (int index = 0; index < 20; index++) {
+            DocumentEntity entity = getEntity();
+            entityManager.insert(entity);
+        }
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+        DocumentQuery select = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(select).toList();
+        Assertions.assertThat(entities).isEmpty();
     }
 
     private DocumentEntity getEntity() {
