@@ -18,31 +18,11 @@ import com.couchbase.client.java.json.JsonObject;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-final class N1QLQuery {
+record N1QLQuery(String query, JsonObject params, List<String> ids) {
 
-    private final String query;
-
-    private final JsonObject params;
-
-    private final List<String> ids;
-
-    N1QLQuery(String query, JsonObject params, List<String> ids) {
-        this.query = query;
-        this.params = params;
-        this.ids = ids;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public JsonObject getParams() {
-        return params;
-    }
-
-    public List<String> getIds() {
+    @Override
+    public List<String> ids() {
         return Collections.unmodifiableList(ids);
     }
 
@@ -56,24 +36,6 @@ final class N1QLQuery {
 
     public boolean hasIds() {
         return !this.ids.isEmpty();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        N1QLQuery n1QLQuery = (N1QLQuery) o;
-        return Objects.equals(query, n1QLQuery.query) && Objects.equals(params, n1QLQuery.params)
-                && Objects.equals(ids, n1QLQuery.ids);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(query, params, ids);
     }
 
     @Override

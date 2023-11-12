@@ -58,19 +58,17 @@ final class CassandraConverter {
     private static Column getColumn(ColumnDefinition definition, Object result) {
 
         final DataType type = definition.getType();
-        switch (type.getProtocolCode()) {
-            case ProtocolConstants.DataType.UDT:
-                return Column.class.cast(result);
-            case ProtocolConstants.DataType.LIST:
-            case ProtocolConstants.DataType.SET:
+        return switch (type.getProtocolCode()) {
+            case ProtocolConstants.DataType.UDT -> Column.class.cast(result);
+            case ProtocolConstants.DataType.LIST, ProtocolConstants.DataType.SET -> {
                 if (isUDTIterable(result)) {
-                    return UDT.builder(getUserType(result)).withName(definition.getName().asInternal())
+                    yield UDT.builder(getUserType(result)).withName(definition.getName().asInternal())
                             .addUDTs(getColumns(definition, result)).build();
                 }
-                return Column.of(definition.getName().asInternal(), Value.of(result));
-            default:
-                return Column.of(definition.getName().asInternal(), Value.of(result));
-        }
+                yield Column.of(definition.getName().asInternal(), Value.of(result));
+            }
+            default -> Column.of(definition.getName().asInternal(), Value.of(result));
+        };
     }
 
     static Object get(ColumnDefinition definition, Row row) {

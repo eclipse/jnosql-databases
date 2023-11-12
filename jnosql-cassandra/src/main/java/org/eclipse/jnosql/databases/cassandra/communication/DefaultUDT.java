@@ -77,10 +77,9 @@ class DefaultUDT implements UDT {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof UDT)) {
+        if (!(o instanceof UDT udt)) {
             return false;
         }
-        UDT udt = (UDT) o;
         return Objects.equals(name, udt.name()) &&
                 Objects.equals(userType, udt.getUserType()) &&
                 Objects.equals(columns, udt.get());

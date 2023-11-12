@@ -162,7 +162,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
             List<JsonObject> jsons = new ArrayList<>();
             if (n1QLQuery.hasIds()) {
                 Collection collection = bucket.collection(query.name());
-                for (String id : n1QLQuery.getIds()) {
+                for (String id : n1QLQuery.ids()) {
                     try {
                         GetResult result = collection.get(id);
                         jsons.add(result.contentAsObject());
@@ -175,10 +175,10 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
             if (!n1QLQuery.hasOnlyIds()) {
                 QueryResult result;
                 if (n1QLQuery.hasParameter()) {
-                    result = cluster.query(n1QLQuery.getQuery());
+                    result = cluster.query(n1QLQuery.query());
                 } else {
-                    result = cluster.query(n1QLQuery.getQuery(), QueryOptions
-                            .queryOptions().parameters(n1QLQuery.getParams()));
+                    result = cluster.query(n1QLQuery.query(), QueryOptions
+                            .queryOptions().parameters(n1QLQuery.params()));
                 }
                 jsons.addAll(result.rowsAsObject());
             }
@@ -194,7 +194,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
                     .select("COUNT(*)").from(documentCollection).build();
             N1QLQuery n1QLQuery = N1QLBuilder
                     .of(countQuery, database, bucket.defaultScope().name()).get();
-            QueryResult query = cluster.query(n1QLQuery.getQuery());
+            QueryResult query = cluster.query(n1QLQuery.query());
             List<JsonObject> result = query.rowsAsObject();
             var count = result.stream().findFirst()
                     .map(data -> data.getNumber("$1"))

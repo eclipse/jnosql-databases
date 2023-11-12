@@ -91,10 +91,9 @@ class DefaultCounter implements Counter {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DefaultCounter)) {
+        if (!(o instanceof DefaultCounter that)) {
             return false;
         }
-        DefaultCounter that = (DefaultCounter) o;
         return Objects.equals(key, that.key);
     }
 

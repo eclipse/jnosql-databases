@@ -52,36 +52,26 @@ final class DocumentQueryConversor {
         Document document = condition.document();
         Object value = ValueUtil.convert(document.value());
 
-        switch (condition.condition()) {
-            case EQUALS:
-            case LIKE:
-                return document.name() + ':' + value;
-            case GREATER_EQUALS_THAN:
-            case GREATER_THAN:
-                return document.name() + ":[" + value + " TO *]";
-            case LESSER_EQUALS_THAN:
-            case LESSER_THAN:
-                return document.name() + ":[* TO " + value + "]";
-            case IN:
+        return switch (condition.condition()) {
+            case EQUALS, LIKE -> document.name() + ':' + value;
+            case GREATER_EQUALS_THAN, GREATER_THAN -> document.name() + ":[" + value + " TO *]";
+            case LESSER_EQUALS_THAN, LESSER_THAN -> document.name() + ":[* TO " + value + "]";
+            case IN -> {
                 final String inConditions = ValueUtil.convertToList(document.value())
                         .stream()
                         .map(Object::toString).collect(Collectors.joining(" OR "));
-                return document.name() + ":(" + inConditions + ')';
-            case NOT:
-                return " NOT " + convert(document.get(DocumentCondition.class));
-
-            case AND:
-                return getDocumentConditions(condition).stream()
-                        .map(DocumentQueryConversor::convert)
-                        .collect(Collectors.joining(" AND "));
-            case OR:
-                return getDocumentConditions(condition).stream()
-                        .map(DocumentQueryConversor::convert)
-                        .collect(Collectors.joining(" OR "));
-            default:
-                throw new UnsupportedOperationException("The condition " + condition.condition()
-                        + " is not supported from mongoDB diana driver");
-        }
+                yield document.name() + ":(" + inConditions + ')';
+            }
+            case NOT -> " NOT " + convert(document.get(DocumentCondition.class));
+            case AND -> getDocumentConditions(condition).stream()
+                    .map(DocumentQueryConversor::convert)
+                    .collect(Collectors.joining(" AND "));
+            case OR -> getDocumentConditions(condition).stream()
+                    .map(DocumentQueryConversor::convert)
+                    .collect(Collectors.joining(" OR "));
+            default -> throw new UnsupportedOperationException("The condition " + condition.condition()
+                    + " is not supported from mongoDB diana driver");
+        };
     }
 
     private static List<DocumentCondition> getDocumentConditions(DocumentCondition condition) {

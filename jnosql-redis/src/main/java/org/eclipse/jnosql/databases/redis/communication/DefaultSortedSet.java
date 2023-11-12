@@ -135,10 +135,9 @@ class DefaultSortedSet implements SortedSet {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DefaultSortedSet)) {
+        if (!(o instanceof DefaultSortedSet that)) {
             return false;
         }
-        DefaultSortedSet that = (DefaultSortedSet) o;
         return Objects.equals(key, that.key);
     }
 

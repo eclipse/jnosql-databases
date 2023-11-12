@@ -49,7 +49,7 @@ public class QueueTest {
         assertTrue(lineBank.add(new LineBank("Otavio", 25)));
         assertEquals(1, lineBank.size());
         LineBank otavio = lineBank.poll();
-        assertEquals(otavio.getPerson().getName(), "Otavio");
+        assertEquals(otavio.getPerson().name(), "Otavio");
         assertNull(lineBank.poll());
         assertTrue(lineBank.isEmpty());
     }
@@ -61,7 +61,7 @@ public class QueueTest {
         assertNotNull(otavio);
         assertNotNull(lineBank.peek());
         LineBank otavio2 = lineBank.remove();
-        assertEquals(otavio.getPerson().getName(), otavio2.getPerson().getName());
+        assertEquals(otavio.getPerson().name(), otavio2.getPerson().name());
         boolean happendException = false;
         try {
             lineBank.remove();

@@ -61,10 +61,8 @@ public enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFac
         try (var elasticsearch = INSTANCE.newElasticsearchClient()) {
             var response = elasticsearch.client().indices().delete(DeleteIndexRequest.of(d ->
                     d.index(index)));
-            assertSoftly(softly -> {
-                softly.assertThat(response.acknowledged())
-                        .isTrue();
-            });
+            assertSoftly(softly -> softly.assertThat(response.acknowledged())
+                    .isTrue());
         } catch (Exception e) {
             if( !(e instanceof ElasticsearchException)) {
                 throw new RuntimeException(e);
@@ -76,10 +74,8 @@ public enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFac
         try (var elasticsearch = INSTANCE.newElasticsearchClient()) {
             CreateIndexResponse response = elasticsearch.client().indices().create(
                     CreateIndexRequest.of(b -> b.index(index)));
-            assertSoftly(softly -> {
-                softly.assertThat(response.acknowledged())
-                        .isTrue();
-            });
+            assertSoftly(softly -> softly.assertThat(response.acknowledged())
+                    .isTrue());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -88,10 +84,8 @@ public enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFac
     public static void updateMapping(String index, Function<PutMappingRequest.Builder, ObjectBuilder<PutMappingRequest>> fn) {
         try (var elasticsearch = INSTANCE.newElasticsearchClient()) {
             PutMappingResponse response = elasticsearch.client().indices().putMapping(fn);
-            assertSoftly(softly -> {
-                softly.assertThat(response.acknowledged())
-                        .isTrue();
-            });
+            assertSoftly(softly -> softly.assertThat(response.acknowledged())
+                    .isTrue());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -111,10 +105,8 @@ public enum DocumentDatabase implements Supplier<ElasticsearchDocumentManagerFac
 
             IndexResponse response = elasticsearch.client().index(indexRequest);
 
-            assertSoftly(softly -> {
-                softly.assertThat(response.result().jsonValue())
-                        .isEqualTo("created");
-            });
+            assertSoftly(softly -> softly.assertThat(response.result().jsonValue())
+                    .isEqualTo("created"));
             _id.ifPresent(id -> map.put("_id", id));
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -56,23 +56,21 @@ final class MongoAuthentication {
                     source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
         }
 
-        switch (mechanism.get()) {
-            case PLAIN:
-                return Optional.of(MongoCredential.createPlainCredential(user.orElseThrow(missingExceptionUser()),
-                        source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
-            case GSSAPI:
-                return Optional.of(MongoCredential.createGSSAPICredential(user.orElseThrow(missingExceptionUser())));
-            case SCRAM_SHA_1:
-                return Optional.of(MongoCredential.createScramSha1Credential(user.orElseThrow(missingExceptionUser()),
-                        source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
-            case MONGODB_X509:
-                return Optional.of(MongoCredential.createMongoX509Credential(user.orElseThrow(missingExceptionUser())));
-            case SCRAM_SHA_256:
-                return Optional.of(MongoCredential.createScramSha256Credential(user.orElseThrow(missingExceptionUser()),
-                        source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
-            default:
-                throw new CommunicationException("There is not support to the type: " + mechanism);
-        }
+        return switch (mechanism.get()) {
+            case PLAIN -> Optional.of(MongoCredential.createPlainCredential(user.orElseThrow(missingExceptionUser()),
+                    source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
+            case GSSAPI ->
+                    Optional.of(MongoCredential.createGSSAPICredential(user.orElseThrow(missingExceptionUser())));
+            case SCRAM_SHA_1 ->
+                    Optional.of(MongoCredential.createScramSha1Credential(user.orElseThrow(missingExceptionUser()),
+                            source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
+            case MONGODB_X509 ->
+                    Optional.of(MongoCredential.createMongoX509Credential(user.orElseThrow(missingExceptionUser())));
+            case SCRAM_SHA_256 ->
+                    Optional.of(MongoCredential.createScramSha256Credential(user.orElseThrow(missingExceptionUser()),
+                            source.orElseThrow(missingExceptionSource()), password.orElseThrow(missingExceptionPassword())));
+            default -> throw new CommunicationException("There is not support to the type: " + mechanism);
+        };
 
     }
 

@@ -19,18 +19,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 
-public class User implements Serializable {
-
-    private final String nickName;
-
-    public User(String nickName) {
-        this.nickName = nickName;
-
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
+public record User(String nickName) implements Serializable {
 
     @Override
     public boolean equals(Object o) {
@@ -38,11 +27,6 @@ public class User implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(nickName, user.nickName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(nickName);
     }
 
     @Override

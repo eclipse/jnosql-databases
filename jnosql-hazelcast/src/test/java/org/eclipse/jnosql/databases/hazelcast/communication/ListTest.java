@@ -62,7 +62,7 @@ public class ListTest {
         assertFalse(fruits.isEmpty());
         ProductCart banana = fruits.get(0);
         assertNotNull(banana);
-        assertEquals(banana.getName(), "banana");
+        assertEquals(banana.name(), "banana");
     }
 
     @Test
@@ -72,12 +72,12 @@ public class ListTest {
         fruits.add(0, orange);
         assertEquals(2, fruits.size());
 
-        assertEquals(fruits.get(0).getName(), "orange");
-        assertEquals(fruits.get(1).getName(), "banana");
+        assertEquals(fruits.get(0).name(), "orange");
+        assertEquals(fruits.get(1).name(), "banana");
 
         fruits.set(0, waterMelon);
-        assertEquals(fruits.get(0).getName(), "waterMelon");
-        assertEquals(fruits.get(1).getName(), "banana");
+        assertEquals(fruits.get(0).name(), "waterMelon");
+        assertEquals(fruits.get(1).name(), "banana");
 
     }
 

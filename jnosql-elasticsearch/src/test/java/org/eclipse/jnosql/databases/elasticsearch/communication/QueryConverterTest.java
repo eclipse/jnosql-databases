@@ -103,17 +103,13 @@ class QueryConverterTest {
                     .as("indexMappingRecordWithoutKeywordAttributes wasn't provided")
                     .isNotNull();
 
-            map.keySet().forEach(key -> {
-                softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
-                        .as("%s attribute should not support TermQuery".formatted(key))
-                        .isFalse();
-            });
+            map.keySet().forEach(key -> softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
+                    .as("%s attribute should not support TermQuery".formatted(key))
+                    .isFalse());
 
-            Set.of("doc2.data1", "doc2.data2").forEach(key -> {
-                softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
-                        .as("%s attribute should not support TermQuery".formatted(key))
-                        .isFalse();
-            });
+            Set.of("doc2.data1", "doc2.data2").forEach(key -> softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
+                    .as("%s attribute should not support TermQuery".formatted(key))
+                    .isFalse());
 
         });
 
@@ -136,12 +132,9 @@ class QueryConverterTest {
 
             map.keySet().stream()
                     .filter(anObject -> !"@entity".equals(anObject))
-                    .forEach(key -> {
-                        softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithKeywordAttributes, key))
-                                .as("%s attribute should not support TermQuery".formatted(key))
-                                .isFalse();
-
-                    });
+                    .forEach(key -> softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithKeywordAttributes, key))
+                            .as("%s attribute should not support TermQuery".formatted(key))
+                            .isFalse());
 
 
             softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithKeywordAttributes, "@entity"))
@@ -185,20 +178,20 @@ class QueryConverterTest {
                     .as("QueryConverter.select() should returns a non-null object")
                     .isNotNull();
 
-            Query _query = selectWithoutKeywordFields.getStatement().build();
-            softly.assertThat(_query._kind())
+            Query esQuery = selectWithoutKeywordFields.statement().build();
+            softly.assertThat(esQuery._kind())
                     .as("QueryConverterResult's statement should be a %s query".formatted(Query.Kind.Bool))
                     .isEqualTo(Query.Kind.Bool);
 
-            softly.assertThat(_query.bool().must())
+            softly.assertThat(esQuery.bool().must())
                     .as("QueryConverterResult's statement should be a %s query with 2 conditions".formatted(Query.Kind.Bool))
                     .hasSize(2);
 
-            softly.assertThat(_query.bool().must().get(0)._kind())
+            softly.assertThat(esQuery.bool().must().get(0)._kind())
                     .as("first condition of QueryConverterResult's statement should be a %s query".formatted(Query.Kind.Match))
                     .isEqualTo(Query.Kind.Match);
 
-            softly.assertThat(_query.bool().must().get(1)._kind())
+            softly.assertThat(esQuery.bool().must().get(1)._kind())
                     .as("second condition of QueryConverterResult's statement should be a %s query".formatted(Query.Kind.Match))
                     .isEqualTo(Query.Kind.Match);
 
@@ -231,7 +224,7 @@ class QueryConverterTest {
                     .as("QueryConverter.select() should returns a non-null object")
                     .isNotNull();
 
-            Query builtQuery = selectWithKeywordFields.getStatement().build();
+            Query builtQuery = selectWithKeywordFields.statement().build();
 
             softly.assertThat(builtQuery._kind())
                     .as("QueryConverterResult's statement should be a %s query".formatted(Query.Kind.Bool))
