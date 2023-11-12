@@ -11,7 +11,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 === Changed
 
 - Modify aggregate method to return DocumentEntity at MongoDB.
-- Update MongoDB driver to version 4.3.1
+- Update MongoDB driver to version 4.11.1
 - Update Hazelcast to version 5.3.5
 - Update Apache Sorl to version 9.4.0
 - Update Jedis to version 5.0.2
