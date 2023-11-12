@@ -203,18 +203,14 @@ class RepositoryIntegrationTest {
             return !books.isEmpty();
         });
 
-        assertSoftly(softly -> {
-            assertThat(booksWithEffective.get())
-                    .as("returned book list with 'Effective' is not equals to the expected items ")
-                    .containsAll(effectiveBooks);
-        });
+        assertSoftly(softly -> assertThat(booksWithEffective.get())
+                .as("returned book list with 'Effective' is not equals to the expected items ")
+                .containsAll(effectiveBooks));
 
 
-        assertSoftly(softly -> {
-            assertThat(booksWithJa.get())
-                    .as("returned book list with 'Ja*' is not equals to the expected items ")
-                    .containsAll(allBooks);
-        });
+        assertSoftly(softly -> assertThat(booksWithJa.get())
+                .as("returned book list with 'Ja*' is not equals to the expected items ")
+                .containsAll(allBooks));
     }
 
 

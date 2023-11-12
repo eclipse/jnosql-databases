@@ -103,17 +103,13 @@ class QueryConverterTest {
                     .as("indexMappingRecordWithoutKeywordAttributes wasn't provided")
                     .isNotNull();
 
-            map.keySet().forEach(key -> {
-                softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
-                        .as("%s attribute should not support TermQuery".formatted(key))
-                        .isFalse();
-            });
+            map.keySet().forEach(key -> softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
+                    .as("%s attribute should not support TermQuery".formatted(key))
+                    .isFalse());
 
-            Set.of("doc2.data1", "doc2.data2").forEach(key -> {
-                softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
-                        .as("%s attribute should not support TermQuery".formatted(key))
-                        .isFalse();
-            });
+            Set.of("doc2.data1", "doc2.data2").forEach(key -> softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithoutKeywordAttributes, key))
+                    .as("%s attribute should not support TermQuery".formatted(key))
+                    .isFalse());
 
         });
 
@@ -136,12 +132,9 @@ class QueryConverterTest {
 
             map.keySet().stream()
                     .filter(anObject -> !"@entity".equals(anObject))
-                    .forEach(key -> {
-                        softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithKeywordAttributes, key))
-                                .as("%s attribute should not support TermQuery".formatted(key))
-                                .isFalse();
-
-                    });
+                    .forEach(key -> softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithKeywordAttributes, key))
+                            .as("%s attribute should not support TermQuery".formatted(key))
+                            .isFalse());
 
 
             softly.assertThat(QueryConverter.supportTermQuery(indexMappingRecordWithKeywordAttributes, "@entity"))
