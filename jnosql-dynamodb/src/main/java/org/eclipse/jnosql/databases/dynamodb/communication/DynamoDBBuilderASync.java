@@ -53,8 +53,8 @@ public class DynamoDBBuilderASync implements DynamoDBBuilder {
 
     public DynamoDbAsyncClient build() {
 
-        boolean accessKey = awsAccessKey != null && !awsAccessKey.equals("");
-        boolean secretAccess = awsSecretAccess != null && !awsSecretAccess.equals("");
+        boolean accessKey = awsAccessKey != null && !awsAccessKey.isEmpty();
+        boolean secretAccess = awsSecretAccess != null && !awsSecretAccess.isEmpty();
 
         if (accessKey && secretAccess) {
 
