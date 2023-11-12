@@ -83,7 +83,7 @@ public abstract class ArangoDBConfiguration {
     }
 
     /**
-     * set if gonna use ssl
+     * set if going to use ssl
      *
      * @param value the ssl
      */

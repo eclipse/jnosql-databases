@@ -55,7 +55,7 @@ final class QueryAQLConverter {
     public static AQLQueryResult delete(DocumentDeleteQuery query) throws NullPointerException {
 
         return convert(query.name(),
-                query.condition(),
+                query.condition().orElse(null),
                 Collections.emptyList(),
                 0L,
                 0L,
@@ -65,7 +65,7 @@ final class QueryAQLConverter {
     public static AQLQueryResult select(DocumentQuery query) throws NullPointerException {
 
         return convert(query.name(),
-                query.condition(),
+                query.condition().orElse(null),
                 query.sorts(),
                 query.skip(),
                 query.limit(),
@@ -75,7 +75,7 @@ final class QueryAQLConverter {
 
 
     private static AQLQueryResult convert(String documentCollection,
-                                          Optional<DocumentCondition> documentCondition,
+                                          DocumentCondition documentCondition,
                                           List<Sort> sorts,
                                           long firstResult,
                                           long maxResult,
@@ -85,7 +85,7 @@ final class QueryAQLConverter {
         char entity = Character.toLowerCase(documentCollection.charAt(0));
         aql.append("FOR ").append(entity).append(IN).append(documentCollection);
 
-        documentCondition.ifPresent(condition -> {
+        Optional.ofNullable(documentCondition).ifPresent(condition -> {
             aql.append(FILTER);
             definesCondition(condition, aql, params, entity, 0);
         });
