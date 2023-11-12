@@ -16,9 +16,12 @@ package org.eclipse.jnosql.databases.arangodb.mapping;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBDocumentManager;
+import org.eclipse.jnosql.databases.arangodb.communication.Person;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
@@ -32,6 +35,7 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -96,6 +100,20 @@ public class DefaultArangoDBTemplateTest {
     public void shouldFindAQLWithType() {
         template.aql("FOR p IN Person FILTER p.name = @name RETURN p", String.class);
         Mockito.verify(manager).aql("FOR p IN Person FILTER p.name = @name RETURN p", String.class);
+    }
+
+    @Test
+    public void shouldDeleteAll(){
+        ArgumentCaptor<DocumentDeleteQuery> argumentCaptor = ArgumentCaptor.forClass(DocumentDeleteQuery.class);
+        template.deleteAll(Person.class);
+        Mockito.verify(manager).delete(argumentCaptor.capture());
+        DocumentDeleteQuery query = argumentCaptor.getValue();
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(query.name()).isEqualTo("Person");
+            soft.assertThat(query.documents()).isEmpty();
+            soft.assertThat(query.condition()).isEmpty();
+        });
+
     }
 
 

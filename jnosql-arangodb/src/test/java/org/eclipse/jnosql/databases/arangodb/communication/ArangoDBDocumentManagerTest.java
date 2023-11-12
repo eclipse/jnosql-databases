@@ -61,6 +61,7 @@ public class ArangoDBDocumentManagerTest {
         random = new Random();
         entityManager = DocumentDatabase.INSTANCE.get().apply(DATABASE);
         entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
+
     }
 
     @AfterEach
@@ -79,7 +80,7 @@ public class ArangoDBDocumentManagerTest {
     @Test
     public void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         DocumentEntity updated = entityManager.update(entity);
@@ -93,7 +94,7 @@ public class ArangoDBDocumentManagerTest {
         DocumentQuery select = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(select).collect(Collectors.toList()).isEmpty());
+        assertThat(entityManager.select(select)).hasSize(0);
     }
 
     @Test
@@ -103,7 +104,7 @@ public class ArangoDBDocumentManagerTest {
         DocumentQuery select = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
-        assertTrue(entityManager.select(select).collect(Collectors.toList()).isEmpty());
+        assertThat(entityManager.select(select)).hasSize(0);
     }
 
 
@@ -112,7 +113,7 @@ public class ArangoDBDocumentManagerTest {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find(KEY_NAME).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<DocumentEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
         DocumentEntity documentEntity = entities.get(0);
         assertEquals(entity.find(KEY_NAME).get().value().get(String.class), documentEntity.find(KEY_NAME).get()
@@ -233,6 +234,18 @@ public class ArangoDBDocumentManagerTest {
         String aql = "FOR a IN person RETURN a.name";
         List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
+    }
+    @Test
+    public void shouldDeleteAll(){
+for (int index = 0; index < 20; index++) {
+            DocumentEntity entity = getEntity();
+            entityManager.insert(entity);
+        }
+        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+        DocumentQuery select = select().from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(select).toList();
+        assertThat(entities).isEmpty();
     }
 
     private DocumentEntity getEntity() {

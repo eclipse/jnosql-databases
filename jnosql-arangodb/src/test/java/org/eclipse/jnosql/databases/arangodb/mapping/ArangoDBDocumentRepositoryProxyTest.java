@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.databases.arangodb.mapping;
 
 import jakarta.inject.Inject;
+import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
@@ -128,6 +129,17 @@ public class ArangoDBDocumentRepositoryProxyTest {
         Person person = Person.of("Ada", 10);
         personRepository.delete(person);
         verify(template).delete(Person.class, person.getName());
+    }
+
+    @Test
+    public void shouldDeleteAll() {
+        ArgumentCaptor<Class<?>> queryCaptor = ArgumentCaptor.forClass(Class.class);
+
+        personRepository.deleteAll();
+        verify(template).deleteAll(queryCaptor.capture());
+
+        Class<?> query = queryCaptor.getValue();
+        Assertions.assertThat(query).isEqualTo(Person.class);
     }
 
 

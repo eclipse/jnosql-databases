@@ -21,6 +21,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Update Couchbase library to version 3.4.11
 - Update ArangoDB library to version 7.2.0
 
+=== Fixed
+
+- deleteAll does not delete anything in ArangoDB Repository
+
 
 == [1.0.2] - 2023-10-01
 

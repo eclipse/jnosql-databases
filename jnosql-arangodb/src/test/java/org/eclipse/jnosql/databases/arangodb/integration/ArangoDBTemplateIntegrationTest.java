@@ -19,6 +19,7 @@ import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBConfigurations;
 import org.eclipse.jnosql.databases.arangodb.mapping.ArangoDBTemplate;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -45,6 +46,7 @@ import static org.eclipse.jnosql.databases.arangodb.communication.DocumentDataba
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
 @AddPackages(Reflections.class)
+@AddPackages(Converters.class)
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class ArangoDBTemplateIntegrationTest {
 
@@ -105,6 +107,19 @@ class ArangoDBTemplateIntegrationTest {
         template.delete(Book.class, book.id());
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
+    }
+
+    @Test
+    public void shouldDeleteAll(){
+        for (int index = 0; index < 20; index++) {
+            Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+            assertThat(template.insert(book))
+                    .isNotNull()
+                    .isEqualTo(book);
+        }
+
+        template.delete(Book.class).execute();
+        assertThat(template.select(Book.class).result()).isEmpty();
     }
 
 

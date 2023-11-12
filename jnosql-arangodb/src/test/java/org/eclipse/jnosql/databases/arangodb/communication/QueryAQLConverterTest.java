@@ -34,8 +34,8 @@ public class QueryAQLConverterTest {
                 .where("name").eq("value").build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name RETURN c", aql);
 
@@ -49,8 +49,8 @@ public class QueryAQLConverterTest {
                 .build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name AND  c.age <= @age RETURN c", aql);
 
@@ -64,8 +64,8 @@ public class QueryAQLConverterTest {
                 .build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name OR  c.age <= @age RETURN c", aql);
 
@@ -78,8 +78,8 @@ public class QueryAQLConverterTest {
                 .orderBy("name").asc().build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC RETURN c", aql);
     }
@@ -92,8 +92,8 @@ public class QueryAQLConverterTest {
                 .orderBy("age").desc().build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name SORT  c.name ASC , c.age DESC RETURN c", aql);
     }
@@ -106,8 +106,8 @@ public class QueryAQLConverterTest {
                 .limit(5).build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 5 RETURN c", aql);
 
@@ -120,8 +120,8 @@ public class QueryAQLConverterTest {
                 .skip(1).limit(5).build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  c.name == @name LIMIT 1, 5 RETURN c", aql);
     }
@@ -132,8 +132,8 @@ public class QueryAQLConverterTest {
                 .where("name").not().eq("value").build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
         assertEquals("FOR c IN collection FILTER  NOT  c.name == @name RETURN c", aql);
 
@@ -148,8 +148,8 @@ public class QueryAQLConverterTest {
                 .or("name").not().eq("Lucas").build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
-        String aql = convert.getQuery();
-        Map<String, Object> values = convert.getValues();
+        String aql = convert.query();
+        Map<String, Object> values = convert.values();
         assertEquals(3, values.size());
         assertEquals("Assis", values.get("city"));
         assertEquals("Otavio", values.get("name"));
