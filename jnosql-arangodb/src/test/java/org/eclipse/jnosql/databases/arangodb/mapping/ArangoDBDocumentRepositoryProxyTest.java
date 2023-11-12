@@ -16,7 +16,6 @@ package org.eclipse.jnosql.databases.arangodb.mapping;
 
 import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;

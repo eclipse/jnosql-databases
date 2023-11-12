@@ -16,7 +16,6 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
-import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
