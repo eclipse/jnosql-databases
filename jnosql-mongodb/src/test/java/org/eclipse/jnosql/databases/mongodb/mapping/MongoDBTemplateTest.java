@@ -39,7 +39,7 @@ class MongoDBTemplateTest {
     private MongoDBTemplate template;
 
     @Test
-    public void shouldInjectMongoDBTemplate() {
+    void shouldInjectMongoDBTemplate() {
         Assertions.assertNotNull(template);
     }
 }
