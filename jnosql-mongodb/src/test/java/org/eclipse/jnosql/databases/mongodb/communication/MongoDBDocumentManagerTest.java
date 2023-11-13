@@ -61,7 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-public class MongoDBDocumentManagerTest {
+class MongoDBDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
     private static DocumentManager entityManager;
@@ -72,24 +72,24 @@ public class MongoDBDocumentManagerTest {
     }
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertTrue(documentEntity.documents().stream().map(Document::name).anyMatch(s -> s.equals("_id")));
     }
 
     @Test
-    public void shouldThrowExceptionWhenInsertWithTTL() {
+    void shouldThrowExceptionWhenInsertWithTTL() {
         assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10)));
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
@@ -99,7 +99,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Optional<Document> id = documentEntity.find("_id");
@@ -115,7 +115,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocument() {
+    void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find("_id");
 
@@ -129,7 +129,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocument2() {
+    void shouldFindDocument2() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find("_id");
 
@@ -144,7 +144,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocument3() {
+    void shouldFindDocument3() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find("_id");
         DocumentQuery query = select().from(COLLECTION_NAME)
@@ -159,7 +159,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentGreaterThan() {
+    void shouldFindDocumentGreaterThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -176,7 +176,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentGreaterEqualsThan() {
+    void shouldFindDocumentGreaterEqualsThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -193,7 +193,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLesserThan() {
+    void shouldFindDocumentLesserThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -211,7 +211,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLesserEqualsThan() {
+    void shouldFindDocumentLesserEqualsThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -228,7 +228,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLike() {
+    void shouldFindDocumentLike() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -245,7 +245,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentIn() {
+    void shouldFindDocumentIn() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -260,7 +260,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentStart() {
+    void shouldFindDocumentStart() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -288,7 +288,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLimit() {
+    void shouldFindDocumentLimit() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -316,7 +316,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentSort() {
+    void shouldFindDocumentSort() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -353,7 +353,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindAll() {
+    void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -361,7 +361,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldDeleteAll() {
+    void shouldDeleteAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -373,7 +373,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindAllByFields() {
+    void shouldFindAllByFields() {
         entityManager.insert(getEntity());
         DocumentQuery query = select("name").from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -387,7 +387,7 @@ public class MongoDBDocumentManagerTest {
 
 
     @Test
-    public void shouldSaveSubDocument() {
+    void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -404,7 +404,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() {
+    void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -422,7 +422,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldCreateEntityByteArray() {
+    void shouldCreateEntityByteArray() {
         byte[] contents = {1, 2, 3, 4, 5, 6};
 
         DocumentEntity entity = DocumentEntity.of("download");
@@ -444,7 +444,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldCreateDate() {
+    void shouldCreateDate() {
         Date date = new Date();
         LocalDate now = LocalDate.now();
 
@@ -469,14 +469,14 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListDocumentList() {
+    void shouldConvertFromListDocumentList() {
         DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListDocumentList() {
+    void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from("AppointmentBook")
@@ -493,13 +493,13 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldCount() {
+    void shouldCount() {
         entityManager.insert(getEntity());
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
     }
 
     @Test
-    public void shouldCustomTypeWork() {
+    void shouldCustomTypeWork() {
         DocumentEntity entity = getEntity();
         Currency currency = Currency.getInstance("USD");
         Money money = Money.of(currency, BigDecimal.valueOf(10D));
@@ -515,7 +515,7 @@ public class MongoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveMap() {
+    void shouldSaveMap() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         String id = UUID.randomUUID().toString();
         entity.add("properties", Collections.singletonMap("hallo", "Welt"));
