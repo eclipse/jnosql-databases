@@ -97,7 +97,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldDelete() {
+    public void shouldDeleteById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -106,6 +106,19 @@ class TemplateIntegrationTest {
         template.delete(Book.class, book.id());
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
+    }
+
+    @Test
+    void shouldDeleteAll(){
+        for (int index = 0; index < 20; index++) {
+            Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+            assertThat(template.insert(book))
+                    .isNotNull()
+                    .isEqualTo(book);
+        }
+
+        template.delete(Book.class).execute();
+        assertThat(template.select(Book.class).result()).isEmpty();
     }
 
 
