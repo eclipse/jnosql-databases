@@ -85,14 +85,13 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     void shouldReturnErrorOnDeleteMethod() {
-        assertThrows(NullPointerException.class, () -> template.delete((String) null, null));
-        assertThrows(NullPointerException.class, () -> template.delete("Collection", null));
-        assertThrows(NullPointerException.class, () -> template.delete((String) null,
-                eq("name", "Poliana")));
+        Bson filter = eq("name", "Poliana");
+        assertThrows(NullPointerException.class,() -> template.delete((String) null, null));
+        assertThrows(NullPointerException.class,() -> template.delete("Collection", null));
+        assertThrows(NullPointerException.class,() -> template.delete((String) null, filter));
 
-        assertThrows(NullPointerException.class, () -> template.delete(Person.class, null));
-        assertThrows(NullPointerException.class, () -> template.delete((Class<Object>) null,
-                eq("name", "Poliana")));
+        assertThrows(NullPointerException.class,() -> template.delete(Person.class, null));
+        assertThrows(NullPointerException.class,() -> template.delete((Class<Object>) null, filter));
     }
 
     @Test
@@ -119,14 +118,15 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     void shouldReturnErrorOnSelectMethod() {
+        Bson filter = eq("name", "Poliana");
+
         assertThrows(NullPointerException.class, () -> template.select((String) null, null));
         assertThrows(NullPointerException.class, () -> template.select("Collection", null));
-        assertThrows(NullPointerException.class, () -> template.select((String) null,
-                eq("name", "Poliana")));
+        assertThrows(NullPointerException.class, () -> template.select((String) null, filter));
 
+        assertThrows(NullPointerException.class, () -> template.select((Class<?>) null, null));
         assertThrows(NullPointerException.class, () -> template.select(Person.class, null));
-        assertThrows(NullPointerException.class, () -> template.select((Class<Object>) null,
-                eq("name", "Poliana")));
+        assertThrows(NullPointerException.class, () -> template.select((Class<?>) null, filter));
     }
 
     @Test
@@ -167,14 +167,29 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     void shouldReturnErrorOnAggregateMethod() {
-        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (List) null));
-        assertThrows(NullPointerException.class, () -> template.aggregate("Collection", (List) null));
-        assertThrows(NullPointerException.class, () -> template.aggregate((String) null,
-                Collections.singletonList(eq("name", "Poliana"))));
+        var collectionName = "AnyCollection";
+        var bson = eq("name", "Poliana");
+        var pipeline = Collections.singletonList(bson);
+        var pipelineArray = new Bson[]{bson, bson};
 
-        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, (List) null));
-        assertThrows(NullPointerException.class, () -> template.aggregate((Class<Object>) null,
-                Collections.singletonList(eq("name", "Poliana"))));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (Bson[]) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (Bson) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipeline));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipelineArray));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, bson));
+        assertThrows(NullPointerException.class, () -> template.aggregate(collectionName, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate(collectionName, (Bson[]) null));
+
+        assertThrows(NullPointerException.class, () -> template.aggregate((Class<?>) null, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((Class<?>) null, (Bson[]) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((Class<?>) null, (Bson) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipeline));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipelineArray));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, bson));
+        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, (Bson[]) null));
+
     }
 
     @Test
