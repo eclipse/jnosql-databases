@@ -76,7 +76,7 @@ class DefaultMongoDBTemplateTest {
     private MongoDBDocumentManager manager;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.manager = mock(MongoDBDocumentManager.class);
         Instance instance = mock(Instance.class);
         when(instance.get()).thenReturn(manager);
@@ -84,7 +84,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldReturnErrorOnDeleteMethod() {
+    void shouldReturnErrorOnDeleteMethod() {
         assertThrows(NullPointerException.class, () -> template.delete((String) null, null));
         assertThrows(NullPointerException.class, () -> template.delete("Collection", null));
         assertThrows(NullPointerException.class, () -> template.delete((String) null,
@@ -96,21 +96,21 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldDeleteWithCollectionName() {
+    void shouldDeleteWithCollectionName() {
         Bson filter = eq("name", "Poliana");
         template.delete("Person", filter);
         Mockito.verify(manager).delete("Person", filter);
     }
 
     @Test
-    public void shouldDeleteWithEntity() {
+    void shouldDeleteWithEntity() {
         Bson filter = eq("name", "Poliana");
         template.delete(Person.class, filter);
         Mockito.verify(manager).delete("Person", filter);
     }
 
     @Test
-    public void shouldDeleteAll() {
+    void shouldDeleteAll() {
         EntityMetadata metadata = entities.get(Person.class);
         DocumentDeleteQuery query = DocumentDeleteQuery.delete().from(metadata.name()).build();
         template.deleteAll(Person.class);
@@ -118,7 +118,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldReturnErrorOnSelectMethod() {
+    void shouldReturnErrorOnSelectMethod() {
         assertThrows(NullPointerException.class, () -> template.select((String) null, null));
         assertThrows(NullPointerException.class, () -> template.select("Collection", null));
         assertThrows(NullPointerException.class, () -> template.select((String) null,
@@ -130,7 +130,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldSelectWithCollectionName() {
+    void shouldSelectWithCollectionName() {
         DocumentEntity entity = DocumentEntity.of("Person", Arrays
                 .asList(Document.of("_id", "Poliana"),
                         Document.of("age", 30)));
@@ -148,7 +148,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldSelectWithEntity() {
+    void shouldSelectWithEntity() {
         DocumentEntity entity = DocumentEntity.of("Person", Arrays
                 .asList(Document.of("_id", "Poliana"),
                         Document.of("age", 30)));
@@ -166,7 +166,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldReturnErrorOnAggregateMethod() {
+    void shouldReturnErrorOnAggregateMethod() {
         assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (List) null));
         assertThrows(NullPointerException.class, () -> template.aggregate("Collection", (List) null));
         assertThrows(NullPointerException.class, () -> template.aggregate((String) null,
@@ -178,7 +178,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldAggregateWithCollectionName() {
+    void shouldAggregateWithCollectionName() {
         Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
@@ -189,7 +189,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldAggregateWithEntity() {
+    void shouldAggregateWithEntity() {
         Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
@@ -200,7 +200,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldCountByFilterWithCollectionName() {
+    void shouldCountByFilterWithCollectionName() {
         var filter = eq("name", "Poliana");
 
         template.count("Person", filter);
@@ -209,7 +209,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldCountByFilterWithEntity() {
+    void shouldCountByFilterWithEntity() {
         var filter = eq("name", "Poliana");
 
         template.count(Person.class, filter);
@@ -218,7 +218,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldReturnErrorOnCountByFilterMethod() {
+    void shouldReturnErrorOnCountByFilterMethod() {
         var filter = eq("name", "Poliana");
         assertThrows(NullPointerException.class, () -> template.count((String) null, null));
         assertThrows(NullPointerException.class, () -> template.count((String) null, filter));
