@@ -26,7 +26,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDBDocumentManagerFactoryTest {
+class MongoDBDocumentManagerFactoryTest {
 
     private static MongoDBDocumentConfiguration configuration;
 
@@ -36,23 +36,23 @@ public class MongoDBDocumentManagerFactoryTest {
     }
 
     @Test
-    public void shouldCreateEntityManager() {
+    void shouldCreateEntityManager() {
         MongoDBDocumentManagerFactory mongoDBFactory = configuration.apply(Settings.builder().build());
         assertNotNull(mongoDBFactory.apply("database"));
     }
 
     @Test
-    public void shouldReturnNPEWhenSettingsIsNull() {
+    void shouldReturnNPEWhenSettingsIsNull() {
         assertThrows(NullPointerException.class, () -> configuration.apply((Settings) null));
     }
 
     @Test
-    public void shouldReturnNPEWhenMapSettingsIsNull() {
+    void shouldReturnNPEWhenMapSettingsIsNull() {
         assertThrows(NullPointerException.class, () -> configuration.get((Map<String, String>) null));
     }
 
     @Test
-    public void shouldReturnNPEWhenMongoClientIsNull() {
+    void shouldReturnNPEWhenMongoClientIsNull() {
         assertThrows(NullPointerException.class, () -> configuration.get((MongoClient) null));
     }
 
