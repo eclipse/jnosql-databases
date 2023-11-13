@@ -10,16 +10,16 @@
  *
  *   Contributors:
  *
- *   Otavio Santana
+ *   Maximillian Arruda
  */
 package org.eclipse.jnosql.databases.mongodb.integration;
 
-
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
-import org.eclipse.jnosql.databases.mongodb.mapping.MongoDBTemplate;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.Database;
+import org.eclipse.jnosql.mapping.DatabaseType;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -31,8 +31,6 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import java.util.Optional;
-
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
@@ -42,16 +40,12 @@ import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabas
 @EnableAutoWeld
 @AddPackages(value = {Convert.class, DocumentEntityConverter.class})
 @AddPackages(Book.class)
-@AddPackages(MongoDBTemplate.class)
 @AddPackages(Reflections.class)
 @AddPackages(Converters.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class MongoDBTemplateIntegrationTest {
-
-    @Inject
-    private MongoDBTemplate template;
+class RepositoryIntegrationTest {
 
     static {
         INSTANCE.get("library");
@@ -59,68 +53,63 @@ class MongoDBTemplateIntegrationTest {
         System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
     }
 
-    @Test
-    void shouldInsert() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
-        template.insert(book);
-        Optional<Book> optional = template.find(Book.class, book.id());
-        assertThat(optional).isNotNull().isNotEmpty()
-                .get().isEqualTo(book);
-    }
+    @Inject
+    @Database(DatabaseType.DOCUMENT)
+    BookRepository repository;
 
     @Test
-    void shouldUpdate() {
+    void shouldSave() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
-        assertThat(template.insert(book))
+        assertThat(repository.save(book))
                 .isNotNull()
                 .isEqualTo(book);
 
         Book updated = new Book(book.id(), book.title() + " updated", 2);
 
-        assertThat(template.update(updated))
+        assertThat(repository.save(updated))
                 .isNotNull()
                 .isNotEqualTo(book);
 
-        assertThat(template.find(Book.class, book.id()))
+        assertThat(repository.findById(book.id()))
                 .isNotNull().get().isEqualTo(updated);
 
     }
 
     @Test
-    void shouldFindById() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
-        assertThat(template.insert(book))
-                .isNotNull()
-                .isEqualTo(book);
-
-        assertThat(template.find(Book.class, book.id()))
-                .isNotNull().get().isEqualTo(book);
-    }
-
-    @Test
     void shouldDelete() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
-        assertThat(template.insert(book))
+        assertThat(repository.save(book))
                 .isNotNull()
                 .isEqualTo(book);
 
-        template.delete(Book.class, book.id());
-        assertThat(template.find(Book.class, book.id()))
+        repository.delete(book);
+        assertThat(repository.findById(book.id()))
                 .isNotNull().isEmpty();
     }
 
     @Test
-    void shouldDeleteAll(){
+    void shouldDeleteById() {
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        assertThat(repository.save(book))
+                .isNotNull()
+                .isEqualTo(book);
+
+        repository.deleteById(book.id());
+        assertThat(repository.findById(book.id()))
+                .isNotNull().isEmpty();
+    }
+
+    @Test
+    void shouldDeleteAll() {
         for (int index = 0; index < 20; index++) {
             Book book = new Book(randomUUID().toString(), "Effective Java", 1);
-            assertThat(template.insert(book))
+            assertThat(repository.save(book))
                     .isNotNull()
                     .isEqualTo(book);
         }
 
-        template.delete(Book.class).execute();
-        assertThat(template.select(Book.class).result()).isEmpty();
+        repository.deleteAll();
+        assertThat(repository.findAll()).isEmpty();
     }
-
 
 }

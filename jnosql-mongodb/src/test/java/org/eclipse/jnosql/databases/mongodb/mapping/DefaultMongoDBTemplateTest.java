@@ -21,6 +21,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManager;
 import org.eclipse.jnosql.mapping.Converters;
@@ -28,6 +29,7 @@ import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -74,7 +76,7 @@ class DefaultMongoDBTemplateTest {
     private MongoDBDocumentManager manager;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.manager = mock(MongoDBDocumentManager.class);
         Instance instance = mock(Instance.class);
         when(instance.get()).thenReturn(manager);
@@ -82,45 +84,53 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldReturnErrorOnDeleteMethod() {
-        assertThrows(NullPointerException.class, () -> template.delete((String) null, null));
-        assertThrows(NullPointerException.class, () -> template.delete("Collection", null));
-        assertThrows(NullPointerException.class, () -> template.delete((String) null,
-                eq("name", "Poliana")));
+    void shouldReturnErrorOnDeleteMethod() {
+        Bson filter = eq("name", "Poliana");
+        assertThrows(NullPointerException.class,() -> template.delete((String) null, null));
+        assertThrows(NullPointerException.class,() -> template.delete("Collection", null));
+        assertThrows(NullPointerException.class,() -> template.delete((String) null, filter));
 
-        assertThrows(NullPointerException.class, () -> template.delete(Person.class, null));
-        assertThrows(NullPointerException.class, () -> template.delete((Class<Object>) null,
-                eq("name", "Poliana")));
+        assertThrows(NullPointerException.class,() -> template.delete(Person.class, null));
+        assertThrows(NullPointerException.class,() -> template.delete((Class<Object>) null, filter));
     }
 
     @Test
-    public void shouldDeleteWithCollectionName() {
+    void shouldDeleteWithCollectionName() {
         Bson filter = eq("name", "Poliana");
         template.delete("Person", filter);
         Mockito.verify(manager).delete("Person", filter);
     }
 
     @Test
-    public void shouldDeleteWithEntity() {
+    void shouldDeleteWithEntity() {
         Bson filter = eq("name", "Poliana");
         template.delete(Person.class, filter);
         Mockito.verify(manager).delete("Person", filter);
     }
 
     @Test
-    public void shouldReturnErrorOnSelectMethod() {
-        assertThrows(NullPointerException.class, () -> template.select((String) null, null));
-        assertThrows(NullPointerException.class, () -> template.select("Collection", null));
-        assertThrows(NullPointerException.class, () -> template.select((String) null,
-                eq("name", "Poliana")));
-
-        assertThrows(NullPointerException.class, () -> template.select(Person.class, null));
-        assertThrows(NullPointerException.class, () -> template.select((Class<Object>) null,
-                eq("name", "Poliana")));
+    void shouldDeleteAll() {
+        EntityMetadata metadata = entities.get(Person.class);
+        DocumentDeleteQuery query = DocumentDeleteQuery.delete().from(metadata.name()).build();
+        template.deleteAll(Person.class);
+        Mockito.verify(manager).delete(query);
     }
 
     @Test
-    public void shouldSelectWithCollectionName() {
+    void shouldReturnErrorOnSelectMethod() {
+        Bson filter = eq("name", "Poliana");
+
+        assertThrows(NullPointerException.class, () -> template.select((String) null, null));
+        assertThrows(NullPointerException.class, () -> template.select("Collection", null));
+        assertThrows(NullPointerException.class, () -> template.select((String) null, filter));
+
+        assertThrows(NullPointerException.class, () -> template.select((Class<?>) null, null));
+        assertThrows(NullPointerException.class, () -> template.select(Person.class, null));
+        assertThrows(NullPointerException.class, () -> template.select((Class<?>) null, filter));
+    }
+
+    @Test
+    void shouldSelectWithCollectionName() {
         DocumentEntity entity = DocumentEntity.of("Person", Arrays
                 .asList(Document.of("_id", "Poliana"),
                         Document.of("age", 30)));
@@ -138,7 +148,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldSelectWithEntity() {
+    void shouldSelectWithEntity() {
         DocumentEntity entity = DocumentEntity.of("Person", Arrays
                 .asList(Document.of("_id", "Poliana"),
                         Document.of("age", 30)));
@@ -156,19 +166,34 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldReturnErrorOnAggregateMethod() {
-        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (List) null));
-        assertThrows(NullPointerException.class, () -> template.aggregate("Collection", (List) null));
-        assertThrows(NullPointerException.class, () -> template.aggregate((String) null,
-                Collections.singletonList(eq("name", "Poliana"))));
+    void shouldReturnErrorOnAggregateMethod() {
+        var collectionName = "AnyCollection";
+        var bson = eq("name", "Poliana");
+        var pipeline = Collections.singletonList(bson);
+        var pipelineArray = new Bson[]{bson, bson};
 
-        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, (List) null));
-        assertThrows(NullPointerException.class, () -> template.aggregate((Class<Object>) null,
-                Collections.singletonList(eq("name", "Poliana"))));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (Bson[]) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, (Bson) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipeline));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipelineArray));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, bson));
+        assertThrows(NullPointerException.class, () -> template.aggregate(collectionName, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate(collectionName, (Bson[]) null));
+
+        assertThrows(NullPointerException.class, () -> template.aggregate((Class<?>) null, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((Class<?>) null, (Bson[]) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((Class<?>) null, (Bson) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipeline));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, pipelineArray));
+        assertThrows(NullPointerException.class, () -> template.aggregate((String) null, bson));
+        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, (List<Bson>) null));
+        assertThrows(NullPointerException.class, () -> template.aggregate(Person.class, (Bson[]) null));
+
     }
 
     @Test
-    public void shouldAggregateWithCollectionName() {
+    void shouldAggregateWithCollectionName() {
         Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
@@ -179,7 +204,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldAggregateWithEntity() {
+    void shouldAggregateWithEntity() {
         Bson[] predicates = {
                 Aggregates.match(eq("name", "Poliana")),
                 Aggregates.group("$stars", Accumulators.sum("count", 1))
@@ -190,7 +215,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldCountByFilterWithCollectionName() {
+    void shouldCountByFilterWithCollectionName() {
         var filter = eq("name", "Poliana");
 
         template.count("Person", filter);
@@ -199,7 +224,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldCountByFilterWithEntity() {
+    void shouldCountByFilterWithEntity() {
         var filter = eq("name", "Poliana");
 
         template.count(Person.class, filter);
@@ -208,7 +233,7 @@ class DefaultMongoDBTemplateTest {
     }
 
     @Test
-    public void shouldReturnErrorOnCountByFilterMethod() {
+    void shouldReturnErrorOnCountByFilterMethod() {
         var filter = eq("name", "Poliana");
         assertThrows(NullPointerException.class, () -> template.count((String) null, null));
         assertThrows(NullPointerException.class, () -> template.count((String) null, filter));

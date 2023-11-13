@@ -25,22 +25,22 @@ class ObjectIdConverterTest {
     private AttributeConverter<String, ObjectId> converter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.converter = new ObjectIdConverter();
     }
 
     @Test
-    public void shouldReturnNullWhenAttributeIsNull() {
+    void shouldReturnNullWhenAttributeIsNull() {
         Assertions.assertNull(this.converter.convertToDatabaseColumn(null));
     }
 
     @Test
-    public void shouldReturnNullWhenDataIsNull() {
+    void shouldReturnNullWhenDataIsNull() {
         Assertions.assertNull(this.converter.convertToEntityAttribute(null));
     }
 
     @Test
-    public void shouldConvertToEntity() {
+    void shouldConvertToEntity() {
         ObjectId id = new ObjectId();
         String entityAttribute = this.converter.convertToEntityAttribute(id);
         Assertions.assertNotNull(entityAttribute);
@@ -48,7 +48,7 @@ class ObjectIdConverterTest {
     }
 
     @Test
-    public void shouldConvertToDatabase() {
+    void shouldConvertToDatabase() {
         ObjectId objectId = new ObjectId();
         String entityAttribute = objectId.toString();
         ObjectId id = this.converter.convertToDatabaseColumn(entityAttribute);

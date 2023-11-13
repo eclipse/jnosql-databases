@@ -26,10 +26,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDBDocumentConfigurationTest {
+class MongoDBDocumentConfigurationTest {
 
     @Test
-    public void shouldCreateDocumentManagerFactoryByMap() {
+    void shouldCreateDocumentManagerFactoryByMap() {
         Map<String, String> map = new HashMap<>();
         map.put("mongodb-server-host-1", "172.17.0.2:27017");
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
@@ -39,26 +39,26 @@ public class MongoDBDocumentConfigurationTest {
 
 
     @Test
-    public void shouldReturnErrorWhendSettingsIsNull() {
+    void shouldReturnErrorWhendSettingsIsNull() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
     @Test
-    public void shouldReturnErrorWhenMapSettingsIsNull() {
+    void shouldReturnErrorWhenMapSettingsIsNull() {
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.get((Map) null));
     }
 
     @Test
-    public void shouldReturnFromConfiguration() {
+    void shouldReturnFromConfiguration() {
         DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof DocumentConfiguration);
     }
 
     @Test
-    public void shouldReturnFromConfigurationQuery() {
+    void shouldReturnFromConfigurationQuery() {
         MongoDBDocumentConfiguration configuration = DocumentConfiguration
                 .getConfiguration(MongoDBDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);

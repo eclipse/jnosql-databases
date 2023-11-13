@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MongoAuthenticationTest {
 
     @Test
-    public void shouldReturnErrorWhenTheNumberParameterIsInvalid() {
+    void shouldReturnErrorWhenTheNumberParameterIsInvalid() {
         Settings settings = Settings.builder().put(USER, "value")
                 .build();
 
@@ -43,7 +43,7 @@ class MongoAuthenticationTest {
 
     }
     @Test
-    public void shouldReturnOneAuthentication() {
+    void shouldReturnOneAuthentication() {
         Settings settings = Settings.builder()
                 .put(AUTHENTICATION_SOURCE, "database")
                 .put(PASSWORD, "password")
@@ -59,7 +59,7 @@ class MongoAuthenticationTest {
     }
 
     @Test
-    public void shouldReturnOneAuthenticationWithGSSAPI() {
+    void shouldReturnOneAuthenticationWithGSSAPI() {
         Settings settings = Settings.builder()
                 .put(AUTHENTICATION_SOURCE, "database")
                 .put(PASSWORD, "password")
@@ -75,7 +75,7 @@ class MongoAuthenticationTest {
     }
 
     @Test
-    public void shouldReturnOneAuthenticationWithMongoX509() {
+    void shouldReturnOneAuthenticationWithMongoX509() {
         Settings settings = Settings.builder()
                 .put(AUTHENTICATION_SOURCE, "database")
                 .put(PASSWORD, "password")
@@ -90,7 +90,7 @@ class MongoAuthenticationTest {
     }
 
     @Test
-    public void shouldReturnOneAuthenticationWithSCRAMSHA1() {
+    void shouldReturnOneAuthenticationWithSCRAMSHA1() {
         Settings settings = Settings.builder()
                 .put(AUTHENTICATION_SOURCE, "database")
                 .put(PASSWORD, "password")
@@ -106,7 +106,7 @@ class MongoAuthenticationTest {
     }
 
     @Test
-    public void shouldReturnOneAuthenticationWithSCRAMSHA256() {
+    void shouldReturnOneAuthenticationWithSCRAMSHA256() {
         Settings settings = Settings.builder()
                 .put(AUTHENTICATION_SOURCE, "database")
                 .put(PASSWORD, "password")

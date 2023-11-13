@@ -49,17 +49,28 @@ import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabas
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class TemplateIntegrationTest {
 
-    @Inject
-    private DocumentTemplate template;
-
     static {
         INSTANCE.get("library");
         System.setProperty(MongoDBDocumentConfigurations.HOST.get() + ".1", INSTANCE.host());
         System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
     }
 
+    @Inject
+    private DocumentTemplate template;
+
     @Test
-    public void shouldInsert() {
+    void shouldFindById() {
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        assertThat(template.insert(book))
+                .isNotNull()
+                .isEqualTo(book);
+
+        assertThat(template.find(Book.class, book.id()))
+                .isNotNull().get().isEqualTo(book);
+    }
+
+    @Test
+    void shouldInsert() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.insert(book);
         Optional<Book> optional = template.find(Book.class, book.id());
@@ -68,7 +79,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -86,18 +97,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldFindById() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
-        assertThat(template.insert(book))
-                .isNotNull()
-                .isEqualTo(book);
-
-        assertThat(template.find(Book.class, book.id()))
-                .isNotNull().get().isEqualTo(book);
-    }
-
-    @Test
-    public void shouldDelete() {
+    void shouldDeleteById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -108,5 +108,16 @@ class TemplateIntegrationTest {
                 .isNotNull().isEmpty();
     }
 
+    @Test
+    void shouldDeleteAll(){
+        for (int index = 0; index < 20; index++) {
+            Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+            assertThat(template.insert(book))
+                    .isNotNull()
+                    .isEqualTo(book);
+        }
 
+        template.delete(Book.class).execute();
+        assertThat(template.select(Book.class).result()).isEmpty();
+    }
 }

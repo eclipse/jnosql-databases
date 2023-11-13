@@ -40,7 +40,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import org.bson.BsonValue;
 import static org.eclipse.jnosql.databases.mongodb.communication.MongoDBUtils.ID_FIELD;
@@ -95,7 +94,7 @@ public class MongoDBDocumentManager implements DocumentManager {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
-                .collect(toList());
+                .toList();
     }
 
     @Override
@@ -104,7 +103,7 @@ public class MongoDBDocumentManager implements DocumentManager {
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(e -> insert(e, ttl))
-                .collect(toList());
+                .toList();
     }
 
 
@@ -129,7 +128,7 @@ public class MongoDBDocumentManager implements DocumentManager {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update)
-                .collect(toList());
+                .toList();
     }
 
 

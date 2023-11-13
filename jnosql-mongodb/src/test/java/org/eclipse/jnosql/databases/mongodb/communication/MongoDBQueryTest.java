@@ -40,24 +40,24 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-public class MongoDBQueryTest {
+class MongoDBQueryTest {
 
     public static final String COLLECTION_NAME = "person";
     private static DocumentManager entityManager;
 
     @BeforeAll
-    public static void setUp() throws IOException {
+    static void setUp() throws IOException {
         entityManager = DocumentDatabase.INSTANCE.get("database");
     }
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test
     @DisplayName("The query should execute A or B")
-    public void shouldQuery() {
+    void shouldQuery() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
 
