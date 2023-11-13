@@ -59,7 +59,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.insert(book);
         Optional<Book> optional = template.find(Book.class, book.id());
@@ -68,7 +68,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -86,7 +86,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldFindById() {
+    void shouldFindById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -97,7 +97,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldDeleteById() {
+    void shouldDeleteById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
