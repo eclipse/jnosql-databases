@@ -21,6 +21,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManager;
 import org.eclipse.jnosql.mapping.Converters;
@@ -28,6 +29,7 @@ import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -105,6 +107,14 @@ class DefaultMongoDBTemplateTest {
         Bson filter = eq("name", "Poliana");
         template.delete(Person.class, filter);
         Mockito.verify(manager).delete("Person", filter);
+    }
+
+    @Test
+    public void shouldDeleteAll() {
+        EntityMetadata metadata = entities.get(Person.class);
+        DocumentDeleteQuery query = DocumentDeleteQuery.delete().from(metadata.name()).build();
+        template.deleteAll(Person.class);
+        Mockito.verify(manager).delete(query);
     }
 
     @Test
