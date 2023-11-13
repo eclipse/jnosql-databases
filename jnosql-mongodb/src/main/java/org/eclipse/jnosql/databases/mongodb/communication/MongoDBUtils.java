@@ -25,10 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
@@ -36,7 +35,7 @@ final class MongoDBUtils {
     static final String ID_FIELD = "_id";
 
     private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).name();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> MongoDBUtils.convert(cast(d).value());
+    private static final UnaryOperator<Object> VALUE_DOCUMENT = d -> MongoDBUtils.convert(cast(d).value());
 
     private MongoDBUtils() {
     }
