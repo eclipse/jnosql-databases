@@ -49,13 +49,24 @@ import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabas
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class TemplateIntegrationTest {
 
-    @Inject
-    private DocumentTemplate template;
-
     static {
         INSTANCE.get("library");
         System.setProperty(MongoDBDocumentConfigurations.HOST.get() + ".1", INSTANCE.host());
         System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
+    }
+
+    @Inject
+    private DocumentTemplate template;
+
+    @Test
+    void shouldFindById() {
+        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+        assertThat(template.insert(book))
+                .isNotNull()
+                .isEqualTo(book);
+
+        assertThat(template.find(Book.class, book.id()))
+                .isNotNull().get().isEqualTo(book);
     }
 
     @Test
@@ -86,17 +97,6 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    void shouldFindById() {
-        Book book = new Book(randomUUID().toString(), "Effective Java", 1);
-        assertThat(template.insert(book))
-                .isNotNull()
-                .isEqualTo(book);
-
-        assertThat(template.find(Book.class, book.id()))
-                .isNotNull().get().isEqualTo(book);
-    }
-
-    @Test
     void shouldDeleteById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
@@ -120,6 +120,4 @@ class TemplateIntegrationTest {
         template.delete(Book.class).execute();
         assertThat(template.select(Book.class).result()).isEmpty();
     }
-
-
 }
