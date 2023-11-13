@@ -40,7 +40,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import org.bson.BsonValue;
 import static org.eclipse.jnosql.databases.mongodb.communication.MongoDBUtils.ID_FIELD;
