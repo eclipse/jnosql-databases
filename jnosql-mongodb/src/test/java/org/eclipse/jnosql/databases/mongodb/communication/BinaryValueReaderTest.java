@@ -30,18 +30,18 @@ class BinaryValueReaderTest {
     private ValueReader valueReader;
 
     @BeforeEach
-    public void init() {
+    void init() {
         valueReader = new BinaryValueReader();
     }
 
     @Test
-    public void shouldValidateCompatibility() {
+    void shouldValidateCompatibility() {
         assertTrue(valueReader.test(Binary.class));
         assertFalse(valueReader.test(AtomicBoolean.class));
     }
 
     @Test
-    public void shouldConvert() {
+    void shouldConvert() {
         byte[] bytes = new byte[] {10, 10, 10};
         assertEquals(new Binary(bytes), valueReader.read(Binary.class, bytes));
         assertEquals(new Binary("hello".getBytes()), valueReader.read(Binary.class, "hello"));
