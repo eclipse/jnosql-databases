@@ -109,5 +109,18 @@ class MongoDBTemplateIntegrationTest {
                 .isNotNull().isEmpty();
     }
 
+    @Test
+    public void shouldDeleteAll(){
+        for (int index = 0; index < 20; index++) {
+            Book book = new Book(randomUUID().toString(), "Effective Java", 1);
+            assertThat(template.insert(book))
+                    .isNotNull()
+                    .isEqualTo(book);
+        }
+
+        template.delete(Book.class).execute();
+        assertThat(template.select(Book.class).result()).isEmpty();
+    }
+
 
 }
