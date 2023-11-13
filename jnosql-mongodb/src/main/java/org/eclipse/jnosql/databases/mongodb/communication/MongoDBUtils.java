@@ -58,7 +58,7 @@ final class MongoDBUtils {
         }
         if (isSudDocumentList(val)) {
             return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                    .map(MongoDBUtils::getMap).collect(toList());
+                    .map(MongoDBUtils::getMap).toList();
         }
         return val;
     }
@@ -70,7 +70,7 @@ final class MongoDBUtils {
             Object value = values.get(key);
             return getDocument(key, value);
         };
-        return values.keySet().stream().filter(isNotNull).map(documentMap).collect(Collectors.toList());
+        return values.keySet().stream().filter(isNotNull).map(documentMap).toList();
     }
 
     private static org.eclipse.jnosql.communication.document.Document getDocument(String key, Object value) {
@@ -80,7 +80,7 @@ final class MongoDBUtils {
             List<List<org.eclipse.jnosql.communication.document.Document>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
                 Map<?, ?> map = Map.class.cast(object);
-                documents.add(map.entrySet().stream().map(e -> getDocument(e.getKey().toString(), e.getValue())).collect(toList()));
+                documents.add(map.entrySet().stream().map(e -> getDocument(e.getKey().toString(), e.getValue())).toList());
             }
             return org.eclipse.jnosql.communication.document.Document.of(key, documents);
         }
