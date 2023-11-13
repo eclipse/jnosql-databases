@@ -35,13 +35,13 @@ import org.junit.jupiter.api.Test;
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
-public class DocumentEntityConverterTest {
+class DocumentEntityConverterTest {
 
     @Inject
     private DocumentEntityConverter converter;
 
     @Test
-    public void shouldConverterToDocument() {
+    void shouldConverterToDocument() {
         ObjectId id = new ObjectId();
         Music music = new Music(id.toString(), "Music", 2021);
         DocumentEntity entity = converter.toDocument(music);
@@ -53,7 +53,7 @@ public class DocumentEntityConverterTest {
     }
 
     @Test
-    public void shouldConvertToEntity() {
+    void shouldConvertToEntity() {
         ObjectId id = new ObjectId();
         DocumentEntity entity = DocumentEntity.of("Music");
         entity.add("name", "Music");
