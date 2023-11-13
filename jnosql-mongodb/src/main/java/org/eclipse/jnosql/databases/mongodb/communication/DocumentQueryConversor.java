@@ -24,7 +24,6 @@ import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 final class DocumentQueryConversor {
 
@@ -50,13 +49,13 @@ final class DocumentQueryConversor {
                 List<DocumentCondition> andList = condition.document().value().get(new TypeReference<>() {
                 });
                 yield Filters.and(andList.stream()
-                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
+                        .map(DocumentQueryConversor::convert).toList());
             }
             case OR -> {
                 List<DocumentCondition> orList = condition.document().value().get(new TypeReference<>() {
                 });
                 yield Filters.or(orList.stream()
-                        .map(DocumentQueryConversor::convert).collect(Collectors.toList()));
+                        .map(DocumentQueryConversor::convert).toList());
             }
             default -> throw new UnsupportedOperationException("The condition " + condition.condition()
                     + " is not supported from mongoDB diana driver");
