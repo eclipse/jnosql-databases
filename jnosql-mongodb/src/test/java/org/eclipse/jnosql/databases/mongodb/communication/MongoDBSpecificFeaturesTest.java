@@ -64,13 +64,14 @@ class MongoDBSpecificFeaturesTest {
 
     @Test
     void shouldReturnErrorOnSelectWhenThereIsNullParameter() {
+        Bson filter = eq("name", "Poliana");
+
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.select(null, null));
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.select(COLLECTION_NAME, null));
-
         Assertions.assertThrows(NullPointerException.class,
-                () -> entityManager.select(null, eq("name", "Poliana")));
+                () -> entityManager.select(null, filter));
     }
 
     @Test
@@ -85,6 +86,8 @@ class MongoDBSpecificFeaturesTest {
 
     @Test
     void shouldReturnErrorOnDeleteWhenThereIsNullParameter() {
+        Bson filter = eq("name", "Poliana");
+
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.delete(null, null));
         Assertions.assertThrows(NullPointerException.class,
@@ -108,6 +111,10 @@ class MongoDBSpecificFeaturesTest {
 
     @Test
     void shouldReturnErrorOnAggregateWhenThereIsNullParameter() {
+        Bson bson = eq("name", "Poliana");
+        List<Bson> pipeline = Collections.singletonList(bson);
+        var pipelineArray = new Bson[]{bson};
+
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.aggregate(null, (List<Bson>) null));
         Assertions.assertThrows(NullPointerException.class,
@@ -178,12 +185,14 @@ class MongoDBSpecificFeaturesTest {
     @Test
     void shouldReturnErrorOnCountWithInvalidFilter() {
 
+        Bson filter = eq("name", "Poliana");
+
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.count(null, null));
         Assertions.assertThrows(NullPointerException.class,
                 () -> entityManager.count(COLLECTION_NAME, null));
         Assertions.assertThrows(NullPointerException.class,
-                () -> entityManager.count(null, eq("name","Poliana")));
+                () -> entityManager.count(null, filter));
 
     }
 
