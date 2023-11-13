@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2023 Contributors to the Eclipse Foundation
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
+ *
+ *   You may elect to redistribute this code under either of these licenses.
+ *
+ *   Contributors:
+ *
+ *   Maximillian Arruda
+ */
 package org.eclipse.jnosql.databases.mongodb.integration;
 
 import jakarta.inject.Inject;
@@ -86,7 +100,7 @@ class RepositoryIntegrationTest {
     }
 
     @Test
-    void shouldDeleteAll(){
+    void shouldDeleteAll() {
         for (int index = 0; index < 20; index++) {
             Book book = new Book(randomUUID().toString(), "Effective Java", 1);
             assertThat(repository.save(book))
