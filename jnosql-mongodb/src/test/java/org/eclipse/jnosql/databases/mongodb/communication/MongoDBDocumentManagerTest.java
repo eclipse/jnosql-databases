@@ -80,7 +80,9 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldThrowExceptionWhenInsertWithTTL() {
-        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10)));
+        var entity = getEntity();
+        var ttl = Duration.ofSeconds(10);
+        assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(entity, ttl));
     }
 
     @Test
