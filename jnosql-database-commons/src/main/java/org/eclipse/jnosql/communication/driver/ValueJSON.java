@@ -58,6 +58,11 @@ public class ValueJSON implements Value {
         return typeClass.isInstance(json);
     }
 
+    @Override
+    public boolean isNull() {
+        return false;
+    }
+
     /**
      * Returns a new instance of {@link Value} keeping the value as JSON
      *
