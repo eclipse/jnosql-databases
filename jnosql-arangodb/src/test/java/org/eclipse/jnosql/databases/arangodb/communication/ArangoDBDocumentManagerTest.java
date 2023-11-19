@@ -235,9 +235,10 @@ public class ArangoDBDocumentManagerTest {
         List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
+
     @Test
-    public void shouldDeleteAll(){
-for (int index = 0; index < 20; index++) {
+    public void shouldDeleteAll() {
+        for (int index = 0; index < 20; index++) {
             DocumentEntity entity = getEntity();
             entityManager.insert(entity);
         }
