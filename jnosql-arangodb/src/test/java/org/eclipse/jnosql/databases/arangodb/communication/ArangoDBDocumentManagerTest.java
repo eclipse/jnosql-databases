@@ -157,14 +157,14 @@ public class ArangoDBDocumentManagerTest {
 
     @Test
     void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+        DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
     void shouldRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+        DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find(KEY_NAME).get();
         DocumentQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
 
@@ -250,7 +250,19 @@ public class ArangoDBDocumentManagerTest {
             soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
             soft.assertThat(name).get().extracting(Document::get).isNull();
         });
+    }
 
+    @Test
+    void shouldUpdateNull(){
+        var entity = entityManager.insert(getEntity());
+        entity.add(Document.of("name", null));
+        var documentEntity = entityManager.update(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
     }
 
     @Test
@@ -277,7 +289,7 @@ public class ArangoDBDocumentManagerTest {
         return entity;
     }
 
-    private DocumentEntity createSubdocumentList() {
+    private DocumentEntity createDocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         entity.add(Document.of("_id", "ids"));
         List<List<Document>> documents = new ArrayList<>();
