@@ -16,6 +16,7 @@ package org.eclipse.jnosql.databases.mongodb.integration;
 
 
 import jakarta.inject.Inject;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
 import org.eclipse.jnosql.databases.mongodb.mapping.MongoDBTemplate;
 import org.eclipse.jnosql.mapping.Convert;
@@ -121,6 +122,21 @@ class MongoDBTemplateIntegrationTest {
         template.delete(Book.class).execute();
         assertThat(template.select(Book.class).result()).isEmpty();
     }
+
+    @Test
+    void shouldUpdateNullValues(){
+        var book = new Book(randomUUID().toString(), "Effective Java", 1);
+        template.insert(book);
+        template.update(new Book(book.id(), null, 2));
+        Optional<Book> optional = template.select(Book.class).where("id")
+                .eq(book.id()).singleResult();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(optional).isPresent();
+            softly.assertThat(optional).get().extracting(Book::title).isNull();
+            softly.assertThat(optional).get().extracting(Book::edition).isEqualTo(2);
+        });
+    }
+
 
 
 }
