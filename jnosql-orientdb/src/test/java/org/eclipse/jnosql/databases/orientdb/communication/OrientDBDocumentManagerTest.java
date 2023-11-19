@@ -15,6 +15,7 @@
  */
 package org.eclipse.jnosql.databases.orientdb.communication;
 
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -491,6 +492,32 @@ public class OrientDBDocumentManagerTest {
         assertNotNull(documentEntity);
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
 
+    }
+
+    @Test
+    void shouldInsertNull() {
+        DocumentEntity entity = getEntity();
+        entity.add(Document.of("name", null));
+        DocumentEntity documentEntity = entityManager.insert(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
+    }
+
+    @Test
+    void shouldUpdateNull(){
+        var entity = entityManager.insert(getEntity());
+        entity.add(Document.of("name", null));
+        var documentEntity = entityManager.update(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
     }
 
     private DocumentEntity createSubdocumentList() {
