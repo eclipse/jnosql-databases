@@ -64,20 +64,20 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
         entityManager.delete(query);
     }
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
 
     @Test
-    public void shouldInsertNotId() {
+    void shouldInsertNotId() {
         DocumentEntity entity = getEntity();
         entity.remove(CouchDBConstant.ID);
         DocumentEntity documentEntity = entityManager.insert(entity);
@@ -85,7 +85,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         DocumentEntity entity = getEntity();
         entity.remove(CouchDBConstant.ID);
         DocumentEntity documentEntity = entityManager.insert(entity);
@@ -96,7 +96,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldReturnErrorOnUpdate() {
+    void shouldReturnErrorOnUpdate() {
         assertThrows(NullPointerException.class, () -> entityManager.update((DocumentEntity) null));
         assertThrows(CouchDBHttpClientException.class, () -> {
             DocumentEntity entity = getEntity();
@@ -115,7 +115,7 @@ class DefaultCouchDBDocumentManagerTest {
 
 
     @Test
-    public void shouldSelect() {
+    void shouldSelect() {
         DocumentEntity entity = getEntity();
         entity.remove(CouchDBConstant.ID);
         entity = entityManager.insert(entity);
@@ -126,14 +126,14 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSelectEmptyResult() {
+    void shouldSelectEmptyResult() {
         DocumentQuery query = select().from(COLLECTION_NAME).where("no_field").eq("not_found").build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
     }
 
     @Test
-    public void shouldRemoveEntityByName() {
+    void shouldRemoveEntityByName() {
         DocumentEntity entity = getEntity();
         entity.remove(CouchDBConstant.ID);
         entity = entityManager.insert(entity);
@@ -147,7 +147,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldCount() {
+    void shouldCount() {
         DocumentEntity entity = getEntity();
         entity.remove(CouchDBConstant.ID);
         entityManager.insert(entity);
@@ -156,7 +156,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSelectWithCouchDBDocumentQuery() {
+    void shouldSelectWithCouchDBDocumentQuery() {
 
         for (int index = 0; index < 4; index++) {
             DocumentEntity entity = getEntity();
@@ -183,7 +183,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldExecuteInStringQueryAtCouchbase() {
+    void shouldExecuteInStringQueryAtCouchbase() {
         for (int index = 0; index < 4; index++) {
             DocumentEntity entity = getEntity();
             entity.remove(CouchDBConstant.ID);
@@ -197,14 +197,14 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListSubdocumentList() {
+    void shouldConvertFromListSubdocumentList() {
         DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListDocumentList() {
+    void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find(CouchDBConstant.ID).get();
         DocumentQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
@@ -217,7 +217,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument() {
+    void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -234,7 +234,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() {
+    void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"),
                 Document.of("mobile2", "1231231"))));
@@ -253,7 +253,7 @@ class DefaultCouchDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveMap() {
+    void shouldSaveMap() {
         DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
         String id = UUID.randomUUID().toString();
         entity.add("properties", Collections.singletonMap("hallo", "Welt"));
