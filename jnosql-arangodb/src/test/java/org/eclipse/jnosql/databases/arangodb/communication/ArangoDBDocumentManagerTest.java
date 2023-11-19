@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -234,6 +236,21 @@ public class ArangoDBDocumentManagerTest {
         String aql = "FOR a IN person RETURN a.name";
         List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
+    }
+
+    @Test
+    void shouldInsertNull() {
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        entity.add(Document.of(KEY_NAME, String.valueOf(random.nextLong())));
+        entity.add(Document.of("name", null));
+        DocumentEntity documentEntity = entityManager.insert(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
+
     }
 
     @Test
