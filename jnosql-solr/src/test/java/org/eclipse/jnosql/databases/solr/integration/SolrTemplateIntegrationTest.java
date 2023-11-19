@@ -16,6 +16,7 @@ package org.eclipse.jnosql.databases.solr.integration;
 
 
 import jakarta.inject.Inject;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.solr.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfigurations;
 import org.eclipse.jnosql.databases.solr.mapping.SolrTemplate;
@@ -108,6 +109,22 @@ class SolrTemplateIntegrationTest {
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
     }
+
+    @Test
+    void shouldUpdateNullValues(){
+        var book = new Book(randomUUID().toString(), "Effective Java", 1);
+        template.insert(book);
+        template.update(new Book(book.id(), null, 2));
+        Optional<Book> optional = template.select(Book.class).where("id")
+                .eq(book.id()).singleResult();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(optional).isPresent();
+            softly.assertThat(optional).get().extracting(Book::title).isNull();
+            softly.assertThat(optional).get().extracting(Book::edition).isEqualTo(2);
+        });
+    }
+
+
 
 
 }
