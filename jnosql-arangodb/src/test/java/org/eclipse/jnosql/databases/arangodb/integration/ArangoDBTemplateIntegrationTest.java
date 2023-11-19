@@ -60,7 +60,7 @@ class ArangoDBTemplateIntegrationTest {
     }
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.insert(book);
         Optional<Book> optional = template.find(Book.class, book.id());
@@ -69,7 +69,7 @@ class ArangoDBTemplateIntegrationTest {
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -87,7 +87,7 @@ class ArangoDBTemplateIntegrationTest {
     }
 
     @Test
-    public void shouldFindById() {
+    void shouldFindById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -98,7 +98,7 @@ class ArangoDBTemplateIntegrationTest {
     }
 
     @Test
-    public void shouldDelete() {
+    void shouldDelete() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -110,7 +110,7 @@ class ArangoDBTemplateIntegrationTest {
     }
 
     @Test
-    public void shouldDeleteAll(){
+    void shouldDeleteAll(){
         for (int index = 0; index < 20; index++) {
             Book book = new Book(randomUUID().toString(), "Effective Java", 1);
             assertThat(template.insert(book))
@@ -121,6 +121,8 @@ class ArangoDBTemplateIntegrationTest {
         template.delete(Book.class).execute();
         assertThat(template.select(Book.class).result()).isEmpty();
     }
+    
+    
 
 
 }
