@@ -62,19 +62,19 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertTrue(documentEntity.documents().stream().map(Document::name).anyMatch(s -> s.equals(ID)));
     }
 
     @Test
-    public void shouldThrowExceptionWhenInsertWithTTL() {
+    void shouldThrowExceptionWhenInsertWithTTL() {
         assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ofSeconds(10)));
     }
 
     @Test
-    public void shouldUpdateSave() {
+    void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
@@ -84,7 +84,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Optional<Document> id = documentEntity.find(ID);
@@ -100,7 +100,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocument() {
+    void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find(ID);
 
@@ -119,7 +119,7 @@ public class DefaultSolrDocumentManagerTest {
 
 
     @Test
-    public void shouldFindDocument2() {
+    void shouldFindDocument2() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find(ID);
 
@@ -137,7 +137,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocument3() {
+    void shouldFindDocument3() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find(ID);
         DocumentQuery query = select().from(COLLECTION_NAME)
@@ -154,7 +154,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentGreaterThan() {
+    void shouldFindDocumentGreaterThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -170,7 +170,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindNot() {
+    void shouldFindNot() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         entityManager.insert(getEntitiesWithValues());
@@ -181,7 +181,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentGreaterEqualsThan() {
+    void shouldFindDocumentGreaterEqualsThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -198,7 +198,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLesserThan() {
+    void shouldFindDocumentLesserThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -213,7 +213,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLesserEqualsThan() {
+    void shouldFindDocumentLesserEqualsThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -229,7 +229,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLike() {
+    void shouldFindDocumentLike() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entities = entityManager.insert(getEntitiesWithValues());
@@ -244,7 +244,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentIn() {
+    void shouldFindDocumentIn() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -259,7 +259,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentStart() {
+    void shouldFindDocumentStart() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -287,7 +287,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentLimit() {
+    void shouldFindDocumentLimit() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -315,7 +315,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocumentSort() {
+    void shouldFindDocumentSort() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
@@ -349,7 +349,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldExecuteNativeQuery() {
+    void shouldExecuteNativeQuery() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         entityManager.insert(getEntitiesWithValues());
@@ -359,7 +359,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldExecuteNativeQueryParams() {
+    void shouldExecuteNativeQueryParams() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         entityManager.insert(getEntitiesWithValues());
@@ -375,7 +375,7 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldExecuteNativeQueryParamsReplaceAll() {
+    void shouldExecuteNativeQueryParamsReplaceAll() {
         entityManager.insert(getEntitiesWithValues());
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
@@ -391,7 +391,7 @@ public class DefaultSolrDocumentManagerTest {
 
 
     @Test
-    public void shouldFindAll() {
+    void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());;
@@ -400,7 +400,7 @@ public class DefaultSolrDocumentManagerTest {
 
 
     @Test
-    public void shouldReturnErrorWhenSaveSubDocument() {
+    void shouldReturnErrorWhenSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         Assertions.assertThrows(SolrException.class, () -> entityManager.insert(entity));
@@ -408,14 +408,14 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() {
+    void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         Assertions.assertThrows(SolrException.class, () -> entityManager.insert(entity));
     }
 
     @Test
-    public void shouldCreateDate() {
+    void shouldCreateDate() {
         Date date = new Date();
         LocalDate now = LocalDate.now();
 
@@ -437,12 +437,12 @@ public class DefaultSolrDocumentManagerTest {
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
+    void shouldRetrieveListSubdocumentList() {
         Assertions.assertThrows(SolrException.class, () -> entityManager.insert(createSubdocumentList()));
     }
 
     @Test
-    public void shouldCount() {
+    void shouldCount() {
         DocumentEntity entity = entityManager.insert(getEntity());
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
     }
