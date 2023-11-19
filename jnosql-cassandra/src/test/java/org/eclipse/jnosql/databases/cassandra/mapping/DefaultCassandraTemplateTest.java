@@ -80,7 +80,7 @@ public class DefaultCassandraTemplateTest {
     private CassandraColumnManager manager;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.manager = mock(CassandraColumnManager.class);
         Instance instance = mock(Instance.class);
         when(instance.get()).thenReturn(manager);
@@ -88,9 +88,9 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    public void shouldSaveConsistency() {
+    void shouldSaveConsistency() {
         ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
-
+        entity.addNull("home");
         ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
@@ -110,9 +110,9 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    public void shouldSaveConsistencyIterable() {
+    void shouldSaveConsistencyIterable() {
         ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
-
+        entity.addNull("home");
         ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
@@ -131,10 +131,10 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    public void shouldSaveConsntencyDuration() {
+    void shouldSaveConsntencyDuration() {
         Duration duration = Duration.ofHours(2);
         ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
-
+        entity.addNull("home");
         ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
@@ -153,10 +153,10 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    public void shouldSaveConsntencyDurationIterable() {
+    void shouldSaveConsistencyDurationIterable() {
         Duration duration = Duration.ofHours(2);
         ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
-
+        entity.addNull("home");
         ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
@@ -174,7 +174,7 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    public void shouldDelete() {
+    void shouldDelete() {
 
 
         ColumnDeleteQuery query = ColumnDeleteQuery.delete().from("columnFamily").build();
@@ -185,7 +185,7 @@ public class DefaultCassandraTemplateTest {
 
 
     @Test
-    public void shouldFind() {
+    void shouldFind() {
         Person person = new Person();
         person.setName("Name");
         person.setAge(20);
@@ -200,7 +200,7 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    public void shouldFindCQL() {
+    void shouldFindCQL() {
         Person person = new Person();
         person.setName("Name");
         person.setAge(20);
@@ -214,7 +214,7 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    public void shouldFindSimpleStatement() {
+    void shouldFindSimpleStatement() {
         SimpleStatement statement = QueryBuilder.selectFrom("Person").all().build();
         Person person = new Person();
         person.setName("Name");

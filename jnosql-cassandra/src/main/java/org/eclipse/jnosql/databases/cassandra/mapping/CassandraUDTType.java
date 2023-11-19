@@ -60,7 +60,9 @@ class CassandraUDTType implements ColumnFieldValue {
 
     @Override
     public List<Column> toColumn(ColumnEntityConverter converter, Converters converters) {
-        if (Iterable.class.isInstance(value)) {
+        if (value == null) {
+            return singletonList(Column.of(field.name(), null));
+        } else if (Iterable.class.isInstance(value)) {
             List<Iterable<Column>> columns = new ArrayList<>();
             stream(Iterable.class.cast(value).spliterator(), false)
                     .forEach(c -> columns.add(converter.toColumn(c).columns()));
