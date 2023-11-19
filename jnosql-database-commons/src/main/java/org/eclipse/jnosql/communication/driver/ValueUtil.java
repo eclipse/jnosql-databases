@@ -33,7 +33,9 @@ import static java.util.stream.Collectors.toList;
  */
 public final class ValueUtil {
     private static final String PARAM_CLASS_NAME = "org.eclipse.jnosql.communication.ParamValue";
+    @SuppressWarnings("rawtypes")
     private static final ValueWriter VALUE_WRITER = ValueWriterDecorator.getInstance();
+    @SuppressWarnings("rawtypes")
     private static final Function CONVERT = o -> {
         if (o instanceof Value) {
             return convert(Value.class.cast(o));
@@ -66,6 +68,7 @@ public final class ValueUtil {
      * @param value the value
      * @return a list object
      */
+    @SuppressWarnings("unchecked")
     public static List<Object> convertToList(Value value) {
         Objects.requireNonNull(value, "value is required");
         Object val = value.get();
@@ -90,13 +93,17 @@ public final class ValueUtil {
         return Collections.singletonList(getObject(val));
     }
 
+    @SuppressWarnings("unchecked")
     private static List<Object> getObjects(Object val) {
         return (List<Object>) StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
                 .map(CONVERT).collect(toList());
     }
 
+    @SuppressWarnings("unchecked")
     private static Object getObject(Object val) {
-        if (VALUE_WRITER.test(val.getClass())) {
+        if (val == null) {
+            return null;
+        } else if (VALUE_WRITER.test(val.getClass())) {
             return VALUE_WRITER.write(val);
         }
         return val;

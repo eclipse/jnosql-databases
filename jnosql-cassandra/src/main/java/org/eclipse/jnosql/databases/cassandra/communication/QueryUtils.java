@@ -172,6 +172,10 @@ final class QueryUtils {
 
     private static void insertSingleField(Column column, Map<String, Term> values) {
         Object value = column.get();
+        if(value == null) {
+            values.put(getName(column), QueryBuilder.literal(null));
+            return;
+        }
         try {
             CodecRegistry.DEFAULT.codecFor(value);
             values.put(getName(column), QueryBuilder.literal(value));

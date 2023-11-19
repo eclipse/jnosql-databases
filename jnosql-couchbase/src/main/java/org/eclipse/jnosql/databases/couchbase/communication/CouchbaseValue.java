@@ -56,4 +56,9 @@ final class CouchbaseValue implements Value {
     public boolean isInstanceOf(Class<?> typeClass) {
         return false;
     }
+
+    @Override
+    public boolean isNull() {
+        return result != null;
+    }
 }

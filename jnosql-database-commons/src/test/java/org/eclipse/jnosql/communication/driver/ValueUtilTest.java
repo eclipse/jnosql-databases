@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ValueUtilTest {
 
@@ -59,6 +60,12 @@ class ValueUtilTest {
     public void shouldConvertList3() {
         Value value = Value.of(Arrays.asList(Value.of(10), Value.of(20)));
         assertEquals(Arrays.asList(10, 20), ValueUtil.convertToList(value));
+    }
+
+    @Test
+    public void shouldConvertNull() {
+        Value value = Value.of(null);
+        assertNull(ValueUtil.convert(value));
     }
 
 

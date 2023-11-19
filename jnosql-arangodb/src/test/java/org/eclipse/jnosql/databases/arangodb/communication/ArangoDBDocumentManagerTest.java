@@ -16,6 +16,7 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -57,7 +59,7 @@ public class ArangoDBDocumentManagerTest {
     private final String KEY_NAME = "_key";
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         random = new Random();
         entityManager = DocumentDatabase.INSTANCE.get().apply(DATABASE);
         entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
@@ -65,12 +67,12 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @AfterEach
-    public void after() {
+    void after() {
         entityManager.delete(DocumentDeleteQuery.delete().from(COLLECTION_NAME).build());
     }
 
     @Test
-    public void shouldSave() {
+    void shouldSave() {
         DocumentEntity entity = getEntity();
 
         DocumentEntity documentEntity = entityManager.insert(entity);
@@ -78,7 +80,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldUpdateSave() {
+    void shouldUpdateSave() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
@@ -88,7 +90,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
         Document id = documentEntity.find("_key").get();
         DocumentQuery select = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
@@ -98,7 +100,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntity2() {
+    void shouldRemoveEntity2() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
         Document id = documentEntity.find("name").get();
         DocumentQuery select = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
@@ -109,7 +111,7 @@ public class ArangoDBDocumentManagerTest {
 
 
     @Test
-    public void shouldFindDocument() {
+    void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find(KEY_NAME).get();
         DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
@@ -124,7 +126,7 @@ public class ArangoDBDocumentManagerTest {
 
 
     @Test
-    public void shouldSaveSubDocument() {
+    void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -138,7 +140,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() {
+    void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -154,15 +156,15 @@ public class ArangoDBDocumentManagerTest {
 
 
     @Test
-    public void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+    void shouldConvertFromListSubdocumentList() {
+        DocumentEntity entity = createDocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+    void shouldRetrieveListSubdocumentList() {
+        DocumentEntity entity = entityManager.insert(createDocumentList());
         Document key = entity.find(KEY_NAME).get();
         DocumentQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
 
@@ -176,7 +178,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldRunAQL() {
+    void shouldRunAQL() {
         DocumentEntity entity = getEntity();
         DocumentEntity entitySaved = entityManager.insert(entity);
 
@@ -188,7 +190,7 @@ public class ArangoDBDocumentManagerTest {
 
 
     @Test
-    public void shouldCount() {
+    void shouldCount() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
 
@@ -196,7 +198,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldReadFromDifferentBaseDocumentUsingInstance() {
+    void shouldReadFromDifferentBaseDocumentUsingInstance() {
         entityManager.insert(getEntity());
         ArangoDB arangoDB = DefaultArangoDBDocumentManager.class.cast(entityManager).getArangoDB();
         arangoDB.db(DATABASE).collection(COLLECTION_NAME).insertDocument(new Person());
@@ -206,7 +208,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldReadFromDifferentBaseDocumentUsingMap() {
+    void shouldReadFromDifferentBaseDocumentUsingMap() {
         entityManager.insert(getEntity());
         ArangoDB arangoDB = DefaultArangoDBDocumentManager.class.cast(entityManager).getArangoDB();
         Map<String, Object> map = new HashMap<>();
@@ -219,7 +221,7 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldExecuteAQLWithTypeParams() {
+    void shouldExecuteAQLWithTypeParams() {
         entityManager.insert(getEntity());
         String aql = "FOR a IN person FILTER a.name == @name RETURN a.name";
         List<String> entities = entityManager.aql(aql,
@@ -229,15 +231,43 @@ public class ArangoDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldExecuteAQLWithType() {
+    void shouldExecuteAQLWithType() {
         entityManager.insert(getEntity());
         String aql = "FOR a IN person RETURN a.name";
         List<String> entities = entityManager.aql(aql, String.class).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
+
     @Test
-    public void shouldDeleteAll(){
-for (int index = 0; index < 20; index++) {
+    void shouldInsertNull() {
+        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        entity.add(Document.of(KEY_NAME, String.valueOf(random.nextLong())));
+        entity.add(Document.of("name", null));
+        DocumentEntity documentEntity = entityManager.insert(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
+    }
+
+    @Test
+    void shouldUpdateNull(){
+        var entity = entityManager.insert(getEntity());
+        entity.add(Document.of("name", null));
+        var documentEntity = entityManager.update(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
+    }
+
+    @Test
+    void shouldDeleteAll() {
+        for (int index = 0; index < 20; index++) {
             DocumentEntity entity = getEntity();
             entityManager.insert(entity);
         }
@@ -259,7 +289,7 @@ for (int index = 0; index < 20; index++) {
         return entity;
     }
 
-    private DocumentEntity createSubdocumentList() {
+    private DocumentEntity createDocumentList() {
         DocumentEntity entity = DocumentEntity.of("AppointmentBook");
         entity.add(Document.of("_id", "ids"));
         List<List<Document>> documents = new ArrayList<>();

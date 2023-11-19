@@ -18,6 +18,7 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
 import jakarta.data.exceptions.NonUniqueResultException;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.column.Column;
 import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
@@ -71,7 +72,7 @@ public class CassandraColumnManagerTest {
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         DefaultCassandraColumnManager manager = DefaultCassandraColumnManager.class.cast(entityManager);
         CqlSession session = manager.getSession();
         if (!session.isClosed()) {
@@ -81,7 +82,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldClose() throws Exception {
+    void shouldClose() throws Exception {
         entityManager.close();
         DefaultCassandraColumnManager manager = DefaultCassandraColumnManager.class.cast(entityManager);
         CqlSession session = manager.getSession();
@@ -89,7 +90,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldInsertJustKey() {
+    void shouldInsertJustKey() {
         Column key = Columns.of("id", 10L);
         ColumnEntity columnEntity = ColumnEntity.of(Constants.COLUMN_FAMILY);
         columnEntity.add(key);
@@ -98,13 +99,13 @@ public class CassandraColumnManagerTest {
 
 
     @Test
-    public void shouldInsertColumns() {
+    void shouldInsertColumns() {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity);
     }
 
     @Test
-    public void shouldInsertWithTtl() throws InterruptedException {
+    void shouldInsertWithTtl() throws InterruptedException {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity, Duration.ofSeconds(1L));
 
@@ -116,7 +117,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldInsertIterableWithTtl() throws InterruptedException {
+    void shouldInsertIterableWithTtl() throws InterruptedException {
         entityManager.insert(getEntities(), Duration.ofSeconds(1L));
 
         sleep(2_000L);
@@ -127,13 +128,13 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenInsertWithColumnNull() {
+    void shouldReturnErrorWhenInsertWithColumnNull() {
 
         assertThrows(NullPointerException.class, () -> entityManager.insert((ColumnEntity) null));
     }
 
     @Test
-    public void shouldReturnErrorWhenInsertWithConsistencyLevelNull() {
+    void shouldReturnErrorWhenInsertWithConsistencyLevelNull() {
 
         assertThrows(NullPointerException.class, () -> entityManager.insert(getColumnFamily(), null));
 
@@ -141,44 +142,44 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenInsertWithColumnsNull() {
+    void shouldReturnErrorWhenInsertWithColumnsNull() {
 
         assertThrows(NullPointerException.class, () -> entityManager.insert((Iterable<ColumnEntity>) null));
     }
 
 
     @Test
-    public void shouldInsertColumnsWithConsistencyLevel() {
+    void shouldInsertColumnsWithConsistencyLevel() {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.save(columnEntity, CONSISTENCY_LEVEL);
     }
 
 
     @Test
-    public void shouldReturnErrorWhenUpdateWithColumnsNull() {
+    void shouldReturnErrorWhenUpdateWithColumnsNull() {
 
         assertThrows(NullPointerException.class, () -> entityManager.update((Iterable<ColumnEntity>) null));
 
     }
 
     @Test
-    public void shouldReturnErrorWhenUpdateWithColumnNull() {
+    void shouldReturnErrorWhenUpdateWithColumnNull() {
         assertThrows(NullPointerException.class, () -> entityManager.update((ColumnEntity) null));
     }
 
     @Test
-    public void shouldUpdateColumn() {
+    void shouldUpdateColumn() {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.update(columnEntity);
     }
 
     @Test
-    public void shouldUpdateColumns() {
+    void shouldUpdateColumns() {
         entityManager.update(getEntities());
     }
 
     @Test
-    public void shouldReturnErrorWhenSaveHasNullElement() {
+    void shouldReturnErrorWhenSaveHasNullElement() {
         assertThrows(NullPointerException.class, () -> entityManager.save((ColumnEntity) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL));
 
         assertThrows(NullPointerException.class, () -> entityManager.save(getColumnFamily(), null, ConsistencyLevel.ALL));
@@ -187,7 +188,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenSaveIterableHasNullElement() {
+    void shouldReturnErrorWhenSaveIterableHasNullElement() {
         assertThrows(NullPointerException.class, () -> entityManager.save((List<ColumnEntity>) null, Duration.ofSeconds(1L), ConsistencyLevel.ALL));
 
         assertThrows(NullPointerException.class, () -> entityManager.save(getEntities(), null, ConsistencyLevel.ALL));
@@ -196,7 +197,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldFindAll() {
+    void shouldFindAll() {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity);
 
@@ -206,7 +207,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldReturnSingleResult() {
+    void shouldReturnSingleResult() {
         ColumnEntity columnEntity = getColumnFamily();
         entityManager.insert(columnEntity);
         ColumnQuery query = select().from(columnEntity.name()).where("id").eq(10L).build();
@@ -219,14 +220,14 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenThereIsNotThanOneResultInSingleResult() {
+    void shouldReturnErrorWhenThereIsNotThanOneResultInSingleResult() {
         entityManager.insert(getEntities());
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).build();
         assertThrows(NonUniqueResultException.class, () -> entityManager.singleResult(query));
     }
 
     @Test
-    public void shouldReturnErrorWhenQueryIsNull() {
+    void shouldReturnErrorWhenQueryIsNull() {
         assertThrows(NullPointerException.class, () -> entityManager.select(null));
 
         assertThrows(NullPointerException.class, () -> entityManager.singleResult(null));
@@ -234,7 +235,7 @@ public class CassandraColumnManagerTest {
 
 
     @Test
-    public void shouldFindById() {
+    void shouldFindById() {
 
         entityManager.insert(getColumnFamily());
 
@@ -250,7 +251,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldFindByIdWithConsistenceLevel() {
+    void shouldFindByIdWithConsistenceLevel() {
 
         entityManager.insert(getColumnFamily());
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).where("id").eq(10L).build();
@@ -264,7 +265,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldRunNativeQuery() {
+    void shouldRunNativeQuery() {
         entityManager.insert(getColumnFamily());
         List<ColumnEntity> entities = entityManager.cql("select * from newKeySpace.newColumnFamily where id=10;")
                 .collect(toList());
@@ -276,7 +277,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldRunNativeQuery2() {
+    void shouldRunNativeQuery2() {
         entityManager.insert(getColumnFamily());
         String query = "select * from newKeySpace.newColumnFamily where id = :id;";
         List<ColumnEntity> entities = entityManager.cql(query, singletonMap("id", 10L)).collect(toList());
@@ -289,7 +290,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldPrepareStatement() {
+    void shouldPrepareStatement() {
         entityManager.insert(getColumnFamily());
         CassandraPreparedStatement preparedStatement = entityManager.nativeQueryPrepare("select * from newKeySpace.newColumnFamily where id=?");
         preparedStatement.bind(10L);
@@ -302,7 +303,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldDeleteColumnFamily() {
+    void shouldDeleteColumnFamily() {
         entityManager.insert(getColumnFamily());
         ColumnEntity.of(Constants.COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).where("id").eq(10L).build();
@@ -314,17 +315,17 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenDeleteQueryIsNull() {
+    void shouldReturnErrorWhenDeleteQueryIsNull() {
         assertThrows(NullPointerException.class, () -> entityManager.delete(null));
     }
 
     @Test
-    public void shouldReturnErrorWhenDeleteConsistencyLevelIsNull() {
+    void shouldReturnErrorWhenDeleteConsistencyLevelIsNull() {
         assertThrows(NullPointerException.class, () -> entityManager.delete(delete().from(Constants.COLUMN_FAMILY).build(), null));
     }
 
     @Test
-    public void shouldDeleteColumnFamilyWithConsistencyLevel() {
+    void shouldDeleteColumnFamilyWithConsistencyLevel() {
         entityManager.insert(getColumnFamily());
         ColumnEntity.of(Constants.COLUMN_FAMILY, singletonList(Columns.of("id", 10L)));
         ColumnDeleteQuery deleteQuery = delete().from(Constants.COLUMN_FAMILY).where("id").eq(10L).build();
@@ -335,7 +336,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldLimitResult() {
+    void shouldLimitResult() {
         getEntities().forEach(entityManager::insert);
         ColumnQuery query = select().from(Constants.COLUMN_FAMILY).where("id").in(Arrays.asList(1L, 2L, 3L))
                 .limit(2).build();
@@ -359,7 +360,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldSupportUDT() {
+    void shouldSupportUDT() {
         ColumnEntity entity = ColumnEntity.of("users");
         entity.add(Column.of("nickname", "ada"));
         List<Column> columns = new ArrayList<>();
@@ -382,7 +383,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldSupportAnUDTElement() {
+    void shouldSupportAnUDTElement() {
         ColumnEntity entity = ColumnEntity.of("users");
         entity.add(Column.of("nickname", "Ioda"));
         List<Column> columns = new ArrayList<>();
@@ -407,7 +408,7 @@ public class CassandraColumnManagerTest {
 
 
     @Test
-    public void shouldSupportDate() {
+    void shouldSupportDate() {
         ColumnEntity entity = ColumnEntity.of("history");
         entity.add(Column.of("name", "World war II"));
         ZoneId defaultZoneId = ZoneId.systemDefault();
@@ -426,13 +427,13 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldSupportListUDTs() {
+    void shouldSupportListUDTs() {
         ColumnEntity entity = createEntityWithIterable();
         entityManager.insert(entity);
     }
 
     @Test
-    public void shouldReturnListUDT() {
+    void shouldReturnListUDT() {
         ColumnEntity entity = createEntityWithIterable();
         entityManager.insert(entity);
 
@@ -444,7 +445,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldCount() {
+    void shouldCount() {
         ColumnEntity entity = createEntityWithIterable();
         entityManager.insert(entity);
         long contacts = entityManager.count("contacts");
@@ -452,7 +453,7 @@ public class CassandraColumnManagerTest {
     }
 
    @Test
-    public void shouldPagingState() {
+    void shouldPagingState() {
         for (long index = 1; index <= 10; index++) {
             ColumnEntity columnFamily = getColumnFamily();
             columnFamily.add("id", index);
@@ -470,7 +471,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldPaginate() {
+    void shouldPaginate() {
         for (long index = 1; index <= 10; index++) {
             ColumnEntity columnFamily = getColumnFamily();
             columnFamily.add("id", index);
@@ -483,7 +484,7 @@ public class CassandraColumnManagerTest {
     }
 
     @Test
-    public void shouldCreateUDTWithSet() {
+    void shouldCreateUDTWithSet() {
         ColumnEntity entity = createEntityWithIterableSet();
         entityManager.insert(entity);
         ColumnQuery query = ColumnQuery.select().from("agenda").build();
@@ -493,6 +494,31 @@ public class CassandraColumnManagerTest {
         List<List<Column>> names = (List<List<Column>>) result.find("names").get().get();
         assertEquals(3, names.size());
         assertTrue(names.stream().allMatch(n -> n.size() == 2));
+    }
+
+    @Test
+    void shouldInsertNullValues(){
+        var family = getColumnFamily();
+        family.add(Column.of("name", null));
+        ColumnEntity columnEntity = entityManager.insert(family);
+        var column = columnEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(column).get().extracting(Column::name).isEqualTo("name");
+            soft.assertThat(column).get().extracting(Column::get).isNull();
+        });
+    }
+
+    @Test
+    void shouldUpdateNullValues(){
+        var family = getColumnFamily();
+        entityManager.insert(family);
+        family.addNull("name");
+        ColumnEntity columnEntity = entityManager.update(family);
+        var column = columnEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(column).get().extracting(Column::name).isEqualTo("name");
+            soft.assertThat(column).get().extracting(Column::get).isNull();
+        });
     }
 
     private ColumnEntity createEntityWithIterable() {

@@ -16,10 +16,12 @@ package org.eclipse.jnosql.databases.solr.integration;
 
 
 import jakarta.inject.Inject;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.solr.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfigurations;
 import org.eclipse.jnosql.databases.solr.mapping.SolrTemplate;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -43,6 +45,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 @AddPackages(Book.class)
 @AddPackages(SolrTemplate.class)
 @AddPackages(Reflections.class)
+@AddPackages(Converters.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
@@ -106,6 +109,22 @@ class SolrTemplateIntegrationTest {
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
     }
+
+    @Test
+    void shouldUpdateNullValues(){
+        var book = new Book(randomUUID().toString(), "Effective Java", 1);
+        template.insert(book);
+        template.update(new Book(book.id(), null, 2));
+        Optional<Book> optional = template.select(Book.class).where("id")
+                .eq(book.id()).singleResult();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(optional).isPresent();
+            softly.assertThat(optional).get().extracting(Book::title).isNull();
+            softly.assertThat(optional).get().extracting(Book::edition).isEqualTo(2);
+        });
+    }
+
+
 
 
 }

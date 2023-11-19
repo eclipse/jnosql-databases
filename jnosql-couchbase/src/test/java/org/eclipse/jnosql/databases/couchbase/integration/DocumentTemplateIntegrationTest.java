@@ -17,8 +17,10 @@ package org.eclipse.jnosql.databases.couchbase.integration;
 
 import jakarta.inject.Inject;
 import jakarta.nosql.document.DocumentTemplate;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.couchbase.communication.CouchbaseUtil;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
@@ -44,6 +46,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
+@AddPackages(Converters.class)
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class DocumentTemplateIntegrationTest {
 
@@ -109,6 +112,20 @@ class DocumentTemplateIntegrationTest {
         template.delete(Book.class, book.id());
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
+    }
+
+    @Test
+    void shouldUpdateNullValues(){
+        var book = new Book(randomUUID().toString(), "Effective Java", 1);
+        template.insert(book);
+        template.update(new Book(book.id(), null, 2));
+        Optional<Book> optional = template.select(Book.class).where("id")
+                .eq(book.id()).singleResult();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(optional).isPresent();
+            softly.assertThat(optional).get().extracting(Book::title).isNull();
+            softly.assertThat(optional).get().extracting(Book::edition).isEqualTo(2);
+        });
     }
 
 

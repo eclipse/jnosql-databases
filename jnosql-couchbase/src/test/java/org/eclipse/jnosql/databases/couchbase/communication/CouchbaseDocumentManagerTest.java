@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.json.JsonObject;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
@@ -77,7 +78,7 @@ public class CouchbaseDocumentManagerTest {
 
     @BeforeEach
     @AfterEach
-    public void cleanUpData() throws InterruptedException {
+   void cleanUpData() throws InterruptedException {
         try {
             keyValueEntityManagerForPerson.delete("id");
             keyValueEntityManagerForPerson.delete("id2");
@@ -93,14 +94,14 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldInsert() {
+   void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
 
     @Test
-    public void shouldInsertWithKey() {
+   void shouldInsertWithKey() {
         DocumentEntity entity = getEntity();
         entity.add("_key", "anyvalue");
         DocumentEntity documentEntity = entityManager.insert(entity);
@@ -109,7 +110,7 @@ public class CouchbaseDocumentManagerTest {
 
 
     @Test
-    public void shouldUpdate() {
+   void shouldUpdate() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         Document newField = Documents.of("newField", "10");
@@ -119,7 +120,7 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntityByName() {
+   void shouldRemoveEntityByName() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Document name = documentEntity.find("name").get();
@@ -131,7 +132,7 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument() {
+   void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -145,7 +146,7 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() throws InterruptedException {
+   void shouldSaveSubDocument2() throws InterruptedException {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -161,7 +162,7 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSetDocument() throws InterruptedException {
+   void shouldSaveSetDocument() throws InterruptedException {
         Set<String> set = new HashSet<>();
         set.add("Acarajé");
         set.add("Munguzá");
@@ -180,14 +181,14 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListDocumentList() {
+   void shouldConvertFromListDocumentList() {
         DocumentEntity entity = createSubdocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListDocumentList() {
+   void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from(COLLECTION_APP_NAME).where(key.name()).eq(key.get()).build();
@@ -202,7 +203,7 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldCount() {
+   void shouldCount() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         long counted = entityManager.count(COLLECTION_PERSON_NAME);
@@ -229,7 +230,7 @@ public class CouchbaseDocumentManagerTest {
 
 
     @Test
-    public void shouldRunN1Ql() {
+   void shouldRunN1Ql() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
         await().until(() ->
@@ -240,7 +241,7 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldRunN1QlParameters() {
+   void shouldRunN1QlParameters() {
         DocumentEntity entity = getEntity();
         entityManager.insert(entity);
 
@@ -254,7 +255,7 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-    public void shouldCreateLimitOrderQuery(){
+   void shouldCreateLimitOrderQuery(){
         DocumentEntity entity = getEntity();
         entity.add("_id", "id2");
         entityManager.insert(entity);
@@ -266,6 +267,33 @@ public class CouchbaseDocumentManagerTest {
         List<DocumentEntity> select = entityManager.select(query).toList();
         Assertions.assertThat(select).flatMap(d -> d.find("name").stream().toList())
                 .containsOnly(Document.of("name", "Poliana"));
+    }
+
+
+    @Test
+    void shouldInsertNull() {
+        DocumentEntity entity =getEntity();
+        entity.add(Document.of("name", null));
+        DocumentEntity documentEntity = entityManager.insert(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
+    }
+
+    @Test
+    void shouldUpdateNull(){
+        var entity = entityManager.insert(getEntity());
+        entity.add(Document.of("name", null));
+        var documentEntity = entityManager.update(entity);
+        Optional<Document> name = documentEntity.find("name");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(name).isPresent();
+            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Document::get).isNull();
+        });
     }
 
     private DocumentEntity getEntity() {

@@ -1,0 +1,25 @@
+= Running Tests with Eclipse JNoSQL and OrientDB
+
+== Prerequisites
+
+Before running the tests, ensure that you have at least an OrientDB instance running. You can use Docker to make it easier. Use the following command:
+
+[source,shell]
+----
+docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb:latest
+----
+
+== Running the Tests
+
+To run the tests, execute the following Maven command:
+
+[source,shell]
+----
+mvn clean test
+----
+
+This will run the test suite for Eclipse JNoSQL with OrientDB.
+
+NOTE: Make sure that the OrientDB instance is running before executing the tests.
+
+You can replace `orientdb:latest` with a specific version if needed.
