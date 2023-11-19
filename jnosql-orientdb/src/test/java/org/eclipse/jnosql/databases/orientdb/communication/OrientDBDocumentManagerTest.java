@@ -62,12 +62,12 @@ public class OrientDBDocumentManagerTest {
     private OrientDBDocumentManager entityManager;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         entityManager = DocumentDatabase.INSTANCE.get().apply(Database.DATABASE);
     }
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertNotNull(documentEntity);
@@ -77,12 +77,12 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenSaveWithTTL() {
+    void shouldThrowExceptionWhenSaveWithTTL() {
         assertThrows(UnsupportedOperationException.class, () -> entityManager.insert(getEntity(), Duration.ZERO));
     }
 
     @Test
-    public void shouldUpdateSave() {
+    void shouldUpdateSave() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
@@ -99,7 +99,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldUpdateWithRetry() {
+    void shouldUpdateWithRetry() {
         DocumentEntity entity = entityManager.insert(getEntity());
         entity.add(Document.of(OrientDBConverter.VERSION_FIELD, 0));
         Document newField = Documents.of("newField", "99");
@@ -117,7 +117,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldRemoveEntity() {
+    void shouldRemoveEntity() {
         DocumentEntity documentEntity = entityManager.insert(getEntity());
 
         Document id = documentEntity.find("name").get();
@@ -129,7 +129,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldFindDocument() {
+    void shouldFindDocument() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Document id = entity.find("name").get();
 
@@ -140,7 +140,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSQL() {
+    void shouldSQL() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find("name");
 
@@ -151,7 +151,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSQL2() {
+    void shouldSQL2() {
         DocumentEntity entity = entityManager.insert(getEntity());
         Optional<Document> id = entity.find("name");
 
@@ -163,7 +163,7 @@ public class OrientDBDocumentManagerTest {
 
 
     @Test
-    public void shouldSaveSubDocument() {
+    void shouldSaveSubDocument() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -177,7 +177,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldSaveSubDocument2() {
+    void shouldSaveSubDocument2() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
@@ -191,7 +191,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryAnd() {
+    void shouldQueryAnd() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("age", 24));
         entityManager.insert(entity);
@@ -210,7 +210,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryOr() {
+    void shouldQueryOr() {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("age", 24));
         entityManager.insert(entity);
@@ -229,7 +229,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryGreaterThan() {
+    void shouldQueryGreaterThan() {
         DocumentEntity entity = getEntity();
         entity.add("age", 25);
         entityManager.insert(entity);
@@ -246,7 +246,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryLesserThan() {
+    void shouldQueryLesserThan() {
         DocumentEntity entity = getEntity();
         entity.add("age", 25);
         entityManager.insert(entity);
@@ -263,7 +263,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryLesserEqualsThan() {
+    void shouldQueryLesserEqualsThan() {
         DocumentEntity entity = getEntity();
         entity.add("age", 25);
         entityManager.insert(entity);
@@ -285,7 +285,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryIn() {
+    void shouldQueryIn() {
         entityManager.insert(getEntities());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
@@ -302,7 +302,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryLike() {
+    void shouldQueryLike() {
         List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false)
                 .collect(Collectors.toList());
 
@@ -316,7 +316,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryNot() {
+    void shouldQueryNot() {
         List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
@@ -329,7 +329,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryStart() {
+    void shouldQueryStart() {
         entityManager.insert(getEntities());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
@@ -341,7 +341,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryLimit() {
+    void shouldQueryLimit() {
         entityManager.insert(getEntities());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
@@ -353,7 +353,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryOrderBy() {
+    void shouldQueryOrderBy() {
         List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
 
         DocumentQuery queryAsc = select().from(COLLECTION_NAME)
@@ -372,7 +372,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldQueryMultiOrderBy() {
+    void shouldQueryMultiOrderBy() {
         List<DocumentEntity> entities = new ArrayList<>(getEntities());
         DocumentEntity bruno = DocumentEntity.of(COLLECTION_NAME);
         bruno.add(Document.of("name", "Bruno"));
@@ -391,7 +391,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldLive() {
+    void shouldLive() {
         AtomicBoolean condition = new AtomicBoolean(false);
         List<DocumentEntity> entities = new ArrayList<>();
         OrientDBLiveCreateCallback<DocumentEntity> callback = d -> {
@@ -410,7 +410,7 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     @Disabled
-    public void shouldLiveUpdateCallback() {
+    void shouldLiveUpdateCallback() {
 
         AtomicBoolean condition = new AtomicBoolean(false);
         List<DocumentEntity> entities = new ArrayList<>();
@@ -433,7 +433,7 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     @Disabled
-    public void shouldLiveDeleteCallback() {
+    void shouldLiveDeleteCallback() {
         AtomicBoolean condition = new AtomicBoolean(false);
         OrientDBLiveDeleteCallback<DocumentEntity> callback = d -> condition.set(true);
         entityManager.insert(getEntity());
@@ -446,7 +446,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldLiveWithNativeQuery() {
+    void shouldLiveWithNativeQuery() {
         AtomicBoolean condition = new AtomicBoolean(false);
         List<DocumentEntity> entities = new ArrayList<>();
         OrientDBLiveCreateCallback<DocumentEntity> callback = d -> {
@@ -463,14 +463,14 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldConvertFromListSubdocumentList() {
+    void shouldConvertFromListSubdocumentList() {
         DocumentEntity entity = createSubdocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
-    public void shouldRetrieveListSubdocumentList() {
+    void shouldRetrieveListSubdocumentList() {
         DocumentEntity entity = entityManager.insert(createSubdocumentList());
         Document key = entity.find("_id").get();
         DocumentQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
@@ -485,7 +485,7 @@ public class OrientDBDocumentManagerTest {
     }
 
     @Test
-    public void shouldCount() {
+    void shouldCount() {
         DocumentEntity entity = getEntity();
         DocumentEntity documentEntity = entityManager.insert(entity);
         assertNotNull(documentEntity);
