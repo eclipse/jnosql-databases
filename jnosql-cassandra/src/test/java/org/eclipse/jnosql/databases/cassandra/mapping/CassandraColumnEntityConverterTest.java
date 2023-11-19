@@ -104,7 +104,7 @@ public class CassandraColumnEntityConverterTest {
 
         ColumnEntity entity = converter.toColumn(artist);
         assertEquals("Artist", entity.name());
-        assertEquals(4, entity.size());
+        assertEquals(5, entity.size());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class CassandraColumnEntityConverterTest {
 
         ColumnEntity entity = converter.toColumn(actor);
         assertEquals("Actor", entity.name());
-        assertEquals(6, entity.size());
+        assertEquals(7, entity.size());
 
 
         assertThat(entity.columns()).contains(columns);
@@ -158,7 +158,7 @@ public class CassandraColumnEntityConverterTest {
                 .withPhones(asList("234", "2342")).withMovie(movie).build();
 
         ColumnEntity entity = converter.toColumn(director);
-        assertEquals(5, entity.size());
+        assertEquals(6, entity.size());
 
         assertEquals(getValue(entity.find("name")), director.getName());
         assertEquals(getValue(entity.find("age")), director.getAge());
