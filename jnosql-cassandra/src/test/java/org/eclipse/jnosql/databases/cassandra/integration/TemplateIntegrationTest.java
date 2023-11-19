@@ -17,10 +17,12 @@ package org.eclipse.jnosql.databases.cassandra.integration;
 
 import jakarta.inject.Inject;
 import jakarta.nosql.column.ColumnTemplate;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraConfigurations;
 import org.eclipse.jnosql.databases.cassandra.communication.ColumnDatabase;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
@@ -47,6 +49,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 @AddExtensions({EntityMetadataExtension.class,
         ColumnExtension.class})
 @AddPackages(Reflections.class)
+@AddPackages(Converters.class)
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class TemplateIntegrationTest {
 
@@ -64,7 +67,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.insert(book);
         Optional<Book> optional = template.find(Book.class, book.id());
@@ -73,7 +76,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -91,7 +94,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldFindById() {
+    void shouldFindById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -102,7 +105,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldDelete() {
+    void shouldDelete() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -111,6 +114,20 @@ class TemplateIntegrationTest {
         template.delete(Book.class, book.id());
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
+    }
+
+    @Test
+    void shouldUpdateNullValues(){
+        var book = new Book(randomUUID().toString(), "Effective Java", 1);
+        template.insert(book);
+        template.update(new Book(book.id(), null, 2));
+        Optional<Book> optional = template.select(Book.class).where("id")
+                .eq(book.id()).singleResult();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(optional).isPresent();
+            softly.assertThat(optional).get().extracting(Book::title).isNull();
+            softly.assertThat(optional).get().extracting(Book::edition).isEqualTo(2);
+        });
     }
 
 
