@@ -20,49 +20,57 @@ import org.eclipse.jnosql.communication.document.DocumentManager;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
-
 /**
- * The ArangoDB implementation of {@link DocumentManager} it does not support to TTL methods:
- * <p>{@link DocumentManager#insert(DocumentEntity)}</p>
+ * The ArangoDB implementation of {@link DocumentManager}. This implementation does not support TTL methods in the context of
+ * {@link DocumentManager#insert(DocumentEntity)}.
  */
 public interface ArangoDBDocumentManager extends DocumentManager {
 
     /**
-     * Executes ArangoDB query language, AQL.
-     * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
-     * This conversion will happen at Eclipse JNoSQL side.
-     * @param query  the query
-     * @param params the named queries
-     * @return the query result
-     * @throws NullPointerException when either query or params are null
+     * Executes an ArangoDB query using the ArangoDB Query Language (AQL).
+     *
+     * <p>Example query: {@code FOR u IN users FILTER u.status == @status RETURN u}</p>
+     *
+     * <p>The conversion from the query result to {@link DocumentEntity} will happen at the Eclipse JNoSQL side.</p>
+     *
+     * @param query  the AQL query
+     * @param params the named parameters for the query
+     * @return a {@link Stream} of {@link DocumentEntity} representing the query result
+     * @throws NullPointerException when either the query or params are null
      */
     Stream<DocumentEntity> aql(String query, Map<String, Object> params);
 
     /**
-     * Executes ArangoDB query language, AQL.
-     * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
-     * The serialization will happen at the ArangoDB side using the {@link com.arangodb.ArangoDatabase#query(String, Class)}.
-     * This serialization will not have any converter support.
-     * @param query     the query
-     * @param params    named query
-     * @param type The type of the result
-     * @param <T>       the type
-     * @return the query result
-     * @throws NullPointerException when either query or params are null
+     * Executes an ArangoDB query using the ArangoDB Query Language (AQL).
+     *
+     * <p>Example query: {@code FOR u IN users FILTER u.status == @status RETURN u}</p>
+     *
+     * <p>The serialization of the query result will happen at the ArangoDB side using
+     * {@link com.arangodb.ArangoDatabase#query(String, Class)}. This serialization does not have any converter support.</p>
+     *
+     * @param query  the AQL query
+     * @param params the named parameters for the query
+     * @param type   the type of the result
+     * @param <T>    the type
+     * @return a {@link Stream} of the specified type representing the query result
+     * @throws NullPointerException when either the query or params are null
      */
     <T> Stream<T> aql(String query, Map<String, Object> params, Class<T> type);
 
     /**
-     * Executes ArangoDB query language, AQL and uses the {@link Collections#emptyMap()} as params.
-     * The serialization will happen at the ArangoDB side using the {@link com.arangodb.ArangoDatabase#query(String, Class)}.
-     * This serialization will not have any converter support.
-     * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
+     * Executes an ArangoDB query using the ArangoDB Query Language (AQL) with an empty parameter map.
      *
-     * @param query     the query
-     * @param type The type of the result
-     * @param <T>       the type
-     * @return the query result
-     * @throws NullPointerException when either query or values are null
+     * <p>Example query: {@code FOR u IN users FILTER u.status == @status RETURN u}</p>
+     *
+     * <p>The serialization of the query result will happen at the ArangoDB side using
+     * {@link com.arangodb.ArangoDatabase#query(String, Class)}. This serialization does not have any converter support.</p>
+     *
+     * @param query the AQL query
+     * @param type  the type of the result
+     * @param <T>   the type
+     * @return a {@link Stream} of the specified type representing the query result
+     * @throws NullPointerException when either the query or type are null
      */
     <T> Stream<T> aql(String query, Class<T> type);
 }
+
