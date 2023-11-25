@@ -55,10 +55,10 @@ public interface ArangoDBDocumentManager extends DocumentManager {
      * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
      *
      * @param query     the query
-     * @param typeClass The type of the result
+     * @param type The type of the result
      * @param <T>       the type
      * @return the query result
      * @throws NullPointerException when either query or values are null
      */
-    <T> Stream<T> aql(String query, Class<T> typeClass);
+    <T> Stream<T> aql(String query, Class<T> type);
 }

@@ -161,10 +161,10 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     }
 
     @Override
-    public <T> Stream<T> aql(String query, Class<T> typeClass) {
+    public <T> Stream<T> aql(String query, Class<T> type) {
         requireNonNull(query, "query is required");
-        requireNonNull(typeClass, "typeClass is required");
-        ArangoCursor<T> result = arangoDB.db(database).query(query,typeClass, emptyMap(), null);
+        requireNonNull(type, "typeClass is required");
+        ArangoCursor<T> result = arangoDB.db(database).query(query, type, emptyMap(), null);
         return StreamSupport.stream(result.spliterator(), false);
     }
 
