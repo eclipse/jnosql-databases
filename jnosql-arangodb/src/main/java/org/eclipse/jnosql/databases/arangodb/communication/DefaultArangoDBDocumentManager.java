@@ -142,21 +142,21 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
 
     @Override
-    public Stream<DocumentEntity> aql(String query, Map<String, Object> values) throws NullPointerException {
+    public Stream<DocumentEntity> aql(String query, Map<String, Object> params) throws NullPointerException {
         requireNonNull(query, "query is required");
-        requireNonNull(values, "values is required");
-        ArangoCursor<BaseDocument> result = arangoDB.db(database).query(query,BaseDocument.class, values, null);
+        requireNonNull(params, "values is required");
+        ArangoCursor<BaseDocument> result = arangoDB.db(database).query(query,BaseDocument.class, params, null);
         return StreamSupport.stream(result.spliterator(), false)
                 .map(ArangoDBUtil::toEntity);
 
     }
 
     @Override
-    public <T> Stream<T> aql(String query, Map<String, Object> values, Class<T> typeClass) {
+    public <T> Stream<T> aql(String query, Map<String, Object> params, Class<T> type) {
         requireNonNull(query, "query is required");
-        requireNonNull(values, "values is required");
-        requireNonNull(typeClass, "typeClass is required");
-        ArangoCursor<T> result = arangoDB.db(database).query(query, typeClass, values, null);
+        requireNonNull(params, "values is required");
+        requireNonNull(type, "typeClass is required");
+        ArangoCursor<T> result = arangoDB.db(database).query(query, type, params, null);
         return StreamSupport.stream(result.spliterator(), false);
     }
 
