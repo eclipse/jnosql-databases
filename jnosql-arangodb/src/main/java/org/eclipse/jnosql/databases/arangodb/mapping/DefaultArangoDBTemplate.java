@@ -92,19 +92,19 @@ class DefaultArangoDBTemplate extends AbstractDocumentTemplate implements Arango
 
 
     @Override
-    public <T> Stream<T> aql(String query, Map<String, Object> values) {
+    public <T> Stream<T> aql(String query, Map<String, Object> params) {
         requireNonNull(query, "query is required");
-        requireNonNull(values, "values is required");
-        return manager.get().aql(query, values).map(converter::toEntity).map(d -> (T) d);
+        requireNonNull(params, "values is required");
+        return manager.get().aql(query, params).map(converter::toEntity).map(d -> (T) d);
     }
 
     @Override
-    public <T> Stream<T> aql(String query, Map<String, Object> values, Class<T> typeClass) {
-        return manager.get().aql(query, values, typeClass);
+    public <T> Stream<T> aql(String query, Map<String, Object> params, Class<T> type) {
+        return manager.get().aql(query, params, type);
     }
 
     @Override
-    public <T> Stream<T> aql(String query, Class<T> typeClass) {
-        return manager.get().aql(query, typeClass);
+    public <T> Stream<T> aql(String query, Class<T> type) {
+        return manager.get().aql(query, type);
     }
 }

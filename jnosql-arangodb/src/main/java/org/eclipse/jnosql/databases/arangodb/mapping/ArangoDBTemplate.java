@@ -32,36 +32,36 @@ public interface ArangoDBTemplate extends JNoSQLDocumentTemplate {
      *
      * @param <T>    entity class
      * @param query  the query
-     * @param values the named queries
+     * @param params the named queries
      * @return the query result
-     * @throws NullPointerException when either query or values are null
+     * @throws NullPointerException when either query or params are null
      */
-    <T> Stream<T> aql(String query, Map<String, Object> values);
+    <T> Stream<T> aql(String query, Map<String, Object> params);
 
     /**
      * Executes ArangoDB query language, AQL.
      * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
      *
      * @param query     the query
-     * @param values    named query
-     * @param typeClass The type of the result
+     * @param params    named query
+     * @param type The type of the result
      * @param <T>       the type
      * @return the query result
-     * @throws NullPointerException when either query or values are null
+     * @throws NullPointerException when either query or params are null
      */
-    <T> Stream<T> aql(String query, Map<String, Object> values, Class<T> typeClass);
+    <T> Stream<T> aql(String query, Map<String, Object> params, Class<T> type);
 
     /**
      * Executes ArangoDB query language, AQL.
      * <p>FOR u IN users FILTER u.status == @status RETURN u </p>
      *
      * @param query     the query
-     * @param typeClass The type of the result
+     * @param type The type of the result
      * @param <T>       the type
      * @return the query result
      * @throws NullPointerException when either query or values are null
      */
-    <T> Stream<T> aql(String query, Class<T> typeClass);
+    <T> Stream<T> aql(String query, Class<T> type);
 
 
 }
