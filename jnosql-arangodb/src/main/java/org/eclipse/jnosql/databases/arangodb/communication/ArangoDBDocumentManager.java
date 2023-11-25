@@ -17,7 +17,6 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 /**
