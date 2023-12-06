@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.communication.driver;
 
 import org.eclipse.jnosql.communication.Value;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -26,46 +27,52 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class ValueUtilTest {
 
     @Test
-    public void shouldConvert() {
+    void shouldConvert() {
         Value value = Value.of(10);
         assertEquals(10, ValueUtil.convert(value));
     }
 
     @Test
-    public void shouldConvert2() {
+    void shouldConvert2() {
         Value value = Value.of(Arrays.asList(10, 20));
         assertEquals(Arrays.asList(10, 20), ValueUtil.convert(value));
     }
 
     @Test
-    public void shouldConvert3() {
+    void shouldConvert3() {
         Value value = Value.of(Arrays.asList(Value.of(10), Value.of(20)));
         assertEquals(Arrays.asList(10, 20), ValueUtil.convert(value));
     }
 
     @Test
-    public void shouldConvertList() {
+    void shouldConvertList() {
         Value value = Value.of(10);
         assertEquals(Collections.singletonList(10), ValueUtil.convertToList(value));
     }
 
     @Test
-    public void shouldConvertList2() {
+    void shouldConvertList2() {
         Value value = Value.of(Arrays.asList(10, 20));
         assertEquals(Arrays.asList(10, 20), ValueUtil.convertToList(value));
     }
 
 
     @Test
-    public void shouldConvertList3() {
+    void shouldConvertList3() {
         Value value = Value.of(Arrays.asList(Value.of(10), Value.of(20)));
         assertEquals(Arrays.asList(10, 20), ValueUtil.convertToList(value));
     }
 
     @Test
-    public void shouldConvertNull() {
+    void shouldConvertNull() {
         Value value = Value.of(null);
         assertNull(ValueUtil.convert(value));
+    }
+
+    @Test
+    void shouldReturnNullWhenValueUtilHasNullValue() {
+        Object result = ValueUtil.convert(Value.ofNull());
+        Assertions.assertNull(result);
     }
 
 
