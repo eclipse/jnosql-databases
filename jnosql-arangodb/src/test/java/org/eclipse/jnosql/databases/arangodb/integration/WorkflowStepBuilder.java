@@ -12,7 +12,7 @@
  *
  *    Otavio Santana
  */
-package org.eclipse.jnosql.databases.arangodb.mapping;
+package org.eclipse.jnosql.databases.arangodb.integration;
 
 import java.util.List;
 

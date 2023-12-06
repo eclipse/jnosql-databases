@@ -20,9 +20,6 @@ import jakarta.nosql.document.DocumentTemplate;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBConfigurations;
 import org.eclipse.jnosql.databases.arangodb.communication.DocumentDatabase;
-import org.eclipse.jnosql.databases.arangodb.mapping.MainStepType;
-import org.eclipse.jnosql.databases.arangodb.mapping.Transition;
-import org.eclipse.jnosql.databases.arangodb.mapping.WorkflowStep;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
@@ -43,7 +40,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
-import static org.eclipse.jnosql.databases.arangodb.mapping.StepTransitionReason.REPEAT;
+import static org.eclipse.jnosql.databases.arangodb.integration.StepTransitionReason.REPEAT;
 
 @EnableAutoWeld
 @AddPackages(value = {Convert.class, DocumentEntityConverter.class})
