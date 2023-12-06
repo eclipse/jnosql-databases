@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.arangodb.integration;
 
 import jakarta.inject.Inject;
 import jakarta.nosql.document.DocumentTemplate;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBConfigurations;
 import org.eclipse.jnosql.databases.arangodb.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.arangodb.mapping.MainStepType;
@@ -128,7 +129,25 @@ class TemplateIntegrationTest {
                 .availableTransitions(List.of(new Transition("TEST_WORKFLOW_STEP_KEY", REPEAT,
                         null, List.of("ADMIN"))))
                 .build();
-        this.template.insert(workflowStep);
+        var result = this.template.insert(workflowStep);
+
+        SoftAssertions.assertSoftly(soft ->{
+            soft.assertThat(result).isNotNull();
+            soft.assertThat(result.id()).isEqualTo("workflow_step/key");
+            soft.assertThat(result.key()).isEqualTo("key");
+            soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
+            soft.assertThat(result.stepName()).isEqualTo("stepName");
+            soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
+            soft.assertThat(result.stepNo()).isEqualTo(1);
+            soft.assertThat(result.componentConfigurationKey()).isEqualTo("componentConfigurationKey");
+            soft.assertThat(result.relationTypeKey()).isEqualTo("relationTypeKey");
+            soft.assertThat(result.availableTransitions()).hasSize(1);
+            soft.assertThat(result.availableTransitions().get(0).targetWorkflowStepKey()).isEqualTo("TEST_WORKFLOW_STEP_KEY");
+            soft.assertThat(result.availableTransitions().get(0).stepTransitionReason()).isEqualTo(REPEAT);
+            soft.assertThat(result.availableTransitions().get(0).mailTemplateKey()).isNull();
+            soft.assertThat(result.availableTransitions().get(0).restrictedRoleGroups()).hasSize(1);
+            soft.assertThat(result.availableTransitions().get(0).restrictedRoleGroups().get(0)).isEqualTo("ADMIN");
+        });
     }
 
 

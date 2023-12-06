@@ -72,4 +72,39 @@ public class WorkflowStep {
         return new WorkflowStepBuilder();
     }
 
+    public String id() {
+        return id;
+    }
+
+    public String key() {
+        return key;
+    }
+
+    public String workflowSchemaKey() {
+        return workflowSchemaKey;
+    }
+
+    public String stepName() {
+        return stepName;
+    }
+
+    public MainStepType mainStepType() {
+        return mainStepType;
+    }
+
+    public Integer stepNo() {
+        return stepNo;
+    }
+
+    public String componentConfigurationKey() {
+        return componentConfigurationKey;
+    }
+
+    public String relationTypeKey() {
+        return relationTypeKey;
+    }
+
+    public List<Transition> availableTransitions() {
+        return availableTransitions;
+    }
 }
