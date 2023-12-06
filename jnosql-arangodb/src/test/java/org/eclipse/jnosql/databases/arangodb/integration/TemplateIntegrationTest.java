@@ -19,6 +19,9 @@ import jakarta.inject.Inject;
 import jakarta.nosql.document.DocumentTemplate;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBConfigurations;
 import org.eclipse.jnosql.databases.arangodb.communication.DocumentDatabase;
+import org.eclipse.jnosql.databases.arangodb.mapping.MainStepType;
+import org.eclipse.jnosql.databases.arangodb.mapping.Transition;
+import org.eclipse.jnosql.databases.arangodb.mapping.WorkflowStep;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.Converters;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
@@ -32,12 +35,14 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.databases.arangodb.mapping.StepTransitionReason.REPEAT;
 
 @EnableAutoWeld
 @AddPackages(value = {Convert.class, DocumentEntityConverter.class})
@@ -60,7 +65,7 @@ class TemplateIntegrationTest {
 
 
     @Test
-    public void shouldInsert() {
+    void shouldInsert() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         template.insert(book);
         Optional<Book> optional = template.find(Book.class, book.id());
@@ -69,7 +74,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldUpdate() {
+    void shouldUpdate() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -87,7 +92,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldFindById() {
+    void shouldFindById() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -98,7 +103,7 @@ class TemplateIntegrationTest {
     }
 
     @Test
-    public void shouldDelete() {
+    void shouldDelete() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
         assertThat(template.insert(book))
                 .isNotNull()
@@ -107,6 +112,23 @@ class TemplateIntegrationTest {
         template.delete(Book.class, book.id());
         assertThat(template.find(Book.class, book.id()))
                 .isNotNull().isEmpty();
+    }
+
+    @Test
+    void shouldUpdateEmbeddable() {
+        var workflowStep = WorkflowStep.builder()
+                .id("id")
+                .key("key")
+                .workflowSchemaKey("workflowSchemaKey")
+                .stepName("stepName")
+                .mainStepType(MainStepType.MAIN)
+                .stepNo(1)
+                .componentConfigurationKey("componentConfigurationKey")
+                .relationTypeKey("relationTypeKey")
+                .availableTransitions(List.of(new Transition("TEST_WORKFLOW_STEP_KEY", REPEAT,
+                        null, List.of("ADMIN"))))
+                .build();
+        this.template.insert(workflowStep);
     }
 
 

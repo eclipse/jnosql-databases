@@ -12,10 +12,9 @@
  *
  *    Otavio Santana
  */
-package org.eclipse.jnosql.mapping.document.entities;
+package org.eclipse.jnosql.databases.arangodb.mapping;
 
 
 public enum StepTransitionReason {
-
     REPEAT
 }
