@@ -148,7 +148,7 @@ public final class ArangoDBUtil {
         Map<Object, Object> map = new HashMap<>();
         for (Object item : iterable) {
             var document = cast(item);
-            map.put(document.name(), document.value());
+            map.put(document.name(), document.get());
         }
         return map;
     }
