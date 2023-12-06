@@ -29,7 +29,6 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
 final class MongoDBUtils {
