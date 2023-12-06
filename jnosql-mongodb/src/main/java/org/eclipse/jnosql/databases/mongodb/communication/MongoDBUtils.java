@@ -21,6 +21,7 @@ import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -101,8 +102,13 @@ final class MongoDBUtils {
     }
 
     private static Object getMap(Object val) {
-        return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+        Iterable<?> iterable = Iterable.class.cast(val);
+        Map<Object, Object> map = new HashMap<>();
+        for (Object item : iterable) {
+            var document = cast(item);
+            map.put(document.name(), document.value());
+        }
+        return map;
     }
 
     private static org.eclipse.jnosql.communication.document.Document cast(Object document) {
