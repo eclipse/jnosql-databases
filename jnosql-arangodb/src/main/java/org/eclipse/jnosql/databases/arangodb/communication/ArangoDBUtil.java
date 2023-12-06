@@ -48,11 +48,6 @@ public final class ArangoDBUtil {
     public static final String KEY = "_key";
     public static final String ID = "_id";
     public static final String REV = "_rev";
-
-    private static final Function<Object, String> KEY_DOCUMENT = d -> cast(d).name();
-    private static final Function<Object, Object> VALUE_DOCUMENT = d -> ValueUtil.convert(cast(d).value());
-
-
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
 
     private static final Function<Map.Entry<?, ?>, Document> ENTRY_DOCUMENT = entry ->
@@ -150,8 +145,13 @@ public final class ArangoDBUtil {
     }
 
     private static Object getMap(Object val) {
-        return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
-                .collect(toMap(KEY_DOCUMENT, VALUE_DOCUMENT));
+        Iterable<?> iterable = Iterable.class.cast(val);
+        Map<Object, Object> map = new HashMap<>();
+        for (Object item : iterable) {
+            var document = cast(item);
+            map.put(document.name(), document.value());
+        }
+        return map;
     }
 
     private static boolean isSudDocumentList(Object value) {
