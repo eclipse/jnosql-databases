@@ -147,5 +147,34 @@ class TemplateIntegrationTest {
         });
     }
 
+    @Test
+    void shouldUpdateEmbeddable2() {
+        var workflowStep = WorkflowStep.builder()
+                .id("id")
+                .key("key")
+                .workflowSchemaKey("workflowSchemaKey")
+                .stepName("stepName")
+                .mainStepType(MainStepType.MAIN)
+                .stepNo(null)
+                .componentConfigurationKey("componentConfigurationKey")
+                .relationTypeKey("relationTypeKey")
+                .availableTransitions(null)
+                .build();
+        var result = this.template.insert(workflowStep);
+
+        SoftAssertions.assertSoftly(soft ->{
+            soft.assertThat(result).isNotNull();
+            soft.assertThat(result.id()).isEqualTo("workflow_step/key");
+            soft.assertThat(result.key()).isEqualTo("key");
+            soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
+            soft.assertThat(result.stepName()).isEqualTo("stepName");
+            soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
+            soft.assertThat(result.stepNo()).isNull();
+            soft.assertThat(result.componentConfigurationKey()).isEqualTo("componentConfigurationKey");
+            soft.assertThat(result.relationTypeKey()).isEqualTo("relationTypeKey");
+            soft.assertThat(result.availableTransitions()).isNull();
+        });
+    }
+
 
 }
