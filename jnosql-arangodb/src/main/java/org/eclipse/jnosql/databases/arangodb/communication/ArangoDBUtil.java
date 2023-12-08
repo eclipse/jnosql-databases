@@ -96,6 +96,9 @@ public final class ArangoDBUtil {
     static BaseDocument getBaseDocument(DocumentEntity entity) {
         Map<String, Object> map = new HashMap<>();
         for (Document document : entity.documents()) {
+            if(KEY.equals(document.name()) && Objects.isNull(document.get())) {
+                continue;
+            }
             map.put(document.name(), convert(document.value()));
         }
         return new BaseDocument(map);

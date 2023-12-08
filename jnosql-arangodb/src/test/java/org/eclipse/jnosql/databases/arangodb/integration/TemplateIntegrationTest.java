@@ -116,7 +116,7 @@ class TemplateIntegrationTest {
     void shouldUpdateEmbeddable() {
         var workflowStep = WorkflowStep.builder()
                 .id("id")
-                .key("key")
+                .key("key1")
                 .workflowSchemaKey("workflowSchemaKey")
                 .stepName("stepName")
                 .mainStepType(MainStepType.MAIN)
@@ -130,8 +130,8 @@ class TemplateIntegrationTest {
 
         SoftAssertions.assertSoftly(soft ->{
             soft.assertThat(result).isNotNull();
-            soft.assertThat(result.id()).isEqualTo("workflow_step/key");
-            soft.assertThat(result.key()).isEqualTo("key");
+            soft.assertThat(result.id()).isEqualTo("workflow_step/key1");
+            soft.assertThat(result.key()).isEqualTo("key1");
             soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
             soft.assertThat(result.stepName()).isEqualTo("stepName");
             soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
@@ -151,7 +151,7 @@ class TemplateIntegrationTest {
     void shouldUpdateEmbeddable2() {
         var workflowStep = WorkflowStep.builder()
                 .id("id")
-                .key("key")
+                .key("key2")
                 .workflowSchemaKey("workflowSchemaKey")
                 .stepName("stepName")
                 .mainStepType(MainStepType.MAIN)
@@ -164,8 +164,63 @@ class TemplateIntegrationTest {
 
         SoftAssertions.assertSoftly(soft ->{
             soft.assertThat(result).isNotNull();
-            soft.assertThat(result.id()).isEqualTo("workflow_step/key");
-            soft.assertThat(result.key()).isEqualTo("key");
+            soft.assertThat(result.id()).isEqualTo("workflow_step/key2");
+            soft.assertThat(result.key()).isEqualTo("key2");
+            soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
+            soft.assertThat(result.stepName()).isEqualTo("stepName");
+            soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
+            soft.assertThat(result.stepNo()).isNull();
+            soft.assertThat(result.componentConfigurationKey()).isEqualTo("componentConfigurationKey");
+            soft.assertThat(result.relationTypeKey()).isEqualTo("relationTypeKey");
+            soft.assertThat(result.availableTransitions()).isNull();
+        });
+    }
+
+    @Test
+    void shouldExecuteWithoutKey(){
+        var workflowStep = WorkflowStep.builder()
+                .id("id")
+                .workflowSchemaKey("workflowSchemaKey")
+                .stepName("stepName")
+                .mainStepType(MainStepType.MAIN)
+                .stepNo(null)
+                .componentConfigurationKey("componentConfigurationKey")
+                .relationTypeKey("relationTypeKey")
+                .availableTransitions(null)
+                .build();
+        var result = this.template.insert(workflowStep);
+
+        SoftAssertions.assertSoftly(soft ->{
+            soft.assertThat(result).isNotNull();
+            soft.assertThat(result.id()).contains("workflow_step/");
+            soft.assertThat(result.key()).isNotNull();
+            soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
+            soft.assertThat(result.stepName()).isEqualTo("stepName");
+            soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
+            soft.assertThat(result.stepNo()).isNull();
+            soft.assertThat(result.componentConfigurationKey()).isEqualTo("componentConfigurationKey");
+            soft.assertThat(result.relationTypeKey()).isEqualTo("relationTypeKey");
+            soft.assertThat(result.availableTransitions()).isNull();
+        });
+    }
+
+    @Test
+    void shouldExecuteWithoutKId(){
+        var workflowStep = WorkflowStep.builder()
+                .workflowSchemaKey("workflowSchemaKey")
+                .stepName("stepName")
+                .mainStepType(MainStepType.MAIN)
+                .stepNo(null)
+                .componentConfigurationKey("componentConfigurationKey")
+                .relationTypeKey("relationTypeKey")
+                .availableTransitions(null)
+                .build();
+        var result = this.template.insert(workflowStep);
+
+        SoftAssertions.assertSoftly(soft ->{
+            soft.assertThat(result).isNotNull();
+            soft.assertThat(result.id()).contains("workflow_step/");
+            soft.assertThat(result.key()).isNotNull();
             soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
             soft.assertThat(result.stepName()).isEqualTo("stepName");
             soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
