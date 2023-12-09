@@ -22,7 +22,7 @@ import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentManager;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCallback;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCreateCallback;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;

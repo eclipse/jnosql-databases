@@ -21,7 +21,7 @@ import org.eclipse.jnosql.databases.cassandra.communication.CassandraConfigurati
 import org.eclipse.jnosql.databases.cassandra.communication.ColumnDatabase;
 import org.eclipse.jnosql.databases.cassandra.mapping.CassandraTemplate;
 import org.eclipse.jnosql.mapping.Convert;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;

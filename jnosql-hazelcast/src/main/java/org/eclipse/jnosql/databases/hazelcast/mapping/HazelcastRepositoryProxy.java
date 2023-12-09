@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.hazelcast.mapping;
 import jakarta.data.repository.PageableRepository;
 import jakarta.nosql.keyvalue.KeyValueTemplate;
 import org.eclipse.jnosql.mapping.keyvalue.query.AbstractKeyValueRepositoryProxy;
-import org.eclipse.jnosql.mapping.repository.DynamicReturn;
+import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static org.eclipse.jnosql.mapping.repository.DynamicReturn.toSingleResult;
+import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
 class HazelcastRepositoryProxy<T> extends AbstractKeyValueRepositoryProxy<T> {
 

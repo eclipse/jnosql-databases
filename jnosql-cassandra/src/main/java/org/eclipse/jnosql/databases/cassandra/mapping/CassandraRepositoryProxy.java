@@ -16,12 +16,12 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 
 
 import jakarta.data.repository.PageableRepository;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.query.AbstractColumnRepositoryProxy;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
-import org.eclipse.jnosql.mapping.repository.DynamicReturn;
+import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static org.eclipse.jnosql.mapping.repository.DynamicReturn.toSingleResult;
+import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
 class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>  {
 
