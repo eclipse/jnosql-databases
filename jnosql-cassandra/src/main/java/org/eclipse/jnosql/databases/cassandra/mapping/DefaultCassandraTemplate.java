@@ -27,7 +27,7 @@ import org.eclipse.jnosql.communication.column.ColumnManager;
 import org.eclipse.jnosql.communication.column.ColumnQuery;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManager;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraPreparedStatement;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.column.AbstractColumnTemplate;
 import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
 import org.eclipse.jnosql.mapping.column.ColumnEventPersistManager;

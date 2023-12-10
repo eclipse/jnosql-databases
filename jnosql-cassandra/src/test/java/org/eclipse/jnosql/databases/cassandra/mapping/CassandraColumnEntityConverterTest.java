@@ -30,7 +30,7 @@ import org.eclipse.jnosql.databases.cassandra.mapping.model.Job;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Money;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Movie;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Worker;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;

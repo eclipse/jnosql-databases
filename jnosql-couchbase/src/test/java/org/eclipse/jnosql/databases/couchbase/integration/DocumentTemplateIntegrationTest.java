@@ -20,7 +20,7 @@ import jakarta.nosql.document.DocumentTemplate;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.couchbase.communication.CouchbaseUtil;
 import org.eclipse.jnosql.mapping.Convert;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;

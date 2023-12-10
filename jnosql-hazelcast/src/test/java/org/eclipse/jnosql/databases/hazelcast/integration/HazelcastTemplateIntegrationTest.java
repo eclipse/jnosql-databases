@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.hazelcast.integration;
 
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.hazelcast.mapping.HazelcastTemplate;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.keyvalue.KeyValueEntityConverter;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;

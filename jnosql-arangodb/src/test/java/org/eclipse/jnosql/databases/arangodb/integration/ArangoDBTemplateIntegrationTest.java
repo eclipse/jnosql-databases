@@ -20,7 +20,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBConfigurations;
 import org.eclipse.jnosql.databases.arangodb.mapping.ArangoDBTemplate;
 import org.eclipse.jnosql.mapping.Convert;
-import org.eclipse.jnosql.mapping.Converters;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
