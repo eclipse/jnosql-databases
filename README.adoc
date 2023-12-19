@@ -22,7 +22,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-arangodb</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -179,7 +179,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-cassandra</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -331,7 +331,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-couchbase</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -457,7 +457,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-couchdb</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -533,7 +533,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-dynamodb</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -592,7 +592,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-elasticsearch</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -676,7 +676,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-hazelcast</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -784,7 +784,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-hbase</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -827,7 +827,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-infinispan</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -877,7 +877,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-memcached</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -961,7 +961,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-mongodb</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -1074,7 +1074,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-orientdb</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -1185,7 +1185,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-ravendb</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -1230,7 +1230,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-redis</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -1337,7 +1337,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-redis</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
@@ -1383,7 +1383,7 @@ You can use either the Maven or Gradle dependencies:
 <dependency>
   <groupId>org.eclipse.jnosql.databases</groupId>
   <artifactId>jnosql-solr</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ----
 
