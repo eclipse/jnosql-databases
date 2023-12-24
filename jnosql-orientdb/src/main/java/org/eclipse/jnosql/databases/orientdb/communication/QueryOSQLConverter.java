@@ -17,8 +17,8 @@ package org.eclipse.jnosql.databases.orientdb.communication;
 
 
 import com.orientechnologies.orient.core.id.ORecordId;
-import jakarta.data.repository.Direction;
-import jakarta.data.repository.Sort;
+import jakarta.data.Direction;
+import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;

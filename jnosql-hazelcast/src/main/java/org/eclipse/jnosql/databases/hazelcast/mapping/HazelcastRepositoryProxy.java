@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
-class HazelcastRepositoryProxy<T> extends AbstractKeyValueRepositoryProxy<T> {
+class HazelcastRepositoryProxy<T, K> extends AbstractKeyValueRepositoryProxy<T, K> {
 
     private final HazelcastTemplate template;
 

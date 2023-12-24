@@ -31,7 +31,7 @@ import java.util.Objects;
 
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
-class SolrRepositoryProxy<T> extends AbstractDocumentRepositoryProxy<T> {
+class SolrRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 

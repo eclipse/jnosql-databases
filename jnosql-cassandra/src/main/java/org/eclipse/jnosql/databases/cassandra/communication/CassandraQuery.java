@@ -16,7 +16,7 @@
  */
 package org.eclipse.jnosql.databases.cassandra.communication;
 
-import jakarta.data.repository.Sort;
+import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.column.ColumnCondition;
 import org.eclipse.jnosql.communication.column.ColumnQuery;
 

@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.couchbase.communication;
 
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.data.repository.Direction;
+import jakarta.data.Direction;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;
