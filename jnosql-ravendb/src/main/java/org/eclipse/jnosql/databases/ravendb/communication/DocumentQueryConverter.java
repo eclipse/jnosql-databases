@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.ravendb.communication;
 
-import jakarta.data.repository.Sort;
+import jakarta.data.Sort;
 import net.ravendb.client.documents.queries.Query;
 import net.ravendb.client.documents.session.IDocumentQuery;
 import net.ravendb.client.documents.session.IDocumentSession;

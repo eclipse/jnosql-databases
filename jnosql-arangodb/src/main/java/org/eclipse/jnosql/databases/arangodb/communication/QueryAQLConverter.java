@@ -14,8 +14,8 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import jakarta.data.repository.Direction;
-import jakarta.data.repository.Sort;
+import jakarta.data.Direction;
+import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;

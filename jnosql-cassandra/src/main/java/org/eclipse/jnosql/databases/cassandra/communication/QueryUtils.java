@@ -36,7 +36,7 @@ import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.term.Term;
 import com.datastax.oss.protocol.internal.ProtocolConstants;
-import jakarta.data.repository.Sort;
+import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.CommunicationException;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.column.Column;

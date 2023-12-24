@@ -22,7 +22,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
-import jakarta.data.repository.Sort;
+import jakarta.data.Sort;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;

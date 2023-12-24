@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.solr.communication;
 
-import jakarta.data.repository.Direction;
+import jakarta.data.Direction;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;

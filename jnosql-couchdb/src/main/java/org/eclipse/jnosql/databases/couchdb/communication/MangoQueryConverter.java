@@ -16,8 +16,8 @@
  */
 package org.eclipse.jnosql.databases.couchdb.communication;
 
-import jakarta.data.repository.Direction;
-import jakarta.data.repository.Sort;
+import jakarta.data.Direction;
+import jakarta.data.Sort;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
