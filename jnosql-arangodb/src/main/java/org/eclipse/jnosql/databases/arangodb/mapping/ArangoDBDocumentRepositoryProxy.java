@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyMap;
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
-class ArangoDBDocumentRepositoryProxy<T> extends AbstractDocumentRepositoryProxy<T> {
+class ArangoDBDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
