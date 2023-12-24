@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
 
-class CouchbaseDocumentRepositoryProxy<T>extends AbstractDocumentRepositoryProxy<T> {
+class CouchbaseDocumentRepositoryProxy<T, K>extends AbstractDocumentRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
