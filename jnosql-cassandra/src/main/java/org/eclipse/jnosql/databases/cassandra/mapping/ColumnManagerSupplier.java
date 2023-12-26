@@ -18,14 +18,14 @@ import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManager;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManagerFactory;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraConfiguration;
-import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
+import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.eclipse.jnosql.mapping.config.MappingConfigurations.COLUMN_DATABASE;
+import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.COLUMN_DATABASE;
 
 @ApplicationScoped
 class ColumnManagerSupplier implements Supplier<CassandraColumnManager> {

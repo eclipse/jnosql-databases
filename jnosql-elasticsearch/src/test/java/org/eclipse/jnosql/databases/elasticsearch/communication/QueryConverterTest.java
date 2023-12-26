@@ -26,7 +26,7 @@ import jakarta.nosql.Id;
 import org.awaitility.Awaitility;
 import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.mapping.config.MappingConfigurations;
+import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

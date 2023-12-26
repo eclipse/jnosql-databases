@@ -18,14 +18,14 @@ import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.hazelcast.communication.HazelcastBucketManager;
 import org.eclipse.jnosql.databases.hazelcast.communication.HazelcastBucketManagerFactory;
 import org.eclipse.jnosql.databases.hazelcast.communication.HazelcastKeyValueConfiguration;
-import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
+import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.eclipse.jnosql.mapping.config.MappingConfigurations.KEY_VALUE_DATABASE;
+import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.KEY_VALUE_DATABASE;
 
 @ApplicationScoped
 class BucketManagerSupplier implements Supplier<HazelcastBucketManager> {

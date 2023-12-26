@@ -21,7 +21,7 @@ import jakarta.enterprise.util.AnnotationLiteral;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProducer;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.spi.AbstractBean;
+import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;

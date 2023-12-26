@@ -18,14 +18,14 @@ import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentConfiguration;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentManager;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentManagerFactory;
-import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
+import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.eclipse.jnosql.mapping.config.MappingConfigurations.DOCUMENT_DATABASE;
+import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.DOCUMENT_DATABASE;
 
 @ApplicationScoped
 class DocumentManagerSupplier implements Supplier<OrientDBDocumentManager> {

@@ -18,14 +18,14 @@ import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfiguration;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentManager;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentManagerFactory;
-import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
+import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.eclipse.jnosql.mapping.config.MappingConfigurations.DOCUMENT_DATABASE;
+import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.DOCUMENT_DATABASE;
 
 @ApplicationScoped
 class DocumentManagerSupplier implements Supplier<SolrDocumentManager> {

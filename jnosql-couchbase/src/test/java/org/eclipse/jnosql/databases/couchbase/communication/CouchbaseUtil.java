@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
-import org.eclipse.jnosql.mapping.config.MappingConfigurations;
+import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 
 import java.util.HashMap;
 import java.util.Map;

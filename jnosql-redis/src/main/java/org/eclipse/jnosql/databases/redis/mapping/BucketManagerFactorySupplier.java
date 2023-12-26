@@ -15,7 +15,7 @@ import jakarta.enterprise.inject.Typed;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.redis.communication.RedisBucketManagerFactory;
 import org.eclipse.jnosql.databases.redis.communication.RedisConfiguration;
-import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
+import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;

@@ -18,14 +18,14 @@ import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfiguration;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManager;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManagerFactory;
-import org.eclipse.jnosql.mapping.config.MicroProfileSettings;
+import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.eclipse.jnosql.mapping.config.MappingConfigurations.DOCUMENT_DATABASE;
+import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.DOCUMENT_DATABASE;
 
 @ApplicationScoped
 class DocumentManagerSupplier implements Supplier<MongoDBDocumentManager> {

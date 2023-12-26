@@ -19,7 +19,7 @@ import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
 import org.eclipse.jnosql.mapping.keyvalue.query.KeyValueRepositoryProducer;
-import org.eclipse.jnosql.mapping.spi.AbstractBean;
+import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
