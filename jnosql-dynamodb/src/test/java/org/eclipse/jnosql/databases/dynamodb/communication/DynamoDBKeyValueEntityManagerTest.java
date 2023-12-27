@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-public class DynamoDBKeyValueEntityManagerTest {
+class DynamoDBKeyValueEntityManagerTest {
 
     private BucketManager keyValueEntityManager;
 
@@ -53,14 +53,14 @@ public class DynamoDBKeyValueEntityManagerTest {
     private KeyValueEntity keyValueSoro = KeyValueEntity.of("soro", Value.of(userSoro));
 
     @BeforeEach
-    public void init() {
-        keyValueEntityManagerFactory = DynamoDBTestUtils.INSTANCE.get();
+    void init() {
+        keyValueEntityManagerFactory = DynamoDBTestUtils.INSTANCE.getBucketManagerFactory();
         keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
 
     @Test
-    public void shouldPutValue() {
+    void shouldPutValue() {
         keyValueEntityManager.put("otavio", userOtavio);
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
@@ -68,7 +68,7 @@ public class DynamoDBKeyValueEntityManagerTest {
     }
 
     @Test
-    public void shouldPutKeyValue() {
+    void shouldPutKeyValue() {
         keyValueEntityManager.put(keyValueOtavio);
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
         assertTrue(otavio.isPresent());
@@ -76,7 +76,7 @@ public class DynamoDBKeyValueEntityManagerTest {
     }
 
     @Test
-    public void shouldPutIterableKeyValue() {
+    void shouldPutIterableKeyValue() {
 
         keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
         Optional<Value> otavio = keyValueEntityManager.get("otavio");
@@ -89,7 +89,7 @@ public class DynamoDBKeyValueEntityManagerTest {
     }
 
     @Test
-    public void shouldMultiGet() {
+    void shouldMultiGet() {
         User user = new User("otavio");
         KeyValueEntity keyValue = KeyValueEntity.of("otavio", Value.of(user));
         keyValueEntityManager.put(keyValue);
@@ -97,7 +97,7 @@ public class DynamoDBKeyValueEntityManagerTest {
     }
 
     @Test
-    public void shouldRemoveKey() {
+    void shouldRemoveKey() {
         keyValueEntityManager.put(keyValueOtavio);
         assertTrue(keyValueEntityManager.get("otavio").isPresent());
         keyValueEntityManager.delete("otavio");
@@ -105,7 +105,7 @@ public class DynamoDBKeyValueEntityManagerTest {
     }
 
     @Test
-    public void shouldRemoveMultiKey() {
+    void shouldRemoveMultiKey() {
         keyValueEntityManager.put(asList(keyValueSoro, keyValueOtavio));
         List<String> keys = asList("otavio", "soro");
         Iterable<Value> values = keyValueEntityManager.get(keys);
@@ -117,7 +117,7 @@ public class DynamoDBKeyValueEntityManagerTest {
     }
 
     @AfterAll
-    public static void shutDown() {
+    static void shutDown() {
         DynamoDBTestUtils.INSTANCE.shutDown();
     }
 

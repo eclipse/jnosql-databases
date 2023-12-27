@@ -19,9 +19,7 @@ import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import java.util.function.Supplier;
-
-public enum DynamoDBTestUtils implements Supplier<BucketManagerFactory> {
+enum DynamoDBTestUtils {
 
     INSTANCE;
 
@@ -30,15 +28,22 @@ public enum DynamoDBTestUtils implements Supplier<BucketManagerFactory> {
                     .withExposedPorts(8000)
                     .waitingFor(Wait.defaultWaitStrategy());
 
-    public BucketManagerFactory get() {
-        dynamodb.start();
+    BucketManagerFactory getBucketManagerFactory() {
+        Settings settings = getSettings();
         DynamoDBKeyValueConfiguration configuration = new DynamoDBKeyValueConfiguration();
-        String endpoint = "http://" + dynamodb.getHost() + ":" + dynamodb.getFirstMappedPort();
-        return configuration.apply(Settings.builder()
-                .put(DynamoDBConfigurations.ENDPOINT, endpoint).build());
+        return configuration.apply(settings);
     }
 
-    public void shutDown() {
+    Settings getSettings() {
+        dynamodb.start();
+        return Settings.builder()
+                .put(DynamoDBConfigurations.ENDPOINT, "http://" + dynamodb.getHost() + ":" + dynamodb.getFirstMappedPort())
+                .put(DynamoDBConfigurations.AWS_ACCESSKEY, System.getProperty("AWS_ACCESS_KEY_ID","DUMMYIDEXAMPLE"))
+                .put(DynamoDBConfigurations.AWS_SECRET_ACCESS, System.getProperty("AWS_SECRET_ACCESS_KEY","DUMMYEXAMPLEKEY"))
+                .put(DynamoDBConfigurations.REGION, "us-west-2").build();
+    }
+
+    void shutDown() {
         dynamodb.close();
     }
 }
