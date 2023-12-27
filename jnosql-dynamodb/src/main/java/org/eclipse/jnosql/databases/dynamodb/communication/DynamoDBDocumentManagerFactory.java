@@ -15,15 +15,27 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-public class DynamoDBDocumentConfiguration extends DynamoDBConfiguration
-        implements DocumentConfiguration {
+import java.util.Optional;
+
+public class DynamoDBDocumentManagerFactory implements DocumentManagerFactory {
+
+    private final DynamoDbClient dynamoDB;
+
+    public DynamoDBDocumentManagerFactory(DynamoDbClient dynamoDB) {
+        this.dynamoDB = dynamoDB;
+    }
+
     @Override
-    public DocumentManagerFactory apply(Settings settings) {
-        var dynamoDB = getDynamoDB(settings);
-        return new DynamoDBDocumentManagerFactory(dynamoDB);
+    public DocumentManager apply(String s) {
+        return null;
+    }
+
+    @Override
+    public void close() {
+        Optional.ofNullable(this.dynamoDB).ifPresent(DynamoDbClient::close);
     }
 }
