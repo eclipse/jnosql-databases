@@ -18,7 +18,6 @@ import com.couchbase.client.java.json.JsonObject;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.AbstractKeyValueTemplate;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
@@ -56,9 +55,6 @@ public class CouchbaseDocumentRepositoryProxyTest {
     private CouchbaseTemplate template;
 
     @Inject
-    private DocumentRepositoryProducer producer;
-
-    @Inject
     private Converters converters;
 
     @Inject
@@ -72,7 +68,7 @@ public class CouchbaseDocumentRepositoryProxyTest {
         this.template = Mockito.mock(CouchbaseTemplate.class);
 
         CouchbaseDocumentRepositoryProxy handler = new CouchbaseDocumentRepositoryProxy(template,
-                PersonRepository.class, producer.get(PersonRepository.class, template), converters, entitiesMetadata);
+                PersonRepository.class, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());

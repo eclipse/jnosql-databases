@@ -14,14 +14,12 @@
  */
 package org.eclipse.jnosql.databases.arangodb.mapping;
 
-import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
-import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
@@ -30,9 +28,9 @@ import java.util.Collections;
 import java.util.Set;
 
 
-class ArangoDBRepositoryBean extends AbstractBean<ArangoDBRepository> {
+class ArangoDBRepositoryBean<T, K> extends AbstractBean<ArangoDBRepository<T, K>> {
 
-    private final Class type;
+    private final Class<T> type;
 
 
     private final Set<Type> types;
@@ -50,16 +48,15 @@ class ArangoDBRepositoryBean extends AbstractBean<ArangoDBRepository> {
         return type;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ArangoDBRepository create(CreationalContext<ArangoDBRepository> creationalContext) {
+    public ArangoDBRepository<T, K> create(CreationalContext<ArangoDBRepository<T, K>> creationalContext) {
         ArangoDBTemplate template = getInstance(ArangoDBTemplate.class);
-        DocumentRepositoryProducer producer = getInstance(DocumentRepositoryProducer.class);
         Converters converters = getInstance(Converters.class);
         EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
-        PageableRepository<Object, Object> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
 
-        ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy(template,type, repository, converters, entitiesMetadata);
-        return (ArangoDBRepository) Proxy.newProxyInstance(type.getClassLoader(),
+        ArangoDBDocumentRepositoryProxy<T, K> handler = new ArangoDBDocumentRepositoryProxy<>(template, type, converters, entitiesMetadata);
+        return (ArangoDBRepository<T,K>) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
     }

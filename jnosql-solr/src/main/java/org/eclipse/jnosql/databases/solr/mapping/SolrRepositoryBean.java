@@ -14,12 +14,10 @@
  */
 package org.eclipse.jnosql.databases.solr.mapping;
 
-import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
 
@@ -30,9 +28,9 @@ import java.util.Collections;
 import java.util.Set;
 
 
-class SolrRepositoryBean extends AbstractBean<SolrRepository> {
+class SolrRepositoryBean<T, K> extends AbstractBean<SolrRepository<T, K>> {
 
-    private final Class type;
+    private final Class<T> type;
 
 
     private final Set<Type> types;
@@ -40,7 +38,7 @@ class SolrRepositoryBean extends AbstractBean<SolrRepository> {
     private final Set<Annotation> qualifiers = Collections.singleton(new AnnotationLiteral<Default>() {
     });
 
-    SolrRepositoryBean(Class type) {
+    SolrRepositoryBean(Class<T> type) {
         this.type = type;
         this.types = Collections.singleton(type);
     }
@@ -51,15 +49,14 @@ class SolrRepositoryBean extends AbstractBean<SolrRepository> {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
-    public SolrRepository create(CreationalContext<SolrRepository> creationalContext) {
+    public SolrRepository<T, K> create(CreationalContext<SolrRepository<T, K>> creationalContext) {
         SolrTemplate template = getInstance(SolrTemplate.class);
-        DocumentRepositoryProducer producer = getInstance(DocumentRepositoryProducer.class);
-        PageableRepository<Object, Object> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
         Converters converters = getInstance(Converters.class);
         EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
-        SolrRepositoryProxy handler = new SolrRepositoryProxy(template, type, repository, converters, entitiesMetadata);
-        return (SolrRepository) Proxy.newProxyInstance(type.getClassLoader(),
+        SolrRepositoryProxy<T, K> handler = new SolrRepositoryProxy<>(template, type, converters, entitiesMetadata);
+        return (SolrRepository<T, K>) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
     }

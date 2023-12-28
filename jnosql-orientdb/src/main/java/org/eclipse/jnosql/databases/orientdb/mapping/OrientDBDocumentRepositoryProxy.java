@@ -15,10 +15,11 @@
 package org.eclipse.jnosql.databases.orientdb.mapping;
 
 
-import jakarta.data.repository.PageableRepository;
 import org.eclipse.jnosql.mapping.core.Converters;
+import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
 import org.eclipse.jnosql.mapping.document.query.AbstractDocumentRepositoryProxy;
+import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProxy;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
@@ -38,7 +39,7 @@ class OrientDBDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryPr
 
     private final OrientDBTemplate template;
 
-    private final PageableRepository<?, ?> repository;
+    private final AbstractRepository<T, K> repository;
 
     private final Class<?> repositoryType;
 
@@ -48,20 +49,20 @@ class OrientDBDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryPr
 
 
     OrientDBDocumentRepositoryProxy(OrientDBTemplate template, Class<?> repositoryType,
-                                    PageableRepository<?, ?> repository, Converters converters,
+                                    Converters converters,
                                     EntitiesMetadata entitiesMetadata) {
         this.template = template;
         this.typeClass = Class.class.cast(ParameterizedType.class.cast(repositoryType.getGenericInterfaces()[0])
                 .getActualTypeArguments()[0]);
-        this.repository = repository;
         this.repositoryType = repositoryType;
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
+        this.repository = DocumentRepositoryProxy.DocumentRepository.of(template, entityMetadata);
     }
 
 
     @Override
-    protected PageableRepository getRepository() {
+    protected AbstractRepository<T, K>  repository() {
         return repository;
     }
 
@@ -71,17 +72,17 @@ class OrientDBDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryPr
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
     @Override
-    protected EntityMetadata getEntityMetadata() {
+    protected EntityMetadata entityMetadata() {
         return entityMetadata;
     }
 
     @Override
-    protected JNoSQLDocumentTemplate getTemplate() {
+    protected JNoSQLDocumentTemplate template() {
         return template;
     }
 

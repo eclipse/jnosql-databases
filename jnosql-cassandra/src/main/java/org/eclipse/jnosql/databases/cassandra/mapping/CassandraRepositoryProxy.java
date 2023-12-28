@@ -15,10 +15,11 @@
 package org.eclipse.jnosql.databases.cassandra.mapping;
 
 
-import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProxy;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.query.AbstractColumnRepositoryProxy;
+import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
@@ -37,7 +38,7 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
 
     private final CassandraTemplate template;
 
-    private final PageableRepository<T,?> repository;
+    private final AbstractRepository<T,K> repository;
 
     private final Converters converters;
 
@@ -46,25 +47,25 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
     private final Class<?> repositoryType;
 
     CassandraRepositoryProxy(CassandraTemplate template, Class<?> repositoryType,
-                             PageableRepository<T, ?> repository,
                              Converters converters, EntitiesMetadata entitiesMetadata) {
 
         this.template = template;
         this.typeClass = Class.class.cast(ParameterizedType.class.cast(repositoryType.getGenericInterfaces()[0])
                 .getActualTypeArguments()[0]);
-        this.repository = repository;
+
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
         this.repositoryType = repositoryType;
+        this.repository = ColumnRepositoryProxy.ColumnRepository.of(template, entityMetadata);
     }
 
     @Override
-    protected PageableRepository getRepository() {
+    protected AbstractRepository<T, K> repository() {
         return repository;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
@@ -74,12 +75,12 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
     }
 
     @Override
-    protected EntityMetadata getEntityMetadata() {
+    protected EntityMetadata entityMetadata() {
         return entityMetadata;
     }
 
     @Override
-    protected JNoSQLColumnTemplate getTemplate() {
+    protected JNoSQLColumnTemplate template() {
         return template;
     }
 

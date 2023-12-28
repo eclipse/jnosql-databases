@@ -17,6 +17,7 @@ package org.eclipse.jnosql.databases.arangodb.mapping;
 import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.mapping.core.Converters;
+import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -55,10 +56,6 @@ import static org.mockito.Mockito.when;
 public class ArangoDBDocumentRepositoryProxyTest {
 
     private ArangoDBTemplate template;
-
-    @Inject
-    private DocumentRepositoryProducer producer;
-
     @Inject
     private EntitiesMetadata entitiesMetadata;
 
@@ -72,9 +69,8 @@ public class ArangoDBDocumentRepositoryProxyTest {
     public void setUp() {
         this.template = Mockito.mock(ArangoDBTemplate.class);
 
-        PersonRepository personRepository = producer.get(PersonRepository.class, template);
         ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy<>(template,
-                PersonRepository.class, personRepository, converters, entitiesMetadata);
+                PersonRepository.class, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());

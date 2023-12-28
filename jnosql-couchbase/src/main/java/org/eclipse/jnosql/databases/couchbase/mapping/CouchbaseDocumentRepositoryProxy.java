@@ -16,10 +16,11 @@ package org.eclipse.jnosql.databases.couchbase.mapping;
 
 
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.data.repository.PageableRepository;
 import org.eclipse.jnosql.mapping.core.Converters;
+import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
 import org.eclipse.jnosql.mapping.document.query.AbstractDocumentRepositoryProxy;
+import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProxy;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
@@ -32,13 +33,13 @@ import java.util.stream.Stream;
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
 
-class CouchbaseDocumentRepositoryProxy<T, K>extends AbstractDocumentRepositoryProxy<T, K> {
+class CouchbaseDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
     private final CouchbaseTemplate template;
 
-    private final PageableRepository<?, ?> repository;
+    private final AbstractRepository<T, K> repository;
 
     private final Converters converters;
 
@@ -47,20 +48,20 @@ class CouchbaseDocumentRepositoryProxy<T, K>extends AbstractDocumentRepositoryPr
     private final Class<?> repositoryType;
 
     CouchbaseDocumentRepositoryProxy(CouchbaseTemplate template, Class<?> repositoryType,
-                                     PageableRepository<?, ?> repository, Converters converters,
+                                     Converters converters,
                                      EntitiesMetadata entitiesMetadata) {
         this.template = template;
         this.typeClass = Class.class.cast(ParameterizedType.class.cast(repositoryType.getGenericInterfaces()[0])
                 .getActualTypeArguments()[0]);
-        this.repository = repository;
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
         this.repositoryType = repositoryType;
+        this.repository = DocumentRepositoryProxy.DocumentRepository.of(template, entityMetadata);
     }
 
 
     @Override
-    protected PageableRepository getRepository() {
+    protected AbstractRepository<T, K> repository() {
         return repository;
     }
 
@@ -70,17 +71,17 @@ class CouchbaseDocumentRepositoryProxy<T, K>extends AbstractDocumentRepositoryPr
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
     @Override
-    protected EntityMetadata getEntityMetadata() {
+    protected EntityMetadata entityMetadata() {
         return entityMetadata;
     }
 
     @Override
-    protected JNoSQLDocumentTemplate getTemplate() {
+    protected JNoSQLDocumentTemplate template() {
         return template;
     }
 
