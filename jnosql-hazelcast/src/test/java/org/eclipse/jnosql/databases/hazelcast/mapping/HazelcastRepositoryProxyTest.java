@@ -14,10 +14,11 @@
  */
 package org.eclipse.jnosql.databases.hazelcast.mapping;
 
-import jakarta.data.repository.PageableRepository;
+import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.keyvalue.AbstractKeyValueTemplate;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
@@ -60,8 +61,10 @@ public class HazelcastRepositoryProxyTest {
     @Mock
     private HazelcastTemplate template;
 
-    @Mock
-    private PageableRepository<?, ?> repository;
+
+    @Inject
+    private EntitiesMetadata entitiesMetadata;
+
     private PersonRepository personRepository;
 
 
@@ -72,7 +75,7 @@ public class HazelcastRepositoryProxyTest {
         Collection<Object> people = asList(new Person("Poliana", 25), new Person("Otavio", 28));
 
         when(template.sql(anyString())).thenReturn(people);
-        HazelcastRepositoryProxy handler = new HazelcastRepositoryProxy<>(template, PersonRepository.class, repository);
+        HazelcastRepositoryProxy handler = new HazelcastRepositoryProxy<>(template, PersonRepository.class, entitiesMetadata);
 
         when(template.sql(anyString(), any(Map.class))).thenReturn(people);
 

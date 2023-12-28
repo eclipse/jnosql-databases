@@ -14,12 +14,11 @@
  */
 package org.eclipse.jnosql.databases.hazelcast.mapping;
 
-import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
-import org.eclipse.jnosql.mapping.keyvalue.query.KeyValueRepositoryProducer;
 import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
@@ -28,16 +27,16 @@ import java.util.Collections;
 import java.util.Set;
 
 
-class HazelcastRepositoryBean extends AbstractBean<HazelcastRepository> {
+class HazelcastRepositoryBean<T, K> extends AbstractBean<HazelcastRepository<T, K>> {
 
-    private final Class type;
+    private final Class<T> type;
 
     private final Set<Type> types;
 
     private final Set<Annotation> qualifiers = Collections.singleton(new AnnotationLiteral<Default>() {
     });
 
-    HazelcastRepositoryBean(Class type) {
+    HazelcastRepositoryBean(Class<T> type) {
         this.type = type;
         this.types = Collections.singleton(type);
     }
@@ -48,13 +47,13 @@ class HazelcastRepositoryBean extends AbstractBean<HazelcastRepository> {
     }
 
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public HazelcastRepository create(CreationalContext<HazelcastRepository> creationalContext) {
+    public HazelcastRepository<T, K> create(CreationalContext<HazelcastRepository<T, K>> creationalContext) {
         HazelcastTemplate template = getInstance(HazelcastTemplate.class);
+        EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
 
-        KeyValueRepositoryProducer producer = getInstance(KeyValueRepositoryProducer.class);
-        PageableRepository<?, ?> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
-        HazelcastRepositoryProxy handler = new HazelcastRepositoryProxy(template, type, repository);
+        HazelcastRepositoryProxy<T, K> handler = new HazelcastRepositoryProxy<>(template, type, entitiesMetadata);
         return (HazelcastRepository) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
