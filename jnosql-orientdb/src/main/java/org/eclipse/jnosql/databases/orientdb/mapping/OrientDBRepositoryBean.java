@@ -14,12 +14,10 @@
  */
 package org.eclipse.jnosql.databases.orientdb.mapping;
 
-import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
 
@@ -30,16 +28,16 @@ import java.util.Collections;
 import java.util.Set;
 
 
-class OrientDBRepositoryBean extends AbstractBean<OrientDBCrudRepository> {
+class OrientDBRepositoryBean<T, K> extends AbstractBean<OrientDBCrudRepository<T, K>> {
 
-    private final Class type;
+    private final Class<T> type;
 
     private final Set<Type> types;
 
     private final Set<Annotation> qualifiers = Collections.singleton(new AnnotationLiteral<Default>() {
     });
 
-    OrientDBRepositoryBean(Class type) {
+    OrientDBRepositoryBean(Class<T> type) {
         this.type = type;
         this.types = Collections.singleton(type);
     }
@@ -49,16 +47,14 @@ class OrientDBRepositoryBean extends AbstractBean<OrientDBCrudRepository> {
         return type;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public OrientDBCrudRepository create(CreationalContext<OrientDBCrudRepository> creationalContext) {
+    public OrientDBCrudRepository<T, K> create(CreationalContext<OrientDBCrudRepository<T, K>> creationalContext) {
         OrientDBTemplate template = getInstance(OrientDBTemplate.class);
-        DocumentRepositoryProducer producer = getInstance(DocumentRepositoryProducer.class);
-        PageableRepository<?, ?> repository = producer.get((Class<PageableRepository<Object, Object>>) type, template);
         Converters converters = getInstance(Converters.class);
         EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
-        OrientDBDocumentRepositoryProxy handler = new OrientDBDocumentRepositoryProxy(template, type, repository,
-                converters, entitiesMetadata);
-        return (OrientDBCrudRepository) Proxy.newProxyInstance(type.getClassLoader(),
+        OrientDBDocumentRepositoryProxy<T, K> handler = new OrientDBDocumentRepositoryProxy<>(template, type, converters, entitiesMetadata);
+        return (OrientDBCrudRepository<T, K>) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
     }

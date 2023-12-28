@@ -55,9 +55,6 @@ public class OrientDBDocumentRepositoryProxyTest {
     private OrientDBTemplate template;
 
     @Inject
-    private DocumentRepositoryProducer producer;
-
-    @Inject
     private EntitiesMetadata entitiesMetadata;
 
     @Inject
@@ -69,9 +66,8 @@ public class OrientDBDocumentRepositoryProxyTest {
     @BeforeEach
     public void setUp() {
         this.template = Mockito.mock(OrientDBTemplate.class);
-        PersonRepository personRepository = producer.get(PersonRepository.class, template);
         OrientDBDocumentRepositoryProxy handler = new OrientDBDocumentRepositoryProxy(template,
-                PersonRepository.class, personRepository, converters, entitiesMetadata);
+                PersonRepository.class, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());

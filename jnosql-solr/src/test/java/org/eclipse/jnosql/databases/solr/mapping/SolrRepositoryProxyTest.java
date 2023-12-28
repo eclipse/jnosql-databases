@@ -55,9 +55,6 @@ public class SolrRepositoryProxyTest {
     private SolrTemplate template;
 
     @Inject
-    private DocumentRepositoryProducer producer;
-
-    @Inject
     private Converters converters;
 
     @Inject
@@ -70,7 +67,7 @@ public class SolrRepositoryProxyTest {
         this.template = Mockito.mock(SolrTemplate.class);
 
         SolrRepositoryProxy handler = new SolrRepositoryProxy(template,
-                PersonRepository.class, producer.get(PersonRepository.class, template), converters, entitiesMetadata);
+                PersonRepository.class, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());
