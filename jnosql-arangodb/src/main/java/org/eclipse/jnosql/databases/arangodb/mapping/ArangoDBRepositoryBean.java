@@ -14,17 +14,12 @@
  */
 package org.eclipse.jnosql.databases.arangodb.mapping;
 
-import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
-import org.eclipse.jnosql.mapping.core.query.AbstractRepositoryProxy;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProxy;
-import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
+import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
