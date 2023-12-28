@@ -55,9 +55,6 @@ public class CassandraRepositoryProxyTest {
     private CassandraTemplate template;
 
     @Inject
-    private ColumnRepositoryProducer producer;
-
-    @Inject
     private Converters converters;
 
     @Inject
@@ -68,9 +65,8 @@ public class CassandraRepositoryProxyTest {
     @BeforeEach
     public void setUp() {
         this.template = Mockito.mock(CassandraTemplate.class);
-        PersonRepository personRepository = producer.get(PersonRepository.class, template);
         CassandraRepositoryProxy handler = new CassandraRepositoryProxy(template,
-                PersonRepository.class, personRepository, converters, entitiesMetadata);
+                PersonRepository.class, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());
