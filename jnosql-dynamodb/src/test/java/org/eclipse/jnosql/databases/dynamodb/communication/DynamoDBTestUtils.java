@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -31,6 +32,12 @@ enum DynamoDBTestUtils {
     BucketManagerFactory getBucketManagerFactory() {
         Settings settings = getSettings();
         DynamoDBKeyValueConfiguration configuration = new DynamoDBKeyValueConfiguration();
+        return configuration.apply(settings);
+    }
+
+    DocumentManagerFactory getDocumentManagerFactory() {
+        Settings settings = getSettings();
+        var configuration = new DynamoDBDocumentConfiguration();
         return configuration.apply(settings);
     }
 
