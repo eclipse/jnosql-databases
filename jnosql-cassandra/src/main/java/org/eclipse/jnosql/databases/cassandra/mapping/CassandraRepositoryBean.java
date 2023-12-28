@@ -14,12 +14,10 @@
  */
 package org.eclipse.jnosql.databases.cassandra.mapping;
 
-import jakarta.data.repository.PageableRepository;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProducer;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.core.spi.AbstractBean;
 
