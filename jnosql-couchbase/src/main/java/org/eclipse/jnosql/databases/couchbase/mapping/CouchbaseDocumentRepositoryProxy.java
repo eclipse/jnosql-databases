@@ -16,7 +16,6 @@ package org.eclipse.jnosql.databases.couchbase.mapping;
 
 
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.data.repository.PageableRepository;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
