@@ -35,6 +35,8 @@ class DynamoDBDocumentEntityConverter {
     static final String ENTITY = "@entity";
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
+    private DynamoDBDocumentEntityConverter() {}
+
     static EnhancedDocument toEnhancedDocument(DocumentEntity documentEntity) {
         return EnhancedDocument.builder()
                 .json(JSONB.toJson(getMap(documentEntity)))
