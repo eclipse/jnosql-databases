@@ -17,12 +17,11 @@ package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 public class DynamoDBDocumentConfiguration extends DynamoDBConfiguration
         implements DocumentConfiguration {
     @Override
-    public DocumentManagerFactory apply(Settings settings) {
+    public DynamoDBDocumentManagerFactory apply(Settings settings) {
         var dynamoDB = getDynamoDB(settings);
         return new DynamoDBDocumentManagerFactory(dynamoDB);
     }
