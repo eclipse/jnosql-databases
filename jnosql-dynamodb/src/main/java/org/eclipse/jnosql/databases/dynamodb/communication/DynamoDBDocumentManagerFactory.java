@@ -30,8 +30,8 @@ public class DynamoDBDocumentManagerFactory implements DocumentManagerFactory {
     }
 
     @Override
-    public DocumentManager apply(String s) {
-        return null;
+    public DocumentManager apply(String database) {
+        return new DynamoDBDocumentManager(database, dynamoDB);
     }
 
     @Override
