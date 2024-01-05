@@ -54,7 +54,7 @@ class DynamoDBKeyValueEntityManagerTest {
 
     @BeforeEach
     void init() {
-        keyValueEntityManagerFactory = DynamoDBTestUtils.INSTANCE.getBucketManagerFactory();
+        keyValueEntityManagerFactory = DynamoDBTestUtils.CONFIG.getBucketManagerFactory();
         keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
@@ -118,7 +118,7 @@ class DynamoDBKeyValueEntityManagerTest {
 
     @AfterAll
     static void shutDown() {
-        DynamoDBTestUtils.INSTANCE.shutDown();
+        DynamoDBTestUtils.CONFIG.shutDown();
     }
 
 }
