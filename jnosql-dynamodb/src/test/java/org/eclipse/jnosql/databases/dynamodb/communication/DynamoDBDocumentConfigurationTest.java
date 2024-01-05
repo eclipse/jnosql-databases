@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 
-import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.junit.jupiter.api.Assertions;
@@ -48,7 +47,7 @@ class DynamoDBDocumentConfigurationTest {
         var configuration = DocumentConfiguration
                 .getConfiguration(DynamoDBDocumentConfiguration.class);
 
-        var settings = DynamoDBTestUtils.INSTANCE.getSettings();
+        var settings = DynamoDBTestUtils.CONFIG.getSettings();
 
         assertSoftly(softly -> {
             softly.assertThat(configuration)
