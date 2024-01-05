@@ -32,9 +32,8 @@ final class DocumentEntityGenerator {
 
     static final String COLLECTION_NAME = "music";
 
-
     static DocumentEntity getEntity() {
-        return  getEntityWithSubDocuments(0);
+        return getEntityWithSubDocuments(0);
     }
 
     static DocumentEntity getEntityWithSubDocuments(int levels) {
@@ -47,7 +46,7 @@ final class DocumentEntityGenerator {
         map.put("float", 1f);
         map.put("bigdecimal", BigDecimal.valueOf(10.10));
         map.put("city", "Salvador");
-        map.put("texts",List.of("A","B","C"));
+        map.put("texts", List.of("A", "B", "C"));
         if (levels > 0) {
             addSubDocument(m -> map.put("level" + levels, m), levels - 1);
         }
