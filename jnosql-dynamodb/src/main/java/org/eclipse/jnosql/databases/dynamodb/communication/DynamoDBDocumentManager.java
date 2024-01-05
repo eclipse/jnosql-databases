@@ -19,14 +19,8 @@ import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentPreparedStatement;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
-import software.amazon.awssdk.enhanced.dynamodb.AttributeConverterProvider;
-import software.amazon.awssdk.enhanced.dynamodb.AttributeValueType;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.TableMetadata;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.document.EnhancedDocument;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTimeToLiveRequest;
@@ -37,11 +31,9 @@ import software.amazon.awssdk.services.dynamodb.model.TimeToLiveStatus;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -58,20 +50,20 @@ public class DynamoDBDocumentManager implements DocumentManager {
 
     private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
 
-    private final UnaryOperator<String> entityNameResolver;
+    private final UnaryOperator<String> entityNameAttributeNameResolver;
 
     private final ConcurrentHashMap<String, DynamoDbTable<EnhancedDocument>> tables = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Supplier<String>> ttlAttributeNamesByTable = new ConcurrentHashMap<>();
 
     public DynamoDBDocumentManager(String database, DynamoDbClient dynamoDbClient, Settings settings) {
+        this.settings = settings;
         this.database = database;
         this.dynamoDbClient = dynamoDbClient;
         this.dynamoDbEnhancedClient = DynamoDbEnhancedClient.builder().dynamoDbClient(dynamoDbClient).build();
-        this.settings = settings;
-        this.entityNameResolver = this::resolveEntityName;
+        this.entityNameAttributeNameResolver = this::resolveEntityNameAttributeName;
     }
 
-    private String resolveEntityName(String entityName) {
+    private String resolveEntityNameAttributeName(String entityName) {
         return this.settings.get(DynamoDBConfigurations.ENTITY_PARTITION_KEY, String.class).orElse(entityName);
     }
 
@@ -88,8 +80,8 @@ public class DynamoDBDocumentManager implements DocumentManager {
         return database;
     }
 
-    public UnaryOperator<String> getEntityNameResolver() {
-        return this.entityNameResolver;
+    UnaryOperator<String> entityNameAttributeNameResolver() {
+        return this.entityNameAttributeNameResolver;
     }
 
     @Override
@@ -102,36 +94,36 @@ public class DynamoDBDocumentManager implements DocumentManager {
     }
 
     private EnhancedDocument convertToEnhancedDocument(DocumentEntity documentEntity) {
-        return toEnhancedDocument(getEntityNameResolver(), documentEntity);
+        return toEnhancedDocument(entityNameAttributeNameResolver(), documentEntity);
     }
 
     private DynamoDbTable<EnhancedDocument> getTableFor(String name) {
         return this.tables.computeIfAbsent(name, this::getOrCreateTable);
     }
 
-    private Supplier<String> getTTLAttributeNameFor(String name) {
-        return this.ttlAttributeNamesByTable.computeIfAbsent(name, this::getOrCreateTableWithTTLSupport);
+    private Supplier<String> getTTLAttributeNameFor(String tableName) {
+        return this.ttlAttributeNamesByTable.computeIfAbsent(tableName, this::getTTLAttributeNameSupplierFromTable);
     }
 
-    private Supplier<String> getOrCreateTableWithTTLSupport(String nameKey) {
-        DynamoDbTable<EnhancedDocument> table = this.getOrCreateTable(nameKey);
+    private Supplier<String> getTTLAttributeNameSupplierFromTable(String tableName) {
+        DynamoDbTable<EnhancedDocument> table = this.getOrCreateTable(tableName);
         DescribeTimeToLiveResponse describeTimeToLiveResponse = getDynamoDbClient().describeTimeToLive(DescribeTimeToLiveRequest.builder()
                 .tableName(table.tableName()).build());
         if (TimeToLiveStatus.ENABLED.equals(describeTimeToLiveResponse.timeToLiveDescription().timeToLiveStatus())) {
             var ttlAttributeName = describeTimeToLiveResponse.timeToLiveDescription().attributeName();
             return () -> ttlAttributeName;
         }
-        return unsupportedTTL(table.tableName());
+        return unsupportedTTLSupplierFor(table.tableName());
     }
 
-    private Supplier<String> unsupportedTTL(String tableName) {
+    private Supplier<String> unsupportedTTLSupplierFor(String tableName) {
         return () -> tableName + " don't support TTL operations. Check if TTL support is enabled for this table.";
     }
 
     private DynamoDbTable<EnhancedDocument> getOrCreateTable(String nameKey) {
         DynamoDbTable<EnhancedDocument> table = dynamoDbEnhancedClient
                 .table(nameKey, TableSchema.documentSchemaBuilder()
-                        .addIndexPartitionKey(TableMetadata.primaryIndexName(), getEntityFieldName(), AttributeValueType.S)
+                        .addIndexPartitionKey(TableMetadata.primaryIndexName(), getEntityNameAttributeName(), AttributeValueType.S)
                         .addIndexSortKey(TableMetadata.primaryIndexName(), DocumentEntityConverter.ID, AttributeValueType.S)
                         .attributeConverterProviders(AttributeConverterProvider.defaultProvider())
                         .build());
@@ -153,8 +145,8 @@ public class DynamoDBDocumentManager implements DocumentManager {
                 .orElse(false);
     }
 
-    private String getEntityFieldName() {
-        return getEntityNameResolver().apply(DocumentEntityConverter.ENTITY);
+    private String getEntityNameAttributeName() {
+        return entityNameAttributeNameResolver().apply(DocumentEntityConverter.ENTITY);
     }
 
     @Override
@@ -173,7 +165,7 @@ public class DynamoDBDocumentManager implements DocumentManager {
         requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -182,57 +174,35 @@ public class DynamoDBDocumentManager implements DocumentManager {
         requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(e -> this.insert(e, ttl))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public DocumentEntity update(DocumentEntity documentEntity) {
-        return null;
+        throw new UnsupportedOperationException("update method must be implemented!");
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> iterable) {
-        return null;
+    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+        requireNonNull(entities, "entities is required");
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::update)
+                .toList();
     }
 
     @Override
     public void delete(DocumentDeleteQuery documentDeleteQuery) {
-
+        throw new UnsupportedOperationException("delete method must be implemented!");
     }
 
     @Override
     public Stream<DocumentEntity> select(DocumentQuery documentQuery) {
-        return null;
+        throw new UnsupportedOperationException("select method must be implemented!");
     }
 
     @Override
-    public long count(DocumentQuery query) {
-        return DocumentManager.super.count(query);
-    }
-
-    @Override
-    public boolean exists(DocumentQuery query) {
-        return DocumentManager.super.exists(query);
-    }
-
-    @Override
-    public Stream<DocumentEntity> query(String query) {
-        return DocumentManager.super.query(query);
-    }
-
-    @Override
-    public DocumentPreparedStatement prepare(String query) {
-        return DocumentManager.super.prepare(query);
-    }
-
-    @Override
-    public Optional<DocumentEntity> singleResult(DocumentQuery query) {
-        return DocumentManager.super.singleResult(query);
-    }
-
-    @Override
-    public long count(String s) {
-        return 0;
+    public long count(String tableName) {
+        throw new UnsupportedOperationException("count method must be implemented!");
     }
 
     @Override
