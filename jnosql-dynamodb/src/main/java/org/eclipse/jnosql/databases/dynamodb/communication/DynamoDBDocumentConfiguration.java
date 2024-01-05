@@ -23,6 +23,6 @@ public class DynamoDBDocumentConfiguration extends DynamoDBConfiguration
     @Override
     public DynamoDBDocumentManagerFactory apply(Settings settings) {
         var dynamoDB = getDynamoDB(settings);
-        return new DynamoDBDocumentManagerFactory(dynamoDB);
+        return new DynamoDBDocumentManagerFactory(dynamoDB, settings);
     }
 }

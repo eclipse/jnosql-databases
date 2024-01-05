@@ -15,6 +15,7 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
+import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -24,14 +25,16 @@ import java.util.Optional;
 public class DynamoDBDocumentManagerFactory implements DocumentManagerFactory {
 
     private final DynamoDbClient dynamoDB;
+    private final Settings settings;
 
-    public DynamoDBDocumentManagerFactory(DynamoDbClient dynamoDB) {
+    public DynamoDBDocumentManagerFactory(DynamoDbClient dynamoDB, Settings settings) {
         this.dynamoDB = dynamoDB;
+        this.settings = settings;
     }
 
     @Override
     public DocumentManager apply(String database) {
-        return new DynamoDBDocumentManager(database, dynamoDB);
+        return new DynamoDBDocumentManager(database, dynamoDB, settings);
     }
 
     @Override
