@@ -31,7 +31,7 @@ class DynamoDBDocumentManagerFactoryTest {
 
     @BeforeEach
     void setup() {
-        this.documentManagerFactory = DynamoDBTestUtils.INSTANCE.getDocumentManagerFactory();
+        this.documentManagerFactory = DynamoDBTestUtils.CONFIG.getDocumentManagerFactory();
         assertSoftly(softly -> {
             softly.assertThat(documentManagerFactory).isNotNull();
             softly.assertThat(documentManagerFactory).isInstanceOf(DynamoDBDocumentManagerFactory.class);
