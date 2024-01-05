@@ -22,7 +22,9 @@ public enum  DynamoDBConfigurations implements Supplier<String> {
     REGION("jnosql.dynamodb.region"),
     PROFILE("jnosql.dynamodb.profile"),
     AWS_ACCESSKEY("jnosql.dynamodb.awsaccesskey"),
-    AWS_SECRET_ACCESS("jnosql.dynamodb.secretaccess");
+    AWS_SECRET_ACCESS("jnosql.dynamodb.secretaccess"),
+    ENTITY_PARTITION_KEY("jnosql.dynamodb.entity.pk"),
+    CREATE_TABLES("jnosql.dynamodb.create.tables");
 
     private final String configuration;
 
