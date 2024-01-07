@@ -16,6 +16,8 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class DynamoDBDocumentManagerFactoryTest {
@@ -37,7 +40,10 @@ class DynamoDBDocumentManagerFactoryTest {
             softly.assertThat(documentManagerFactory).isInstanceOf(DynamoDBDocumentManagerFactory.class);
         });
     }
-
+    @AfterEach
+    void tearDown() {
+        assertDoesNotThrow(documentManagerFactory::close, "DocumentManagerFactory.close() should be not throw exceptions");
+    }
     @Test
     void shouldCreateDocumentManager() {
         var documentManager = documentManagerFactory.apply("anydatabase");
