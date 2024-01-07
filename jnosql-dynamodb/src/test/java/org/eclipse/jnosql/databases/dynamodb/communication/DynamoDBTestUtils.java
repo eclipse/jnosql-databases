@@ -37,6 +37,8 @@ enum DynamoDBTestUtils {
 
     private final GenericContainer dynamodb =
             new GenericContainer("amazon/dynamodb-local:latest")
+                    .withReuse(true)
+                    .withExposedPorts(8000)
                     .waitingFor(Wait.defaultWaitStrategy());
 
     BucketManagerFactory getBucketManagerFactory() {
