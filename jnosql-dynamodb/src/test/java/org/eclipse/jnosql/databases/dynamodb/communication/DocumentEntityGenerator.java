@@ -19,6 +19,7 @@ import net.datafaker.Faker;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.Documents;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,14 +32,23 @@ import java.util.function.Consumer;
 
 final class DocumentEntityGenerator {
 
-    static final String COLLECTION_NAME = "music";
+    static final String COLLECTION_NAME = "entityA";
     static final Faker faker = new Faker();
 
     static DocumentEntity createRandomEntity() {
         return createRandomEntityWithSubDocuments(0);
     }
 
+    static DocumentEntity createRandomEntity(String collectionName) {
+        return createRandomEntityWithSubDocuments(collectionName,0);
+    }
+
     static DocumentEntity createRandomEntityWithSubDocuments(int levels) {
+        return createRandomEntityWithSubDocuments(COLLECTION_NAME, levels);
+    }
+
+    @NotNull
+    private static DocumentEntity createRandomEntityWithSubDocuments(String collectionName, int levels) {
         Map<String, Object> map = new HashMap<>();
         map.put("_id", UUID.randomUUID().toString());
         map.put("name", faker.name().firstName());
@@ -46,14 +56,14 @@ final class DocumentEntityGenerator {
         map.put("agora", LocalDateTime.now());
         map.put("integerNumber", faker.random().nextInt(1, 10));
         map.put("floatNumber", (float) faker.random().nextDouble(1.0, 10.0));
-        map.put("doubleNumber",  faker.random().nextDouble(1.0, 10.0));
+        map.put("doubleNumber", faker.random().nextDouble(1.0, 10.0));
         map.put("bigdecimal", BigDecimal.valueOf(10.10));
         map.put("city", faker.address().city());
         map.put("texts", List.of("A", "B", "C"));
         if (levels > 0) {
             addSubDocument(m -> map.put("level" + levels, m), levels - 1);
         }
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        DocumentEntity entity = DocumentEntity.of(collectionName);
         List<Document> documents = Documents.of(map);
         documents.forEach(entity::add);
         return entity;
@@ -67,7 +77,7 @@ final class DocumentEntityGenerator {
         map.put("agora", LocalDateTime.now());
         map.put("integerNumber", faker.random().nextInt(1, 10));
         map.put("floatNumber", (float) faker.random().nextDouble(1.0, 10.0));
-        map.put("doubleNumber",  faker.random().nextDouble(1.0, 10.0));
+        map.put("doubleNumber", faker.random().nextDouble(1.0, 10.0));
         map.put("bigdecimal", BigDecimal.valueOf(10.10));
         if (level > 0) {
             addSubDocument(m -> map.put("level" + level, m), level - 1);
