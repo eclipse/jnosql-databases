@@ -15,6 +15,8 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.SettingsBuilder;
+import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.jetbrains.annotations.NotNull;
@@ -27,9 +29,10 @@ import software.amazon.awssdk.enhanced.dynamodb.document.DocumentTableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.document.EnhancedDocument;
 import software.amazon.awssdk.enhanced.dynamodb.model.DescribeTableEnhancedResponse;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 enum DynamoDBTestUtils {
 
@@ -61,23 +64,43 @@ enum DynamoDBTestUtils {
         return configuration.apply(settings);
     }
 
+    DocumentManager getDocumentManager(Settings settings) {
+        var database = settings
+                .get(MappingConfigurations.DOCUMENT_DATABASE, String.class)
+                .orElseThrow();
+        return getDocumentManagerFactory(settings).apply(database);
+    }
+
     Settings getSettings() {
         dynamodb.start();
         String dynamoDBHost = getDynamoDBHost(dynamodb.getHost(), dynamodb.getFirstMappedPort());
         return getSettings(dynamoDBHost);
     }
 
-    @NotNull
     Settings getSettings(String dynamoDBHost) {
+        return getSettingsBuilder(builder -> builder
+                .put(DynamoDBConfigurations.ENDPOINT, dynamoDBHost))
+                .build();
+    }
+
+    Settings customSetting(SettingsBuilder builder) {
+        var defaultSetting = getSettings();
+        var customSetting = builder.build();
         return Settings.builder()
-                .put(MappingConfigurations.DOCUMENT_DATABASE,"test")
-                .put(DynamoDBConfigurations.ENDPOINT, dynamoDBHost)
+                .putAll(defaultSetting.toMap())
+                .putAll(customSetting.toMap())
+                .build();
+    }
+
+    @NotNull
+    private static SettingsBuilder getSettingsBuilder(UnaryOperator<SettingsBuilder> builder) {
+        return builder.apply(Settings.builder())
+                .put(MappingConfigurations.DOCUMENT_DATABASE, "test")
                 .put(DynamoDBConfigurations.AWS_ACCESSKEY, System.getProperty("AWS_ACCESS_KEY_ID", "AKIAIOSFODNN7EXAMPLE"))
                 .put(DynamoDBConfigurations.AWS_SECRET_ACCESS, System.getProperty("AWS_SECRET_ACCESS_KEY", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"))
                 .put(DynamoDBConfigurations.PROFILE, System.getProperty("AWS_PROFILE", "default"))
                 .put(DynamoDBConfigurations.REGION, "us-west-2")
-                .put(DynamoDBConfigurations.ENTITY_PARTITION_KEY, "entityType")
-                .build();
+                .put(DynamoDBConfigurations.ENTITY_PARTITION_KEY, "entityType");
     }
 
     @NotNull
