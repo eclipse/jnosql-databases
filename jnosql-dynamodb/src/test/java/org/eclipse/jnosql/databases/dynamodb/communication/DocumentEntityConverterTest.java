@@ -43,7 +43,7 @@ class DocumentEntityConverterTest {
     void shouldConvertDocumentEntityToEnhancedDocument() {
 
         assertSoftly(softly -> {
-            var entity = DocumentEntityGenerator.getEntity();
+            var entity = DocumentEntityGenerator.createRandomEntity();
             var enhancedDocument = DocumentEntityConverter.toEnhancedDocument(entityNameResolver, entity);
             var expected = Json.createReader(new StringReader(JSONB.toJson(DocumentEntityConverter.getMap(entityNameResolver, entity)))).readObject();
             var actual = Json.createReader(new StringReader(enhancedDocument.toJson())).readObject();
@@ -56,7 +56,7 @@ class DocumentEntityConverterTest {
     void shouldConvertDocumentEntityWithSubDocumentsToEnhancedDocument() {
 
         assertSoftly(softly -> {
-            var entity = DocumentEntityGenerator.getEntityWithSubDocuments(3);
+            var entity = DocumentEntityGenerator.createRandomEntityWithSubDocuments(3);
             var enhancedDocument = DocumentEntityConverter.toEnhancedDocument(entityNameResolver, entity);
             var expected = Json.createReader(new StringReader(JSONB.toJson(DocumentEntityConverter.getMap(entityNameResolver, entity)))).readObject();
             var actual = Json.createReader(new StringReader(enhancedDocument.toJson())).readObject();
