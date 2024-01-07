@@ -17,6 +17,8 @@ package org.eclipse.jnosql.databases.dynamodb.communication;
 
 
 import org.assertj.core.api.Assertions;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
@@ -24,17 +26,26 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import software.amazon.awssdk.enhanced.dynamodb.*;
+import software.amazon.awssdk.enhanced.dynamodb.AttributeConverterProvider;
+import software.amazon.awssdk.enhanced.dynamodb.AttributeValueType;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableMetadata;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.document.EnhancedDocument;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
@@ -44,142 +55,182 @@ import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBTestUt
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class DynamoDBDocumentManagerTest {
 
-    private DocumentManager documentManager;
 
     private DynamoDbClient dynamoDbClient;
 
     private DynamoDbEnhancedClient dynamoDbEnhancedClient;
 
-    private DynamoDbTable<EnhancedDocument> table;
-
-    private String database;
     private UnaryOperator<String> entityNameResolver;
-    private boolean tableWasCreated;
+
 
     @BeforeEach
     void setUp() {
         var settings = CONFIG.getSettings();
-        database = settings.get(MappingConfigurations.DOCUMENT_DATABASE, String.class).orElseThrow();
         entityNameResolver = entityName -> settings.get(DynamoDBConfigurations.ENTITY_PARTITION_KEY, String.class).orElse(entityName);
-
-        var documentManagerFactory = CONFIG.getDocumentManagerFactory(settings);
-        documentManager = documentManagerFactory.apply(database);
-        Assertions.assertThat(documentManager).isNotNull();
-
         dynamoDbClient = CONFIG.getDynamoDbClient(settings);
         dynamoDbEnhancedClient = CONFIG.getDynamoDbEnhancedClient(dynamoDbClient);
-        table = dynamoDbEnhancedClient.table("music",
-                TableSchema.documentSchemaBuilder()
-                        .addIndexPartitionKey(TableMetadata.primaryIndexName(), entityNameResolver.apply("@entity"), AttributeValueType.S)
-                        .addIndexSortKey(TableMetadata.primaryIndexName(), "_id", AttributeValueType.S)
-                        .attributeConverterProviders(AttributeConverterProvider.defaultProvider())
-                        .build());
+    }
 
-        try {
-            table.describeTable();
-        } catch (ResourceNotFoundException ex) {
-            table.createTable();
-        }
+    private DocumentManager getDocumentManagerCannotCreateTables() {
+        var settings = CONFIG.customSetting(Settings.builder()
+                .put(DynamoDBConfigurations.CREATE_TABLES, "false"));
+        var database = settings.get(MappingConfigurations.DOCUMENT_DATABASE, String.class).orElseThrow();
+        var documentManagerFactory = CONFIG.getDocumentManagerFactory(settings);
+        return documentManagerFactory.apply(database);
+    }
+
+    private DocumentManager getDocumentManagerCanCreateTables() {
+        var settings = CONFIG.customSetting(Settings.builder()
+                .put(DynamoDBConfigurations.CREATE_TABLES, "true"));
+        var database = settings.get(MappingConfigurations.DOCUMENT_DATABASE, String.class).orElseThrow();
+        var documentManagerFactory = CONFIG.getDocumentManagerFactory(settings);
+        return documentManagerFactory.apply(database);
     }
 
 
     @AfterEach
     void tearDown() {
-        table.deleteTable();
-    }
-
-    private void cleanTable() {
-        table.deleteTable();
-        table.createTable();
+        dynamoDbClient.listTables()
+                .tableNames()
+                .forEach(tableName ->
+                        dynamoDbClient.deleteTable(DeleteTableRequest.builder().tableName(tableName).build())
+                );
     }
 
     @Test
     void shouldReturnName() {
-        Assertions.assertThat(documentManager.name()).isEqualTo(database);
+        try (var manager = getDocumentManagerCannotCreateTables()) {
+            var database = CONFIG
+                    .getSettings()
+                    .get(MappingConfigurations.DOCUMENT_DATABASE, String.class).orElseThrow();
+            Assertions.assertThat(manager.name()).isEqualTo(database);
+        }
     }
 
     @Test
     void shouldReturnErrorWhenInsertNull() {
-        assertSoftly(softly -> {
-            softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null))
-                    .as("should return error when insert a null DocumentEntity reference")
-                    .isExactlyInstanceOf(NullPointerException.class);
-            softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null, Duration.ofSeconds(1)))
-                    .as("should return error when insert a null DocumentEntity reference with TTL param")
-                    .isInstanceOfAny(NullPointerException.class);
-            softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null, null))
-                    .as("should return error when insert a null DocumentEntity reference with nullable TTL param")
-                    .isInstanceOfAny(NullPointerException.class);
-            softly.assertThatThrownBy(() -> documentManager.insert(DocumentEntityGenerator.createRandomEntity(), null))
-                    .as("should return error when insert a null DocumentEntity reference with nullable TTL param")
-                    .isInstanceOfAny(NullPointerException.class);
-            softly.assertThatThrownBy(() -> documentManager.insert((Iterable<DocumentEntity>) null))
-                    .as("should return error when insert a null Iterable<DocumentEntity> reference")
-                    .isInstanceOfAny(NullPointerException.class);
-            softly.assertThatThrownBy(() -> documentManager.insert((Iterable<DocumentEntity>) null, Duration.ofSeconds(1)))
-                    .as("should return error when insert a null Iterable<DocumentEntity> reference with TTL param")
-                    .isInstanceOfAny(NullPointerException.class);
-            softly.assertThatThrownBy(() -> documentManager.insert(List.of(DocumentEntityGenerator.createRandomEntity()), null))
-                    .as("should return error when insert a null Iterable<DocumentEntity> reference with nullable TTL param")
-                    .isInstanceOfAny(NullPointerException.class);
-        });
+
+        try (var documentManager = getDocumentManagerCannotCreateTables()) {
+            assertSoftly(softly -> {
+                softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null))
+                        .as("should return error when insert a null DocumentEntity reference")
+                        .isExactlyInstanceOf(NullPointerException.class);
+                softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null, Duration.ofSeconds(1)))
+                        .as("should return error when insert a null DocumentEntity reference with TTL param")
+                        .isInstanceOfAny(NullPointerException.class);
+                softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null, null))
+                        .as("should return error when insert a null DocumentEntity reference with nullable TTL param")
+                        .isInstanceOfAny(NullPointerException.class);
+                softly.assertThatThrownBy(() -> documentManager.insert(DocumentEntityGenerator.createRandomEntity(), null))
+                        .as("should return error when insert a null DocumentEntity reference with nullable TTL param")
+                        .isInstanceOfAny(NullPointerException.class);
+                softly.assertThatThrownBy(() -> documentManager.insert((Iterable<DocumentEntity>) null))
+                        .as("should return error when insert a null Iterable<DocumentEntity> reference")
+                        .isInstanceOfAny(NullPointerException.class);
+                softly.assertThatThrownBy(() -> documentManager.insert((Iterable<DocumentEntity>) null, Duration.ofSeconds(1)))
+                        .as("should return error when insert a null Iterable<DocumentEntity> reference with TTL param")
+                        .isInstanceOfAny(NullPointerException.class);
+                softly.assertThatThrownBy(() -> documentManager.insert(List.of(DocumentEntityGenerator.createRandomEntity()), null))
+                        .as("should return error when insert a null Iterable<DocumentEntity> reference with nullable TTL param")
+                        .isInstanceOfAny(NullPointerException.class);
+            });
+        }
     }
 
     @Test
     void shouldInsert() {
 
-        assertSoftly(softly -> {
-            DocumentEntity entity = createRandomEntity();
-            var _entityType = entity.name();
-            var id = entity.find("_id", String.class).orElseThrow();
-            var persistedEntity = documentManager.insert(entity);
-            softly.assertThat(persistedEntity)
-                    .as("documentManager.insert(DocumentEntity) method should return a non-null persistent DocumentEntity")
-                    .isNotNull();
+        try (var documentManager = getDocumentManagerCanCreateTables()) {
 
-            EnhancedDocument persistedItem = table.getItem(Key.builder().partitionValue(_entityType).sortValue(id).build());
-
-            softly.assertThat(persistedItem).as("should return the item from dynamodb").isNotNull();
-        });
-
-        assertSoftly(softly -> {
-            var entities = List.of(createRandomEntity(),createRandomEntity(),createRandomEntity());
-            Iterable<DocumentEntity> persistedEntities = documentManager.insert(entities);
-            softly.assertThat(persistedEntities)
-                    .as("documentManager.insert(Iterable<>) should returns the non-null list of DocumentEntity").isNotNull();
-
-            assertThat(persistedEntities)
-                    .as("documentmanager.insert(iterable<>) should returns a corresponded list of DocumentEntity")
-                    .hasSize(3);
-
-            persistedEntities.forEach(entity -> {
+            assertSoftly(softly -> {
+                DocumentEntity entity = createRandomEntity();
                 var _entityType = entity.name();
                 var id = entity.find("_id", String.class).orElseThrow();
-                EnhancedDocument persistedItem = table.getItem(Key.builder().partitionValue(_entityType).sortValue(id).build());
-                softly.assertThat(persistedItem)
-                        .as("all items of the list of DocumentEntity should be stored on dynamodb database. the entity %s not found"
-                                .formatted(id))
+                var persistedEntity = documentManager.insert(entity);
+                softly.assertThat(persistedEntity)
+                        .as("documentManager.insert(DocumentEntity) method should return a non-null persistent DocumentEntity")
                         .isNotNull();
-            });
-        });
 
+                EnhancedDocument persistedItem = getTable(entity.name()).getItem(Key.builder().partitionValue(_entityType).sortValue(id).build());
+
+                softly.assertThat(persistedItem).as("should return the item from dynamodb").isNotNull();
+            });
+
+            assertSoftly(softly -> {
+                var entities = List.of(createRandomEntity(), createRandomEntity(), createRandomEntity());
+                Iterable<DocumentEntity> persistedEntities = documentManager.insert(entities);
+                softly.assertThat(persistedEntities)
+                        .as("documentManager.insert(Iterable<>) should returns the non-null list of DocumentEntity").isNotNull();
+
+                assertThat(persistedEntities)
+                        .as("documentmanager.insert(iterable<>) should returns a corresponded list of DocumentEntity")
+                        .hasSize(3);
+
+                var table = getTable(entities.get(0).name());
+
+
+                persistedEntities.forEach(entity -> {
+                    var _entityType = entity.name();
+                    var id = entity.find("_id", String.class).orElseThrow();
+                    EnhancedDocument persistedItem = table.getItem(Key.builder().partitionValue(_entityType).sortValue(id).build());
+                    softly.assertThat(persistedItem)
+                            .as("all items of the list of DocumentEntity should be stored on dynamodb database. the entity %s not found"
+                                    .formatted(id))
+                            .isNotNull();
+                });
+            });
+        }
+    }
+
+    private DynamoDbTable<EnhancedDocument> getTable(String name) {
+        return dynamoDbEnhancedClient
+                .table(name, TableSchema.documentSchemaBuilder()
+                        .addIndexPartitionKey(TableMetadata.primaryIndexName(), entityNameResolver.apply(name), AttributeValueType.S)
+                        .addIndexSortKey(TableMetadata.primaryIndexName(), DocumentEntityConverter.ID, AttributeValueType.S)
+                        .attributeConverterProviders(AttributeConverterProvider.defaultProvider())
+                        .build());
     }
 
     @Test
-    void shouldInserts() {
+    void shouldCountByCollectionName() {
 
-        DocumentEntity entity = createRandomEntity();
-        var _entityType = entity.name();
-        var id = entity.find("_id", String.class).orElseThrow();
-        var persistedEntity = documentManager.insert(entity);
-        assertSoftly(softly -> {
-            softly.assertThat(persistedEntity).as("should return the persistent document entity from documentManager.insert() method").isNotNull();
-            EnhancedDocument persistedItem = table.getItem(Key.builder().partitionValue(_entityType).sortValue(id).build());
-            softly.assertThat(persistedItem).as("should return the item from dynamodb").isNotNull();
-        });
+        try (var dmCanCreateTable = getDocumentManagerCanCreateTables();
+             var dmCannotCreateTable = getDocumentManagerCannotCreateTables()) {
+            assertSoftly(softly -> {
 
+                DocumentEntity entity = createRandomEntity();
+                DocumentEntity entity2 = createRandomEntity();
 
+                dmCanCreateTable.insert(entity);
+                dmCanCreateTable.insert(entity2);
+
+                softly.assertThatThrownBy(() -> dmCanCreateTable.count((String) null))
+                        .as("should return an error when a nullable String is passed as arg")
+                        .isInstanceOfAny(NullPointerException.class);
+
+                softly.assertThat(dmCanCreateTable.count(entity.name()))
+                        .as("the returned count number of items from an given existent table name is incorrect")
+                        .isEqualTo(2L);
+
+                String nonExistentTable = UUID.randomUUID().toString();
+
+                softly.assertThat(dmCannotCreateTable.count(nonExistentTable))
+                        .as("the returned count number of items from a given an non-existent table name is incorrect")
+                        .isEqualTo(0L);
+
+                softly.assertThatThrownBy(() -> getTable(nonExistentTable).describeTable())
+                        .as("it must not create a table")
+                        .isInstanceOfAny(ResourceNotFoundException.class);
+
+                var entityBName = "entityB";
+                DocumentEntity entity3 = createRandomEntity(entityBName);
+                dmCanCreateTable.insert(entity3);
+
+                softly.assertThat(dmCannotCreateTable.count(entity3.name()))
+                        .as("the returned count number of items from a given table name is incorrect")
+                        .isEqualTo(1L);
+            });
+
+        }
     }
-
-
 }

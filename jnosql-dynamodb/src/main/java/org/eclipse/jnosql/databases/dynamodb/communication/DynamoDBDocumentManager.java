@@ -36,6 +36,7 @@ import software.amazon.awssdk.services.dynamodb.model.TimeToLiveStatus;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -93,7 +94,7 @@ public class DynamoDBDocumentManager implements DocumentManager {
     public DocumentEntity insert(DocumentEntity documentEntity) {
         requireNonNull(documentEntity, "documentEntity is required");
         var enhancedDocument = convertToEnhancedDocument(documentEntity);
-        getTableFor(documentEntity.name())
+        createIfNeeded(getTableFor(documentEntity.name()))
                 .putItem(enhancedDocument);
         return documentEntity;
     }
@@ -103,7 +104,7 @@ public class DynamoDBDocumentManager implements DocumentManager {
     }
 
     private DynamoDbTable<EnhancedDocument> getTableFor(String name) {
-        return this.tables.computeIfAbsent(name, this::getOrCreateTable);
+        return this.tables.computeIfAbsent(name, this::buildTable);
     }
 
     private Supplier<String> getTTLAttributeNameFor(String tableName) {
@@ -111,7 +112,7 @@ public class DynamoDBDocumentManager implements DocumentManager {
     }
 
     private Supplier<String> getTTLAttributeNameSupplierFromTable(String tableName) {
-        DynamoDbTable<EnhancedDocument> table = this.getOrCreateTable(tableName);
+        DynamoDbTable<EnhancedDocument> table = buildTable(tableName);
         DescribeTimeToLiveResponse describeTimeToLiveResponse = getDynamoDbClient().describeTimeToLive(DescribeTimeToLiveRequest.builder()
                 .tableName(table.tableName()).build());
         if (TimeToLiveStatus.ENABLED.equals(describeTimeToLiveResponse.timeToLiveDescription().timeToLiveStatus())) {
@@ -125,23 +126,24 @@ public class DynamoDBDocumentManager implements DocumentManager {
         return () -> tableName + " don't support TTL operations. Check if TTL support is enabled for this table.";
     }
 
-    private DynamoDbTable<EnhancedDocument> getOrCreateTable(String nameKey) {
-        DynamoDbTable<EnhancedDocument> table = dynamoDbEnhancedClient
+    private DynamoDbTable<EnhancedDocument> buildTable(String nameKey) {
+        return dynamoDbEnhancedClient
                 .table(nameKey, TableSchema.documentSchemaBuilder()
                         .addIndexPartitionKey(TableMetadata.primaryIndexName(), getEntityNameAttributeName(), AttributeValueType.S)
                         .addIndexSortKey(TableMetadata.primaryIndexName(), DocumentEntityConverter.ID, AttributeValueType.S)
                         .attributeConverterProviders(AttributeConverterProvider.defaultProvider())
                         .build());
-        try {
-            table.describeTable();
-            return table;
-        } catch (ResourceNotFoundException ex) {
-            if (shouldCreateTables()) {
+    }
+
+    private DynamoDbTable<EnhancedDocument> createIfNeeded(DynamoDbTable<EnhancedDocument> table) {
+        if (shouldCreateTables()) {
+            try {
+                table.describeTable();
+            } catch (ResourceNotFoundException ex) {
                 table.createTable();
-                return table;
             }
-            throw ex;
         }
+        return table;
     }
 
     private boolean shouldCreateTables() {
@@ -158,7 +160,7 @@ public class DynamoDBDocumentManager implements DocumentManager {
     public DocumentEntity insert(DocumentEntity documentEntity, Duration ttl) {
         requireNonNull(documentEntity, "documentEntity is required");
         requireNonNull(ttl, "ttl is required");
-        DynamoDbTable<EnhancedDocument> tableFor = getTableFor(documentEntity.name());
+        DynamoDbTable<EnhancedDocument> tableFor = createIfNeeded(getTableFor(documentEntity.name()));
         documentEntity.add(getTTLAttributeNameFor(tableFor.tableName()).get(), Instant.now().plus(ttl).truncatedTo(ChronoUnit.SECONDS));
         var enhancedDocument = convertToEnhancedDocument(documentEntity);
         tableFor.putItem(enhancedDocument);
@@ -207,7 +209,13 @@ public class DynamoDBDocumentManager implements DocumentManager {
 
     @Override
     public long count(String tableName) {
-        throw new UnsupportedOperationException("count method must be implemented!");
+        Objects.requireNonNull(tableName, "tableName is required");
+        DynamoDbTable<EnhancedDocument> table = getTableFor(tableName);
+        try {
+            return table.describeTable().table().itemCount();
+        } catch (ResourceNotFoundException ex) {
+            return 0;
+        }
     }
 
     @Override
