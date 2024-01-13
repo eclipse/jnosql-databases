@@ -23,8 +23,8 @@
         <version>1.0.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-redis</artifactId>
-    <description>The Eclipse JNoSQL layer implementation Redis</description>
+    <artifactId>jnosql-oracle</artifactId>
+    <description>The Eclipse JNoSQL layer implementation Oracle NoSQL</description>
     <dependencies>
         <dependency>
             <groupId>org.eclipse.jnosql.communication</groupId>
