@@ -35,9 +35,9 @@
             <artifactId>jnosql-mapping-key-value</artifactId>
         </dependency>
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>5.0.2</version>
+            <groupId>com.oracle.nosql.sdk</groupId>
+            <artifactId>nosqldriver</artifactId>
+            <version>5.4.13</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

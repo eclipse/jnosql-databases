@@ -6,16 +6,16 @@
  *  and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
  *    You may elect to redistribute this code under either of these licenses.
  */
-package org.eclipse.jnosql.databases.redis.mapping;
+package org.eclipse.jnosql.databases.oracle.mapping;
 
 import jakarta.data.exceptions.MappingException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.databases.redis.communication.Counter;
-import org.eclipse.jnosql.databases.redis.communication.RedisBucketManagerFactory;
-import org.eclipse.jnosql.databases.redis.communication.SortedSet;
+import org.eclipse.jnosql.databases.oracle.communication.Counter;
+import org.eclipse.jnosql.databases.oracle.communication.RedisBucketManagerFactory;
+import org.eclipse.jnosql.databases.oracle.communication.SortedSet;
 import org.eclipse.jnosql.mapping.keyvalue.KeyValueDatabase;
 
 

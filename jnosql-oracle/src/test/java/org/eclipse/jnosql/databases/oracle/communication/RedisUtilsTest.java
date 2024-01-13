@@ -13,7 +13,7 @@
  *   Otavio Santana
  */
 
-package org.eclipse.jnosql.databases.redis.communication;
+package org.eclipse.jnosql.databases.oracle.communication;
 
 import org.junit.jupiter.api.Test;
 

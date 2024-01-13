@@ -17,4 +17,4 @@
  * Redis is a software project that implements data structure servers. It is open-source, networked, in-memory,
  * and stores keys with optional durability.
  */
-package org.eclipse.jnosql.databases.redis;
+package org.eclipse.jnosql.databases.oracle;

@@ -16,4 +16,4 @@
 /**
  * The Redis key-value implementation
  */
-package org.eclipse.jnosql.databases.redis.communication;
+package org.eclipse.jnosql.databases.oracle.communication;
