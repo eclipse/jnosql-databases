@@ -42,22 +42,22 @@ final class MemcachedBucketManagerFactory implements BucketManagerFactory {
     }
 
     @Override
-    public Map getMap(String bucketName, Class keyValue, Class valueValue) {
-        throw new UnsupportedOperationException("This method is not supported");
+    public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
+        throw new UnsupportedOperationException("Memcached does not support Map");
     }
 
     @Override
-    public Queue getQueue(String bucketName, Class clazz) {
-        throw new UnsupportedOperationException("This method is not supported");
+    public <T> Queue<T> getQueue(String bucketName, Class<T> type) {
+        throw new UnsupportedOperationException("Memcached does not support queue");
     }
 
     @Override
-    public Set getSet(String bucketName, Class clazz) {
-        throw new UnsupportedOperationException("This method is not supported");
+    public <T>  Set<T>  getSet(String bucketName, Class<T>  type) {
+        throw new UnsupportedOperationException("Memcached does not support set");
     }
 
     @Override
-    public List getList(String bucketName, Class clazz) {
+    public <T> List<T>  getList(String bucketName, Class<T> type) {
         throw new UnsupportedOperationException("This method is not supported");
     }
 }
