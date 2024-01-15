@@ -31,17 +31,20 @@ public record User(String nickName) {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
         return Objects.equals(nickName, user.nickName);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("nickName='").append(nickName).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "User{" +
+                "nickName='" + nickName + '\'' +
+                '}';
     }
 }
