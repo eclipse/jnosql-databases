@@ -34,8 +34,15 @@ public class OracleKeyValueConfiguration implements KeyValueConfiguration {
     public BucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
         String host = settings.get(Configurations.HOST, String.class).orElse("http://localhost:8080");
+        String user = settings.get(Configurations.USER, String.class).orElse(null);
+        String password = settings.get(Configurations.PASSWORD, String.class).orElse(null);
+
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
-        config.setAuthorizationProvider(new StoreAccessTokenProvider());
+        if (user != null && password != null) {
+            config.setAuthorizationProvider(new StoreAccessTokenProvider(user, password.toCharArray()));
+        } else {
+            config.setAuthorizationProvider(new StoreAccessTokenProvider());
+        }
         var nosql =  NoSQLHandleFactory.createNoSQLHandle(config);
         return new OracleBucketManagerFactory(nosql);
     }
