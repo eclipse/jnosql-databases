@@ -14,6 +14,10 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
 import oracle.nosql.driver.ops.DeleteRequest;
@@ -28,11 +32,16 @@ import org.eclipse.jnosql.communication.driver.ValueJSON;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class OracleBucketManager implements BucketManager {
     private final String bucketName;
@@ -87,9 +96,13 @@ final class OracleBucketManager implements BucketManager {
         getRequest.setKey(new MapValue().put("id", key.toString()));
         getRequest.setTableName(name());
         GetResult getResult = serviceHandle.get(getRequest);
-        if (getResult != null) {
+        if (getResult != null && getResult.getValue() != null) {
             String json = getResult.getValue().toJson(new JsonOptions());
-            return Optional.of(ValueJSON.of(json));
+            InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+            JsonReader jsonReader = Json.createReader(stream);
+            JsonObject readObject = jsonReader.readObject();
+            JsonValue content = readObject.get("content");
+            return Optional.of(ValueJSON.of(content.toString()));
         } else {
             return Optional.empty();
         }

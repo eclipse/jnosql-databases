@@ -20,6 +20,7 @@ import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -77,13 +78,14 @@ public class OracleBucketManagerTest {
     }
 
     @Test
-    public void shouldPutValueDuration() throws InterruptedException {
-        keyValueEntityManager.put(entityOtavio, Duration.ofSeconds(1L));
-        Optional<Value> otavio = keyValueEntityManager.get("otavio");
-        assertTrue(otavio.isPresent());
-        TimeUnit.SECONDS.sleep(3L);
-        otavio = keyValueEntityManager.get("otavio");
-        assertFalse(otavio.isPresent());
+    public void shouldReturnUnsupported()  {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            keyValueEntityManager.put(entityOtavio, Duration.ofSeconds(1L));
+        });
+
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            keyValueEntityManager.put(List.of(entityOtavio), Duration.ofSeconds(1L));
+        });
     }
 
 
