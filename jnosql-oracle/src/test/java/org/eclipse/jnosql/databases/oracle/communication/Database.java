@@ -4,10 +4,16 @@ import oracle.nosql.driver.NoSQLHandle;
 import oracle.nosql.driver.NoSQLHandleConfig;
 import oracle.nosql.driver.NoSQLHandleFactory;
 import oracle.nosql.driver.kv.StoreAccessTokenProvider;
+import org.eclipse.jnosql.communication.Configurations;
+import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
-public enum Database {
+import java.util.function.Supplier;
+
+public enum Database implements Supplier<BucketManagerFactory> {
 
     INSTANCE;
     private final GenericContainer<?> container = new GenericContainer<>
@@ -28,4 +34,12 @@ public enum Database {
         return NoSQLHandleFactory.createNoSQLHandle(config) ;
     }
 
+    @Override
+    public BucketManagerFactory get() {
+        KeyValueConfiguration configuration = new OracleKeyValueConfiguration();
+        Settings settings = Settings.builder()
+                .put(OracleConfigurations.HOST, "http://" + container.getHost() + ":" + container.getFirstMappedPort())
+                .build();
+        return configuration.apply(settings);
+    }
 }

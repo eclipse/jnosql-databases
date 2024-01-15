@@ -16,6 +16,10 @@ package org.eclipse.jnosql.databases.oracle.communication;
 
 import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
+import oracle.nosql.driver.ops.TableLimits;
+import oracle.nosql.driver.ops.TableRequest;
+import oracle.nosql.driver.ops.TableResult;
+import org.eclipse.jnosql.communication.CommunicationException;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
@@ -25,14 +29,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Logger;
 
 final class OracleBucketManagerFactory implements BucketManagerFactory {
 
-    private static final Jsonb JSON = JsonbSupplier.getInstance().get();
-    private final NoSQLHandle sqlHandle;
+    private static final String CREATE_TABLE ="CREATE TABLE if not exists %s (id STRING, content JSON, primary key (id))";
 
-    OracleBucketManagerFactory(NoSQLHandle sqlHandle) {
-        this.sqlHandle = sqlHandle;
+    private static final Logger LOGGER = Logger.getLogger(OracleBucketManagerFactory.class.getName());
+    private static final Jsonb JSON = JsonbSupplier.getInstance().get();
+    private final NoSQLHandle serviceHandle;
+
+    OracleBucketManagerFactory(NoSQLHandle serviceHandle) {
+        this.serviceHandle = serviceHandle;
     }
 
     @Override
@@ -58,12 +66,27 @@ final class OracleBucketManagerFactory implements BucketManagerFactory {
     @Override
     public BucketManager apply(String bucketName) {
         Objects.requireNonNull(bucketName, "bucketName is required");
-        return new OracleBucketManager(bucketName, sqlHandle, JSON);
+        createTable(bucketName);
+        return new OracleBucketManager(bucketName, serviceHandle, JSON);
+    }
+
+    private void createTable(String bucketName) {
+        String table = String.format(CREATE_TABLE, bucketName);
+        LOGGER.info("starting the bucket manager, creating a table Running query: " + table);
+        TableRequest tableRequest = new TableRequest().setStatement(table);
+
+        tableRequest.setTableLimits(new TableLimits(25, 25, 25));
+        TableResult tableResult = serviceHandle.tableRequest(tableRequest);
+        tableResult.waitForCompletion(serviceHandle, 120000, 500);
+        if (tableResult.getTableState() != TableResult.State.ACTIVE)  {
+            throw new CommunicationException("Unable to create table "+ bucketName +
+                    tableResult.getTableState());
+        }
     }
 
     @Override
     public void close() {
-        sqlHandle.close();
+        serviceHandle.close();
     }
 
 

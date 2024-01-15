@@ -22,6 +22,8 @@ import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 
+import java.util.List;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -33,9 +35,12 @@ public class OracleKeyValueConfiguration implements KeyValueConfiguration {
     @Override
     public BucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
-        String host = settings.get(Configurations.HOST, String.class).orElse("http://localhost:8080");
-        String user = settings.get(Configurations.USER, String.class).orElse(null);
-        String password = settings.get(Configurations.PASSWORD, String.class).orElse(null);
+        String host = settings.get(List.of(OracleConfigurations.HOST.get(), Configurations.HOST.get()))
+                .map(Object::toString).orElse("http://localhost:8080");
+        String user = settings.get(List.of(OracleConfigurations.USER.get(), Configurations.USER.get()))
+                .map(Object::toString).orElse(null);
+        String password = settings.get(List.of(OracleConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
+                .map(Object::toString).orElse(null);
 
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
         if (user != null && password != null) {
