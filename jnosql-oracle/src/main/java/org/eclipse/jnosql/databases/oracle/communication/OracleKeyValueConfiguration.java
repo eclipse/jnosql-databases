@@ -15,6 +15,8 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import oracle.nosql.driver.NoSQLHandleConfig;
+import oracle.nosql.driver.NoSQLHandleFactory;
+import oracle.nosql.driver.kv.StoreAccessTokenProvider;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
@@ -24,9 +26,8 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The memcached implementation of {@link KeyValueConfiguration} that returns
- * {@link MemcachedBucketManagerFactory}.
+ * {@link OracleBucketManagerFactory}.
  *
- * @see MemcachedConfigurations
  */
 public class OracleKeyValueConfiguration implements KeyValueConfiguration {
     @Override
@@ -34,6 +35,8 @@ public class OracleKeyValueConfiguration implements KeyValueConfiguration {
         requireNonNull(settings, "settings is required");
         String host = settings.get(Configurations.HOST, String.class).orElse("http://localhost:8080");
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
-        return null;
+        config.setAuthorizationProvider(new StoreAccessTokenProvider());
+        var nosql =  NoSQLHandleFactory.createNoSQLHandle(config);
+        return new OracleBucketManagerFactory(nosql);
     }
 }
