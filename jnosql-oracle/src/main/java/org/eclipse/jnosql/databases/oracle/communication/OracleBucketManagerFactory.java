@@ -1,6 +1,22 @@
+/*
+ *  Copyright (c) 2023 Contributors to the Eclipse Foundation
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
+ *
+ *   You may elect to redistribute this code under either of these licenses.
+ *
+ *   Contributors:
+ *
+ *   Otavio Santana
+ */
 package org.eclipse.jnosql.databases.oracle.communication;
 
+import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
+import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 
@@ -12,10 +28,11 @@ import java.util.Set;
 
 final class OracleBucketManagerFactory implements BucketManagerFactory {
 
-    private final NoSQLHandle bucketManager;
+    private static final Jsonb JSON = JsonbSupplier.getInstance().get();
+    private final NoSQLHandle sqlHandle;
 
-    OracleBucketManagerFactory(NoSQLHandle bucketManager) {
-        this.bucketManager = bucketManager;
+    OracleBucketManagerFactory(NoSQLHandle sqlHandle) {
+        this.sqlHandle = sqlHandle;
     }
 
     @Override
@@ -41,12 +58,12 @@ final class OracleBucketManagerFactory implements BucketManagerFactory {
     @Override
     public BucketManager apply(String bucketName) {
         Objects.requireNonNull(bucketName, "bucketName is required");
-        return null;
+        return new OracleBucketManager(bucketName, sqlHandle, JSON);
     }
 
     @Override
     public void close() {
-        bucketManager.close();
+        sqlHandle.close();
     }
 
 
