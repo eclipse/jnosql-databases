@@ -20,12 +20,13 @@ import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 /**
  * The Oracle implementation to {@link DocumentConfiguration}
- * that returns  {@link MongoDBDocumentManagerFactory}
- * @see MongoDBDocumentConfigurations
+ * that returns  {@link OracleDocumentManagerFactory}
+ * @see OracleConfigurations
  */
 public class OracleDocumentConfiguration implements DocumentConfiguration {
     @Override
     public DocumentManagerFactory apply(Settings settings) {
-        return null;
+        var nosql =  NoSQLHandleConfigConfiguration.INSTANCE.apply(settings);
+        return new OracleDocumentManagerFactory(nosql);
     }
 }
