@@ -18,7 +18,6 @@ package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
@@ -26,23 +25,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import software.amazon.awssdk.enhanced.dynamodb.AttributeConverterProvider;
-import software.amazon.awssdk.enhanced.dynamodb.AttributeValueType;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.TableMetadata;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.document.EnhancedDocument;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,9 +50,6 @@ class DynamoDBDocumentManagerTest {
 
 
     private DynamoDbClient dynamoDbClient;
-
-    private DynamoDbEnhancedClient dynamoDbEnhancedClient;
-
     private UnaryOperator<String> entityNameResolver;
 
 
@@ -68,7 +58,7 @@ class DynamoDBDocumentManagerTest {
         var settings = CONFIG.getSettings();
         entityNameResolver = entityName -> settings.get(DynamoDBConfigurations.ENTITY_PARTITION_KEY, String.class).orElse(entityName);
         dynamoDbClient = CONFIG.getDynamoDbClient(settings);
-        dynamoDbEnhancedClient = CONFIG.getDynamoDbEnhancedClient(dynamoDbClient);
+        tearDown();
     }
 
     private DocumentManager getDocumentManagerCannotCreateTables() {
@@ -145,13 +135,14 @@ class DynamoDBDocumentManagerTest {
             assertSoftly(softly -> {
                 DocumentEntity entity = createRandomEntity();
                 var _entityType = entity.name();
-                var id = entity.find("_id", String.class).orElseThrow();
+                var id = entity.find(DocumentEntityConverter.ID, String.class).orElseThrow();
                 var persistedEntity = documentManager.insert(entity);
+
                 softly.assertThat(persistedEntity)
                         .as("documentManager.insert(DocumentEntity) method should return a non-null persistent DocumentEntity")
                         .isNotNull();
 
-                EnhancedDocument persistedItem = getTable(entity.name()).getItem(Key.builder().partitionValue(_entityType).sortValue(id).build());
+                var persistedItem = getItem(_entityType, id);
 
                 softly.assertThat(persistedItem).as("should return the item from dynamodb").isNotNull();
             });
@@ -166,13 +157,10 @@ class DynamoDBDocumentManagerTest {
                         .as("documentmanager.insert(iterable<>) should returns a corresponded list of DocumentEntity")
                         .hasSize(3);
 
-                var table = getTable(entities.get(0).name());
-
-
                 persistedEntities.forEach(entity -> {
                     var _entityType = entity.name();
                     var id = entity.find("_id", String.class).orElseThrow();
-                    EnhancedDocument persistedItem = table.getItem(Key.builder().partitionValue(_entityType).sortValue(id).build());
+                    var persistedItem = getItem(_entityType, id);
                     softly.assertThat(persistedItem)
                             .as("all items of the list of DocumentEntity should be stored on dynamodb database. the entity %s not found"
                                     .formatted(id))
@@ -182,14 +170,18 @@ class DynamoDBDocumentManagerTest {
         }
     }
 
-    private DynamoDbTable<EnhancedDocument> getTable(String name) {
-        return dynamoDbEnhancedClient
-                .table(name, TableSchema.documentSchemaBuilder()
-                        .addIndexPartitionKey(TableMetadata.primaryIndexName(), entityNameResolver.apply(name), AttributeValueType.S)
-                        .addIndexSortKey(TableMetadata.primaryIndexName(), DocumentEntityConverter.ID, AttributeValueType.S)
-                        .attributeConverterProviders(AttributeConverterProvider.defaultProvider())
-                        .build());
+    private Map<String, AttributeValue> getItem(String _entityType, String id) {
+        return dynamoDbClient
+                .getItem(GetItemRequest.builder()
+                        .tableName(_entityType)
+                        .key(Map.of(
+                                entityNameResolver.apply(_entityType), AttributeValue.builder().s(_entityType).build(),
+                                DocumentEntityConverter.ID, AttributeValue.builder().s(id).build()
+                        ))
+                        .build())
+                .item();
     }
+
 
     @Test
     void shouldCountByCollectionName() {
@@ -218,7 +210,11 @@ class DynamoDBDocumentManagerTest {
                         .as("the returned count number of items from a given an non-existent table name is incorrect")
                         .isEqualTo(0L);
 
-                softly.assertThatThrownBy(() -> getTable(nonExistentTable).describeTable())
+                softly.assertThatThrownBy(() -> dynamoDbClient
+                                .describeTable(DescribeTableRequest
+                                        .builder()
+                                        .tableName(nonExistentTable
+                                        ).build()))
                         .as("it must not create a table")
                         .isInstanceOfAny(ResourceNotFoundException.class);
 
@@ -232,5 +228,9 @@ class DynamoDBDocumentManagerTest {
             });
 
         }
+    }
+
+    @Test
+    void shouldCountByDocumentQuery() {
     }
 }

@@ -22,16 +22,8 @@ import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.document.DocumentTableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.document.EnhancedDocument;
-import software.amazon.awssdk.enhanced.dynamodb.model.DescribeTableEnhancedResponse;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 enum DynamoDBTestUtils {
@@ -125,29 +117,6 @@ enum DynamoDBTestUtils {
         settings.get(DynamoDBConfigurations.PROFILE, String.class).ifPresent(builderSync::profile);
         settings.get(DynamoDBConfigurations.REGION, String.class).ifPresent(builderSync::region);
         return builderSync.build();
-    }
-
-    DynamoDbEnhancedClient getDynamoDbEnhancedClient() {
-        DynamoDbClient dynamoDbClient = getDynamoDbClient();
-        return getDynamoDbEnhancedClient(dynamoDbClient);
-    }
-
-    DynamoDbEnhancedClient getDynamoDbEnhancedClient(DynamoDbClient dynamoDbClient) {
-        return DynamoDbEnhancedClient.builder().dynamoDbClient(dynamoDbClient).build();
-    }
-
-    public static DescribeTableEnhancedResponse createTable(DynamoDbEnhancedClient enhancedClient, String tableName, Function<DocumentTableSchema.Builder, DocumentTableSchema.Builder> documentTableSchema) {
-        DynamoDbTable<EnhancedDocument> table = enhancedClient.table(tableName,
-                documentTableSchema.apply(TableSchema.documentSchemaBuilder())
-                        .build()
-        );
-        table.createTable();
-        return table.describeTable();
-    }
-
-    public static void deleteTable(DynamoDbClient dynamoDbClient, Function<DeleteTableRequest.Builder, DeleteTableRequest> deleteTableRequest) {
-        var request = deleteTableRequest.apply(DeleteTableRequest.builder());
-        dynamoDbClient.deleteTable(request);
     }
 
 }

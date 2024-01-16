@@ -49,11 +49,6 @@
             <version>${dynamodb.version}</version>
         </dependency>
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>dynamodb-enhanced</artifactId>
-            <version>${dynamodb.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.datafaker</groupId>
             <artifactId>datafaker</artifactId>
             <version>2.0.2</version>

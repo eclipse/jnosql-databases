@@ -21,10 +21,15 @@ import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.enhanced.dynamodb.document.EnhancedDocument;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.util.*;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
@@ -39,25 +44,6 @@ class DocumentEntityConverter {
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private DocumentEntityConverter() {
-    }
-
-    static DocumentEntity toDocumentEntity(UnaryOperator<String> entityNameResolver, EnhancedDocument enhancedDocument) {
-        if (enhancedDocument == null) {
-            return null;
-        }
-        if (enhancedDocument.toMap().isEmpty()) {
-            return null;
-        }
-        UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
-        String entityAttribute = resolver.apply(ENTITY);
-        Map<String, AttributeValue> map = enhancedDocument.toMap();
-        var entityName = map.containsKey(entityAttribute) ? map.get(entityAttribute).s() : entityAttribute;
-        List<Document> documents = map.entrySet()
-                .stream()
-                .filter(entry -> !Objects.equals(entityAttribute, entry.getKey()))
-                .map(entry -> Document.of(entry.getKey(), convertValue(entry.getValue())))
-                .toList();
-        return DocumentEntity.of(entityName, documents);
     }
 
     private static Object convertValue(Object value) {
@@ -89,14 +75,6 @@ class DocumentEntityConverter {
             }
         }
         return value;
-    }
-
-    static EnhancedDocument toEnhancedDocument(UnaryOperator<String> entityNameResolver, DocumentEntity documentEntity) {
-        UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
-        Map<String, Object> documentAsMap = getMap(resolver, documentEntity);
-        return EnhancedDocument.builder()
-                .json(JSONB.toJson(documentAsMap))
-                .build();
     }
 
     static Map<String, Object> getMap(UnaryOperator<String> entityNameResolver, DocumentEntity entity) {
@@ -140,5 +118,65 @@ class DocumentEntityConverter {
     private static boolean isSudDocumentList(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
+    }
+
+    public static Map<String, AttributeValue> toItem(UnaryOperator<String> entityNameResolver, DocumentEntity documentEntity) {
+        UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
+        Map<String, Object> documentAttributes = getMap(resolver, documentEntity);
+        return toItem(documentAttributes);
+    }
+
+    private static Map<String, AttributeValue> toItem(Map<String, Object> documentAttributes) {
+        HashMap<String, AttributeValue> result = new HashMap<>();
+        documentAttributes.forEach((attribute, value) -> result.put(attribute, toAttributeValue(value)));
+        return result;
+    }
+
+    public static AttributeValue toAttributeValue(Object value) {
+        if (value == null)
+            return AttributeValue.builder().nul(true).build();
+        if (value instanceof String str)
+            return AttributeValue.builder().s(str).build();
+        if (value instanceof Number number)
+            return AttributeValue.builder().n(String.valueOf(number)).build();
+        if (value instanceof Boolean bool)
+            return AttributeValue.builder().bool(bool).build();
+        if (value instanceof List<?> list)
+            return AttributeValue.builder().l(list.stream().filter(Objects::nonNull)
+                    .map(DocumentEntityConverter::toAttributeValue).toList()).build();
+        if (value instanceof Map<?, ?> mapValue) {
+            HashMap<String, AttributeValue> values = new HashMap<>();
+            mapValue.forEach((k, v) -> values.put(String.valueOf(k), toAttributeValue(v)));
+            return AttributeValue.builder().m(values).build();
+        }
+        if (value instanceof byte[] data) {
+            return AttributeValue.builder().b(SdkBytes.fromByteArray(data)).build();
+        }
+        if (value instanceof ByteBuffer byteBuffer) {
+            return AttributeValue.builder().b(SdkBytes.fromByteBuffer(byteBuffer)).build();
+        }
+        if (value instanceof InputStream input) {
+            return AttributeValue.builder().b(SdkBytes.fromInputStream(input)).build();
+        }
+        return AttributeValue.builder().s(String.valueOf(value)).build();
+    }
+
+
+    public static DocumentEntity toDocumentEntity(UnaryOperator<String> entityNameResolver, Map<String, AttributeValue> item) {
+        if (item == null) {
+            return null;
+        }
+        if (item.isEmpty()) {
+            return null;
+        }
+        UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
+        String entityAttribute = resolver.apply(ENTITY);
+        var entityName = item.containsKey(entityAttribute) ? item.get(entityAttribute).s() : entityAttribute;
+        List<Document> documents = item.entrySet()
+                .stream()
+                .filter(entry -> !Objects.equals(entityAttribute, entry.getKey()))
+                .map(entry -> Document.of(entry.getKey(), convertValue(entry.getValue())))
+                .toList();
+        return DocumentEntity.of(entityName, documents);
     }
 }

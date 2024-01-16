@@ -17,15 +17,16 @@ package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import jakarta.json.Json;
 import jakarta.json.bind.Jsonb;
-import org.eclipse.jnosql.communication.TypeReference;
+import net.datafaker.Faker;
 import org.eclipse.jnosql.communication.document.Document;
+import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import software.amazon.awssdk.enhanced.dynamodb.document.EnhancedDocument;
 
 import java.io.StringReader;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -35,84 +36,40 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class DocumentEntityConverterTest {
 
+    static final Faker faker = new Faker();
+
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
+
     private static final UnaryOperator<String> entityNameResolver = UnaryOperator.identity();
 
-
     @Test
-    void shouldConvertDocumentEntityToEnhancedDocument() {
+    void shouldConvertToItemRequest() {
 
         assertSoftly(softly -> {
-            var entity = DocumentEntityGenerator.createRandomEntity();
-            var enhancedDocument = DocumentEntityConverter.toEnhancedDocument(entityNameResolver, entity);
+            var entity = DocumentEntity.of("entityA",
+                    List.of(
+                            Document.of("_id", UUID.randomUUID().toString()),
+                            Document.of("city", faker.address().city()),
+                            Document.of("total", 10.0),
+                            Document.of("address", List.of(
+                                    Document.of("zipcode", faker.address().zipCode()),
+                                    Document.of("city", faker.address().cityName()))),
+                            Document.of("phones", List.of(faker.name().firstName(), faker.name().firstName(), faker.name().firstName()))
+                    ));
+
+            var item = DocumentEntityConverter.toItem(entityNameResolver, entity);
+
+            var entityFromItem = DocumentEntityConverter.toDocumentEntity(entityNameResolver, item);
+
             var expected = Json.createReader(new StringReader(JSONB.toJson(DocumentEntityConverter.getMap(entityNameResolver, entity)))).readObject();
-            var actual = Json.createReader(new StringReader(enhancedDocument.toJson())).readObject();
+
+            var actual = Json.createReader(new StringReader(JSONB.toJson(DocumentEntityConverter.getMap(entityNameResolver, entityFromItem)))).readObject();
+
             softly.assertThat(actual).as("cannot convert a simple DocumentEntity")
                     .isEqualTo(expected);
         });
+
+
     }
-
-    @Test
-    void shouldConvertDocumentEntityWithSubDocumentsToEnhancedDocument() {
-
-        assertSoftly(softly -> {
-            var entity = DocumentEntityGenerator.createRandomEntityWithSubDocuments(3);
-            var enhancedDocument = DocumentEntityConverter.toEnhancedDocument(entityNameResolver, entity);
-            var expected = Json.createReader(new StringReader(JSONB.toJson(DocumentEntityConverter.getMap(entityNameResolver, entity)))).readObject();
-            var actual = Json.createReader(new StringReader(enhancedDocument.toJson())).readObject();
-            softly.assertThat(actual).as("cannot convert a DocumentEntity with document sublist")
-                    .isEqualTo(expected);
-        });
-    }
-
-
-    @Test
-    void shouldConvertEnhancedDocumentToDocumentEntity() {
-
-        var enhancedDocument = EnhancedDocument.builder()
-                .json("""
-                        {
-                            "%s":"Max",
-                            "%s": "person",
-                            "name":"Maximillian",
-                            "number": 123,
-                            "address": {
-                                "street": "Rua tralala"
-                            },
-                            "phones": [
-                                "1111-2222",
-                                "2222-3333"
-                            ]
-                        }
-                        """.formatted(DocumentEntityConverter.ID, DocumentEntityConverter.ENTITY)).build();
-        var expected = DocumentEntityConverter.toDocumentEntity(entityNameResolver, enhancedDocument);
-
-        assertSoftly(softly -> {
-            softly.assertThat(expected).as("cannot return a null reference")
-                    .isNotNull();
-            softly.assertThat(expected.name()).as("documentEntity name is not correct")
-                    .isEqualTo("person");
-
-            softly.assertThat(expected.find("_id", String.class))
-                    .as("documentEntity._id was parsed incorrectly")
-                    .hasValue("Max");
-            softly.assertThat(expected.find("name", String.class))
-                    .as("documentEntity.name was parsed incorrectly")
-                    .hasValue("Maximillian");
-            softly.assertThat(expected.find("number", Integer.class))
-                    .as("documentEntity.number was parsed incorrectly")
-                    .hasValue(123);
-            softly.assertThat(expected.find("address", new TypeReference<List<Document>>() {
-                    }))
-                    .as("documentEntity.address was parsed incorrectly")
-                    .contains(List.of(Document.of("street", "Rua tralala")));
-            softly.assertThat(expected.find("phones", new TypeReference<List<String>>() {
-                    }))
-                    .as("documentEntity.phones  was parsed incorrectly")
-                    .contains(List.of("1111-2222", "2222-3333"));
-
-        });
-    }
-
 
 }
