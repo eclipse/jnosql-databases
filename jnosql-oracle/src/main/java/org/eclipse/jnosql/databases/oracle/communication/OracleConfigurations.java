@@ -25,7 +25,15 @@ import java.util.function.Supplier;
  */
 public enum OracleConfigurations implements Supplier<String> {
 
-    HOST("jnosql.oracle.host"), USER("jnosql.oracle.user"), PASSWORD("jnosql.oracle.password");
+    HOST("jnosql.oracle.host"),
+    USER("jnosql.oracle.user"),
+    PASSWORD("jnosql.oracle.password"),
+    TABLE_READ_LIMITS("jnosql.oracle.table.read.limit"),
+    TABLE_WRITE_LIMITS("jnosql.oracle.table.write.limit"),
+    TABLE_STORAGE_GB("jnosql.oracle.table.storage.gb"),
+    TABLE_WAIT_MILLIS("jnosql.oracle.table.wait.millis"),
+    TABLE_DELAY_MILLIS("jnosql.oracle.table.delay.millis");
+
 
     private final String configuration;
 
