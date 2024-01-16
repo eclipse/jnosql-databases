@@ -39,7 +39,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class OracleBucketManager implements BucketManager {
     private final String bucketName;
