@@ -27,7 +27,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The memcached implementation of {@link KeyValueConfiguration} that returns
+ * The Oracle implementation of {@link KeyValueConfiguration} that returns
  * {@link OracleBucketManagerFactory}.
  *
  */
