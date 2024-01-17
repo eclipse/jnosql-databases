@@ -105,6 +105,19 @@ final class OracleDocumentManager implements DocumentManager {
 
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) {
+        Objects.requireNonNull(query, "query is required");
+        SelectBuilder selectBuilder = new SelectBuilder(query, table);
+        OracleQuery oracleQuery = selectBuilder.get();
+        if (oracleQuery.hasIds()) {
+            System.out.println("has ids");
+        }
+        if (!oracleQuery.hasOnlyIds()) {
+            if (oracleQuery.hasParameter()) {
+                System.out.println("has hasParameter");
+            } else {
+                System.out.println("has not hasParameter");
+            }
+        }
         return null;
     }
 
