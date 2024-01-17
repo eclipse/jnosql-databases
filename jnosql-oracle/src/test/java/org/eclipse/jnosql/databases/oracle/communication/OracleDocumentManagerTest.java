@@ -507,9 +507,8 @@ class OracleDocumentManagerTest {
         Assertions.assertTrue(optional.isPresent());
         DocumentEntity documentEntity = optional.get();
         Document properties = documentEntity.find("properties").get();
-        Map<String, Object> map = properties.get(new TypeReference<>() {
-        });
-        Assertions.assertNotNull(map);
+        Document document = properties.get(Document.class);
+        assertThat(document).isNotNull().isEqualTo(Document.of("hallo", "Welt"));
     }
 
     @Test
