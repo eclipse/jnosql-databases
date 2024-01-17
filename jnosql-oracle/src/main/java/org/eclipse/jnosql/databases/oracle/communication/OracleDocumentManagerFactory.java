@@ -14,8 +14,10 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
+import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 
 import java.util.Objects;
 
@@ -24,6 +26,8 @@ import java.util.Objects;
  * The Oracle implementation to {@link DocumentManagerFactory}
  */
 class OracleDocumentManagerFactory implements DocumentManagerFactory {
+
+    private static final Jsonb JSON = JsonbSupplier.getInstance().get();
     private final NoSQLHandleConfiguration configuration;
 
     public OracleDocumentManagerFactory(NoSQLHandleConfiguration configuration) {
@@ -40,6 +44,6 @@ class OracleDocumentManagerFactory implements DocumentManagerFactory {
         Objects.requireNonNull(table, "table is required");
         var tableCreation = this.configuration.tableCreationConfiguration();
         tableCreation.createTable(table, configuration.serviceHandle());
-        return new OracleDocumentManager(table, configuration.serviceHandle());
+        return new OracleDocumentManager(table, configuration.serviceHandle(), JSON);
     }
 }

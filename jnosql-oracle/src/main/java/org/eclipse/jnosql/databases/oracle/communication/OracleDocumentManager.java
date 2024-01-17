@@ -14,6 +14,7 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
+import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
@@ -28,9 +29,11 @@ final class OracleDocumentManager implements DocumentManager {
     private final String table;
     private final NoSQLHandle serviceHandle;
 
-    public OracleDocumentManager(String table, NoSQLHandle serviceHandle) {
+    private final Jsonb jsonB;
+    public OracleDocumentManager(String table, NoSQLHandle serviceHandle, Jsonb jsonB) {
         this.table = table;
         this.serviceHandle = serviceHandle;
+        this.jsonB = jsonB;
     }
 
     @Override

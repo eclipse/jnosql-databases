@@ -46,7 +46,7 @@ final class OracleBucketManager implements BucketManager {
 
     private final Jsonb jsonB;
 
-    public OracleBucketManager(String bucketName, NoSQLHandle serviceHandle, Jsonb jsonB) {
+    OracleBucketManager(String bucketName, NoSQLHandle serviceHandle, Jsonb jsonB) {
         this.bucketName = bucketName;
         this.serviceHandle = serviceHandle;
         this.jsonB = jsonB;
