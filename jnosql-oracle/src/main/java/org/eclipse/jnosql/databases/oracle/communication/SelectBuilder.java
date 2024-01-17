@@ -50,7 +50,7 @@ final class SelectBuilder implements Supplier<OracleQuery> {
         query.append("select ");
         query.append(select()).append(' ');
         query.append("from ").append(table);
-        query.append(" WHERE " + JSON_FIELD + "._entity = '").append(this.query.name()).append("' ");
+        query.append(" WHERE '" + JSON_FIELD + "._entity' = '").append(this.query.name()).append("' ");
         this.query.condition().ifPresent(c -> condition(c, query, params, ids));
 
 

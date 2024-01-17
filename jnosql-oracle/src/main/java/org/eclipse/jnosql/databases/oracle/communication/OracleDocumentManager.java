@@ -22,7 +22,11 @@ import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
 import oracle.nosql.driver.ops.GetRequest;
 import oracle.nosql.driver.ops.GetResult;
+import oracle.nosql.driver.ops.PrepareRequest;
+import oracle.nosql.driver.ops.PrepareResult;
 import oracle.nosql.driver.ops.PutRequest;
+import oracle.nosql.driver.ops.QueryRequest;
+import oracle.nosql.driver.ops.QueryResult;
 import oracle.nosql.driver.values.JsonOptions;
 import oracle.nosql.driver.values.MapValue;
 import org.eclipse.jnosql.communication.document.Document;
@@ -133,7 +137,15 @@ final class OracleDocumentManager implements DocumentManager {
         }
         if (!oracleQuery.hasOnlyIds()) {
             if (oracleQuery.isParameterEmpty()) {
-                System.out.println("has not hasParameter");
+                PrepareRequest prepReq = new PrepareRequest().setStatement(oracleQuery.query());
+                PrepareResult prepRes = serviceHandle.prepare(prepReq);
+                QueryRequest queryRequest = new QueryRequest().setPreparedStatement(prepRes);
+                do {
+                    QueryResult queryResult = serviceHandle.query(queryRequest);
+                    List<MapValue> results = queryResult.getResults();
+                    System.out.println(results);
+                } while (!queryRequest.isDone());
+
             } else {
                 System.out.println("has hasParameter");
             }
