@@ -19,6 +19,8 @@ import oracle.nosql.driver.NoSQLHandleConfig;
 import oracle.nosql.driver.NoSQLHandleFactory;
 import oracle.nosql.driver.kv.StoreAccessTokenProvider;
 import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.testcontainers.containers.GenericContainer;
@@ -50,6 +52,14 @@ public enum Database implements Supplier<BucketManagerFactory> {
     @Override
     public BucketManagerFactory get() {
         KeyValueConfiguration configuration = new OracleKeyValueConfiguration();
+        Settings settings = Settings.builder()
+                .put(OracleConfigurations.HOST, "http://" + container.getHost() + ":" + container.getFirstMappedPort())
+                .build();
+        return configuration.apply(settings);
+    }
+
+    public DocumentManagerFactory managerFactory() {
+        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
         Settings settings = Settings.builder()
                 .put(OracleConfigurations.HOST, "http://" + container.getHost() + ":" + container.getFirstMappedPort())
                 .build();

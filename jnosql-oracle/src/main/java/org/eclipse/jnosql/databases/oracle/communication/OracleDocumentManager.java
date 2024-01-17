@@ -99,6 +99,7 @@ final class OracleDocumentManager implements DocumentManager {
 
     @Override
     public void delete(DocumentDeleteQuery query) {
+        Objects.requireNonNull(query, "query is required");
 
     }
 
