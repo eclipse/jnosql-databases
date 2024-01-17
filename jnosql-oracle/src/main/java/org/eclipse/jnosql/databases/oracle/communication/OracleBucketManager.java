@@ -33,14 +33,18 @@ import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.ID_FIELD;
+import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.JSON_FIELD;
+
 
 final class OracleBucketManager implements BucketManager {
+    private static final JsonOptions OPTIONS = new JsonOptions();
     private final String bucketName;
     private final NoSQLHandle serviceHandle;
 
@@ -90,15 +94,15 @@ final class OracleBucketManager implements BucketManager {
     public <K> Optional<Value> get(K key) {
         Objects.requireNonNull(key, "key is required");
         GetRequest getRequest = new GetRequest();
-        getRequest.setKey(new MapValue().put("id", key.toString()));
+        getRequest.setKey(new MapValue().put(ID_FIELD, key.toString()));
         getRequest.setTableName(name());
         GetResult getResult = serviceHandle.get(getRequest);
         if (getResult != null && getResult.getValue() != null) {
-            String json = getResult.getValue().toJson(new JsonOptions());
-            InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+            String json = getResult.getValue().toJson(OPTIONS);
+            InputStream stream = new ByteArrayInputStream(json.getBytes(UTF_8));
             JsonReader jsonReader = Json.createReader(stream);
             JsonObject readObject = jsonReader.readObject();
-            JsonValue content = readObject.get("content");
+            JsonValue content = readObject.get(JSON_FIELD);
             return Optional.of(ValueJSON.of(content.toString()));
         } else {
             return Optional.empty();
@@ -138,7 +142,7 @@ final class OracleBucketManager implements BucketManager {
     private <K, V> void putImplementation(K key, V value) {
         MapValue mapValue = new MapValue().put("id", key.toString());
         MapValue contentVal = mapValue.putFromJson("content", jsonB.toJson(value),
-                new JsonOptions());
+                OPTIONS);
         PutRequest putRequest = new PutRequest()
                 .setValue(contentVal)
                 .setTableName(name());

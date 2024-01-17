@@ -32,6 +32,8 @@ record TableCreationConfiguration(int readLimit,
     private static final Logger LOGGER = Logger.getLogger(OracleBucketManagerFactory.class.getName());
     static final String JSON_FIELD = "content";
 
+    static final String ID_FIELD = "id";
+
     public void createTable(String tableName, NoSQLHandle serviceHandle){
         String table = String.format(CREATE_TABLE, tableName);
         LOGGER.info("starting the bucket manager, creating a table Running query: " + table);
