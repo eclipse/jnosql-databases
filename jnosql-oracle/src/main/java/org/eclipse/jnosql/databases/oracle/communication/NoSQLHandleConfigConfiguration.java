@@ -24,7 +24,7 @@ import org.eclipse.jnosql.communication.Settings;
 import java.util.List;
 import java.util.function.Function;
 
-enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandle> {
+enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleConfiguration> {
 
     INSTANCE;
 
@@ -35,7 +35,7 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandle> {
     private static final int DEFAULT_TABLE_WAIT_MILLIS = 120_000;
     private static final int DEFAULT_TABLE_DELAY_MILLIS = 500;
     @Override
-    public NoSQLHandle apply(Settings settings) {
+    public NoSQLHandleConfiguration apply(Settings settings) {
         String host = settings.get(List.of(OracleConfigurations.HOST.get(), Configurations.HOST.get()))
                 .map(Object::toString).orElse(DEFAULT_HOST);
         String user = settings.get(List.of(OracleConfigurations.USER.get(), Configurations.USER.get()))
@@ -55,6 +55,6 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandle> {
         int waitMillis = settings.getOrDefault(OracleConfigurations.TABLE_WAIT_MILLIS, DEFAULT_TABLE_WAIT_MILLIS);
         int delayMillis = settings.getOrDefault(OracleConfigurations.TABLE_DELAY_MILLIS, DEFAULT_TABLE_DELAY_MILLIS);
         var tableLimits = new TableCreationConfiguration(readLimit, writeLimit, storageGB, waitMillis, delayMillis);
-        return NoSQLHandleFactory.createNoSQLHandle(config);
+        return new NoSQLHandleConfiguration(NoSQLHandleFactory.createNoSQLHandle(config), tableLimits);
     }
 }
