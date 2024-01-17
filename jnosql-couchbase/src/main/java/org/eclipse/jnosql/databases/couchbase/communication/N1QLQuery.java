@@ -26,12 +26,12 @@ record N1QLQuery(String query, JsonObject params, List<String> ids) {
         return Collections.unmodifiableList(ids);
     }
 
-    public boolean hasParameter() {
+    public boolean isParameterEmpty() {
         return this.params.isEmpty();
     }
 
     public boolean hasOnlyIds() {
-        return hasIds() && hasParameter();
+        return hasIds() && isParameterEmpty();
     }
 
     public boolean hasIds() {
