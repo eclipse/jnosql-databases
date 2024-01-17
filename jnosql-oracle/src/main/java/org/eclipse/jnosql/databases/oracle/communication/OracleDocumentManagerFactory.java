@@ -14,7 +14,6 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
-import oracle.nosql.driver.NoSQLHandle;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
@@ -25,20 +24,22 @@ import java.util.Objects;
  * The Oracle implementation to {@link DocumentManagerFactory}
  */
 class OracleDocumentManagerFactory implements DocumentManagerFactory {
-    private final NoSQLHandle serviceHandle;
+    private final NoSQLHandleConfiguration configuration;
 
-    public OracleDocumentManagerFactory(NoSQLHandle serviceHandle) {
-        this.serviceHandle = serviceHandle;
+    public OracleDocumentManagerFactory(NoSQLHandleConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
     public void close() {
-        this.serviceHandle.close();
+        this.configuration.serviceHandle().close();
     }
 
     @Override
     public DocumentManager apply(String table) {
         Objects.requireNonNull(table, "table is required");
-        return null;
+        var tableCreation = this.configuration.tableCreationConfiguration();
+        tableCreation.createTable(table, configuration.serviceHandle());
+        return new OracleDocumentManager(table, configuration.serviceHandle());
     }
 }

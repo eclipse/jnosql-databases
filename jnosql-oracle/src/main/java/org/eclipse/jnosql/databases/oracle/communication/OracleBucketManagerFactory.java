@@ -66,8 +66,8 @@ final class OracleBucketManagerFactory implements BucketManagerFactory {
     }
 
     private void createTable(String bucketName) {
-        TableCreationConfiguration creationConfiguration = configuration.tableCreationConfiguration();
-        creationConfiguration.createTable(bucketName, configuration.serviceHandle());
+        var tableCreation = configuration.tableCreationConfiguration();
+        tableCreation.createTable(bucketName, configuration.serviceHandle());
     }
 
     @Override
