@@ -25,12 +25,12 @@ record OracleQuery(String query, Map<String, Object> params, List<String> ids) {
         return Collections.unmodifiableList(ids);
     }
 
-    public boolean hasParameter() {
+    public boolean isParameterEmpty() {
         return this.params.isEmpty();
     }
 
     public boolean hasOnlyIds() {
-        return hasIds() && hasParameter();
+        return hasIds() && isParameterEmpty();
     }
 
     public boolean hasIds() {

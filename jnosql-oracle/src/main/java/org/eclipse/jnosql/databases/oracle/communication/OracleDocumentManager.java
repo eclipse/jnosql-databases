@@ -31,13 +31,11 @@ import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
-import org.eclipse.jnosql.communication.driver.ValueJSON;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,10 +132,10 @@ final class OracleDocumentManager implements DocumentManager {
             entities.addAll(getIds(oracleQuery));
         }
         if (!oracleQuery.hasOnlyIds()) {
-            if (oracleQuery.hasParameter()) {
-                System.out.println("has hasParameter");
-            } else {
+            if (oracleQuery.isParameterEmpty()) {
                 System.out.println("has not hasParameter");
+            } else {
+                System.out.println("has hasParameter");
             }
         }
         return entities.stream();
