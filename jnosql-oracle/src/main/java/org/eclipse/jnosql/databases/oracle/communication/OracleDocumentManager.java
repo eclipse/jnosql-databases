@@ -14,8 +14,14 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
+import oracle.nosql.driver.ops.GetRequest;
+import oracle.nosql.driver.ops.GetResult;
 import oracle.nosql.driver.ops.PutRequest;
 import oracle.nosql.driver.values.JsonOptions;
 import oracle.nosql.driver.values.MapValue;
@@ -24,15 +30,29 @@ import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.driver.ValueJSON;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.ID_FIELD;
+import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.JSON_FIELD;
+
 final class OracleDocumentManager implements DocumentManager {
+
+    private static final JsonOptions OPTIONS = new JsonOptions();
     static final String ENTITY = "_entity";
     static final String ID = "_id";
     private final String table;
@@ -108,8 +128,10 @@ final class OracleDocumentManager implements DocumentManager {
         Objects.requireNonNull(query, "query is required");
         SelectBuilder selectBuilder = new SelectBuilder(query, table);
         OracleQuery oracleQuery = selectBuilder.get();
+        List<DocumentEntity> entities = new ArrayList<>();
+
         if (oracleQuery.hasIds()) {
-            System.out.println("has ids");
+            entities.addAll(getIds(oracleQuery));
         }
         if (!oracleQuery.hasOnlyIds()) {
             if (oracleQuery.hasParameter()) {
@@ -118,7 +140,35 @@ final class OracleDocumentManager implements DocumentManager {
                 System.out.println("has not hasParameter");
             }
         }
-        return null;
+        return entities.stream();
+    }
+
+    private List<DocumentEntity> getIds(OracleQuery oracleQuery) {
+        List<DocumentEntity> entities = new ArrayList<>();
+        for (String id : oracleQuery.ids()) {
+            GetRequest getRequest = new GetRequest();
+            getRequest.setKey(new MapValue().put(ID_FIELD, id));
+            getRequest.setTableName(name());
+            GetResult getResult = serviceHandle.get(getRequest);
+            if (getResult != null && getResult.getValue() != null) {
+                String json = getResult.getValue().toJson(OPTIONS);
+                InputStream stream = new ByteArrayInputStream(json.getBytes(UTF_8));
+                JsonReader jsonReader = Json.createReader(stream);
+                JsonObject readObject = jsonReader.readObject();
+                JsonValue content = readObject.get(JSON_FIELD);
+                Map<String, Object> entity = jsonB.fromJson(content.toString(), Map.class);
+                List<Document> documents = Documents.of(entity);
+                String entityName = Optional.ofNullable(entity.get(ENTITY))
+                        .map(Object::toString)
+                        .orElseThrow(() -> new OracleDBException("The _entity is required in the entity"));
+                DocumentEntity documentEntity = DocumentEntity.of(entityName);
+                documentEntity.addAll(documents);
+                documentEntity.remove(ENTITY);
+                entities.add(documentEntity);
+            }
+        }
+
+        return entities;
     }
 
     @Override

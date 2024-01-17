@@ -123,7 +123,7 @@ final class OracleBucketManager implements BucketManager {
     public <K> void delete(K key) {
         Objects.requireNonNull(key, "key is required");
         DeleteRequest deleteRequest = new DeleteRequest();
-        deleteRequest.setKey(new MapValue().put("id", key.toString()));
+        deleteRequest.setKey(new MapValue().put(ID_FIELD, key.toString()));
         deleteRequest.setTableName(name());
         serviceHandle.delete(deleteRequest);
     }
