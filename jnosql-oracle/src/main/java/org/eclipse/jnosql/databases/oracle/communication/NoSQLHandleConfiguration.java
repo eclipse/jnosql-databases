@@ -16,5 +16,5 @@ package org.eclipse.jnosql.databases.oracle.communication;
 
 import oracle.nosql.driver.NoSQLHandle;
 
-record NoSQLHandleConfiguration(NoSQLHandle handle, TableCreationConfiguration tableCreationConfiguration) {
+record NoSQLHandleConfiguration(NoSQLHandle serviceHandle, TableCreationConfiguration tableCreationConfiguration) {
 }

@@ -14,7 +14,6 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
-import oracle.nosql.driver.NoSQLHandle;
 import oracle.nosql.driver.NoSQLHandleConfig;
 import oracle.nosql.driver.NoSQLHandleFactory;
 import oracle.nosql.driver.kv.StoreAccessTokenProvider;
