@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024 Contributors to the Eclipse Foundation
+ *   All rights reserved. This program and the accompanying materials
+ *   are made available under the terms of the Eclipse Public License v1.0
+ *   and Apache License v2.0 which accompanies this distribution.
+ *   The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ *   and the Apache License v2.0 is available at http://www.opensource.org/licenses/apache2.0.php.
+ *
+ *   You may elect to redistribute this code under either of these licenses.
+ *
+ *   Contributors:
+ *
+ *   Otavio Santana
+ */
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import oracle.nosql.driver.NoSQLHandle;
@@ -15,11 +29,11 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandle> {
     INSTANCE;
 
     private static final String DEFAULT_HOST = "http://localhost:8080";
-    private static final String DEFAULT_TABLE_READ_LIMITS = "http://localhost:8080";
-    private static final String DEFAULT_TABLE_WRITE_LIMITS = "http://localhost:8080";
-    private static final String DEFAULT_TABLE_STORAGE_GB = "http://localhost:8080";
-    private static final String DEFAULT_TABLE_WAIT_MILLIS = "http://localhost:8080";
-    private static final String DEFAULT_TABLE_DELAY_MILLIS = "http://localhost:8080";
+    private static final int DEFAULT_TABLE_READ_LIMITS = 25;
+    private static final int DEFAULT_TABLE_WRITE_LIMITS = 25;
+    private static final int DEFAULT_TABLE_STORAGE_GB = 25;
+    private static final int DEFAULT_TABLE_WAIT_MILLIS = 120_000;
+    private static final int DEFAULT_TABLE_DELAY_MILLIS = 500;
     @Override
     public NoSQLHandle apply(Settings settings) {
         String host = settings.get(List.of(OracleConfigurations.HOST.get(), Configurations.HOST.get()))
@@ -35,6 +49,12 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandle> {
         } else {
             config.setAuthorizationProvider(new StoreAccessTokenProvider());
         }
+        int readLimit = settings.getOrDefault(OracleConfigurations.TABLE_READ_LIMITS, DEFAULT_TABLE_READ_LIMITS);
+        int writeLimit = settings.getOrDefault(OracleConfigurations.TABLE_WRITE_LIMITS, DEFAULT_TABLE_WRITE_LIMITS);
+        int storageGB = settings.getOrDefault(OracleConfigurations.TABLE_STORAGE_GB, DEFAULT_TABLE_STORAGE_GB);
+        int waitMillis = settings.getOrDefault(OracleConfigurations.TABLE_WAIT_MILLIS, DEFAULT_TABLE_WAIT_MILLIS);
+        int delayMillis = settings.getOrDefault(OracleConfigurations.TABLE_DELAY_MILLIS, DEFAULT_TABLE_DELAY_MILLIS);
+        var tableLimits = new TableCreationConfiguration(readLimit, writeLimit, storageGB, waitMillis, delayMillis);
         return NoSQLHandleFactory.createNoSQLHandle(config);
     }
 }
