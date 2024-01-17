@@ -39,7 +39,7 @@ class MongoDBDocumentConfigurationTest {
 
 
     @Test
-    void shouldReturnErrorWhendSettingsIsNull() {
+    void shouldReturnErrorWhenSettingsIsNull() {
         DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
