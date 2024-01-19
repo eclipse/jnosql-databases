@@ -568,6 +568,7 @@ class OracleDocumentManagerTest {
 
     private List<DocumentEntity> getEntitiesWithValues() {
         DocumentEntity lucas = DocumentEntity.of(COLLECTION_NAME);
+
         lucas.add(Document.of("name", "Lucas"));
         lucas.add(Document.of("age", 22));
         lucas.add(Document.of("location", "BR"));
