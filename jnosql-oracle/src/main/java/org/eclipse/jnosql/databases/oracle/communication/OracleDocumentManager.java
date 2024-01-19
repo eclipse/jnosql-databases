@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -55,8 +56,9 @@ import static org.eclipse.jnosql.databases.oracle.communication.TableCreationCon
 final class OracleDocumentManager implements DocumentManager {
 
     private static final JsonOptions OPTIONS = new JsonOptions();
-    static final String ENTITY = "_entity";
+    static final String ENTITY = "entity";
     static final String ID = "_id";
+    static final String ORACLE_ID = "id";
     private final String table;
     private final NoSQLHandle serviceHandle;
 
@@ -79,9 +81,9 @@ final class OracleDocumentManager implements DocumentManager {
         entityMap.put(ENTITY, entity.name());
         String id = entity.find(ID).map(Document::get)
                 .map(Object::toString)
-                .orElseThrow(() -> new OracleDBException("The _id is required in the entity"));
+                .orElseGet(() -> UUID.randomUUID().toString());
 
-        MapValue mapValue = new MapValue().put("id", id);
+        MapValue mapValue = new MapValue().put(ORACLE_ID, id).put(ENTITY, entity.name());
         MapValue contentVal = mapValue.putFromJson("content", jsonB.toJson(entityMap),
                 new JsonOptions());
         PutRequest putRequest = new PutRequest()
@@ -125,6 +127,7 @@ final class OracleDocumentManager implements DocumentManager {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
@@ -143,7 +146,14 @@ final class OracleDocumentManager implements DocumentManager {
                 do {
                     QueryResult queryResult = serviceHandle.query(queryRequest);
                     List<MapValue> results = queryResult.getResults();
-                    System.out.println(results);
+                    for (MapValue result : results) {
+
+                        DocumentEntity entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
+                        String json = result.get(JSON_FIELD).toJson();
+                        entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
+                        entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
+                        entities.add(entity);
+                    }
                 } while (!queryRequest.isDone());
 
             } else {
