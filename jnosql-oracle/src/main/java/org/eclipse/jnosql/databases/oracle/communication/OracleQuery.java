@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-record OracleQuery(String query, Map<String, FieldValue> params, List<String> ids) {
+record OracleQuery(String query, List<FieldValue> params, List<String> ids) {
 
     @Override
     public List<String> ids() {
@@ -48,7 +48,7 @@ record OracleQuery(String query, Map<String, FieldValue> params, List<String> id
                 '}';
     }
 
-    static OracleQuery of(StringBuilder query, Map<String, FieldValue> params, List<String> ids) {
+    static OracleQuery of(StringBuilder query, List<FieldValue> params, List<String> ids) {
         return new OracleQuery(query.toString(), params, ids);
     }
 }

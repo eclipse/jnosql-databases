@@ -147,9 +147,10 @@ final class OracleDocumentManager implements DocumentManager {
             var prepReq = new PrepareRequest().setStatement(oracleQuery.query());
             var prepRes = serviceHandle.prepare(prepReq);
             PreparedStatement preparedStatement = prepRes.getPreparedStatement();
-            for (Map.Entry<String, FieldValue> entry : oracleQuery.params().entrySet()) {
-                preparedStatement.setVariable(entry.getKey(), entry.getValue());
+            for (int index = 0; index < oracleQuery.params().size(); index++) {
+                preparedStatement.setVariable((index + 1), oracleQuery.params().get(index));
             }
+
             QueryRequest queryRequest = new QueryRequest().setPreparedStatement(prepRes);
             do {
                 QueryResult queryResult = serviceHandle.query(queryRequest);
