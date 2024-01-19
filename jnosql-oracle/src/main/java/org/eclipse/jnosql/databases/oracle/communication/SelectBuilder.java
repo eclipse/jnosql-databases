@@ -33,7 +33,6 @@ import static org.eclipse.jnosql.databases.oracle.communication.TableCreationCon
 
 final class SelectBuilder implements Supplier<OracleQuery> {
 
-    private static final int BOUND = 1000;
     private static final int ORIGIN = 0;
     private final DocumentQuery query;
 
@@ -62,8 +61,9 @@ final class SelectBuilder implements Supplier<OracleQuery> {
 
         if (!this.query.sorts().isEmpty()) {
             query.append(" ORDER BY ");
+
             String order = this.query.sorts().stream()
-                    .map(s -> s.property() + " " + (s.isAscending() ? Direction.ASC : Direction.DESC))
+                    .map(s -> identifierOf(s.property()) + " " + (s.isAscending() ? Direction.ASC : Direction.DESC))
                     .collect(Collectors.joining(", "));
             query.append(order);
         }
