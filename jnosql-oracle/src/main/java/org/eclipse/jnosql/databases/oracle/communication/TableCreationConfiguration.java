@@ -28,7 +28,7 @@ record TableCreationConfiguration(int readLimit,
                                   int waitMillis,
                                   int delayMillis) {
 
-    private static final String CREATE_TABLE ="CREATE TABLE if not exists %s (id STRING, content JSON, primary key (id))";
+    private static final String CREATE_TABLE ="CREATE TABLE if not exists %s (id STRING, entity STRING, content JSON, primary key (id))";
     private static final Logger LOGGER = Logger.getLogger(OracleBucketManagerFactory.class.getName());
     static final String JSON_FIELD = "content";
 
