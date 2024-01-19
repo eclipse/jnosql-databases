@@ -110,7 +110,7 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
             condition(documentCondition, appendQuery, params, ids);
             if(index == ORIGIN){
                 query.append(" ").append(appendQuery);
-            } else {
+            } else if(!appendQuery.isEmpty()) {
                 query.append(condition).append(appendQuery);
             }
             index++;

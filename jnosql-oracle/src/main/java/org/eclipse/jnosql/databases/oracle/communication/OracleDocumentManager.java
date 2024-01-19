@@ -171,7 +171,7 @@ final class OracleDocumentManager implements DocumentManager {
             entities.addAll(getIds(oracleQuery));
         }
         if (!oracleQuery.hasOnlyIds()) {
-            LOGGER.finest("Executing Oracle Query: " +oracleQuery.query());
+            LOGGER.finest("Executing Oracle Query: " + oracleQuery.query());
 
             var prepReq = new PrepareRequest().setStatement(oracleQuery.query());
             var prepRes = serviceHandle.prepare(prepReq);
