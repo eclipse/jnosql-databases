@@ -20,6 +20,8 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
+import oracle.nosql.driver.ops.DeleteRequest;
+import oracle.nosql.driver.ops.DeleteResult;
 import oracle.nosql.driver.ops.GetRequest;
 import oracle.nosql.driver.ops.GetResult;
 import oracle.nosql.driver.ops.PrepareRequest;
@@ -49,6 +51,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -58,6 +61,7 @@ import static org.eclipse.jnosql.databases.oracle.communication.TableCreationCon
 
 final class OracleDocumentManager implements DocumentManager {
 
+    private final Logger LOGGER = Logger.getLogger(OracleDocumentManager.class.getName());
     private static final JsonOptions OPTIONS = new JsonOptions();
     static final String ENTITY = "entity";
     static final String ID = "_id";
@@ -128,21 +132,46 @@ final class OracleDocumentManager implements DocumentManager {
     public void delete(DocumentDeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
 
+        var selectBuilder = new DeleteBuilder(query, table);
+        var oracleQuery = selectBuilder.get();
+        if (oracleQuery.hasIds()) {
+            for (String id : oracleQuery.ids()) {
+                var delRequest = new DeleteRequest().setKey(new MapValue().put(ORACLE_ID, id))
+                        .setTableName(table);
+                serviceHandle.delete(delRequest);
+            }
+        }
+        if (!oracleQuery.hasOnlyIds()) {
+            LOGGER.finest("Executing delete query at Oracle NoSQL: " +oracleQuery.query());
+            var prepReq = new PrepareRequest().setStatement(oracleQuery.query());
+            var prepRes = serviceHandle.prepare(prepReq);
+            PreparedStatement preparedStatement = prepRes.getPreparedStatement();
+            for (int index = 0; index < oracleQuery.params().size(); index++) {
+                preparedStatement.setVariable((index + 1), oracleQuery.params().get(index));
+            }
+
+            QueryRequest queryRequest = new QueryRequest().setPreparedStatement(prepRes);
+            do {
+                QueryResult result = serviceHandle.query(queryRequest);
+                List<MapValue> results = result.getResults();
+                LOGGER.finest("The delete result: " +results);
+            } while (!queryRequest.isDone());
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
-        SelectBuilder selectBuilder = new SelectBuilder(query, table);
-        OracleQuery oracleQuery = selectBuilder.get();
+        var selectBuilder = new SelectBuilder(query, table);
+        var oracleQuery = selectBuilder.get();
         List<DocumentEntity> entities = new ArrayList<>();
 
         if (oracleQuery.hasIds()) {
             entities.addAll(getIds(oracleQuery));
         }
         if (!oracleQuery.hasOnlyIds()) {
-            System.out.println(oracleQuery.query());
+            LOGGER.finest("Executing Oracle Query: " +oracleQuery.query());
 
             var prepReq = new PrepareRequest().setStatement(oracleQuery.query());
             var prepRes = serviceHandle.prepare(prepReq);

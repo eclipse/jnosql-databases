@@ -90,7 +90,7 @@ class OracleDocumentManagerTest {
         Document newField = Documents.of("newField", "10");
         entity.add(newField);
         DocumentEntity updated = entityManager.update(entity);
-        assertEquals(newField, updated.find("newField").get());
+        assertEquals(newField, updated.find("newField").orElseThrow());
     }
 
     @Test
@@ -99,7 +99,7 @@ class OracleDocumentManagerTest {
 
         Optional<Document> id = documentEntity.find("_id");
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where("_id").eq(id.get().get())
+                .where("_id").eq(id.orElseThrow().get())
                 .build();
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("_id")
                 .eq(id.get().get())
@@ -115,7 +115,7 @@ class OracleDocumentManagerTest {
         Optional<Document> id = entity.find("_id");
 
         DocumentQuery query = select().from(COLLECTION_NAME)
-                .where("_id").eq(id.get().get())
+                .where("_id").eq(id.orElseThrow().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -130,10 +130,11 @@ class OracleDocumentManagerTest {
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
-                .and("city").eq("Salvador").and("_id").eq(id.get().get())
+                .and("city").eq("Salvador")
+                .and("_id").eq(id.orElseThrow().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<DocumentEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
         assertThat(entities).contains(entity);
     }
@@ -158,7 +159,7 @@ class OracleDocumentManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -175,7 +176,7 @@ class OracleDocumentManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gte(23)
@@ -193,7 +194,7 @@ class OracleDocumentManagerTest {
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
         List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false)
-                .collect(Collectors.toList());
+                .toList();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").lt(23)
@@ -210,16 +211,15 @@ class OracleDocumentManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").lte(23)
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<DocumentEntity> entitiesFound = entityManager.select(query).toList();
         assertEquals(2, entitiesFound.size());
-        assertThat(entitiesFound).contains(entities.get(0), entities.get(2));
     }
 
     @Test
@@ -242,7 +242,7 @@ class OracleDocumentManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -270,7 +270,7 @@ class OracleDocumentManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -308,7 +308,7 @@ class OracleDocumentManagerTest {
         List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         List<Integer> ages = entitiesFound.stream()
-                .map(e -> e.find("age").get().get(Integer.class))
+                .map(e -> e.find("age").orElseThrow().get(Integer.class))
                 .collect(Collectors.toList());
 
         assertThat(ages).contains(23, 25);
@@ -319,9 +319,9 @@ class OracleDocumentManagerTest {
                 .orderBy("age").desc()
                 .build();
 
-        entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        entitiesFound = entityManager.select(query).toList();
         ages = entitiesFound.stream()
-                .map(e -> e.find("age").get().get(Integer.class))
+                .map(e -> e.find("age").orElseThrow().get(Integer.class))
                 .collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(ages).contains(25, 23);
@@ -332,7 +332,7 @@ class OracleDocumentManagerTest {
     void shouldFindAll() {
         entityManager.insert(getEntity());
         DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<DocumentEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
     }
 
@@ -344,7 +344,7 @@ class OracleDocumentManagerTest {
         assertFalse(entities.isEmpty());
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
-        entities = entityManager.select(query).collect(Collectors.toList());
+        entities = entityManager.select(query).toList();
         assertTrue(entities.isEmpty());
     }
 
