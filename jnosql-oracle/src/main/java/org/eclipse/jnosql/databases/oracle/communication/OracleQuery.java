@@ -14,11 +14,13 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
+import oracle.nosql.driver.values.FieldValue;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-record OracleQuery(String query, Map<String, Object> params, List<String> ids) {
+record OracleQuery(String query, Map<String, FieldValue> params, List<String> ids) {
 
     @Override
     public List<String> ids() {
@@ -46,7 +48,7 @@ record OracleQuery(String query, Map<String, Object> params, List<String> ids) {
                 '}';
     }
 
-    static OracleQuery of(StringBuilder query, Map<String, Object> params, List<String> ids) {
+    static OracleQuery of(StringBuilder query, Map<String, FieldValue> params, List<String> ids) {
         return new OracleQuery(query.toString(), params, ids);
     }
 }

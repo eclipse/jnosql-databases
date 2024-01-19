@@ -24,11 +24,14 @@ import oracle.nosql.driver.ops.GetRequest;
 import oracle.nosql.driver.ops.GetResult;
 import oracle.nosql.driver.ops.PrepareRequest;
 import oracle.nosql.driver.ops.PrepareResult;
+import oracle.nosql.driver.ops.PreparedStatement;
 import oracle.nosql.driver.ops.PutRequest;
 import oracle.nosql.driver.ops.QueryRequest;
 import oracle.nosql.driver.ops.QueryResult;
+import oracle.nosql.driver.values.FieldValue;
 import oracle.nosql.driver.values.JsonOptions;
 import oracle.nosql.driver.values.MapValue;
+import oracle.nosql.driver.values.StringValue;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
@@ -139,26 +142,27 @@ final class OracleDocumentManager implements DocumentManager {
             entities.addAll(getIds(oracleQuery));
         }
         if (!oracleQuery.hasOnlyIds()) {
-            if (oracleQuery.isParameterEmpty()) {
-                PrepareRequest prepReq = new PrepareRequest().setStatement(oracleQuery.query());
-                PrepareResult prepRes = serviceHandle.prepare(prepReq);
-                QueryRequest queryRequest = new QueryRequest().setPreparedStatement(prepRes);
-                do {
-                    QueryResult queryResult = serviceHandle.query(queryRequest);
-                    List<MapValue> results = queryResult.getResults();
-                    for (MapValue result : results) {
+            System.out.println(oracleQuery.query());
 
-                        DocumentEntity entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
-                        String json = result.get(JSON_FIELD).toJson();
-                        entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
-                        entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
-                        entities.add(entity);
-                    }
-                } while (!queryRequest.isDone());
-
-            } else {
-                System.out.println("has hasParameter");
+            var prepReq = new PrepareRequest().setStatement(oracleQuery.query());
+            var prepRes = serviceHandle.prepare(prepReq);
+            PreparedStatement preparedStatement = prepRes.getPreparedStatement();
+            for (Map.Entry<String, FieldValue> entry : oracleQuery.params().entrySet()) {
+                preparedStatement.setVariable(entry.getKey(), entry.getValue());
             }
+            QueryRequest queryRequest = new QueryRequest().setPreparedStatement(prepRes);
+            do {
+                QueryResult queryResult = serviceHandle.query(queryRequest);
+                List<MapValue> results = queryResult.getResults();
+                for (MapValue result : results) {
+
+                    DocumentEntity entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
+                    String json = result.get(JSON_FIELD).toJson();
+                    entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
+                    entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
+                    entities.add(entity);
+                }
+            } while (!queryRequest.isDone());
         }
         return entities.stream();
     }

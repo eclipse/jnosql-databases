@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import jakarta.data.Direction;
+import oracle.nosql.driver.values.FieldValue;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentCondition;
@@ -32,6 +33,8 @@ import static org.eclipse.jnosql.databases.oracle.communication.TableCreationCon
 
 final class SelectBuilder implements Supplier<OracleQuery> {
 
+    private static final int BOUND = 1000;
+    private static final int ORIGIN = 0;
     private final DocumentQuery query;
 
     private final String table;
@@ -43,15 +46,19 @@ final class SelectBuilder implements Supplier<OracleQuery> {
 
     @Override
     public OracleQuery get() {
+        StringBuilder declaration = new StringBuilder();
         StringBuilder query = new StringBuilder();
-        Map<String, Object> params = new HashMap<>();
+        Map<String, FieldValue> params = new HashMap<>();
         List<String> ids = new ArrayList<>();
 
         query.append("select ");
         query.append(select()).append(' ');
         query.append("from ").append(table);
-        query.append(" WHERE ").append(table).append(".entity= '").append(this.query.name()).append("' ");
-        this.query.condition().ifPresent(c -> condition(c, query, params, ids));
+        query.append(" WHERE ").append(table).append(".entity= '").append(this.query.name()).append("'");
+        this.query.condition().ifPresent(c -> {
+            query.append(" AND ");
+            condition(c, declaration, query, params, ids);
+        });
 
 
         if (!this.query.sorts().isEmpty()) {
@@ -62,28 +69,28 @@ final class SelectBuilder implements Supplier<OracleQuery> {
             query.append(order);
         }
 
-        if (this.query.limit() > 0) {
+        if (this.query.limit() > ORIGIN) {
             query.append(" LIMIT ").append(this.query.limit());
         }
 
-        if (this.query.skip() > 0) {
+        if (this.query.skip() > ORIGIN) {
             query.append(" OFFSET ").append(this.query.skip());
         }
-        return new OracleQuery(query.toString(), params, ids);
+        return new OracleQuery(declaration.append(" ").append(query).toString(), params, ids);
     }
 
     private String select() {
             return "*";
     }
 
-    private void condition(DocumentCondition condition, StringBuilder query, Map<String, Object> params, List<String> ids) {
+    private void condition(DocumentCondition condition, StringBuilder declaration, StringBuilder query, Map<String, FieldValue> params, List<String> ids) {
         Document document = condition.document();
         switch (condition.condition()) {
             case EQUALS:
                 if (document.name().equals(OracleDocumentManager.ID)) {
                     ids.add(document.get(String.class));
                 } else {
-                    predicate(query, " = ", document, params);
+                    predicate(declaration, query, " = ", document, params);
                 }
                 return;
             case IN:
@@ -91,67 +98,71 @@ final class SelectBuilder implements Supplier<OracleQuery> {
                     ids.addAll(document.get(new TypeReference<List<String>>() {
                     }));
                 } else {
-                    predicate(query, " IN ", document, params);
+                    predicate(declaration, query, " IN ", document, params);
                 }
                 return;
             case LESSER_THAN:
-                predicate(query, " < ", document, params);
+                predicate(declaration, query, " < ", document, params);
                 return;
             case GREATER_THAN:
-                predicate(query, " > ", document, params);
+                predicate(declaration, query, " > ", document, params);
                 return;
             case LESSER_EQUALS_THAN:
-                predicate(query, " <= ", document, params);
+                predicate(declaration, query, " <= ", document, params);
                 return;
             case GREATER_EQUALS_THAN:
-                predicate(query, " >= ", document, params);
+                predicate(declaration, query, " >= ", document, params);
                 return;
             case LIKE:
-                predicate(query, " LIKE ", document, params);
+                predicate(declaration, query, " LIKE ", document, params);
                 return;
             case NOT:
                 query.append(" NOT ");
-                condition(document.get(DocumentCondition.class), query, params, ids);
+                condition(document.get(DocumentCondition.class), declaration, query, params, ids);
                 return;
             case OR:
-                appendCondition(query, params, document.get(new TypeReference<>() {
+                appendCondition(declaration, query, params, document.get(new TypeReference<>() {
                 }), " OR ", ids);
                 return;
             case AND:
-                appendCondition(query, params, document.get(new TypeReference<>() {
+                appendCondition(declaration, query, params, document.get(new TypeReference<>() {
                 }), " AND ", ids);
                 return;
             case BETWEEN:
-                predicateBetween(query, params, document);
+                predicateBetween(declaration, query, params, document);
                 return;
             default:
                 throw new UnsupportedOperationException("There is not support condition for " + condition.condition());
         }
     }
 
-    private void predicateBetween(StringBuilder n1ql, Map<String, Object> params, Document document) {
-        n1ql.append(" BETWEEN ");
+    private void predicateBetween(StringBuilder declaration, StringBuilder query, Map<String, FieldValue> params, Document document) {
+        query.append(" BETWEEN ");
         ThreadLocalRandom random = ThreadLocalRandom.current();
         String name = identifierOf(document.name());
 
         List<Object> values = new ArrayList<>();
         ((Iterable<?>) document.get()).forEach(values::add);
 
-        String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
-        String param2 = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
-        n1ql.append(name).append(" ").append(param).append(" AND ").append(param2);
-        params.put(param, values.get(0));
-        params.put(param2, values.get(1));
+        String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(ORIGIN, BOUND)));
+        String param2 = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(ORIGIN, BOUND)));
+        query.append(name).append(" ").append(param).append(" AND ").append(param2);
+        FieldValue fieldValue = FieldValueConverter.INSTANCE.of(values.get(ORIGIN));
+        FieldValue fieldValue2 = FieldValueConverter.INSTANCE.of(values.get(1));
+        params.put(param, fieldValue);
+        params.put(param2, fieldValue2);
+        declaration.append("DECLARE ").append(param).append(" ").append(fieldValue.getType()).append("; ");
+        declaration.append("DECLARE ").append(param2).append(" ").append(fieldValue2.getType()).append(";");
     }
 
-    private void appendCondition(StringBuilder query, Map<String, Object> params,
+    private void appendCondition(StringBuilder declaration,StringBuilder query, Map<String, FieldValue> params,
                                  List<DocumentCondition> conditions,
                                  String condition, List<String> ids) {
-        int index = 0;
+        int index = ORIGIN;
         for (DocumentCondition documentCondition : conditions) {
             StringBuilder appendQuery = new StringBuilder();
-            condition(documentCondition, appendQuery, params, ids);
-            if(index == 0){
+            condition(documentCondition, declaration, appendQuery, params, ids);
+            if(index == ORIGIN){
                 query.append(" ").append(appendQuery);
             } else {
                 query.append(condition).append(appendQuery);
@@ -160,16 +171,19 @@ final class SelectBuilder implements Supplier<OracleQuery> {
         }
     }
 
-    private void predicate(StringBuilder query,
+    private void predicate(StringBuilder declaration,
+                           StringBuilder query,
                            String condition,
                            Document document,
-                           Map<String, Object> params) {
+                           Map<String, FieldValue> params) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         String name = identifierOf(document.name());
         Object value = document.get();
-        String param = "$".concat(document.name()).concat("_").concat(Integer.toString(random.nextInt(0, 100)));
+        String param = "$".concat(document.name()).concat("").concat(Integer.toString(random.nextInt(ORIGIN, BOUND)));
         query.append(name).append(condition).append(param);
-        params.put(param, value);
+        FieldValue fieldValue = FieldValueConverter.INSTANCE.of(value);
+        declaration.append("DECLARE ").append(param).append(" ").append(fieldValue.getType()).append("; ");
+        params.put(param, fieldValue);
     }
 
     private String identifierOf(String name) {
