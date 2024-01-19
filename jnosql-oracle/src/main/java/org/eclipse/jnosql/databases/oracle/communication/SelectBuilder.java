@@ -50,7 +50,7 @@ final class SelectBuilder implements Supplier<OracleQuery> {
         query.append("select ");
         query.append(select()).append(' ');
         query.append("from ").append(table);
-        query.append(" WHERE '" + JSON_FIELD + "._entity' = '").append(this.query.name()).append("' ");
+        query.append(" WHERE ").append(table).append(".entity= '").append(this.query.name()).append("' ");
         this.query.condition().ifPresent(c -> condition(c, query, params, ids));
 
 
@@ -73,13 +73,7 @@ final class SelectBuilder implements Supplier<OracleQuery> {
     }
 
     private String select() {
-        String documents = query.documents().stream()
-                .map(d -> JSON_FIELD + "." + d)
-                .collect(Collectors.joining(", "));
-        if (documents.isBlank()) {
             return "*";
-        }
-        return documents;
     }
 
     private void condition(DocumentCondition condition, StringBuilder query, Map<String, Object> params, List<String> ids) {
@@ -179,6 +173,6 @@ final class SelectBuilder implements Supplier<OracleQuery> {
     }
 
     private String identifierOf(String name) {
-        return ' ' + JSON_FIELD + "." + name + ' ';
+        return ' ' + table + "." + JSON_FIELD + "." + name + ' ';
     }
 }
