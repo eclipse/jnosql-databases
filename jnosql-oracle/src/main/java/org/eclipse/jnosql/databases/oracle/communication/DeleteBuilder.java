@@ -16,19 +16,21 @@ package org.eclipse.jnosql.databases.oracle.communication;
 
 import jakarta.data.Direction;
 import oracle.nosql.driver.values.FieldValue;
+import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class SelectBuilder extends AbstractQueryBuilder {
+final class DeleteBuilder extends AbstractQueryBuilder {
 
-    private final DocumentQuery documentQuery;
+    private static final int ORIGIN = 0;
+    private final DocumentDeleteQuery documentQuery;
 
     private final String table;
 
-    SelectBuilder(DocumentQuery documentQuery, String table) {
+    DeleteBuilder(DocumentDeleteQuery documentQuery, String table) {
         super(table);
         this.documentQuery = documentQuery;
         this.table = table;
@@ -40,37 +42,15 @@ final class SelectBuilder extends AbstractQueryBuilder {
         List<FieldValue> params =new ArrayList<>();
         List<String> ids = new ArrayList<>();
 
-        query.append("select ");
-        query.append(select()).append(' ');
-        query.append("from ").append(table);
+        query.append("DELETE from ").append(table);
         entityCondition(query, documentQuery.name());
         this.documentQuery.condition().ifPresent(c -> {
             query.append(" AND ");
             condition(c, query, params, ids);
         });
-
-
-        if (!this.documentQuery.sorts().isEmpty()) {
-            query.append(" ORDER BY ");
-
-            String order = this.documentQuery.sorts().stream()
-                    .map(s -> identifierOf(s.property()) + " " + (s.isAscending() ? Direction.ASC : Direction.DESC))
-                    .collect(Collectors.joining(", "));
-            query.append(order);
-        }
-
-        if (this.documentQuery.limit() > ORIGIN) {
-            query.append(" LIMIT ").append(this.documentQuery.limit());
-        }
-
-        if (this.documentQuery.skip() > ORIGIN) {
-            query.append(" OFFSET ").append(this.documentQuery.skip());
-        }
         return new OracleQuery(query.toString(), params, ids);
     }
 
-    private String select() {
-            return "*";
-    }
+
 
 }
