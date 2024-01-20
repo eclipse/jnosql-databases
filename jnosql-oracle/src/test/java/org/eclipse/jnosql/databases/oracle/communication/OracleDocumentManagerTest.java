@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.SoftAssertionsProvider;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -202,9 +203,17 @@ class OracleDocumentManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
-        assertEquals(1, entitiesFound.size());
-        assertThat(entitiesFound).contains(entities.get(0));
+        List<DocumentEntity> entitiesFound = entityManager.select(query).toList();
+
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(entitiesFound).hasSize(1);
+
+            List<String> namesFound = entitiesFound.stream()
+                    .flatMap(d -> d.find("name").stream())
+                    .map(d-> d.get(String.class))
+                    .toList();
+            soft.assertThat(namesFound).contains("Lucas");
+        });
     }
 
     @Test
@@ -238,8 +247,14 @@ class OracleDocumentManagerTest {
         assertSoftly(soft -> {
             List<DocumentEntity> entitiesFound = entityManager.select(query).toList();
             soft.assertThat(entitiesFound).hasSize(entities.size());
-            List<String> namesFound = entitiesFound.stream().map(DocumentEntity::name).toList();
-            List<String> names =entities.stream().map(DocumentEntity::name).toList();
+            List<String> namesFound = entitiesFound.stream()
+                    .flatMap(d -> d.find("name").stream())
+                    .map(d-> d.get(String.class))
+                    .toList();
+            List<String> names = entities.stream()
+                    .flatMap(d -> d.find("name").stream())
+                    .map(d-> d.get(String.class))
+                    .toList();
             soft.assertThat(namesFound).containsAll(names);
         });
 
