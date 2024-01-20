@@ -192,8 +192,8 @@ final class OracleDocumentManager implements DocumentManager {
                         entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
                     }
                     for (Map.Entry<String, FieldValue> entry : result) {
-                        if (!entry.getKey().equals(ENTITY) && !entry.getKey().equals(JSON_FIELD) && !entry.getKey().equals(ORACLE_ID)) {
-                            entity.add(Document.of(entry.getKey(), entry.getValue()));
+                        if (isNotOracleField(entry)) {
+                            entity.add(Document.of(entry.getKey(), FieldValueConverter.INSTANCE.of(entry.getValue())));
                         }
                     }
                     entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
@@ -202,6 +202,10 @@ final class OracleDocumentManager implements DocumentManager {
             } while (!queryRequest.isDone());
         }
         return entities.stream();
+    }
+
+    private static boolean isNotOracleField(Map.Entry<String, FieldValue> entry) {
+        return !entry.getKey().equals(ENTITY) && !entry.getKey().equals(JSON_FIELD) && !entry.getKey().equals(ORACLE_ID);
     }
 
     private List<DocumentEntity> getIds(OracleQuery oracleQuery) {

@@ -359,7 +359,7 @@ class OracleDocumentManagerTest {
     @Test
     void shouldFindAllByFields() {
         entityManager.insert(getEntity());
-        DocumentQuery query = select("name", "city").from(COLLECTION_NAME).build();
+        DocumentQuery query = select("name").from(COLLECTION_NAME).build();
         List<DocumentEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
         final DocumentEntity entity = entities.get(0);

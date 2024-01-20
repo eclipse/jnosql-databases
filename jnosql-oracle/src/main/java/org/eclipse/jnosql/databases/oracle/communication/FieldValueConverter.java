@@ -64,6 +64,23 @@ enum FieldValueConverter {
         }
     }
 
+    Object toObject(FieldValue value) {
+        if (value.isNull()) {
+            return null;
+        }
+        return switch (value.getType()) {
+            case STRING -> value.asString();
+            case INTEGER -> value.asInteger();
+            case LONG -> value.asLong();
+            case DOUBLE -> value.asDouble();
+            case BOOLEAN -> value.asBoolean();
+            case NUMBER -> value.asNumber();
+            case BINARY -> value.asBinary();
+            case ARRAY -> value.asArray();
+            case MAP -> value.asMap();
+            default -> throw new UnsupportedOperationException("There is not support to: " + value.getType());
+        };
+    }
     private MapValue entries(Map<String, ?> value) {
         MapValue mapValue = new MapValue();
         for (Map.Entry<String, ?> entry : value.entrySet()) {
