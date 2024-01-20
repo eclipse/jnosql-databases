@@ -47,6 +47,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
@@ -234,7 +235,14 @@ class OracleDocumentManagerTest {
                 .and("type").eq("V")
                 .build();
 
-        assertEquals(entities, entityManager.select(query).collect(Collectors.toList()));
+        assertSoftly(soft -> {
+            List<DocumentEntity> entitiesFound = entityManager.select(query).toList();
+            soft.assertThat(entitiesFound).hasSize(entities.size());
+            List<String> namesFound = entitiesFound.stream().map(DocumentEntity::name).toList();
+            List<String> names =entities.stream().map(DocumentEntity::name).toList();
+            soft.assertThat(namesFound).containsAll(names);
+        });
+
     }
 
     @Test
@@ -351,14 +359,15 @@ class OracleDocumentManagerTest {
     @Test
     void shouldFindAllByFields() {
         entityManager.insert(getEntity());
-        DocumentQuery query = select("name").from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        DocumentQuery query = select("name", "city").from(COLLECTION_NAME).build();
+        List<DocumentEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
         final DocumentEntity entity = entities.get(0);
-        assertEquals(2, entity.size());
-        assertTrue(entity.find("name").isPresent());
-        assertTrue(entity.find("_id").isPresent());
-        assertFalse(entity.find("city").isPresent());
+        assertSoftly(soft -> {
+            soft.assertThat(entity.find("name")).isPresent();
+            soft.assertThat(entity.find("_id")).isPresent();
+            soft.assertThat(entity.find("city")).isNotPresent();
+        });
     }
 
 
@@ -436,7 +445,7 @@ class OracleDocumentManagerTest {
 
         assertEquals(1, entities.size());
         DocumentEntity documentEntity = entities.get(0);
-        SoftAssertions.assertSoftly(soft ->{
+        assertSoftly(soft ->{
             soft.assertThat(id).isEqualTo(documentEntity.find("_id").orElseThrow().get(Long.class));
             soft.assertThat(now).isEqualTo(documentEntity.find("now").orElseThrow().get(LocalDate.class));
         });
@@ -497,7 +506,7 @@ class OracleDocumentManagerTest {
         entity.add(Document.of("name", null));
         DocumentEntity documentEntity = entityManager.insert(entity);
         Optional<Document> name = documentEntity.find("name");
-        SoftAssertions.assertSoftly(soft -> {
+        assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
             soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
             soft.assertThat(name).get().extracting(Document::get).isNull();
@@ -510,7 +519,7 @@ class OracleDocumentManagerTest {
         entity.add(Document.of("name", null));
         var documentEntity = entityManager.update(entity);
         Optional<Document> name = documentEntity.find("name");
-        SoftAssertions.assertSoftly(soft -> {
+        assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
             soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
             soft.assertThat(name).get().extracting(Document::get).isNull();

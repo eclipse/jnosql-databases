@@ -187,8 +187,15 @@ final class OracleDocumentManager implements DocumentManager {
                 for (MapValue result : results) {
 
                     var entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
-                    var json = result.get(JSON_FIELD).toJson();
-                    entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
+                    if(result.get(JSON_FIELD) != null){
+                        var json = result.get(JSON_FIELD).toJson();
+                        entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
+                    }
+                    for (Map.Entry<String, FieldValue> entry : result) {
+                        if (!entry.getKey().equals(ENTITY) && !entry.getKey().equals(JSON_FIELD) && !entry.getKey().equals(ORACLE_ID)) {
+                            entity.add(Document.of(entry.getKey(), entry.getValue()));
+                        }
+                    }
                     entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
                     entities.add(entity);
                 }

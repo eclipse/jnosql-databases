@@ -123,8 +123,12 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
                            List<FieldValue> params) {
         String name = identifierOf(document.name());
         Object value = document.get();
-        query.append(name).append(condition).append(" ? ");
         FieldValue fieldValue = FieldValueConverter.INSTANCE.of(value);
+        if(fieldValue.isArray()){
+            query.append(name).append(condition).append(" ?[] ");
+        } else {
+            query.append(name).append(condition).append(" ? ");
+        }
         params.add(fieldValue);
     }
 

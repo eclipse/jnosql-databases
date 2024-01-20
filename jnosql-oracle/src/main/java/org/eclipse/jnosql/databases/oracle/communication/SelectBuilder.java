@@ -70,7 +70,13 @@ final class SelectBuilder extends AbstractQueryBuilder {
     }
 
     private String select() {
+        List<String> documents = documentQuery.documents();
+        if (documents.isEmpty()) {
             return "*";
+        } else {
+            return "id, entity," + documents.stream()
+                    .map(this::identifierOf).collect(Collectors.joining(", "));
+        }
     }
 
 }
