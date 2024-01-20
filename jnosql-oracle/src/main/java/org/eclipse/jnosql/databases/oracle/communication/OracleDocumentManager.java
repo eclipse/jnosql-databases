@@ -92,7 +92,7 @@ final class OracleDocumentManager implements DocumentManager {
 
         MapValue mapValue = new MapValue().put(ORACLE_ID, id).put(ENTITY, entity.name());
         MapValue contentVal = mapValue.putFromJson("content", jsonB.toJson(entityMap),
-                new JsonOptions());
+                OPTIONS);
         PutRequest putRequest = new PutRequest()
                 .setValue(contentVal)
                 .setTableName(name());
@@ -175,19 +175,19 @@ final class OracleDocumentManager implements DocumentManager {
 
             var prepReq = new PrepareRequest().setStatement(oracleQuery.query());
             var prepRes = serviceHandle.prepare(prepReq);
-            PreparedStatement preparedStatement = prepRes.getPreparedStatement();
+            var preparedStatement = prepRes.getPreparedStatement();
             for (int index = 0; index < oracleQuery.params().size(); index++) {
                 preparedStatement.setVariable((index + 1), oracleQuery.params().get(index));
             }
 
-            QueryRequest queryRequest = new QueryRequest().setPreparedStatement(prepRes);
+            var queryRequest = new QueryRequest().setPreparedStatement(prepRes);
             do {
                 QueryResult queryResult = serviceHandle.query(queryRequest);
                 List<MapValue> results = queryResult.getResults();
                 for (MapValue result : results) {
 
-                    DocumentEntity entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
-                    String json = result.get(JSON_FIELD).toJson();
+                    var entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
+                    var json = result.get(JSON_FIELD).toJson();
                     entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
                     entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
                     entities.add(entity);

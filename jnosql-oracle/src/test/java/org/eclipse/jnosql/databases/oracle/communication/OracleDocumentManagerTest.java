@@ -227,7 +227,7 @@ class OracleDocumentManagerTest {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("location").in(asList("BR", "US"))
