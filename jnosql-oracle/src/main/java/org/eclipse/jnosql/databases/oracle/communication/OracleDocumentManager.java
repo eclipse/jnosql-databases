@@ -204,6 +204,24 @@ final class OracleDocumentManager implements DocumentManager {
         return entities.stream();
     }
 
+    @Override
+    public long count(String documentCollection) {
+        Objects.requireNonNull(documentCollection, "documentCollection is required");
+
+        var prepReq = new PrepareRequest().setStatement("select count(*)  as count from " + name() + " where " +
+                ENTITY +" = ?");
+        var prepRes = serviceHandle.prepare(prepReq);
+        var preparedStatement = prepRes.getPreparedStatement();
+        preparedStatement.setVariable(1, new StringValue(documentCollection));
+        var queryRequest = new QueryRequest().setPreparedStatement(prepRes);
+        QueryResult queryResult = serviceHandle.query(queryRequest);
+        List<MapValue> results = queryResult.getResults();
+        if(results.size() == 1) {
+            return results.get(0).get("count").asLong().getValue();
+        }
+        return 0;
+    }
+
     private static boolean isNotOracleField(Map.Entry<String, FieldValue> entry) {
         return !entry.getKey().equals(ENTITY) && !entry.getKey().equals(JSON_FIELD) && !entry.getKey().equals(ORACLE_ID);
     }
@@ -236,10 +254,7 @@ final class OracleDocumentManager implements DocumentManager {
         return entities;
     }
 
-    @Override
-    public long count(String documentCollection) {
-        return 0;
-    }
+
 
     @Override
     public void close() {
