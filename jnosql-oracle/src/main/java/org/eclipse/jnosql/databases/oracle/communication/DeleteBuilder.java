@@ -14,14 +14,11 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
-import jakarta.data.Direction;
 import oracle.nosql.driver.values.FieldValue;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 final class DeleteBuilder extends AbstractQueryBuilder {
 

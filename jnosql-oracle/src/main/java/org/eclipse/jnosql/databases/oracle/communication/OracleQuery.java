@@ -18,7 +18,6 @@ import oracle.nosql.driver.values.FieldValue;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 record OracleQuery(String query, List<FieldValue> params, List<String> ids) {
 

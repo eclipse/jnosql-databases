@@ -15,10 +15,6 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import jakarta.json.bind.Jsonb;
-import oracle.nosql.driver.ops.TableLimits;
-import oracle.nosql.driver.ops.TableRequest;
-import oracle.nosql.driver.ops.TableResult;
-import org.eclipse.jnosql.communication.CommunicationException;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
@@ -28,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
-import java.util.logging.Logger;
 
 final class OracleBucketManagerFactory implements BucketManagerFactory {
     private static final Jsonb JSON = JsonbSupplier.getInstance().get();
