@@ -23,6 +23,7 @@ import org.eclipse.jnosql.communication.document.DocumentQuery;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
@@ -36,22 +37,26 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.StreamSpecification;
 import software.amazon.awssdk.services.dynamodb.model.TimeToLiveStatus;
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.entityAttributeName;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toAttributeValue;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toItem;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toItemUpdate;
 
 public class DynamoDBDocumentManager implements DocumentManager {
 
@@ -61,15 +66,14 @@ public class DynamoDBDocumentManager implements DocumentManager {
 
     private final DynamoDbClient dynamoDbClient;
 
-    private final UnaryOperator<String> entityNameAttributeNameResolver;
-
     private final ConcurrentHashMap<String, Supplier<String>> ttlAttributeNamesByTable = new ConcurrentHashMap<>();
+
+    private final ConcurrentHashMap<String, DescribeTableResponse> tables = new ConcurrentHashMap<>();
 
     public DynamoDBDocumentManager(String database, DynamoDbClient dynamoDbClient, Settings settings) {
         this.settings = settings;
         this.database = database;
         this.dynamoDbClient = dynamoDbClient;
-        this.entityNameAttributeNameResolver = this::resolveEntityNameAttributeName;
     }
 
     private String resolveEntityNameAttributeName(String entityName) {
@@ -85,22 +89,14 @@ public class DynamoDBDocumentManager implements DocumentManager {
         return database;
     }
 
-    UnaryOperator<String> entityNameAttributeNameResolver() {
-        return this.entityNameAttributeNameResolver;
-    }
-
     @Override
     public DocumentEntity insert(DocumentEntity documentEntity) {
         requireNonNull(documentEntity, "documentEntity is required");
         getDynamoDbClient().putItem(PutItemRequest.builder()
                 .tableName(createIfNeeded(documentEntity.name()).table().tableName())
-                .item(asItem(documentEntity))
+                .item(toItem(this::resolveEntityNameAttributeName, documentEntity))
                 .build());
         return documentEntity;
-    }
-
-    private Map<String, AttributeValue> asItem(DocumentEntity documentEntity) {
-        return toItem(entityNameAttributeNameResolver(), documentEntity);
     }
 
     private Supplier<String> getTTLAttributeNameFor(String tableName) {
@@ -123,15 +119,20 @@ public class DynamoDBDocumentManager implements DocumentManager {
     }
 
     private DescribeTableResponse createIfNeeded(String tableName) {
-        if (shouldCreateTables()) {
-            try {
-                return getDynamoDbClient().describeTable(DescribeTableRequest.builder()
-                        .tableName(tableName)
-                        .build());
-            } catch (ResourceNotFoundException ex) {
-                return createTable(tableName);
-            }
+        return this.tables.computeIfAbsent(tableName, this::resolveTable);
+    }
+
+    private DescribeTableResponse resolveTable(String tableName) {
+        try {
+            return getDescribeTableResponse(tableName);
+        } catch (ResourceNotFoundException ex) {
+            if (!shouldCreateTables())
+                throw ex;
+            return createTable(tableName);
         }
+    }
+
+    private DescribeTableResponse getDescribeTableResponse(String tableName) {
         return getDynamoDbClient().describeTable(DescribeTableRequest.builder()
                 .tableName(tableName)
                 .build());
@@ -163,14 +164,14 @@ public class DynamoDBDocumentManager implements DocumentManager {
 
     private Collection<AttributeDefinition> defaultAttributeDefinitionsFor(String tableName) {
         return List.of(
-                AttributeDefinition.builder().attributeName(getEntityNameAttributeName()).attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder().attributeName(getEntityAttributeName()).attributeType(ScalarAttributeType.S).build(),
                 AttributeDefinition.builder().attributeName(DocumentEntityConverter.ID).attributeType(ScalarAttributeType.S).build()
         );
     }
 
     private Collection<KeySchemaElement> defaultKeySchemaFor(String tableName) {
         return List.of(
-                KeySchemaElement.builder().attributeName(getEntityNameAttributeName()).keyType(KeyType.HASH).build(),
+                KeySchemaElement.builder().attributeName(getEntityAttributeName()).keyType(KeyType.HASH).build(),
                 KeySchemaElement.builder().attributeName(DocumentEntityConverter.ID).keyType(KeyType.RANGE).build()
         );
     }
@@ -181,8 +182,8 @@ public class DynamoDBDocumentManager implements DocumentManager {
                 .orElse(false);
     }
 
-    private String getEntityNameAttributeName() {
-        return entityNameAttributeNameResolver().apply(DocumentEntityConverter.ENTITY);
+    private String getEntityAttributeName() {
+        return entityAttributeName(this::resolveEntityNameAttributeName);
     }
 
     @Override
@@ -195,7 +196,7 @@ public class DynamoDBDocumentManager implements DocumentManager {
 
     @Override
     public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
-        requireNonNull(entities, "entities is required");
+        requireNonNull(entities, "entities are required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
                 .toList();
@@ -212,7 +213,36 @@ public class DynamoDBDocumentManager implements DocumentManager {
 
     @Override
     public DocumentEntity update(DocumentEntity documentEntity) {
-        throw new UnsupportedOperationException("update method must be implemented!");
+        requireNonNull(documentEntity, "entity is required");
+        Map<String, AttributeValue> itemKey = getItemKey(documentEntity);
+        Map<String, AttributeValueUpdate> attributeUpdates = asItemToUpdate(documentEntity);
+        itemKey.keySet().forEach(attributeUpdates::remove);
+        getDynamoDbClient().updateItem(UpdateItemRequest.builder()
+                .tableName(createIfNeeded(documentEntity.name()).table().tableName())
+                .key(itemKey)
+                .attributeUpdates(attributeUpdates)
+                .build());
+        return documentEntity;
+    }
+
+    private Map<String, AttributeValue> getItemKey(DocumentEntity documentEntity) {
+        DescribeTableResponse describeTableResponse = this.tables.computeIfAbsent(documentEntity.name(), this::getDescribeTableResponse);
+        Map<String, AttributeValue> itemKey = describeTableResponse
+                .table()
+                .keySchema()
+                .stream()
+                .map(attribute -> Map.of(attribute.attributeName(),
+                        toAttributeValue(documentEntity.find(attribute.attributeName(), Object.class).orElse(null))))
+                .reduce(new HashMap<>(), (a, b) -> {
+                    a.putAll(b);
+                    return a;
+                });
+        itemKey.put(getEntityAttributeName(), toAttributeValue(documentEntity.name()));
+        return itemKey;
+    }
+
+    private Map<String, AttributeValueUpdate> asItemToUpdate(DocumentEntity documentEntity) {
+        return toItemUpdate(this::resolveEntityNameAttributeName, documentEntity);
     }
 
     @Override
@@ -237,8 +267,7 @@ public class DynamoDBDocumentManager implements DocumentManager {
     public long count(String tableName) {
         Objects.requireNonNull(tableName, "tableName is required");
         try {
-            return getDynamoDbClient()
-                    .describeTable(DescribeTableRequest.builder().tableName(tableName).build())
+            return getDescribeTableResponse(tableName)
                     .table()
                     .itemCount();
         } catch (ResourceNotFoundException ex) {
