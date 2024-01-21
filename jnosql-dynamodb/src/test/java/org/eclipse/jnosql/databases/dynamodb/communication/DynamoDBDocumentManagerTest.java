@@ -103,7 +103,7 @@ class DynamoDBDocumentManagerTest {
     }
 
     @Test
-    void shouldReturnErrorWhenInsertNull() {
+    void shouldReturnErrorWhenInsertWithInvalidInputs() {
 
         try (var documentManager = getDocumentManagerCannotCreateTables()) {
             assertSoftly(softly -> {
@@ -171,6 +171,21 @@ class DynamoDBDocumentManagerTest {
                                     .formatted(id))
                             .isNotNull();
                 });
+            });
+        }
+    }
+
+    @Test
+    void shouldReturnErrorWhenUpdateWithInvalidInputs() {
+
+        try (var documentManager = getDocumentManagerCannotCreateTables()) {
+            assertSoftly(softly -> {
+                softly.assertThatThrownBy(() -> documentManager.update((DocumentEntity) null))
+                        .as("should return error when insert a null DocumentEntity reference")
+                        .isExactlyInstanceOf(NullPointerException.class);
+                softly.assertThatThrownBy(() -> documentManager.update((Iterable<DocumentEntity>) null))
+                        .as("should return error when insert a null Iterable<DocumentEntity> reference")
+                        .isInstanceOfAny(NullPointerException.class);
             });
         }
     }
