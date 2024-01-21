@@ -16,8 +16,11 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 
+import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
@@ -36,6 +39,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,10 +52,11 @@ import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBTestUt
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class DynamoDBDocumentManagerTest {
 
+    private static Faker faker = new Faker();
 
     private DynamoDbClient dynamoDbClient;
-    private UnaryOperator<String> entityNameResolver;
 
+    private UnaryOperator<String> entityNameResolver;
 
     @BeforeEach
     void setUp() {
@@ -166,6 +171,52 @@ class DynamoDBDocumentManagerTest {
                                     .formatted(id))
                             .isNotNull();
                 });
+            });
+        }
+    }
+
+    @Test
+    void shouldUpdate() {
+        try (var documentManager = getDocumentManagerCanCreateTables()) {
+
+            var entity1 = createRandomEntity();
+            var entity2 = createRandomEntity();
+            var entity3 = createRandomEntity();
+
+            documentManager.insert(List.of(entity1, entity2, entity3));
+
+            final BiConsumer<SoftAssertions, DocumentEntity> assertions = (softly, updatedEntity) -> {
+                Map<String, AttributeValue> item = getItem(updatedEntity.name(), updatedEntity.find(DocumentEntityConverter.ID, String.class).orElseThrow());
+                softly.assertThat(item.get("name"))
+                        .as("the name attribute should exists in the returned item from dynamodb")
+                        .isNotNull();
+                softly.assertThat(item.get("name").s())
+                        .as("the name attribute should had be updated successfully")
+                        .isEqualTo(updatedEntity.find("name", String.class).orElse(null));
+            };
+
+            assertSoftly(softly -> {
+                entity1.add(Document.of("name", faker.name().fullName()));
+                var updatedEntity = documentManager.update(entity1);
+                softly.assertThat(updatedEntity)
+                        .as("documentManager.update(DocumentEntity) method should return a non-null persistent DocumentEntity")
+                        .isNotNull();
+                assertions.accept(softly, updatedEntity);
+            });
+
+            assertSoftly(softly -> {
+                entity2.add(Document.of("name", faker.name().fullName()));
+                entity3.add(Document.of("name", faker.name().fullName()));
+
+                var updatedEntities = documentManager.update(List.of(entity2, entity2));
+                softly.assertThat(updatedEntities)
+                        .as("documentManager.update(Iterable<>) method should return a non-null list of DocumentEntity")
+                        .isNotNull();
+                softly.assertThat(updatedEntities)
+                        .as("the size of the returned list of DocumentEntity from " +
+                                "documentManager.update(Iterable<>) method should be equals to the size of the submitted list of DocumentEntity")
+                        .hasSize(2);
+                updatedEntities.forEach(updatedEntity -> assertions.accept(softly, updatedEntity));
             });
         }
     }
