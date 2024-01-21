@@ -21,7 +21,9 @@ import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -81,8 +83,12 @@ class DocumentEntityConverter {
         var nameResolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
         Map<String, Object> jsonObject = new HashMap<>();
         entity.documents().forEach(feedJSON(jsonObject));
-        jsonObject.put(Optional.ofNullable(nameResolver.apply(ENTITY)).orElse(ENTITY), entity.name());
+        jsonObject.put(entityAttributeName(nameResolver), entity.name());
         return jsonObject;
+    }
+
+    public static String entityAttributeName(UnaryOperator<String> nameResolver) {
+        return Optional.ofNullable(nameResolver.apply(ENTITY)).orElse(ENTITY);
     }
 
     private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
@@ -126,6 +132,7 @@ class DocumentEntityConverter {
         return toItem(documentAttributes);
     }
 
+
     private static Map<String, AttributeValue> toItem(Map<String, Object> documentAttributes) {
         HashMap<String, AttributeValue> result = new HashMap<>();
         documentAttributes.forEach((attribute, value) -> result.put(attribute, toAttributeValue(value)));
@@ -158,7 +165,31 @@ class DocumentEntityConverter {
         if (value instanceof InputStream input) {
             return AttributeValue.builder().b(SdkBytes.fromInputStream(input)).build();
         }
+        if (value instanceof Document document) {
+            return toAttributeValue(getMap(document));
+        }
         return AttributeValue.builder().s(String.valueOf(value)).build();
+    }
+
+    public static Map<String, AttributeValueUpdate> toItemUpdate(UnaryOperator<String> entityNameResolver, DocumentEntity documentEntity) {
+        UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
+        Map<String, Object> documentAttributes = getMap(resolver, documentEntity);
+        return toItemUpdate(documentAttributes);
+    }
+
+    private static Map<String, AttributeValueUpdate> toItemUpdate(Map<String, Object> documentAttributes) {
+        return documentAttributes
+                .entrySet()
+                .stream()
+                .map(entry -> Map.of(entry.getKey(), toAttributeValueUpdate(entry.getValue())))
+                .reduce(new HashMap<>(), (a, b) -> {
+                    a.putAll(b);
+                    return a;
+                });
+    }
+
+    public static AttributeValueUpdate toAttributeValueUpdate(Object value) {
+        return AttributeValueUpdate.builder().value(toAttributeValue(value)).action(AttributeAction.PUT).build();
     }
 
 
