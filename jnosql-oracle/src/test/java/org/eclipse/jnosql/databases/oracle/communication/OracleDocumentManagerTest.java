@@ -42,6 +42,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
@@ -57,11 +58,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class OracleDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static DocumentManager entityManager;
+    private static OracleDocumentManager entityManager;
 
     @BeforeAll
     public static void setUp() throws IOException {
-        entityManager = Database.INSTANCE.managerFactory().apply("database");
+        entityManager = (OracleDocumentManager) Database.INSTANCE.managerFactory().apply("database");
     }
 
     @BeforeEach
@@ -536,6 +537,28 @@ class OracleDocumentManagerTest {
             soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
             soft.assertThat(name).get().extracting(Document::get).isNull();
         });
+    }
+
+    @Test
+    void shouldQuery(){
+        entityManager.insert(getEntity());
+
+        var query = "select * from database where database.content.name = 'Poliana'";
+        Stream<DocumentEntity> entities = entityManager.sql(query);
+        List<String> names = entities.map(d -> d.find("name").orElseThrow().get(String.class))
+                .toList();
+        assertThat(names).contains("Poliana");
+    }
+
+    @Test
+    void shouldQueryParams(){
+        entityManager.insert(getEntity());
+
+        var query = "select * from database where database.content.name = ?";
+        Stream<DocumentEntity> entities = entityManager.sql(query, "Poliana");
+        List<String> names = entities.map(d -> d.find("name").orElseThrow().get(String.class))
+                .toList();
+        assertThat(names).contains("Poliana");
     }
 
     private DocumentEntity createDocumentList() {
