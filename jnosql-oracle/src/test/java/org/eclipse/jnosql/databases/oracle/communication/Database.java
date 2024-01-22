@@ -23,6 +23,7 @@ import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -53,15 +54,19 @@ public enum Database implements Supplier<BucketManagerFactory> {
     public BucketManagerFactory get() {
         KeyValueConfiguration configuration = new OracleKeyValueConfiguration();
         Settings settings = Settings.builder()
-                .put(OracleConfigurations.HOST, "http://" + container.getHost() + ":" + container.getFirstMappedPort())
+                .put(OracleConfigurations.HOST, host())
                 .build();
         return configuration.apply(settings);
+    }
+
+    public String host() {
+        return "http://" + container.getHost() + ":" + container.getFirstMappedPort();
     }
 
     public DocumentManagerFactory managerFactory() {
         DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
         Settings settings = Settings.builder()
-                .put(OracleConfigurations.HOST, "http://" + container.getHost() + ":" + container.getFirstMappedPort())
+                .put(OracleConfigurations.HOST, host())
                 .build();
         return configuration.apply(settings);
     }
