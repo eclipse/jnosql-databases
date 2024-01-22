@@ -41,7 +41,7 @@ public class ArangoDBExtensionTest {
     private PersonRepository repository;
 
     @Test
-    public void shouldSave() {
+    public void shouldSaveOrientDB() {
         Assertions.assertNotNull(repository);
     }
 }
