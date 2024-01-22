@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import org.assertj.core.api.SoftAssertions;
-import org.assertj.core.api.SoftAssertionsProvider;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
@@ -35,7 +34,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +146,7 @@ class OracleDocumentManagerTest {
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
-                .and(id.get().name()).eq(id.get().get())
+                .and(id.orElseThrow().name()).eq(id.get().get())
                 .build();
 
         List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
@@ -390,13 +388,13 @@ class OracleDocumentManagerTest {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", Document.of("mobile", "1231231")));
         DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
+        Document id = entitySaved.find("_id").orElseThrow();
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("_id").eq(id.get())
                 .build();
 
-        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
+        DocumentEntity entityFound = entityManager.select(query).toList().get(0);
+        Document subDocument = entityFound.find("phones").orElseThrow();
         List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"));
@@ -407,13 +405,13 @@ class OracleDocumentManagerTest {
         DocumentEntity entity = getEntity();
         entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
         DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
+        Document id = entitySaved.find("_id").orElseThrow();
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where(id.name()).eq(id.get())
                 .build();
         DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
+        Document subDocument = entityFound.find("phones").orElseThrow();
         List<Document> documents = subDocument.get(new TypeReference<>() {
         });
         assertThat(documents).contains(Document.of("mobile", "1231231"),
@@ -474,15 +472,15 @@ class OracleDocumentManagerTest {
     @Test
     void shouldRetrieveListDocumentList() {
         DocumentEntity entity = entityManager.insert(createDocumentList());
-        Document key = entity.find("_id").get();
+        Document key = entity.find("_id").orElseThrow();
         DocumentQuery query = select().from("AppointmentBook")
                 .where(key.name())
                 .eq(key.get()).build();
 
-        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        DocumentEntity documentEntity = entityManager.singleResult(query).orElseThrow();
         assertNotNull(documentEntity);
 
-        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").orElseThrow().get();
 
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
@@ -509,7 +507,7 @@ class OracleDocumentManagerTest {
         final Optional<DocumentEntity> optional = entityManager.select(query).findFirst();
         Assertions.assertTrue(optional.isPresent());
         DocumentEntity documentEntity = optional.get();
-        Document properties = documentEntity.find("properties").get();
+        Document properties = documentEntity.find("properties").orElseThrow();
         Document document = properties.get(Document.class);
         assertThat(document).isNotNull().isEqualTo(Document.of("hallo", "Welt"));
     }

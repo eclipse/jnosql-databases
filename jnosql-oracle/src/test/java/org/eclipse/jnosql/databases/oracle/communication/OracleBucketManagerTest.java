@@ -78,13 +78,9 @@ public class OracleBucketManagerTest {
 
     @Test
     public void shouldReturnUnsupported()  {
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            keyValueEntityManager.put(entityOtavio, Duration.ofSeconds(1L));
-        });
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> keyValueEntityManager.put(entityOtavio, Duration.ofSeconds(1L)));
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-            keyValueEntityManager.put(List.of(entityOtavio), Duration.ofSeconds(1L));
-        });
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> keyValueEntityManager.put(List.of(entityOtavio), Duration.ofSeconds(1L)));
     }
 
 

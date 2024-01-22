@@ -27,7 +27,7 @@ public enum OracleConfigurations implements Supplier<String> {
 
     /**
      * Specifies the hostname or IP address of the Oracle NoSQL database server.
-     * Default value: <b>http://localhost:8080</b>
+     * Default value: <b><a href="http://localhost:8080">http://localhost:8080</a></b>
      */
     HOST("jnosql.oracle.host"),
 

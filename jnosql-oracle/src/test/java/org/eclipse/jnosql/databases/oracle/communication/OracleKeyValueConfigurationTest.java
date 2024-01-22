@@ -14,7 +14,6 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.junit.jupiter.api.Test;
 
