@@ -43,6 +43,7 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
                 .map(Object::toString).orElse(null);
 
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
+
         if (user != null && password != null) {
             config.setAuthorizationProvider(new StoreAccessTokenProvider(user, password.toCharArray()));
         } else {

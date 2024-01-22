@@ -29,17 +29,17 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
      * Specifies the hostname or IP address of the Oracle NoSQL database server.
      * Default value: <b><a href="http://localhost:8080">http://localhost:8080</a></b>
      */
-    HOST("jnosql.oracle.host"),
+    HOST("jnosql.oracle.nosql.host"),
 
     /**
      * Specifies the username used to authenticate with the Oracle NoSQL database.
      */
-    USER("jnosql.oracle.user"),
+    USER("jnosql.oracle.nosql.user"),
 
     /**
      * Specifies the password used to authenticate with the Oracle NoSQL database.
      */
-    PASSWORD("jnosql.oracle.password"),
+    PASSWORD("jnosql.oracle.nosql.password"),
 
     /**
      * Specifies the desired throughput of read operations when creating a table using Eclipse JNoSQL.
@@ -47,32 +47,37 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
      * Double the read units are consumed for absolutely consistent reads.
      * Default value: <b>25</b>
      */
-    TABLE_READ_LIMITS("jnosql.oracle.table.read.limit"),
+    TABLE_READ_LIMITS("jnosql.oracle.nosql.table.read.limit"),
 
     /**
      * Specifies the desired throughput of write operations when creating a table using Eclipse JNoSQL.
      * A write unit represents 1 write per second of data up to 1 KB in size.
      * Default value: <b>25</b>
      */
-    TABLE_WRITE_LIMITS("jnosql.oracle.table.write.limit"),
+    TABLE_WRITE_LIMITS("jnosql.oracle.nosql.table.write.limit"),
 
     /**
      * Specifies the maximum storage, in gigabytes, to be consumed by a table created using Eclipse JNoSQL.
      * Default value: <b>25</b>
      */
-    TABLE_STORAGE_GB("jnosql.oracle.table.storage.gb"),
+    TABLE_STORAGE_GB("jnosql.oracle.nosql.table.storage.gb"),
 
     /**
      * Specifies the total amount of time to wait, in milliseconds, when creating a table.
      * This value must be non-zero and greater than the delayMillis.
      */
-    TABLE_WAIT_MILLIS("jnosql.oracle.table.wait.millis"),
+    TABLE_WAIT_MILLIS("jnosql.oracle.nosql.table.wait.millis"),
 
     /**
      * Specifies the amount of time to wait, in milliseconds, between polling attempts when creating a table.
      * If set to 0, it defaults to <b>500</b> milliseconds.
      */
-    TABLE_DELAY_MILLIS("jnosql.oracle.table.delay.millis");
+    TABLE_DELAY_MILLIS("jnosql.oracle.nosql.table.delay.millis"),
+    /**
+     * Specifies the deployment type for Oracle NoSQL database.
+     * Default value: {@link DeploymentType#ON_PREMISES}
+     */
+    DEPLOYMENT("jnosql.oracle.nosql.deployment");
 
 
     private final String configuration;
