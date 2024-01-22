@@ -25,12 +25,12 @@ import java.util.Objects;
 /**
  * The Oracle implementation to {@link DocumentManagerFactory}
  */
-class OracleDocumentManagerFactory implements DocumentManagerFactory {
+public final class OracleDocumentManagerFactory implements DocumentManagerFactory {
 
     private static final Jsonb JSON = JsonbSupplier.getInstance().get();
     private final NoSQLHandleConfiguration configuration;
 
-    public OracleDocumentManagerFactory(NoSQLHandleConfiguration configuration) {
+    OracleDocumentManagerFactory(NoSQLHandleConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -40,7 +40,7 @@ class OracleDocumentManagerFactory implements DocumentManagerFactory {
     }
 
     @Override
-    public DocumentManager apply(String table) {
+    public OracleDocumentManager apply(String table) {
         Objects.requireNonNull(table, "table is required");
         var tableCreation = this.configuration.tableCreationConfiguration();
         tableCreation.createTable(table, configuration.serviceHandle());

@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
  * {@link OracleBucketManagerFactory}.
  *
  */
-public class OracleKeyValueConfiguration implements KeyValueConfiguration {
+public final class OracleKeyValueConfiguration implements KeyValueConfiguration {
     @Override
     public BucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");

@@ -23,9 +23,9 @@ import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
  * that returns  {@link OracleDocumentManagerFactory}
  * @see OracleConfigurations
  */
-public class OracleDocumentConfiguration implements DocumentConfiguration {
+public final class OracleDocumentConfiguration implements DocumentConfiguration {
     @Override
-    public DocumentManagerFactory apply(Settings settings) {
+    public OracleDocumentManagerFactory apply(Settings settings) {
         var nosql =  NoSQLHandleConfigConfiguration.INSTANCE.apply(settings);
         return new OracleDocumentManagerFactory(nosql);
     }

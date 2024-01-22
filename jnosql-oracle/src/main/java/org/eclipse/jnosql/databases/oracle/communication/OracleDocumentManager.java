@@ -57,7 +57,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.ID_FIELD;
 import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.JSON_FIELD;
 
-final class OracleDocumentManager implements DocumentManager {
+public final class OracleDocumentManager implements DocumentManager {
 
     private final Logger LOGGER = Logger.getLogger(OracleDocumentManager.class.getName());
     private static final JsonOptions OPTIONS = new JsonOptions();
