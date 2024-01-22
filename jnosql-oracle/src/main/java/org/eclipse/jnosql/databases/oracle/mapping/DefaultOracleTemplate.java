@@ -88,7 +88,7 @@ class DefaultOracleTemplate extends AbstractDocumentTemplate implements OracleTe
     @Override
     public <T> Stream<T> sql(String query) {
         Objects.requireNonNull(query, "query is required");
-        return manager.get().sql(query, Collections.emptyList()).map(converter::toEntity).map(d -> (T) d);
+        return manager.get().sql(query).map(converter::toEntity).map(d -> (T) d);
     }
 
     @Override
