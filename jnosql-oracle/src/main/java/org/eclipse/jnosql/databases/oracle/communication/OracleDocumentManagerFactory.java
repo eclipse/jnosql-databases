@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import jakarta.json.bind.Jsonb;
-import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 
@@ -44,6 +43,6 @@ public final class OracleDocumentManagerFactory implements DocumentManagerFactor
         Objects.requireNonNull(table, "table is required");
         var tableCreation = this.configuration.tableCreationConfiguration();
         tableCreation.createTable(table, configuration.serviceHandle());
-        return new OracleDocumentManager(table, configuration.serviceHandle(), JSON);
+        return new DefaultOracleDocumentManager(table, configuration.serviceHandle(), JSON);
     }
 }

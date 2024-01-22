@@ -38,14 +38,14 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
         Document document = condition.document();
         switch (condition.condition()) {
             case EQUALS:
-                if (document.name().equals(OracleDocumentManager.ID)) {
+                if (document.name().equals(DefaultOracleDocumentManager.ID)) {
                     ids.add(document.get(String.class));
                 } else {
                     predicate(query, " = ", document, params);
                 }
                 return;
             case IN:
-                if (document.name().equals(OracleDocumentManager.ID)) {
+                if (document.name().equals(DefaultOracleDocumentManager.ID)) {
                     ids.addAll(document.get(new TypeReference<List<String>>() {
                     }));
                 } else {
