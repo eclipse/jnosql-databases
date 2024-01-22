@@ -21,19 +21,19 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.interceptor.Interceptor;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.databases.oracle.communication.OracleDocumentManager;
+import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLDocumentManager;
 import org.mockito.Mockito;
 
 import java.util.function.Supplier;
 
 @Alternative
 @Priority(Interceptor.Priority.APPLICATION)
-public class MockProducer implements Supplier<OracleDocumentManager> {
+public class MockProducer implements Supplier<OracleNoSQLDocumentManager> {
 
     @Produces
     @Override
-    public OracleDocumentManager get() {
-        OracleDocumentManager manager = Mockito.mock(OracleDocumentManager.class);
+    public OracleNoSQLDocumentManager get() {
+        OracleNoSQLDocumentManager manager = Mockito.mock(OracleNoSQLDocumentManager.class);
         DocumentEntity entity = DocumentEntity.of("Person");
         entity.add(Document.of("name", "Ada"));
         Mockito.when(manager.insert(Mockito.any(DocumentEntity.class))).thenReturn(entity);

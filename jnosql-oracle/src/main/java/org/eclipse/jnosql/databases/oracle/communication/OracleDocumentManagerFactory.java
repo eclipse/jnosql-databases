@@ -39,10 +39,10 @@ public final class OracleDocumentManagerFactory implements DocumentManagerFactor
     }
 
     @Override
-    public OracleDocumentManager apply(String table) {
+    public OracleNoSQLDocumentManager apply(String table) {
         Objects.requireNonNull(table, "table is required");
         var tableCreation = this.configuration.tableCreationConfiguration();
         tableCreation.createTable(table, configuration.serviceHandle());
-        return new DefaultOracleDocumentManager(table, configuration.serviceHandle(), JSON);
+        return new DefaultOracleNoSQLDocumentManager(table, configuration.serviceHandle(), JSON);
     }
 }

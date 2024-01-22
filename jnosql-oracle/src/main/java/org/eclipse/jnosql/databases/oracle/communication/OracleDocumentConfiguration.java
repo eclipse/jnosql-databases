@@ -16,12 +16,11 @@ package org.eclipse.jnosql.databases.oracle.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 
 /**
  * The Oracle implementation to {@link DocumentConfiguration}
  * that returns  {@link OracleDocumentManagerFactory}
- * @see OracleConfigurations
+ * @see OracleNoSQLConfigurations
  */
 public final class OracleDocumentConfiguration implements DocumentConfiguration {
     @Override

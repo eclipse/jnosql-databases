@@ -19,7 +19,6 @@ import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 import org.junit.jupiter.api.Assertions;
@@ -55,14 +54,14 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class OracleDocumentManagerTest {
+class OracleNoSQLDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static OracleDocumentManager entityManager;
+    private static OracleNoSQLDocumentManager entityManager;
 
     @BeforeAll
     public static void setUp() throws IOException {
-        entityManager = (OracleDocumentManager) Database.INSTANCE.managerFactory().apply("database");
+        entityManager = (OracleNoSQLDocumentManager) Database.INSTANCE.managerFactory().apply("database");
     }
 
     @BeforeEach

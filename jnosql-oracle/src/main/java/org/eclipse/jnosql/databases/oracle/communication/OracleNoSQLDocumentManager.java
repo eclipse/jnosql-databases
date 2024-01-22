@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 /**
  * A document manager interface for Oracle NoSQL database operations.
  */
-public interface OracleDocumentManager extends DocumentManager {
+public interface OracleNoSQLDocumentManager extends DocumentManager {
 
 
     /**

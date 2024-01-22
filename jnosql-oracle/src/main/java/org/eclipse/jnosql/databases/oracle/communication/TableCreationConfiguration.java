@@ -29,7 +29,7 @@ record TableCreationConfiguration(int readLimit,
                                   int delayMillis) {
 
     private static final String CREATE_TABLE ="CREATE TABLE if not exists %s (id STRING, entity STRING, content JSON, primary key (id))";
-    private static final Logger LOGGER = Logger.getLogger(OracleBucketManagerFactory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OracleNoSQLBucketManagerFactory.class.getName());
     static final String JSON_FIELD = "content";
 
     static final String ID_FIELD = "id";

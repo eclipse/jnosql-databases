@@ -17,7 +17,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.oracle.communication.OracleDocumentConfiguration;
-import org.eclipse.jnosql.databases.oracle.communication.OracleDocumentManager;
+import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLDocumentManager;
 import org.eclipse.jnosql.databases.oracle.communication.OracleDocumentManagerFactory;
 import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
@@ -29,28 +29,28 @@ import java.util.logging.Logger;
 import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.DOCUMENT_DATABASE;
 
 @ApplicationScoped
-class DocumentManagerSupplier implements Supplier<OracleDocumentManager> {
+class DocumentManagerSupplier implements Supplier<OracleNoSQLDocumentManager> {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentManagerSupplier.class.getName());
 
 
     @Override
     @Produces
-    @Typed(OracleDocumentManager.class)
-    public OracleDocumentManager get() {
+    @Typed(OracleNoSQLDocumentManager.class)
+    public OracleNoSQLDocumentManager get() {
         Settings settings = MicroProfileSettings.INSTANCE;
         OracleDocumentConfiguration configuration = new OracleDocumentConfiguration();
         OracleDocumentManagerFactory factory = configuration.apply(settings);
         Optional<String> database = settings.get(DOCUMENT_DATABASE, String.class);
         String db = database.orElseThrow(() -> new MappingException("Please, inform the database filling up the property "
                 + DOCUMENT_DATABASE.get()));
-        OracleDocumentManager manager = factory.apply(db);
+        OracleNoSQLDocumentManager manager = factory.apply(db);
         LOGGER.log(Level.FINEST, "Starting  a OracleDocumentManager instance using Eclipse MicroProfile Config," +
                 " database name: " + db);
         return manager;
     }
 
-    public void close(@Disposes OracleDocumentManager manager) {
+    public void close(@Disposes OracleNoSQLDocumentManager manager) {
         LOGGER.log(Level.FINEST, "Closing OracleDocumentManager resource, database name: " + manager.name());
         manager.close();
     }

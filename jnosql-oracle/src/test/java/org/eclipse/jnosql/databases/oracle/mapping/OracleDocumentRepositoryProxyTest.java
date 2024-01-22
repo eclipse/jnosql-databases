@@ -35,10 +35,8 @@ import org.mockito.Mockito;
 import java.lang.reflect.Proxy;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -54,28 +52,28 @@ import static org.mockito.Mockito.when;
         DocumentExtension.class, OracleExtension.class})
 public class OracleDocumentRepositoryProxyTest {
 
-    private OracleTemplate template;
+    private OracleNoSQLTemplate template;
     @Inject
     private EntitiesMetadata entitiesMetadata;
 
     @Inject
     private Converters converters;
 
-    private PersonRepository personRepository;
+    private PersonNoSQLRepository personRepository;
 
     @SuppressWarnings("rawtypes")
     @BeforeEach
     public void setUp() {
-        this.template = Mockito.mock(OracleTemplate.class);
+        this.template = Mockito.mock(OracleNoSQLTemplate.class);
 
         OracleDocumentRepositoryProxy handler = new OracleDocumentRepositoryProxy<>(template,
-                PersonRepository.class, converters, entitiesMetadata);
+                PersonNoSQLRepository.class, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
         when(template.insert(any(Person.class), any(Duration.class))).thenReturn(new Person());
         when(template.update(any(Person.class))).thenReturn(new Person());
-        this.personRepository = (PersonRepository) Proxy.newProxyInstance(PersonRepository.class.getClassLoader(),
-                new Class[]{PersonRepository.class},
+        this.personRepository = (PersonNoSQLRepository) Proxy.newProxyInstance(PersonNoSQLRepository.class.getClassLoader(),
+                new Class[]{PersonNoSQLRepository.class},
                 handler);
     }
 
@@ -138,7 +136,7 @@ public class OracleDocumentRepositoryProxyTest {
     }
 
 
-    interface PersonRepository extends OracleRepository<Person, String> {
+    interface PersonNoSQLRepository extends OracleNoSQLRepository<Person, String> {
 
         @SQL("select * from Person")
         List<Person> findAllQuery();

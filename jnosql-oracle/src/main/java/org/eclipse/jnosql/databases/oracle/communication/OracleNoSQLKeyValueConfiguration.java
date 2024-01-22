@@ -22,15 +22,15 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * The Oracle implementation of {@link KeyValueConfiguration} that returns
- * {@link OracleBucketManagerFactory}.
+ * {@link OracleNoSQLBucketManagerFactory}.
  *
  */
-public final class OracleKeyValueConfiguration implements KeyValueConfiguration {
+public final class OracleNoSQLKeyValueConfiguration implements KeyValueConfiguration {
     @Override
     public BucketManagerFactory apply(Settings settings) {
         requireNonNull(settings, "settings is required");
 
         var nosql =  NoSQLHandleConfigConfiguration.INSTANCE.apply(settings);
-        return new OracleBucketManagerFactory(nosql);
+        return new OracleNoSQLBucketManagerFactory(nosql);
     }
 }

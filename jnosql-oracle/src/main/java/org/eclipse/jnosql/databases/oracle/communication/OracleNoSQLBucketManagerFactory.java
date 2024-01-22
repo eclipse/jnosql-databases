@@ -25,11 +25,11 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
-final class OracleBucketManagerFactory implements BucketManagerFactory {
+final class OracleNoSQLBucketManagerFactory implements BucketManagerFactory {
     private static final Jsonb JSON = JsonbSupplier.getInstance().get();
     private final NoSQLHandleConfiguration configuration;
 
-    OracleBucketManagerFactory(NoSQLHandleConfiguration configuration) {
+    OracleNoSQLBucketManagerFactory(NoSQLHandleConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -57,7 +57,7 @@ final class OracleBucketManagerFactory implements BucketManagerFactory {
     public BucketManager apply(String bucketName) {
         Objects.requireNonNull(bucketName, "bucketName is required");
         createTable(bucketName);
-        return new OracleBucketManager(bucketName, configuration.serviceHandle(), JSON);
+        return new OracleNoSQLBucketManager(bucketName, configuration.serviceHandle(), JSON);
     }
 
     private void createTable(String bucketName) {

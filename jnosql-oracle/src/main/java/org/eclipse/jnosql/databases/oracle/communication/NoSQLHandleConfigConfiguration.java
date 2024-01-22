@@ -35,11 +35,11 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
     private static final int DEFAULT_TABLE_DELAY_MILLIS = 500;
     @Override
     public NoSQLHandleConfiguration apply(Settings settings) {
-        String host = settings.get(List.of(OracleConfigurations.HOST.get(), Configurations.HOST.get()))
+        String host = settings.get(List.of(OracleNoSQLConfigurations.HOST.get(), Configurations.HOST.get()))
                 .map(Object::toString).orElse(DEFAULT_HOST);
-        String user = settings.get(List.of(OracleConfigurations.USER.get(), Configurations.USER.get()))
+        String user = settings.get(List.of(OracleNoSQLConfigurations.USER.get(), Configurations.USER.get()))
                 .map(Object::toString).orElse(null);
-        String password = settings.get(List.of(OracleConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
+        String password = settings.get(List.of(OracleNoSQLConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
                 .map(Object::toString).orElse(null);
 
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
@@ -48,11 +48,11 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
         } else {
             config.setAuthorizationProvider(new StoreAccessTokenProvider());
         }
-        int readLimit = settings.getOrDefault(OracleConfigurations.TABLE_READ_LIMITS, DEFAULT_TABLE_READ_LIMITS);
-        int writeLimit = settings.getOrDefault(OracleConfigurations.TABLE_WRITE_LIMITS, DEFAULT_TABLE_WRITE_LIMITS);
-        int storageGB = settings.getOrDefault(OracleConfigurations.TABLE_STORAGE_GB, DEFAULT_TABLE_STORAGE_GB);
-        int waitMillis = settings.getOrDefault(OracleConfigurations.TABLE_WAIT_MILLIS, DEFAULT_TABLE_WAIT_MILLIS);
-        int delayMillis = settings.getOrDefault(OracleConfigurations.TABLE_DELAY_MILLIS, DEFAULT_TABLE_DELAY_MILLIS);
+        int readLimit = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_READ_LIMITS, DEFAULT_TABLE_READ_LIMITS);
+        int writeLimit = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_WRITE_LIMITS, DEFAULT_TABLE_WRITE_LIMITS);
+        int storageGB = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_STORAGE_GB, DEFAULT_TABLE_STORAGE_GB);
+        int waitMillis = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_WAIT_MILLIS, DEFAULT_TABLE_WAIT_MILLIS);
+        int delayMillis = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_DELAY_MILLIS, DEFAULT_TABLE_DELAY_MILLIS);
         var tableLimits = new TableCreationConfiguration(readLimit, writeLimit, storageGB, waitMillis, delayMillis);
         return new NoSQLHandleConfiguration(NoSQLHandleFactory.createNoSQLHandle(config), tableLimits);
     }

@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Set;
 
 
-class OracleRepositoryBean<T, K> extends AbstractBean<OracleRepository<T, K>> {
+class OracleRepositoryBean<T, K> extends AbstractBean<OracleNoSQLRepository<T, K>> {
 
     private final Class<T> type;
 
@@ -50,13 +50,13 @@ class OracleRepositoryBean<T, K> extends AbstractBean<OracleRepository<T, K>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public OracleRepository<T, K> create(CreationalContext<OracleRepository<T, K>> creationalContext) {
-        OracleTemplate template = getInstance(OracleTemplate.class);
+    public OracleNoSQLRepository<T, K> create(CreationalContext<OracleNoSQLRepository<T, K>> creationalContext) {
+        OracleNoSQLTemplate template = getInstance(OracleNoSQLTemplate.class);
         Converters converters = getInstance(Converters.class);
         EntitiesMetadata entitiesMetadata = getInstance(EntitiesMetadata.class);
 
         OracleDocumentRepositoryProxy<T, K> handler = new OracleDocumentRepositoryProxy<>(template, type, converters, entitiesMetadata);
-        return (OracleRepository<T,K>) Proxy.newProxyInstance(type.getClassLoader(),
+        return (OracleNoSQLRepository<T,K>) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
     }

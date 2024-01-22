@@ -31,14 +31,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyMap;
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
 class OracleDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
-    private final OracleTemplate template;
+    private final OracleNoSQLTemplate template;
 
     private final AbstractRepository<?, ?> repository;
 
@@ -49,7 +48,7 @@ class OracleDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProx
     private final EntityMetadata entityMetadata;
 
     @Inject
-    OracleDocumentRepositoryProxy(OracleTemplate template,
+    OracleDocumentRepositoryProxy(OracleNoSQLTemplate template,
                                   Class<?> type,
                                   Converters converters,
                                   EntitiesMetadata entitiesMetadata) {

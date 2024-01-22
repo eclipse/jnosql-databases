@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-public class OracleBucketManagerTest {
+public class OracleNoSQLBucketManagerTest {
 
     private BucketManager keyValueEntityManager;
 

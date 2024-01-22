@@ -23,7 +23,6 @@ import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
-import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -52,9 +51,9 @@ public enum Database implements Supplier<BucketManagerFactory> {
 
     @Override
     public BucketManagerFactory get() {
-        KeyValueConfiguration configuration = new OracleKeyValueConfiguration();
+        KeyValueConfiguration configuration = new OracleNoSQLKeyValueConfiguration();
         Settings settings = Settings.builder()
-                .put(OracleConfigurations.HOST, host())
+                .put(OracleNoSQLConfigurations.HOST, host())
                 .build();
         return configuration.apply(settings);
     }
@@ -66,7 +65,7 @@ public enum Database implements Supplier<BucketManagerFactory> {
     public DocumentManagerFactory managerFactory() {
         DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
         Settings settings = Settings.builder()
-                .put(OracleConfigurations.HOST, host())
+                .put(OracleNoSQLConfigurations.HOST, host())
                 .build();
         return configuration.apply(settings);
     }

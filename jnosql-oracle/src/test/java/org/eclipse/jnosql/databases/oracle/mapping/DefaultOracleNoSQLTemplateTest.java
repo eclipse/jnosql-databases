@@ -20,7 +20,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.databases.oracle.communication.OracleDocumentManager;
+import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
@@ -38,11 +38,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
@@ -51,7 +48,7 @@ import static org.mockito.Mockito.when;
 @AddExtensions({EntityMetadataExtension.class, DocumentExtension.class, OracleExtension.class})
 @ExtendWith(MockitoExtension.class)
 @AddPackages(Reflections.class)
-class DefaultOracleTemplateTest {
+class DefaultOracleNoSQLTemplateTest {
 
 
     @Inject
@@ -65,16 +62,16 @@ class DefaultOracleTemplateTest {
     @Inject
     private Converters converters;
 
-    private OracleDocumentManager manager;
+    private OracleNoSQLDocumentManager manager;
 
-    private OracleTemplate template;
+    private OracleNoSQLTemplate template;
 
     @BeforeEach
     public void setup() {
-        manager = Mockito.mock(OracleDocumentManager.class);
+        manager = Mockito.mock(OracleNoSQLDocumentManager.class);
         Instance instance = Mockito.mock(Instance.class);
         when(instance.get()).thenReturn(manager);
-        template = new DefaultOracleTemplate(instance, converter, persistManager, entities, converters);
+        template = new DefaultOracleNoSQLTemplate(instance, converter, persistManager, entities, converters);
 
         DocumentEntity entity = DocumentEntity.of("Person");
         entity.add(Document.of("_id", "Ada"));

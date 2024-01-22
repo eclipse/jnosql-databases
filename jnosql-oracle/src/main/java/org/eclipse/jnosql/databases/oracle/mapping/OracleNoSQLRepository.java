@@ -47,5 +47,5 @@ import jakarta.data.repository.PageableRepository;
  * @see PageableRepository
  * @see SQL
  */
-public interface OracleRepository<T, K> extends PageableRepository<T, K> {
+public interface OracleNoSQLRepository<T, K> extends PageableRepository<T, K> {
 }

@@ -43,14 +43,14 @@ import static org.eclipse.jnosql.databases.oracle.communication.TableCreationCon
 import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.JSON_FIELD;
 
 
-final class OracleBucketManager implements BucketManager {
+final class OracleNoSQLBucketManager implements BucketManager {
     private static final JsonOptions OPTIONS = new JsonOptions();
     private final String bucketName;
     private final NoSQLHandle serviceHandle;
 
     private final Jsonb jsonB;
 
-    OracleBucketManager(String bucketName, NoSQLHandle serviceHandle, Jsonb jsonB) {
+    OracleNoSQLBucketManager(String bucketName, NoSQLHandle serviceHandle, Jsonb jsonB) {
         this.bucketName = bucketName;
         this.serviceHandle = serviceHandle;
         this.jsonB = jsonB;

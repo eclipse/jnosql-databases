@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  *
  * @see JNoSQLDocumentTemplate
  */
-public interface OracleTemplate extends JNoSQLDocumentTemplate {
+public interface OracleNoSQLTemplate extends JNoSQLDocumentTemplate {
 
     /**
      * Executes an Oracle query using the Oracle Query Language (SQL).

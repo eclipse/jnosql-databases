@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  *
  * @see org.eclipse.jnosql.communication.Settings
  */
-public enum OracleConfigurations implements Supplier<String> {
+public enum OracleNoSQLConfigurations implements Supplier<String> {
 
     /**
      * Specifies the hostname or IP address of the Oracle NoSQL database server.
@@ -77,7 +77,7 @@ public enum OracleConfigurations implements Supplier<String> {
 
     private final String configuration;
 
-    OracleConfigurations(String configuration) {
+    OracleNoSQLConfigurations(String configuration) {
         this.configuration = configuration;
     }
 

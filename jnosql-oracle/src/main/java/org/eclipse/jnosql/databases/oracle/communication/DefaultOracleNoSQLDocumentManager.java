@@ -35,7 +35,6 @@ import oracle.nosql.driver.values.StringValue;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.document.Documents;
 
@@ -60,11 +59,11 @@ import static org.eclipse.jnosql.databases.oracle.communication.TableCreationCon
 import static org.eclipse.jnosql.databases.oracle.communication.TableCreationConfiguration.JSON_FIELD;
 
 /**
- * The Oracle implementation to {@link OracleDocumentManager}
+ * The Oracle implementation to {@link OracleNoSQLDocumentManager}
  */
-final class DefaultOracleDocumentManager implements OracleDocumentManager {
+final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentManager {
 
-    private final Logger LOGGER = Logger.getLogger(DefaultOracleDocumentManager.class.getName());
+    private final Logger LOGGER = Logger.getLogger(DefaultOracleNoSQLDocumentManager.class.getName());
     private static final JsonOptions OPTIONS = new JsonOptions();
     static final String ENTITY = "entity";
     static final String ID = "_id";
@@ -73,7 +72,7 @@ final class DefaultOracleDocumentManager implements OracleDocumentManager {
     private final NoSQLHandle serviceHandle;
 
     private final Jsonb jsonB;
-    public DefaultOracleDocumentManager(String table, NoSQLHandle serviceHandle, Jsonb jsonB) {
+    public DefaultOracleNoSQLDocumentManager(String table, NoSQLHandle serviceHandle, Jsonb jsonB) {
         this.table = table;
         this.serviceHandle = serviceHandle;
         this.jsonB = jsonB;
@@ -222,7 +221,7 @@ final class DefaultOracleDocumentManager implements OracleDocumentManager {
                 List<Document> documents = Documents.of(entity);
                 String entityName = Optional.ofNullable(entity.get(ENTITY))
                         .map(Object::toString)
-                        .orElseThrow(() -> new OracleDBException("The _entity is required in the entity"));
+                        .orElseThrow(() -> new OracleNoSQLException("The _entity is required in the entity"));
                 DocumentEntity documentEntity = DocumentEntity.of(entityName);
                 documentEntity.addAll(documents);
                 documentEntity.remove(ENTITY);

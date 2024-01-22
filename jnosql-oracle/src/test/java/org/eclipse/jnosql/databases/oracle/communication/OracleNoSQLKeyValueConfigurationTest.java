@@ -20,11 +20,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class OracleKeyValueConfigurationTest {
+class OracleNoSQLKeyValueConfigurationTest {
 
     @Test
     void shouldReturnErrorWhenMapSettingsIsNull() {
-        OracleKeyValueConfiguration configuration = new OracleKeyValueConfiguration();
+        OracleNoSQLKeyValueConfiguration configuration = new OracleNoSQLKeyValueConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
@@ -33,6 +33,6 @@ class OracleKeyValueConfigurationTest {
         KeyValueConfiguration configuration = KeyValueConfiguration.getConfiguration();
         assertThat(configuration).isNotNull()
                 .isInstanceOf(KeyValueConfiguration.class)
-                .isInstanceOf(OracleKeyValueConfiguration.class);
+                .isInstanceOf(OracleNoSQLKeyValueConfiguration.class);
     }
 }

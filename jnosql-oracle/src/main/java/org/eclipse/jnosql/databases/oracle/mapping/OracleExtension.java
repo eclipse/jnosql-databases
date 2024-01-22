@@ -29,7 +29,7 @@ public class OracleExtension implements Extension {
     void onAfterBeanDiscovery(@Observes final AfterBeanDiscovery afterBeanDiscovery) {
 
         ClassScanner scanner = ClassScanner.load();
-        Set<Class<?>> crudTypes = scanner.repositories(OracleRepository.class);
+        Set<Class<?>> crudTypes = scanner.repositories(OracleNoSQLRepository.class);
 
         LOGGER.info("Starting the onAfterBeanDiscovery with elements number: " + crudTypes.size());
 

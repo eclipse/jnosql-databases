@@ -19,22 +19,21 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.databases.oracle.communication.OracleDocumentManager;
+import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@Typed(OracleTemplate.class)
+@Typed(OracleNoSQLTemplate.class)
 @ApplicationScoped
-class DefaultOracleTemplate extends AbstractDocumentTemplate implements OracleTemplate {
+class DefaultOracleNoSQLTemplate extends AbstractDocumentTemplate implements OracleNoSQLTemplate {
 
-    private Instance<OracleDocumentManager> manager;
+    private Instance<OracleNoSQLDocumentManager> manager;
 
     private DocumentEntityConverter converter;
 
@@ -45,11 +44,11 @@ class DefaultOracleTemplate extends AbstractDocumentTemplate implements OracleTe
     private Converters converters;
 
     @Inject
-    DefaultOracleTemplate(Instance<OracleDocumentManager> manager,
-                            DocumentEntityConverter converter,
-                            DocumentEventPersistManager persistManager,
-                            EntitiesMetadata entities,
-                            Converters converters) {
+    DefaultOracleNoSQLTemplate(Instance<OracleNoSQLDocumentManager> manager,
+                               DocumentEntityConverter converter,
+                               DocumentEventPersistManager persistManager,
+                               EntitiesMetadata entities,
+                               Converters converters) {
         this.manager = manager;
         this.converter = converter;
         this.persistManager = persistManager;
@@ -57,7 +56,7 @@ class DefaultOracleTemplate extends AbstractDocumentTemplate implements OracleTe
         this.converters = converters;
     }
 
-    DefaultOracleTemplate() {
+    DefaultOracleNoSQLTemplate() {
     }
 
     @Override

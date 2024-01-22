@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 Contributors to the Eclipse Foundation
+ *  Copyright (c) 2024 Contributors to the Eclipse Foundation
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -12,11 +12,15 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.databases.oracle.mapping;
+package org.eclipse.jnosql.databases.oracle.communication;
 
 
-import jakarta.data.repository.Repository;
+import org.eclipse.jnosql.communication.CommunicationException;
 
-@Repository
-public interface PersonRepository extends OracleRepository<Person, String> {
+class OracleNoSQLException extends CommunicationException {
+
+    public OracleNoSQLException(String message) {
+        super(message);
+    }
+
 }

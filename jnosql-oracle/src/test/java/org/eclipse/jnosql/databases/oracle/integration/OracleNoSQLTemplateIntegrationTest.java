@@ -18,8 +18,8 @@ package org.eclipse.jnosql.databases.oracle.integration;
 import jakarta.inject.Inject;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.oracle.communication.Database;
-import org.eclipse.jnosql.databases.oracle.communication.OracleConfigurations;
-import org.eclipse.jnosql.databases.oracle.mapping.OracleTemplate;
+import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLConfigurations;
+import org.eclipse.jnosql.databases.oracle.mapping.OracleNoSQLTemplate;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
@@ -43,19 +43,19 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 @EnableAutoWeld
 @AddPackages(value = {Convert.class, DocumentEntityConverter.class})
 @AddPackages(Book.class)
-@AddPackages(OracleTemplate.class)
+@AddPackages(OracleNoSQLTemplate.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
 @AddPackages(Reflections.class)
 @AddPackages(Converters.class)
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class OracleTemplateIntegrationTest {
+class OracleNoSQLTemplateIntegrationTest {
 
     @Inject
-    private OracleTemplate template;
+    private OracleNoSQLTemplate template;
 
     static {
-        System.setProperty(OracleConfigurations.HOST.get(), Database.INSTANCE.host());
+        System.setProperty(OracleNoSQLConfigurations.HOST.get(), Database.INSTANCE.host());
         System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
     }
 
