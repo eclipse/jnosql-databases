@@ -47,11 +47,11 @@ public class OracleBucketManagerTest {
 
     private BucketManagerFactory keyValueEntityManagerFactory;
 
-    private User otavio = new User("otavio");
+    private final User otavio = new User("otavio");
     private KeyValueEntity entityOtavio = KeyValueEntity.of("otavio", Value.of(otavio));
 
-    private User soro = new User("soro");
-    private KeyValueEntity entitySoro = KeyValueEntity.of("soro", Value.of(soro));
+    private final User soro = new User("soro");
+    private final KeyValueEntity entitySoro = KeyValueEntity.of("soro", Value.of(soro));
 
     @BeforeEach
     public void init() {
