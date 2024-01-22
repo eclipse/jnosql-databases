@@ -43,6 +43,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +162,7 @@ final class DefaultOracleDocumentManager implements OracleDocumentManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
+
     @Override
     public Stream<DocumentEntity> select(DocumentQuery query) {
         Objects.requireNonNull(query, "query is required");
@@ -174,36 +176,12 @@ final class DefaultOracleDocumentManager implements OracleDocumentManager {
         if (!oracleQuery.hasOnlyIds()) {
             LOGGER.finest("Executing Oracle Query: " + oracleQuery.query());
 
-            var prepReq = new PrepareRequest().setStatement(oracleQuery.query());
-            var prepRes = serviceHandle.prepare(prepReq);
-            var preparedStatement = prepRes.getPreparedStatement();
-            for (int index = 0; index < oracleQuery.params().size(); index++) {
-                preparedStatement.setVariable((index + 1), oracleQuery.params().get(index));
-            }
-
-            var queryRequest = new QueryRequest().setPreparedStatement(prepRes);
-            do {
-                QueryResult queryResult = serviceHandle.query(queryRequest);
-                List<MapValue> results = queryResult.getResults();
-                for (MapValue result : results) {
-
-                    var entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
-                    if(result.get(JSON_FIELD) != null){
-                        var json = result.get(JSON_FIELD).toJson();
-                        entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
-                    }
-                    for (Map.Entry<String, FieldValue> entry : result) {
-                        if (isNotOracleField(entry)) {
-                            entity.add(Document.of(entry.getKey(), FieldValueConverter.INSTANCE.of(entry.getValue())));
-                        }
-                    }
-                    entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
-                    entities.add(entity);
-                }
-            } while (!queryRequest.isDone());
+            entities.addAll(executeSQL(oracleQuery.query(), oracleQuery.params()));
         }
         return entities.stream();
     }
+
+
 
     @Override
     public long count(String documentCollection) {
@@ -260,5 +238,53 @@ final class DefaultOracleDocumentManager implements OracleDocumentManager {
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public Stream<DocumentEntity> sql(String query) {
+        Objects.requireNonNull(query, "query is required");
+
+        return executeSQL(query, Collections.emptyList()).stream();
+    }
+
+    @Override
+    public Stream<DocumentEntity> sql(String query, Object... params) {
+        Objects.requireNonNull(query, "query is required");
+        Objects.requireNonNull(params, "params is required");
+        List<FieldValue> fields = Arrays.stream(params).map(FieldValueConverter.INSTANCE::of).toList();
+        return executeSQL(query, fields).stream();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<DocumentEntity> executeSQL(String sql, List<FieldValue> params) {
+        List<DocumentEntity> entities = new ArrayList<>();
+        var prepReq = new PrepareRequest().setStatement(sql);
+        var prepRes = serviceHandle.prepare(prepReq);
+        var preparedStatement = prepRes.getPreparedStatement();
+        for (int index = 0; index < params.size(); index++) {
+            preparedStatement.setVariable((index + 1), params.get(index));
+        }
+
+        var queryRequest = new QueryRequest().setPreparedStatement(prepRes);
+        do {
+            QueryResult queryResult = serviceHandle.query(queryRequest);
+            List<MapValue> results = queryResult.getResults();
+            for (MapValue result : results) {
+
+                var entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
+                if(result.get(JSON_FIELD) != null){
+                    var json = result.get(JSON_FIELD).toJson();
+                    entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
+                }
+                for (Map.Entry<String, FieldValue> entry : result) {
+                    if (isNotOracleField(entry)) {
+                        entity.add(Document.of(entry.getKey(), FieldValueConverter.INSTANCE.of(entry.getValue())));
+                    }
+                }
+                entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
+                entities.add(entity);
+            }
+        } while (!queryRequest.isDone());
+        return entities;
     }
 }
