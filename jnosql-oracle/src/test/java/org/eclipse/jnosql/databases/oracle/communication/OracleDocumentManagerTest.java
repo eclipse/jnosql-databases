@@ -220,8 +220,7 @@ class OracleDocumentManagerTest {
     void shouldFindDocumentLesserEqualsThan() {
         DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
+        entityManager.insert(getEntitiesWithValues());
 
         DocumentQuery query = select().from(COLLECTION_NAME)
                 .where("age").lte(23)
