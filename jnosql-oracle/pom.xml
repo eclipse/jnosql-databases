@@ -23,7 +23,7 @@
         <version>1.0.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jnosql-oracle</artifactId>
+    <artifactId>jnosql-oracle-nosql</artifactId>
     <description>The Eclipse JNoSQL layer implementation Oracle NoSQL</description>
     <dependencies>
         <dependency>
