@@ -14,7 +14,6 @@
  */
 package org.eclipse.jnosql.databases.oracle.mapping;
 
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
 
 import java.util.stream.Stream;
