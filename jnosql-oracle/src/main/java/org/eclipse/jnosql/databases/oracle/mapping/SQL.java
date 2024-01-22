@@ -15,6 +15,11 @@
 package org.eclipse.jnosql.databases.oracle.mapping;
 
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * The {@code SQL} annotation is a custom annotation used to associate SQL query strings
  * with methods or elements in your code.
@@ -52,6 +57,9 @@ package org.eclipse.jnosql.databases.oracle.mapping;
  * to execute the specified SQL query when calling the repository method.
  * </p>
  */
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface SQL {
 
 

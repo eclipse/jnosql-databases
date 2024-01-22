@@ -12,19 +12,18 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.databases.arangodb.mapping;
+package org.eclipse.jnosql.databases.oracle.mapping;
 
+import jakarta.data.repository.Param;
 import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
+import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProducer;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
-import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -48,14 +47,14 @@ import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
-@AddPackages(value = {Converters.class, DocumentEntityConverter.class, AQL.class})
+@AddPackages(value = {Converters.class, DocumentEntityConverter.class, SQL.class})
 @AddPackages(MockProducer.class)
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class, KeyValueExtension.class,
-        DocumentExtension.class, ArangoDBExtension.class})
-public class ArangoDBDocumentRepositoryProxyTest {
+        DocumentExtension.class, OracleExtension.class})
+public class OracleDocumentRepositoryProxyTest {
 
-    private ArangoDBTemplate template;
+    private OracleTemplate template;
     @Inject
     private EntitiesMetadata entitiesMetadata;
 
@@ -67,9 +66,9 @@ public class ArangoDBDocumentRepositoryProxyTest {
     @SuppressWarnings("rawtypes")
     @BeforeEach
     public void setUp() {
-        this.template = Mockito.mock(ArangoDBTemplate.class);
+        this.template = Mockito.mock(OracleTemplate.class);
 
-        ArangoDBDocumentRepositoryProxy handler = new ArangoDBDocumentRepositoryProxy<>(template,
+        OracleDocumentRepositoryProxy handler = new OracleDocumentRepositoryProxy<>(template,
                 PersonRepository.class, converters, entitiesMetadata);
 
         when(template.insert(any(Person.class))).thenReturn(new Person());
@@ -84,17 +83,17 @@ public class ArangoDBDocumentRepositoryProxyTest {
     @Test
     public void shouldFindAll() {
         personRepository.findAllQuery();
-        verify(template).aql("FOR p IN Person RETURN p", emptyMap());
+        verify(template).sql("select * from Person");
     }
 
     @Test
-    public void shouldFindByNameAQL() {
-        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+    public void shouldFindByNameSQL() {
+        ArgumentCaptor<Object[]> captor = ArgumentCaptor.forClass(Object[].class);
         personRepository.findByName("Ada");
-        verify(template).aql(eq("FOR p IN Person FILTER p.name = @name RETURN p"), captor.capture());
+        verify(template).sql(eq("select * from Person where content.name= ?"), captor.capture());
 
-        Map value = captor.getValue();
-        assertEquals("Ada", value.get("name"));
+        Object[] value = captor.getValue();
+        Assertions.assertThat(value).hasSize(1).contains("Ada");
     }
 
     @Test
@@ -139,12 +138,12 @@ public class ArangoDBDocumentRepositoryProxyTest {
     }
 
 
-    interface PersonRepository extends ArangoDBRepository<Person, String> {
+    interface PersonRepository extends OracleRepository<Person, String> {
 
-        @AQL("FOR p IN Person RETURN p")
+        @SQL("select * from Person")
         List<Person> findAllQuery();
 
-        @AQL("FOR p IN Person FILTER p.name = @name RETURN p")
-        List<Person> findByName(@Param("name") String name);
+        @SQL("select * from Person where content.name= ?")
+        List<Person> findByName(@Param("") String name);
     }
 }

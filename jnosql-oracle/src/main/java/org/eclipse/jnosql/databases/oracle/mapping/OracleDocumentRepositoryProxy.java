@@ -28,7 +28,6 @@ import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -105,9 +104,9 @@ class OracleDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProx
             Stream<T> result;
             List<Object> params = ParamUtil.getParams(args, method);
             if (params.isEmpty()) {
-                result = template.sql(sql.value(), emptyMap());
+                result = template.sql(sql.value());
             } else {
-                result = template.sql(sql.value(), params);
+                result = template.sql(sql.value(), params.toArray());
             }
             return DynamicReturn.builder()
                     .withClassSource(typeClass)
