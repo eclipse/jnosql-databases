@@ -23,4 +23,8 @@ class OracleNoSQLException extends CommunicationException {
         super(message);
     }
 
+    public OracleNoSQLException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

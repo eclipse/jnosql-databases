@@ -73,7 +73,7 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             try {
                 return Optional.of(new SignatureProvider());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new OracleNoSQLException("Error to load configuration to Oracle Cloud at Oracle NoSQL", e);
             }
 
         }
