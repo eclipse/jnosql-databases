@@ -80,21 +80,18 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
     DEPLOYMENT("jnosql.oracle.nosql.deployment"),
     /**
      * Specifies the Oracle NoSQL database tenant ID for Cloud deployment.
-     * Default value: ""
      * Relevant for Cloud deployment only.
      */
     TENANT("jnosql.oracle.nosql.tenant.id"),
 
     /**
      * Specifies the fingerprint for authentication with Oracle NoSQL database for Cloud deployment.
-     * Default value: ""
      * Relevant for Cloud deployment only.
      */
     FINGERPRINT("jnosql.oracle.nosql.fingerprint"),
 
     /**
      * Specifies the private key for authentication with Oracle NoSQL database for Cloud deployment.
-     * Default value: ""
      * Relevant for Cloud deployment only.
      */
     PRIVATE_KEY("jnosql.oracle.nosql.private.key");
