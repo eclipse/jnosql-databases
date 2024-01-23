@@ -77,7 +77,10 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
      * Specifies the deployment type for Oracle NoSQL database.
      * Default value: {@link DeploymentType#ON_PREMISES}
      */
-    DEPLOYMENT("jnosql.oracle.nosql.deployment");
+    DEPLOYMENT("jnosql.oracle.nosql.deployment"),
+    TENANT("jnosql.oracle.nosql.tenant.id"),
+    FINGERPRINT("jnosql.oracle.nosql.fingerprint"),
+    PRIVATE_KEY("jnosql.oracle.nosql.private.key");
 
 
     private final String configuration;
