@@ -76,6 +76,20 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
     /**
      * Specifies the deployment type for Oracle NoSQL database.
      * Default value: {@link DeploymentType#ON_PREMISES}
+     * <p>
+     * When ON_PREMISES is selected for deployment:
+     * - Credentials required: USER (username) and HOST (hostname or IP address).
+     * - Connection is established without authentication if USER and HOST are not provided.
+     * </p>
+     * <p>
+     * When CLOUD is selected for deployment:
+     * - Credentials required: PRIVATE_KEY (private key file path), FINGERPRINT (fingerprint of the public key),
+     *   TENANT (Oracle Cloud tenant ID), USER (Oracle Cloud username), and PASSWORD (Oracle Cloud password).
+     * - If any of these credentials are not provided, the configuration will be read from a configuration file.
+     *   For more information, see:
+     *   <a href="https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/javasdkgettingstarted.htm#Configur">
+     *       https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/javasdkgettingstarted.htm#Configur</a>
+     * </p>
      */
     DEPLOYMENT("jnosql.oracle.nosql.deployment"),
     /**
