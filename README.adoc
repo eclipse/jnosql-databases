@@ -1054,6 +1054,167 @@ Bson filter = eq("name", "Poliana");
 Stream<Person> stream = template.select(Person.class , filter);
 ----
 
+== Oracle NoSQL
+
+image::https://www.jnosql.org/img/logos/oracle.png[Oracle NoSQL Project,align="center"width=25%,height=25%]
+
+https://www.arangodb.com/[ArangoDB] is a native multi-model database with flexible data models for documents, graphs, and key-values.
+Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
+
+This API offers support for **Document** and **Key-Value** types.
+
+
+=== How To Install
+
+You can use either the Maven or Gradle dependencies:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.eclipse.jnosql.databases</groupId>
+  <artifactId>jnosql-oracle-nosql</artifactId>
+  <version>1.0.4</version>
+</dependency>
+----
+
+=== Configuration
+
+This API provides the ```ArangoDBConfigurations``` class to programmatically establish the credentials.
+Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
+
+[cols="Arango Properties"]
+|===
+|Configuration property |Description
+
+|`jnosql.jnosql.arangodb.host`
+|The database host, where you need to put the port split by colons. E.g.: jnosql.jnosql.arangodb.host=localhost:8529
+
+|`jnosql.arangodb.user`
+|The user's userID.
+
+|`jnosql.arangodb.password`
+|The user's password
+
+|`jnosql.arangodb.timeout`
+|The connection and request timeout in milliseconds.
+
+|`jnosql.arangodb.chunk.size`
+|The chunk size when Protocol is used.
+
+|`jnosql.arangodb.userSsl`
+|The true SSL will be used when connecting to an ArangoDB server.
+
+|`jnosql.arangodb.load.balancing.strategy`
+|The com.arangodb.entity.LoadBalancingStrategy as String.
+
+|`jnosql.arangodb.protocol`
+|The com.arangodb.Protocol as String
+
+|`jnosql.arangodb.connections.max`
+|The maximum number of connections the built-in connection pool will open per host.
+
+|`jnosql.arangodb.acquire.host.list`
+|Set hosts split by comma
+|===
+
+This is an example using ArangoDB's Document API with MicroProfile Config.
+
+[source,properties]
+----
+jnosql.document.provider=org.eclipse.jnosql.databases.arangodb.communication.ArangoDBDocumentConfiguration
+jnosql.document.database=<DATABASE>
+jnosql.arangodb.host=localhost:8529
+----
+
+This is an example using ArangoDB's Key-Value API with MicroProfile Config.
+
+[source,properties]
+----
+jnosql.keyvalue.provider=org.eclipse.jnosql.databases.arangodb.communication.ArangoDBKeyValueConfiguration
+jnosql.keyvalue.database=<DATABASE>
+jnosql.arangodb.host=localhost:8529
+----
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<ArangoDBDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<ArangoDBDocumentManager> {
+
+    @Produces
+    public ArangoDBDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
+        ArangoDBDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+
+=== Repository
+
+The ```ArangoDBRepository``` interface is an extension of the Repository interface that allows execution of AQL via the ```@AQL``` annotation. Also, it's possible to combine with ```@Param``` annotation to execute parameterized AQL queries:
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends ArangoDBRepository<Person, String> {
+
+    @AQL("FOR p IN Person RETURN p")
+    List<Person> findAll();
+
+    @AQL("FOR p IN Person FILTER p.name = @name RETURN p")
+    List<Person> findByName(@Param("name") String name);
+}
+----
+
+=== @AQL
+
+The ```@AQL``` annotation is a mapping annotation that allows to define dynamic queries following link:https://www.arangodb.com/docs/stable/aql/[ArangoDB Query Languange] on ```ArangoDBRepository```.
+
+[source,java]
+----
+interface CarRepository extends ArangoDBRepository<Car, String> {
+
+        @AQL("FOR c IN Car RETURN c")
+        List<Car> findAll();
+
+}
+----
+
+=== @Param
+
+For parameterized queries, use the ```@Param``` annotation for binding the target argument to the parameter informing the named parameter like the below example:
+
+[source,java]
+----
+
+interface OrderRepository extends ArangoDBRepository<Order, String> {
+
+        @AQL("FOR o IN Order FILTER o.customer = @customer RETURN o")
+        List<Order> findByCustomer(@Param("customer") String customer);
+
+}
+----
+
+
+=== Template
+
+The ```ArangoDBTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows using both synchronous and asynchronous AQL.
+
+[source,java]
+----
+@Inject
+private ArangoDBTemplate template;
+...
+List<Person> people = template.aql("FOR p IN Person FILTER p.name = @name RETURN p", params);
+----
+
+
 == OrientDB
 
 image::https://jnosql.github.io/img/logos/orientdb.png[Orient Project,align="center" width=25%,height=25%]
