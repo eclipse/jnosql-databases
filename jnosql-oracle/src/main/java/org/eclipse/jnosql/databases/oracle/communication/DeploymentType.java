@@ -44,7 +44,7 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             if (user != null && password != null) {
                return Optional.of(new StoreAccessTokenProvider(user, password.toCharArray()));
             } else {
-                return Optional.empty();
+                return Optional.of(new StoreAccessTokenProvider());
             }
 
         }
