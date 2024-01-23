@@ -37,18 +37,13 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
     public NoSQLHandleConfiguration apply(Settings settings) {
         String host = settings.get(List.of(OracleNoSQLConfigurations.HOST.get(), Configurations.HOST.get()))
                 .map(Object::toString).orElse(DEFAULT_HOST);
-        String user = settings.get(List.of(OracleNoSQLConfigurations.USER.get(), Configurations.USER.get()))
-                .map(Object::toString).orElse(null);
-        String password = settings.get(List.of(OracleNoSQLConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
-                .map(Object::toString).orElse(null);
 
+
+        DeploymentType deploymentType = settings.get(OracleNoSQLConfigurations.DEPLOYMENT.get())
+                .map(Object::toString).map(DeploymentType::valueOf).orElse(DeploymentType.ON_PREMISES);
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
 
-        if (user != null && password != null) {
-            config.setAuthorizationProvider(new StoreAccessTokenProvider(user, password.toCharArray()));
-        } else {
-            config.setAuthorizationProvider(new StoreAccessTokenProvider());
-        }
+        deploymentType.apply(settings).ifPresent(config::setAuthorizationProvider);
         int readLimit = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_READ_LIMITS, DEFAULT_TABLE_READ_LIMITS);
         int writeLimit = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_WRITE_LIMITS, DEFAULT_TABLE_WRITE_LIMITS);
         int storageGB = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_STORAGE_GB, DEFAULT_TABLE_STORAGE_GB);
