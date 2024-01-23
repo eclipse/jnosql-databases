@@ -91,6 +91,9 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
      */
     public static DeploymentType parse(String value) {
         try {
+            if(value == null) {
+                return DeploymentType.ON_PREMISES;
+            }
             return DeploymentType.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
             return DeploymentType.ON_PREMISES;

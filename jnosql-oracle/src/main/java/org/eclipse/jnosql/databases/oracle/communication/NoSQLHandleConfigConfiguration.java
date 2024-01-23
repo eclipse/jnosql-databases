@@ -39,7 +39,7 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
 
 
         DeploymentType deploymentType = settings.get(OracleNoSQLConfigurations.DEPLOYMENT.get())
-                .map(Object::toString).map(DeploymentType::valueOf).orElse(DeploymentType.ON_PREMISES);
+                .map(Object::toString).map(DeploymentType::parse).orElse(DeploymentType.ON_PREMISES);
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
 
         deploymentType.apply(settings).ifPresent(config::setAuthorizationProvider);
