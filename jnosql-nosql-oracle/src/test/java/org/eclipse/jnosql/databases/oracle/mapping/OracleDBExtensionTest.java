@@ -12,14 +12,14 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.databases.arangodb.mapping;
+package org.eclipse.jnosql.databases.oracle.mapping;
 
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
-import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -33,12 +33,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @AddPackages(MockProducer.class)
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class, KeyValueExtension.class,
-        DocumentExtension.class, ArangoDBExtension.class})
+        DocumentExtension.class, OracleExtension.class})
 @ExtendWith(MockitoExtension.class)
-public class ArangoDBExtensionTest {
+public class OracleDBExtensionTest {
 
     @Inject
-    private PersonRepository repository;
+    private PersonNoSQLRepository repository;
 
     @Test
     public void shouldSave() {

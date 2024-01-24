@@ -174,7 +174,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
 
             if (!n1QLQuery.hasOnlyIds()) {
                 QueryResult result;
-                if (n1QLQuery.hasParameter()) {
+                if (n1QLQuery.isParameterEmpty()) {
                     result = cluster.query(n1QLQuery.query());
                 } else {
                     result = cluster.query(n1QLQuery.query(), QueryOptions

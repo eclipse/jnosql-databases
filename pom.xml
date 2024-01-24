@@ -59,6 +59,7 @@
         <module>jnosql-redis</module>
         <module>jnosql-riak</module>
         <module>jnosql-solr</module>
+        <module>jnosql-nosql-oracle</module>
     </modules>
 
     <dependencyManagement>

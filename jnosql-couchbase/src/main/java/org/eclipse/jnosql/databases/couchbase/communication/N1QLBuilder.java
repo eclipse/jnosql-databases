@@ -157,7 +157,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
             condition(documentCondition, query, params, ids);
             if(index == 0){
                  n1ql.append(" ").append(query);
-            } else {
+            } else if(!query.isEmpty()) {
                  n1ql.append(condition).append(query);
             }
             index++;

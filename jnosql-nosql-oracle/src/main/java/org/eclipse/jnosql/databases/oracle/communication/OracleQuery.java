@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 Contributors to the Eclipse Foundation
+ *  Copyright (c) 2024 Contributors to the Eclipse Foundation
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
  *   and Apache License v2.0 which accompanies this distribution.
@@ -12,14 +12,14 @@
  *
  *   Otavio Santana
  */
-package org.eclipse.jnosql.databases.couchbase.communication;
+package org.eclipse.jnosql.databases.oracle.communication;
 
-import com.couchbase.client.java.json.JsonObject;
+import oracle.nosql.driver.values.FieldValue;
 
 import java.util.Collections;
 import java.util.List;
 
-record N1QLQuery(String query, JsonObject params, List<String> ids) {
+record OracleQuery(String query, List<FieldValue> params, List<String> ids) {
 
     @Override
     public List<String> ids() {
@@ -40,14 +40,14 @@ record N1QLQuery(String query, JsonObject params, List<String> ids) {
 
     @Override
     public String toString() {
-        return "N1QLQuery{" +
+        return "OracleQuery{" +
                 "query='" + query + '\'' +
                 ", params=" + params +
                 ", ids=" + ids +
                 '}';
     }
 
-    static N1QLQuery of(StringBuilder query, JsonObject params, List<String> ids) {
-        return new N1QLQuery(query.toString(), params, ids);
+    static OracleQuery of(StringBuilder query, List<FieldValue> params, List<String> ids) {
+        return new OracleQuery(query.toString(), params, ids);
     }
 }
