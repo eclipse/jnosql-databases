@@ -36,7 +36,7 @@ record TableCreationConfiguration(int readLimit,
 
     public void createTable(String tableName, NoSQLHandle serviceHandle){
         String table = String.format(CREATE_TABLE, tableName);
-        LOGGER.info("starting the bucket manager, creating a table Running query: " + table);
+        LOGGER.fine("starting the bucket manager, creating a table Running query: " + table);
         TableRequest tableRequest = new TableRequest().setStatement(table);
         tableRequest.setTableLimits(new TableLimits(this.readLimit, this.writeLimit, this.storageGB));
         TableResult tableResult = serviceHandle.tableRequest(tableRequest);
