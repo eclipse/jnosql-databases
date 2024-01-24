@@ -63,5 +63,10 @@ import java.lang.annotation.Target;
 public @interface SQL {
 
 
+    /**
+     * The SQL query to associate with the annotated method or element.
+     *
+     * @return The SQL query to associate with the annotated method or element.
+     */
     String value();
 }
