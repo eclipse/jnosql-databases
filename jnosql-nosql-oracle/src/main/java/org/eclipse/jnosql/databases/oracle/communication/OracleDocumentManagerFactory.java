@@ -35,7 +35,6 @@ public final class OracleDocumentManagerFactory implements DocumentManagerFactor
 
     @Override
     public void close() {
-        this.configuration.serviceHandle().close();
     }
 
     @Override

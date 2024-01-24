@@ -136,7 +136,7 @@ final class OracleNoSQLBucketManager implements BucketManager {
 
     @Override
     public void close() {
-
+        this.serviceHandle.close();
     }
 
     private <K, V> void putImplementation(K key, V value) {

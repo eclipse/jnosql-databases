@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import oracle.nosql.driver.NoSQLHandleConfig;
-import oracle.nosql.driver.NoSQLHandleFactory;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 
@@ -49,6 +48,6 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
         int waitMillis = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_WAIT_MILLIS, DEFAULT_TABLE_WAIT_MILLIS);
         int delayMillis = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_DELAY_MILLIS, DEFAULT_TABLE_DELAY_MILLIS);
         var tableLimits = new TableCreationConfiguration(readLimit, writeLimit, storageGB, waitMillis, delayMillis);
-        return new NoSQLHandleConfiguration(NoSQLHandleFactory.createNoSQLHandle(config), tableLimits);
+        return new NoSQLHandleConfiguration(config, tableLimits);
     }
 }

@@ -236,7 +236,7 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
 
     @Override
     public void close() {
-
+        this.serviceHandle.close();
     }
 
     @Override

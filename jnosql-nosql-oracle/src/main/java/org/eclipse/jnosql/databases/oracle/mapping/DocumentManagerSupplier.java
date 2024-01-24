@@ -37,6 +37,7 @@ class DocumentManagerSupplier implements Supplier<OracleNoSQLDocumentManager> {
     @Override
     @Produces
     @Typed(OracleNoSQLDocumentManager.class)
+    @ApplicationScoped
     public OracleNoSQLDocumentManager get() {
         Settings settings = MicroProfileSettings.INSTANCE;
         OracleDocumentConfiguration configuration = new OracleDocumentConfiguration();

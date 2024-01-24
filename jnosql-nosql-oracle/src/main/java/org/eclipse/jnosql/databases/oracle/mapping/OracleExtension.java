@@ -33,7 +33,7 @@ public class OracleExtension implements Extension {
 
         LOGGER.info("Starting the onAfterBeanDiscovery with elements number: " + crudTypes.size());
 
-        crudTypes.forEach(type -> afterBeanDiscovery.addBean(new OracleRepositoryBean(type)));
+        crudTypes.forEach(type -> afterBeanDiscovery.addBean(new OracleRepositoryBean<>(type)));
 
         LOGGER.info("Finished the onAfterBeanDiscovery");
     }
