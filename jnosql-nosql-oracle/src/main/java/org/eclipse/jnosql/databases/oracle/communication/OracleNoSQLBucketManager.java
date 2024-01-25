@@ -20,6 +20,7 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
+import oracle.nosql.driver.TimeToLive;
 import oracle.nosql.driver.ops.DeleteRequest;
 import oracle.nosql.driver.ops.GetRequest;
 import oracle.nosql.driver.ops.GetResult;
@@ -36,6 +37,7 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -65,18 +67,20 @@ final class OracleNoSQLBucketManager implements BucketManager {
     public <K, V> void put(K key, V value) {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
-        putImplementation(key, value);
+        putImplementation(key, value, TimeToLive.DO_NOT_EXPIRE);
     }
 
     @Override
     public void put(KeyValueEntity keyValueEntity) {
         Objects.requireNonNull(keyValueEntity, "keyValueEntity is required");
-        putImplementation(keyValueEntity.key(), keyValueEntity.value());
+        putImplementation(keyValueEntity.key(), keyValueEntity.value(), TimeToLive.DO_NOT_EXPIRE);
     }
 
     @Override
-    public void put(KeyValueEntity keyValueEntity, Duration duration) {
-        throw new UnsupportedOperationException("Oracle NoSQL does not support TTL");
+    public void put(KeyValueEntity entity, Duration duration) {
+        Objects.requireNonNull(entity, "keyValueEntity is required");
+        Objects.requireNonNull(duration, "duration is required");
+        putImplementation(entity.key(), entity.value(), TimeToLive.ofHours(duration.toHours()));
     }
 
     @Override
@@ -86,8 +90,9 @@ final class OracleNoSQLBucketManager implements BucketManager {
     }
 
     @Override
-    public void put(Iterable<KeyValueEntity> iterable, Duration duration) {
-        throw new UnsupportedOperationException("Oracle NoSQL does not support TTL");
+    public void put(Iterable<KeyValueEntity> entities, Duration duration) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(e -> put(e, duration));
     }
 
     @Override
@@ -139,12 +144,13 @@ final class OracleNoSQLBucketManager implements BucketManager {
         this.serviceHandle.close();
     }
 
-    private <K, V> void putImplementation(K key, V value) {
+    private <K, V> void putImplementation(K key, V value, TimeToLive ttl) {
         MapValue mapValue = new MapValue().put("id", key.toString());
         MapValue contentVal = mapValue.putFromJson("content", jsonB.toJson(value),
                 OPTIONS);
         PutRequest putRequest = new PutRequest()
                 .setValue(contentVal)
+                .setTTL(ttl)
                 .setTableName(name());
         serviceHandle.put(putRequest);
     }
