@@ -28,7 +28,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class DynamoDBDocumentManagerFactoryTest {
+class DefaultDynamoDBDocumentManagerFactoryTest {
 
     private DocumentManagerFactory documentManagerFactory;
 

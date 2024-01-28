@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toList;
 class DocumentEntityConverter {
 
     static final String ENTITY = "@entity";
-    static final String ID = "_id";
+    static final String ID = "id";
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private DocumentEntityConverter() {

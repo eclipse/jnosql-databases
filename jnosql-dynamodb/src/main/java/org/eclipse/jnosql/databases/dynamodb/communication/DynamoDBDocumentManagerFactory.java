@@ -34,7 +34,7 @@ public class DynamoDBDocumentManagerFactory implements DocumentManagerFactory {
 
     @Override
     public DocumentManager apply(String database) {
-        return new DynamoDBDocumentManager(database, dynamoDB, settings);
+        return new DefaultDynamoDBDocumentManager(database, dynamoDB, settings);
     }
 
     @Override

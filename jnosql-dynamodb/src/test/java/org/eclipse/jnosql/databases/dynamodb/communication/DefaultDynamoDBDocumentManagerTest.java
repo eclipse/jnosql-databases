@@ -44,13 +44,16 @@ import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
+import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.ID;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityGenerator.createRandomEntity;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBTestUtils.CONFIG;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class DynamoDBDocumentManagerTest {
+class DefaultDynamoDBDocumentManagerTest {
 
     private static Faker faker = new Faker();
 
@@ -164,7 +167,7 @@ class DynamoDBDocumentManagerTest {
 
                 persistedEntities.forEach(entity -> {
                     var _entityType = entity.name();
-                    var id = entity.find("_id", String.class).orElseThrow();
+                    var id = entity.find(ID, String.class).orElseThrow();
                     var persistedItem = getItem(_entityType, id);
                     softly.assertThat(persistedItem)
                             .as("all items of the list of DocumentEntity should be stored on dynamodb database. the entity %s not found"
@@ -297,6 +300,154 @@ class DynamoDBDocumentManagerTest {
     }
 
     @Test
+    void shouldDelete() {
+        try (var documentManager = getDocumentManagerCanCreateTables()) {
+
+            DocumentEntity entity1, entity2, entity3, entity4;
+
+            var entities = List.of(
+                    entity1 = createRandomEntity(),
+                    entity2 = createRandomEntity(),
+                    entity3 = createRandomEntity(),
+                    entity4 = createRandomEntity());
+
+            documentManager.insert(entities);
+
+            var entityType = entity1.name();
+            var id1 = entity1.find(ID, String.class).orElseThrow();
+            var id2 = entity2.find(ID, String.class).orElseThrow();
+            var id3 = entity3.find(ID, String.class).orElseThrow();
+            var id4 = entity4.find(ID, String.class).orElseThrow();
+
+            assertSoftly(softly -> {
+
+                documentManager.delete(delete().
+                        from(entityType)
+                        .where(ID).eq(id1)
+                        .build()
+                );
+
+                softly.assertThat(documentManager.count(entityType))
+                        .as("the returned count number of items from a given table name is incorrect")
+                        .isEqualTo(entities.size() - 1L);
+
+                softly.assertThat(getItem(entityType, id1))
+                        .as("the item should be deleted")
+                        .hasSize(0);
+
+                documentManager.delete(delete().
+                        from(entityType)
+                        .where(ID).in(List.of(id2, id3))
+                        .build()
+                );
+
+                softly.assertThat(documentManager.count(entityType))
+                        .as("the returned count number of items from a given table name is incorrect")
+                        .isEqualTo(entities.size() - 3L);
+
+                softly.assertThat(getItem(entityType, id2))
+                        .as("the item should be deleted")
+                        .hasSize(0);
+
+                softly.assertThat(getItem(entityType, id3))
+                        .as("the item should be deleted")
+                        .hasSize(0);
+
+
+                documentManager.delete(delete().
+                        from(entityType)
+                        .build()
+                );
+
+                softly.assertThat(getItem(entityType, id4))
+                        .as("the item should be deleted")
+                        .hasSize(0);
+
+                softly.assertThat(documentManager.count(entityType))
+                        .as("the returned count number of items from a given table name is incorrect")
+                        .isEqualTo(0);
+
+
+            });
+        }
+    }
+
+    @Test
     void shouldCountByDocumentQuery() {
+
+        try (var documentManager = getDocumentManagerCanCreateTables()) {
+
+            DocumentEntity entity1, entity2, entity3;
+
+            var entities = List.of(entity1 = createRandomEntity(), entity2 = createRandomEntity(), entity3 = createRandomEntity());
+
+            documentManager.insert(entities);
+
+            assertSoftly(softly -> {
+
+                var documentQuery1 = select()
+                        .from(entity1.name())
+                        .where(ID).eq(entity1.find(ID, String.class).orElseThrow())
+                        .build();
+
+                softly.assertThat(documentManager.count(documentQuery1))
+                        .as("the returned count number of items from a given DocumentQuery is incorrect")
+                        .isEqualTo(1L);
+
+
+                var documentQuery2 = select()
+                        .from(entity1.name())
+                        .where(ID).eq(entity1.find(ID, String.class).orElseThrow())
+                        .or(ID).eq(entity2.find(ID, String.class).orElseThrow())
+                        .build();
+
+                softly.assertThat(documentManager.count(documentQuery2))
+                        .as("the returned count number of items from a given DocumentQuery is incorrect")
+                        .isEqualTo(2L);
+
+                var documentQuery3 = select()
+                        .from(entity1.name())
+                        .where(ID).eq(entity1.find(ID, String.class).orElseThrow())
+                        .or(ID).eq(entity2.find(ID, String.class).orElseThrow())
+                        .or(ID).eq(entity3.find(ID, String.class).orElseThrow())
+                        .build();
+
+                softly.assertThat(documentManager.count(documentQuery3))
+                        .as("the returned count number of items from a given DocumentQuery is incorrect")
+                        .isEqualTo(3L);
+
+            });
+        }
+    }
+
+    @Test
+    void shouldExecutePartiQL() {
+
+        try (var documentManager = getDocumentManagerCanCreateTables()) {
+
+            DocumentEntity entity1;
+            var entities = List.of(entity1 = createRandomEntity(), createRandomEntity(), createRandomEntity());
+            documentManager.insert(entities);
+
+            if (documentManager instanceof DynamoDBDocumentManager partiManager) {
+
+                assertSoftly(softly -> {
+                    softly.assertThat(partiManager.partiQL("SELECT * FROM " + entity1.name()))
+                            .as("the returned count number of items from a given DocumentQuery is incorrect")
+                            .hasSize(3);
+
+                });
+
+                assertSoftly(softly -> {
+                    softly.assertThat(partiManager.partiQL("""
+                                            SELECT * FROM %s WHERE %s = ?
+                                            """.formatted(entity1.name(), ID),
+                                    entity1.find(ID).orElseThrow().get()))
+                            .as("the returned count number of items from a given DocumentQuery is incorrect")
+                            .hasSize(1);
+
+                });
+            }
+        }
     }
 }

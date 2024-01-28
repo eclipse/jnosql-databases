@@ -50,13 +50,11 @@ final class DocumentEntityGenerator {
     @NotNull
     private static DocumentEntity createRandomEntityWithSubDocuments(String collectionName, int levels) {
         Map<String, Object> map = new HashMap<>();
-        map.put("_id", UUID.randomUUID().toString());
+        map.put(DocumentEntityConverter.ID, UUID.randomUUID().toString());
         map.put("name", faker.name().firstName());
         map.put("hoje", LocalDate.now());
         map.put("agora", LocalDateTime.now());
-        map.put("integerNumber", faker.random().nextInt(1, 10));
-        map.put("floatNumber", (float) faker.random().nextDouble(1.0, 10.0));
-        map.put("doubleNumber", faker.random().nextDouble(1.0, 10.0));
+        map.put("guessingNumber", faker.random().nextInt(1, 10));
         map.put("bigdecimal", BigDecimal.valueOf(10.10));
         map.put("city", faker.address().city());
         map.put("texts", List.of("A", "B", "C"));
