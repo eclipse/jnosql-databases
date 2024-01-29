@@ -35,7 +35,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
 
 class DynamoDBConverter {
 
