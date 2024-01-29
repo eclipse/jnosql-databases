@@ -34,7 +34,7 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
      * Represents an "On-premises" deployment where software solutions are deployed and managed
      * within an organization's physical premises or data centers.
      */
-    ON_PREMISES{
+    ON_PREMISES {
         @Override
         public Optional<AuthorizationProvider> apply(Settings settings) {
             String user = settings.get(List.of(OracleNoSQLConfigurations.USER.get(), Configurations.USER.get()))
@@ -54,7 +54,7 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
      * Represents a "Cloud" deployment where software solutions are delivered and managed
      * over the internet (the cloud) by Oracle cloud provider.
      */
-    CLOUD{
+    CLOUD {
         @Override
         public Optional<AuthorizationProvider> apply(Settings settings) {
 

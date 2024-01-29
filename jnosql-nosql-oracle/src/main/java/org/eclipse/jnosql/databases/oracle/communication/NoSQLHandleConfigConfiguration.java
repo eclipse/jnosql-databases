@@ -33,6 +33,7 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
     private static final int DEFAULT_TABLE_DELAY_MILLIS = 500;
     @Override
     public NoSQLHandleConfiguration apply(Settings settings) {
+
         String host = settings.get(List.of(OracleNoSQLConfigurations.HOST.get(), Configurations.HOST.get()))
                 .map(Object::toString).orElse(DEFAULT_HOST);
 
@@ -48,6 +49,10 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
         int waitMillis = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_WAIT_MILLIS, DEFAULT_TABLE_WAIT_MILLIS);
         int delayMillis = settings.getOrDefault(OracleNoSQLConfigurations.TABLE_DELAY_MILLIS, DEFAULT_TABLE_DELAY_MILLIS);
         var tableLimits = new TableCreationConfiguration(readLimit, writeLimit, storageGB, waitMillis, delayMillis);
+        settings.get(OracleNoSQLConfigurations.NAMESPACE.get())
+                .map(Object::toString).ifPresent(config::setDefaultNamespace);
+        settings.get(OracleNoSQLConfigurations.COMPARTMENT.get())
+                .map(Object::toString).ifPresent(config::setDefaultCompartment);
         return new NoSQLHandleConfiguration(config, tableLimits);
     }
 }
