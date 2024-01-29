@@ -48,7 +48,7 @@ import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.dele
 import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.ID;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.ID;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityGenerator.createRandomEntity;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBTestUtils.CONFIG;
 
@@ -143,7 +143,7 @@ class DefaultDynamoDBDocumentManagerTest {
             assertSoftly(softly -> {
                 DocumentEntity entity = createRandomEntity();
                 var _entityType = entity.name();
-                var id = entity.find(DocumentEntityConverter.ID, String.class).orElseThrow();
+                var id = entity.find(DynamoDBConverter.ID, String.class).orElseThrow();
                 var persistedEntity = documentManager.insert(entity);
 
                 softly.assertThat(persistedEntity)
@@ -204,7 +204,7 @@ class DefaultDynamoDBDocumentManagerTest {
             documentManager.insert(List.of(entity1, entity2, entity3));
 
             final BiConsumer<SoftAssertions, DocumentEntity> assertions = (softly, updatedEntity) -> {
-                Map<String, AttributeValue> item = getItem(updatedEntity.name(), updatedEntity.find(DocumentEntityConverter.ID, String.class).orElseThrow());
+                Map<String, AttributeValue> item = getItem(updatedEntity.name(), updatedEntity.find(DynamoDBConverter.ID, String.class).orElseThrow());
                 softly.assertThat(item.get("name"))
                         .as("the name attribute should exists in the returned item from dynamodb")
                         .isNotNull();
@@ -245,7 +245,7 @@ class DefaultDynamoDBDocumentManagerTest {
                         .tableName(_entityType)
                         .key(Map.of(
                                 entityNameResolver.apply(_entityType), AttributeValue.builder().s(_entityType).build(),
-                                DocumentEntityConverter.ID, AttributeValue.builder().s(id).build()
+                                DynamoDBConverter.ID, AttributeValue.builder().s(id).build()
                         ))
                         .build())
                 .item();

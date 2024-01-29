@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.function.UnaryOperator;
 
-enum DynamoDBTestUtils {
+public enum DynamoDBTestUtils {
 
     CONFIG;
 
@@ -63,7 +63,7 @@ enum DynamoDBTestUtils {
         return getDocumentManagerFactory(settings).apply(database);
     }
 
-    Settings getSettings() {
+    public Settings getSettings() {
         dynamodb.start();
         String dynamoDBHost = getDynamoDBHost(dynamodb.getHost(), dynamodb.getFirstMappedPort());
         return getSettings(dynamoDBHost);
@@ -75,7 +75,7 @@ enum DynamoDBTestUtils {
                 .build();
     }
 
-    Settings customSetting(SettingsBuilder builder) {
+    public Settings customSetting(SettingsBuilder builder) {
         var defaultSetting = getSettings();
         var customSetting = builder.build();
         return Settings.builder()
@@ -85,7 +85,7 @@ enum DynamoDBTestUtils {
     }
 
     @NotNull
-    private static SettingsBuilder getSettingsBuilder(UnaryOperator<SettingsBuilder> builder) {
+    public static SettingsBuilder getSettingsBuilder(UnaryOperator<SettingsBuilder> builder) {
         return builder.apply(Settings.builder())
                 .put(MappingConfigurations.DOCUMENT_DATABASE, "test")
                 .put(DynamoDBConfigurations.AWS_ACCESSKEY, System.getProperty("AWS_ACCESS_KEY_ID", "AKIAIOSFODNN7EXAMPLE"))
@@ -93,6 +93,12 @@ enum DynamoDBTestUtils {
                 .put(DynamoDBConfigurations.PROFILE, System.getProperty("AWS_PROFILE", "default"))
                 .put(DynamoDBConfigurations.REGION, "us-west-2")
                 .put(DynamoDBConfigurations.ENTITY_PARTITION_KEY, "entityType");
+    }
+
+    public void setupSystemProperties(SettingsBuilder builder) {
+        Settings settings = customSetting(builder);
+        System.getProperties().putAll(settings.toMap());
+        System.out.println(System.getProperties());
     }
 
     @NotNull

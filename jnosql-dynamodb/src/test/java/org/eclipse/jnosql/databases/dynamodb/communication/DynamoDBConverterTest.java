@@ -34,7 +34,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class DocumentEntityConverterTest {
+class DynamoDBConverterTest {
 
     static final Faker faker = new Faker();
 
@@ -57,13 +57,13 @@ class DocumentEntityConverterTest {
                             Document.of("phones", List.of(faker.name().firstName(), faker.name().firstName(), faker.name().firstName()))
                     ));
 
-            var item = DocumentEntityConverter.toItem(entityNameResolver, entity);
+            var item = DynamoDBConverter.toItem(entityNameResolver, entity);
 
-            var entityFromItem = DocumentEntityConverter.toDocumentEntity(entityNameResolver, item);
+            var entityFromItem = DynamoDBConverter.toDocumentEntity(entityNameResolver, item);
 
-            var expected = Json.createReader(new StringReader(JSONB.toJson(DocumentEntityConverter.getMap(entityNameResolver, entity)))).readObject();
+            var expected = Json.createReader(new StringReader(JSONB.toJson(DynamoDBConverter.getMap(entityNameResolver, entity)))).readObject();
 
-            var actual = Json.createReader(new StringReader(JSONB.toJson(DocumentEntityConverter.getMap(entityNameResolver, entityFromItem)))).readObject();
+            var actual = Json.createReader(new StringReader(JSONB.toJson(DynamoDBConverter.getMap(entityNameResolver, entityFromItem)))).readObject();
 
             softly.assertThat(actual).as("cannot convert a simple DocumentEntity")
                     .isEqualTo(expected);

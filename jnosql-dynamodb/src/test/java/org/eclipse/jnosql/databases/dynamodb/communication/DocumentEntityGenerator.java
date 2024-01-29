@@ -50,7 +50,7 @@ final class DocumentEntityGenerator {
     @NotNull
     private static DocumentEntity createRandomEntityWithSubDocuments(String collectionName, int levels) {
         Map<String, Object> map = new HashMap<>();
-        map.put(DocumentEntityConverter.ID, UUID.randomUUID().toString());
+        map.put(DynamoDBConverter.ID, UUID.randomUUID().toString());
         map.put("name", faker.name().firstName());
         map.put("hoje", LocalDate.now());
         map.put("agora", LocalDateTime.now());
