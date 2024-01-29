@@ -52,10 +52,9 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
     },
 
     /**
-     * Represents a "Cloud" deployment where software solutions are delivered and managed
-     * over the internet (the cloud) by Oracle cloud provider.
+     * Represents a "Cloud" deployment using API key for authentication and authorization.
      */
-    CLOUD {
+    CLOUD_API_KEY {
         @Override
         public Optional<AuthorizationProvider> apply(Settings settings) {
 
