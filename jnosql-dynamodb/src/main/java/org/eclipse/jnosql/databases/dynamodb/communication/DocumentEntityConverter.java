@@ -15,10 +15,8 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
@@ -43,7 +41,6 @@ class DocumentEntityConverter {
 
     static final String ENTITY = "@entity";
     static final String ID = "id";
-    private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private DocumentEntityConverter() {
     }
