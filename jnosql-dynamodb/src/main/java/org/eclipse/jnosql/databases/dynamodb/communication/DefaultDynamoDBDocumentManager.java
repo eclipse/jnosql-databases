@@ -339,6 +339,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
                     .executeStatement(ExecuteStatementRequest.builder()
                             .statement(query)
                             .parameters(parameters)
+                            .nextToken(executeStatementResponse.nextToken())
                             .build());
             executeStatementResponse.items().forEach(item -> result.add(toDocumentEntity(this::resolveEntityNameAttributeName, item)));
         }
