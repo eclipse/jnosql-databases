@@ -20,6 +20,7 @@ import oracle.nosql.driver.kv.StoreAccessTokenProvider;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -69,13 +70,39 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             if(user != null && password.length > 0 && tenantId != null && fingerprint != null && privateKey != null) {
                 return Optional.of(new SignatureProvider(tenantId, user, fingerprint, privateKey, password));
             }
-
             try {
                 return Optional.of(new SignatureProvider());
             } catch (IOException e) {
                 throw new OracleNoSQLException("Error to load configuration to Oracle Cloud at Oracle NoSQL", e);
             }
 
+        }
+    },
+    /**
+     * Represents a "Cloud" deployment using resource principal for authentication and authorization.
+     */
+    CLOUD_INSTANCE_PRINCIPAL {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+            return Optional.of(SignatureProvider.createWithInstancePrincipal());
+        }
+    },
+    /**
+     * Represents a "Cloud" deployment using resource principal for authentication and authorization.
+     */
+    CLOUD_RESOURCE_PRINCIPAL {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+            return Optional.of(SignatureProvider.createWithResourcePrincipal());
+        }
+    },
+    /**
+     * Represents a "Cloud" deployment using instance principal for delegation with an OBO token.
+     */
+    CLOUD_INSTANCE_OBO_USER {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+            return Optional.of(SignatureProvider.createWithInstancePrincipalForDelegation(new File(System.getenv("OCI_obo_token_path"))));
         }
     };
 
