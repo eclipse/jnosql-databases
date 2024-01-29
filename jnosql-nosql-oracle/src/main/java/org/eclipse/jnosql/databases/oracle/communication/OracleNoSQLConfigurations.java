@@ -108,7 +108,15 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
      * Specifies the private key for authentication with Oracle NoSQL database for Cloud deployment.
      * Relevant for Cloud deployment only.
      */
-    PRIVATE_KEY("jnosql.oracle.nosql.private.key");
+    PRIVATE_KEY("jnosql.oracle.nosql.private.key"),
+    /**
+     * Define the compartment name in Oracle Cloud Infrastructure
+     */
+    COMPARTMENT("jnosql.oracle.nosql.compartment"),
+    /**
+     * Define the compartment name in Oracle NoSQL on-premise.
+     */
+    NAMESPACE("jnosql.oracle.nosql.compartment");
 
 
     private final String configuration;
