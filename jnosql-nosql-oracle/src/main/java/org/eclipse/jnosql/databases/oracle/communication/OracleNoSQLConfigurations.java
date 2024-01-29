@@ -116,7 +116,7 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
     /**
      * Define the compartment name in Oracle NoSQL on-premise.
      */
-    NAMESPACE("jnosql.oracle.nosql.compartment");
+    NAMESPACE("jnosql.oracle.nosql.namespace");
 
 
     private final String configuration;
