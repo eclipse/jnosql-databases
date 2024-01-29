@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toAttributeValue;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toAttributeValue;
 
 abstract class DynamoDBQueryBuilder implements Supplier<DynamoDBQuery> {
 

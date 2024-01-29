@@ -37,12 +37,12 @@ import java.util.stream.StreamSupport;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
-class DocumentEntityConverter {
+class DynamoDBConverter {
 
     static final String ENTITY = "@entity";
     static final String ID = "id";
 
-    private DocumentEntityConverter() {
+    private DynamoDBConverter() {
     }
 
     private static Object convertValue(Object value) {
@@ -61,7 +61,7 @@ class DocumentEntityConverter {
                 case BS:
                     return attributeValue.bs().stream().map(SdkBytes::asByteArray).toList();
                 case L:
-                    return attributeValue.l().stream().map(DocumentEntityConverter::convertValue).toList();
+                    return attributeValue.l().stream().map(DynamoDBConverter::convertValue).toList();
                 case M:
                     return attributeValue.m().entrySet().stream().map(e -> Document.of(e.getKey(), convertValue(e.getValue()))).toList();
                 case NUL:
@@ -88,18 +88,18 @@ class DocumentEntityConverter {
         return Optional.ofNullable(nameResolver.apply(ENTITY)).orElse(ENTITY);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
         return d -> {
             Object value = ValueUtil.convert(d.value());
-            if (value instanceof Document) {
-                Document subDocument = Document.class.cast(value);
+            if (value instanceof Document subDocument) {
                 jsonObject.put(d.name(), singletonMap(subDocument.name(), subDocument.get()));
             } else if (isSudDocument(value)) {
                 Map<String, Object> subDocument = getMap(value);
                 jsonObject.put(d.name(), subDocument);
             } else if (isSudDocumentList(value)) {
-                jsonObject.put(d.name(), StreamSupport.stream(Iterable.class.cast(value).spliterator(), false)
-                        .map(DocumentEntityConverter::getMap).collect(toList()));
+                jsonObject.put(d.name(), StreamSupport.stream(((Iterable) value).spliterator(), false)
+                        .map(DynamoDBConverter::getMap).toList());
             } else {
                 jsonObject.put(d.name(), value);
             }
@@ -147,7 +147,7 @@ class DocumentEntityConverter {
             return AttributeValue.builder().bool(bool).build();
         if (value instanceof List<?> list)
             return AttributeValue.builder().l(list.stream().filter(Objects::nonNull)
-                    .map(DocumentEntityConverter::toAttributeValue).toList()).build();
+                    .map(DynamoDBConverter::toAttributeValue).toList()).build();
         if (value instanceof Map<?, ?> mapValue) {
             HashMap<String, AttributeValue> values = new HashMap<>();
             mapValue.forEach((k, v) -> values.put(String.valueOf(k), toAttributeValue(v)));

@@ -58,11 +58,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.entityAttributeName;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toAttributeValue;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toDocumentEntity;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toItem;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityConverter.toItemUpdate;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.entityAttributeName;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toAttributeValue;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toDocumentEntity;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toItem;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toItemUpdate;
 
 public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
 
@@ -144,10 +144,10 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
         try (var waiter = dynamoDbClient().waiter()) {
             dynamoDbClient().createTable(CreateTableRequest.builder()
                     .tableName(tableName)
-                    .keySchema(defaultKeySchemaFor(tableName))
-                    .attributeDefinitions(defaultAttributeDefinitionsFor(tableName))
-                    .provisionedThroughput(defaultProvisionedThroughputFor(tableName))
-                    .streamSpecification(defaultStreamSpecificationFor(tableName))
+                    .keySchema(defaultKeySchemaFor())
+                    .attributeDefinitions(defaultAttributeDefinitionsFor())
+                    .provisionedThroughput(defaultProvisionedThroughputFor())
+                    .streamSpecification(defaultStreamSpecificationFor())
                     .build());
 
             var tableRequest = DescribeTableRequest.builder().tableName(tableName).build();
@@ -156,25 +156,25 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
         }
     }
 
-    private StreamSpecification defaultStreamSpecificationFor(String tableName) {
+    private StreamSpecification defaultStreamSpecificationFor() {
         return null;
     }
 
-    private ProvisionedThroughput defaultProvisionedThroughputFor(String tableName) {
+    private ProvisionedThroughput defaultProvisionedThroughputFor() {
         return DynamoTableUtils.createProvisionedThroughput(null, null);
     }
 
-    private Collection<AttributeDefinition> defaultAttributeDefinitionsFor(String tableName) {
+    private Collection<AttributeDefinition> defaultAttributeDefinitionsFor() {
         return List.of(
                 AttributeDefinition.builder().attributeName(getEntityAttributeName()).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder().attributeName(DocumentEntityConverter.ID).attributeType(ScalarAttributeType.S).build()
+                AttributeDefinition.builder().attributeName(DynamoDBConverter.ID).attributeType(ScalarAttributeType.S).build()
         );
     }
 
-    private Collection<KeySchemaElement> defaultKeySchemaFor(String tableName) {
+    private Collection<KeySchemaElement> defaultKeySchemaFor() {
         return List.of(
                 KeySchemaElement.builder().attributeName(getEntityAttributeName()).keyType(KeyType.HASH).build(),
-                KeySchemaElement.builder().attributeName(DocumentEntityConverter.ID).keyType(KeyType.RANGE).build()
+                KeySchemaElement.builder().attributeName(DynamoDBConverter.ID).keyType(KeyType.RANGE).build()
         );
     }
 
@@ -320,13 +320,13 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
 
     @Override
     public Stream<DocumentEntity> partiQL(String query) {
-        return partiQL(query, new Object[0]);
+        return partiQL(query,new Object[0]);
     }
 
     @Override
     public Stream<DocumentEntity> partiQL(String query, Object... params) {
         Objects.requireNonNull(query, "query is required");
-        List<AttributeValue> parameters = Stream.of(params).map(DocumentEntityConverter::toAttributeValue).toList();
+        List<AttributeValue> parameters = Stream.of(params).map(DynamoDBConverter::toAttributeValue).toList();
         ExecuteStatementResponse executeStatementResponse = dynamoDbClient()
                 .executeStatement(ExecuteStatementRequest.builder()
                         .statement(query)
