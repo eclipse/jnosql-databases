@@ -68,8 +68,22 @@ class BeerTemplateIntegrationTest {
         Beer beer = Beer.builder()
                 .id(UUID.randomUUID().toString())
                 .data(Map.of("name", "beer"))
+                .comments(List.of("comment1", "comment2"))
                 .crew(List.of(new Crew("Otavio")))
                 .build();
+
+        this.template.insert(beer);
+
+        Optional<Beer> result = this.template.select(Beer.class).where("id").eq(beer.id()).singleResult();
+
+        SoftAssertions.assertSoftly(soft ->{
+            soft.assertThat(result).isPresent();
+            Beer updateBeer = result.orElseThrow();
+            soft.assertThat(updateBeer.id()).isEqualTo(beer.id());
+            soft.assertThat(updateBeer.data()).isEqualTo(beer.data());
+            soft.assertThat(updateBeer.comments()).isEqualTo(beer.comments());
+            soft.assertThat(updateBeer.crew()).isEqualTo(beer.crew());
+        });
 
     }
 
