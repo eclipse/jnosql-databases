@@ -34,6 +34,10 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
     /**
      * Represents an "On-premises" deployment where software solutions are deployed and managed
      * within an organization's physical premises or data centers.
+     * Usage: Choose this deployment type when your software solutions are hosted and managed within your organization's physical infrastructure.
+     * - Authentication: Uses username and password for access.
+     * - Configuration: Requires USER (username) and PASSWORD (password).
+     *   If not provided, it falls back to default values or empty credentials.
      */
     ON_PREMISES {
         @Override
