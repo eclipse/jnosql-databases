@@ -20,6 +20,7 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import oracle.nosql.driver.NoSQLHandle;
+import oracle.nosql.driver.TimeToLive;
 import oracle.nosql.driver.ops.DeleteRequest;
 import oracle.nosql.driver.ops.GetRequest;
 import oracle.nosql.driver.ops.GetResult;
@@ -86,26 +87,17 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     @Override
     public DocumentEntity insert(DocumentEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
-        Map<String, Object> entityMap = new HashMap<>(entity.toMap());
-        entityMap.put(ENTITY, entity.name());
-        String id = entity.find(ID).map(Document::get)
-                .map(Object::toString)
-                .orElseGet(() -> UUID.randomUUID().toString());
-
-        MapValue mapValue = new MapValue().put(ORACLE_ID, id).put(ENTITY, entity.name());
-        MapValue contentVal = mapValue.putFromJson("content", jsonB.toJson(entityMap),
-                OPTIONS);
-        PutRequest putRequest = new PutRequest()
-                .setValue(contentVal)
-                .setTableName(name());
-
-        serviceHandle.put(putRequest);
+        put(entity, TimeToLive.DO_NOT_EXPIRE);
         return entity;
     }
 
+
     @Override
     public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
-       throw new UnsupportedOperationException("Oracle NoSQL database does not support TTL");
+       Objects.requireNonNull(entity, "entity is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        put(entity, TimeToLive.ofHours(ttl.toHours()));
+        return entity;
     }
 
     @Override
@@ -117,7 +109,10 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
 
     @Override
     public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
-        throw new UnsupportedOperationException("Oracle NoSQL database does not support TTL");
+        Objects.requireNonNull(entities, "entities is required");
+        Objects.requireNonNull(ttl, "ttl is required");
+        StreamSupport.stream(entities.spliterator(), false).forEach(d -> insert(d, ttl));
+        return entities;
     }
 
     @Override
@@ -286,4 +281,23 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
         } while (!queryRequest.isDone());
         return entities;
     }
+
+    private void put(DocumentEntity entity, TimeToLive ttl) {
+        Map<String, Object> entityMap = new HashMap<>(entity.toMap());
+        entityMap.put(ENTITY, entity.name());
+        String id = entity.find(ID).map(Document::get)
+                .map(Object::toString)
+                .orElseGet(() -> UUID.randomUUID().toString());
+
+        MapValue mapValue = new MapValue().put(ORACLE_ID, id).put(ENTITY, entity.name());
+        MapValue contentVal = mapValue.putFromJson("content", jsonB.toJson(entityMap),
+                OPTIONS);
+        PutRequest putRequest = new PutRequest()
+                .setValue(contentVal)
+                .setTTL(ttl)
+                .setTableName(name());
+
+        serviceHandle.put(putRequest);
+    }
+
 }

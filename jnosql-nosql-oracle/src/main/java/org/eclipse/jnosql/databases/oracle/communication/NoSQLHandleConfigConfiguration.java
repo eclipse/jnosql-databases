@@ -20,10 +20,13 @@ import org.eclipse.jnosql.communication.Settings;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleConfiguration> {
 
     INSTANCE;
+
+    private static final Logger LOGGER = Logger.getLogger(NoSQLHandleConfigConfiguration.class.getName());
 
     private static final String DEFAULT_HOST = "http://localhost:8080";
     private static final int DEFAULT_TABLE_READ_LIMITS = 25;
@@ -40,6 +43,9 @@ enum NoSQLHandleConfigConfiguration implements Function<Settings, NoSQLHandleCon
 
         DeploymentType deploymentType = settings.get(OracleNoSQLConfigurations.DEPLOYMENT.get())
                 .map(Object::toString).map(DeploymentType::parse).orElse(DeploymentType.ON_PREMISES);
+
+        LOGGER.info("Connecting to Oracle NoSQL database at " + host + " using " + deploymentType + " deployment type");
+
         NoSQLHandleConfig config = new NoSQLHandleConfig(host);
 
         deploymentType.apply(settings).ifPresent(config::setAuthorizationProvider);
