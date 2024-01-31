@@ -103,6 +103,24 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
         public Optional<AuthorizationProvider> apply(Settings settings) {
             return Optional.of(SignatureProvider.createWithInstancePrincipalForDelegation(new File(System.getenv("OCI_obo_token_path"))));
         }
+    },
+    /**
+     * Represents a "Cloud" deployment using resource principal for delegation with an OBO token.
+     */
+    CLOUD_SECURITY_TOKEN {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+
+            String profileName = settings.get(OracleNoSQLConfigurations.PROFILE_NAME, String.class).orElse(null);
+            String configFile = settings.get(OracleNoSQLConfigurations.CONFIG_FILE, String.class).orElse(null);
+            if(profileName != null && configFile != null) {
+                return Optional.of(SignatureProvider.createWithSessionToken(configFile, profileName));
+            } else if(profileName != null) {
+                return Optional.of(SignatureProvider.createWithSessionToken(profileName));
+            } else  {
+                return Optional.of(SignatureProvider.createWithSessionToken());
+            }
+        }
     };
 
 

@@ -116,7 +116,16 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
     /**
      * Define the compartment name in Oracle NoSQL on-premise.
      */
-    NAMESPACE("jnosql.oracle.nosql.namespace");
+    NAMESPACE("jnosql.oracle.nosql.namespace"),
+
+    /**
+     * Define the  profile name used to load session token in Oracle NoSQL cloud.
+     */
+    PROFILE_NAME("jnosql.oracle.nosql.profile.name"),
+    /**
+     * Define the  path of configuration file used to load session token in Oracle NoSQL cloud.
+     */
+    CONFIG_FILE("jnosql.oracle.nosql.config.file");
 
 
     private final String configuration;
