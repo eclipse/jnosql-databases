@@ -1109,6 +1109,10 @@ The API offers the `OracleNoSQLConfigurations` class to programmatically set up 
 
 | `jnosql.oracle.nosql.namespace` | Namespace name in Oracle NoSQL on-premises.
 
+| `jnosql.oracle.nosql.profile.name` | Specifies the profile name used to load session token in Oracle NoSQL cloud.
+
+| `jnosql.oracle.nosql.config.file` | Specifies the path of configuration file used to load session token in Oracle NoSQL cloud.
+
 | `jnosql.oracle.nosql.deployment` | Specifies the deployment type for Oracle NoSQL database. You can choose from the following options:
 
 - `ON_PREMISES`: Represents an on-premises deployment where software solutions are deployed and managed within an organization's physical premises or data centers.
@@ -1120,6 +1124,8 @@ The API offers the `OracleNoSQLConfigurations` class to programmatically set up 
 - `CLOUD_RESOURCE_PRINCIPAL`: Represents a cloud deployment using resource principal for authentication and authorization.
 
 - `CLOUD_INSTANCE_OBO_USER`: Represents a cloud deployment using instance principal for delegation with an OBO token.
+
+- `CLOUD_SECURITY_TOKEN`: Represents a "Cloud" deployment using resource principal for delegation with an OBO token.
 |===
 
 Below are examples using Oracle NoSQL's Document API and Key-Value API with MicroProfile Config.
