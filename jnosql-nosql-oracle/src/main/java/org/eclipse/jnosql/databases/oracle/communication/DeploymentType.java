@@ -20,6 +20,7 @@ import oracle.nosql.driver.kv.StoreAccessTokenProvider;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +34,12 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
     /**
      * Represents an "On-premises" deployment where software solutions are deployed and managed
      * within an organization's physical premises or data centers.
+     * Usage: Choose this deployment type when your software solutions are hosted and managed within your organization's physical infrastructure.
+     * - Authentication: Uses username and password for access.
+     * - Configuration: Requires USER (username) and PASSWORD (password).
+     *   If not provided, it falls back to default values or empty credentials.
      */
-    ON_PREMISES{
+    ON_PREMISES {
         @Override
         public Optional<AuthorizationProvider> apply(Settings settings) {
             String user = settings.get(List.of(OracleNoSQLConfigurations.USER.get(), Configurations.USER.get()))
@@ -51,10 +56,9 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
     },
 
     /**
-     * Represents a "Cloud" deployment where software solutions are delivered and managed
-     * over the internet (the cloud) by Oracle cloud provider.
+     * Represents a "Cloud" deployment using API key for authentication and authorization.
      */
-    CLOUD{
+    CLOUD_API_KEY {
         @Override
         public Optional<AuthorizationProvider> apply(Settings settings) {
 
@@ -69,13 +73,57 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             if(user != null && password.length > 0 && tenantId != null && fingerprint != null && privateKey != null) {
                 return Optional.of(new SignatureProvider(tenantId, user, fingerprint, privateKey, password));
             }
-
             try {
                 return Optional.of(new SignatureProvider());
             } catch (IOException e) {
                 throw new OracleNoSQLException("Error to load configuration to Oracle Cloud at Oracle NoSQL", e);
             }
 
+        }
+    },
+    /**
+     * Represents a "Cloud" deployment using resource principal for authentication and authorization.
+     */
+    CLOUD_INSTANCE_PRINCIPAL {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+            return Optional.of(SignatureProvider.createWithInstancePrincipal());
+        }
+    },
+    /**
+     * Represents a "Cloud" deployment using resource principal for authentication and authorization.
+     */
+    CLOUD_RESOURCE_PRINCIPAL {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+            return Optional.of(SignatureProvider.createWithResourcePrincipal());
+        }
+    },
+    /**
+     * Represents a "Cloud" deployment using instance principal for delegation with an OBO token.
+     */
+    CLOUD_INSTANCE_OBO_USER {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+            return Optional.of(SignatureProvider.createWithInstancePrincipalForDelegation(new File(System.getenv("OCI_obo_token_path"))));
+        }
+    },
+    /**
+     * Represents a "Cloud" deployment using resource principal for delegation with an OBO token.
+     */
+    CLOUD_SECURITY_TOKEN {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+
+            String profileName = settings.get(OracleNoSQLConfigurations.PROFILE_NAME, String.class).orElse(null);
+            String configFile = settings.get(OracleNoSQLConfigurations.CONFIG_FILE, String.class).orElse(null);
+            if(profileName != null && configFile != null) {
+                return Optional.of(SignatureProvider.createWithSessionToken(configFile, profileName));
+            } else if(profileName != null) {
+                return Optional.of(SignatureProvider.createWithSessionToken(profileName));
+            } else  {
+                return Optional.of(SignatureProvider.createWithSessionToken());
+            }
         }
     };
 

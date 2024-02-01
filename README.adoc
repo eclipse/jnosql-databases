@@ -1058,13 +1058,13 @@ Stream<Person> stream = template.select(Person.class , filter);
 
 image::https://www.jnosql.org/img/logos/oracle.png[Oracle NoSQL Project,align="center"width=25%,height=25%]
 
-https://www.oracle.com/database/nosql/technologies/nosql/[Oracle NoSQL Database] is a native multi-model database that provides flexible data models for documents, graphs, and key values. You can develop high-performance applications using a user-friendly SQL-like query language or JavaScript extensions.
+[Oracle NoSQL Database](https://www.oracle.com/database/nosql/technologies/nosql/) is a versatile multi-model database offering flexible data models for documents, graphs, and key-value pairs. It empowers developers to build high-performance applications using a user-friendly SQL-like query language or JavaScript extensions.
 
-This API offers support for *Document* and *Key-Value* data types.
+This API provides support for *Document* and *Key-Value* data types.
 
-=== How To Install
+=== Installation
 
-You can use either the Maven or Gradle dependencies:
+You can include Oracle NoSQL as a dependency using either Maven or Gradle:
 
 [source,xml]
 ----
@@ -1077,41 +1077,60 @@ You can use either the Maven or Gradle dependencies:
 
 === Configuration
 
-This API provides the ```OracleNoSQLConfigurations``` class to programmatically establish the credentials.
-Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
+The API offers the `OracleNoSQLConfigurations` class to programmatically set up credentials. It also supports configuration via the [MicroProfile Config](https://microprofile.io/microprofile-config/) specification.
 
 [cols="Oracle NoSQL Properties"]
 |===
 | Property Name | Description
 
-| `jnosql.oracle.nosql.host` | Specifies the hostname or IP address of the Oracle NoSQL database server.
+| `jnosql.oracle.nosql.host` | Hostname or IP address of the Oracle NoSQL database server.
 
-| `jnosql.oracle.nosql.user` | Specifies the username used to authenticate with the Oracle NoSQL database.
+| `jnosql.oracle.nosql.user` | Username for Oracle NoSQL database authentication.
 
-| `jnosql.oracle.nosql.password` | Specifies the password used to authenticate with the Oracle NoSQL database.
+| `jnosql.oracle.nosql.password` | Password for Oracle NoSQL database authentication.
 
-| `jnosql.oracle.nosql.table.read.limit` | Specifies the desired throughput of read operations when creating a table using Eclipse JNoSQL.
+| `jnosql.oracle.nosql.table.read.limit` | Desired throughput of read operations when creating tables with Eclipse JNoSQL.
 
-| `jnosql.oracle.nosql.table.write.limit` | Specifies the desired throughput of write operations when creating a table using Eclipse JNoSQL.
+| `jnosql.oracle.nosql.table.write.limit` | Desired throughput of write operations when creating tables with Eclipse JNoSQL.
 
-| `jnosql.oracle.nosql.table.storage.gb` | Specifies the maximum storage, in gigabytes, to be consumed by a table created using Eclipse JNoSQL.
+| `jnosql.oracle.nosql.table.storage.gb` | Maximum storage in gigabytes for tables created with Eclipse JNoSQL.
 
-| `jnosql.oracle.nosql.table.wait.millis` | Specifies the total amount of time to wait, in milliseconds, when creating a table.
+| `jnosql.oracle.nosql.table.wait.millis` | Total waiting time in milliseconds when creating a table.
 
-| `jnosql.oracle.nosql.table.delay.millis` | Specifies the amount of time to wait, in milliseconds, between polling attempts when creating a table.
+| `jnosql.oracle.nosql.table.delay.millis` | Time between polling attempts in milliseconds when creating a table.
 
-| `jnosql.oracle.nosql.deployment` | Specifies the deployment type for Oracle NoSQL database.
+| `jnosql.oracle.nosql.tenant.id` | Tenant ID for Oracle NoSQL database in a Cloud deployment.
 
-| `jnosql.oracle.nosql.tenant.id` | Specifies the Oracle NoSQL database tenant ID for Cloud deployment.
+| `jnosql.oracle.nosql.fingerprint` | Fingerprint for authentication with Oracle NoSQL database in a Cloud deployment.
 
-| `jnosql.oracle.nosql.fingerprint` | Specifies the fingerprint for authentication with Oracle NoSQL database for Cloud deployment.
+| `jnosql.oracle.nosql.private.key` | Private key for authentication with Oracle NoSQL database in a Cloud deployment.
 
-| `jnosql.oracle.nosql.private.key` | Specifies the private key for authentication with Oracle NoSQL database for Cloud deployment.
+| `jnosql.oracle.nosql.compartment` | Compartment name in Oracle Cloud Infrastructure.
+
+| `jnosql.oracle.nosql.namespace` | Namespace name in Oracle NoSQL on-premises.
+
+| `jnosql.oracle.nosql.profile.name` | Specifies the profile name used to load session token in Oracle NoSQL cloud.
+
+| `jnosql.oracle.nosql.config.file` | Specifies the path of configuration file used to load session token in Oracle NoSQL cloud.
+
+| `jnosql.oracle.nosql.deployment` | Specifies the deployment type for Oracle NoSQL database. You can choose from the following options:
+
+- `ON_PREMISES`: Represents an on-premises deployment where software solutions are deployed and managed within an organization's physical premises or data centers.
+
+- `CLOUD_API_KEY`: Represents a cloud deployment using API key for authentication and authorization.
+
+- `CLOUD_INSTANCE_PRINCIPAL`: Represents a cloud deployment using instance principal for authentication and authorization.
+
+- `CLOUD_RESOURCE_PRINCIPAL`: Represents a cloud deployment using resource principal for authentication and authorization.
+
+- `CLOUD_INSTANCE_OBO_USER`: Represents a cloud deployment using instance principal for delegation with an OBO token.
+
+- `CLOUD_SECURITY_TOKEN`: Represents a "Cloud" deployment using resource principal for delegation with an OBO token.
 |===
 
+Below are examples using Oracle NoSQL's Document API and Key-Value API with MicroProfile Config.
 
-
-This is an example using Oracle NoSQL's Document API with MicroProfile Config.
+**Document API Example:**
 
 [source,properties]
 ----
@@ -1120,7 +1139,7 @@ jnosql.document.database=library
 jnosql.oracle.nosql.host=http://localhost:8080
 ----
 
-This is an example using Oracle NoSQL's Key-Value API with MicroProfile Config.
+**Key-Value API Example:**
 
 [source,properties]
 ----
@@ -1129,7 +1148,7 @@ jnosql.keyvalue.database=library
 jnosql.oracle.nosql.host=http://localhost:8080
 ----
 
-The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<ArangoDBDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+Although these are the default configuration settings, you have the option to configure them programmatically. Create a class that implements `Supplier<OracleNoSQLDocumentManager>`, annotate it with `@Alternative`, and set the priority using `@Priority`.
 
 [source,java]
 ----
@@ -1151,7 +1170,7 @@ public class ManagerSupplier implements Supplier<OracleNoSQLDocumentManager> {
 
 === Repository
 
-The ```OracleNoSQLRepository``` interface is an extension of the Repository interface that allows execution of SQL via the ```@SQL``` annotation. Also, it's possible to combine with ```@Param``` annotation to execute parameterized SQL queries:
+The `OracleNoSQLRepository` interface extends the Repository interface and allows executing SQL queries using the `@SQL` annotation. You can also combine it with the `@Param` annotation for parameterized SQL queries:
 
 [source,java]
 ----
@@ -1169,7 +1188,7 @@ interface PersonRepository extends OracleNoSQLRepository<Person, String> {
 
 === Template
 
-The ```OracleNoSQLTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows using synchronous SQL operation.
+The `OracleNoSQLTemplate` interface, an extension of the `DocumentTemplate`, enables synchronous SQL operations.
 
 [source,java]
 ----

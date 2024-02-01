@@ -73,25 +73,14 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
      * If set to 0, it defaults to <b>500</b> milliseconds.
      */
     TABLE_DELAY_MILLIS("jnosql.oracle.nosql.table.delay.millis"),
+
     /**
      * Specifies the deployment type for Oracle NoSQL database.
      * Default value: {@link DeploymentType#ON_PREMISES}
-     * <p>
-     * When ON_PREMISES is selected for deployment:
-     * - Credentials required: USER (username) and HOST (hostname or IP address).
-     * - Connection is established without authentication if USER and HOST are not provided.
-     * </p>
-     * <p>
-     * When CLOUD is selected for deployment:
-     * - Credentials required: PRIVATE_KEY (private key file path), FINGERPRINT (fingerprint of the public key),
-     *   TENANT (Oracle Cloud tenant ID), USER (Oracle Cloud username), and PASSWORD (Oracle Cloud password).
-     * - If any of these credentials are not provided, the configuration will be read from a configuration file.
-     *   For more information, see:
-     *   <a href="https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/javasdkgettingstarted.htm#Configur">
-     *       https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/javasdkgettingstarted.htm#Configur</a>
-     * </p>
+     *
      */
     DEPLOYMENT("jnosql.oracle.nosql.deployment"),
+
     /**
      * Specifies the Oracle NoSQL database tenant ID for Cloud deployment.
      * Relevant for Cloud deployment only.
@@ -108,8 +97,26 @@ public enum OracleNoSQLConfigurations implements Supplier<String> {
      * Specifies the private key for authentication with Oracle NoSQL database for Cloud deployment.
      * Relevant for Cloud deployment only.
      */
-    PRIVATE_KEY("jnosql.oracle.nosql.private.key");
+    PRIVATE_KEY("jnosql.oracle.nosql.private.key"),
 
+    /**
+     * Define the compartment name in Oracle Cloud Infrastructure.
+     */
+    COMPARTMENT("jnosql.oracle.nosql.compartment"),
+
+    /**
+     * Define the compartment name in Oracle NoSQL on-premise.
+     */
+    NAMESPACE("jnosql.oracle.nosql.namespace"),
+
+    /**
+     * Define the profile name used to load session token in Oracle NoSQL cloud.
+     */
+    PROFILE_NAME("jnosql.oracle.nosql.profile.name"),
+    /**
+     * Define the path of configuration file used to load session token in Oracle NoSQL cloud.
+     */
+    CONFIG_FILE("jnosql.oracle.nosql.config.file");
 
     private final String configuration;
 
