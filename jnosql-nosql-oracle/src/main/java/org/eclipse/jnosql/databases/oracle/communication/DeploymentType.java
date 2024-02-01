@@ -72,7 +72,7 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             String profileName = settings.get(OracleNoSQLConfigurations.PROFILE_NAME, String.class).orElse(null);
             String configFile = settings.get(OracleNoSQLConfigurations.CONFIG_FILE, String.class).orElse(null);
 
-            if(isFingerPrint(user, password, tenantId, fingerprint, privateKey)) {
+            if(user != null && password.length > 0 && tenantId != null && fingerprint != null && privateKey != null) {
                 return Optional.of(new SignatureProvider(tenantId, user, fingerprint, privateKey, password));
             }
             try {
@@ -88,9 +88,6 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
 
         }
 
-        private static boolean isFingerPrint(String user, char[] password, String tenantId, String fingerprint, String privateKey) {
-            return user != null && password.length > 0 && tenantId != null && fingerprint != null && privateKey != null;
-        }
     },
     /**
      * Represents a "Cloud" deployment using resource principal for authentication and authorization.
