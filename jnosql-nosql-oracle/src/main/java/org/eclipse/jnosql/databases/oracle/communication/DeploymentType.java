@@ -69,16 +69,27 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             String tenantId = settings.get(OracleNoSQLConfigurations.TENANT, String.class).orElse(null);
             String fingerprint= settings.get(OracleNoSQLConfigurations.FINGERPRINT, String.class).orElse(null);
             String privateKey = settings.get(OracleNoSQLConfigurations.PRIVATE_KEY, String.class).orElse(null);
+            String profileName = settings.get(OracleNoSQLConfigurations.PROFILE_NAME, String.class).orElse(null);
+            String configFile = settings.get(OracleNoSQLConfigurations.CONFIG_FILE, String.class).orElse(null);
 
-            if(user != null && password.length > 0 && tenantId != null && fingerprint != null && privateKey != null) {
+            if(isFingerPrint(user, password, tenantId, fingerprint, privateKey)) {
                 return Optional.of(new SignatureProvider(tenantId, user, fingerprint, privateKey, password));
             }
             try {
+                if(profileName != null && configFile != null) {
+                    return Optional.of(new SignatureProvider(configFile, profileName));
+                } else if(profileName != null) {
+                    return Optional.of(new SignatureProvider(profileName));
+                }
                 return Optional.of(new SignatureProvider());
             } catch (IOException e) {
                 throw new OracleNoSQLException("Error to load configuration to Oracle Cloud at Oracle NoSQL", e);
             }
 
+        }
+
+        private static boolean isFingerPrint(String user, char[] password, String tenantId, String fingerprint, String privateKey) {
+            return user != null && password.length > 0 && tenantId != null && fingerprint != null && privateKey != null;
         }
     },
     /**
