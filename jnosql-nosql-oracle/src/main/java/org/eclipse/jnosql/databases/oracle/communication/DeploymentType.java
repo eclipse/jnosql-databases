@@ -72,8 +72,8 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             String profileName = settings.get(OracleNoSQLConfigurations.PROFILE_NAME, String.class).orElse(null);
             String configFile = settings.get(OracleNoSQLConfigurations.CONFIG_FILE, String.class).orElse(null);
 
-            if(user != null && password.length > 0 && tenantId != null && fingerprint != null && privateKey != null) {
-                return Optional.of(new SignatureProvider(tenantId, user, fingerprint, privateKey, password));
+            if(user != null && tenantId != null && fingerprint != null && privateKey != null) {
+                return Optional.of(new SignatureProvider(tenantId, user, fingerprint, new File(privateKey), password));
             }
             try {
                 if(profileName != null && configFile != null) {
