@@ -80,7 +80,7 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public List<Sort> sorts() {
+    public List<Sort<?>> sorts() {
         return query.sorts();
     }
 

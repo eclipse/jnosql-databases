@@ -76,7 +76,7 @@ final class QueryAQLConverter {
 
     private static AQLQueryResult convert(String documentCollection,
                                           DocumentCondition documentCondition,
-                                          List<Sort> sorts,
+                                          List<Sort<?>> sorts,
                                           long firstResult,
                                           long maxResult,
                                           String conclusion, boolean delete) {
@@ -107,10 +107,10 @@ final class QueryAQLConverter {
         return new AQLQueryResult(aql.toString(), params);
     }
 
-    private static void sort(List<Sort> sorts, StringBuilder aql, char entity) {
+    private static void sort(List<Sort<?>> sorts, StringBuilder aql, char entity) {
         aql.append(SORT);
         String separator = SEPARATOR;
-        for (Sort sort : sorts) {
+        for (Sort<?> sort : sorts) {
             aql.append(separator)
                     .append(entity).append('.')
                     .append(sort.property())

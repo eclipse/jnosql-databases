@@ -15,14 +15,14 @@
 package org.eclipse.jnosql.databases.cassandra.mapping;
 
 
-import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.NoSQLRepository;
 
 /**
- * The Cassandra {@link PageableRepository}
+ * The Cassandra {@link NoSQLRepository}
  *
  * @param <T> the entity type
  * @param <K> the id entity type
  */
-public interface CassandraRepository<T, K> extends PageableRepository<T, K> {
+public interface CassandraRepository<T, K> extends NoSQLRepository<T, K> {
 
 }

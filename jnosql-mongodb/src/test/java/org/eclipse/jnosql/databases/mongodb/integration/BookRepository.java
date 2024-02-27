@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.databases.mongodb.integration;
 
-import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Repository;
+import org.eclipse.jnosql.mapping.NoSQLRepository;
 
 @Repository
-public interface BookRepository extends PageableRepository<Book, String> {
+public interface BookRepository extends NoSQLRepository<Book, String> {
 }
