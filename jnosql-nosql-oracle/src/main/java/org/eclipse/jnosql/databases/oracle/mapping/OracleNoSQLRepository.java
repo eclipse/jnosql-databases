@@ -15,10 +15,10 @@
 package org.eclipse.jnosql.databases.oracle.mapping;
 
 
-import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.NoSQLRepository;
 
 /**
- * The {@code OracleRepository} is an extension of {@link PageableRepository} specific to Oracle NoSQL database.
+ * The {@code OracleRepository} is an extension of {@link NoSQLRepository} specific to Oracle NoSQL database.
  * It provides CRUD (Create, Read, Update, Delete) operations for entities in the Oracle NoSQL database
  * and supports pagination and sorting through its parent interface.
  * <p>
@@ -44,8 +44,8 @@ import jakarta.data.repository.PageableRepository;
  * @param <T> the entity type managed by this repository
  * @param <K> the type of the entity's primary key
  *
- * @see PageableRepository
+ * @see NoSQLRepository
  * @see SQL
  */
-public interface OracleNoSQLRepository<T, K> extends PageableRepository<T, K> {
+public interface OracleNoSQLRepository<T, K> extends NoSQLRepository<T, K> {
 }

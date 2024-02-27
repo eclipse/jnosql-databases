@@ -15,12 +15,12 @@
 package org.eclipse.jnosql.databases.couchbase.mapping;
 
 
-import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.NoSQLRepository;
 
 /**
- * The couchbase {@link PageableRepository}
+ * The couchbase {@link NoSQLRepository}
  * @param <T> the entity type
  * @param <K> the entity id type
  */
-public interface CouchbaseRepository<T, K> extends PageableRepository<T, K> {
+public interface CouchbaseRepository<T, K> extends NoSQLRepository<T, K> {
 }

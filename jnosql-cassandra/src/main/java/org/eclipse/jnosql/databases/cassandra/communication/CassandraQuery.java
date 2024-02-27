@@ -107,7 +107,7 @@ public final class CassandraQuery implements ColumnQuery {
     }
 
     @Override
-    public List<Sort> sorts() {
+    public List<Sort<?>> sorts() {
         return query.sorts();
     }
 

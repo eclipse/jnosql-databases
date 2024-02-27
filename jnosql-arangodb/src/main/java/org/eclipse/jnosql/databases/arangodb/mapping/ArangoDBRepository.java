@@ -15,13 +15,13 @@
 package org.eclipse.jnosql.databases.arangodb.mapping;
 
 
-import jakarta.data.repository.PageableRepository;
+import org.eclipse.jnosql.mapping.NoSQLRepository;
 
 
 /**
- * The arangodb {@link PageableRepository}
+ * The arangodb {@link NoSQLRepository}
  * @param <T> the entity type
  * @param <K> the id entity type
  */
-public interface ArangoDBRepository<T, K> extends PageableRepository<T, K> {
+public interface ArangoDBRepository<T, K> extends NoSQLRepository<T, K> {
 }

@@ -150,10 +150,10 @@ final class QueryOSQLConverter {
         }
     }
 
-    private static void appendSort(List<Sort> sorts, StringBuilder query) {
+    private static void appendSort(List<Sort<?>> sorts, StringBuilder query) {
         query.append(SORT);
         String separator = SPACE;
-        for (Sort sort : sorts) {
+        for (Sort<?> sort : sorts) {
             query.append(separator)
                     .append(sort.property())
                     .append(SPACE)
