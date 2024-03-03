@@ -21,17 +21,17 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnManager;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManager;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraPreparedStatement;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.AbstractColumnTemplate;
-import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
-import org.eclipse.jnosql.mapping.column.ColumnEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.time.Duration;
 import java.util.Map;
@@ -43,22 +43,22 @@ import java.util.stream.StreamSupport;
 
 @Typed(CassandraTemplate.class)
 @ApplicationScoped
-class DefaultCassandraTemplate extends AbstractColumnTemplate implements CassandraTemplate {
+class DefaultCassandraTemplate extends AbstractSemistructuredTemplate implements CassandraTemplate {
 
-    private Instance<CassandraColumnManager> manager;
+    private final Instance<CassandraColumnManager> manager;
 
-    private CassandraColumnEntityConverter converter;
+    private final CassandraColumnEntityConverter converter;
 
-    private ColumnEventPersistManager persistManager;
+    private final EventPersistManager persistManager;
 
-    private EntitiesMetadata entities;
+    private final EntitiesMetadata entities;
 
-    private Converters converters;
+    private final Converters converters;
 
     @Inject
     DefaultCassandraTemplate(Instance<CassandraColumnManager> manager,
                              CassandraColumnEntityConverter converter,
-                             ColumnEventPersistManager persistManager,
+                             EventPersistManager persistManager,
                              EntitiesMetadata entities,
                              Converters converters) {
         this.manager = manager;
@@ -69,30 +69,31 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
     }
 
     DefaultCassandraTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected ColumnEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected ColumnManager getManager() {
+    protected DatabaseManager manager() {
         return manager.get();
     }
 
     @Override
-    protected ColumnEventPersistManager getEventManager() {
+    protected EventPersistManager eventManager() {
         return persistManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
@@ -100,7 +101,7 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
     public <T> T save(T entity, ConsistencyLevel level) {
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(level, "level is required");
-        UnaryOperator<ColumnEntity> save = e -> manager.get().save(e, level);
+        UnaryOperator<CommunicationEntity> save = e -> manager.get().save(e, level);
         return persist(entity, save);
     }
 
@@ -111,7 +112,7 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
         Objects.requireNonNull(level, "level is required");
 
         return StreamSupport.stream(entities.spliterator(), false)
-                .map(converter::toColumn)
+                .map(converter::toCommunication)
                 .map(e -> manager.get().save(e, ttl, level))
                 .map(converter::toEntity)
                 .map(e -> (T) e)
@@ -123,7 +124,7 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(level, "level is required");
         return StreamSupport.stream(entities.spliterator(), false)
-                .map(converter::toColumn)
+                .map(converter::toCommunication)
                 .map(e -> manager.get().save(e, level))
                 .map(converter::toEntity)
                 .map(e -> (T) e)
@@ -135,19 +136,19 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
         Objects.requireNonNull(level, "level is required");
-        UnaryOperator<ColumnEntity> save = e -> manager.get().save(e, ttl, level);
+        UnaryOperator<CommunicationEntity> save = e -> manager.get().save(e, ttl, level);
         return persist(entity, save);
     }
 
     @Override
-    public void delete(ColumnDeleteQuery query, ConsistencyLevel level) {
+    public void delete(DeleteQuery query, ConsistencyLevel level) {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(level, "level is required");
         manager.get().delete(query, level);
     }
 
     @Override
-    public <T> Stream<T> find(ColumnQuery query, ConsistencyLevel level) {
+    public <T> Stream<T> find(SelectQuery query, ConsistencyLevel level) {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(level, "level is required");
 
@@ -171,7 +172,7 @@ class DefaultCassandraTemplate extends AbstractColumnTemplate implements Cassand
     public <T> Stream<T> cql(String query, Object... params) {
         Objects.requireNonNull(query, "query is required");
         CassandraPreparedStatement cassandraPrepareStatement = manager.get().nativeQueryPrepare(query);
-        Stream<ColumnEntity> entities = cassandraPrepareStatement.bind(params).executeQuery();
+        Stream<CommunicationEntity> entities = cassandraPrepareStatement.bind(params).executeQuery();
         return entities.map(converter::toEntity).map(e -> (T) e);
     }
 

@@ -15,10 +15,9 @@
 package org.eclipse.jnosql.databases.cassandra.mapping;
 
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.mapping.column.ColumnTemplate;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
-import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProducer;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
@@ -44,7 +43,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
-@AddPackages(value = {Converters.class, JNoSQLColumnTemplate.class,
+@AddPackages(value = {Converters.class, ColumnTemplate.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddPackages(Reflections.class)
@@ -86,7 +85,7 @@ public class CassandraRepositoryProxyTest {
     @Test
     public void shouldDeleteByName() {
         personRepository.deleteByName("Ada");
-        verify(template).delete(Mockito.any(ColumnDeleteQuery.class));
+        verify(template).delete(Mockito.any(DeleteQuery.class));
     }
 
     @Test

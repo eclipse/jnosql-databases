@@ -15,14 +15,14 @@
 package org.eclipse.jnosql.databases.cassandra.mapping;
 
 
-import org.eclipse.jnosql.mapping.column.query.ColumnRepositoryProxy;
+import org.eclipse.jnosql.mapping.column.ColumnTemplate;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
-import org.eclipse.jnosql.mapping.column.query.AbstractColumnRepositoryProxy;
 import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
+import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemistructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.query.SemistructuredRepositoryProxy;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
-class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>  {
+class CassandraRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
@@ -56,7 +56,7 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
         this.repositoryType = repositoryType;
-        this.repository = ColumnRepositoryProxy.ColumnRepository.of(template, entityMetadata);
+        this.repository = SemistructuredRepositoryProxy.SemistructuredRepository.of(template, entityMetadata);
     }
 
     @Override
@@ -80,7 +80,7 @@ class CassandraRepositoryProxy<T, K> extends AbstractColumnRepositoryProxy<T, K>
     }
 
     @Override
-    protected JNoSQLColumnTemplate template() {
+    protected ColumnTemplate template() {
         return template;
     }
 

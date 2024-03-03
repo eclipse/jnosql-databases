@@ -20,18 +20,19 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.assertj.core.api.Assertions;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManager;
+import org.eclipse.jnosql.mapping.column.ColumnTemplate;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
-import org.eclipse.jnosql.mapping.column.ColumnEventPersistManager;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -48,14 +49,14 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.column.ColumnQuery.select;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
-@AddPackages(value = {Converters.class, ColumnEntityConverter.class,
+@AddPackages(value = {Converters.class, EntityConverter.class, ColumnTemplate.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddPackages(Reflections.class)
@@ -67,7 +68,7 @@ public class DefaultCassandraTemplateTest {
     private CassandraColumnEntityConverter converter;
 
     @Inject
-    private ColumnEventPersistManager persistManager;
+    private EventPersistManager persistManager;
 
     @Inject
     private EntitiesMetadata entities;
@@ -89,14 +90,14 @@ public class DefaultCassandraTemplateTest {
 
     @Test
     void shouldSaveConsistency() {
-        ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
+        var entity = CommunicationEntity.of("Person", asList(Element.of("name", "Name"), Element.of("age", 20)));
         entity.addNull("home");
-        ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
+        ArgumentCaptor<CommunicationEntity> captor = ArgumentCaptor.forClass(CommunicationEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
 
         when(manager.
-                save(Mockito.any(ColumnEntity.class), Mockito.eq(level)))
+                save(Mockito.any(CommunicationEntity.class), Mockito.eq(level)))
                 .thenReturn(entity);
 
         Person person = new Person();
@@ -111,14 +112,14 @@ public class DefaultCassandraTemplateTest {
 
     @Test
     void shouldSaveConsistencyIterable() {
-        ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
+        CommunicationEntity entity = CommunicationEntity.of("Person", asList(Element.of("name", "Name"), Element.of("age", 20)));
         entity.addNull("home");
-        ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
+        ArgumentCaptor<CommunicationEntity> captor = ArgumentCaptor.forClass(CommunicationEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
 
         when(manager.
-                save(Mockito.any(ColumnEntity.class), Mockito.eq(level)))
+                save(Mockito.any(CommunicationEntity.class), Mockito.eq(level)))
                 .thenReturn(entity);
 
         Person person = new Person();
@@ -131,15 +132,15 @@ public class DefaultCassandraTemplateTest {
     }
 
     @Test
-    void shouldSaveConsntencyDuration() {
+    void shouldSaveConsistencyDuration() {
         Duration duration = Duration.ofHours(2);
-        ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
+        CommunicationEntity entity = CommunicationEntity.of("Person", asList(Element.of("name", "Name"), Element.of("age", 20)));
         entity.addNull("home");
-        ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
+        ArgumentCaptor<CommunicationEntity> captor = ArgumentCaptor.forClass(CommunicationEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
         when(manager.
-                save(Mockito.any(ColumnEntity.class), Mockito.eq(duration),
+                save(Mockito.any(CommunicationEntity.class), Mockito.eq(duration),
                         Mockito.eq(level)))
                 .thenReturn(entity);
 
@@ -155,13 +156,13 @@ public class DefaultCassandraTemplateTest {
     @Test
     void shouldSaveConsistencyDurationIterable() {
         Duration duration = Duration.ofHours(2);
-        ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
+        CommunicationEntity entity = CommunicationEntity.of("Person", asList(Element.of("name", "Name"), Element.of("age", 20)));
         entity.addNull("home");
-        ArgumentCaptor<ColumnEntity> captor = ArgumentCaptor.forClass(ColumnEntity.class);
+        ArgumentCaptor<CommunicationEntity> captor = ArgumentCaptor.forClass(CommunicationEntity.class);
 
         ConsistencyLevel level = ConsistencyLevel.THREE;
         when(manager.
-                save(Mockito.any(ColumnEntity.class), Mockito.eq(duration),
+                save(Mockito.any(CommunicationEntity.class), Mockito.eq(duration),
                         Mockito.eq(level)))
                 .thenReturn(entity);
 
@@ -176,8 +177,7 @@ public class DefaultCassandraTemplateTest {
     @Test
     void shouldDelete() {
 
-
-        ColumnDeleteQuery query = ColumnDeleteQuery.delete().from("columnFamily").build();
+        DeleteQuery query = DeleteQuery.delete().from("columnFamily").build();
         ConsistencyLevel level = ConsistencyLevel.THREE;
         template.delete(query, level);
         verify(manager).delete(query, level);
@@ -190,8 +190,8 @@ public class DefaultCassandraTemplateTest {
         person.setName("Name");
         person.setAge(20);
 
-        ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
-        ColumnQuery query = select().from("columnFamily").build();
+        CommunicationEntity entity = CommunicationEntity.of("Person", asList(Element.of("name", "Name"), Element.of("age", 20)));
+        SelectQuery query = select().from("columnFamily").build();
         ConsistencyLevel level = ConsistencyLevel.THREE;
         when(manager.select(query, level)).thenReturn(Stream.of(entity));
 
@@ -205,7 +205,7 @@ public class DefaultCassandraTemplateTest {
         person.setName("Name");
         person.setAge(20);
         String cql = "select * from Person";
-        ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
+        CommunicationEntity entity = CommunicationEntity.of("Person", asList(Element.of("name", "Name"), Element.of("age", 20)));
 
         when(manager.cql(cql)).thenReturn(Stream.of(entity));
 
@@ -219,7 +219,7 @@ public class DefaultCassandraTemplateTest {
         Person person = new Person();
         person.setName("Name");
         person.setAge(20);
-        ColumnEntity entity = ColumnEntity.of("Person", asList(Column.of("name", "Name"), Column.of("age", 20)));
+        CommunicationEntity entity = CommunicationEntity.of("Person", asList(Element.of("name", "Name"), Element.of("age", 20)));
 
         when(manager.execute(statement)).thenReturn(Stream.of(entity));
 

@@ -14,12 +14,12 @@
  */
 package org.eclipse.jnosql.databases.cassandra.mapping;
 
-import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.cassandra.communication.UDT;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
-import org.eclipse.jnosql.mapping.column.ColumnFieldValue;
 import org.eclipse.jnosql.mapping.metadata.FieldMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AttributeFieldValue;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.Objects;
 import static java.util.Collections.singletonList;
 import static java.util.stream.StreamSupport.stream;
 
-class CassandraUDTType implements ColumnFieldValue {
+class CassandraUDTType implements AttributeFieldValue {
 
     private final String type;
 
@@ -59,19 +59,19 @@ class CassandraUDTType implements ColumnFieldValue {
     }
 
     @Override
-    public List<Column> toColumn(ColumnEntityConverter converter, Converters converters) {
+    public List<Element> toElements(EntityConverter converter, Converters converters) {
         if (value == null) {
-            return singletonList(Column.of(field.name(), null));
+            return singletonList(Element.of(field.name(), null));
         } else if (Iterable.class.isInstance(value)) {
-            List<Iterable<Column>> columns = new ArrayList<>();
+            List<Iterable<Element>> columns = new ArrayList<>();
             stream(Iterable.class.cast(value).spliterator(), false)
-                    .forEach(c -> columns.add(converter.toColumn(c).columns()));
+                    .forEach(c -> columns.add(converter.toCommunication(c).elements()));
             return singletonList(UDT.builder(type).withName(field.name()).addUDTs(columns).build());
 
         } else {
             return singletonList(UDT.builder(type)
                     .withName(field.name())
-                    .addUDT(converter.toColumn(value).columns())
+                    .addUDT(converter.toCommunication(value).elements())
                     .build());
         }
     }

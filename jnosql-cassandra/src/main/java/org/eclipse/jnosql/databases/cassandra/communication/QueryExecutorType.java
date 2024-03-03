@@ -19,8 +19,8 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -31,12 +31,12 @@ import java.util.stream.Stream;
 enum QueryExecutorType implements QueryExecutor {
     PAGING_STATE {
         @Override
-        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnManager manager) {
+        public Stream<CommunicationEntity> execute(String keyspace, SelectQuery query, DefaultCassandraColumnManager manager) {
             return execute(keyspace, query, null, manager);
         }
 
         @Override
-        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery q, ConsistencyLevel level,
+        public Stream<CommunicationEntity> execute(String keyspace, SelectQuery q, ConsistencyLevel level,
                                             DefaultCassandraColumnManager manager) {
 
             CassandraQuery query = CassandraQuery.class.cast(q);
@@ -59,7 +59,7 @@ enum QueryExecutorType implements QueryExecutor {
             final ByteBuffer pagingState = resultSet.getExecutionInfo().getPagingState();
             query.setPagingState(pagingState);
 
-            List<ColumnEntity> entities = new ArrayList<>();
+            List<CommunicationEntity> entities = new ArrayList<>();
 
             for (Row row : resultSet) {
                 entities.add(CassandraConverter.toDocumentEntity(row));
@@ -74,12 +74,12 @@ enum QueryExecutorType implements QueryExecutor {
     },
     DEFAULT {
         @Override
-        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnManager manager) {
+        public Stream<CommunicationEntity> execute(String keyspace, SelectQuery query, DefaultCassandraColumnManager manager) {
             return execute(keyspace, query, null, manager);
         }
 
         @Override
-        public Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
+        public Stream<CommunicationEntity> execute(String keyspace, SelectQuery query, ConsistencyLevel level,
                                             DefaultCassandraColumnManager manager) {
 
             Select cassandraSelect = QueryUtils.select(query, keyspace);

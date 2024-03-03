@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
-import org.eclipse.jnosql.communication.column.ColumnManager;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -55,7 +55,7 @@ public class CassandraColumnManagerFactoryTest {
 
     @Test
     public void shouldReturnEntityManager() {
-        ColumnManager columnEntityManager = subject.apply(Constants.KEY_SPACE);
+        DatabaseManager columnEntityManager = subject.apply(Constants.KEY_SPACE);
         assertNotNull(columnEntityManager);
     }
 

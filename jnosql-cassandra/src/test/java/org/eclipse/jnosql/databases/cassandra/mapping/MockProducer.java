@@ -19,9 +19,11 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.interceptor.Interceptor;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManager;
+import org.eclipse.jnosql.mapping.Database;
+import org.eclipse.jnosql.mapping.DatabaseType;
 import org.mockito.Mockito;
 
 import java.util.function.Supplier;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.when;
 
 @Alternative
 @Priority(Interceptor.Priority.APPLICATION)
+@Database(DatabaseType.COLUMN)
 public class MockProducer implements Supplier<CassandraColumnManager> {
 
 
@@ -37,9 +40,9 @@ public class MockProducer implements Supplier<CassandraColumnManager> {
     @Override
     public CassandraColumnManager get() {
         CassandraColumnManager manager = Mockito.mock(CassandraColumnManager.class);
-        ColumnEntity entity = ColumnEntity.of("Person");
-        entity.add(Column.of("name", "Ada"));
-        when(manager.insert(Mockito.any(ColumnEntity.class))).thenReturn(entity);
+        var entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("name", "Ada"));
+        when(manager.insert(Mockito.any(CommunicationEntity.class))).thenReturn(entity);
         return manager;
     }
 
