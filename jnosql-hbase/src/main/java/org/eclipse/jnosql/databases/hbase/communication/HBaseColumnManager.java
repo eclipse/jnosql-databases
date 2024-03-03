@@ -27,12 +27,12 @@ import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.ValueWriter;
 import org.eclipse.jnosql.communication.ValueWriterDecorator;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnCondition;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnManager;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -50,11 +50,11 @@ import static org.eclipse.jnosql.communication.Condition.IN;
 import static org.eclipse.jnosql.communication.Condition.OR;
 
 /**
- * The Hbase implementation to {@link ColumnManager}.
+ * The Hbase implementation to {@link DatabaseManager}.
  * It does not support TTL methods
- * <p>{@link HBaseColumnManager#insert(ColumnEntity, Duration)}</p>
+ * <p>{@link HBaseColumnManager#insert(org.eclipse.jnosql.communication.semistructured.CommunicationEntity, Duration)}</p>
  */
-public class HBaseColumnManager implements ColumnManager {
+public class HBaseColumnManager implements DatabaseManager {
 
     private static final String KEY_REQUIRED_ERROR = "\"To save an entity is necessary to have an row, a Column that has a blank name. Documents.of(\\\"\\\", keyValue);\"";
 
@@ -77,14 +77,14 @@ public class HBaseColumnManager implements ColumnManager {
     }
 
     @Override
-    public ColumnEntity insert(ColumnEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         String family = entity.name();
-        List<Column> columns = entity.columns();
+        List<Element> columns = entity.elements();
         if (columns.isEmpty()) {
             return entity;
         }
-        Column columnID = entity.find(HBaseUtils.KEY_COLUMN).orElseThrow(() -> new HBaseException(KEY_REQUIRED_ERROR));
+        Element columnID = entity.find(HBaseUtils.KEY_COLUMN).orElseThrow(() -> new HBaseException(KEY_REQUIRED_ERROR));
 
         Put put = new Put(Bytes.toBytes(valueToString(columnID.value())));
         columns.stream().filter(Predicate.isEqual(columnID).negate()).forEach(column ->
@@ -100,12 +100,12 @@ public class HBaseColumnManager implements ColumnManager {
     }
 
     @Override
-    public ColumnEntity update(ColumnEntity entity) throws NullPointerException {
+    public CommunicationEntity update(CommunicationEntity entity) throws NullPointerException {
         return insert(entity);
     }
 
     @Override
-    public Iterable<ColumnEntity> update(Iterable<ColumnEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update)
@@ -113,12 +113,12 @@ public class HBaseColumnManager implements ColumnManager {
     }
 
     @Override
-    public ColumnEntity insert(ColumnEntity entity, Duration ttl) throws NullPointerException {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) throws NullPointerException {
         throw new UnsupportedOperationException("There is not support to save async");
     }
 
     @Override
-    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
@@ -126,7 +126,7 @@ public class HBaseColumnManager implements ColumnManager {
     }
 
     @Override
-    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -136,9 +136,9 @@ public class HBaseColumnManager implements ColumnManager {
 
 
     @Override
-    public void delete(ColumnDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
-        ColumnCondition condition = query.condition()
+        CriteriaCondition condition = query.condition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         checkedCondition(condition);
         List<String> values = new ArrayList<>();
@@ -159,9 +159,9 @@ public class HBaseColumnManager implements ColumnManager {
 
 
     @Override
-    public Stream<ColumnEntity> select(ColumnQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         Objects.requireNonNull(query, "query is required");
-        ColumnCondition condition = query.condition()
+        var condition = query.condition()
                 .orElseThrow(() -> new IllegalArgumentException("Condition is required"));
         checkedCondition(condition);
         return Stream.of(findById(condition))
@@ -194,7 +194,7 @@ public class HBaseColumnManager implements ColumnManager {
         }
     }
 
-    private Result[] findById(ColumnCondition condition) {
+    private Result[] findById(CriteriaCondition condition) {
         List<String> values = new ArrayList<>();
         convert(condition, values);
 
@@ -209,29 +209,29 @@ public class HBaseColumnManager implements ColumnManager {
     }
 
 
-    private void convert(ColumnCondition columnCondition, List<String> values) {
+    private void convert(CriteriaCondition columnCondition, List<String> values) {
         Condition condition = columnCondition.condition();
 
         if (OR.equals(condition)) {
-            columnCondition.column().get(new TypeReference<List<ColumnCondition>>() {
+            columnCondition.element().get(new TypeReference<List<CriteriaCondition>>() {
             }).forEach(c -> convert(c, values));
         } else if (IN.equals(condition)) {
-            values.addAll(columnCondition.column().get(new TypeReference<List<String>>() {
+            values.addAll(columnCondition.element().get(new TypeReference<List<String>>() {
             }));
         } else if (EQUALS.equals(condition)) {
-            values.add(valueToString(columnCondition.column().value()));
+            values.add(valueToString(columnCondition.element().value()));
         }
 
 
     }
 
-    private void checkedCondition(ColumnCondition columnCondition) {
+    private void checkedCondition(CriteriaCondition columnCondition) {
 
         Condition condition = columnCondition.condition();
         if (OR.equals(condition)) {
-            List<ColumnCondition> columnConditions = columnCondition.column().get(new TypeReference<>() {
+            List<CriteriaCondition> columnConditions = columnCondition.element().get(new TypeReference<>() {
             });
-            for (ColumnCondition cc : columnConditions) {
+            for (CriteriaCondition cc : columnConditions) {
                 checkedCondition(cc);
             }
             return;

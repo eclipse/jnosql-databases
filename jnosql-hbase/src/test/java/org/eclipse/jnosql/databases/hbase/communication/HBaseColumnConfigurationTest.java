@@ -31,13 +31,13 @@ public class HBaseColumnConfigurationTest {
 
     @Test
     public void shouldCreatesColumnManagerFactory() {
-        ColumnConfiguration configuration = new HBaseColumnConfiguration();
+        var configuration = new HBaseColumnConfiguration();
         assertNotNull(configuration.apply(Settings.builder().build()));
     }
 
     @Test
     public void shouldCreatesColumnManagerFactoryFromConfiguration() {
-        ColumnConfiguration configuration = new HBaseColumnConfiguration();
+        var configuration = new HBaseColumnConfiguration();
         assertNotNull(configuration.apply(Settings.builder().build()));
     }
 

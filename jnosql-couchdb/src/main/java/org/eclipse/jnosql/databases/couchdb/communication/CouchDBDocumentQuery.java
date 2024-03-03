@@ -118,7 +118,7 @@ public final class CouchDBDocumentQuery implements SelectQuery {
     /**
      * returns a new instance of {@link CouchDBDocumentQuery}
      *
-     * @param query the {@link DocumentQuery}
+     * @param query the {@link SelectQuery}
      * @return a new instance
      * @throws NullPointerException when query is null
      */
@@ -130,7 +130,7 @@ public final class CouchDBDocumentQuery implements SelectQuery {
     /**
      * returns a new instance of {@link CouchDBDocumentQuery}
      *
-     * @param query    the {@link DocumentQuery}
+     * @param query    the {@link SelectQuery}
      * @param bookmark {@link CouchDBDocumentQuery#bookmark}
      * @return a new instance
      * @throws NullPointerException when there is null parameter

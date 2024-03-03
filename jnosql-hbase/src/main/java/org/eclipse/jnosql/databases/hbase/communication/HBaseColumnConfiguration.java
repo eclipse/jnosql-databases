@@ -18,7 +18,7 @@ package org.eclipse.jnosql.databases.hbase.communication;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.column.ColumnConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  * Configuration to HBase that returns {@link HBaseColumnManagerFactory}
  * <p>hbase.family.n: as prefix to add family, eg: hbase,family.1=column-family</p>
  */
-public class HBaseColumnConfiguration implements ColumnConfiguration {
+public class HBaseColumnConfiguration implements DatabaseConfiguration {
 
     private final Configuration configuration;
 

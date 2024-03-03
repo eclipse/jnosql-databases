@@ -16,8 +16,7 @@
 package org.eclipse.jnosql.databases.hbase.communication;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.column.ColumnConfiguration;
-import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -28,11 +27,11 @@ import static org.junit.Assert.assertNotNull;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class HBaseColumnManagerFactoryTest {
-    private ColumnConfiguration configuration = new HBaseColumnConfiguration();
+    private DatabaseConfiguration configuration = new HBaseColumnConfiguration();
 
     @Test
     public void shouldCreateColumnManager() {
-        ColumnManagerFactory managerFactory = configuration.apply(Settings.builder().build());
+        var managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 
