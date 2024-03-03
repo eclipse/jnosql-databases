@@ -16,14 +16,14 @@
 package org.eclipse.jnosql.databases.solr.communication;
 
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.Objects;
 
 /**
- * The solr implementation to {@link DocumentManagerFactory}
+ * The solr implementation to {@link DatabaseManagerFactory}
  */
-public class SolrDocumentManagerFactory implements DocumentManagerFactory {
+public class SolrDocumentManagerFactory implements DatabaseManagerFactory {
 
     private final Http2SolrClient solrClient;
 

@@ -23,11 +23,10 @@ import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -65,7 +64,7 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
 
         try {
@@ -78,12 +77,12 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("Apache Solr does not support save with TTL");
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         final List<SolrInputDocument> documents = StreamSupport.stream(entities.spliterator(), false)
                 .map(SolrUtils::getDocument).collect(toList());
@@ -97,7 +96,7 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -107,14 +106,14 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
 
 
     @Override
-    public DocumentEntity update(DocumentEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
 
-        Document id = entity.find("_id").orElseThrow(() ->
+        var id = entity.find("_id").orElseThrow(() ->
                 new IllegalArgumentException("The _id field is required for update"));
 
-        DocumentCondition condition = DocumentCondition.eq(id);
-        DocumentDeleteQuery query = DocumentDeleteQuery.builder()
+        CriteriaCondition condition = CriteriaCondition.eq(id);
+        var query = DeleteQuery.builder()
                 .from(entity.name())
                 .where(condition).build();
         delete(query);
@@ -123,7 +122,7 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update)
@@ -132,10 +131,10 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
 
 
     @Override
-    public void delete(DocumentDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
         try {
-            solrClient.deleteByQuery(DocumentQueryConversor.convert(query));
+            solrClient.deleteByQuery(DocumentQueryConverter.convert(query));
             commit();
         } catch (SolrServerException | IOException e) {
             throw new SolrException("Error to delete at Solr", e);
@@ -143,11 +142,11 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
     }
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         Objects.requireNonNull(query, "query is required");
         try {
             SolrQuery solrQuery = new SolrQuery();
-            final String queryExpression = DocumentQueryConversor.convert(query);
+            final String queryExpression = DocumentQueryConverter.convert(query);
             solrQuery.set("q", queryExpression);
             if (query.skip() > 0) {
                 solrQuery.setStart((int) query.skip());
@@ -204,7 +203,7 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
 
 
     @Override
-    public List<DocumentEntity> solr(String query) {
+    public List<CommunicationEntity> solr(String query) {
         Objects.requireNonNull(query, "query is required");
 
         try {
@@ -219,7 +218,7 @@ class DefaultSolrDocumentManager implements SolrDocumentManager {
     }
 
     @Override
-    public List<DocumentEntity> solr(String query, Map<String, ? extends Object> params) {
+    public List<CommunicationEntity> solr(String query, Map<String, ? extends Object> params) {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(params, "params is required");
         String nativeQuery = query;

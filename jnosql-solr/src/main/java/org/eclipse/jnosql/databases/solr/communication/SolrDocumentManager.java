@@ -14,18 +14,18 @@
  */
 package org.eclipse.jnosql.databases.solr.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
 /**
- * The solr implementation to {@link DocumentManager} that does not support TTL methods
- * <p>{@link DefaultSolrDocumentManager#insert(DocumentEntity, Duration)}</p>
+ * The solr implementation to {@link DatabaseManager} that does not support TTL methods
+ * <p>{@link DefaultSolrDocumentManager#insert(CommunicationEntity, Duration)}</p>
  */
-public interface SolrDocumentManager extends DocumentManager {
+public interface SolrDocumentManager extends DatabaseManager {
 
     /**
      * Executes a Solr native query
@@ -34,7 +34,7 @@ public interface SolrDocumentManager extends DocumentManager {
      * @return the result
      * @throws NullPointerException when query is null
      */
-    List<DocumentEntity> solr(String query);
+    List<CommunicationEntity> solr(String query);
 
     /**
      * Executes a Solr native query with params.
@@ -44,5 +44,5 @@ public interface SolrDocumentManager extends DocumentManager {
      * @return the result
      * @throws NullPointerException when there is null parameter
      */
-    List<DocumentEntity> solr(String query, Map<String, ? extends Object> params);
+    List<CommunicationEntity> solr(String query, Map<String, ? extends Object> params);
 }
