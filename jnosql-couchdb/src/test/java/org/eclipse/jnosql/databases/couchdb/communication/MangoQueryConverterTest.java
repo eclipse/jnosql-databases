@@ -17,12 +17,11 @@
 package org.eclipse.jnosql.databases.couchdb.communication;
 
 import jakarta.json.JsonObject;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.junit.jupiter.params.ParameterizedTest;
 
 import java.util.Arrays;
 
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -33,7 +32,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_all.json")
     public void shouldReturnSelectFromAll(JsonObject expected) {
-        DocumentQuery query = select().from("person").build();
+        var query = select().from("person").build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -41,7 +40,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_fields.json")
     public void shouldReturnSelectFieldsFromAll(JsonObject expected) {
-        DocumentQuery query = select("_id", "_rev").from("person").build();
+        var query = select("_id", "_rev").from("person").build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -49,7 +48,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_fields_skip_start.json")
     public void shouldReturnSelectFieldsLimitSkip(JsonObject expected) {
-        DocumentQuery query = select("_id", "_rev").from("person").limit(10).skip(2).build();
+        var query = select("_id", "_rev").from("person").limit(10).skip(2).build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -57,7 +56,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_order.json")
     public void shouldReturnSelectFromOrder(JsonObject expected) {
-        DocumentQuery query = select().from("person").orderBy("year").asc()
+        var query = select().from("person").orderBy("year").asc()
                 .orderBy("name").desc().build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
@@ -66,7 +65,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_gt_order.json")
     public void shouldSelectFromGtAge(JsonObject expected) {
-        DocumentQuery query = select().from("person").where("age").gt(10).build();
+        var query = select().from("person").where("age").gt(10).build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -74,7 +73,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_gte_order.json")
     public void shouldSelectFromGteAge(JsonObject expected) {
-        DocumentQuery query = select().from("person").where("age").gte(10).build();
+        var query = select().from("person").where("age").gte(10).build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -82,7 +81,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_lt_order.json")
     public void shouldSelectFromLtAge(JsonObject expected) {
-        DocumentQuery query = select().from("person").where("age").lt(10).build();
+        var query = select().from("person").where("age").lt(10).build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -90,7 +89,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_lte_order.json")
     public void shouldSelectFromLteAge(JsonObject expected) {
-        DocumentQuery query = select().from("person").where("age").lte(10).build();
+        var query = select().from("person").where("age").lte(10).build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -98,7 +97,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_in_order.json")
     public void shouldSelectFromInAge(JsonObject expected) {
-        DocumentQuery query = select().from("person").where("age").in(Arrays.asList(10, 12)).build();
+        var query = select().from("person").where("age").in(Arrays.asList(10, 12)).build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -106,7 +105,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_not_order.json")
     public void shouldSelectFromNotAge(JsonObject expected) {
-        DocumentQuery query = select().from("person").where("age").not().lt(10).build();
+        var query = select().from("person").where("age").not().lt(10).build();
         JsonObject jsonObject = converter.apply(query);
         assertEquals(expected, jsonObject);
     }
@@ -114,7 +113,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_and_order.json")
     public void shouldSelectFromAndAge(JsonObject expected) {
-        DocumentQuery query = select().from("person")
+        var query = select().from("person")
                 .where("name").eq("Poliana")
                 .and("name").eq("Ada").build();
         JsonObject jsonObject = converter.apply(query);
@@ -124,7 +123,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_from_or_order.json")
     public void shouldSelectFromOrAge(JsonObject expected) {
-        DocumentQuery query = select().from("person")
+        var query = select().from("person")
                 .where("name").eq("Poliana")
                 .or("name").eq("Ada").build();
         JsonObject jsonObject = converter.apply(query);
@@ -134,7 +133,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_all.json")
     public void shouldReturnSelectFromAllBookmark(JsonObject expected) {
-        DocumentQuery query = select().from("person").build();
+        var query = select().from("person").build();
         JsonObject jsonObject = converter.apply(CouchDBDocumentQuery.of(query));
         assertEquals(expected, jsonObject);
     }
@@ -142,7 +141,7 @@ class MangoQueryConverterTest {
     @ParameterizedTest
     @JsonSource("select_all_bookmark.json")
     public void shouldReturnSelectFromAllBookmark2(JsonObject expected) {
-        DocumentQuery query = select().from("person").build();
+        var query = select().from("person").build();
         JsonObject jsonObject = converter.apply(CouchDBDocumentQuery.of(query, "bookmark"));
         assertEquals(expected, jsonObject);
     }

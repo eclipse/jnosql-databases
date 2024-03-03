@@ -16,9 +16,9 @@ package org.eclipse.jnosql.databases.couchdb.communication;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.eclipse.jnosql.communication.CommunicationException;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,19 +46,19 @@ final class CouchDBHttpClient {
         return;
     }
 
-    public DocumentEntity insert(DocumentEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         return this.httpExecute.insert(database, entity);
     }
 
-    public DocumentEntity update(DocumentEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         return this.httpExecute.update(database, entity);
     }
 
-    public Stream<DocumentEntity> select(DocumentQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         return this.httpExecute.select(database, query);
     }
 
-    public void delete(DocumentDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         this.httpExecute.delete(database, query);
     }
 

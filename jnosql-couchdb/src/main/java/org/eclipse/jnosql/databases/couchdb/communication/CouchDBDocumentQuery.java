@@ -17,8 +17,8 @@
 package org.eclipse.jnosql.databases.couchdb.communication;
 
 import jakarta.data.Sort;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.List;
 import java.util.Map;
@@ -26,20 +26,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * A CouchDB specialization of {@link DocumentQuery} that allows query with bookmark which can do pagination.
+ * A CouchDB specialization of {@link SelectQuery} that allows query with bookmark which can do pagination.
  *
- * @see CouchDBDocumentQuery#of(DocumentQuery)
- * @see CouchDBDocumentQuery#of(DocumentQuery, String)
+ * @see CouchDBDocumentQuery#of(SelectQuery)
+ * @see CouchDBDocumentQuery#of(SelectQuery, String)
  */
-public final class CouchDBDocumentQuery implements DocumentQuery {
+public final class CouchDBDocumentQuery implements SelectQuery {
 
 
-    private final DocumentQuery query;
+    private final SelectQuery query;
 
     private String bookmark;
 
 
-    private CouchDBDocumentQuery(DocumentQuery query) {
+    private CouchDBDocumentQuery(SelectQuery query) {
         this.query = query;
     }
 
@@ -75,7 +75,7 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public Optional<DocumentCondition> condition() {
+    public Optional<CriteriaCondition> condition() {
         return query.condition();
     }
 
@@ -85,8 +85,8 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public List<String> documents() {
-        return query.documents();
+    public List<String> columns() {
+        return query.columns();
     }
 
     @Override
@@ -109,11 +109,10 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CouchDBDocumentQuery{");
-        sb.append("query=").append(query);
-        sb.append(", bookmark='").append(bookmark).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "CouchDBDocumentQuery{" +
+                "query=" + query +
+                ", bookmark='" + bookmark + '\'' +
+                '}';
     }
 
     /**
@@ -123,7 +122,7 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
      * @return a new instance
      * @throws NullPointerException when query is null
      */
-    public static CouchDBDocumentQuery of(DocumentQuery query) {
+    public static CouchDBDocumentQuery of(SelectQuery query) {
         Objects.requireNonNull(query, "query is required ");
         return new CouchDBDocumentQuery(query);
     }
@@ -136,7 +135,7 @@ public final class CouchDBDocumentQuery implements DocumentQuery {
      * @return a new instance
      * @throws NullPointerException when there is null parameter
      */
-    public static CouchDBDocumentQuery of(DocumentQuery query, String bookmark) {
+    public static CouchDBDocumentQuery of(SelectQuery query, String bookmark) {
         Objects.requireNonNull(query, "query is required ");
         Objects.requireNonNull(bookmark, "bookmark is required ");
         CouchDBDocumentQuery couchDBDocumentQuery = new CouchDBDocumentQuery(query);

@@ -16,11 +16,11 @@
  */
 package org.eclipse.jnosql.databases.couchdb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.Objects;
 
-public class CouchDBDocumentManagerFactory implements DocumentManagerFactory {
+public class CouchDBDocumentManagerFactory implements DatabaseManagerFactory {
 
 
     private final CouchDBHttpConfiguration configuration;

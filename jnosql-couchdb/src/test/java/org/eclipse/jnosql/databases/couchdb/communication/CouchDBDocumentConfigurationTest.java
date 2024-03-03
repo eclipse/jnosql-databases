@@ -17,8 +17,7 @@
 package org.eclipse.jnosql.databases.couchdb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -33,27 +32,27 @@ class CouchDBDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentManagerFactoryByMap() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
-        DocumentManagerFactory managerFactory = configuration.apply(Settings.settings());
+        var managerFactory = configuration.apply(Settings.settings());
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldCreateDocumentManagerFactoryByFile() {
         CouchDBDocumentConfiguration configuration = new CouchDBDocumentConfiguration();
-        DocumentManagerFactory managerFactory = configuration.apply(Settings.settings());
+        var managerFactory = configuration.apply(Settings.settings());
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldReturnFromConfiguration() {
-        CouchDBDocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        CouchDBDocumentConfiguration configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof CouchDBDocumentConfiguration);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        CouchDBDocumentConfiguration configuration = DocumentConfiguration
+        CouchDBDocumentConfiguration configuration = DatabaseConfiguration
                 .getConfiguration(CouchDBDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof CouchDBDocumentConfiguration);

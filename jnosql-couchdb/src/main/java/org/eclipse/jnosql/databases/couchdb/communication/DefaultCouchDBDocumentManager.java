@@ -16,9 +16,10 @@
  */
 package org.eclipse.jnosql.databases.couchdb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -43,25 +44,25 @@ class DefaultCouchDBDocumentManager implements CouchDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         return connector.insert(entity);
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("CouchDB does not support TTL operation");
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert).collect(Collectors.toList());
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -69,26 +70,26 @@ class DefaultCouchDBDocumentManager implements CouchDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity update(DocumentEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         return connector.update(entity);
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update).collect(Collectors.toList());
     }
 
     @Override
-    public void delete(DocumentDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
         connector.delete(query);
     }
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         Objects.requireNonNull(query, "query is required");
         return connector.select(query);
     }
