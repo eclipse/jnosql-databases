@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
  */
 @Typed(ArangoDBTemplate.class)
 @ApplicationScoped
-class DefaultArangoDBTemplate extends AbstractSemistructuredTemplate implements ArangoDBTemplate, DocumentTemplate {
+class DefaultArangoDBTemplate extends AbstractSemistructuredTemplate implements ArangoDBTemplate {
 
     private final Instance<ArangoDBDocumentManager> manager;
 

@@ -18,12 +18,12 @@ package org.eclipse.jnosql.databases.couchbase.mapping;
 import com.couchbase.client.java.json.JsonObject;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.query.AbstractDocumentRepositoryProxy;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProxy;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
+import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemistructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.query.SemistructuredRepositoryProxy;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
 
-class CouchbaseDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
+class CouchbaseDocumentRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
@@ -56,7 +56,7 @@ class CouchbaseDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryP
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
         this.repositoryType = repositoryType;
-        this.repository = DocumentRepositoryProxy.DocumentRepository.of(template, entityMetadata);
+        this.repository = SemistructuredRepositoryProxy.SemistructuredRepository.of(template, entityMetadata);
     }
 
 
@@ -81,7 +81,7 @@ class CouchbaseDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryP
     }
 
     @Override
-    protected JNoSQLDocumentTemplate template() {
+    protected DocumentTemplate template() {
         return template;
     }
 

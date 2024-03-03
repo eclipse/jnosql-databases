@@ -16,15 +16,14 @@ package org.eclipse.jnosql.databases.couchbase.mapping;
 
 
 import com.couchbase.client.java.json.JsonObject;
-import jakarta.nosql.document.DocumentTemplate;
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 
 import java.util.stream.Stream;
 
 /**
  * A {@link DocumentTemplate} to couchbase
  */
-public interface CouchbaseTemplate extends JNoSQLDocumentTemplate {
+public interface CouchbaseTemplate extends DocumentTemplate {
 
 
     /**

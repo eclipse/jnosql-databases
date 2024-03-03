@@ -20,13 +20,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.couchbase.communication.CouchbaseDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.util.stream.Stream;
 
@@ -37,24 +37,24 @@ import static java.util.Objects.requireNonNull;
  */
 @Typed(CouchbaseTemplate.class)
 @ApplicationScoped
-class DefaultCouchbaseTemplate extends AbstractDocumentTemplate
+class DefaultCouchbaseTemplate extends AbstractSemistructuredTemplate
         implements CouchbaseTemplate {
 
-    private Instance<CouchbaseDocumentManager> manager;
+    private final Instance<CouchbaseDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final EntityConverter converter;
 
 
-    private DocumentEventPersistManager persistManager;
+    private final EventPersistManager persistManager;
 
-    private EntitiesMetadata entities;
+    private final EntitiesMetadata entities;
 
-    private Converters converters;
+    private final Converters converters;
 
     @Inject
     DefaultCouchbaseTemplate(Instance<CouchbaseDocumentManager> manager,
-                             DocumentEntityConverter converter,
-                             DocumentEventPersistManager persistManager,
+                             EntityConverter converter,
+                             EventPersistManager persistManager,
                              EntitiesMetadata entities,
                              Converters converters) {
         this.manager = manager;
@@ -65,33 +65,33 @@ class DefaultCouchbaseTemplate extends AbstractDocumentTemplate
     }
 
     DefaultCouchbaseTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected DocumentManager getManager() {
+    protected DatabaseManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
+    protected EventPersistManager eventManager() {
         return persistManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
-
     @Override
     public <T> Stream<T> n1qlQuery(String n1qlQuery, JsonObject params) {
         requireNonNull(n1qlQuery, "n1qlQuery is required");
