@@ -132,8 +132,8 @@ public final class ArangoDBUtil {
     private static Object convert(Value value) {
         Object val = ValueUtil.convert(value);
 
-        if (Document.class.isInstance(val)) {
-            Document document = Document.class.cast(val);
+        if (Element.class.isInstance(val)) {
+            Element document = Element.class.cast(val);
             return singletonMap(document.name(), convert(document.value()));
         }
         if (isSudDocument(val)) {
@@ -163,11 +163,11 @@ public final class ArangoDBUtil {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
+                allMatch(Element.class::isInstance);
     }
 
-    private static org.eclipse.jnosql.communication.document.Document cast(Object document) {
-        return org.eclipse.jnosql.communication.document.Document.class.cast(document);
+    private static Element cast(Object document) {
+        return Element.class.cast(document);
     }
 
 }

@@ -16,8 +16,7 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,20 +29,20 @@ public class ArangoDBDocumentConfigurationTest {
     public void shouldCreateDocumentManagerFactory() {
         ArangoDBDocumentConfiguration configuration = new ArangoDBDocumentConfiguration();
         configuration.addHost("localhost", 8529);
-        DocumentManagerFactory managerFactory = configuration.apply(Settings.builder().build());
+        ArangoDBDocumentManagerFactory managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldReturnFromConfiguration() {
-        ArangoDBDocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        ArangoDBDocumentConfiguration configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        ArangoDBDocumentConfiguration configuration = DocumentConfiguration
+        ArangoDBDocumentConfiguration configuration = DatabaseConfiguration
                 .getConfiguration(ArangoDBDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof ArangoDBDocumentConfiguration);

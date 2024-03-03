@@ -14,15 +14,15 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Map;
 
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
@@ -30,7 +30,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQuery() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").eq("value").build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
@@ -43,7 +43,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryAnd() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").eq("value")
                 .and("age").lte(10)
                 .build();
@@ -58,7 +58,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryOr() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").eq("value")
                 .or("age").lte(10)
                 .build();
@@ -73,7 +73,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQuerySort() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").eq("value")
                 .orderBy("name").asc().build();
 
@@ -86,7 +86,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQuerySort2() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").eq("value")
                 .orderBy("name").asc()
                 .orderBy("age").desc().build();
@@ -101,7 +101,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryLimit() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").eq("value")
                 .limit(5).build();
 
@@ -115,7 +115,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryLimit2() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").eq("value")
                 .skip(1).limit(5).build();
 
@@ -128,7 +128,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryNot() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("name").not().eq("value").build();
 
         AQLQueryResult convert = QueryAQLConverter.select(query);
@@ -142,7 +142,7 @@ public class QueryAQLConverterTest {
 
     @Test
     public void shouldNegate() {
-        DocumentQuery query = select().from("collection")
+        SelectQuery query = select().from("collection")
                 .where("city").not().eq("Assis")
                 .and("name").eq("Otavio")
                 .or("name").not().eq("Lucas").build();

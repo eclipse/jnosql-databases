@@ -17,7 +17,6 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import static java.util.Objects.requireNonNull;
