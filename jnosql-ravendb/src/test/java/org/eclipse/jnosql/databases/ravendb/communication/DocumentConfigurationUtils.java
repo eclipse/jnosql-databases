@@ -17,17 +17,17 @@ package org.eclipse.jnosql.databases.ravendb.communication;
 
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.function.Supplier;
 
-public enum  DocumentConfigurationUtils implements Supplier<DocumentManagerFactory> {
+public enum  DocumentConfigurationUtils implements Supplier<DatabaseManagerFactory> {
 
 INSTANCE;
 
-    public DocumentManagerFactory get() {
-        DocumentConfiguration configuration = new RavenDBDocumentConfiguration();
+    public DatabaseManagerFactory get() {
+        DatabaseConfiguration configuration = new RavenDBDocumentConfiguration();
         return configuration.apply(getSettings());
     }
 

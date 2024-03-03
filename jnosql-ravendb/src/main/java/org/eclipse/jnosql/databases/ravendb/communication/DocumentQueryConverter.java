@@ -20,10 +20,10 @@ import net.ravendb.client.documents.queries.Query;
 import net.ravendb.client.documents.session.IDocumentQuery;
 import net.ravendb.client.documents.session.IDocumentSession;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ class DocumentQueryConverter {
     }
 
 
-    public static QueryResult createQuery(IDocumentSession session, DocumentQuery query) {
+    public static QueryResult createQuery(IDocumentSession session, SelectQuery query) {
 
         List<String> ids = new ArrayList<>();
         IDocumentQuery<HashMap> ravenQuery = session.query(HashMap.class, Query.collection(query.name()));
@@ -51,7 +51,7 @@ class DocumentQueryConverter {
 
     }
 
-    private static QueryResult appendRavenQuery(DocumentQuery query, List<String> ids, IDocumentQuery<HashMap> ravenQuery) {
+    private static QueryResult appendRavenQuery(SelectQuery query, List<String> ids, IDocumentQuery<HashMap> ravenQuery) {
         Consumer<Sort> sortConsumer = s -> {
             if(s.isDescending()){
                 ravenQuery.orderByDescending(s.property());
@@ -71,8 +71,8 @@ class DocumentQueryConverter {
         return new QueryResult(ids, ravenQuery);
     }
 
-    private static void feedQuery(IDocumentQuery<HashMap> ravenQuery, DocumentCondition condition, List<String> ids) {
-        Document document = condition.document();
+    private static void feedQuery(IDocumentQuery<HashMap> ravenQuery, CriteriaCondition condition, List<String> ids) {
+        Element document = condition.element();
         Object value = document.get();
         String name = document.name();
 
@@ -107,19 +107,19 @@ class DocumentQueryConverter {
                 return;
             case NOT:
                 ravenQuery.negateNext();
-                feedQuery(ravenQuery, document.get(DocumentCondition.class), ids);
+                feedQuery(ravenQuery, document.get(CriteriaCondition.class), ids);
                 return;
             case LIKE:
                 throw new UnsupportedOperationException("Raven does not support LIKE Operator");
             case AND:
-                condition.document().value()
-                        .get(new TypeReference<List<DocumentCondition>>() {
+                condition.element().value()
+                        .get(new TypeReference<List<CriteriaCondition>>() {
                         })
                         .forEach(c -> feedQuery(ravenQuery.andAlso(), c, ids));
                 return;
             case OR:
-                condition.document().value()
-                        .get(new TypeReference<List<DocumentCondition>>() {
+                condition.element().value()
+                        .get(new TypeReference<List<CriteriaCondition>>() {
                         })
                         .forEach(c -> feedQuery(ravenQuery.orElse(), c, ids));
                 return;

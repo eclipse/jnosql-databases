@@ -16,15 +16,15 @@
 package org.eclipse.jnosql.databases.ravendb.communication;
 
 import net.ravendb.client.documents.DocumentStore;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * The RavenDB implementation to {@link DocumentManagerFactory}
+ * The RavenDB implementation to {@link DatabaseManagerFactory}
  */
-public class RavenDBDocumentManagerFactory implements DocumentManagerFactory {
+public class RavenDBDocumentManagerFactory implements DatabaseManagerFactory {
 
     private final String[] hosts;
 
