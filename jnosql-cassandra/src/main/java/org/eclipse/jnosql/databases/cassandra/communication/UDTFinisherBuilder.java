@@ -22,5 +22,5 @@ public interface UDTFinisherBuilder {
      * @return a udt instance
      * @throws IllegalStateException when there is a null element
      */
-    public UDT build();
+    UDT build();
 }

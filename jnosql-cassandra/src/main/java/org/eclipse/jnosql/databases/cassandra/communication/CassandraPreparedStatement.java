@@ -18,7 +18,7 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 
 import java.util.stream.Stream;
 
@@ -38,7 +38,7 @@ public class CassandraPreparedStatement {
         this.session = session;
     }
 
-    public Stream<ColumnEntity> executeQuery() {
+    public Stream<CommunicationEntity> executeQuery() {
         load();
         ResultSet resultSet = session.execute(boundStatement);
         return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);

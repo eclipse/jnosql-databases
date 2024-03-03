@@ -377,7 +377,7 @@ public class CassandraColumnManagerTest {
         udt = UDT.class.cast(column);
         List<Column> udtColumns = (List<Column>) udt.get();
         assertEquals("name", udt.name());
-        assertEquals("fullname", udt.getUserType());
+        assertEquals("fullname", udt.userType());
         assertThat(udtColumns).contains(Column.of("firstname", "Ada"),
                 Column.of("lastname", "Lovelace"));
     }
@@ -402,7 +402,7 @@ public class CassandraColumnManagerTest {
         udt = UDT.class.cast(column);
         List<Column> udtColumns = (List<Column>) udt.get();
         assertEquals("name", udt.name());
-        assertEquals("fullname", udt.getUserType());
+        assertEquals("fullname", udt.userType());
         assertThat(udtColumns).contains(Column.of("firstname", "Ioda"));
     }
 

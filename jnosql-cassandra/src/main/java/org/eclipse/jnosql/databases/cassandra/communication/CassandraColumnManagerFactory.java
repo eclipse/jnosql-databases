@@ -18,14 +18,14 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
-import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.List;
 
 /**
- * The Cassandra implementation to {@link ColumnManagerFactory}
+ * The Cassandra implementation to {@link DatabaseManagerFactory}
  */
-public class CassandraColumnManagerFactory implements ColumnManagerFactory {
+public class CassandraColumnManagerFactory implements DatabaseManagerFactory {
 
     private final CqlSessionBuilder sessionBuilder;
 

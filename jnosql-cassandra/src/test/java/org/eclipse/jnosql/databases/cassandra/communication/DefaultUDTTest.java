@@ -35,7 +35,7 @@ public class DefaultUDTTest {
         UDT udt = UDT.builder("fullname").withName("name")
                 .addUDT(columns).build();
 
-        assertEquals("fullname", udt.getUserType());
+        assertEquals("fullname", udt.userType());
         assertEquals("name", udt.name());
     }
 

@@ -293,7 +293,7 @@ public class CassandraColumnEntityConverterTest {
         Column column = entity.find("home").get();
         UDT udt = UDT.class.cast(column);
 
-        assertEquals("address", udt.getUserType());
+        assertEquals("address", udt.userType());
         assertEquals("home", udt.name());
         assertThat((List<Column>) udt.get())
                 .contains(Column.of("city", "California"), Column.of("street", "Street"));
@@ -353,7 +353,7 @@ public class CassandraColumnEntityConverterTest {
         List<List<Column>> contacts = (List<List<Column>>) column.get();
         assertEquals(2, contacts.size());
         assertTrue(contacts.stream().allMatch(c -> c.size() == 2));
-        assertEquals("Contact", column.getUserType());
+        assertEquals("Contact", column.userType());
 
     }
 

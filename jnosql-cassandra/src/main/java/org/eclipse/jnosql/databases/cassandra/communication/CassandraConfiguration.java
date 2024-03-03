@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.column.ColumnConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The Cassandra implementation to {@link ColumnConfiguration}  that returns
+ * The Cassandra implementation to {@link DatabaseConfiguration}  that returns
  * {@link CassandraColumnManagerFactory}
  *
  * @see CassandraConfigurations
  */
-public final class CassandraConfiguration implements ColumnConfiguration {
+public final class CassandraConfiguration implements DatabaseConfiguration {
 
 
     private CassandraColumnManagerFactory getManagerFactory(Map<String, String> configurations) {

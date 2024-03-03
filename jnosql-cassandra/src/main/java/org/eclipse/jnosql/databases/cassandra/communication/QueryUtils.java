@@ -39,10 +39,10 @@ import com.datastax.oss.protocol.internal.ProtocolConstants;
 import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.CommunicationException;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -62,11 +62,11 @@ final class QueryUtils {
     }
 
 
-    static Insert insert(ColumnEntity entity, String keyspace, CqlSession session, Duration duration) {
+    static Insert insert(CommunicationEntity entity, String keyspace, CqlSession session, Duration duration) {
 
         Map<String, Term> values = new HashMap<>();
         InsertInto insert = QueryBuilder.insertInto(keyspace, entity.name());
-        entity.columns().stream()
+        entity.elements().stream()
                 .forEach(c -> {
                     if (UDT.class.isInstance(c)) {
                         insertUDT(UDT.class.cast(c), keyspace, entity.name(), session, values);
@@ -82,7 +82,7 @@ final class QueryUtils {
         return regularInsert;
     }
 
-    public static Select select(ColumnQuery query, String keyspace) {
+    public static Select select(SelectQuery query, String keyspace) {
         String columnFamily = query.name();
         final List<String> columns = query.columns();
 
@@ -109,7 +109,7 @@ final class QueryUtils {
 
         final Optional<KeyspaceMetadata> keyspaceMetadata = session.getMetadata().getKeyspace(keyspace);
         UserDefinedType userType = keyspaceMetadata
-                .flatMap(ks -> ks.getUserDefinedType(udt.getUserType()))
+                .flatMap(ks -> ks.getUserDefinedType(udt.userType()))
                 .orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));
 
         final TableMetadata tableMetadata = keyspaceMetadata
@@ -133,8 +133,8 @@ final class QueryUtils {
         final List<String> udtNames = userType.getFieldNames().stream().map(CqlIdentifier::asInternal)
                 .collect(Collectors.toList());
         for (Object object : elements) {
-            if (Column.class.isInstance(object)) {
-                Column column = Column.class.cast(object);
+            if (Element.class.isInstance(object)) {
+                Element column = Element.class.cast(object);
                 Object convert = ValueUtil.convert(column.value());
 
                 final int index = udtNames.indexOf(column.name());
@@ -170,7 +170,7 @@ final class QueryUtils {
         }
     }
 
-    private static void insertSingleField(Column column, Map<String, Term> values) {
+    private static void insertSingleField(Element column, Map<String, Term> values) {
         Object value = column.get();
         if(value == null) {
             values.put(getName(column), QueryBuilder.literal(null));
@@ -189,7 +189,7 @@ final class QueryUtils {
         return String.format("select count(*) from %s.%s", keyspace, columnFamily);
     }
 
-    static String getName(Column column) {
+    static String getName(Element column) {
         return getName(column.name());
     }
 

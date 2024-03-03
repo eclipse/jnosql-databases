@@ -15,23 +15,23 @@
 package org.eclipse.jnosql.databases.cassandra.communication;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.stream.Stream;
 
 interface QueryExecutor {
 
-    static QueryExecutor of(ColumnQuery query) {
+    static QueryExecutor of(SelectQuery query) {
         if (CassandraQuery.class.isInstance(query)) {
             return QueryExecutorType.PAGING_STATE;
         }
         return QueryExecutorType.DEFAULT;
     }
 
-    Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, DefaultCassandraColumnManager manager);
+    Stream<CommunicationEntity> execute(String keyspace, SelectQuery query, DefaultCassandraColumnManager manager);
 
-    Stream<ColumnEntity> execute(String keyspace, ColumnQuery query, ConsistencyLevel level,
+    Stream<CommunicationEntity> execute(String keyspace, SelectQuery query, ConsistencyLevel level,
                                  DefaultCassandraColumnManager manager);
 
 }

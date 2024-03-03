@@ -15,7 +15,8 @@
 package org.eclipse.jnosql.databases.cassandra.communication;
 
 
-import org.eclipse.jnosql.communication.column.Column;
+
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +32,9 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
 
     private final String typeName;
 
-    private final List<Column> columns = new ArrayList<>();
+    private final List<Element> columns = new ArrayList<>();
 
-    private Iterable<Iterable<Column>> udts = new ArrayList<>();
+    private Iterable<Iterable<Element>> udts = new ArrayList<>();
 
 
     UDTBuilder(String userType) {
@@ -48,14 +49,14 @@ class UDTBuilder implements UDTNameBuilder, UDTElementBuilder, UDTFinisherBuilde
 
 
     @Override
-    public UDTBuilder addUDT(Iterable<Column> udt) throws NullPointerException {
+    public UDTBuilder addUDT(Iterable<Element> udt) throws NullPointerException {
         Objects.requireNonNull(udt, "udt is required");
         StreamSupport.stream(udt.spliterator(), false).forEach(this.columns::add);
         return this;
     }
 
     @Override
-    public UDTBuilder addUDTs(Iterable<Iterable<Column>> udts) throws NullPointerException {
+    public UDTBuilder addUDTs(Iterable<Iterable<Element>> udts) throws NullPointerException {
         Objects.requireNonNull(udts, "udts is required");
         this.udts = udts;
         return this;

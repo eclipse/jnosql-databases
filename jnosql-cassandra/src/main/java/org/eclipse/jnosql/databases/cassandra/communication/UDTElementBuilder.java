@@ -14,7 +14,8 @@
  */
 package org.eclipse.jnosql.databases.cassandra.communication;
 
-import org.eclipse.jnosql.communication.column.Column;
+
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 public interface UDTElementBuilder {
 
@@ -26,7 +27,7 @@ public interface UDTElementBuilder {
      * @return the builder instance
      * @throws NullPointerException when either the udt or there is a null element
      */
-    UDTFinisherBuilder addUDT(Iterable<Column> udt) throws NullPointerException;
+    UDTFinisherBuilder addUDT(Iterable<Element> udt) throws NullPointerException;
     /**
      * <p>On Cassandra, there is the option to a UDT be part of a list. This implementation holds this option.</p>
      * <p>eg: CREATE COLUMNFAMILY IF NOT EXISTS contacts ( user text PRIMARY KEY, names list&#60;frozen &#60;fullname&#62;&#62;);</p>
@@ -35,5 +36,5 @@ public interface UDTElementBuilder {
      * @return the builder instance
      * @throws NullPointerException when either the udt or there is a null element
      */
-    UDTFinisherBuilder addUDTs(Iterable<Iterable<Column>> udts) throws NullPointerException;
+    UDTFinisherBuilder addUDTs(Iterable<Iterable<Element>> udts) throws NullPointerException;
 }

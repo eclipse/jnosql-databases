@@ -15,27 +15,27 @@
 package org.eclipse.jnosql.databases.cassandra.communication;
 
 
-import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 /**
- * A Cassandra user data type, this interface does not support both Value alias method:
- * get(class) and get(TypeSupplier);
+ * Represents a user-defined type (UDT) in Cassandra. This interface does not support
+ * the {@code getValue(alias)} method, which includes both the {@code get(Class)} and {@code get(TypeSupplier)} aliases.
  */
-public interface UDT extends Column {
+public interface UDT extends Element {
 
     /**
-     * The UDT name
+     * Retrieves the name of the user-defined type (UDT).
      *
-     * @return the UDT name
+     * @return the name of the UDT
      */
-    String getUserType();
+    String userType();
 
     /**
-     * Returns a UDT builder
+     * Creates a builder for constructing instances of the specified user-defined type (UDT).
      *
-     * @param userType the user type name
-     * @return the {@link UDTBuilder} instance
-     * @throws NullPointerException when userType is null
+     * @param userType the name of the user-defined type
+     * @return the {@link UDTBuilder} instance for the specified UDT
+     * @throws NullPointerException if {@code userType} is {@code null}
      */
     static UDTNameBuilder builder(String userType) throws NullPointerException {
         return new UDTBuilder(userType);

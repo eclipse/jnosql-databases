@@ -26,8 +26,8 @@ import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.protocol.internal.ProtocolConstants;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +41,8 @@ final class CassandraConverter {
     private CassandraConverter() {
     }
 
-    public static ColumnEntity toDocumentEntity(Row row) {
-        List<Column> columns = new ArrayList<>();
+    public static CommunicationEntity toDocumentEntity(Row row) {
+        List<Element> columns = new ArrayList<>();
         String columnFamily = "";
         for (ColumnDefinition definition : row.getColumnDefinitions()) {
             columnFamily = definition.getTable().asInternal();
@@ -51,23 +51,23 @@ final class CassandraConverter {
                 columns.add(getColumn(definition, result));
             }
         }
-        return ColumnEntity.of(columnFamily, columns);
+        return CommunicationEntity.of(columnFamily, columns);
     }
 
 
-    private static Column getColumn(ColumnDefinition definition, Object result) {
+    private static Element getColumn(ColumnDefinition definition, Object result) {
 
         final DataType type = definition.getType();
         return switch (type.getProtocolCode()) {
-            case ProtocolConstants.DataType.UDT -> Column.class.cast(result);
+            case ProtocolConstants.DataType.UDT -> Element.class.cast(result);
             case ProtocolConstants.DataType.LIST, ProtocolConstants.DataType.SET -> {
                 if (isUDTIterable(result)) {
                     yield UDT.builder(getUserType(result)).withName(definition.getName().asInternal())
                             .addUDTs(getColumns(definition, result)).build();
                 }
-                yield Column.of(definition.getName().asInternal(), Value.of(result));
+                yield Element.of(definition.getName().asInternal(), Value.of(result));
             }
-            default -> Column.of(definition.getName().asInternal(), Value.of(result));
+            default -> Element.of(definition.getName().asInternal(), Value.of(result));
         };
     }
 
@@ -85,14 +85,14 @@ final class CassandraConverter {
     private static UDT getUDT(ColumnDefinition definition, UdtValue udtValue) {
         String name = definition.getName().asInternal();
         final UserDefinedType type = udtValue.getType();
-        List<Column> columns = new ArrayList<>();
+        List<Element> columns = new ArrayList<>();
         List<String> names = type.getFieldNames().stream().map(CqlIdentifier::asInternal).collect(toList());
         for (CqlIdentifier fieldName : type.getFieldNames()) {
             final int index = names.indexOf(fieldName.asInternal());
             DataType fieldType = type.getFieldTypes().get(index);
             Object elementValue = udtValue.get(fieldName, CodecRegistry.DEFAULT.codecFor(fieldType));
             if (elementValue != null) {
-                columns.add(Column.of(fieldName.asInternal(), elementValue));
+                columns.add(Element.of(fieldName.asInternal(), elementValue));
             }
         }
         return UDT.builder(type.getName().asInternal()).withName(name).addUDT(columns).build();
@@ -106,13 +106,13 @@ final class CassandraConverter {
                 .get().toString();
     }
 
-    private static Iterable<Iterable<Column>> getColumns(ColumnDefinition definition, Object result) {
+    private static Iterable<Iterable<Element>> getColumns(ColumnDefinition definition, Object result) {
 
-        List<Iterable<Column>> columns = new ArrayList<>();
+        List<Iterable<Element>> columns = new ArrayList<>();
         for (Object value : Iterable.class.cast(result)) {
             final UdtValue udtValue = UdtValue.class.cast(value);
             final UDT udt = getUDT(definition, udtValue);
-            columns.add((Iterable<Column>) udt.get());
+            columns.add((Iterable<Element>) udt.get());
         }
 
         return columns;
