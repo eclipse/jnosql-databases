@@ -17,15 +17,15 @@ package org.eclipse.jnosql.databases.elasticsearch.communication;
 
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 
 import java.util.stream.Stream;
 
 /**
- * The ES implementation of {@link DocumentManager}
+ * The ES implementation of {@link DatabaseManager}
  */
-public interface ElasticsearchDocumentManager extends DocumentManager {
+public interface ElasticsearchDocumentManager extends DatabaseManager {
 
     /**
      * Find entities from {@link SearchRequest}
@@ -34,6 +34,6 @@ public interface ElasticsearchDocumentManager extends DocumentManager {
      * @return the objects from search
      * @throws NullPointerException when the search request builder is null
      */
-    Stream<DocumentEntity> search(SearchRequest query) throws NullPointerException;
+    Stream<CommunicationEntity> search(SearchRequest query) throws NullPointerException;
 
 }

@@ -24,10 +24,9 @@ import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.bulk.DeleteOperation;
 import org.eclipse.jnosql.communication.CommunicationException;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -61,9 +60,9 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         requireNonNull(entity, "entity is required");
-        Document id = entity.find(EntityConverter.ID_FIELD)
+        var id = entity.find(EntityConverter.ID_FIELD)
                 .orElseThrow(() -> new ElasticsearchKeyFoundException(entity.toString()));
         Map<String, Object> jsonObject = EntityConverter.getMap(entity);
         try {
@@ -80,19 +79,19 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
 
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("The insert with TTL does not support");
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert).collect(Collectors.toList());
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -100,24 +99,24 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
     }
 
     @Override
-    public DocumentEntity update(DocumentEntity entity) throws NullPointerException {
+    public CommunicationEntity update(CommunicationEntity entity) throws NullPointerException {
         return insert(entity);
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update).collect(Collectors.toList());
     }
 
     @Override
-    public void delete(DocumentDeleteQuery query) throws NullPointerException {
+    public void delete(DeleteQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
 
-        DocumentQuery select = new ElasticsearchDocumentQuery(query);
+        var select = new ElasticsearchDocumentQuery(query);
 
-        List<DocumentEntity> entities = select(select).collect(Collectors.toList());
+        List<CommunicationEntity> entities = select(select).toList();
 
         if (entities.isEmpty()) {
             return;
@@ -142,7 +141,7 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
     }
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery query) throws NullPointerException {
+    public Stream<CommunicationEntity> select(SelectQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
         return EntityConverter.query(query, elasticsearchClient, index);
     }
@@ -161,7 +160,7 @@ class DefaultElasticsearchDocumentManager implements ElasticsearchDocumentManage
     }
 
     @Override
-    public Stream<DocumentEntity> search(SearchRequest query) {
+    public Stream<CommunicationEntity> search(SearchRequest query) {
         Objects.requireNonNull(query, "query is required");
         try {
             var responses = elasticsearchClient.search(query, Map.class);
