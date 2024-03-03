@@ -15,10 +15,12 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 
+import org.eclipse.jnosql.communication.CommunicationException;
+
 /**
  * The exception to ArangoDB
  */
-public class ArangoDBException extends RuntimeException {
+public class ArangoDBException extends CommunicationException {
     public ArangoDBException(String message) {
         super(message);
     }

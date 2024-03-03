@@ -17,11 +17,11 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 import jakarta.data.Direction;
 import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +52,7 @@ final class QueryAQLConverter {
     private QueryAQLConverter() {
     }
 
-    public static AQLQueryResult delete(DocumentDeleteQuery query) throws NullPointerException {
+    public static AQLQueryResult delete(DeleteQuery query) throws NullPointerException {
 
         return convert(query.name(),
                 query.condition().orElse(null),
@@ -62,7 +62,7 @@ final class QueryAQLConverter {
                 REMOVE, true);
     }
 
-    public static AQLQueryResult select(DocumentQuery query) throws NullPointerException {
+    public static AQLQueryResult select(SelectQuery query) throws NullPointerException {
 
         return convert(query.name(),
                 query.condition().orElse(null),
@@ -75,7 +75,7 @@ final class QueryAQLConverter {
 
 
     private static AQLQueryResult convert(String documentCollection,
-                                          DocumentCondition documentCondition,
+                                          CriteriaCondition documentCondition,
                                           List<Sort<?>> sorts,
                                           long firstResult,
                                           long maxResult,
@@ -119,12 +119,12 @@ final class QueryAQLConverter {
         }
     }
 
-    private static void definesCondition(DocumentCondition condition,
+    private static void definesCondition(CriteriaCondition condition,
                                          StringBuilder aql,
                                          Map<String, Object> params,
                                          char entity, int counter) {
 
-        Document document = condition.document();
+        Element document = condition.element();
         switch (condition.condition()) {
             case IN:
                 appendCondition(aql, params, entity, document, IN);
@@ -149,7 +149,7 @@ final class QueryAQLConverter {
                 return;
             case AND:
 
-                for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
+                for (CriteriaCondition dc : document.get(new TypeReference<List<CriteriaCondition>>() {
                 })) {
 
                     if (isFirstCondition(aql, counter)) {
@@ -160,7 +160,7 @@ final class QueryAQLConverter {
                 return;
             case OR:
 
-                for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
+                for (CriteriaCondition dc : document.get(new TypeReference<List<CriteriaCondition>>() {
                 })) {
                     if (isFirstCondition(aql, counter)) {
                         aql.append(OR);
@@ -169,7 +169,7 @@ final class QueryAQLConverter {
                 }
                 return;
             case NOT:
-                DocumentCondition documentCondition = document.get(DocumentCondition.class);
+                CriteriaCondition documentCondition = document.get(CriteriaCondition.class);
                 aql.append(NOT);
                 definesCondition(documentCondition, aql, params, entity, ++counter);
                 return;
@@ -183,7 +183,7 @@ final class QueryAQLConverter {
     }
 
     private static void appendCondition(StringBuilder aql, Map<String, Object> params,
-                                        char entity, Document document, String condition) {
+                                        char entity, Element document, String condition) {
         String nameParam = getNameParam(document.name(), params);
         aql.append(SEPARATOR).append(entity).append('.').append(document.name())
                 .append(condition).append(PARAM_APPENDER).append(nameParam);

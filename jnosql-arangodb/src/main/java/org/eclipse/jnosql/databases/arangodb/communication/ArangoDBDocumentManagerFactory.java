@@ -16,10 +16,10 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 
 import com.arangodb.ArangoDB;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 
-public final class ArangoDBDocumentManagerFactory implements DocumentManagerFactory {
+public final class ArangoDBDocumentManagerFactory implements DatabaseManagerFactory {
 
 
     private final ArangoDB arangoDB;
