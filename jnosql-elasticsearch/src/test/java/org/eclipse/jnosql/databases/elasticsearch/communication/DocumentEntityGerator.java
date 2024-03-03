@@ -14,9 +14,9 @@
  */
 package org.eclipse.jnosql.databases.elasticsearch.communication;
 
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +27,13 @@ final class DocumentEntityGerator {
     static final String COLLECTION_NAME = "person";
     static final String INDEX = "person";
 
-    static DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+    static CommunicationEntity getEntity() {
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
         map.put("_id", "id");
-        List<Document> documents = Documents.of(map);
+        List<Element> documents = Elements.of(map);
         documents.forEach(entity::add);
         return entity;
     }

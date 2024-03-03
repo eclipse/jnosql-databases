@@ -28,10 +28,10 @@ import co.elastic.clients.elasticsearch.indices.get_mapping.IndexMappingRecord;
 import co.elastic.clients.json.JsonData;
 import org.eclipse.jnosql.communication.Condition;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -51,7 +51,7 @@ final class QueryConverter {
     private QueryConverter() {
     }
 
-    static QueryConverterResult select(ElasticsearchClient client, String database, DocumentQuery query) {
+    static QueryConverterResult select(ElasticsearchClient client, String database, SelectQuery query) {
 
         var indexMappingRecord = getIndexMappingRecord(client, database, query);
 
@@ -102,7 +102,7 @@ final class QueryConverter {
         return Objects.nonNull(property) && property.isKeyword();
     }
 
-    private static IndexMappingRecord getIndexMappingRecord(ElasticsearchClient client, String database, DocumentQuery query) {
+    private static IndexMappingRecord getIndexMappingRecord(ElasticsearchClient client, String database, SelectQuery query) {
         try {
             return client.indices().getMapping(q -> q.index(database))
                     .get(database);
@@ -112,8 +112,8 @@ final class QueryConverter {
     }
 
 
-    private static Query.Builder getCondition(IndexMappingRecord indexMappingRecord, DocumentCondition condition) {
-        Document document = condition.document();
+    private static Query.Builder getCondition(IndexMappingRecord indexMappingRecord, CriteriaCondition condition) {
+        Element document = condition.element();
 
         switch (condition.condition()) {
             case EQUALS:
@@ -175,7 +175,7 @@ final class QueryConverter {
                                         .should(List.of(d1.build(), d2.build())))))
                         .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
             case AND:
-                return document.get(new TypeReference<List<DocumentCondition>>() {
+                return document.get(new TypeReference<List<CriteriaCondition>>() {
                         })
                         .stream()
                         .map(d -> getCondition(indexMappingRecord, d))
@@ -186,7 +186,7 @@ final class QueryConverter {
                         ).orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
 
             case OR:
-                return document.get(new TypeReference<List<DocumentCondition>>() {
+                return document.get(new TypeReference<List<CriteriaCondition>>() {
                         })
                         .stream()
                         .map(d -> getCondition(indexMappingRecord, d))
@@ -196,7 +196,7 @@ final class QueryConverter {
                                         .should(List.of(d1.build(), d2.build())))))
                         .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
             case NOT:
-                DocumentCondition dc = document.get(DocumentCondition.class);
+                CriteriaCondition dc = document.get(CriteriaCondition.class);
                 Query.Builder queryBuilder = Optional.ofNullable(getCondition(indexMappingRecord, dc))
                         .orElseThrow(() -> new IllegalStateException("An and condition cannot be empty"));
                 return (Query.Builder) new Query.Builder()
@@ -207,7 +207,7 @@ final class QueryConverter {
         }
     }
 
-    private static boolean isIdField(Document document) {
+    private static boolean isIdField(Element document) {
         return EntityConverter.ID_FIELD.equals(document.name());
     }
 

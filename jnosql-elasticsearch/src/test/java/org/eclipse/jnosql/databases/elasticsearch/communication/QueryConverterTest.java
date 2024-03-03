@@ -24,8 +24,8 @@ import co.elastic.clients.util.ObjectBuilder;
 import jakarta.nosql.Column;
 import jakarta.nosql.Id;
 import org.awaitility.Awaitility;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -166,10 +166,10 @@ class QueryConverterTest {
 
         insertData(map);
 
-        DocumentQuery query = DocumentQuery.builder()
+        SelectQuery query = SelectQuery.builder()
                 .select()
                 .from("Book")
-                .where(DocumentCondition.eq("_id", effectiveJava.id())).build();
+                .where(CriteriaCondition.eq("_id", effectiveJava.id())).build();
 
         QueryConverterResult selectWithoutKeywordFields = QueryConverter.select(elasticsearch.client(), INDEX, query);
 
@@ -210,12 +210,12 @@ class QueryConverterTest {
 
         insertData(map);
 
-        DocumentQuery query2 = DocumentQuery.builder()
+        var query2 = SelectQuery.builder()
                 .select()
                 .from("Book")
-                .where(DocumentCondition.eq("_id", effectiveJava.id())
-                        .and(DocumentCondition.eq("doc2.data1", "teste")
-                                .and(DocumentCondition.eq("doc2.data2", 222L)))).build();
+                .where(CriteriaCondition.eq("_id", effectiveJava.id())
+                        .and(CriteriaCondition.eq("doc2.data1", "teste")
+                                .and(CriteriaCondition.eq("doc2.data2", 222L)))).build();
 
         QueryConverterResult selectWithKeywordFields = QueryConverter.select(elasticsearch.client(), INDEX, query2);
 

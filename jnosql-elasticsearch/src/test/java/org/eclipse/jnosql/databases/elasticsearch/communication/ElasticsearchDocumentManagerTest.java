@@ -17,11 +17,11 @@ package org.eclipse.jnosql.databases.elasticsearch.communication;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import org.awaitility.Awaitility;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,10 +40,10 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.semistructured.DeleteQuery.delete;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -71,17 +71,17 @@ public class ElasticsearchDocumentManagerTest {
 
 
     @NotNull
-    private Callable<Long> numberOfEntitiesFrom(DocumentQuery query) {
+    private Callable<Long> numberOfEntitiesFrom(SelectQuery query) {
         return () -> entityManager.select(query).count();
     }
 
     @NotNull
-    private Callable<DocumentEntity> getSingleResult(DocumentQuery query) {
+    private Callable<CommunicationEntity> getSingleResult(SelectQuery query) {
         return () -> entityManager.singleResult(query).orElse(null);
     }
 
     @NotNull
-    private Callable<List<DocumentEntity>> selectFrom(DocumentQuery query) {
+    private Callable<List<CommunicationEntity>> selectFrom(SelectQuery query) {
         return () -> entityManager.select(query).collect(Collectors.toList());
     }
 
@@ -91,11 +91,11 @@ public class ElasticsearchDocumentManagerTest {
         ElasticsearchDocumentManagerFactory managerFactory = DocumentDatabase.INSTANCE.get();
         entityManager = managerFactory.apply(DocumentEntityGerator.INDEX);
 
-        DocumentDeleteQuery deleteQuery = DocumentDeleteQuery.delete().from(DocumentEntityGerator.COLLECTION_NAME).build();
+        DeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).build();
 
         entityManager.delete(deleteQuery);
 
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).build();
+        SelectQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(0L));
@@ -110,12 +110,12 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldInsert() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        var entity = DocumentEntityGerator.getEntity();
+        var documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
 
-        Document id = documentEntity.find(EntityConverter.ID_FIELD).get();
-        DocumentQuery query = DocumentQuery.select()
+        var id = documentEntity.find(EntityConverter.ID_FIELD).get();
+        var query = SelectQuery.select()
                 .from(documentEntity.name())
                 .where(id.name()).eq(id.value())
                 .build();
@@ -131,10 +131,10 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldReturnAll() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
+        var entity = DocumentEntityGerator.getEntity();
         entityManager.insert(entity);
 
-        DocumentQuery query = select().
+        var query = select().
                 from(DocumentEntityGerator.COLLECTION_NAME)
                 .build();
 
@@ -145,12 +145,12 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldUpdateSave() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
+        var entity = DocumentEntityGerator.getEntity();
         entityManager.insert(entity);
 
-        Document id = entity.find(EntityConverter.ID_FIELD).get();
+        var id = entity.find(EntityConverter.ID_FIELD).get();
 
-        DocumentQuery query = select()
+        var query = select()
                 .from(DocumentEntityGerator.COLLECTION_NAME)
                 .where(id.name())
                 .eq(id.get())
@@ -159,9 +159,9 @@ public class ElasticsearchDocumentManagerTest {
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
-        Document newField = Documents.of("newField", "10");
+        var newField = Elements.of("newField", "10");
         entity.add(newField);
-        DocumentEntity updated = entityManager.update(entity);
+        var updated = entityManager.update(entity);
         assertEquals(newField, updated.find("newField").get());
 
         // it's required in order to avoid an eventual inconsistency
@@ -170,7 +170,7 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldUserSearchRequest() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
+        var entity = DocumentEntityGerator.getEntity();
         entityManager.insert(entity);
 
         var query = SearchRequest.of(b -> b
@@ -188,14 +188,14 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldRemoveEntityByName() {
-        DocumentEntity documentEntity = entityManager.insert(DocumentEntityGerator.getEntity());
-        Document name = documentEntity.find("name").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(name.name()).eq(name.get()).build();
+        var documentEntity = entityManager.insert(DocumentEntityGerator.getEntity());
+        var name = documentEntity.find("name").get();
+        var query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(name.name()).eq(name.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
-        DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(name.name()).eq(name.get()).build();
+        var deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(name.name()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
 
         // it's required in order to avoid an eventual inconsistency
@@ -205,16 +205,16 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldRemoveEntityById() {
-        DocumentEntity documentEntity = entityManager.insert(DocumentEntityGerator.getEntity());
+        var documentEntity = entityManager.insert(DocumentEntityGerator.getEntity());
 
-        Document id = documentEntity.find("_id").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        var id = documentEntity.find("_id").get();
+        var query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
 
-        DocumentDeleteQuery deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        var deleteQuery = delete().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
 
         // it's required in order to avoid an eventual inconsistency
@@ -224,9 +224,9 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldFindDocumentByName() {
-        DocumentEntity entity = entityManager.insert(DocumentEntityGerator.getEntity());
-        Document name = entity.find("name").get();
-        DocumentQuery query = select().
+        var entity = entityManager.insert(DocumentEntityGerator.getEntity());
+        var name = entity.find("name").get();
+        var query = select().
                 from(DocumentEntityGerator.COLLECTION_NAME).
                 where(name.name())
                 .eq(name.get())
@@ -235,19 +235,19 @@ public class ElasticsearchDocumentManagerTest {
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        var entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        List<Document> names = entities.stream().map(e -> e.find("name").get())
+        var names = entities.stream().map(e -> e.find("name").get())
                 .distinct().collect(Collectors.toList());
         assertThat(names).contains(name);
     }
 
     @Test
     public void shouldFindDocumentById() {
-        DocumentEntity entity = entityManager.insert(DocumentEntityGerator.getEntity());
-        Document id = entity.find("_id").get();
+        var entity = entityManager.insert(DocumentEntityGerator.getEntity());
+        var id = entity.find("_id").get();
 
-        DocumentQuery query = select()
+        var query = select()
                 .from(DocumentEntityGerator.COLLECTION_NAME)
                 .where(id.name()).eq(id.get())
                 .build();
@@ -259,14 +259,14 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldFindOrderByName() {
-        final DocumentEntity poliana = DocumentEntityGerator.getEntity();
-        final DocumentEntity otavio = DocumentEntityGerator.getEntity();
+        var poliana = DocumentEntityGerator.getEntity();
+        var otavio = DocumentEntityGerator.getEntity();
         poliana.add("name", "poliana");
         otavio.add("name", "otavio");
         otavio.add("_id", "id2");
         entityManager.insert(Arrays.asList(poliana, otavio));
 
-        DocumentQuery query = DocumentQuery.select()
+        var query = SelectQuery.select()
                 .from(DocumentEntityGerator.COLLECTION_NAME)
                 .orderBy("name").asc()
                 .build();
@@ -286,14 +286,14 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldFindOrderByNameDesc() {
-        final DocumentEntity poliana = DocumentEntityGerator.getEntity();
-        final DocumentEntity otavio = DocumentEntityGerator.getEntity();
+        var poliana = DocumentEntityGerator.getEntity();
+        var otavio = DocumentEntityGerator.getEntity();
         poliana.add("name", "poliana");
         otavio.add("name", "otavio");
         otavio.add("_id", "id2");
         entityManager.insert(Arrays.asList(poliana, otavio));
 
-        DocumentQuery query = DocumentQuery.select()
+        var query = SelectQuery.select()
                 .from(DocumentEntityGerator.COLLECTION_NAME)
                 .orderBy("name").desc()
                 .build();
@@ -316,7 +316,7 @@ public class ElasticsearchDocumentManagerTest {
     public void shouldFindAll() {
         entityManager.insert(DocumentEntityGerator.getEntity());
 
-        DocumentQuery query = select()
+        var query = select()
                 .from(DocumentEntityGerator.COLLECTION_NAME)
                 .build();
 
@@ -328,37 +328,37 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldSaveSubDocument() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
-        entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
+        var entity = DocumentEntityGerator.getEntity();
+        entity.add(Element.of("phones", Element.of("mobile", "1231231")));
+        var entitySaved = entityManager.insert(entity);
+        var id = entitySaved.find("_id").get();
 
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        var query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(id.name()).eq(id.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
-        DocumentEntity entityFound = entityManager.singleResult(query).get();
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        var entityFound = entityManager.singleResult(query).get();
+        var subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents).contains(Document.of("mobile", "1231231"));
+        assertThat(documents).contains(Element.of("mobile", "1231231"));
     }
 
     @Test
     public void shouldSaveSubDocument2() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
+        var entity = DocumentEntityGerator.getEntity();
 
-        Document mobile = Document.of("mobile", "1231231");
-        Document mobile2 = Document.of("mobile2", "1231231");
+        var mobile = Element.of("mobile", "1231231");
+        var mobile2 = Element.of("mobile2", "1231231");
 
-        entity.add(Document.of("phones", Arrays.
+        entity.add(Element.of("phones", Arrays.
                 asList(mobile, mobile2)));
 
-        DocumentEntity entitySaved = entityManager.insert(entity);
+        var entitySaved = entityManager.insert(entity);
 
-        Document id = entitySaved.find("_id").get();
-        DocumentQuery query = select().
+        var id = entitySaved.find("_id").get();
+        var query = select().
                 from(DocumentEntityGerator.COLLECTION_NAME).
                 where(id.name()).eq(id.get())
                 .build();
@@ -366,12 +366,12 @@ public class ElasticsearchDocumentManagerTest {
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
-        DocumentEntity entityFound = entityManager.select(query)
+        var entityFound = entityManager.select(query)
                 .collect(Collectors.toList())
                 .get(0);
 
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        var subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
 
         assertThat(documents).contains(mobile, mobile2);
@@ -379,18 +379,18 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldInsertAndRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
+        var entity = entityManager.insert(createSubdocumentList());
 
-        Document key = entity.find("_id").get();
-        DocumentQuery query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(key.name()).eq(key.get()).build();
+        var key = entity.find("_id").get();
+        var query = select().from(DocumentEntityGerator.COLLECTION_NAME).where(key.name()).eq(key.get()).build();
 
         // it's required in order to avoid an eventual inconsistency
         await().until(numberOfEntitiesFrom(query), equalTo(1L));
 
-        DocumentEntity documentEntity = entityManager.singleResult(query).orElse(null);
+        var documentEntity = entityManager.singleResult(query).orElse(null);
         assertNotNull(documentEntity);
 
-        List<List<Document>> contacts = documentEntity.find("contacts")
+        List<List<Element>> contacts = documentEntity.find("contacts")
                 .orElseThrow()
                 .get(List.class);
 
@@ -400,9 +400,9 @@ public class ElasticsearchDocumentManagerTest {
 
     @Test
     public void shouldCount() {
-        DocumentEntity entity = DocumentEntityGerator.getEntity();
-        DocumentEntity entity2 = DocumentEntityGerator.getEntity();
-        entity2.add(Document.of("_id", "test"));
+        var entity = DocumentEntityGerator.getEntity();
+        var entity2 = DocumentEntityGerator.getEntity();
+        entity2.add(Element.of("_id", "test"));
         entityManager.insert(entity);
         entityManager.insert(entity2);
 
@@ -411,21 +411,21 @@ public class ElasticsearchDocumentManagerTest {
                 equalTo(2L));
     }
 
-    private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of(DocumentEntityGerator.COLLECTION_NAME);
-        entity.add(Document.of("_id", "ids"));
-        List<List<Document>> documents = new ArrayList<>();
+    private CommunicationEntity createSubdocumentList() {
+        CommunicationEntity entity = CommunicationEntity.of(DocumentEntityGerator.COLLECTION_NAME);
+        entity.add(Element.of("_id", "ids"));
+        List<List<Element>> documents = new ArrayList<>();
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.EMAIL),
-                Document.of("information", "ada@lovelace.com")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.EMAIL),
+                Element.of("information", "ada@lovelace.com")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.MOBILE),
-                Document.of("information", "11 1231231 123")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.MOBILE),
+                Element.of("information", "11 1231231 123")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.PHONE),
-                Document.of("information", "phone")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.PHONE),
+                Element.of("information", "phone")));
 
-        entity.add(Document.of("contacts", documents));
+        entity.add(Element.of("contacts", documents));
         return entity;
     }
 
