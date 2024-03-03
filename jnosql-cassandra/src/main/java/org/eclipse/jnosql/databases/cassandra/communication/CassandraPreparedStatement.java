@@ -23,33 +23,42 @@ import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import java.util.stream.Stream;
 
 /**
- * The Diana wrapper to {@link com.datastax.oss.driver.api.core.cql.PreparedStatement}
+ * Wrapper class for {@link com.datastax.oss.driver.api.core.cql.PreparedStatement} in JNoSQL.
+ * Allows execution of CQL queries and binding of parameters.
  */
 public class CassandraPreparedStatement {
 
     private final com.datastax.oss.driver.api.core.cql.PreparedStatement prepare;
-
     private final CqlSession session;
-
     private BoundStatement boundStatement;
 
+    /**
+     * Constructs a new CassandraPreparedStatement.
+     *
+     * @param prepare the underlying Cassandra PreparedStatement
+     * @param session the CQL session
+     */
     CassandraPreparedStatement(com.datastax.oss.driver.api.core.cql.PreparedStatement prepare, CqlSession session) {
         this.prepare = prepare;
         this.session = session;
     }
 
+    /**
+     * Executes the prepared statement as a query and returns the results as a stream of CommunicationEntity.
+     *
+     * @return a stream of CommunicationEntity containing the results of the query
+     */
     public Stream<CommunicationEntity> executeQuery() {
         load();
         ResultSet resultSet = session.execute(boundStatement);
         return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
-
     /**
-     * Bind
+     * Binds values to the prepared statement.
      *
-     * @param values the values
-     * @return this instance
+     * @param values the values to bind
+     * @return this CassandraPreparedStatement instance
      */
     public CassandraPreparedStatement bind(Object... values) {
         boundStatement = prepare.bind(values);
@@ -62,7 +71,11 @@ public class CassandraPreparedStatement {
         }
     }
 
-
+    /**
+     * Returns a string representation of this CassandraPreparedStatement.
+     *
+     * @return a string representation of this CassandraPreparedStatement
+     */
     @Override
     public String toString() {
         return "CassandraPreparedStatement{" +

@@ -146,7 +146,7 @@ public final class CassandraQuery implements SelectQuery {
     /**
      * returns a new instance of {@link CassandraQuery}
      *
-     * @param query the {@link ColumnQuery}
+     * @param query the {@link SelectQuery}
      * @return a new instance
      * @throws NullPointerException when query is null
      */

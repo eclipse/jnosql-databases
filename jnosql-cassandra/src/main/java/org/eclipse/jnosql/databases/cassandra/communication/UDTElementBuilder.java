@@ -17,24 +17,33 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 import org.eclipse.jnosql.communication.semistructured.Element;
 
+/**
+ * A builder interface for constructing Cassandra User-Defined Types (UDTs).
+ */
 public interface UDTElementBuilder {
 
-
     /**
-     * Adds the udt when the type is just one element
+     * Adds a single UDT element to the builder.
      *
-     * @param udt the elements in a UDT to be added
+     * @param udt the UDT element to be added
      * @return the builder instance
-     * @throws NullPointerException when either the udt or there is a null element
+     * @throws NullPointerException if the udt or any of its elements is null
      */
     UDTFinisherBuilder addUDT(Iterable<Element> udt) throws NullPointerException;
+
     /**
-     * <p>On Cassandra, there is the option to a UDT be part of a list. This implementation holds this option.</p>
-     * <p>eg: CREATE COLUMNFAMILY IF NOT EXISTS contacts ( user text PRIMARY KEY, names list&#60;frozen &#60;fullname&#62;&#62;);</p>
+     * Adds multiple UDTs to the builder, typically used when a UDT is part of a list.
+     * For example:
+     * <pre>
+     *     CREATE COLUMNFAMILY IF NOT EXISTS contacts (
+     *         user text PRIMARY KEY,
+     *         names list&lt;frozen &lt;fullname&gt;&gt;
+     *     );
+     * </pre>
      *
-     * @param udts the UTDs to be added
+     * @param udts the UDTs to be added
      * @return the builder instance
-     * @throws NullPointerException when either the udt or there is a null element
+     * @throws NullPointerException if any of the udts or their elements is null
      */
     UDTFinisherBuilder addUDTs(Iterable<Iterable<Element>> udts) throws NullPointerException;
 }

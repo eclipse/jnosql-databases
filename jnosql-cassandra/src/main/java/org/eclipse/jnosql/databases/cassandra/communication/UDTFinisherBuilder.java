@@ -14,13 +14,16 @@
  */
 package org.eclipse.jnosql.databases.cassandra.communication;
 
+/**
+ * A builder interface for finalizing the creation of a user-defined type (UDT).
+ */
 public interface UDTFinisherBuilder {
 
     /**
-     * Creates a udt instance
+     * Creates a UDT instance based on the previously specified elements.
      *
-     * @return a udt instance
-     * @throws IllegalStateException when there is a null element
+     * @return a new UDT instance
+     * @throws IllegalStateException if any required element is missing
      */
-    UDT build();
+    UDT build() throws IllegalStateException;
 }

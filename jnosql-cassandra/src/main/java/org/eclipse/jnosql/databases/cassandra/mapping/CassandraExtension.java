@@ -23,12 +23,19 @@ import org.eclipse.jnosql.mapping.metadata.ClassScanner;
 import java.util.Set;
 import java.util.logging.Logger;
 
+/**
+ * CDI extension for Cassandra integration.
+ */
 public class CassandraExtension implements Extension {
 
     private static final Logger LOGGER = Logger.getLogger(CassandraExtension.class.getName());
 
+    /**
+     * Observes the AfterBeanDiscovery event to add Cassandra repository beans.
+     *
+     * @param afterBeanDiscovery the AfterBeanDiscovery event
+     */
     void onAfterBeanDiscovery(@Observes final AfterBeanDiscovery afterBeanDiscovery) {
-
         ClassScanner scanner = ClassScanner.load();
         Set<Class<?>> crudTypes = scanner.repositories(CassandraRepository.class);
 
