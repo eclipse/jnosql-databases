@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import oracle.nosql.driver.values.FieldValue;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +23,11 @@ import java.util.List;
 final class DeleteBuilder extends AbstractQueryBuilder {
 
     private static final int ORIGIN = 0;
-    private final DocumentDeleteQuery documentQuery;
+    private final DeleteQuery documentQuery;
 
     private final String table;
 
-    DeleteBuilder(DocumentDeleteQuery documentQuery, String table) {
+    DeleteBuilder(DeleteQuery documentQuery, String table) {
         super(table);
         this.documentQuery = documentQuery;
         this.table = table;

@@ -19,24 +19,27 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.interceptor.Interceptor;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLDocumentManager;
+import org.eclipse.jnosql.mapping.Database;
+import org.eclipse.jnosql.mapping.DatabaseType;
 import org.mockito.Mockito;
 
 import java.util.function.Supplier;
 
 @Alternative
 @Priority(Interceptor.Priority.APPLICATION)
+@Database(DatabaseType.DOCUMENT)
 public class MockProducer implements Supplier<OracleNoSQLDocumentManager> {
 
     @Produces
     @Override
     public OracleNoSQLDocumentManager get() {
         OracleNoSQLDocumentManager manager = Mockito.mock(OracleNoSQLDocumentManager.class);
-        DocumentEntity entity = DocumentEntity.of("Person");
-        entity.add(Document.of("name", "Ada"));
-        Mockito.when(manager.insert(Mockito.any(DocumentEntity.class))).thenReturn(entity);
+        CommunicationEntity entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("name", "Ada"));
+        Mockito.when(manager.insert(Mockito.any(CommunicationEntity.class))).thenReturn(entity);
         return manager;
     }
 

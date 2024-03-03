@@ -14,21 +14,21 @@
  */
 package org.eclipse.jnosql.databases.oracle.mapping;
 
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 
 import java.util.stream.Stream;
 
 /**
- * The {@code OracleTemplate} is an interface that extends {@link JNoSQLDocumentTemplate} and
+ * The {@code OracleTemplate} is an interface that extends {@link DocumentTemplate} and
  * provides methods for executing Oracle SQL queries using the Oracle Query Language (SQL).
  * <p>
  * It allows you to interact with the Oracle NoSQL database using SQL queries to retrieve and
  * process data in a more flexible and customizable way.
  * </p>
  *
- * @see JNoSQLDocumentTemplate
+ * @see DocumentTemplate
  */
-public interface OracleNoSQLTemplate extends JNoSQLDocumentTemplate {
+public interface OracleNoSQLTemplate extends DocumentTemplate {
 
     /**
      * Executes an Oracle query using the Oracle Query Language (SQL).

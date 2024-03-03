@@ -16,7 +16,7 @@ package org.eclipse.jnosql.databases.oracle.communication;
 
 import jakarta.data.Direction;
 import oracle.nosql.driver.values.FieldValue;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 
 final class SelectBuilder extends AbstractQueryBuilder {
 
-    private final DocumentQuery documentQuery;
+    private final SelectQuery documentQuery;
 
     private final String table;
 
-    SelectBuilder(DocumentQuery documentQuery, String table) {
+    SelectBuilder(SelectQuery documentQuery, String table) {
         super(table);
         this.documentQuery = documentQuery;
         this.table = table;
@@ -70,7 +70,7 @@ final class SelectBuilder extends AbstractQueryBuilder {
     }
 
     private String select() {
-        List<String> documents = documentQuery.documents();
+        List<String> documents = documentQuery.columns();
         if (documents.isEmpty()) {
             return "*";
         } else {
