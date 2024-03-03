@@ -20,18 +20,19 @@ import com.mongodb.client.model.Aggregates;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.bson.conversions.Bson;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -52,7 +53,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
-@AddPackages(value = {Converters.class, DocumentEntityConverter.class})
+@AddPackages(value = {Converters.class, EntityConverter.class, DocumentTemplate.class, MongoDBTemplate.class})
 @AddPackages(Music.class)
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
@@ -60,10 +61,10 @@ import static org.mockito.Mockito.when;
 class DefaultMongoDBTemplateTest {
 
     @Inject
-    private DocumentEntityConverter converter;
+    private EntityConverter converter;
 
     @Inject
-    private DocumentEventPersistManager persistManager;
+    private EventPersistManager persistManager;
 
     @Inject
     private EntitiesMetadata entities;
@@ -111,7 +112,7 @@ class DefaultMongoDBTemplateTest {
     @Test
     void shouldDeleteAll() {
         EntityMetadata metadata = entities.get(Person.class);
-        DocumentDeleteQuery query = DocumentDeleteQuery.delete().from(metadata.name()).build();
+        DeleteQuery query = DeleteQuery.delete().from(metadata.name()).build();
         template.deleteAll(Person.class);
         Mockito.verify(manager).delete(query);
     }
@@ -131,9 +132,9 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     void shouldSelectWithCollectionName() {
-        DocumentEntity entity = DocumentEntity.of("Person", Arrays
-                .asList(Document.of("_id", "Poliana"),
-                        Document.of("age", 30)));
+        var entity = CommunicationEntity.of("Person", Arrays
+                .asList(Element.of("_id", "Poliana"),
+                        Element.of("age", 30)));
         Bson filter = eq("name", "Poliana");
         Mockito.when(manager.select("Person", filter))
                 .thenReturn(Stream.of(entity));
@@ -149,9 +150,9 @@ class DefaultMongoDBTemplateTest {
 
     @Test
     void shouldSelectWithEntity() {
-        DocumentEntity entity = DocumentEntity.of("Person", Arrays
-                .asList(Document.of("_id", "Poliana"),
-                        Document.of("age", 30)));
+        var entity = CommunicationEntity.of("Person", Arrays
+                .asList(Element.of("_id", "Poliana"),
+                        Element.of("age", 30)));
         Bson filter = eq("name", "Poliana");
         Mockito.when(manager.select("Person", filter))
                 .thenReturn(Stream.of(entity));

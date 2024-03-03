@@ -17,12 +17,12 @@ package org.eclipse.jnosql.databases.mongodb.communication;
 
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.databases.mongodb.communication.type.Money;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,17 +50,17 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.semistructured.DeleteQuery.delete;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class MongoDBDocumentManagerTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static DocumentManager entityManager;
+    private static DatabaseManager entityManager;
 
     @BeforeAll
     public static void setUp() throws IOException {
@@ -69,14 +69,14 @@ class MongoDBDocumentManagerTest {
 
     @BeforeEach
     void beforeEach() {
-        DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
+        delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test
     void shouldInsert() {
-        DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
-        assertTrue(documentEntity.documents().stream().map(Document::name).anyMatch(s -> s.equals("_id")));
+        var entity = getEntity();
+        var documentEntity = entityManager.insert(entity);
+        assertTrue(documentEntity.elements().stream().map(Element::name).anyMatch(s -> s.equals("_id")));
     }
 
     @Test
@@ -88,23 +88,23 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldUpdate() {
-        DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
-        Document newField = Documents.of("newField", "10");
+        var entity = getEntity();
+        var documentEntity = entityManager.insert(entity);
+        var newField = Elements.of("newField", "10");
         entity.add(newField);
-        DocumentEntity updated = entityManager.update(entity);
+        var updated = entityManager.update(entity);
         assertEquals(newField, updated.find("newField").get());
     }
 
     @Test
     void shouldRemoveEntity() {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
+        var documentEntity = entityManager.insert(getEntity());
 
-        Optional<Document> id = documentEntity.find("_id");
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        Optional<Element> id = documentEntity.find("_id");
+        var query = select().from(COLLECTION_NAME)
                 .where("_id").eq(id.get().get())
                 .build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("_id")
+        var deleteQuery = delete().from(COLLECTION_NAME).where("_id")
                 .eq(id.get().get())
                 .build();
 
@@ -114,142 +114,142 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldFindDocument() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("_id");
+        var entity = entityManager.insert(getEntity());
+        Optional<Element> id = entity.find("_id");
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("_id").eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        var entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities).contains(entity);
     }
 
     @Test
     void shouldFindDocument2() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("_id");
+        var entity = entityManager.insert(getEntity());
+        Optional<Element> id = entity.find("_id");
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .and("city").eq("Salvador").and("_id").eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities).contains(entity);
     }
 
     @Test
     void shouldFindDocument3() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("_id");
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var entity = entityManager.insert(getEntity());
+        Optional<Element> id = entity.find("_id");
+        var query = select().from(COLLECTION_NAME)
                 .where("name").eq("Poliana")
                 .or("city").eq("Salvador")
                 .and(id.get().name()).eq(id.get().get())
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities).contains(entity);
     }
 
     @Test
     void shouldFindDocumentGreaterThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
     @Test
     void shouldFindDocumentGreaterEqualsThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("age").gte(23)
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).isNotIn(entities.get(0));
     }
 
     @Test
     void shouldFindDocumentLesserThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false)
-                .collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false)
+                .toList();
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("age").lt(23)
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound).contains(entities.get(0));
     }
 
     @Test
     void shouldFindDocumentLesserEqualsThan() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        SelectQuery query = select().from(COLLECTION_NAME)
                 .where("age").lte(23)
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).contains(entities.get(0), entities.get(2));
     }
 
     @Test
     void shouldFindDocumentLike() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("name").like("Lu")
                 .and("type").eq("V")
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         assertThat(entitiesFound).contains(entities.get(0), entities.get(2));
     }
 
     @Test
     void shouldFindDocumentIn() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        SelectQuery query = select().from(COLLECTION_NAME)
                 .where("location").in(asList("BR", "US"))
                 .and("type").eq("V")
                 .build();
@@ -259,18 +259,18 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldFindDocumentStart() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        SelectQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
                 .and("type").eq("V")
                 .skip(1L)
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound).isNotIn(entities.get(0));
 
@@ -287,18 +287,18 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldFindDocumentLimit() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        SelectQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
                 .and("type").eq("V")
                 .limit(1L)
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(1, entitiesFound.size());
         assertThat(entitiesFound).isNotIn(entities.get(0));
 
@@ -315,19 +315,19 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldFindDocumentSort() {
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
-        Iterable<DocumentEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<DocumentEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).
-                collect(Collectors.toList());
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).
+                toList();
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        SelectQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
                 .and("type").eq("V")
                 .orderBy("age").asc()
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entitiesFound.size());
         List<Integer> ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
@@ -353,18 +353,18 @@ class MongoDBDocumentManagerTest {
     @Test
     void shouldFindAll() {
         entityManager.insert(getEntity());
-        DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        SelectQuery query = select().from(COLLECTION_NAME).build();
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
     }
 
     @Test
     void shouldDeleteAll() {
         entityManager.insert(getEntity());
-        DocumentQuery query = select().from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        SelectQuery query = select().from(COLLECTION_NAME).build();
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         entities = entityManager.select(query).collect(Collectors.toList());
         assertTrue(entities.isEmpty());
@@ -373,10 +373,10 @@ class MongoDBDocumentManagerTest {
     @Test
     void shouldFindAllByFields() {
         entityManager.insert(getEntity());
-        DocumentQuery query = select("name").from(COLLECTION_NAME).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        SelectQuery query = select("name").from(COLLECTION_NAME).build();
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
-        final DocumentEntity entity = entities.get(0);
+        final CommunicationEntity entity = entities.get(0);
         assertEquals(2, entity.size());
         assertTrue(entity.find("name").isPresent());
         assertTrue(entity.find("_id").isPresent());
@@ -386,55 +386,55 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldSaveSubDocument() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        CommunicationEntity entity = getEntity();
+        entity.add(Element.of("phones", Element.of("mobile", "1231231")));
+        CommunicationEntity entitySaved = entityManager.insert(entity);
+        Element id = entitySaved.find("_id").get();
+        SelectQuery query = select().from(COLLECTION_NAME)
                 .where("_id").eq(id.get())
                 .build();
 
-        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        CommunicationEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        Element subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents).contains(Document.of("mobile", "1231231"));
+        assertThat(documents).contains(Element.of("mobile", "1231231"));
     }
 
     @Test
     void shouldSaveSubDocument2() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
+        CommunicationEntity entity = getEntity();
+        entity.add(Element.of("phones", asList(Element.of("mobile", "1231231"), Element.of("mobile2", "1231231"))));
+        CommunicationEntity entitySaved = entityManager.insert(entity);
+        Element id = entitySaved.find("_id").get();
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        SelectQuery query = select().from(COLLECTION_NAME)
                 .where(id.name()).eq(id.get())
                 .build();
-        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        var entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        var subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents).contains(Document.of("mobile", "1231231"),
-                Document.of("mobile2", "1231231"));
+        assertThat(documents).contains(Element.of("mobile", "1231231"),
+                Element.of("mobile2", "1231231"));
     }
 
     @Test
     void shouldCreateEntityByteArray() {
         byte[] contents = {1, 2, 3, 4, 5, 6};
 
-        DocumentEntity entity = DocumentEntity.of("download");
+        var entity = CommunicationEntity.of("download");
         long id = ThreadLocalRandom.current().nextLong();
         entity.add("_id", id);
         entity.add("contents", contents);
 
         entityManager.insert(entity);
 
-        List<DocumentEntity> entities = entityManager.select(select().from("download")
+        List<CommunicationEntity> entities = entityManager.select(select().from("download")
                 .where("_id").eq(id).build()).collect(Collectors.toList());
 
         assertEquals(1, entities.size());
-        DocumentEntity documentEntity = entities.get(0);
+        CommunicationEntity documentEntity = entities.get(0);
         assertEquals(id, documentEntity.find("_id").get().get());
 
         assertArrayEquals(contents, (byte[]) documentEntity.find("contents").get().get());
@@ -446,7 +446,7 @@ class MongoDBDocumentManagerTest {
         Date date = new Date();
         LocalDate now = LocalDate.now();
 
-        DocumentEntity entity = DocumentEntity.of("download");
+        CommunicationEntity entity = CommunicationEntity.of("download");
         long id = ThreadLocalRandom.current().nextLong();
         entity.add("_id", id);
         entity.add("date", date);
@@ -454,11 +454,11 @@ class MongoDBDocumentManagerTest {
 
         entityManager.insert(entity);
 
-        List<DocumentEntity> entities = entityManager.select(select().from("download")
+        List<CommunicationEntity> entities = entityManager.select(select().from("download")
                 .where("_id").eq(id).build()).collect(Collectors.toList());
 
         assertEquals(1, entities.size());
-        DocumentEntity documentEntity = entities.get(0);
+        CommunicationEntity documentEntity = entities.get(0);
         assertEquals(id, documentEntity.find("_id").get().get());
         assertEquals(date, documentEntity.find("date").get().get(Date.class));
         assertEquals(now, documentEntity.find("date").get().get(LocalDate.class));
@@ -468,22 +468,22 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldConvertFromListDocumentList() {
-        DocumentEntity entity = createDocumentList();
+        CommunicationEntity entity = createDocumentList();
         assertDoesNotThrow(() -> entityManager.insert(entity));
     }
 
     @Test
     void shouldRetrieveListDocumentList() {
-        DocumentEntity entity = entityManager.insert(createDocumentList());
-        Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook")
+        CommunicationEntity entity = entityManager.insert(createDocumentList());
+        Element key = entity.find("_id").get();
+        var query = select().from("AppointmentBook")
                 .where(key.name())
                 .eq(key.get()).build();
 
-        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        var documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
 
-        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+        List<List<Element>> contacts = (List<List<Element>>) documentEntity.find("contacts").get().get();
 
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
@@ -497,34 +497,34 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldCustomTypeWork() {
-        DocumentEntity entity = getEntity();
+        var entity = getEntity();
         Currency currency = Currency.getInstance("USD");
         Money money = Money.of(currency, BigDecimal.valueOf(10D));
         entity.add("money", money);
-        DocumentEntity documentEntity = entityManager.insert(entity);
-        Document id = documentEntity.find("_id").get();
-        DocumentQuery query = DocumentQuery.select().from(documentEntity.name())
+        var documentEntity = entityManager.insert(entity);
+        Element id = documentEntity.find("_id").get();
+        SelectQuery query = SelectQuery.select().from(documentEntity.name())
                 .where(id.name()).eq(id.get()).build();
 
-        DocumentEntity result = entityManager.singleResult(query).get();
+        CommunicationEntity result = entityManager.singleResult(query).get();
         assertEquals(money, result.find("money").get().get(Money.class));
 
     }
 
     @Test
     void shouldSaveMap() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         String id = UUID.randomUUID().toString();
         entity.add("properties", Collections.singletonMap("hallo", "Welt"));
         entity.add("scope", "xxx");
         entity.add("_id", id);
         entityManager.insert(entity);
-        final DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("_id").eq(id).and("scope").eq("xxx").build();
-        final Optional<DocumentEntity> optional = entityManager.select(query).findFirst();
+        final Optional<CommunicationEntity> optional = entityManager.select(query).findFirst();
         Assertions.assertTrue(optional.isPresent());
-        DocumentEntity documentEntity = optional.get();
-        Document properties = documentEntity.find("properties").get();
+        CommunicationEntity documentEntity = optional.get();
+        Element properties = documentEntity.find("properties").get();
         Map<String, Object> map = properties.get(new TypeReference<>() {
         });
         Assertions.assertNotNull(map);
@@ -532,76 +532,76 @@ class MongoDBDocumentManagerTest {
 
     @Test
     void shouldInsertNull() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("name", null));
-        DocumentEntity documentEntity = entityManager.insert(entity);
-        Optional<Document> name = documentEntity.find("name");
+        CommunicationEntity entity = getEntity();
+        entity.add(Element.of("name", null));
+        CommunicationEntity documentEntity = entityManager.insert(entity);
+        Optional<Element> name = documentEntity.find("name");
         SoftAssertions.assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
-            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
-            soft.assertThat(name).get().extracting(Document::get).isNull();
+            soft.assertThat(name).get().extracting(Element::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Element::get).isNull();
         });
     }
 
     @Test
     void shouldUpdateNull(){
         var entity = entityManager.insert(getEntity());
-        entity.add(Document.of("name", null));
+        entity.add(Element.of("name", null));
         var documentEntity = entityManager.update(entity);
-        Optional<Document> name = documentEntity.find("name");
+        Optional<Element> name = documentEntity.find("name");
         SoftAssertions.assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
-            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
-            soft.assertThat(name).get().extracting(Document::get).isNull();
+            soft.assertThat(name).get().extracting(Element::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Element::get).isNull();
         });
     }
 
-    private DocumentEntity createDocumentList() {
-        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
-        entity.add(Document.of("_id", new Random().nextInt()));
-        List<List<Document>> documents = new ArrayList<>();
+    private CommunicationEntity createDocumentList() {
+        CommunicationEntity entity = CommunicationEntity.of("AppointmentBook");
+        entity.add(Element.of("_id", new Random().nextInt()));
+        List<List<Element>> documents = new ArrayList<>();
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.EMAIL),
-                Document.of("information", "ada@lovelace.com")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.EMAIL),
+                Element.of("information", "ada@lovelace.com")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.MOBILE),
-                Document.of("information", "11 1231231 123")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.MOBILE),
+                Element.of("information", "11 1231231 123")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.PHONE),
-                Document.of("information", "phone")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.PHONE),
+                Element.of("information", "phone")));
 
-        entity.add(Document.of("contacts", documents));
+        entity.add(Element.of("contacts", documents));
         return entity;
     }
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+    private CommunicationEntity getEntity() {
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        List<Document> documents = Documents.of(map);
+        List<Element> documents = Elements.of(map);
         documents.forEach(entity::add);
         return entity;
     }
 
-    private List<DocumentEntity> getEntitiesWithValues() {
-        DocumentEntity lucas = DocumentEntity.of(COLLECTION_NAME);
-        lucas.add(Document.of("name", "Lucas"));
-        lucas.add(Document.of("age", 22));
-        lucas.add(Document.of("location", "BR"));
-        lucas.add(Document.of("type", "V"));
+    private List<CommunicationEntity> getEntitiesWithValues() {
+        CommunicationEntity lucas = CommunicationEntity.of(COLLECTION_NAME);
+        lucas.add(Element.of("name", "Lucas"));
+        lucas.add(Element.of("age", 22));
+        lucas.add(Element.of("location", "BR"));
+        lucas.add(Element.of("type", "V"));
 
-        DocumentEntity otavio = DocumentEntity.of(COLLECTION_NAME);
-        otavio.add(Document.of("name", "Otavio"));
-        otavio.add(Document.of("age", 25));
-        otavio.add(Document.of("location", "BR"));
-        otavio.add(Document.of("type", "V"));
+        CommunicationEntity otavio = CommunicationEntity.of(COLLECTION_NAME);
+        otavio.add(Element.of("name", "Otavio"));
+        otavio.add(Element.of("age", 25));
+        otavio.add(Element.of("location", "BR"));
+        otavio.add(Element.of("type", "V"));
 
-        DocumentEntity luna = DocumentEntity.of(COLLECTION_NAME);
-        luna.add(Document.of("name", "Luna"));
-        luna.add(Document.of("age", 23));
-        luna.add(Document.of("location", "US"));
-        luna.add(Document.of("type", "V"));
+        CommunicationEntity luna = CommunicationEntity.of(COLLECTION_NAME);
+        luna.add(Element.of("name", "Luna"));
+        luna.add(Element.of("age", 23));
+        luna.add(Element.of("location", "US"));
+        luna.add(Element.of("type", "V"));
 
         return asList(lucas, otavio, luna);
     }

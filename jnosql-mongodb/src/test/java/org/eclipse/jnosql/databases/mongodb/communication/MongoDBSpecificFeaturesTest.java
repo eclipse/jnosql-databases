@@ -18,10 +18,10 @@ import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ class MongoDBSpecificFeaturesTest {
 
     @BeforeEach
     void beforeEach() {
-        DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
+        DeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test
@@ -76,9 +76,9 @@ class MongoDBSpecificFeaturesTest {
 
     @Test
     void shouldFindDocument() {
-        DocumentEntity entity = entityManager.insert(getEntity());
+        CommunicationEntity entity = entityManager.insert(getEntity());
 
-        List<DocumentEntity> entities = entityManager.select(COLLECTION_NAME,
+        List<CommunicationEntity> entities = entityManager.select(COLLECTION_NAME,
                 eq("name", "Poliana")).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities).contains(entity);
@@ -104,7 +104,7 @@ class MongoDBSpecificFeaturesTest {
                 eq("name", "Poliana"));
 
         Assertions.assertEquals(1L, result);
-        List<DocumentEntity> entities = entityManager.select(COLLECTION_NAME,
+        List<CommunicationEntity> entities = entityManager.select(COLLECTION_NAME,
                 eq("name", "Poliana")).collect(Collectors.toList());
         Assertions.assertTrue(entities.isEmpty());
     }
@@ -149,20 +149,20 @@ class MongoDBSpecificFeaturesTest {
                 Aggregates.limit(1)
         );
         entityManager.insert(getEntity());
-        Stream<DocumentEntity> aggregate = entityManager.aggregate(COLLECTION_NAME, predicates);
+        Stream<CommunicationEntity> aggregate = entityManager.aggregate(COLLECTION_NAME, predicates);
         Assertions.assertNotNull(aggregate);
-        DocumentEntity result = aggregate.findFirst()
+        CommunicationEntity result = aggregate.findFirst()
                 .orElseThrow(() -> new IllegalStateException("There is an issue with the aggregate test result"));
 
         Assertions.assertNotNull(result);
     }
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+    private CommunicationEntity getEntity() {
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        List<Document> documents = Documents.of(map);
+        List<Element> documents = Elements.of(map);
         documents.forEach(entity::add);
         return entity;
     }
