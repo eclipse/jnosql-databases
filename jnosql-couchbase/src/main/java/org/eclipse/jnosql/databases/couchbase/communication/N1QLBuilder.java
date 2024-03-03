@@ -17,9 +17,9 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 import com.couchbase.client.java.json.JsonObject;
 import jakarta.data.Direction;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +29,13 @@ import java.util.stream.Collectors;
 
 final class N1QLBuilder implements Supplier<N1QLQuery> {
 
-    private final DocumentQuery query;
+    private final SelectQuery query;
 
     private final String database;
 
     private final String scope;
 
-    private N1QLBuilder(DocumentQuery query, String database, String scope) {
+    private N1QLBuilder(SelectQuery query, String database, String scope) {
         this.query = query;
         this.database = database;
         this.scope = scope;
@@ -80,8 +80,8 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     }
 
 
-    private void condition(DocumentCondition condition, StringBuilder n1ql, JsonObject params, List<String> ids) {
-        Document document = condition.document();
+    private void condition(CriteriaCondition condition, StringBuilder n1ql, JsonObject params, List<String> ids) {
+        Element document = condition.element();
         switch (condition.condition()) {
             case EQUALS:
                 if (document.name().equals(EntityConverter.ID_FIELD)) {
@@ -115,7 +115,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
                 return;
             case NOT:
                 n1ql.append(" NOT ");
-                condition(document.get(DocumentCondition.class), n1ql, params, ids);
+                condition(document.get(CriteriaCondition.class), n1ql, params, ids);
                 return;
             case OR:
                 appendCondition(n1ql, params, document.get(new TypeReference<>() {
@@ -133,7 +133,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         }
     }
 
-    private void predicateBetween(StringBuilder n1ql, JsonObject params, Document document) {
+    private void predicateBetween(StringBuilder n1ql, JsonObject params, Element document) {
         n1ql.append(" BETWEEN ");
         ThreadLocalRandom random = ThreadLocalRandom.current();
         String name = identifierOf(document.name());
@@ -149,10 +149,10 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     }
 
     private void appendCondition(StringBuilder n1ql, JsonObject params,
-                                 List<DocumentCondition> conditions,
+                                 List<CriteriaCondition> conditions,
                                  String condition, List<String> ids) {
         int index = 0;
-        for (DocumentCondition documentCondition : conditions) {
+        for (CriteriaCondition documentCondition : conditions) {
             StringBuilder query = new StringBuilder();
             condition(documentCondition, query, params, ids);
             if(index == 0){
@@ -166,7 +166,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
 
     private void predicate(StringBuilder n1ql,
                            String condition,
-                           Document document,
+                           Element document,
                            JsonObject params) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         String name = identifierOf(document.name());
@@ -181,7 +181,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
     }
 
     private String select() {
-        String documents = query.documents().stream()
+        String documents = query.columns().stream()
                 .collect(Collectors.joining(", "));
         if (documents.isBlank()) {
             return "*";
@@ -189,7 +189,7 @@ final class N1QLBuilder implements Supplier<N1QLQuery> {
         return documents;
     }
 
-    public static N1QLBuilder of(DocumentQuery query, String database, String scope) {
+    public static N1QLBuilder of(SelectQuery query, String database, String scope) {
         return new N1QLBuilder(query, database, scope);
     }
 }

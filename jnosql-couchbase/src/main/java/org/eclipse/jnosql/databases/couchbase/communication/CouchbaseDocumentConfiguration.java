@@ -16,17 +16,17 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * The couchbase implementation of {@link DocumentConfiguration}  that returns
+ * The couchbase implementation of {@link DatabaseConfiguration}  that returns
  * {@link CouchbaseDocumentManagerFactory}.
  * @see CouchbaseConfigurations
  */
 public class CouchbaseDocumentConfiguration extends CouchbaseConfiguration
-        implements DocumentConfiguration {
+        implements DatabaseConfiguration {
 
 
     @Override

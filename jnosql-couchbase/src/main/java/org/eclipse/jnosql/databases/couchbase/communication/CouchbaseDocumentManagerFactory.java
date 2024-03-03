@@ -16,11 +16,11 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 
 
 import com.couchbase.client.java.Cluster;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.Objects;
 
-public class CouchbaseDocumentManagerFactory implements DocumentManagerFactory {
+public class CouchbaseDocumentManagerFactory implements DatabaseManagerFactory {
 
 
     private final CouchbaseSettings settings;

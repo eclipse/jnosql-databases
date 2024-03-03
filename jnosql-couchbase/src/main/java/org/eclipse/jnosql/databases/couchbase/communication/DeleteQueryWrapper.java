@@ -15,19 +15,19 @@
 package org.eclipse.jnosql.databases.couchbase.communication;
 
 import jakarta.data.Sort;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-final class DeleteQueryWrapper implements DocumentQuery {
+final class DeleteQueryWrapper implements SelectQuery {
 
-    private final DocumentDeleteQuery query;
+    private final DeleteQuery query;
 
-    private DeleteQueryWrapper(DocumentDeleteQuery query) {
+    private DeleteQueryWrapper(DeleteQuery query) {
         this.query = query;
     }
 
@@ -47,7 +47,7 @@ final class DeleteQueryWrapper implements DocumentQuery {
     }
 
     @Override
-    public Optional<DocumentCondition> condition() {
+    public Optional<CriteriaCondition> condition() {
         return this.query.condition();
     }
 
@@ -57,11 +57,11 @@ final class DeleteQueryWrapper implements DocumentQuery {
     }
 
     @Override
-    public List<String> documents() {
+    public List<String> columns() {
         return Collections.emptyList();
     }
 
-    static DocumentQuery of(DocumentDeleteQuery query) {
+    static SelectQuery of(DeleteQuery query) {
         return new DeleteQueryWrapper(query);
     }
 }

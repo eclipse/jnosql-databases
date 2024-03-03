@@ -24,10 +24,10 @@ import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.InsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -66,12 +66,12 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) throws NullPointerException {
+    public CommunicationEntity insert(CommunicationEntity entity) throws NullPointerException {
         requireNonNull(entity, "entity is required");
         return waitBucketBeReadyAndGet(() -> {
             entity.add(EntityConverter.COLLECTION_FIELD, entity.name());
             JsonObject json = EntityConverter.convert(entity);
-            Document id = entity.find(EntityConverter.ID_FIELD)
+            Element id = entity.find(EntityConverter.ID_FIELD)
                     .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
             Collection collection = bucket.collection(entity.name());
             collection.insert(id.get(String.class), json);
@@ -80,12 +80,12 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
         requireNonNull(entity, "entity is required");
         requireNonNull(ttl, "ttl is required");
         return waitBucketBeReadyAndGet(() -> {
             JsonObject json = EntityConverter.convert(entity);
-            Document id = entity.find(EntityConverter.ID_FIELD)
+            Element id = entity.find(EntityConverter.ID_FIELD)
                     .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
             Collection collection = bucket.collection(entity.name());
             collection.insert(id.get(String.class), json, InsertOptions.insertOptions().expiry(ttl));
@@ -94,14 +94,14 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert).collect(Collectors.toList());
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -109,12 +109,12 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
     @Override
-    public DocumentEntity update(DocumentEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         requireNonNull(entity, "entity is required");
         return waitBucketBeReadyAndGet(() -> {
             entity.add(EntityConverter.COLLECTION_FIELD, entity.name());
             JsonObject json = EntityConverter.convert(entity);
-            Document id = entity.find(EntityConverter.ID_FIELD)
+            Element id = entity.find(EntityConverter.ID_FIELD)
                     .orElseThrow(() -> new CouchbaseNoKeyFoundException(entity.toString()));
             Collection collection = bucket.collection(entity.name());
             collection.upsert(id.get(String.class), json);
@@ -123,19 +123,19 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update).collect(Collectors.toList());
     }
 
     @Override
-    public void delete(DocumentDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         waitBucketBeReadyAndDo(() -> {
             Objects.requireNonNull(query, "query is required");
             Collection collection = bucket.collection(query.name());
-            DocumentQuery delete = DeleteQueryWrapper.of(query);
-            Stream<DocumentEntity> entities = select(delete);
+            SelectQuery delete = DeleteQueryWrapper.of(query);
+            Stream<CommunicationEntity> entities = select(delete);
             entities.flatMap(d -> d.find(EntityConverter.ID_FIELD).stream())
                     .filter(Objects::nonNull)
                     .map(d -> d.get(String.class))
@@ -155,7 +155,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
     @Override
-    public Stream<DocumentEntity> select(final DocumentQuery query) throws NullPointerException {
+    public Stream<CommunicationEntity> select(final SelectQuery query) throws NullPointerException {
         Objects.requireNonNull(query, "query is required");
         return waitBucketBeReadyAndGet(() -> {
             N1QLQuery n1QLQuery = N1QLBuilder.of(query, database, bucket.defaultScope().name()).get();
@@ -190,7 +190,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     public long count(String documentCollection) {
         Objects.requireNonNull(documentCollection, "documentCollection is required");
         return waitBucketBeReadyAndGet(() -> {
-            DocumentQuery countQuery = DocumentQuery
+            SelectQuery countQuery = SelectQuery
                     .select("COUNT(*)").from(documentCollection).build();
             N1QLQuery n1QLQuery = N1QLBuilder
                     .of(countQuery, database, bucket.defaultScope().name()).get();
@@ -204,7 +204,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
     }
 
     @Override
-    public Stream<DocumentEntity> n1qlQuery(final String n1ql, final JsonObject params) throws NullPointerException {
+    public Stream<CommunicationEntity> n1qlQuery(final String n1ql, final JsonObject params) throws NullPointerException {
         requireNonNull(n1ql, "n1qlQuery is required");
         requireNonNull(params, "params is required");
         return waitBucketBeReadyAndGet(() -> {
@@ -216,7 +216,7 @@ class DefaultCouchbaseDocumentManager implements CouchbaseDocumentManager {
 
 
     @Override
-    public Stream<DocumentEntity> n1qlQuery(String n1ql) throws NullPointerException {
+    public Stream<CommunicationEntity> n1qlQuery(String n1ql) throws NullPointerException {
         requireNonNull(n1ql, "n1qlQuery is required");
         return waitBucketBeReadyAndGet(() -> {
             QueryResult query = cluster.query(n1ql);

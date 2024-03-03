@@ -16,15 +16,15 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 
 
 import com.couchbase.client.java.json.JsonObject;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 
 import java.util.stream.Stream;
 
 /**
- * The couchbase implementation of {@link DocumentManager}
+ * The couchbase implementation of {@link DatabaseManager}
  */
-public interface CouchbaseDocumentManager extends DocumentManager {
+public interface CouchbaseDocumentManager extends DatabaseManager {
 
     /**
      * Executes the N1QL with params and then result que result
@@ -34,7 +34,7 @@ public interface CouchbaseDocumentManager extends DocumentManager {
      * @return the query result
      * @throws NullPointerException when either n1ql or params are null
      */
-    Stream<DocumentEntity> n1qlQuery(String n1ql, JsonObject params) throws NullPointerException;
+    Stream<CommunicationEntity> n1qlQuery(String n1ql, JsonObject params) throws NullPointerException;
 
 
     /**
@@ -44,6 +44,6 @@ public interface CouchbaseDocumentManager extends DocumentManager {
      * @return the query result
      * @throws NullPointerException when either n1ql or params are null
      */
-    Stream<DocumentEntity> n1qlQuery(String n1ql) throws NullPointerException;
+    Stream<CommunicationEntity> n1qlQuery(String n1ql) throws NullPointerException;
 
 }
