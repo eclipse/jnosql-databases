@@ -21,9 +21,9 @@ import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,8 +46,8 @@ final class OrientDBConverter {
     private OrientDBConverter() {
     }
 
-    static List<DocumentEntity> convert(OResultSet resultSet) {
-        List<DocumentEntity> entities = new ArrayList<>();
+    static List<CommunicationEntity> convert(OResultSet resultSet) {
+        List<CommunicationEntity> entities = new ArrayList<>();
 
         while (resultSet.hasNext()) {
             entities.add(convert(resultSet.next()));
@@ -55,13 +55,13 @@ final class OrientDBConverter {
         return entities;
     }
 
-    static DocumentEntity convert(OResult row) {
+    static CommunicationEntity convert(OResult row) {
         OElement element = row.toElement();
         String name = element.getSchemaType()
                 .map(OClass::getName)
                 .orElseThrow(() -> new IllegalArgumentException("SchemaType is required in a row"));
 
-        DocumentEntity entity = DocumentEntity.of(name);
+        CommunicationEntity entity = CommunicationEntity.of(name);
         for (String propertyName : element.getPropertyNames()) {
             Object property = element.getProperty(propertyName);
             entity.add(propertyName, convert(property));
@@ -77,17 +77,17 @@ final class OrientDBConverter {
     }
 
 
-    static DocumentEntity convert(ODocument document) {
+    static CommunicationEntity convert(ODocument document) {
         if (document == null) {
             return null;
         }
-        DocumentEntity entity = DocumentEntity.of(document.getClassName());
+        CommunicationEntity entity = CommunicationEntity.of(document.getClassName());
         Stream.of(document.fieldNames())
-                .map(f -> Document.of(f, convert((Object) document.field(f))))
+                .map(f -> Element.of(f, convert((Object) document.field(f))))
                 .forEach(entity::add);
-        entity.add(Document.of(RID_FIELD, document.field(RID_FIELD).toString()));
-        entity.add(Document.of(VERSION_FIELD, document.getVersion()));
-        entity.add(Document.of(ID_FIELD, document.field(RID_FIELD).toString()));
+        entity.add(Element.of(RID_FIELD, document.field(RID_FIELD).toString()));
+        entity.add(Element.of(VERSION_FIELD, document.getVersion()));
+        entity.add(Element.of(ID_FIELD, document.field(RID_FIELD).toString()));
         return entity;
     }
 
@@ -96,7 +96,7 @@ final class OrientDBConverter {
         if (Map.class.isInstance(object)) {
             Map map = Map.class.cast(object);
             return map.keySet().stream()
-                    .map(k -> Document.of(k.toString(), map.get(k)))
+                    .map(k -> Element.of(k.toString(), map.get(k)))
                     .collect(toList());
         } else if (List.class.isInstance(object)) {
             return StreamSupport.stream(List.class.cast(object).spliterator(), false)
@@ -106,19 +106,19 @@ final class OrientDBConverter {
     }
 
 
-    public static Map<String, Object> toMap(DocumentEntity entity) {
+    public static Map<String, Object> toMap(CommunicationEntity entity) {
         Map<String, Object> entityValues = new HashMap<>();
-        for (Document document : entity.documents()) {
+        for (Element document : entity.elements()) {
             toDocument(entityValues, document);
         }
 
         return entityValues;
     }
 
-    private static void toDocument(Map<String, Object> entityValues, Document document) {
+    private static void toDocument(Map<String, Object> entityValues, Element document) {
         Object value = ValueUtil.convert(document.value());
-        if (Document.class.isInstance(value)) {
-            Document subDocument = Document.class.cast(value);
+        if (Element.class.isInstance(value)) {
+            Element subDocument = Element.class.cast(value);
             entityValues.put(document.name(), singletonMap(subDocument.name(), subDocument.get()));
         } else if (isDocumentIterable(value)) {
             entityValues.put(document.name(), getMap(value));
@@ -133,14 +133,14 @@ final class OrientDBConverter {
     private static Map<String, Object> getMap(Object valueAsObject) {
         Map<String, Object> map = new java.util.HashMap<>();
         stream(Iterable.class.cast(valueAsObject).spliterator(), false)
-                .forEach(d -> toDocument(map, Document.class.cast(d)));
+                .forEach(d -> toDocument(map, Element.class.cast(d)));
         return map;
     }
 
     private static boolean isDocumentIterable(Object value) {
         return Iterable.class.isInstance(value) &&
                 stream(Iterable.class.cast(value).spliterator(), false)
-                        .allMatch(Document.class::isInstance);
+                        .allMatch(Element.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

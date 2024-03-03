@@ -16,15 +16,15 @@ package org.eclipse.jnosql.databases.orientdb.integration;
 
 
 import jakarta.inject.Inject;
-import jakarta.nosql.document.DocumentTemplate;
 import org.eclipse.jnosql.databases.orientdb.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentConfigurations;
 import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -40,7 +40,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, DocumentEntityConverter.class})
+@AddPackages(value = {Convert.class, EntityConverter.class, DocumentTemplate.class})
 @AddPackages(Book.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})

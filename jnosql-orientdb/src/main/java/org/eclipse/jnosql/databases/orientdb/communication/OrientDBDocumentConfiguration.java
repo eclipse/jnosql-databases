@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.orientdb.communication;
 
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -28,12 +28,12 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
- * The orientDB implementation of {@link DocumentConfiguration}  that returns
+ * The orientDB implementation of {@link DatabaseConfiguration}  that returns
  * {@link OrientDBDocumentManagerFactory}.
  *
  * @see OrientDBDocumentConfigurations
  */
-public class OrientDBDocumentConfiguration implements DocumentConfiguration {
+public class OrientDBDocumentConfiguration implements DatabaseConfiguration {
 
     private String host;
 

@@ -14,8 +14,7 @@
  */
 package org.eclipse.jnosql.databases.orientdb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class OrientDBDocumentManagerFactoryTest {
 
-    private DocumentManagerFactory managerFactory;
+    private DatabaseManagerFactory managerFactory;
 
     @BeforeEach
     public void setUp() {
@@ -36,7 +35,7 @@ public class OrientDBDocumentManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        DocumentManager database = managerFactory.apply("database");
+        var database = managerFactory.apply("database");
         assertNotNull(database);
     }
 }

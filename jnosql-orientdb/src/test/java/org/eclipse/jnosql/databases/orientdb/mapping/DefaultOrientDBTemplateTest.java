@@ -16,19 +16,20 @@ package org.eclipse.jnosql.databases.orientdb.mapping;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentManager;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCallback;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCreateCallback;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -40,14 +41,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
 @EnableAutoWeld
 @AddPackages(value = {Converters.class,
-        DocumentEntityConverter.class, SQL.class})
+        EntityConverter.class, DocumentTemplate.class, SQL.class})
 @AddPackages(MockProducer.class)
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
@@ -55,10 +56,10 @@ import static org.mockito.Mockito.when;
 public class DefaultOrientDBTemplateTest {
 
     @Inject
-    private DocumentEntityConverter converter;
+    private EntityConverter converter;
 
     @Inject
-    private DocumentEventPersistManager persistManager;
+    private EventPersistManager persistManager;
 
     @Inject
     private EntitiesMetadata entities;
@@ -78,9 +79,9 @@ public class DefaultOrientDBTemplateTest {
         when(instance.get()).thenReturn(manager);
         template = new DefaultOrientDBTemplate(instance, converter, persistManager, entities, converters);
 
-        DocumentEntity entity = DocumentEntity.of("Person");
-        entity.add(Document.of("name", "Ada"));
-        entity.add(Document.of("age", 10));
+        CommunicationEntity entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("name", "Ada"));
+        entity.add(Element.of("age", 10));
         when(manager.sql(Mockito.anyString(), Mockito.any(String.class)))
                 .thenReturn(Stream.of(entity));
     }
@@ -96,7 +97,7 @@ public class DefaultOrientDBTemplateTest {
     @Test
     public void shouldLive() {
 
-        DocumentQuery query = select().from("Person").build();
+        SelectQuery query = select().from("Person").build();
 
         OrientDBLiveCreateCallback<Person> callBack = p -> {
         };

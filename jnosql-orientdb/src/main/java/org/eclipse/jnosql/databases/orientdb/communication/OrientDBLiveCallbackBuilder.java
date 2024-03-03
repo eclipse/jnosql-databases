@@ -15,14 +15,14 @@
  */
 package org.eclipse.jnosql.databases.orientdb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 
 import static java.util.Objects.requireNonNull;
 
 public final class OrientDBLiveCallbackBuilder {
-    private OrientDBLiveCreateCallback<DocumentEntity> createCallback;
-    private OrientDBLiveUpdateCallback<DocumentEntity> updateCallback;
-    private OrientDBLiveDeleteCallback<DocumentEntity> deleteCallback;
+    private OrientDBLiveCreateCallback<CommunicationEntity> createCallback;
+    private OrientDBLiveUpdateCallback<CommunicationEntity> updateCallback;
+    private OrientDBLiveDeleteCallback<CommunicationEntity> deleteCallback;
 
     private OrientDBLiveCallbackBuilder() {
     }
@@ -31,25 +31,25 @@ public final class OrientDBLiveCallbackBuilder {
         return new OrientDBLiveCallbackBuilder();
     }
 
-    public OrientDBLiveCallbackBuilder onCreate(OrientDBLiveCreateCallback<DocumentEntity> createCallback) {
+    public OrientDBLiveCallbackBuilder onCreate(OrientDBLiveCreateCallback<CommunicationEntity> createCallback) {
         requireNonNull(createCallback, "createCallback is required");
         this.createCallback = createCallback;
         return this;
     }
 
-    public OrientDBLiveCallbackBuilder onUpdate(OrientDBLiveUpdateCallback<DocumentEntity> updateCallback) {
+    public OrientDBLiveCallbackBuilder onUpdate(OrientDBLiveUpdateCallback<CommunicationEntity> updateCallback) {
         requireNonNull(updateCallback, "updateCallback is required");
         this.updateCallback = updateCallback;
         return this;
     }
 
-    public OrientDBLiveCallbackBuilder onDelete(OrientDBLiveDeleteCallback<DocumentEntity> deleteCallback) {
+    public OrientDBLiveCallbackBuilder onDelete(OrientDBLiveDeleteCallback<CommunicationEntity> deleteCallback) {
         requireNonNull(deleteCallback, "deleteCallback is required");
         this.deleteCallback = deleteCallback;
         return this;
     }
 
-    public OrientDBLiveCallback<DocumentEntity> build() {
+    public OrientDBLiveCallback<CommunicationEntity> build() {
         validateNonNullCallbacks();
         return new OrientDBLiveCallback<>(createCallback, updateCallback, deleteCallback);
     }

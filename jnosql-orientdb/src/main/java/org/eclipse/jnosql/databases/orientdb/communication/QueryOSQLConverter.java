@@ -20,10 +20,10 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import jakarta.data.Direction;
 import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ final class QueryOSQLConverter {
     private QueryOSQLConverter() {
     }
 
-    static Query select(DocumentQuery documentQuery) {
+    static Query select(SelectQuery documentQuery) {
         StringBuilder query = new StringBuilder();
         List<Object> params = new java.util.ArrayList<>();
         List<ORecordId> ids = new ArrayList<>();
@@ -72,10 +72,10 @@ final class QueryOSQLConverter {
         return new Query(query.toString(), params, ids);
     }
 
-    private static void definesCondition(DocumentCondition condition, StringBuilder query, List<Object> params,
+    private static void definesCondition(CriteriaCondition condition, StringBuilder query, List<Object> params,
                                          int counter, List<ORecordId> ids) {
 
-        Document document = condition.document();
+        Element document = condition.element();
         switch (condition.condition()) {
             case IN:
                 appendCondition(query, params, document, IN, ids);
@@ -99,7 +99,7 @@ final class QueryOSQLConverter {
                 appendCondition(query, params, document, LIKE, ids);
                 return;
             case AND:
-                for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
+                for (CriteriaCondition dc : document.get(new TypeReference<List<CriteriaCondition>>() {
                 })) {
 
                     if (isFirstCondition(query, counter)) {
@@ -109,7 +109,7 @@ final class QueryOSQLConverter {
                 }
                 return;
             case OR:
-                for (DocumentCondition dc : document.get(new TypeReference<List<DocumentCondition>>() {
+                for (CriteriaCondition dc : document.get(new TypeReference<List<CriteriaCondition>>() {
                 })) {
                     if (isFirstCondition(query, counter)) {
                         query.append(OR);
@@ -118,7 +118,7 @@ final class QueryOSQLConverter {
                 }
                 return;
             case NOT:
-                DocumentCondition documentCondition = document.get(DocumentCondition.class);
+                CriteriaCondition documentCondition = document.get(CriteriaCondition.class);
                 query.append("NOT (");
                 definesCondition(documentCondition, query, params, ++counter, ids);
                 query.append(")");
@@ -133,7 +133,7 @@ final class QueryOSQLConverter {
     }
 
     private static void appendCondition(StringBuilder query, List<Object> params,
-                                        Document document, String condition, List<ORecordId> ids) {
+                                        Element document, String condition, List<ORecordId> ids) {
 
         if (RID_FIELD.equals(document.name())
                 ||
@@ -162,7 +162,7 @@ final class QueryOSQLConverter {
         }
     }
 
-    private static void appendPagination(DocumentQuery documentQuery, StringBuilder query) {
+    private static void appendPagination(SelectQuery documentQuery, StringBuilder query) {
         if (documentQuery.skip() > 0) {
             query.append(SKIP).append(documentQuery.skip());
         }

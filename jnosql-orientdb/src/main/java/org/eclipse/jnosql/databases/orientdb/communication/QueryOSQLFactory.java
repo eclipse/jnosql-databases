@@ -20,7 +20,7 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,12 +36,12 @@ final class QueryOSQLFactory {
     private QueryOSQLFactory() {
     }
 
-    static QueryResult to(DocumentQuery documentQuery) {
+    static QueryResult to(SelectQuery documentQuery) {
         QueryOSQLConverter.Query query = QueryOSQLConverter.select(documentQuery);
         return new QueryResult(query.query(), query.params(), query.ids());
     }
 
-    static QueryResultAsync toAsync(DocumentQuery documentQuery, Consumer<Stream<ODocument>> callBack) {
+    static QueryResultAsync toAsync(SelectQuery documentQuery, Consumer<Stream<ODocument>> callBack) {
         QueryOSQLConverter.Query query = QueryOSQLConverter.select(documentQuery);
 
         return new QueryResultAsync(new OSQLAsynchQuery<>(query.query(), new OCommandResultListener() {
@@ -66,7 +66,7 @@ final class QueryOSQLFactory {
         }), query.params());
     }
 
-    static QueryResult toLive(DocumentQuery documentQuery, OrientDBLiveCallback callbacks) {
+    static QueryResult toLive(SelectQuery documentQuery, OrientDBLiveCallback callbacks) {
         QueryOSQLConverter.Query query = QueryOSQLConverter.select(documentQuery);
         return new QueryResult(query.query(), query.params(), Collections.emptyList());
     }
