@@ -26,9 +26,9 @@ import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.delete.Delete;
 import com.datastax.oss.driver.api.querybuilder.insert.Insert;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.time.Duration;
 import java.util.Map;
@@ -56,7 +56,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public ColumnEntity insert(ColumnEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         requireNonNull(entity, "entity is required");
         final Insert insert = QueryUtils.insert(entity, keyspace, session, null);
         session.execute(insert.build());
@@ -64,7 +64,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public ColumnEntity insert(ColumnEntity entity, Duration duration) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration duration) {
         requireNonNull(entity, "entity is required");
         requireNonNull(duration, "duration is required");
         final Insert insert = QueryUtils.insert(entity, keyspace, session, duration);
@@ -73,18 +73,18 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public ColumnEntity update(ColumnEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         return insert(entity);
     }
 
     @Override
-    public Iterable<ColumnEntity> update(Iterable<ColumnEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         return insert(entities);
     }
 
 
     @Override
-    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
@@ -92,7 +92,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public Iterable<ColumnEntity> insert(Iterable<ColumnEntity> entities, Duration duration) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration duration) {
         requireNonNull(entities, "entities is required");
         requireNonNull(duration, "entities is duration");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -101,7 +101,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity, ConsistencyLevel level) {
+    public CommunicationEntity save(CommunicationEntity entity, ConsistencyLevel level) {
         requireNonNull(entity, "entities is required");
         requireNonNull(level, "level is required");
 
@@ -111,7 +111,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public ColumnEntity save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) {
+    public CommunicationEntity save(CommunicationEntity entity, Duration ttl, ConsistencyLevel level) {
         requireNonNull(entity, "entity is required");
         requireNonNull(level, "level is required");
         requireNonNull(ttl, "ttl is required");
@@ -122,7 +122,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, ConsistencyLevel level) {
+    public Iterable<CommunicationEntity> save(Iterable<CommunicationEntity> entities, ConsistencyLevel level) {
         requireNonNull(entities, "entities is required");
         requireNonNull(level, "level is required");
         return StreamSupport.stream(entities.spliterator(), false).map(c -> this.save(c, level))
@@ -130,7 +130,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) {
+    public Iterable<CommunicationEntity> save(Iterable<CommunicationEntity> entities, Duration ttl, ConsistencyLevel level) {
         requireNonNull(entities, "entities is required");
         requireNonNull(level, "level is required");
         requireNonNull(ttl, "ttl is required");
@@ -139,14 +139,14 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public Stream<ColumnEntity> select(ColumnQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         requireNonNull(query, "query is required");
         QueryExecutor executor = QueryExecutor.of(query);
         return executor.execute(keyspace, query, this);
     }
 
     @Override
-    public Stream<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException {
+    public Stream<CommunicationEntity> select(SelectQuery query, ConsistencyLevel level) throws NullPointerException {
         requireNonNull(query, "query is required");
         QueryExecutor executor = QueryExecutor.of(query);
         return executor.execute(keyspace, query, level, this);
@@ -166,7 +166,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public void delete(ColumnDeleteQuery query, ConsistencyLevel level) {
+    public void delete(DeleteQuery query, ConsistencyLevel level) {
         requireNonNull(query, "query is required");
         requireNonNull(level, "level is required");
         final Delete delete = DeleteQueryConverter.delete(query, keyspace);
@@ -176,7 +176,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public void delete(ColumnDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         requireNonNull(query, "query is required");
         final Delete delete = DeleteQueryConverter.delete(query, keyspace);
         session.execute(delete.build());
@@ -184,14 +184,14 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
 
 
     @Override
-    public Stream<ColumnEntity> cql(String query) {
+    public Stream<CommunicationEntity> cql(String query) {
         requireNonNull(query, "query is required");
         final ResultSet resultSet = session.execute(query);
         return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);
     }
 
     @Override
-    public Stream<ColumnEntity> cql(String query, Map<String, Object> values) {
+    public Stream<CommunicationEntity> cql(String query, Map<String, Object> values) {
         requireNonNull(query, "query is required");
         requireNonNull(values, "values is required");
         final PreparedStatement prepare = session.prepare(query);
@@ -205,7 +205,7 @@ class DefaultCassandraColumnManager implements CassandraColumnManager {
     }
 
     @Override
-    public Stream<ColumnEntity> execute(SimpleStatement statement) {
+    public Stream<CommunicationEntity> execute(SimpleStatement statement) {
         requireNonNull(statement, "statement is required");
         final ResultSet resultSet = session.execute(statement);
         return resultSet.all().stream().map(CassandraConverter::toDocumentEntity);

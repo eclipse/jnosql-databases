@@ -18,10 +18,10 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
 
 import java.util.List;
 import java.util.Map;
@@ -35,35 +35,35 @@ final class SolrUtils {
     private SolrUtils() {
     }
 
-    static SolrInputDocument getDocument(DocumentEntity entity) {
+    static SolrInputDocument getDocument(CommunicationEntity entity) {
         SolrInputDocument document = new SolrInputDocument();
         document.addField(ENTITY, entity.name());
-        entity.documents().stream().forEach(d -> document.addField(d.name(), convert(d.value())));
+        entity.elements().stream().forEach(d -> document.addField(d.name(), convert(d.value())));
         return document;
     }
 
     private static Object convert(Value value) {
         Object val = ValueUtil.convert(value);
-        if (val instanceof Document || isSudDocument(val) || isSudDocumentList(val)) {
+        if (val instanceof Element || isSudDocument(val) || isSudDocumentList(val)) {
             throw new SolrException("Apache Solr does not support to embedded field");
         }
         return val;
     }
 
 
-    public static List<DocumentEntity> of(SolrDocumentList values) {
+    public static List<CommunicationEntity> of(SolrDocumentList values) {
 
         return values.stream()
                 .map(SolrDocument::getFieldValueMap)
                 .map(SolrUtils::solrToMap)
-                .map(Documents::of)
+                .map(Elements::of)
                 .map(documents -> {
                     final String entity = documents.stream()
                             .filter(d -> ENTITY.equals(d.name()))
                             .findFirst()
                             .map(d -> d.get(String.class))
                             .orElseThrow(() -> new SolrException("The field _entity is required"));
-                    return DocumentEntity.of(entity, documents);
+                    return CommunicationEntity.of(entity, documents);
                 }).collect(Collectors.toList());
     }
 
@@ -73,7 +73,7 @@ final class SolrUtils {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
+                allMatch(Elements.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.solr.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,21 +26,21 @@ public class SolrDocumentConfigurationTest {
 
     @Test
     public void shouldReturnErrorWhenSettingsIsNull() {
-        DocumentConfiguration configuration = new SolrDocumentConfiguration();
+        var configuration = new SolrDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
 
     @Test
     public void shouldReturnFromConfiguration() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        var configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfiguration);
+        Assertions.assertTrue(configuration instanceof DatabaseConfiguration);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        SolrDocumentConfiguration configuration = DocumentConfiguration
+        SolrDocumentConfiguration configuration = DatabaseConfiguration
                 .getConfiguration(SolrDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof SolrDocumentConfiguration);

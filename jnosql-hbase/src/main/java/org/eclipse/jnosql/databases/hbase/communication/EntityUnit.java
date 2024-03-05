@@ -17,8 +17,8 @@ package org.eclipse.jnosql.databases.hbase.communication;
 
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ class EntityUnit {
 
     private String columnFamily;
 
-    private final List<Column> columns = new ArrayList<>();
+    private final List<Element> columns = new ArrayList<>();
 
     EntityUnit(Result result) {
 
@@ -48,7 +48,7 @@ class EntityUnit {
             if (this.columnFamily == null) {
                 this.columnFamily = new String(cloneFamily(cell));
             }
-            columns.add(Column.of(name, value));
+            columns.add(Element.of(name, value));
         }
     }
 
@@ -57,8 +57,8 @@ class EntityUnit {
         return !columns.isEmpty();
     }
 
-    public ColumnEntity toEntity() {
-        ColumnEntity entity = ColumnEntity.of(columnFamily);
+    public CommunicationEntity toEntity() {
+        var entity = CommunicationEntity.of(columnFamily);
         entity.addAll(columns);
         entity.add(HBaseUtils.getKey(rowKey));
         return entity;
@@ -66,11 +66,10 @@ class EntityUnit {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("EntityUnit{");
-        sb.append("rowKey='").append(rowKey).append('\'');
-        sb.append(", columnFamily='").append(columnFamily).append('\'');
-        sb.append(", columns=").append(columns);
-        sb.append('}');
-        return sb.toString();
+        return "EntityUnit{" +
+                "rowKey='" + rowKey + '\'' +
+                ", columnFamily='" + columnFamily + '\'' +
+                ", columns=" + columns +
+                '}';
     }
 }

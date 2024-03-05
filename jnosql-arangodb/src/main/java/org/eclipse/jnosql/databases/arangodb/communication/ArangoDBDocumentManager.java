@@ -14,30 +14,30 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 
 import java.util.Map;
 import java.util.stream.Stream;
 /**
- * The ArangoDB implementation of {@link DocumentManager}. This implementation does not support TTL methods in the context of
- * {@link DocumentManager#insert(DocumentEntity)}.
+ * The ArangoDB implementation of {@link DatabaseManager}. This implementation does not support TTL methods in the context of
+ * {@link DatabaseManager#insert(org.eclipse.jnosql.communication.semistructured.CommunicationEntity)}.
  */
-public interface ArangoDBDocumentManager extends DocumentManager {
+public interface ArangoDBDocumentManager extends DatabaseManager {
 
     /**
      * Executes an ArangoDB query using the ArangoDB Query Language (AQL).
      *
      * <p>Example query: {@code FOR u IN users FILTER u.status == @status RETURN u}</p>
      *
-     * <p>The conversion from the query result to {@link DocumentEntity} will happen at the Eclipse JNoSQL side.</p>
+     * <p>The conversion from the query result to {@link CommunicationEntity} will happen at the Eclipse JNoSQL side.</p>
      *
      * @param query  the AQL query
      * @param params the named parameters for the query
-     * @return a {@link Stream} of {@link DocumentEntity} representing the query result
+     * @return a {@link Stream} of {@link CommunicationEntity} representing the query result
      * @throws NullPointerException when either the query or params are null
      */
-    Stream<DocumentEntity> aql(String query, Map<String, Object> params);
+    Stream<CommunicationEntity> aql(String query, Map<String, Object> params);
 
     /**
      * Executes an ArangoDB query using the ArangoDB Query Language (AQL).

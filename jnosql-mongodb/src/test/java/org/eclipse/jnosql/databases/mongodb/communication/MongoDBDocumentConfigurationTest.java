@@ -15,8 +15,7 @@
 
 package org.eclipse.jnosql.databases.mongodb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,14 +32,14 @@ class MongoDBDocumentConfigurationTest {
         Map<String, String> map = new HashMap<>();
         map.put("mongodb-server-host-1", "172.17.0.2:27017");
         MongoDBDocumentConfiguration configuration = new MongoDBDocumentConfiguration();
-        DocumentManagerFactory managerFactory = configuration.get(map);
+        var managerFactory = configuration.get(map);
         assertNotNull(managerFactory);
     }
 
 
     @Test
     void shouldReturnErrorWhenSettingsIsNull() {
-        DocumentConfiguration configuration = new MongoDBDocumentConfiguration();
+        var configuration = new MongoDBDocumentConfiguration();
         assertThrows(NullPointerException.class, () -> configuration.apply(null));
     }
 
@@ -52,14 +51,14 @@ class MongoDBDocumentConfigurationTest {
 
     @Test
     void shouldReturnFromConfiguration() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        var configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfiguration);
+        Assertions.assertTrue(configuration instanceof DatabaseConfiguration);
     }
 
     @Test
     void shouldReturnFromConfigurationQuery() {
-        MongoDBDocumentConfiguration configuration = DocumentConfiguration
+        MongoDBDocumentConfiguration configuration = DatabaseConfiguration
                 .getConfiguration(MongoDBDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof MongoDBDocumentConfiguration);

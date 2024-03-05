@@ -19,17 +19,16 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentManager;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCallback;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCallbackBuilder;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.util.Map;
 import java.util.Objects;
@@ -40,23 +39,23 @@ import java.util.stream.Stream;
  */
 @Typed(OrientDBTemplate.class)
 @ApplicationScoped
-class DefaultOrientDBTemplate extends AbstractDocumentTemplate
+class DefaultOrientDBTemplate extends AbstractSemistructuredTemplate
         implements OrientDBTemplate {
 
-    private Instance<OrientDBDocumentManager> manager;
+    private final Instance<OrientDBDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final EntityConverter converter;
 
-    private DocumentEventPersistManager persistManager;
+    private final EventPersistManager persistManager;
 
-    private EntitiesMetadata entities;
+    private final EntitiesMetadata entities;
 
-    private Converters converters;
+    private final Converters converters;
 
     @Inject
     DefaultOrientDBTemplate(Instance<OrientDBDocumentManager> manager,
-                            DocumentEntityConverter converter,
-                            DocumentEventPersistManager persistManager,
+                            EntityConverter converter,
+                            EventPersistManager persistManager,
                             EntitiesMetadata entities,
                             Converters converters) {
 
@@ -68,30 +67,31 @@ class DefaultOrientDBTemplate extends AbstractDocumentTemplate
     }
 
     DefaultOrientDBTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected DocumentManager getManager() {
+    protected OrientDBDocumentManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
+    protected EventPersistManager eventManager() {
         return persistManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
@@ -108,7 +108,7 @@ class DefaultOrientDBTemplate extends AbstractDocumentTemplate
     }
 
     @Override
-    public <T> void live(DocumentQuery query, OrientDBLiveCallback<T> callBacks) {
+    public <T> void live(SelectQuery query, OrientDBLiveCallback<T> callBacks) {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(callBacks, "callBacks is required");
         manager.get().live(query, bindCallbacks(callBacks));
@@ -121,7 +121,7 @@ class DefaultOrientDBTemplate extends AbstractDocumentTemplate
         manager.get().live(query, bindCallbacks(callBacks), params);
     }
 
-    private <T> OrientDBLiveCallback<DocumentEntity> bindCallbacks(OrientDBLiveCallback<T> callBacks) {
+    private <T> OrientDBLiveCallback<CommunicationEntity> bindCallbacks(OrientDBLiveCallback<T> callBacks) {
         return OrientDBLiveCallbackBuilder.builder()
                 .onCreate(d -> callBacks.getCreateCallback().ifPresent(callback -> callback.accept(converter.toEntity(d))))
                 .onUpdate(d -> callBacks.getUpdateCallback().ifPresent(callback -> callback.accept(converter.toEntity(d))))

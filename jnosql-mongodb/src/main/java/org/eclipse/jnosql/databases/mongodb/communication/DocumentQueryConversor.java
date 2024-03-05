@@ -19,9 +19,9 @@ package org.eclipse.jnosql.databases.mongodb.communication;
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.List;
 
@@ -30,8 +30,8 @@ final class DocumentQueryConversor {
     private DocumentQueryConversor() {
     }
 
-    public static Bson convert(DocumentCondition condition) {
-        Document document = condition.document();
+    public static Bson convert(CriteriaCondition condition) {
+        Element document = condition.element();
         Object value = ValueUtil.convert(document.value());
         return switch (condition.condition()) {
             case EQUALS -> Filters.eq(document.name(), value);
@@ -43,16 +43,16 @@ final class DocumentQueryConversor {
                 List<Object> inList = ValueUtil.convertToList(document.value());
                 yield Filters.in(document.name(), inList.toArray());
             }
-            case NOT -> Filters.not(convert(document.get(DocumentCondition.class)));
+            case NOT -> Filters.not(convert(document.get(CriteriaCondition.class)));
             case LIKE -> Filters.regex(document.name(), value.toString());
             case AND -> {
-                List<DocumentCondition> andList = condition.document().value().get(new TypeReference<>() {
+                List<CriteriaCondition> andList = condition.element().value().get(new TypeReference<>() {
                 });
                 yield Filters.and(andList.stream()
                         .map(DocumentQueryConversor::convert).toList());
             }
             case OR -> {
-                List<DocumentCondition> orList = condition.document().value().get(new TypeReference<>() {
+                List<CriteriaCondition> orList = condition.element().value().get(new TypeReference<>() {
                 });
                 yield Filters.or(orList.stream()
                         .map(DocumentQueryConversor::convert).toList());

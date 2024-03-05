@@ -17,12 +17,12 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import com.arangodb.ArangoDB;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * The implementation of {@link DocumentConfiguration}
+ * The implementation of {@link DatabaseConfiguration}
  * that returns {@link ArangoDBDocumentManagerFactory}.
  *
  * @see ArangoDBConfiguration
@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
  *
  */
 public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
-        implements DocumentConfiguration {
+        implements DatabaseConfiguration {
 
     @Override
     public ArangoDBDocumentManagerFactory apply(Settings settings) throws NullPointerException {

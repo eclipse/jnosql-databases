@@ -16,8 +16,7 @@
 package org.eclipse.jnosql.databases.orientdb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,7 @@ public class OrientDBDocumentConfigurationTest {
         configuration.setHost("172.17.0.2");
         configuration.setUser("root");
         configuration.setPassword("rootpwd");
-        DocumentManagerFactory managerFactory = configuration.apply(Settings.builder().build());
+        var managerFactory = configuration.apply(Settings.builder().build());
         assertNotNull(managerFactory);
     }
 
@@ -44,14 +43,14 @@ public class OrientDBDocumentConfigurationTest {
 
     @Test
     public void shouldReturnFromConfiguration() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        var configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
-        Assertions.assertTrue(configuration instanceof DocumentConfiguration);
+        Assertions.assertTrue(configuration instanceof DatabaseConfiguration);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        OrientDBDocumentConfiguration configuration = DocumentConfiguration
+        OrientDBDocumentConfiguration configuration = DatabaseConfiguration
                 .getConfiguration(OrientDBDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof OrientDBDocumentConfiguration);

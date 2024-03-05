@@ -15,12 +15,11 @@
 
 package org.eclipse.jnosql.databases.mongodb.communication;
 
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,16 +33,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.semistructured.DeleteQuery.delete;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 class MongoDBQueryTest {
 
     public static final String COLLECTION_NAME = "person";
-    private static DocumentManager entityManager;
+    private static DatabaseManager entityManager;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -52,33 +51,33 @@ class MongoDBQueryTest {
 
     @BeforeEach
     void beforeEach() {
-        DocumentDeleteQuery.delete().from(COLLECTION_NAME).delete(entityManager);
+        delete().from(COLLECTION_NAME).delete(entityManager);
     }
 
     @Test
     @DisplayName("The query should execute A or B")
     void shouldQuery() {
-        DocumentEntity entity = getEntity();
+        var entity = getEntity();
         entityManager.insert(entity);
 
-        DocumentQuery query = select()
+        var query = select()
                 .from(COLLECTION_NAME)
                 .where("name").eq("Otavio")
                 .or("name").eq("Poliana").build();
 
-        Stream<DocumentEntity> stream = entityManager.select(query);
+        Stream<CommunicationEntity> stream = entityManager.select(query);
         long count = stream.count();
         Assertions.assertEquals(1L, count);
         entityManager.delete(delete().from(COLLECTION_NAME).build());
 
     }
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+    private CommunicationEntity getEntity() {
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        List<Document> documents = Documents.of(map);
+        List<Element> documents = Elements.of(map);
         documents.forEach(entity::add);
         return entity;
     }

@@ -18,7 +18,7 @@ package org.eclipse.jnosql.databases.couchdb.communication;
 
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -33,11 +33,11 @@ import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigur
 import static org.eclipse.jnosql.databases.couchdb.communication.CouchDBConfigurations.SOCKET_TIMEOUT;
 
 /**
- * The CouchDB implementation of {@link DocumentConfiguration}  that returns
+ * The CouchDB implementation of {@link DatabaseConfiguration}  that returns
  * {@link CouchDBDocumentManagerFactory}.
  * @see CouchDBConfigurations
  */
-public class CouchDBDocumentConfiguration implements DocumentConfiguration {
+public class CouchDBDocumentConfiguration implements DatabaseConfiguration {
 
 
 

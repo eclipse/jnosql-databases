@@ -20,10 +20,10 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,21 +44,21 @@ final class EntityConverter {
     private EntityConverter() {
     }
 
-    static Map<String, Object> getMap(DocumentEntity entity) {
+    static Map<String, Object> getMap(CommunicationEntity entity) {
         Map<String, Object> jsonObject = new HashMap<>();
 
-        entity.documents().stream()
+        entity.elements().stream()
                 .filter(d -> !d.name().equals(ID_FIELD))
                 .forEach(feedJSON(jsonObject));
         jsonObject.put(ENTITY, entity.name());
         return jsonObject;
     }
 
-    static Stream<DocumentEntity> query(DocumentQuery query, ElasticsearchClient client, String index) {
+    static Stream<CommunicationEntity> query(SelectQuery query, ElasticsearchClient client, String index) {
         QueryConverterResult select = QueryConverter.select(client, index, query);
 
         try {
-            Stream<DocumentEntity> statementQueryStream = Stream.empty();
+            Stream<CommunicationEntity> statementQueryStream = Stream.empty();
             if (select.hasStatement()) {
                 statementQueryStream = executeStatement(query, client, index, select);
             }
@@ -68,7 +68,7 @@ final class EntityConverter {
         }
     }
 
-    private static Stream<DocumentEntity> executeStatement(DocumentQuery query, ElasticsearchClient client, String index,
+    private static Stream<CommunicationEntity> executeStatement(SelectQuery query, ElasticsearchClient client, String index,
                                                            QueryConverterResult select) throws IOException {
         SearchRequest.Builder searchRequest = buildSearchRequestBuilder(query, select);
         searchRequest.index(index);
@@ -79,11 +79,11 @@ final class EntityConverter {
     }
 
 
-    private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
+    private static Consumer<Element> feedJSON(Map<String, Object> jsonObject) {
         return d -> {
             Object value = ValueUtil.convert(d.value());
-            if (value instanceof Document) {
-                Document subDocument = Document.class.cast(value);
+            if (value instanceof Element) {
+                Element subDocument = Element.class.cast(value);
                 jsonObject.put(d.name(), singletonMap(subDocument.name(), subDocument.get()));
             } else if (isSudDocument(value)) {
                 Map<String, Object> subDocument = getMap(value);
@@ -106,7 +106,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
+                allMatch(Element.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {
@@ -114,14 +114,14 @@ final class EntityConverter {
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
-    static Stream<DocumentEntity> getDocumentEntityStream(ElasticsearchClient client, SearchResponse<Map> responses) {
+    static Stream<CommunicationEntity> getDocumentEntityStream(ElasticsearchClient client, SearchResponse<Map> responses) {
         return responses.hits().hits().stream()
                 .map(hits -> ElasticsearchEntry.of(hits.id(), hits.source()))
                 .filter(ElasticsearchEntry::isNotEmpty)
                 .map(ElasticsearchEntry::toEntity);
     }
 
-    private static SearchRequest.Builder buildSearchRequestBuilder(DocumentQuery query, QueryConverterResult select) {
+    private static SearchRequest.Builder buildSearchRequestBuilder(SelectQuery query, QueryConverterResult select) {
         SearchRequest.Builder searchBuilder = new SearchRequest.Builder();
 
         if (select.hasQuery()) {
@@ -132,7 +132,7 @@ final class EntityConverter {
         return searchBuilder;
     }
 
-    private static void feedBuilder(DocumentQuery query, SearchRequest.Builder searchSource) {
+    private static void feedBuilder(SelectQuery query, SearchRequest.Builder searchSource) {
         query.sorts().forEach(d -> {
             if (d.isAscending()) {
                 searchSource.sort(s -> s.field(f -> f.field(d.property()).order(SortOrder.Asc)));

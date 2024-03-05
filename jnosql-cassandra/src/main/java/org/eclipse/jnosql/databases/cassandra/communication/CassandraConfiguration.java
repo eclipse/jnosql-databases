@@ -17,40 +17,50 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.column.ColumnConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 /**
- * The Cassandra implementation to {@link ColumnConfiguration}  that returns
- * {@link CassandraColumnManagerFactory}
+ * A Cassandra-specific implementation of {@link DatabaseConfiguration}, which provides
+ * {@link CassandraColumnManagerFactory} instances.
  *
  * @see CassandraConfigurations
  */
-public final class CassandraConfiguration implements ColumnConfiguration {
+public final class CassandraConfiguration implements DatabaseConfiguration {
 
-
+    /**
+     * Retrieves the {@link CassandraColumnManagerFactory} based on the provided configurations.
+     *
+     * @param configurations the configurations for Cassandra
+     * @return a {@link CassandraColumnManagerFactory} instance
+     * @throws NullPointerException if configurations are null
+     */
     private CassandraColumnManagerFactory getManagerFactory(Map<String, String> configurations) {
-        requireNonNull(configurations);
+        Objects.requireNonNull(configurations);
         CassandraProperties properties = CassandraProperties.of(configurations);
         return new CassandraColumnManagerFactory(properties.createCluster(), properties.getQueries());
     }
 
-
+    /**
+     * Applies the settings to create a {@link CassandraColumnManagerFactory}.
+     *
+     * @param settings the settings to apply
+     * @return a {@link CassandraColumnManagerFactory} instance
+     * @throws NullPointerException if settings are null
+     */
     @Override
     public CassandraColumnManagerFactory apply(Settings settings) throws NullPointerException {
-        requireNonNull(settings, "settings is required");
+        Objects.requireNonNull(settings, "Settings is required");
         Map<String, String> configurations = new HashMap<>();
 
         List<String> keys = settings.keySet()
                 .stream()
                 .filter(k -> k.startsWith("jnosql."))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
 
         for (String key : keys) {
             settings.get(key, String.class).ifPresent(v -> configurations.put(key, v));

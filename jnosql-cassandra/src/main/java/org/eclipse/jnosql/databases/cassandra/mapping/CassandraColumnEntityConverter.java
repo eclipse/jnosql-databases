@@ -18,13 +18,13 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.ColumnEntityConverter;
-import org.eclipse.jnosql.mapping.column.ColumnFieldValue;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.FieldMetadata;
 import org.eclipse.jnosql.mapping.metadata.GenericFieldMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AttributeFieldValue;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.stream.StreamSupport;
 
 @ApplicationScoped
 @Typed(CassandraColumnEntityConverter.class)
-class CassandraColumnEntityConverter extends ColumnEntityConverter {
+class CassandraColumnEntityConverter extends EntityConverter {
 
     @Inject
     private EntitiesMetadata entities;
@@ -45,21 +45,21 @@ class CassandraColumnEntityConverter extends ColumnEntityConverter {
 
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
     @Override
-    protected <T> Consumer<String> feedObject(T instance, List<Column> columns, Map<String, FieldMetadata> fieldsGroupByName) {
+    protected <T> Consumer<String> feedObject(T instance, List<Element> columns, Map<String, FieldMetadata> fieldsGroupByName) {
         return k -> {
             FieldMetadata field = fieldsGroupByName.get(k);
             if (field.value(UDT.class).isPresent()) {
-                Optional<Column> column = columns.stream().filter(c -> c.name().equals(k)).findFirst();
+                Optional<Element> column = columns.stream().filter(c -> c.name().equals(k)).findFirst();
                 setUDTField(instance, column, field);
             } else {
                 super.feedObject(instance, columns, fieldsGroupByName).accept(k);
@@ -67,7 +67,7 @@ class CassandraColumnEntityConverter extends ColumnEntityConverter {
         };
     }
 
-    private <T> void setUDTField(T instance, Optional<Column> column, FieldMetadata field) {
+    private <T> void setUDTField(T instance, Optional<Element> column, FieldMetadata field) {
         if (column.isPresent() && org.eclipse.jnosql.databases.cassandra.communication.UDT.class.isInstance(column.get())) {
             org.eclipse.jnosql.databases.cassandra.communication.UDT udt =
                     org.eclipse.jnosql.databases.cassandra.communication.UDT.class.cast(column.get());
@@ -76,25 +76,25 @@ class CassandraColumnEntityConverter extends ColumnEntityConverter {
                     .allMatch(Iterable.class::isInstance)) {
                 GenericFieldMetadata genericField = GenericFieldMetadata.class.cast(field);
                 Collection collection = genericField.collectionInstance();
-                List<List<Column>> embeddable = (List<List<Column>>) columns;
-                for (List<Column> columnList : embeddable) {
+                List<List<Element>> embeddable = (List<List<Element>>) columns;
+                for (List<Element> columnList : embeddable) {
                     Object element = toEntity(genericField.elementType(), columnList);
                     collection.add(element);
                 }
                 field.write(instance, collection);
             } else {
-                Object value = toEntity(field.type(), (List<Column>) columns);
+                Object value = toEntity(field.type(), (List<Element>) columns);
                 field.write(instance, value);
             }
         }
     }
 
     @Override
-    protected ColumnFieldValue to(FieldMetadata field, Object entityInstance) {
+    protected AttributeFieldValue to(FieldMetadata field, Object entityInstance) {
 
         Object value = field.read(entityInstance);
         Optional<String> annotation = field.value(UDT.class);
-        return annotation.<ColumnFieldValue>map(v -> new CassandraUDTType(v, value, field))
+        return annotation.<AttributeFieldValue>map(v -> new CassandraUDTType(v, value, field))
                 .orElseGet( () -> super.to(field, entityInstance));
     }
 }

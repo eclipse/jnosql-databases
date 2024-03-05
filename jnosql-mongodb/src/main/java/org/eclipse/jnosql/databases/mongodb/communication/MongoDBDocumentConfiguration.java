@@ -23,8 +23,8 @@ import com.mongodb.client.MongoClients;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,11 +35,11 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * The MongoDB implementation to {@link DocumentConfiguration}
+ * The MongoDB implementation to {@link DatabaseConfiguration}
  * that returns  {@link MongoDBDocumentManagerFactory}
  * @see MongoDBDocumentConfigurations
  */
-public class MongoDBDocumentConfiguration implements DocumentConfiguration {
+public class MongoDBDocumentConfiguration implements DatabaseConfiguration {
 
     static final int DEFAULT_PORT = 27017;
 

@@ -14,7 +14,17 @@
  */
 package org.eclipse.jnosql.databases.cassandra.communication;
 
+/**
+ * A builder interface for creating a user-defined type (UDT) element with the specified name.
+ */
 public interface UDTNameBuilder {
 
+    /**
+     * Specifies the name of the UDT element.
+     *
+     * @param name the name of the UDT element
+     * @return the {@link UDTElementBuilder} instance to continue building the UDT
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
     UDTElementBuilder withName(String name) throws NullPointerException;
 }

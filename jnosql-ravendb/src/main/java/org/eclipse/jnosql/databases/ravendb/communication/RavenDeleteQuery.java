@@ -15,9 +15,9 @@
 package org.eclipse.jnosql.databases.ravendb.communication;
 
 import jakarta.data.Sort;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,11 +26,11 @@ import java.util.Optional;
 /**
  * Just a wrapper to do a query in raven then delete the result
  */
-final class RavenDeleteQuery implements DocumentQuery {
+final class RavenDeleteQuery implements SelectQuery {
 
-    private final DocumentDeleteQuery query;
+    private final DeleteQuery query;
 
-    RavenDeleteQuery(DocumentDeleteQuery query) {
+    RavenDeleteQuery(DeleteQuery query) {
         this.query = query;
     }
 
@@ -50,7 +50,7 @@ final class RavenDeleteQuery implements DocumentQuery {
     }
 
     @Override
-    public Optional<DocumentCondition> condition() {
+    public Optional<CriteriaCondition> condition() {
         return query.condition();
     }
 
@@ -60,7 +60,7 @@ final class RavenDeleteQuery implements DocumentQuery {
     }
 
     @Override
-    public List<String> documents() {
+    public List<String> columns() {
         return Collections.emptyList();
     }
 }

@@ -15,9 +15,9 @@
 package org.eclipse.jnosql.databases.ravendb.communication;
 
 import net.ravendb.client.Constants;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ final class EntityConverter {
         return "";
     }
 
-    static DocumentEntity getEntity(Map map) {
+    static CommunicationEntity getEntity(Map map) {
 
         Map<String, Object> entity = new HashMap<>(map);
         Map<String, Object> metadata = (Map<String, Object>) entity.remove(Constants.Documents.Metadata.KEY);
@@ -52,22 +52,22 @@ final class EntityConverter {
         return new RavenDBEntry(id, collection, entity).toEntity();
     }
 
-    static Map<String, Object> getMap(DocumentEntity entity) {
+    static Map<String, Object> getMap(CommunicationEntity entity) {
 
         Map<String, Object> entityMap = new HashMap<>();
 
-        entity.documents().stream()
+        entity.elements().stream()
                 .filter(d -> !ID_FIELD.equals(d.name()))
                 .forEach(feedJSON(entityMap));
         return entityMap;
     }
 
 
-    private static Consumer<Document> feedJSON(Map<String, Object> map) {
+    private static Consumer<Element> feedJSON(Map<String, Object> map) {
         return d -> {
             Object value = ValueUtil.convert(d.value());
-            if (value instanceof Document) {
-                Document subDocument = Document.class.cast(value);
+            if (value instanceof Element) {
+                Element subDocument = Element.class.cast(value);
                 map.put(d.name(), singletonMap(subDocument.name(), subDocument.get()));
             } else if (isSudDocument(value)) {
                 Map<String, Object> subDocument = getMap(value);
@@ -90,7 +90,7 @@ final class EntityConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
+                allMatch(Element.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {

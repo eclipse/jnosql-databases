@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.cassandra.communication;
 
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -29,29 +29,29 @@ public class DefaultUDTTest {
 
     @Test
     public void shouldCreateUDT() {
-        List<Column> columns = new ArrayList<>();
-        columns.add(Column.of("firstname", "Ada"));
-        columns.add(Column.of("lastname", "Lovelace"));
+        List<Element> columns = new ArrayList<>();
+        columns.add(Element.of("firstname", "Ada"));
+        columns.add(Element.of("lastname", "Lovelace"));
         UDT udt = UDT.builder("fullname").withName("name")
                 .addUDT(columns).build();
 
-        assertEquals("fullname", udt.getUserType());
+        assertEquals("fullname", udt.userType());
         assertEquals("name", udt.name());
     }
 
     @Test
     public void shouldReturnGetType() {
-        List<Column> columns = new ArrayList<>();
-        columns.add(Column.of("firstname", "Ada"));
-        columns.add(Column.of("lastname", "Lovelace"));
+        List<Element> columns = new ArrayList<>();
+        columns.add(Element.of("firstname", "Ada"));
+        columns.add(Element.of("lastname", "Lovelace"));
         UDT udt = UDT.builder("fullname").withName("name")
                 .addUDT(columns).build();
 
-        List<Column> udtColumn = udt.get(new TypeReference<>() {
+        List<Element> udtColumn = udt.get(new TypeReference<>() {
         });
 
-        assertThat(columns).contains(Column.of("firstname", "Ada"),
-                Column.of("lastname", "Lovelace"));
+        assertThat(columns).contains(Element.of("firstname", "Ada"),
+                Element.of("lastname", "Lovelace"));
     }
 
 }

@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.ravendb.communication;
 
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.Arrays;
 
@@ -25,11 +25,11 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * The RavenDB implementation to both {@link DocumentConfiguration}
+ * The RavenDB implementation to both {@link DatabaseConfiguration}
  * that returns  {@link RavenDBDocumentManagerFactory}
  *
  */
-public class RavenDBDocumentConfiguration implements DocumentConfiguration {
+public class RavenDBDocumentConfiguration implements DatabaseConfiguration {
 
 
     public static final String HOST = "jnosql.ravendb.host";

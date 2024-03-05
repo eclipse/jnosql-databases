@@ -19,12 +19,9 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import org.bson.conversions.Bson;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 
@@ -33,29 +30,32 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.bson.BsonValue;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 
 @ApplicationScoped
 @Typed(MongoDBTemplate.class)
-class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDBTemplate {
+class DefaultMongoDBTemplate extends AbstractSemistructuredTemplate implements MongoDBTemplate {
 
     private Instance<MongoDBDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private EntityConverter converter;
 
     private EntitiesMetadata entities;
 
     private Converters converters;
 
-    private DocumentEventPersistManager persistManager;
+    private EventPersistManager persistManager;
 
 
     @Inject
     DefaultMongoDBTemplate(Instance<MongoDBDocumentManager> manager,
-                           DocumentEntityConverter converter,
+                           EntityConverter converter,
                            EntitiesMetadata entities,
                            Converters converters,
-                           DocumentEventPersistManager persistManager) {
+                           EventPersistManager persistManager) {
         this.manager = manager;
         this.converter = converter;
         this.entities = entities;
@@ -64,39 +64,39 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     }
 
     DefaultMongoDBTemplate() {
-
+        this(null, null, null, null, null);
     }
-
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected MongoDBDocumentManager getManager() {
+    protected MongoDBDocumentManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
+    protected EventPersistManager eventManager() {
         return persistManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
+
 
     @Override
     public long delete(String collectionName, Bson filter) {
         Objects.requireNonNull(collectionName, "collectionName is required");
         Objects.requireNonNull(filter, "filter is required");
-        return this.getManager().delete(collectionName, filter);
+        return this.manager().delete(collectionName, filter);
     }
 
     @Override
@@ -104,14 +104,14 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
         Objects.requireNonNull(entity, "Entity is required");
         Objects.requireNonNull(filter, "filter is required");
         EntityMetadata entityMetadata = this.entities.get(entity);
-        return this.getManager().delete(entityMetadata.name(), filter);
+        return this.manager().delete(entityMetadata.name(), filter);
     }
 
     @Override
     public <T> Stream<T> select(String collectionName, Bson filter) {
         Objects.requireNonNull(collectionName, "collectionName is required");
         Objects.requireNonNull(filter, "filter is required");
-        Stream<DocumentEntity> entityStream = this.getManager().select(collectionName, filter);
+        Stream<CommunicationEntity> entityStream = this.manager().select(collectionName, filter);
         return entityStream.map(this.converter::toEntity);
     }
 
@@ -120,7 +120,7 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(filter, "filter is required");
         EntityMetadata entityMetadata = this.entities.get(entity);
-        Stream<DocumentEntity> entityStream = this.getManager().select(entityMetadata.name(), filter);
+        Stream<CommunicationEntity> entityStream = this.manager().select(entityMetadata.name(), filter);
         return entityStream.map(this.converter::toEntity);
     }
 
@@ -128,7 +128,7 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     public Stream<Map<String, BsonValue>> aggregate(String collectionName, Bson... pipeline) {
         Objects.requireNonNull(collectionName, "collectionName is required");
         Objects.requireNonNull(pipeline, "pipeline is required");
-        return this.getManager().aggregate(collectionName, pipeline);
+        return this.manager().aggregate(collectionName, pipeline);
     }
 
     @Override
@@ -136,14 +136,14 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(pipeline, "pipeline is required");
         EntityMetadata entityMetadata = this.entities.get(entity);
-        return this.getManager().aggregate(entityMetadata.name(), pipeline);
+        return this.manager().aggregate(entityMetadata.name(), pipeline);
     }
 
     @Override
     public <T> Stream<T> aggregate(String collectionName, List<Bson> pipeline) {
         Objects.requireNonNull(collectionName, "collectionName is required");
         Objects.requireNonNull(pipeline, "pipeline is required");
-        return this.getManager().aggregate(collectionName, pipeline)
+        return this.manager().aggregate(collectionName, pipeline)
                 .map(this.converter::toEntity);
     }
 
@@ -152,7 +152,7 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(pipeline, "pipeline is required");
         EntityMetadata entityMetadata = this.entities.get(entity);
-        return this.getManager().aggregate(entityMetadata.name(), pipeline)
+        return this.manager().aggregate(entityMetadata.name(), pipeline)
                 .map(this.converter::toEntity);
     }
 
@@ -160,7 +160,7 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
     public long count(String collectionName, Bson filter) {
         Objects.requireNonNull(collectionName, "collection name is required");
         Objects.requireNonNull(filter, "filter is required");
-        return this.getManager().count(collectionName, filter);
+        return this.manager().count(collectionName, filter);
     }
 
     @Override
@@ -168,7 +168,7 @@ class DefaultMongoDBTemplate extends AbstractDocumentTemplate implements MongoDB
         Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(filter, "filter is required");
         EntityMetadata entityMetadata = this.entities.get(entity);
-        return this.getManager().count(entityMetadata.name(), filter);
+        return this.manager().count(entityMetadata.name(), filter);
     }
 
 }

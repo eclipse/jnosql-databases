@@ -19,15 +19,15 @@ import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 /**
- * The OrientDB implementation of {@link DocumentManagerFactory}
+ * The OrientDB implementation of {@link DatabaseManagerFactory}
  */
-public class OrientDBDocumentManagerFactory implements DocumentManagerFactory {
+public class OrientDBDocumentManagerFactory implements DatabaseManagerFactory {
 
     private final String host;
     private final String user;

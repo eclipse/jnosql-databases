@@ -19,7 +19,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 import java.util.Arrays;
 
@@ -27,11 +27,11 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * The Apache Solr implementation to {@link DocumentConfiguration}
+ * The Apache Solr implementation to {@link DatabaseConfiguration}
  * that returns  {@link SolrDocumentManagerFactory}
  * @see SolrDocumentConfigurations
  */
-public class SolrDocumentConfiguration implements DocumentConfiguration {
+public class SolrDocumentConfiguration implements DatabaseConfiguration {
 
 
     private static final String DEFAULT_HOST = "http://localhost:8983/solr/";

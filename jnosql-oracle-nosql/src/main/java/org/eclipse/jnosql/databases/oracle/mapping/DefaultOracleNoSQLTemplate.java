@@ -18,35 +18,35 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @Typed(OracleNoSQLTemplate.class)
 @ApplicationScoped
-class DefaultOracleNoSQLTemplate extends AbstractDocumentTemplate implements OracleNoSQLTemplate {
+class DefaultOracleNoSQLTemplate extends AbstractSemistructuredTemplate implements OracleNoSQLTemplate {
 
-    private Instance<OracleNoSQLDocumentManager> manager;
+    private final Instance<OracleNoSQLDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final  EntityConverter converter;
 
-    private DocumentEventPersistManager persistManager;
+    private final  EventPersistManager persistManager;
 
-    private EntitiesMetadata entities;
+    private final  EntitiesMetadata entities;
 
-    private Converters converters;
+    private final  Converters converters;
 
     @Inject
     DefaultOracleNoSQLTemplate(Instance<OracleNoSQLDocumentManager> manager,
-                               DocumentEntityConverter converter,
-                               DocumentEventPersistManager persistManager,
+                               EntityConverter converter,
+                               EventPersistManager persistManager,
                                EntitiesMetadata entities,
                                Converters converters) {
         this.manager = manager;
@@ -57,30 +57,31 @@ class DefaultOracleNoSQLTemplate extends AbstractDocumentTemplate implements Ora
     }
 
     DefaultOracleNoSQLTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected DocumentManager getManager() {
+    protected DatabaseManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
+    protected EventPersistManager eventManager() {
         return persistManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 

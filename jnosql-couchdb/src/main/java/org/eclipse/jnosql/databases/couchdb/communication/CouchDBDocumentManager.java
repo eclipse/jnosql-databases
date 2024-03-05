@@ -16,12 +16,12 @@
  */
 package org.eclipse.jnosql.databases.couchdb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 
 /**
  * A couchdb extension where it does provide a {@link CouchDBDocumentManager#count()} feature.
  */
-public interface CouchDBDocumentManager extends DocumentManager {
+public interface CouchDBDocumentManager extends DatabaseManager {
 
     /**
      * Returns the number of elements of database

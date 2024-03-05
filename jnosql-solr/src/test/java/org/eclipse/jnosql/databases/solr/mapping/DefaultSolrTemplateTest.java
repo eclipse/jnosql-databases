@@ -16,16 +16,17 @@ package org.eclipse.jnosql.databases.solr.mapping;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
 @AddPackages(value = {Converters.class,
-        DocumentEntityConverter.class, Solr.class})
+        EntityConverter.class, DocumentTemplate.class, Solr.class})
 @AddPackages(MockProducer.class)
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
@@ -49,10 +50,10 @@ import static org.mockito.Mockito.when;
 public class DefaultSolrTemplateTest {
 
     @Inject
-    private DocumentEntityConverter converter;
+    private EntityConverter converter;
 
     @Inject
-    private DocumentEventPersistManager persistManager;
+    private EventPersistManager persistManager;
 
     @Inject
     private EntitiesMetadata entities;
@@ -72,9 +73,9 @@ public class DefaultSolrTemplateTest {
         when(instance.get()).thenReturn(manager);
         template = new DefaultSolrTemplate(instance, converter, persistManager, entities, converters);
 
-        DocumentEntity entity = DocumentEntity.of("Person");
-        entity.add(Document.of("_id", "Ada"));
-        entity.add(Document.of("age", 10));
+        var entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("_id", "Ada"));
+        entity.add(Element.of("age", 10));
     }
 
     @Test

@@ -20,12 +20,12 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,10 +43,10 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.semistructured.DeleteQuery.delete;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -95,37 +95,37 @@ public class CouchbaseDocumentManagerTest {
 
     @Test
    void shouldInsert() {
-        DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        CommunicationEntity entity = getEntity();
+        CommunicationEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
 
     @Test
    void shouldInsertWithKey() {
-        DocumentEntity entity = getEntity();
+        CommunicationEntity entity = getEntity();
         entity.add("_key", "anyvalue");
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        CommunicationEntity documentEntity = entityManager.insert(entity);
         assertEquals(entity, documentEntity);
     }
 
 
     @Test
    void shouldUpdate() {
-        DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
-        Document newField = Documents.of("newField", "10");
+        CommunicationEntity entity = getEntity();
+        CommunicationEntity documentEntity = entityManager.insert(entity);
+        Element newField = Elements.of("newField", "10");
         entity.add(newField);
-        DocumentEntity updated = entityManager.update(entity);
+        CommunicationEntity updated = entityManager.update(entity);
         assertEquals(newField, updated.find("newField").get());
     }
 
     @Test
    void shouldRemoveEntityByName() {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
+        CommunicationEntity documentEntity = entityManager.insert(getEntity());
 
-        Document name = documentEntity.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(name.name()).eq(name.get()).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_PERSON_NAME)
+        Element name = documentEntity.find("name").get();
+        SelectQuery query = select().from(COLLECTION_PERSON_NAME).where(name.name()).eq(name.get()).build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_PERSON_NAME)
                 .where(name.name()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
@@ -133,32 +133,32 @@ public class CouchbaseDocumentManagerTest {
 
     @Test
    void shouldSaveSubDocument() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("_id").get();
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        CommunicationEntity entity = getEntity();
+        entity.add(Element.of("phones", Element.of("mobile", "1231231")));
+        CommunicationEntity entitySaved = entityManager.insert(entity);
+        Element id = entitySaved.find("_id").get();
+        SelectQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
+        CommunicationEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        Element subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents).contains(Document.of("mobile", "1231231"));
+        assertThat(documents).contains(Element.of("mobile", "1231231"));
     }
 
     @Test
    void shouldSaveSubDocument2() throws InterruptedException {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
-        DocumentEntity entitySaved = entityManager.insert(entity);
+        CommunicationEntity entity = getEntity();
+        entity.add(Element.of("phones", asList(Element.of("mobile", "1231231"), Element.of("mobile2", "1231231"))));
+        CommunicationEntity entitySaved = entityManager.insert(entity);
         Thread.sleep(1_00L);
-        Document id = entitySaved.find("_id").get();
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        Element id = entitySaved.find("_id").get();
+        var query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
+        CommunicationEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        Element subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents).contains(Document.of("mobile", "1231231"),
-                Document.of("mobile2", "1231231"));
+        assertThat(documents).contains(Element.of("mobile", "1231231"),
+                Element.of("mobile2", "1231231"));
     }
 
     @Test
@@ -166,15 +166,15 @@ public class CouchbaseDocumentManagerTest {
         Set<String> set = new HashSet<>();
         set.add("Acarajé");
         set.add("Munguzá");
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_PERSON_NAME);
-        entity.add(Document.of("_id", "id"));
-        entity.add(Document.of("foods", set));
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_PERSON_NAME);
+        entity.add(Element.of("_id", "id"));
+        entity.add(Element.of("foods", set));
         entityManager.insert(entity);
-        Document id = entity.find("_id").get();
+        Element id = entity.find("_id").get();
         Thread.sleep(1_000L);
-        DocumentQuery query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.singleResult(query).get();
-        Optional<Document> foods = entityFound.find("foods");
+        var query = select().from(COLLECTION_PERSON_NAME).where(id.name()).eq(id.get()).build();
+        CommunicationEntity entityFound = entityManager.singleResult(query).get();
+        Optional<Element> foods = entityFound.find("foods");
         Set<String> setFoods = foods.get().get(new TypeReference<>() {
         });
         assertEquals(set, setFoods);
@@ -182,21 +182,21 @@ public class CouchbaseDocumentManagerTest {
 
     @Test
    void shouldConvertFromListDocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+        CommunicationEntity entity = createSubdocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
    void shouldRetrieveListDocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
-        Document key = entity.find("_id").get();
-        DocumentQuery query = select().from(COLLECTION_APP_NAME).where(key.name()).eq(key.get()).build();
+        CommunicationEntity entity = entityManager.insert(createSubdocumentList());
+        Element key = entity.find("_id").get();
+        var query = select().from(COLLECTION_APP_NAME).where(key.name()).eq(key.get()).build();
 
-        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        CommunicationEntity documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
 
-        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+        List<List<Element>> contacts = (List<List<Element>>) documentEntity.find("contacts").get().get();
 
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
@@ -204,34 +204,34 @@ public class CouchbaseDocumentManagerTest {
 
     @Test
    void shouldCount() {
-        DocumentEntity entity = getEntity();
+        CommunicationEntity entity = getEntity();
         entityManager.insert(entity);
         long counted = entityManager.count(COLLECTION_PERSON_NAME);
         assertTrue(counted > 0);
     }
 
-    private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_APP_NAME);
-        entity.add(Document.of("_id", "ids"));
-        List<List<Document>> documents = new ArrayList<>();
+    private CommunicationEntity createSubdocumentList() {
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_APP_NAME);
+        entity.add(Element.of("_id", "ids"));
+        List<List<Element>> documents = new ArrayList<>();
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.EMAIL),
-                Document.of("information", "ada@lovelace.com")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.EMAIL),
+                Element.of("information", "ada@lovelace.com")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.MOBILE),
-                Document.of("information", "11 1231231 123")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.MOBILE),
+                Element.of("information", "11 1231231 123")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.PHONE),
-                Document.of("information", "phone")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.PHONE),
+                Element.of("information", "phone")));
 
-        entity.add(Document.of("contacts", documents));
+        entity.add(Element.of("contacts", documents));
         return entity;
     }
 
 
     @Test
    void shouldRunN1Ql() {
-        DocumentEntity entity = getEntity();
+        CommunicationEntity entity = getEntity();
         entityManager.insert(entity);
         await().until(() ->
                 !entityManager
@@ -242,7 +242,7 @@ public class CouchbaseDocumentManagerTest {
 
     @Test
    void shouldRunN1QlParameters() {
-        DocumentEntity entity = getEntity();
+        CommunicationEntity entity = getEntity();
         entityManager.insert(entity);
 
         JsonObject params = JsonObject.create().put("name", entity.find("name", String.class).orElse(null));
@@ -256,54 +256,54 @@ public class CouchbaseDocumentManagerTest {
 
     @Test
    void shouldCreateLimitOrderQuery(){
-        DocumentEntity entity = getEntity();
+        CommunicationEntity entity = getEntity();
         entity.add("_id", "id2");
         entityManager.insert(entity);
         entityManager.insert(getEntity());
 
-        DocumentQuery query = DocumentQuery.select()
+        var query = SelectQuery.select()
                 .from(COLLECTION_PERSON_NAME).where("name")
                 .eq("Poliana").and("city").eq("Salvador").limit(1).skip(1).build();
-        List<DocumentEntity> select = entityManager.select(query).toList();
+        List<CommunicationEntity> select = entityManager.select(query).toList();
         Assertions.assertThat(select).flatMap(d -> d.find("name").stream().toList())
-                .containsOnly(Document.of("name", "Poliana"));
+                .containsOnly(Element.of("name", "Poliana"));
     }
 
 
     @Test
     void shouldInsertNull() {
-        DocumentEntity entity =getEntity();
-        entity.add(Document.of("name", null));
-        DocumentEntity documentEntity = entityManager.insert(entity);
-        Optional<Document> name = documentEntity.find("name");
+        CommunicationEntity entity =getEntity();
+        entity.add(Element.of("name", null));
+        CommunicationEntity documentEntity = entityManager.insert(entity);
+        Optional<Element> name = documentEntity.find("name");
         SoftAssertions.assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
-            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
-            soft.assertThat(name).get().extracting(Document::get).isNull();
+            soft.assertThat(name).get().extracting(Element::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Element::get).isNull();
         });
     }
 
     @Test
     void shouldUpdateNull(){
         var entity = entityManager.insert(getEntity());
-        entity.add(Document.of("name", null));
+        entity.add(Element.of("name", null));
         var documentEntity = entityManager.update(entity);
-        Optional<Document> name = documentEntity.find("name");
+        Optional<Element> name = documentEntity.find("name");
         SoftAssertions.assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
-            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
-            soft.assertThat(name).get().extracting(Document::get).isNull();
+            soft.assertThat(name).get().extracting(Element::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Element::get).isNull();
         });
     }
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_PERSON_NAME);
+    private CommunicationEntity getEntity() {
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_PERSON_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
         map.put("_id", "id");
 
-        List<Document> documents = Documents.of(map);
+        List<Element> documents = Elements.of(map);
         documents.forEach(entity::add);
         return entity;
     }

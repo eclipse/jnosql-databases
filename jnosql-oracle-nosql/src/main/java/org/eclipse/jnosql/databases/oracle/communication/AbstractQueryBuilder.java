@@ -16,8 +16,8 @@ package org.eclipse.jnosql.databases.oracle.communication;
 
 import oracle.nosql.driver.values.FieldValue;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +34,8 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
         this.table = table;
     }
 
-    protected void condition(DocumentCondition condition, StringBuilder query, List<FieldValue> params, List<String> ids) {
-        Document document = condition.document();
+    protected void condition(CriteriaCondition condition, StringBuilder query, List<FieldValue> params, List<String> ids) {
+        var document = condition.element();
         switch (condition.condition()) {
             case EQUALS:
                 if (document.name().equals(DefaultOracleNoSQLDocumentManager.ID)) {
@@ -69,7 +69,7 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
                 return;
             case NOT:
                 query.append(" NOT ");
-                condition(document.get(DocumentCondition.class), query, params, ids);
+                condition(document.get(CriteriaCondition.class), query, params, ids);
                 return;
             case OR:
                 appendCondition(query, params, document.get(new TypeReference<>() {
@@ -87,7 +87,7 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
         }
     }
 
-    protected void predicateBetween(StringBuilder query,List<FieldValue> params, Document document) {
+    protected void predicateBetween(StringBuilder query,List<FieldValue> params, Element document) {
         query.append(" BETWEEN ");
         String name = identifierOf(document.name());
 
@@ -102,10 +102,10 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
     }
 
     protected void appendCondition(StringBuilder query, List<FieldValue> params,
-                                 List<DocumentCondition> conditions,
+                                 List<CriteriaCondition> conditions,
                                  String condition, List<String> ids) {
         int index = ORIGIN;
-        for (DocumentCondition documentCondition : conditions) {
+        for (CriteriaCondition documentCondition : conditions) {
             StringBuilder appendQuery = new StringBuilder();
             condition(documentCondition, appendQuery, params, ids);
             if(index == ORIGIN && !appendQuery.isEmpty()){
@@ -122,7 +122,7 @@ abstract class AbstractQueryBuilder implements Supplier<OracleQuery> {
 
     protected void predicate(StringBuilder query,
                            String condition,
-                           Document document,
+                           Element document,
                            List<FieldValue> params) {
         String name = identifierOf(document.name());
         Object value = document.get();

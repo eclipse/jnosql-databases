@@ -14,8 +14,7 @@
  */
 package org.eclipse.jnosql.databases.couchbase.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,20 +27,20 @@ public class CouchbaseDocumentConfigurationTest {
     @Test
     public void shouldCreateDocumentManagerFactoryByFile() {
         CouchbaseDocumentConfiguration configuration = new CouchbaseDocumentConfiguration();
-        DocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
+        CouchbaseDocumentManagerFactory managerFactory = configuration.apply(CouchbaseUtil.getSettings());
         assertNotNull(managerFactory);
     }
 
     @Test
     public void shouldGetConfiguration() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        DatabaseConfiguration configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof CouchbaseDocumentConfiguration);
     }
 
     @Test
     public void shouldGetConfigurationFromQuery() {
-        CouchbaseDocumentConfiguration configuration = DocumentConfiguration
+        CouchbaseDocumentConfiguration configuration = DatabaseConfiguration
                 .getConfiguration(CouchbaseDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof CouchbaseDocumentConfiguration);

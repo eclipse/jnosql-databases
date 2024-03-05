@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 import org.eclipse.jnosql.communication.TypeSupplier;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,9 +31,9 @@ class DefaultUDT implements UDT {
 
     private final String userType;
 
-    private final List<Column> columns;
+    private final List<Element> columns;
 
-    DefaultUDT(String name, String userType, List<Column> columns) {
+    DefaultUDT(String name, String userType, List<Element> columns) {
         this.name = name;
         this.userType = userType;
         this.columns = columns;
@@ -68,7 +68,7 @@ class DefaultUDT implements UDT {
     }
 
     @Override
-    public String getUserType() {
+    public String userType() {
         return userType;
     }
 
@@ -81,7 +81,7 @@ class DefaultUDT implements UDT {
             return false;
         }
         return Objects.equals(name, udt.name()) &&
-                Objects.equals(userType, udt.getUserType()) &&
+                Objects.equals(userType, udt.userType()) &&
                 Objects.equals(columns, udt.get());
     }
 
@@ -92,11 +92,10 @@ class DefaultUDT implements UDT {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("UDT{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", userType='").append(userType).append('\'');
-        sb.append(", columns=").append(columns);
-        sb.append('}');
-        return sb.toString();
+        return "DefaultUDT{" +
+                "name='" + name + '\'' +
+                ", userType='" + userType + '\'' +
+                ", columns=" + columns +
+                '}';
     }
 }

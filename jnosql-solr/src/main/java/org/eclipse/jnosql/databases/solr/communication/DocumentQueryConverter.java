@@ -17,39 +17,39 @@ package org.eclipse.jnosql.databases.solr.communication;
 
 
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class DocumentQueryConversor {
+final class DocumentQueryConverter {
 
     private static final String SELECT_ALL_QUERY = "_entity:";
 
-    private DocumentQueryConversor() {
+    private DocumentQueryConverter() {
     }
 
 
-    static String convert(DocumentQuery query) {
+    static String convert(SelectQuery query) {
         String rootCondition = SolrUtils.ENTITY + ':' + query.name();
         return rootCondition + query.condition()
-                .map(DocumentQueryConversor::convert)
+                .map(DocumentQueryConverter::convert)
                 .map(s -> " AND " + s).orElse("");
     }
 
-    static String convert(DocumentDeleteQuery query) {
+    static String convert(DeleteQuery query) {
         String rootCondition = SolrUtils.ENTITY + ':' + query.name();
         return rootCondition + query.condition()
-                .map(DocumentQueryConversor::convert)
+                .map(DocumentQueryConverter::convert)
                 .map(s -> " AND " + s).orElse("");
     }
 
-    private static String convert(DocumentCondition condition) {
-        Document document = condition.document();
+    private static String convert(CriteriaCondition condition) {
+        Element document = condition.element();
         Object value = ValueUtil.convert(document.value());
 
         return switch (condition.condition()) {
@@ -62,20 +62,20 @@ final class DocumentQueryConversor {
                         .map(Object::toString).collect(Collectors.joining(" OR "));
                 yield document.name() + ":(" + inConditions + ')';
             }
-            case NOT -> " NOT " + convert(document.get(DocumentCondition.class));
+            case NOT -> " NOT " + convert(document.get(CriteriaCondition.class));
             case AND -> getDocumentConditions(condition).stream()
-                    .map(DocumentQueryConversor::convert)
+                    .map(DocumentQueryConverter::convert)
                     .collect(Collectors.joining(" AND "));
             case OR -> getDocumentConditions(condition).stream()
-                    .map(DocumentQueryConversor::convert)
+                    .map(DocumentQueryConverter::convert)
                     .collect(Collectors.joining(" OR "));
             default -> throw new UnsupportedOperationException("The condition " + condition.condition()
                     + " is not supported from mongoDB diana driver");
         };
     }
 
-    private static List<DocumentCondition> getDocumentConditions(DocumentCondition condition) {
-        return condition.document().value().get(new TypeReference<>() {
+    private static List<CriteriaCondition> getDocumentConditions(CriteriaCondition condition) {
+        return condition.element().value().get(new TypeReference<>() {
         });
     }
 

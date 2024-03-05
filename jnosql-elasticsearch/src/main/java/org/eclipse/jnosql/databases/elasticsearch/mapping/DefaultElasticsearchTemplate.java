@@ -20,14 +20,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.elasticsearch.communication.ElasticsearchDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -38,64 +38,65 @@ import java.util.stream.Stream;
 
 @Typed(ElasticsearchTemplate.class)
 @ApplicationScoped
-class DefaultElasticsearchTemplate extends AbstractDocumentTemplate
+class DefaultElasticsearchTemplate extends AbstractSemistructuredTemplate
         implements ElasticsearchTemplate {
 
-    private Instance<ElasticsearchDocumentManager> manager;
+    private final Instance<ElasticsearchDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final EntityConverter converter;
 
-    private DocumentEventPersistManager persistManager;
+    private final EventPersistManager eventManager;
 
-    private EntitiesMetadata entities;
+    private final  EntitiesMetadata entities;
 
-    private Converters converters;
+    private final  Converters converters;
 
     @Inject
     DefaultElasticsearchTemplate(Instance<ElasticsearchDocumentManager> manager,
-                                 DocumentEntityConverter converter,
-                                 DocumentEventPersistManager persistManager,
-                                 EntitiesMetadata entities,
-                                 Converters converters) {
+                            EntityConverter converter,
+                            EventPersistManager eventManager,
+                            EntitiesMetadata entities,
+                            Converters converters) {
         this.manager = manager;
         this.converter = converter;
-        this.persistManager = persistManager;
+        this.eventManager = eventManager;
         this.entities = entities;
         this.converters = converters;
     }
 
     DefaultElasticsearchTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected DocumentManager getManager() {
+    protected DatabaseManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
-        return persistManager;
+    protected EventPersistManager eventManager() {
+        return eventManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
     @Override
     public <T> Stream<T> search(SearchRequest query) {
         Objects.requireNonNull(query, "query is required");
-        Stream<DocumentEntity> entities = manager.get().search(query);
+        Stream<CommunicationEntity> entities = manager.get().search(query);
         return entities.map(converter::toEntity).map(e -> (T) e);
     }
 }

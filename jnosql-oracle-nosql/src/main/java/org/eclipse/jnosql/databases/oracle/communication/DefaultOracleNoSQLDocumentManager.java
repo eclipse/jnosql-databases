@@ -33,11 +33,11 @@ import oracle.nosql.driver.values.FieldValue;
 import oracle.nosql.driver.values.JsonOptions;
 import oracle.nosql.driver.values.MapValue;
 import oracle.nosql.driver.values.StringValue;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -85,7 +85,7 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         put(entity, TimeToLive.DO_NOT_EXPIRE);
         return entity;
@@ -93,7 +93,7 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
 
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
        Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
         put(entity, TimeToLive.ofHours(ttl.toHours()));
@@ -101,14 +101,14 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         StreamSupport.stream(entities.spliterator(), false).forEach(this::insert);
         return entities;
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         StreamSupport.stream(entities.spliterator(), false).forEach(d -> insert(d, ttl));
@@ -116,17 +116,17 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     }
 
     @Override
-    public DocumentEntity update(DocumentEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         return insert(entity);
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         return insert(entities);
     }
 
     @Override
-    public void delete(DocumentDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
 
         var selectBuilder = new DeleteBuilder(query, table);
@@ -158,11 +158,11 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
 
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         Objects.requireNonNull(query, "query is required");
         var selectBuilder = new SelectBuilder(query, table);
         var oracleQuery = selectBuilder.get();
-        List<DocumentEntity> entities = new ArrayList<>();
+        List<CommunicationEntity> entities = new ArrayList<>();
 
         if (oracleQuery.hasIds()) {
             entities.addAll(getIds(oracleQuery));
@@ -199,8 +199,8 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
         return !entry.getKey().equals(ENTITY) && !entry.getKey().equals(JSON_FIELD) && !entry.getKey().equals(ORACLE_ID);
     }
 
-    private List<DocumentEntity> getIds(OracleQuery oracleQuery) {
-        List<DocumentEntity> entities = new ArrayList<>();
+    private List<CommunicationEntity> getIds(OracleQuery oracleQuery) {
+        List<CommunicationEntity> entities = new ArrayList<>();
         for (String id : oracleQuery.ids()) {
             GetRequest getRequest = new GetRequest();
             getRequest.setKey(new MapValue().put(ID_FIELD, id));
@@ -213,11 +213,11 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
                 JsonObject readObject = jsonReader.readObject();
                 JsonValue content = readObject.get(JSON_FIELD);
                 Map<String, Object> entity = jsonB.fromJson(content.toString(), Map.class);
-                List<Document> documents = Documents.of(entity);
+                List<Element> documents = Elements.of(entity);
                 String entityName = Optional.ofNullable(entity.get(ENTITY))
                         .map(Object::toString)
                         .orElseThrow(() -> new OracleNoSQLException("The _entity is required in the entity"));
-                DocumentEntity documentEntity = DocumentEntity.of(entityName);
+                CommunicationEntity documentEntity = CommunicationEntity.of(entityName);
                 documentEntity.addAll(documents);
                 documentEntity.remove(ENTITY);
                 entities.add(documentEntity);
@@ -235,14 +235,14 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     }
 
     @Override
-    public Stream<DocumentEntity> sql(String query) {
+    public Stream<CommunicationEntity> sql(String query) {
         Objects.requireNonNull(query, "query is required");
 
         return executeSQL(query, Collections.emptyList()).stream();
     }
 
     @Override
-    public Stream<DocumentEntity> sql(String query, Object... params) {
+    public Stream<CommunicationEntity> sql(String query, Object... params) {
         Objects.requireNonNull(query, "query is required");
         Objects.requireNonNull(params, "params is required");
         List<FieldValue> fields = Arrays.stream(params).map(FieldValueConverter.INSTANCE::of).toList();
@@ -250,8 +250,8 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     }
 
     @SuppressWarnings("unchecked")
-    private List<DocumentEntity> executeSQL(String sql, List<FieldValue> params) {
-        List<DocumentEntity> entities = new ArrayList<>();
+    private List<CommunicationEntity> executeSQL(String sql, List<FieldValue> params) {
+        List<CommunicationEntity> entities = new ArrayList<>();
         var prepReq = new PrepareRequest().setStatement(sql);
         var prepRes = serviceHandle.prepare(prepReq);
         var preparedStatement = prepRes.getPreparedStatement();
@@ -265,27 +265,27 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
             List<MapValue> results = queryResult.getResults();
             for (MapValue result : results) {
 
-                var entity = DocumentEntity.of(result.get(ENTITY).asString().getValue());
+                var entity = CommunicationEntity.of(result.get(ENTITY).asString().getValue());
                 if(result.get(JSON_FIELD) != null){
                     var json = result.get(JSON_FIELD).toJson();
-                    entity.addAll(Documents.of(jsonB.fromJson(json, Map.class)));
+                    entity.addAll(Elements.of(jsonB.fromJson(json, Map.class)));
                 }
                 for (Map.Entry<String, FieldValue> entry : result) {
                     if (isNotOracleField(entry)) {
-                        entity.add(Document.of(entry.getKey(), FieldValueConverter.INSTANCE.of(entry.getValue())));
+                        entity.add(Element.of(entry.getKey(), FieldValueConverter.INSTANCE.of(entry.getValue())));
                     }
                 }
-                entity.add(Document.of(ID, result.get(ORACLE_ID).asString().getValue()));
+                entity.add(Element.of(ID, result.get(ORACLE_ID).asString().getValue()));
                 entities.add(entity);
             }
         } while (!queryRequest.isDone());
         return entities;
     }
 
-    private void put(DocumentEntity entity, TimeToLive ttl) {
+    private void put(CommunicationEntity entity, TimeToLive ttl) {
         Map<String, Object> entityMap = new HashMap<>(entity.toMap());
         entityMap.put(ENTITY, entity.name());
-        String id = entity.find(ID).map(Document::get)
+        String id = entity.find(ID).map(Element::get)
                 .map(Object::toString)
                 .orElseGet(() -> UUID.randomUUID().toString());
 

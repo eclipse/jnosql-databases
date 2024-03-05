@@ -20,11 +20,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * To a dynamic query on CassandraRepository and CassandraRepositoryAsync interfaces.
+ * Annotation used to define a dynamic CQL query method in CassandraRepository and CassandraRepositoryAsync interfaces.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface CQL {
 
+    /**
+     * The CQL query string.
+     *
+     * @return the CQL query string
+     */
     String value();
 }

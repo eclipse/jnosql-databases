@@ -23,10 +23,10 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         requireNonNull(entity, "Entity is required");
         try (ODatabaseSession tx = pool.acquire()) {
             ODocument document = new ODocument(entity.name());
@@ -81,12 +81,12 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("There is no support to ttl on OrientDB");
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
@@ -94,7 +94,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -103,11 +103,11 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity update(DocumentEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         requireNonNull(entity, "Entity is required");
 
-        Optional<Document> rid = entity.find(RID_FIELD);
-        Optional<Document> id = entity.find(ID_FIELD);
+        Optional<Element> rid = entity.find(RID_FIELD);
+        Optional<Element> id = entity.find(ID_FIELD);
         ORecordId recordId = Stream.concat(rid.stream(), id.stream())
                 .map(d -> d.get(String.class))
                 .map(ORecordId::new)
@@ -128,7 +128,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update)
@@ -136,9 +136,9 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public void delete(DocumentDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         requireNonNull(query, "query is required");
-        DocumentQuery selectQuery = new OrientDBDocumentQuery(query);
+        var selectQuery = new OrientDBDocumentQuery(query);
         QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(selectQuery);
 
         try (ODatabaseSession tx = pool.acquire()) {
@@ -160,12 +160,12 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
 
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         requireNonNull(query, "query is required");
         QueryOSQLFactory.QueryResult orientQuery = QueryOSQLFactory.to(query);
 
         try (ODatabaseSession tx = pool.acquire()) {
-            List<DocumentEntity> entities = new ArrayList<>();
+            List<CommunicationEntity> entities = new ArrayList<>();
             if (orientQuery.isRunQuery()) {
                 try (OResultSet resultSet = tx.command(orientQuery.getQuery(), orientQuery.getParams())) {
                     entities.addAll(OrientDBConverter.convert(resultSet));
@@ -195,7 +195,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public Stream<DocumentEntity> sql(String query, Object... params) {
+    public Stream<CommunicationEntity> sql(String query, Object... params) {
         requireNonNull(query, "query is required");
         try (ODatabaseSession tx = pool.acquire();
              OResultSet resultSet = tx.command(query, params)) {
@@ -205,7 +205,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public Stream<DocumentEntity> sql(String query, Map<String, Object> params) {
+    public Stream<CommunicationEntity> sql(String query, Map<String, Object> params) {
         requireNonNull(query, "query is required");
         requireNonNull(params, "params is required");
 
@@ -216,7 +216,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public void live(DocumentQuery query, OrientDBLiveCallback<DocumentEntity> callbacks) {
+    public void live(SelectQuery query, OrientDBLiveCallback<CommunicationEntity> callbacks) {
         requireNonNull(query, "query is required");
         requireNonNull(callbacks, "callbacks is required");
         ODatabaseSession tx = pool.acquire();
@@ -225,7 +225,7 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
     }
 
     @Override
-    public void live(String query, OrientDBLiveCallback<DocumentEntity> callbacks, Object... params) {
+    public void live(String query, OrientDBLiveCallback<CommunicationEntity> callbacks, Object... params) {
         requireNonNull(query, "query is required");
         requireNonNull(callbacks, "callbacks is required");
         ODatabaseSession tx = pool.acquire();
@@ -238,10 +238,10 @@ class DefaultOrientDBDocumentManager implements OrientDBDocumentManager {
         pool.close();
     }
 
-    private void updateEntity(DocumentEntity entity, ODocument save) {
+    private void updateEntity(CommunicationEntity entity, ODocument save) {
         ORecordId ridField = new ORecordId(save.getIdentity());
-        entity.add(Document.of(RID_FIELD, ridField.toString()));
-        entity.add(Document.of(VERSION_FIELD, save.getVersion()));
-        entity.add(Document.of(ID_FIELD, ridField.toString()));
+        entity.add(Element.of(RID_FIELD, ridField.toString()));
+        entity.add(Element.of(VERSION_FIELD, save.getVersion()));
+        entity.add(Element.of(ID_FIELD, ridField.toString()));
     }
 }

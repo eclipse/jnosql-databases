@@ -19,13 +19,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -37,56 +37,57 @@ import static java.util.Objects.requireNonNull;
  */
 @Typed(ArangoDBTemplate.class)
 @ApplicationScoped
-class DefaultArangoDBTemplate extends AbstractDocumentTemplate implements ArangoDBTemplate {
+class DefaultArangoDBTemplate extends AbstractSemistructuredTemplate implements ArangoDBTemplate {
 
-    private Instance<ArangoDBDocumentManager> manager;
+    private final Instance<ArangoDBDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final  EntityConverter converter;
 
-    private DocumentEventPersistManager persistManager;
+    private final  EventPersistManager eventManager;
 
-    private EntitiesMetadata entities;
+    private final  EntitiesMetadata entities;
 
-    private Converters converters;
+    private final  Converters converters;
 
     @Inject
     DefaultArangoDBTemplate(Instance<ArangoDBDocumentManager> manager,
-                            DocumentEntityConverter converter,
-                            DocumentEventPersistManager persistManager,
+                            EntityConverter converter,
+                            EventPersistManager eventManager,
                             EntitiesMetadata entities,
                             Converters converters) {
         this.manager = manager;
         this.converter = converter;
-        this.persistManager = persistManager;
+        this.eventManager = eventManager;
         this.entities = entities;
         this.converters = converters;
     }
 
     DefaultArangoDBTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected DocumentManager getManager() {
+    protected DatabaseManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
-        return persistManager;
+    protected EventPersistManager eventManager() {
+        return eventManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 

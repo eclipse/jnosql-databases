@@ -19,11 +19,11 @@ import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.query.AbstractDocumentRepositoryProxy;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProxy;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
+import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemistructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.query.SemistructuredRepositoryProxy;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
-class OracleDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
+class OracleDocumentRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
@@ -58,7 +58,7 @@ class OracleDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProx
         this.type = type;
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
-        this.repository = DocumentRepositoryProxy.DocumentRepository.of(template, entityMetadata);
+        this.repository = SemistructuredRepositoryProxy.SemistructuredRepository.of(template, entityMetadata);
     }
 
     OracleDocumentRepositoryProxy() {
@@ -91,7 +91,7 @@ class OracleDocumentRepositoryProxy<T, K> extends AbstractDocumentRepositoryProx
     }
 
     @Override
-    protected JNoSQLDocumentTemplate template() {
+    protected DocumentTemplate template() {
         return template;
     }
 

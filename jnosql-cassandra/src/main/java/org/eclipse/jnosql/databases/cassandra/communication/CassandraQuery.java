@@ -17,8 +17,8 @@
 package org.eclipse.jnosql.databases.cassandra.communication;
 
 import jakarta.data.Sort;
-import org.eclipse.jnosql.communication.column.ColumnCondition;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -28,18 +28,18 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * A Cassandra specialization of {@link ColumnQuery} that allows query with paging state which can do pagination.
+ * A Cassandra specialization of {@link SelectQuery} that allows query with paging state which can do pagination.
  *
- * @see CassandraQuery#of(ColumnQuery)
- * @see CassandraQuery#of(ColumnQuery, String)
+ * @see CassandraQuery#of(SelectQuery)
+ * @see CassandraQuery#of(SelectQuery, String)
  */
-public final class CassandraQuery implements ColumnQuery {
+public final class CassandraQuery implements SelectQuery {
 
     private static final String EXHAUSTED = "EXHAUSTED";
     private static final Predicate<String> EQUALS = EXHAUSTED::equals;
     private static final Predicate<String> NOT_EQUALS = EQUALS.negate();
 
-    private final ColumnQuery query;
+    private final SelectQuery query;
 
     /**
      * This object represents the next page to be fetched if the query is multi page.
@@ -48,7 +48,7 @@ public final class CassandraQuery implements ColumnQuery {
     private String pagingState;
 
 
-    private CassandraQuery(ColumnQuery query) {
+    private CassandraQuery(SelectQuery query) {
         this.query = query;
     }
 
@@ -102,7 +102,7 @@ public final class CassandraQuery implements ColumnQuery {
     }
 
     @Override
-    public Optional<ColumnCondition> condition() {
+    public Optional<CriteriaCondition> condition() {
         return query.condition();
     }
 
@@ -146,11 +146,11 @@ public final class CassandraQuery implements ColumnQuery {
     /**
      * returns a new instance of {@link CassandraQuery}
      *
-     * @param query the {@link ColumnQuery}
+     * @param query the {@link SelectQuery}
      * @return a new instance
      * @throws NullPointerException when query is null
      */
-    public static CassandraQuery of(ColumnQuery query) {
+    public static CassandraQuery of(SelectQuery query) {
         Objects.requireNonNull(query, "query is required ");
         return new CassandraQuery(query);
     }
@@ -158,12 +158,12 @@ public final class CassandraQuery implements ColumnQuery {
     /**
      * returns a new instance of {@link CassandraQuery}
      *
-     * @param query       the {@link ColumnQuery}
+     * @param query       the {@link SelectQuery}
      * @param pagingState {@link CassandraQuery#pagingState}
      * @return a new instance
      * @throws NullPointerException when there is null parameter
      */
-    public static CassandraQuery of(ColumnQuery query, String pagingState) {
+    public static CassandraQuery of(SelectQuery query, String pagingState) {
         Objects.requireNonNull(query, "query is required ");
         Objects.requireNonNull(pagingState, "pagingState is required ");
         CassandraQuery cassandraQuery = new CassandraQuery(query);

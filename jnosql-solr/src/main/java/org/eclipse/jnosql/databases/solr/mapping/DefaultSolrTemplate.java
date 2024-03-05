@@ -19,13 +19,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.util.List;
 import java.util.Map;
@@ -38,22 +37,22 @@ import static java.util.Objects.requireNonNull;
  */
 @Typed(SolrTemplate.class)
 @ApplicationScoped
-class DefaultSolrTemplate extends AbstractDocumentTemplate implements SolrTemplate {
+class DefaultSolrTemplate extends AbstractSemistructuredTemplate implements SolrTemplate {
 
-    private Instance<SolrDocumentManager> manager;
+    private final Instance<SolrDocumentManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final EntityConverter converter;
 
-    private DocumentEventPersistManager persistManager;
+    private final EventPersistManager persistManager;
 
-    private EntitiesMetadata entities;
+    private final EntitiesMetadata entities;
 
-    private Converters converters;
+    private final Converters converters;
 
     @Inject
     DefaultSolrTemplate(Instance<SolrDocumentManager> manager,
-                        DocumentEntityConverter converter,
-                        DocumentEventPersistManager persistManager,
+                        EntityConverter converter,
+                        EventPersistManager persistManager,
                         EntitiesMetadata entities,
                         Converters converters) {
         this.manager = manager;
@@ -64,30 +63,31 @@ class DefaultSolrTemplate extends AbstractDocumentTemplate implements SolrTempla
     }
 
     DefaultSolrTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected DocumentManager getManager() {
+    protected SolrDocumentManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
+    protected EventPersistManager eventManager() {
         return persistManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entities;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 

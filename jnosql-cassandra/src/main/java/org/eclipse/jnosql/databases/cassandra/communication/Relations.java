@@ -20,9 +20,9 @@ import com.datastax.oss.driver.api.querybuilder.term.Term;
 import org.eclipse.jnosql.communication.Condition;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnCondition;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +36,7 @@ final class Relations {
     private Relations() {
     }
 
-    static List<Relation> createClause(ColumnCondition columnCondition) {
+    static List<Relation> createClause(CriteriaCondition columnCondition) {
         if (Objects.isNull(columnCondition)) {
             return Collections.emptyList();
         }
@@ -46,9 +46,9 @@ final class Relations {
         return relations;
     }
 
-    private static void load(ColumnCondition columnCondition, List<Relation> relations) {
+    private static void load(CriteriaCondition columnCondition, List<Relation> relations) {
 
-        Column column = columnCondition.column();
+        Element column = columnCondition.element();
         Condition condition = columnCondition.condition();
 
         switch (condition) {
@@ -74,7 +74,7 @@ final class Relations {
                 relations.add(Relation.column(QueryUtils.getName(column)).like(getTerm(column)));
                 return;
             case AND:
-                column.get(new TypeReference<List<ColumnCondition>>() {}).forEach(cc -> load(cc, relations));
+                column.get(new TypeReference<List<CriteriaCondition>>() {}).forEach(cc -> load(cc, relations));
                 return;
             case OR:
             default:
@@ -83,7 +83,7 @@ final class Relations {
         }
     }
 
-    private static Term getTerm(Column column) {
+    private static Term getTerm(Element column) {
         return literal(ValueUtil.convert(column.value()));
     }
 

@@ -15,10 +15,10 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -49,8 +49,8 @@ public enum Database implements Supplier<BucketManagerFactory> {
         return "http://" + container.getHost() + ":" + container.getFirstMappedPort();
     }
 
-    public DocumentManagerFactory managerFactory() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+    public DatabaseManagerFactory managerFactory() {
+        DatabaseConfiguration configuration = DatabaseConfiguration.getConfiguration();
         Settings settings = Settings.builder()
                 .put(OracleNoSQLConfigurations.HOST, host())
                 .build();

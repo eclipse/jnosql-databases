@@ -15,19 +15,18 @@
  */
 package org.eclipse.jnosql.databases.orientdb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryOSQLConverterTest {
 
     @Test
     public void shouldRunEqualsQuery() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .where("name").eq("value").build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
@@ -39,7 +38,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryAnd() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .where("name").eq("value")
                 .and("age").lte(10)
                 .build();
@@ -54,7 +53,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryOr() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .where("name").eq("value")
                 .or("age").lte(10)
                 .build();
@@ -69,7 +68,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldRunEqualsQueryNot() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .where("name").not().eq("value").build();
 
         QueryOSQLConverter.Query convert = QueryOSQLConverter.select(query);
@@ -81,7 +80,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldNegate() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .where("city").not().eq("Assis")
                 .and("name").eq("Otavio")
                 .or("name").not().eq("Lucas").build();
@@ -98,7 +97,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldPaginateWithStart() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .skip(10)
                 .build();
 
@@ -108,7 +107,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldPaginateWithLimit() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .limit(100)
                 .build();
 
@@ -118,7 +117,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldPaginateWithStartAndLimit() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .skip(10)
                 .limit(100)
                 .build();
@@ -129,7 +128,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldSortAsc() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .orderBy("name").asc()
                 .build();
 
@@ -139,7 +138,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldSortDesc() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .orderBy("name").desc()
                 .build();
 
@@ -149,7 +148,7 @@ public class QueryOSQLConverterTest {
 
     @Test
     public void shouldMultipleSort() {
-        DocumentQuery query = select().from("collection")
+        var query = select().from("collection")
                 .orderBy("name").asc()
                 .orderBy("age").desc()
                 .build();

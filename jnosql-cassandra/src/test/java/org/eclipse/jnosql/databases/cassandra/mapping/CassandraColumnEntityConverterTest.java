@@ -17,8 +17,8 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.column.Column;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.cassandra.communication.UDT;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Actor;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.AppointmentBook;
@@ -30,11 +30,12 @@ import org.eclipse.jnosql.databases.cassandra.mapping.model.Job;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Money;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Movie;
 import org.eclipse.jnosql.databases.cassandra.mapping.model.Worker;
+import org.eclipse.jnosql.mapping.column.ColumnTemplate;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -63,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableAutoWeld
-@AddPackages(value = {Converters.class, JNoSQLColumnTemplate.class,
+@AddPackages(value = {Converters.class, ColumnTemplate.class, EntityConverter.class,
         CQL.class})
 @AddPackages(MockProducer.class)
 @AddPackages(Reflections.class)
@@ -74,7 +75,7 @@ public class CassandraColumnEntityConverterTest {
     @Inject
     private CassandraColumnEntityConverter converter;
 
-    private Column[] columns;
+    private Element[] columns;
 
     private Actor actor = Actor.actorBuilder().withAge()
             .withId()
@@ -87,11 +88,11 @@ public class CassandraColumnEntityConverterTest {
     @BeforeEach
     public void init() {
 
-        columns = new Column[]{Column.of("_id", 12L),
-                Column.of("age", 10), Column.of("name", "Otavio"),
-                Column.of("phones", asList("234", "2342"))
-                , Column.of("movieCharacter", Collections.singletonMap("JavaZone", "Jedi"))
-                , Column.of("movieRating", Collections.singletonMap("JavaZone", 10))};
+        columns = new Element[]{Element.of("_id", 12L),
+                Element.of("age", 10), Element.of("name", "Otavio"),
+                Element.of("phones", asList("234", "2342"))
+                , Element.of("movieCharacter", Collections.singletonMap("JavaZone", "Jedi"))
+                , Element.of("movieRating", Collections.singletonMap("JavaZone", 10))};
     }
 
     @Test
@@ -102,7 +103,7 @@ public class CassandraColumnEntityConverterTest {
                 .withName("Otavio")
                 .withPhones(asList("234", "2342")).build();
 
-        ColumnEntity entity = converter.toColumn(artist);
+        CommunicationEntity entity = converter.toCommunication(artist);
         assertEquals("Artist", entity.name());
         assertEquals(5, entity.size());
     }
@@ -111,17 +112,17 @@ public class CassandraColumnEntityConverterTest {
     public void shouldConvertActorToDocument() {
 
 
-        ColumnEntity entity = converter.toColumn(actor);
+        var entity = converter.toCommunication(actor);
         assertEquals("Actor", entity.name());
         assertEquals(7, entity.size());
 
 
-        assertThat(entity.columns()).contains(columns);
+        assertThat(entity.elements()).contains(columns);
     }
 
     @Test
     public void shouldConvertDocumentToActor() {
-        ColumnEntity entity = ColumnEntity.of("Actor");
+        var entity = CommunicationEntity.of("Actor");
         Stream.of(columns).forEach(entity::add);
 
         Actor actor = converter.toEntity(Actor.class, entity);
@@ -135,7 +136,7 @@ public class CassandraColumnEntityConverterTest {
 
     @Test
     public void shouldConvertDocumentToActorFromEntity() {
-        ColumnEntity entity = ColumnEntity.of("Actor");
+        var entity = CommunicationEntity.of("Actor");
         Stream.of(columns).forEach(entity::add);
 
         Actor actor = converter.toEntity(entity);
@@ -157,7 +158,7 @@ public class CassandraColumnEntityConverterTest {
                 .withName("Otavio")
                 .withPhones(asList("234", "2342")).withMovie(movie).build();
 
-        ColumnEntity entity = converter.toColumn(director);
+        var entity = converter.toCommunication(director);
         assertEquals(6, entity.size());
 
         assertEquals(getValue(entity.find("name")), director.getName());
@@ -166,8 +167,8 @@ public class CassandraColumnEntityConverterTest {
         assertEquals(getValue(entity.find("phones")), director.getPhones());
 
 
-        Column subColumn = entity.find("movie").get();
-        List<Column> columns = subColumn.get(new TypeReference<>() {
+        Element subColumn = entity.find("movie").get();
+        List<Element> columns = subColumn.get(new TypeReference<>() {
         });
 
         assertEquals(3, columns.size());
@@ -187,7 +188,7 @@ public class CassandraColumnEntityConverterTest {
                 .withName("Otavio")
                 .withPhones(asList("234", "2342")).withMovie(movie).build();
 
-        ColumnEntity entity = converter.toColumn(director);
+        var entity = converter.toCommunication(director);
         Director director1 = converter.toEntity(entity);
 
         assertEquals(movie, director1.getMovie());
@@ -204,12 +205,12 @@ public class CassandraColumnEntityConverterTest {
                 .withName("Otavio")
                 .withPhones(asList("234", "2342")).withMovie(movie).build();
 
-        ColumnEntity entity = converter.toColumn(director);
+        var entity = converter.toCommunication(director);
         entity.remove("movie");
         entity.add("movie",
-                Arrays.asList(Column.of("title", "Matrix"),
-                        Column.of("year", 2012),
-                        Column.of("actors", singleton("Actor"))));
+                Arrays.asList(Element.of("title", "Matrix"),
+                        Element.of("year", 2012),
+                        Element.of("actors", singleton("Actor"))));
 
         Director director1 = converter.toEntity(entity);
 
@@ -228,14 +229,14 @@ public class CassandraColumnEntityConverterTest {
                 .withName("Otavio")
                 .withPhones(asList("234", "2342")).withMovie(movie).build();
 
-        ColumnEntity entity = converter.toColumn(director);
+        var entity = converter.toCommunication(director);
         entity.remove("movie");
         Map<String, Object> map = new HashMap<>();
         map.put("title", "Matrix");
         map.put("year", 2012);
         map.put("actors", singleton("Actor"));
 
-        entity.add(Column.of("movie", map));
+        entity.add(Element.of("movie", map));
         Director director1 = converter.toEntity(entity);
 
         assertEquals(movie, director1.getMovie());
@@ -254,7 +255,7 @@ public class CassandraColumnEntityConverterTest {
         worker.setName("Bob");
         worker.setSalary(new Money("BRL", BigDecimal.TEN));
         worker.setJob(job);
-        ColumnEntity entity = converter.toColumn(worker);
+        var entity = converter.toCommunication(worker);
         assertEquals("Worker", entity.name());
         assertEquals("Bob", entity.find("name").get().get());
         assertEquals("BRL 10", entity.find("money").get().get());
@@ -269,7 +270,7 @@ public class CassandraColumnEntityConverterTest {
         worker.setName("Bob");
         worker.setSalary(new Money("BRL", BigDecimal.TEN));
         worker.setJob(job);
-        ColumnEntity entity = converter.toColumn(worker);
+        var entity = converter.toCommunication(worker);
         Worker worker1 = converter.toEntity(entity);
         assertEquals(worker.getSalary(), worker1.getSalary());
         assertEquals(job.getCity(), worker1.getJob().getCity());
@@ -288,26 +289,26 @@ public class CassandraColumnEntityConverterTest {
         person.setName("Ada");
         person.setHome(address);
 
-        ColumnEntity entity = converter.toColumn(person);
+        var entity = converter.toCommunication(person);
         assertEquals("Person", entity.name());
-        Column column = entity.find("home").get();
+        Element column = entity.find("home").get();
         UDT udt = UDT.class.cast(column);
 
-        assertEquals("address", udt.getUserType());
+        assertEquals("address", udt.userType());
         assertEquals("home", udt.name());
-        assertThat((List<Column>) udt.get())
-                .contains(Column.of("city", "California"), Column.of("street", "Street"));
+        assertThat((List<Element>) udt.get())
+                .contains(Element.of("city", "California"), Element.of("street", "Street"));
 
     }
 
 
     @Test
     public void shouldSupportUDTToEntity() {
-        ColumnEntity entity = ColumnEntity.of("Person");
-        entity.add(Column.of("name", "Poliana"));
-        entity.add(Column.of("age", 20));
-        List<Column> columns = asList(Column.of("city", "Salvador"),
-                Column.of("street", "Jose Anasoh"));
+        var entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("name", "Poliana"));
+        entity.add(Element.of("age", 20));
+        List<Element> columns = asList(Element.of("city", "Salvador"),
+                Element.of("street", "Jose Anasoh"));
         UDT udt = UDT.builder("address").withName("home")
                 .addUDT(columns).build();
         entity.add(udt);
@@ -331,7 +332,7 @@ public class CassandraColumnEntityConverterTest {
         history.setZonedDateTime(ZonedDateTime.now());
         history.setNumber(new java.util.Date().getTime());
 
-        ColumnEntity entity = converter.toColumn(history);
+        var entity = converter.toCommunication(history);
         assertEquals("History2", entity.name());
         History2 historyConverted = converter.toEntity(entity);
         assertNotNull(historyConverted);
@@ -345,28 +346,28 @@ public class CassandraColumnEntityConverterTest {
         appointmentBook.setContacts(asList(new Contact("Poliana", "poliana@santana.com"),
                 new Contact("Ada", "ada@lovelace.com")));
 
-        ColumnEntity entity = converter.toColumn(appointmentBook);
+        var entity = converter.toCommunication(appointmentBook);
         assertEquals("AppointmentBook", entity.name());
         assertEquals("otaviojava", entity.find("user").get().get());
         UDT column = (UDT) entity.find("contacts").get();
 
-        List<List<Column>> contacts = (List<List<Column>>) column.get();
+        List<List<Element>> contacts = (List<List<Element>>) column.get();
         assertEquals(2, contacts.size());
         assertTrue(contacts.stream().allMatch(c -> c.size() == 2));
-        assertEquals("Contact", column.getUserType());
+        assertEquals("Contact", column.userType());
 
     }
 
     @Test
     public void shouldConvertListUDTToEntity() {
-        List<Iterable<Column>> columns = new ArrayList<>();
-        columns.add(asList(Column.of("name", "Poliana"),
-                Column.of("description", "poliana")));
-        columns.add(asList(Column.of("name", "Ada"),
-                Column.of("description", "ada@lovelace.com")));
+        List<Iterable<Element>> columns = new ArrayList<>();
+        columns.add(asList(Element.of("name", "Poliana"),
+                Element.of("description", "poliana")));
+        columns.add(asList(Element.of("name", "Ada"),
+                Element.of("description", "ada@lovelace.com")));
 
-        ColumnEntity entity = ColumnEntity.of("AppointmentBook");
-        entity.add(Column.of("user", "otaviojava"));
+        CommunicationEntity entity = CommunicationEntity.of("AppointmentBook");
+        entity.add(Element.of("user", "otaviojava"));
         entity.add(UDT.builder("Contact").withName("contacts").addUDTs(columns).build());
         AppointmentBook appointmentBook = converter.toEntity(entity);
         List<Contact> contacts = appointmentBook.getContacts();
@@ -378,7 +379,7 @@ public class CassandraColumnEntityConverterTest {
 
     }
 
-    private Object getValue(Optional<Column> document) {
-        return document.map(Column::value).map(Value::get).orElse(null);
+    private Object getValue(Optional<Element> document) {
+        return document.map(Element::value).map(Value::get).orElse(null);
     }
 }

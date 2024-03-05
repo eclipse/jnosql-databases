@@ -16,11 +16,12 @@ package org.eclipse.jnosql.databases.couchbase.mapping;
 
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.AbstractKeyValueTemplate;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 @EnableAutoWeld
 @AddPackages(value = {Converters.class, AbstractKeyValueTemplate.class,
-        DocumentEntityConverter.class, N1QL.class})
+        EntityConverter.class, DocumentTemplate.class, N1QL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class, CouchbaseExtension.class})

@@ -15,7 +15,6 @@
 
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -36,7 +35,7 @@ public class ArangoDBDocumentManagerFactoryTest {
 
     @Test
     public void shouldCreateEntityManager() {
-        DocumentManager database = managerFactory.apply("database");
+        var database = managerFactory.apply("database");
         assertNotNull(database);
     }
 

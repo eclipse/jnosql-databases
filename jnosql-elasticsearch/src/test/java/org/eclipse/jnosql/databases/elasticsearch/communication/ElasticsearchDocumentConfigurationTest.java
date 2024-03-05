@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.databases.elasticsearch.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,14 +24,14 @@ public class ElasticsearchDocumentConfigurationTest {
 
     @Test
     public void shouldReturnFromConfiguration() {
-        ElasticsearchDocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        ElasticsearchDocumentConfiguration configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof ElasticsearchDocumentConfiguration);
     }
 
     @Test
     public void shouldReturnFromConfigurationQuery() {
-        ElasticsearchDocumentConfiguration configuration = DocumentConfiguration
+        ElasticsearchDocumentConfiguration configuration = DatabaseConfiguration
                 .getConfiguration(ElasticsearchDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertTrue(configuration instanceof ElasticsearchDocumentConfiguration);

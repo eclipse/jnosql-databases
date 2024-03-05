@@ -17,12 +17,13 @@ package org.eclipse.jnosql.databases.mongodb.mapping;
 
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -30,7 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @EnableAutoWeld
-@AddPackages(value = {Converters.class, DocumentEntityConverter.class})
+@AddPackages(value = {Converters.class, EntityConverter.class, DocumentTemplate.class, MongoDBTemplate.class})
 @AddPackages(Music.class)
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
@@ -38,13 +39,13 @@ import org.junit.jupiter.api.Test;
 class DocumentEntityConverterTest {
 
     @Inject
-    private DocumentEntityConverter converter;
+    private EntityConverter converter;
 
     @Test
     void shouldConverterToDocument() {
         ObjectId id = new ObjectId();
         Music music = new Music(id.toString(), "Music", 2021);
-        DocumentEntity entity = converter.toDocument(music);
+        CommunicationEntity entity = converter.toCommunication(music);
         Assertions.assertNotNull(entity);
         Assertions.assertEquals(Music.class.getSimpleName(), entity.name());
         Assertions.assertEquals(id, entity.find("_id", ObjectId.class).get());
@@ -55,7 +56,7 @@ class DocumentEntityConverterTest {
     @Test
     void shouldConvertToEntity() {
         ObjectId id = new ObjectId();
-        DocumentEntity entity = DocumentEntity.of("Music");
+        CommunicationEntity entity = CommunicationEntity.of("Music");
         entity.add("name", "Music");
         entity.add("year", 2022);
         entity.add("_id", id);

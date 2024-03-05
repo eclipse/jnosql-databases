@@ -16,16 +16,16 @@ package org.eclipse.jnosql.databases.arangodb.mapping;
 
 
 
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 
 import java.util.Map;
 import java.util.stream.Stream;
 /**
  * A template specialization for ArangoDB that includes capabilities for executing ArangoDB query language, AQL.
- * This template extends {@link JNoSQLDocumentTemplate} and provides methods for executing AQL queries with various
+ * This template extends {@link DocumentTemplate} and provides methods for executing AQL queries with various
  * options.
  */
-public interface ArangoDBTemplate extends JNoSQLDocumentTemplate {
+public interface ArangoDBTemplate extends DocumentTemplate {
 
     /**
      * Executes an ArangoDB query using the ArangoDB Query Language (AQL).

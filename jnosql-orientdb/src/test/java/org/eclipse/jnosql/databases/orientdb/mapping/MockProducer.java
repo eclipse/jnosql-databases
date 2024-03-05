@@ -20,9 +20,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.interceptor.Interceptor;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentManager;
+import org.eclipse.jnosql.mapping.Database;
+import org.eclipse.jnosql.mapping.DatabaseType;
 import org.mockito.Mockito;
 
 import java.util.function.Supplier;
@@ -30,15 +32,16 @@ import java.util.function.Supplier;
 @ApplicationScoped
 @Alternative
 @Priority(Interceptor.Priority.APPLICATION)
+@Database(DatabaseType.DOCUMENT)
 public class MockProducer implements Supplier<OrientDBDocumentManager> {
 
     @Produces
     @Override
     public OrientDBDocumentManager get() {
         OrientDBDocumentManager manager = Mockito.mock(OrientDBDocumentManager.class);
-        DocumentEntity entity = DocumentEntity.of("Person");
-        entity.add(Document.of("name", "Ada"));
-        Mockito.when(manager.update(Mockito.any(DocumentEntity.class))).thenReturn(entity);
+        CommunicationEntity entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("name", "Ada"));
+        Mockito.when(manager.update(Mockito.any(CommunicationEntity.class))).thenReturn(entity);
         return manager;
     }
 }

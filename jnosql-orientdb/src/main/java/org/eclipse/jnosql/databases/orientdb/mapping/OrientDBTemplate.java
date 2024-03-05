@@ -15,10 +15,9 @@
 package org.eclipse.jnosql.databases.orientdb.mapping;
 
 
-import jakarta.nosql.document.DocumentTemplate;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCallback;
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -26,7 +25,7 @@ import java.util.stream.Stream;
 /**
  * A {@link DocumentTemplate} to orientdb
  */
-public interface OrientDBTemplate extends JNoSQLDocumentTemplate {
+public interface OrientDBTemplate extends DocumentTemplate {
 
     /**
      * Find using OrientDB native query
@@ -54,7 +53,7 @@ public interface OrientDBTemplate extends JNoSQLDocumentTemplate {
      * @param callBacks callbacks for each operation
      * @throws NullPointerException when both query and callBack are null
      */
-    <T> void live(DocumentQuery query, OrientDBLiveCallback<T> callBacks);
+    <T> void live(SelectQuery query, OrientDBLiveCallback<T> callBacks);
 
     /**
      * Execute live query

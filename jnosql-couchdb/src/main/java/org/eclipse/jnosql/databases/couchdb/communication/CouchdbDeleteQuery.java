@@ -17,9 +17,9 @@
 package org.eclipse.jnosql.databases.couchdb.communication;
 
 import jakarta.data.Sort;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,12 +27,12 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 
-final class DeleteQuery implements DocumentQuery {
+final class CouchdbDeleteQuery implements SelectQuery {
 
     private static final List<String> DOCUMENTS = asList(CouchDBConstant.ID, CouchDBConstant.REV);
-    private final DocumentDeleteQuery query;
+    private final DeleteQuery query;
 
-    DeleteQuery(DocumentDeleteQuery query) {
+    CouchdbDeleteQuery(DeleteQuery query) {
         this.query = query;
     }
 
@@ -52,7 +52,7 @@ final class DeleteQuery implements DocumentQuery {
     }
 
     @Override
-    public Optional<DocumentCondition> condition() {
+    public Optional<CriteriaCondition> condition() {
         return query.condition();
     }
 
@@ -62,7 +62,7 @@ final class DeleteQuery implements DocumentQuery {
     }
 
     @Override
-    public List<String> documents() {
+    public List<String> columns() {
         return DOCUMENTS;
     }
 }

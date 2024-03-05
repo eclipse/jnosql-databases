@@ -70,6 +70,7 @@ class DefaultCouchbaseBucketManagerFactory implements CouchbaseBucketManagerFact
         return new CouchbaseBucketManager(bucket, bucketName, scopeName, collection);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
         requireNonNull(bucketName, "bucketName is required");

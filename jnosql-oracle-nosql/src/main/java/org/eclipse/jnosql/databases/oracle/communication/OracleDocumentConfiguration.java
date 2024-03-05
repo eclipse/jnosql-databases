@@ -15,14 +15,14 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
 /**
- * The Oracle implementation to {@link DocumentConfiguration}
+ * The Oracle implementation to {@link DatabaseConfiguration}
  * that returns  {@link OracleDocumentManagerFactory}
  * @see OracleNoSQLConfigurations
  */
-public final class OracleDocumentConfiguration implements DocumentConfiguration {
+public final class OracleDocumentConfiguration implements DatabaseConfiguration {
     @Override
     public OracleDocumentManagerFactory apply(Settings settings) {
         var nosql =  NoSQLHandleConfigConfiguration.INSTANCE.apply(settings);

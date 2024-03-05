@@ -25,14 +25,14 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.client.TableDescriptor;
 import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
-import org.eclipse.jnosql.communication.column.ColumnManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HBaseColumnManagerFactory implements ColumnManagerFactory {
+public class HBaseColumnManagerFactory implements DatabaseManagerFactory {
 
     private final Configuration configuration;
 

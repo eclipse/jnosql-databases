@@ -21,11 +21,17 @@ import java.lang.annotation.Target;
 
 
 /**
- * Defines a param to a CQL query.
+ * An annotation used to define a parameter in a CQL query.
+ * This annotation is used to specify the name of the parameter.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Param {
 
+    /**
+     * Specifies the name of the parameter.
+     *
+     * @return the name of the parameter
+     */
     String value();
 }

@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Test;
 
 
@@ -31,9 +31,9 @@ class OracleDocumentConfigurationTest {
 
     @Test
     void shouldReturnFromConfiguration() {
-        DocumentConfiguration configuration = DocumentConfiguration.getConfiguration();
+        var configuration = DatabaseConfiguration.getConfiguration();
         assertThat(configuration).isNotNull()
-                .isInstanceOf(DocumentConfiguration.class)
+                .isInstanceOf(DatabaseConfiguration.class)
                 .isInstanceOf(OracleDocumentConfiguration.class);
     }
 }

@@ -29,11 +29,10 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Elements;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
@@ -87,7 +86,7 @@ class HttpExecute {
         }
     }
 
-    public DocumentEntity insert(String database, DocumentEntity entity) {
+    public CommunicationEntity insert(String database, CommunicationEntity entity) {
         Map<String, Object> map = new HashMap<>(entity.toMap());
         String id = map.getOrDefault(CouchDBConstant.ID, "").toString();
         map.put(CouchDBConstant.ENTITY, entity.name());
@@ -114,20 +113,20 @@ class HttpExecute {
         }
     }
 
-    public DocumentEntity update(String database, DocumentEntity entity) {
+    public CommunicationEntity update(String database, CommunicationEntity entity) {
         String id = getId(entity);
         Map<String, Object> json = findById(database, id);
         entity.add(CouchDBConstant.REV, json.get(CouchDBConstant.REV));
         return insert(database, entity);
     }
 
-    public Stream<DocumentEntity> select(String database, DocumentQuery query) {
+    public Stream<CommunicationEntity> select(String database, SelectQuery query) {
         List<Map<String, Object>> entities = executeQuery(database, query);
         return entities.stream().map(this::toEntity);
     }
 
-    public void delete(String database, DocumentDeleteQuery query) {
-        CouchDBDocumentQuery documentQuery = CouchDBDocumentQuery.of(new DeleteQuery(query));
+    public void delete(String database, org.eclipse.jnosql.communication.semistructured.DeleteQuery query) {
+        CouchDBDocumentQuery documentQuery = CouchDBDocumentQuery.of(new CouchdbDeleteQuery(query));
         List<Map<String, Object>> entities = executeQuery(database, documentQuery);
         while (!entities.isEmpty()) {
             entities.stream().map(DeleteElement::new).forEach(id -> this.delete(database, id));
@@ -150,7 +149,7 @@ class HttpExecute {
     }
 
 
-    private List<Map<String, Object>> executeQuery(String database, DocumentQuery query) {
+    private List<Map<String, Object>> executeQuery(String database, SelectQuery query) {
         HttpPost request = new HttpPost(configuration.getUrl().concat(database).concat(CouchDBConstant.FIND));
         setHeader(request);
         JsonObject mangoQuery = converter.apply(query);
@@ -163,9 +162,9 @@ class HttpExecute {
     }
 
 
-    private DocumentEntity toEntity(Map<String, Object> jsonEntity) {
-        DocumentEntity entity = DocumentEntity.of(jsonEntity.get(CouchDBConstant.ENTITY).toString());
-        entity.addAll(Documents.of(jsonEntity));
+    private CommunicationEntity toEntity(Map<String, Object> jsonEntity) {
+        CommunicationEntity entity = CommunicationEntity.of(jsonEntity.get(CouchDBConstant.ENTITY).toString());
+        entity.addAll(Elements.of(jsonEntity));
         entity.remove(CouchDBConstant.ENTITY);
         return entity;
     }
@@ -175,7 +174,7 @@ class HttpExecute {
         return execute(request, JSON, HttpStatus.SC_OK);
     }
 
-    private String getId(DocumentEntity entity) {
+    private String getId(CommunicationEntity entity) {
         return entity.find(CouchDBConstant.ID)
                 .orElseThrow(() -> new CouchDBHttpClientException(
                         String.format("To update the entity %s the id field is required", entity.toString())))

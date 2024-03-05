@@ -16,14 +16,14 @@
 package org.eclipse.jnosql.databases.mongodb.communication;
 
 import com.mongodb.client.MongoClient;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.Objects;
 
 /**
- * The mongodb implementation to {@link DocumentManagerFactory}
+ * The mongodb implementation to {@link DatabaseManagerFactory}
  */
-public class MongoDBDocumentManagerFactory implements DocumentManagerFactory {
+public class MongoDBDocumentManagerFactory implements DatabaseManagerFactory {
 
     private final MongoClient mongoClient;
 

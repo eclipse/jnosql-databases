@@ -28,10 +28,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.communication</groupId>
-            <artifactId>jnosql-communication-column</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.eclipse.jnosql.mapping</groupId>
             <artifactId>jnosql-mapping-column</artifactId>
         </dependency>

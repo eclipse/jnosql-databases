@@ -24,25 +24,25 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
-final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
+final class MangoQueryConverter implements Function<SelectQuery, JsonObject> {
 
 
     @Override
-    public JsonObject apply(DocumentQuery documentQuery) {
+    public JsonObject apply(SelectQuery documentQuery) {
         JsonObjectBuilder select = Json.createObjectBuilder();
 
-        if (!documentQuery.documents().isEmpty()) {
-            select.add(CouchDBConstant.FIELDS_QUERY, Json.createArrayBuilder(documentQuery.documents()).build());
+        if (!documentQuery.columns().isEmpty()) {
+            select.add(CouchDBConstant.FIELDS_QUERY, Json.createArrayBuilder(documentQuery.columns()).build());
         }
         if (documentQuery.limit() > 0) {
             select.add(CouchDBConstant.LIMIT_QUERY, documentQuery.limit());
@@ -76,15 +76,15 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
                 : Direction.DESC.name().toLowerCase(Locale.US)).build();
     }
 
-    private JsonObject getSelector(DocumentQuery documentQuery) {
+    private JsonObject getSelector(SelectQuery documentQuery) {
         JsonObjectBuilder selector = Json.createObjectBuilder();
         selector.add(CouchDBConstant.ENTITY, documentQuery.name());
         documentQuery.condition().ifPresent(d -> appendCondition(d, selector));
         return selector.build();
     }
 
-    private void appendCondition(DocumentCondition condition, JsonObjectBuilder selector) {
-        Document document = condition.document();
+    private void appendCondition(CriteriaCondition condition, JsonObjectBuilder selector) {
+        Element document = condition.element();
         String name = document.name();
         Object value = ValueUtil.convert(document.value());
 
@@ -123,9 +123,9 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
     }
 
     private void appendCombination(JsonObjectBuilder selector, Object value, String combination) {
-        List<DocumentCondition> conditions = List.class.cast(value);
+        List<CriteriaCondition> conditions = List.class.cast(value);
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (DocumentCondition documentCondition : conditions) {
+        for (CriteriaCondition documentCondition : conditions) {
             JsonObjectBuilder builder = Json.createObjectBuilder();
             appendCondition(documentCondition, builder);
             arrayBuilder.add(builder.build());
@@ -135,7 +135,7 @@ final class MangoQueryConverter implements Function<DocumentQuery, JsonObject> {
 
     private void appendNot(JsonObjectBuilder selector, Object value) {
         JsonObjectBuilder not = Json.createObjectBuilder();
-        appendCondition(DocumentCondition.class.cast(value), not);
+        appendCondition(CriteriaCondition.class.cast(value), not);
         selector.add("$not", not.build());
     }
 

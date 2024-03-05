@@ -15,16 +15,16 @@
 package org.eclipse.jnosql.databases.oracle.communication;
 
 import jakarta.json.bind.Jsonb;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.util.Objects;
 
 
 /**
- * The Oracle implementation to {@link DocumentManagerFactory}
+ * The Oracle implementation to {@link DatabaseManagerFactory}
  */
-public final class OracleDocumentManagerFactory implements DocumentManagerFactory {
+public final class OracleDocumentManagerFactory implements DatabaseManagerFactory {
 
     private static final Jsonb JSON = JsonbSupplier.getInstance().get();
     private final NoSQLHandleConfiguration configuration;

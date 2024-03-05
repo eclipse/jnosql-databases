@@ -14,25 +14,25 @@
  */
 package org.eclipse.jnosql.databases.oracle.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 
 import java.util.stream.Stream;
 
 /**
  * A document manager interface for Oracle NoSQL database operations.
  */
-public interface OracleNoSQLDocumentManager extends DocumentManager {
+public interface OracleNoSQLDocumentManager extends DatabaseManager {
 
 
     /**
      * Executes an Oracle query using the Oracle Query Language (SQL).
      *
      * @param query the SQL query
-     * @return a {@link Stream} of {@link DocumentEntity} representing the query result
+     * @return a {@link Stream} of {@link CommunicationEntity} representing the query result
      * @throws NullPointerException when the query is null
      */
-    Stream<DocumentEntity> sql(String query);
+    Stream<CommunicationEntity> sql(String query);
 
     /**
      * Executes an Oracle query using the Oracle Query Language (SQL) with parameters.
@@ -40,9 +40,9 @@ public interface OracleNoSQLDocumentManager extends DocumentManager {
      *
      * @param query  the SQL query with placeholders for parameters
      * @param params the values to replace the placeholders in the query
-     * @return a {@link Stream} of {@link DocumentEntity} representing the query result
+     * @return a {@link Stream} of {@link CommunicationEntity} representing the query result
      * @throws NullPointerException when either the query or params are null
      */
-    Stream<DocumentEntity> sql(String query, Object... params);
+    Stream<CommunicationEntity> sql(String query, Object... params);
 
 }

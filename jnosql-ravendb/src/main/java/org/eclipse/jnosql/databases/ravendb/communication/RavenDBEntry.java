@@ -14,8 +14,9 @@
  */
 package org.eclipse.jnosql.databases.ravendb.communication;
 
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,8 @@ final class RavenDBEntry {
 
     private final String collection;
 
-    private static final Function<Map.Entry<?, ?>, Document> ENTRY_DOCUMENT = entry ->
-            Document.of(entry.getKey().toString(), entry.getValue());
+    private static final Function<Map.Entry<?, ?>, Element> ENTRY_DOCUMENT = entry ->
+            Element.of(entry.getKey().toString(), entry.getValue());
 
 
     RavenDBEntry(String id, String collection, Map<String, Object> map) {
@@ -53,35 +54,35 @@ final class RavenDBEntry {
         return !isEmpty();
     }
 
-    DocumentEntity toEntity() {
-        Document id = Document.of(EntityConverter.ID_FIELD, this.id);
-        List<Document> documents = map.keySet().stream()
+    CommunicationEntity toEntity() {
+        Element id = Element.of(EntityConverter.ID_FIELD, this.id);
+        List<Element> documents = map.keySet().stream()
                 .map(k -> toDocument(k, map))
                 .collect(Collectors.toList());
-        DocumentEntity entity = DocumentEntity.of(collection, documents);
+        CommunicationEntity entity = CommunicationEntity.of(collection, documents);
         entity.remove(EntityConverter.ID_FIELD);
         entity.add(id);
         return entity;
     }
 
-    private Document toDocument(String key, Map<String, Object> properties) {
+    private Element toDocument(String key, Map<String, Object> properties) {
         Object value = properties.get(key);
         if (Map.class.isInstance(value)) {
             Map map = Map.class.cast(value);
-            return Document.of(key, map.keySet()
+            return Element.of(key, map.keySet()
                     .stream().map(k -> toDocument(k.toString(), map))
                     .collect(Collectors.toList()));
         }
         if (isADocumentIterable(value)) {
-            List<List<Document>> documents = new ArrayList<>();
+            List<List<Element>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
                 Map<?, ?> map = Map.class.cast(object);
                 documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
             }
-            return Document.of(key, documents);
+            return Element.of(key, documents);
 
         }
-        return Document.of(key, value);
+        return Element.of(key, value);
     }
 
     private boolean isADocumentIterable(Object value) {

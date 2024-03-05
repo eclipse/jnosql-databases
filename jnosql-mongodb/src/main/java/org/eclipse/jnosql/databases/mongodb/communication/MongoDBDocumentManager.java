@@ -26,11 +26,6 @@ import jakarta.data.Sort;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -42,14 +37,21 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.StreamSupport.stream;
 import org.bson.BsonValue;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
+
 import static org.eclipse.jnosql.databases.mongodb.communication.MongoDBUtils.ID_FIELD;
 import static org.eclipse.jnosql.databases.mongodb.communication.MongoDBUtils.getDocument;
 
 /**
- * The mongodb implementation to {@link DocumentManager} that does not support TTL methods
- * <p>{@link MongoDBDocumentManager#insert(DocumentEntity, Duration)}</p>
+ * The mongodb implementation to {@link DatabaseManager} that does not support TTL methods
+ * <p>{@link MongoDBDocumentManager#insert(CommunicationEntity, Duration)}</p>
  */
-public class MongoDBDocumentManager implements DocumentManager {
+public class MongoDBDocumentManager implements DatabaseManager {
 
     private static final BsonDocument EMPTY = new BsonDocument();
 
@@ -69,28 +71,28 @@ public class MongoDBDocumentManager implements DocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity) {
+    public CommunicationEntity insert(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
         String collectionName = entity.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document document = getDocument(entity);
         collection.insertOne(document);
-        boolean hasNotId = entity.documents().stream()
-                .map(org.eclipse.jnosql.communication.document.Document::name).noneMatch(k -> k.equals(ID_FIELD));
+        boolean hasNotId = entity.elements().stream()
+                .map(Element::name).noneMatch(k -> k.equals(ID_FIELD));
         if (hasNotId) {
-            entity.add(Documents.of(ID_FIELD, document.get(ID_FIELD)));
+            entity.add(Elements.of(ID_FIELD, document.get(ID_FIELD)));
         }
         return entity;
     }
 
 
     @Override
-    public DocumentEntity insert(DocumentEntity entity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
         throw new UnsupportedOperationException("MongoDB does not support save with TTL");
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
@@ -98,7 +100,7 @@ public class MongoDBDocumentManager implements DocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -108,10 +110,10 @@ public class MongoDBDocumentManager implements DocumentManager {
 
 
     @Override
-    public DocumentEntity update(DocumentEntity entity) {
+    public CommunicationEntity update(CommunicationEntity entity) {
         Objects.requireNonNull(entity, "entity is required");
 
-        DocumentEntity copy = entity.copy();
+        CommunicationEntity copy = entity.copy();
         String collectionName = entity.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Document id = copy.find(ID_FIELD)
@@ -124,7 +126,7 @@ public class MongoDBDocumentManager implements DocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         Objects.requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update)
@@ -133,7 +135,7 @@ public class MongoDBDocumentManager implements DocumentManager {
 
 
     @Override
-    public void delete(DocumentDeleteQuery query) {
+    public void delete(DeleteQuery query) {
         Objects.requireNonNull(query, "query is required");
 
         String collectionName = query.name();
@@ -144,14 +146,14 @@ public class MongoDBDocumentManager implements DocumentManager {
 
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery query) {
+    public Stream<CommunicationEntity> select(SelectQuery query) {
         Objects.requireNonNull(query, "query is required");
         String collectionName = query.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         Bson mongoDBQuery = query.condition().map(DocumentQueryConversor::convert).orElse(EMPTY);
 
         FindIterable<Document> documents = collection.find(mongoDBQuery);
-        documents.projection(Projections.include(query.documents()));
+        documents.projection(Projections.include(query.columns()));
         if (query.skip() > 0) {
             documents.skip((int) query.skip());
         }
@@ -163,7 +165,7 @@ public class MongoDBDocumentManager implements DocumentManager {
         query.sorts().stream().map(this::getSort).forEach(documents::sort);
 
         return stream(documents.spliterator(), false).map(MongoDBUtils::of)
-                .map(ds -> DocumentEntity.of(collectionName, ds));
+                .map(ds -> CommunicationEntity.of(collectionName, ds));
 
     }
 
@@ -221,13 +223,13 @@ public class MongoDBDocumentManager implements DocumentManager {
      * @return the stream result
      * @throws NullPointerException when pipeline or collectionName is null
      */
-    public Stream<DocumentEntity> aggregate(String collectionName, List<Bson> pipeline) {
+    public Stream<CommunicationEntity> aggregate(String collectionName, List<Bson> pipeline) {
         Objects.requireNonNull(pipeline, "pipeline is required");
         Objects.requireNonNull(collectionName, "collectionName is required");
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         AggregateIterable<Document> aggregate = collection.aggregate(pipeline);
         return stream(aggregate.spliterator(), false).map(MongoDBUtils::of)
-                .map(ds -> DocumentEntity.of(collectionName, ds));
+                .map(ds -> CommunicationEntity.of(collectionName, ds));
     }
 
     /**
@@ -238,16 +240,16 @@ public class MongoDBDocumentManager implements DocumentManager {
      * @return the stream result
      * @throws NullPointerException when filter or collectionName is null
      */
-    public Stream<DocumentEntity> select(String collectionName, Bson filter) {
+    public Stream<CommunicationEntity> select(String collectionName, Bson filter) {
         Objects.requireNonNull(filter, "filter is required");
         Objects.requireNonNull(collectionName, "collectionName is required");
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
         FindIterable<Document> documents = collection.find(filter);
         return stream(documents.spliterator(), false).map(MongoDBUtils::of)
-                .map(ds -> DocumentEntity.of(collectionName, ds));
+                .map(ds -> CommunicationEntity.of(collectionName, ds));
     }
 
-    private Bson getSort(Sort sort) {
+    private Bson getSort(Sort<?> sort) {
         return sort.isAscending() ? Sorts.ascending(sort.property()) : Sorts.descending(sort.property());
     }
 

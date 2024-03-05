@@ -27,10 +27,6 @@
     <description>The Eclipse JNoSQL layer implementation to Apache Solr</description>
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.jnosql.communication</groupId>
-            <artifactId>jnosql-communication-document</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.eclipse.jnosql.mapping</groupId>
             <artifactId>jnosql-mapping-document</artifactId>
         </dependency>

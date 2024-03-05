@@ -17,9 +17,9 @@ package org.eclipse.jnosql.databases.couchbase.communication;
 
 import com.couchbase.client.java.json.JsonArray;
 import com.couchbase.client.java.json.JsonObject;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +45,7 @@ final class EntityConverter {
     }
 
 
-    static Stream<DocumentEntity> convert(List<JsonObject> result, String database) {
+    static Stream<CommunicationEntity> convert(List<JsonObject> result, String database) {
         return
                 result.stream()
                         .map(JsonObject::toMap)
@@ -54,31 +54,31 @@ final class EntityConverter {
                             if (map.size() == 1) {
                                 Map.Entry<String, Object> entry = map.entrySet().stream().findFirst().get();
                                 if (entry.getValue() instanceof Map) {
-                                    List<Document> documents = toDocuments((Map<String, Object>) entry.getValue());
-                                    return DocumentEntity.of(entry.getKey(), documents);
+                                    List<Element> documents = toDocuments((Map<String, Object>) entry.getValue());
+                                    return CommunicationEntity.of(entry.getKey(), documents);
                                 }
                             }
-                            List<Document> documents = toDocuments(map);
-                            Optional<Document> entityDocument = documents.stream().filter(d -> COLLECTION_FIELD.equals(d.name())).findFirst();
+                            List<Element> documents = toDocuments(map);
+                            Optional<Element> entityDocument = documents.stream().filter(d -> COLLECTION_FIELD.equals(d.name())).findFirst();
                             String collection = entityDocument.map(d -> d.get(String.class)).orElse(database);
-                            return DocumentEntity.of(collection, documents);
+                            return CommunicationEntity.of(collection, documents);
                         });
     }
 
-    private static List<Document> toDocuments(Map<String, Object> map) {
-        List<Document> documents = new ArrayList<>();
+    private static List<Element> toDocuments(Map<String, Object> map) {
+        List<Element> documents = new ArrayList<>();
         for (String key : map.keySet()) {
             Object value = map.get(key);
             if (Map.class.isInstance(value)) {
-                documents.add(Document.of(key, toDocuments(Map.class.cast(value))));
+                documents.add(Element.of(key, toDocuments(Map.class.cast(value))));
             } else if (isADocumentIterable(value)) {
-                List<List<Document>> subDocuments = new ArrayList<>();
+                List<List<Element>> subDocuments = new ArrayList<>();
                 stream(Iterable.class.cast(value).spliterator(), false)
                         .map(m -> toDocuments(Map.class.cast(m)))
-                        .forEach(e -> subDocuments.add((List<Document>) e));
-                documents.add(Document.of(key, subDocuments));
+                        .forEach(e -> subDocuments.add((List<Element>) e));
+                documents.add(Element.of(key, subDocuments));
             } else {
-                documents.add(Document.of(key, value));
+                documents.add(Element.of(key, value));
             }
         }
         return documents;
@@ -99,19 +99,19 @@ final class EntityConverter {
     }
 
 
-    static JsonObject convert(DocumentEntity entity) {
+    static JsonObject convert(CommunicationEntity entity) {
         requireNonNull(entity, "entity is required");
 
         JsonObject jsonObject = JsonObject.create();
-        entity.documents().stream()
+        entity.elements().stream()
                 .forEach(toJsonObject(jsonObject));
         return jsonObject;
     }
 
-    private static Consumer<Document> toJsonObject(JsonObject jsonObject) {
+    private static Consumer<Element> toJsonObject(JsonObject jsonObject) {
         return d -> {
             Object value = ValueUtil.convert(d.value());
-            if (Document.class.isInstance(value)) {
+            if (Element.class.isInstance(value)) {
                 convertDocument(jsonObject, d, value);
             } else if (Iterable.class.isInstance(value)) {
                 convertIterable(jsonObject, d, value);
@@ -122,17 +122,17 @@ final class EntityConverter {
     }
 
 
-    private static void convertDocument(JsonObject jsonObject, Document d, Object value) {
-        Document document = Document.class.cast(value);
+    private static void convertDocument(JsonObject jsonObject, Element d, Object value) {
+        Element document = Element.class.cast(value);
         jsonObject.put(d.name(), Collections.singletonMap(document.name(), document.get()));
     }
 
-    private static void convertIterable(JsonObject jsonObject, Document document, Object value) {
+    private static void convertIterable(JsonObject jsonObject, Element document, Object value) {
         JsonObject map = JsonObject.create();
         JsonArray array = JsonArray.create();
         Iterable.class.cast(value).forEach(element -> {
-            if (Document.class.isInstance(element)) {
-                Document subdocument = Document.class.cast(element);
+            if (Element.class.isInstance(element)) {
+                Element subdocument = Element.class.cast(element);
                 map.put(subdocument.name(), subdocument.get());
             } else if (isSudDocument(element)) {
                 JsonObject subJson = JsonObject.create();
@@ -152,12 +152,12 @@ final class EntityConverter {
     }
 
     private static Consumer getSubdocument(JsonObject subJson) {
-        return e -> toJsonObject(subJson).accept((Document) e);
+        return e -> toJsonObject(subJson).accept((Element) e);
     }
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
+                allMatch(Element.class::isInstance);
     }
 
 }

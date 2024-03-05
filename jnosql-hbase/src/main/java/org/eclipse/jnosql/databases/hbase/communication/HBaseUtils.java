@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.hbase.communication;
 
 
-import org.eclipse.jnosql.communication.column.Column;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 final class HBaseUtils {
 
@@ -25,8 +25,8 @@ final class HBaseUtils {
     }
 
 
-    static Column getKey(Object value) {
-        return Column.of(KEY_COLUMN, value);
+    static Element getKey(Object value) {
+        return Element.of(KEY_COLUMN, value);
     }
 
 

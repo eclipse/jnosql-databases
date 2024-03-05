@@ -18,13 +18,13 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.delete.Delete;
 import com.datastax.oss.driver.api.querybuilder.delete.DeleteSelection;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
 
 final class DeleteQueryConverter {
     private DeleteQueryConverter() {
     }
 
-    static Delete delete(ColumnDeleteQuery query, String keyspace) {
+    static Delete delete(DeleteQuery query, String keyspace) {
         final String columnFamily = query.name();
         DeleteSelection deleteSelection = QueryBuilder.deleteFrom(keyspace, columnFamily);
 

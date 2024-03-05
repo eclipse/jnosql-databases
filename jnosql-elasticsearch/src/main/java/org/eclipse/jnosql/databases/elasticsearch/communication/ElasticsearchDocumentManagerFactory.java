@@ -18,20 +18,20 @@ package org.eclipse.jnosql.databases.elasticsearch.communication;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.OpenRequest;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
 /**
- * The elasticsearch implementation to {@link DocumentManagerFactory} that returns:
+ * The elasticsearch implementation to {@link DatabaseManagerFactory} that returns:
  * {@link ElasticsearchDocumentManager}
  * If the database does not exist, it tries to read a json mapping from the database name.
  * Eg: {@link ElasticsearchDocumentManagerFactory#apply(String)}} with database, if does not exist it tries to
  * read a "/database.json" file. The file must have the mapping to elasticsearch.
  */
-public class ElasticsearchDocumentManagerFactory implements DocumentManagerFactory {
+public class ElasticsearchDocumentManagerFactory implements DatabaseManagerFactory {
 
 
     private final ElasticsearchClient elasticsearchClient;

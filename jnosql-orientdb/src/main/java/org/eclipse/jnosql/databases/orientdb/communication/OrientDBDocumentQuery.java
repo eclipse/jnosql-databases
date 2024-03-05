@@ -15,19 +15,19 @@
 package org.eclipse.jnosql.databases.orientdb.communication;
 
 import jakarta.data.Sort;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-class OrientDBDocumentQuery implements DocumentQuery {
+class OrientDBDocumentQuery implements SelectQuery {
 
-    private final DocumentDeleteQuery query;
+    private final DeleteQuery query;
 
-    OrientDBDocumentQuery(DocumentDeleteQuery query) {
+    OrientDBDocumentQuery(DeleteQuery query) {
         this.query = query;
     }
 
@@ -47,7 +47,7 @@ class OrientDBDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public Optional<DocumentCondition> condition() {
+    public Optional<CriteriaCondition> condition() {
         return query.condition();
     }
 
@@ -57,7 +57,7 @@ class OrientDBDocumentQuery implements DocumentQuery {
     }
 
     @Override
-    public List<String> documents() {
+    public List<String> columns() {
         return Collections.emptyList();
     }
 }

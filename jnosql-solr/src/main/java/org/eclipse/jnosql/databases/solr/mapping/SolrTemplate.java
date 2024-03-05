@@ -15,8 +15,7 @@
 package org.eclipse.jnosql.databases.solr.mapping;
 
 
-import jakarta.nosql.document.DocumentTemplate;
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ import java.util.Map;
 /**
  * A {@link DocumentTemplate} to Apache Solr
  */
-public interface SolrTemplate extends JNoSQLDocumentTemplate {
+public interface SolrTemplate extends DocumentTemplate {
 
     /**
      * Executes a Solr native query

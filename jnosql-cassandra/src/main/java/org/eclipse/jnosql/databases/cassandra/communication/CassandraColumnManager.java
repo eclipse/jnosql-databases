@@ -18,24 +18,24 @@ package org.eclipse.jnosql.databases.cassandra.communication;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.communication.column.ColumnEntity;
-import org.eclipse.jnosql.communication.column.ColumnManager;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.time.Duration;
 import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * The Cassandra implementation of {@link ColumnManager}, that supports all methods and also supports
+ * The Cassandra implementation of {@link DatabaseManager}, that supports all methods and also supports
  * CQL and ConsistencyLevel.
- * <p>{@link CassandraColumnManager#select(ColumnQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnManager#select(SelectQuery, ConsistencyLevel)}</p>
  * <p>{@link CassandraColumnManager#cql(String)}</p>
  * <p>{@link CassandraColumnManager#nativeQueryPrepare(String)}</p>
- * <p>{@link CassandraColumnManager#delete(ColumnDeleteQuery, ConsistencyLevel)}</p>
+ * <p>{@link CassandraColumnManager#delete(DeleteQuery, ConsistencyLevel)}</p>
  */
-public interface CassandraColumnManager extends ColumnManager {
+public interface CassandraColumnManager extends DatabaseManager {
 
 
     /**
@@ -46,7 +46,7 @@ public interface CassandraColumnManager extends ColumnManager {
      * @return the entity saved
      * @throws NullPointerException when both entity or level are null
      */
-    ColumnEntity save(ColumnEntity entity, ConsistencyLevel level) throws NullPointerException;
+    CommunicationEntity save(CommunicationEntity entity, ConsistencyLevel level) throws NullPointerException;
 
 
     /**
@@ -58,7 +58,7 @@ public interface CassandraColumnManager extends ColumnManager {
      * @return the entity saved
      * @throws NullPointerException when either entity or ttl or level are null
      */
-    ColumnEntity save(ColumnEntity entity, Duration ttl, ConsistencyLevel level) throws NullPointerException;
+    CommunicationEntity save(CommunicationEntity entity, Duration ttl, ConsistencyLevel level) throws NullPointerException;
 
     /**
      * Saves a ColumnEntity with a defined ConsistencyLevel
@@ -68,7 +68,7 @@ public interface CassandraColumnManager extends ColumnManager {
      * @return the entities saved
      * @throws NullPointerException when both entity or level are null
      */
-    Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, ConsistencyLevel level) throws NullPointerException;
+    Iterable<CommunicationEntity> save(Iterable<CommunicationEntity> entities, ConsistencyLevel level) throws NullPointerException;
 
 
     /**
@@ -80,7 +80,7 @@ public interface CassandraColumnManager extends ColumnManager {
      * @return the entities saved
      * @throws NullPointerException when either entity or ttl or level are null
      */
-    Iterable<ColumnEntity> save(Iterable<ColumnEntity> entities, Duration ttl, ConsistencyLevel level) throws NullPointerException;
+    Iterable<CommunicationEntity> save(Iterable<CommunicationEntity> entities, Duration ttl, ConsistencyLevel level) throws NullPointerException;
 
     /**
      * Deletes an information using {@link ConsistencyLevel}
@@ -89,7 +89,7 @@ public interface CassandraColumnManager extends ColumnManager {
      * @param level the level
      * @throws NullPointerException when either query or level are null
      */
-    void delete(ColumnDeleteQuery query, ConsistencyLevel level) throws NullPointerException;
+    void delete(DeleteQuery query, ConsistencyLevel level) throws NullPointerException;
 
     /**
      * Finds using a consistency level
@@ -99,16 +99,16 @@ public interface CassandraColumnManager extends ColumnManager {
      * @return the query using a consistency level
      * @throws NullPointerException when either query or level are null
      */
-    Stream<ColumnEntity> select(ColumnQuery query, ConsistencyLevel level) throws NullPointerException;
+    Stream<CommunicationEntity> select(SelectQuery query, ConsistencyLevel level) throws NullPointerException;
 
     /**
      * Executes CQL
      *
-     * @param query the Cassndra query language
+     * @param query the Cassandra query language
      * @return the result of this query
      * @throws NullPointerException when query is null
      */
-    Stream<ColumnEntity> cql(String query) throws NullPointerException;
+    Stream<CommunicationEntity> cql(String query) throws NullPointerException;
 
 
     /**
@@ -120,7 +120,7 @@ public interface CassandraColumnManager extends ColumnManager {
      * @return the result of this query
      * @throws NullPointerException when either query or values are null
      */
-    Stream<ColumnEntity> cql(String query, Map<String, Object> values) throws NullPointerException;
+    Stream<CommunicationEntity> cql(String query, Map<String, Object> values) throws NullPointerException;
 
     /**
      * Executes a statement
@@ -129,7 +129,7 @@ public interface CassandraColumnManager extends ColumnManager {
      * @return the result of this query
      * @throws NullPointerException when statement is null
      */
-    Stream<ColumnEntity> execute(SimpleStatement statement) throws NullPointerException;
+    Stream<CommunicationEntity> execute(SimpleStatement statement) throws NullPointerException;
 
     /**
      * Executes an query and uses as {@link CassandraPreparedStatement}

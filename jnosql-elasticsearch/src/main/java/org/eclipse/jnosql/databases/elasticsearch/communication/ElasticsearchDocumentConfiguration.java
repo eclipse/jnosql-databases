@@ -27,7 +27,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 
@@ -40,12 +40,12 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The implementation of {@link DocumentConfiguration}
+ * The implementation of {@link DatabaseConfiguration}
  * that returns {@link ElasticsearchDocumentManagerFactory}.
  *
  * @see ElasticsearchConfigurations
  */
-public class ElasticsearchDocumentConfiguration implements DocumentConfiguration {
+public class ElasticsearchDocumentConfiguration implements DatabaseConfiguration {
 
     private static final int DEFAULT_PORT = 9200;
 

@@ -19,16 +19,17 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.util.ObjectBuilder;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.databases.elasticsearch.communication.ElasticsearchDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -49,7 +50,7 @@ import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
 @AddPackages(value = {Converters.class,
-        DocumentEntityConverter.class, ElasticsearchTemplate.class})
+        EntityConverter.class, DocumentTemplate.class, ElasticsearchTemplate.class})
 @AddPackages(Person.class)
 @AddPackages(Reflections.class)
 @AddExtensions({EntityMetadataExtension.class,
@@ -57,10 +58,10 @@ import static org.mockito.Mockito.when;
 public class DefaultElasticsearchTemplateTest {
 
     @Inject
-    private DocumentEntityConverter converter;
+    private EntityConverter converter;
 
     @Inject
-    private DocumentEventPersistManager persistManager;
+    private EventPersistManager persistManager;
 
     @Inject
     private EntitiesMetadata entities;
@@ -80,9 +81,9 @@ public class DefaultElasticsearchTemplateTest {
         when(instance.get()).thenReturn(manager);
         template = new DefaultElasticsearchTemplate(instance, converter, persistManager, entities, converters);
 
-        DocumentEntity entity = DocumentEntity.of("Person");
-        entity.add(Document.of("name", "Ada"));
-        entity.add(Document.of("age", 10));
+        CommunicationEntity entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("name", "Ada"));
+        entity.add(Element.of("age", 10));
         when(manager.search(Mockito.any(SearchRequest.class)))
                 .thenReturn(Stream.of(entity));
     }
@@ -101,33 +102,33 @@ public class DefaultElasticsearchTemplateTest {
 
     @Test
     public void shouldGetConverter() {
-        assertNotNull(template.getConverter());
-        assertEquals(converter, template.getConverter());
+        assertNotNull(template.converter());
+        assertEquals(converter, template.converter());
     }
 
     @Test
     public void shouldGetManager() {
-        assertNotNull(template.getManager());
-        assertEquals(manager, template.getManager());
+        assertNotNull(template.manager());
+        assertEquals(manager, template.manager());
     }
 
 
     @Test
     public void shouldGetPersistManager() {
-        assertNotNull(template.getEventManager());
-        assertEquals(persistManager, template.getEventManager());
+        assertNotNull(template.eventManager());
+        assertEquals(persistManager, template.eventManager());
     }
 
 
     @Test
     public void shouldGetClassMappings() {
-        assertNotNull(template.getEntities());
-        assertEquals(entities, template.getEntities());
+        assertNotNull(template.entities());
+        assertEquals(entities, template.entities());
     }
 
     @Test
     public void shouldGetConverters() {
-        assertNotNull(template.getConverters());
-        assertEquals(converters, template.getConverters());
+        assertNotNull(template.converters());
+        assertEquals(converters, template.converters());
     }
 }

@@ -19,9 +19,9 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,8 +49,8 @@ public final class ArangoDBUtil {
     public static final String REV = "_rev";
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
 
-    private static final Function<Map.Entry<?, ?>, Document> ENTRY_DOCUMENT = entry ->
-            Document.of(entry.getKey().toString(), entry.getValue());
+    private static final Function<Map.Entry<?, ?>, Element> ENTRY_DOCUMENT = entry ->
+            Element.of(entry.getKey().toString(), entry.getValue());
 
     private ArangoDBUtil() {
     }
@@ -80,22 +80,22 @@ public final class ArangoDBUtil {
     }
 
 
-    static DocumentEntity toEntity(BaseDocument document) {
+    static CommunicationEntity toEntity(BaseDocument document) {
         Map<String, Object> properties = document.getProperties();
-        List<Document> documents = properties.keySet().stream()
+        List<Element> documents = properties.keySet().stream()
                 .map(k -> toDocument(k, properties))
                 .collect(Collectors.toList());
 
-        documents.add(Document.of(KEY, document.getKey()));
-        documents.add(Document.of(ID, document.getId()));
-        documents.add(Document.of(REV, document.getRevision()));
+        documents.add(Element.of(KEY, document.getKey()));
+        documents.add(Element.of(ID, document.getId()));
+        documents.add(Element.of(REV, document.getRevision()));
         String collection = document.getId().split("/")[0];
-        return DocumentEntity.of(collection, documents);
+        return CommunicationEntity.of(collection, documents);
     }
 
-    static BaseDocument getBaseDocument(DocumentEntity entity) {
+    static BaseDocument getBaseDocument(CommunicationEntity entity) {
         Map<String, Object> map = new HashMap<>();
-        for (Document document : entity.documents()) {
+        for (Element document : entity.elements()) {
             if(KEY.equals(document.name()) && Objects.isNull(document.get())) {
                 continue;
             }
@@ -104,23 +104,23 @@ public final class ArangoDBUtil {
         return new BaseDocument(map);
     }
 
-    private static Document toDocument(String key, Map<String, Object> properties) {
+    private static Element toDocument(String key, Map<String, Object> properties) {
         Object value = properties.get(key);
         if (value instanceof Map map) {
-            return Document.of(key, map.keySet()
+            return Element.of(key, map.keySet()
                     .stream().map(k -> toDocument(k.toString(), map))
                     .collect(Collectors.toList()));
         }
         if (isADocumentIterable(value)) {
-            List<List<Document>> documents = new ArrayList<>();
+            List<List<Element>> documents = new ArrayList<>();
             for (Object object : Iterable.class.cast(value)) {
                 Map<?, ?> map = Map.class.cast(object);
                 documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
             }
-            return Document.of(key, documents);
+            return Element.of(key, documents);
 
         }
-        return Document.of(key, value);
+        return Element.of(key, value);
     }
 
     private static boolean isADocumentIterable(Object value) {
@@ -132,8 +132,8 @@ public final class ArangoDBUtil {
     private static Object convert(Value value) {
         Object val = ValueUtil.convert(value);
 
-        if (Document.class.isInstance(val)) {
-            Document document = Document.class.cast(val);
+        if (Element.class.isInstance(val)) {
+            Element document = Element.class.cast(val);
             return singletonMap(document.name(), convert(document.value()));
         }
         if (isSudDocument(val)) {
@@ -163,11 +163,11 @@ public final class ArangoDBUtil {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
+                allMatch(Element.class::isInstance);
     }
 
-    private static org.eclipse.jnosql.communication.document.Document cast(Object document) {
-        return org.eclipse.jnosql.communication.document.Document.class.cast(document);
+    private static Element cast(Object document) {
+        return Element.class.cast(document);
     }
 
 }

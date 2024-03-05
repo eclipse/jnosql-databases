@@ -18,18 +18,18 @@ package org.eclipse.jnosql.databases.cassandra.mapping;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import org.eclipse.jnosql.communication.column.ColumnDeleteQuery;
-import org.eclipse.jnosql.communication.column.ColumnQuery;
-import org.eclipse.jnosql.mapping.column.JNoSQLColumnTemplate;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
+import org.eclipse.jnosql.mapping.column.ColumnTemplate;
 
 import java.time.Duration;
 import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * A Cassandra extension of {@link JNoSQLColumnTemplate}
+ * A Cassandra extension of {@link ColumnTemplate}
  */
-public interface CassandraTemplate extends JNoSQLColumnTemplate {
+public interface CassandraTemplate extends ColumnTemplate {
 
     /**
      * Saves a ColumnEntity with a defined ConsistencyLevel
@@ -89,7 +89,7 @@ public interface CassandraTemplate extends JNoSQLColumnTemplate {
      * @param level the level
      * @throws NullPointerException when either query or level are null
      */
-    void delete(ColumnDeleteQuery query, ConsistencyLevel level);
+    void delete(DeleteQuery query, ConsistencyLevel level);
 
     /**
      * Finds using a consistency level
@@ -99,13 +99,13 @@ public interface CassandraTemplate extends JNoSQLColumnTemplate {
      * @param level the consistency level
      * @return the query using a consistency level
      */
-    <T> Stream<T> find(ColumnQuery query, ConsistencyLevel level);
+    <T> Stream<T> find(SelectQuery query, ConsistencyLevel level);
 
     /**
      * Executes CQL
      *
      * @param <T>   type
-     * @param query the Cassndra query language
+     * @param query the Cassandra query language
      * @return the result of this query
      * @throws NullPointerException when query is null
      */
@@ -116,7 +116,7 @@ public interface CassandraTemplate extends JNoSQLColumnTemplate {
      * E.g.: "SELECT * FROM users WHERE id = :i", Map.&#60;String, Object&#62;of("i", 1)"
      *
      * @param <T>    type
-     * @param query  the Cassndra query language
+     * @param query  the Cassandra query language
      * @param values values required for the execution of {@code query}
      * @return the result of this query
      * @throws NullPointerException when query is null

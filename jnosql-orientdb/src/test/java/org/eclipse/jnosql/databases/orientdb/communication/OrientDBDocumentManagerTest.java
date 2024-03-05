@@ -17,11 +17,11 @@ package org.eclipse.jnosql.databases.orientdb.communication;
 
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -43,10 +43,10 @@ import java.util.stream.StreamSupport;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.awaitility.Awaitility.await;
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.semistructured.DeleteQuery.delete;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -69,10 +69,10 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldInsert() {
-        DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        var entity = getEntity();
+        var documentEntity = entityManager.insert(entity);
         assertNotNull(documentEntity);
-        Optional<Document> document = documentEntity.find(OrientDBConverter.RID_FIELD);
+        Optional<Element> document = documentEntity.find(OrientDBConverter.RID_FIELD);
         assertTrue(document.isPresent());
 
     }
@@ -84,16 +84,16 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldUpdateSave() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Document newField = Documents.of("newField", "10");
+        var entity = entityManager.insert(getEntity());
+        var newField = Elements.of("newField", "10");
         entity.add(newField);
         entityManager.update(entity);
 
-        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
-        DocumentQuery query = select().from(entity.name())
+        var id = entity.find(OrientDBConverter.RID_FIELD).get();
+        var query = select().from(entity.name())
                 .where(id.name()).eq(id.get())
                 .build();
-        Optional<DocumentEntity> updated = entityManager.singleResult(query);
+        Optional<CommunicationEntity> updated = entityManager.singleResult(query);
 
         assertTrue(updated.isPresent());
         assertEquals(newField, updated.get().find(newField.name()).get());
@@ -101,17 +101,17 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldUpdateWithRetry() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        entity.add(Document.of(OrientDBConverter.VERSION_FIELD, 0));
-        Document newField = Documents.of("newField", "99");
+        var entity = entityManager.insert(getEntity());
+        entity.add(Element.of(OrientDBConverter.VERSION_FIELD, 0));
+        var newField = Elements.of("newField", "99");
         entity.add(newField);
         entityManager.update(entity);
 
-        Document id = entity.find(OrientDBConverter.RID_FIELD).get();
-        DocumentQuery query = select().from(entity.name())
+        var id = entity.find(OrientDBConverter.RID_FIELD).get();
+        var query = select().from(entity.name())
                 .where(id.name()).eq(id.get())
                 .build();
-        Optional<DocumentEntity> updated = entityManager.singleResult(query);
+        Optional<CommunicationEntity> updated = entityManager.singleResult(query);
 
         assertTrue(updated.isPresent());
         assertEquals(newField, updated.get().find(newField.name()).get());
@@ -119,33 +119,33 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldRemoveEntity() {
-        DocumentEntity documentEntity = entityManager.insert(getEntity());
+        CommunicationEntity documentEntity = entityManager.insert(getEntity());
 
-        Document id = documentEntity.find("name").get();
+        var id = documentEntity.find("name").get();
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        var query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        var deleteQuery = delete().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
         entityManager.delete(deleteQuery);
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
     @Test
     void shouldFindDocument() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Document id = entity.find("name").get();
+        CommunicationEntity entity = entityManager.insert(getEntity());
+        Element id = entity.find("name").get();
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        var query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
     }
 
     @Test
     void shouldSQL() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("name");
+        var entity = entityManager.insert(getEntity());
+        Optional<Element> id = entity.find("name");
 
-        List<DocumentEntity> entities = entityManager.sql("select * from person where name = ?", id.get().get())
+        List<CommunicationEntity> entities = entityManager.sql("select * from person where name = ?", id.get().get())
                 .collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -153,10 +153,10 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldSQL2() {
-        DocumentEntity entity = entityManager.insert(getEntity());
-        Optional<Document> id = entity.find("name");
+        var entity = entityManager.insert(getEntity());
+        Optional<Element> id = entity.find("name");
 
-        List<DocumentEntity> entities = entityManager.sql("select * from person where name = :name",
+        List<CommunicationEntity> entities = entityManager.sql("select * from person where name = :name",
                 singletonMap("name", id.get().get())).collect(Collectors.toList());
         assertFalse(entities.isEmpty());
         assertThat(entities, contains(entity));
@@ -165,43 +165,43 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldSaveSubDocument() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Document.of("mobile", "1231231")));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        var entity = getEntity();
+        entity.add(Element.of("phones", Element.of("mobile", "1231231")));
+        var entitySaved = entityManager.insert(entity);
+        var id = entitySaved.find("name").get();
+        var query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        var entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        var subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, contains(Document.of("mobile", "1231231")));
+        assertThat(documents, contains(Element.of("mobile", "1231231")));
     }
 
     @Test
     void shouldSaveSubDocument2() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("phones", Arrays.asList(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231"))));
-        DocumentEntity entitySaved = entityManager.insert(entity);
-        Document id = entitySaved.find("name").get();
-        DocumentQuery query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
-        DocumentEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
-        Document subDocument = entityFound.find("phones").get();
-        List<Document> documents = subDocument.get(new TypeReference<>() {
+        var entity = getEntity();
+        entity.add(Element.of("phones", Arrays.asList(Element.of("mobile", "1231231"), Element.of("mobile2", "1231231"))));
+        var entitySaved = entityManager.insert(entity);
+        Element id = entitySaved.find("name").get();
+        var query = select().from(COLLECTION_NAME).where(id.name()).eq(id.get()).build();
+        var entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        var subDocument = entityFound.find("phones").get();
+        List<Element> documents = subDocument.get(new TypeReference<>() {
         });
-        assertThat(documents, containsInAnyOrder(Document.of("mobile", "1231231"), Document.of("mobile2", "1231231")));
+        assertThat(documents, containsInAnyOrder(Element.of("mobile", "1231231"), Element.of("mobile2", "1231231")));
     }
 
     @Test
     void shouldQueryAnd() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("age", 24));
+        var entity = getEntity();
+        entity.add(Element.of("age", 24));
         entityManager.insert(entity);
 
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where("name").eq("Poliana")
+        var query = select().from(COLLECTION_NAME).where("name").eq("Poliana")
                 .and("age").gte(10).build();
 
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("name").eq("Poliana")
+        var deleteQuery = delete().from(COLLECTION_NAME).where("name").eq("Poliana")
                 .and("age").gte(10).build();
 
         assertFalse(entityManager.select(query).collect(Collectors.toList()).isEmpty());
@@ -212,15 +212,15 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldQueryOr() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("age", 24));
+        var entity = getEntity();
+        entity.add(Element.of("age", 24));
         entityManager.insert(entity);
 
 
-        DocumentQuery query = select().from(COLLECTION_NAME).where("name").eq("Poliana")
+        var query = select().from(COLLECTION_NAME).where("name").eq("Poliana")
                 .or("age").gte(10).build();
 
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("name").eq("Poliana")
+        var deleteQuery = delete().from(COLLECTION_NAME).where("name").eq("Poliana")
                 .or("age").gte(10).build();
 
         assertFalse(entityManager.select(query).collect(Collectors.toList()).isEmpty());
@@ -231,16 +231,16 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldQueryGreaterThan() {
-        DocumentEntity entity = getEntity();
+        var entity = getEntity();
         entity.add("age", 25);
         entityManager.insert(entity);
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("age").gt(25)
                 .build();
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
 
-        DocumentQuery query2 = select().from(COLLECTION_NAME)
+        var query2 = select().from(COLLECTION_NAME)
                 .where("age").gt(24)
                 .build();
         assertEquals(1, entityManager.select(query2).collect(Collectors.toList()).size());
@@ -248,16 +248,16 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldQueryLesserThan() {
-        DocumentEntity entity = getEntity();
+        var entity = getEntity();
         entity.add("age", 25);
         entityManager.insert(entity);
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("age").lt(25)
                 .build();
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
 
-        DocumentQuery query2 = select().from(COLLECTION_NAME)
+        var query2 = select().from(COLLECTION_NAME)
                 .where("age").lt(26)
                 .build();
         assertEquals(1, entityManager.select(query2).collect(Collectors.toList()).size());
@@ -265,21 +265,21 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldQueryLesserEqualsThan() {
-        DocumentEntity entity = getEntity();
+        var entity = getEntity();
         entity.add("age", 25);
         entityManager.insert(entity);
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("age").lte(24)
                 .build();
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
 
-        DocumentQuery query2 = select().from(COLLECTION_NAME)
+        var query2 = select().from(COLLECTION_NAME)
                 .where("age").lte(25)
                 .build();
         assertEquals(1, entityManager.select(query2).collect(Collectors.toList()).size());
 
-        DocumentQuery query3 = select().from(COLLECTION_NAME)
+        var query3 = select().from(COLLECTION_NAME)
                 .where("age").lte(26)
                 .build();
         assertEquals(1, entityManager.select(query3).collect(Collectors.toList()).size());
@@ -289,12 +289,12 @@ public class OrientDBDocumentManagerTest {
     void shouldQueryIn() {
         entityManager.insert(getEntities());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("city").in(asList("Salvador", "Assis"))
                 .build();
         assertEquals(2, entityManager.select(query).collect(Collectors.toList()).size());
 
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME)
+        var deleteQuery = delete().from(COLLECTION_NAME)
                 .where("city").in(asList("Salvador", "Assis", "Sao Paulo"))
                 .build();
         entityManager.delete(deleteQuery);
@@ -304,27 +304,27 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldQueryLike() {
-        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false)
+        List<CommunicationEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false)
                 .collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("city").like("Sa%")
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
         assertThat(entities, containsInAnyOrder(entitiesSaved.get(0), entitiesSaved.get(1)));
     }
 
     @Test
     void shouldQueryNot() {
-        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .where("city").not().eq("Assis")
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
         assertThat(entities, containsInAnyOrder(entitiesSaved.get(0), entitiesSaved.get(1)));
     }
@@ -333,11 +333,11 @@ public class OrientDBDocumentManagerTest {
     void shouldQueryStart() {
         entityManager.insert(getEntities());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .skip(1)
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
     }
 
@@ -345,63 +345,64 @@ public class OrientDBDocumentManagerTest {
     void shouldQueryLimit() {
         entityManager.insert(getEntities());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .limit(2)
                 .build();
 
-        List<DocumentEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
         assertEquals(2, entities.size());
     }
 
     @Test
     void shouldQueryOrderBy() {
-        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(getEntities()).spliterator(), false).collect(Collectors.toList());
 
-        DocumentQuery queryAsc = select().from(COLLECTION_NAME)
+        var queryAsc = select().from(COLLECTION_NAME)
                 .orderBy("name").asc()
                 .build();
 
-        List<DocumentEntity> entitiesAsc = entityManager.select(queryAsc).collect(Collectors.toList());
+        var entitiesAsc = entityManager.select(queryAsc).collect(Collectors.toList());
         assertThat(entitiesAsc, contains(entitiesSaved.get(2), entitiesSaved.get(1), entitiesSaved.get(0)));
 
-        DocumentQuery queryDesc = select().from(COLLECTION_NAME)
+        var queryDesc = select().from(COLLECTION_NAME)
                 .orderBy("name").desc()
                 .build();
 
-        List<DocumentEntity> entitiesDesc = entityManager.select(queryDesc).collect(Collectors.toList());
+        var entitiesDesc = entityManager.select(queryDesc).collect(Collectors.toList());
         assertThat(entitiesDesc, contains(entitiesSaved.get(0), entitiesSaved.get(1), entitiesSaved.get(2)));
     }
 
     @Test
     void shouldQueryMultiOrderBy() {
-        List<DocumentEntity> entities = new ArrayList<>(getEntities());
-        DocumentEntity bruno = DocumentEntity.of(COLLECTION_NAME);
-        bruno.add(Document.of("name", "Bruno"));
-        bruno.add(Document.of("city", "Sao Paulo"));
+        List<CommunicationEntity> entities = new ArrayList<>(getEntities());
+        CommunicationEntity bruno = CommunicationEntity.of(COLLECTION_NAME);
+        bruno.add(Element.of("name", "Bruno"));
+        bruno.add(Element.of("city", "Sao Paulo"));
         entities.add(bruno);
 
-        List<DocumentEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(entities).spliterator(), false).collect(Collectors.toList());
+        List<CommunicationEntity> entitiesSaved = StreamSupport.stream(entityManager.insert(entities).spliterator(), false)
+                .collect(Collectors.toList());
 
-        DocumentQuery query = select().from(COLLECTION_NAME)
+        var query = select().from(COLLECTION_NAME)
                 .orderBy("city").desc()
                 .orderBy("name").asc()
                 .build();
 
-        List<DocumentEntity> entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        var entitiesFound = entityManager.select(query).collect(Collectors.toList());
         assertThat(entitiesFound, contains(entitiesSaved.get(3), entitiesSaved.get(1), entitiesSaved.get(0), entitiesSaved.get(2)));
     }
 
     @Test
     void shouldLive() {
         AtomicBoolean condition = new AtomicBoolean(false);
-        List<DocumentEntity> entities = new ArrayList<>();
-        OrientDBLiveCreateCallback<DocumentEntity> callback = d -> {
+        List<CommunicationEntity> entities = new ArrayList<>();
+        OrientDBLiveCreateCallback<CommunicationEntity> callback = d -> {
             entities.add(d);
             condition.set(true);
         };
 
         entityManager.insert(getEntity());
-        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        var query = select().from(COLLECTION_NAME).build();
 
         entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onCreate(callback).build());
         entityManager.insert(getEntity());
@@ -414,17 +415,17 @@ public class OrientDBDocumentManagerTest {
     void shouldLiveUpdateCallback() {
 
         AtomicBoolean condition = new AtomicBoolean(false);
-        List<DocumentEntity> entities = new ArrayList<>();
-        OrientDBLiveUpdateCallback<DocumentEntity> callback = d -> {
+        List<CommunicationEntity> entities = new ArrayList<>();
+        OrientDBLiveUpdateCallback<CommunicationEntity> callback = d -> {
             entities.add(d);
             condition.set(true);
         };
 
-        DocumentEntity entity = entityManager.insert(getEntity());
-        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        CommunicationEntity entity = entityManager.insert(getEntity());
+        SelectQuery query = select().from(COLLECTION_NAME).build();
 
         entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onUpdate(callback).build());
-        Document newName = Document.of("name", "Lucas");
+        Element newName = Element.of("name", "Lucas");
         entity.add(newName);
         entityManager.update(entity);
         await().untilTrue(condition);
@@ -436,12 +437,12 @@ public class OrientDBDocumentManagerTest {
     @Disabled
     void shouldLiveDeleteCallback() {
         AtomicBoolean condition = new AtomicBoolean(false);
-        OrientDBLiveDeleteCallback<DocumentEntity> callback = d -> condition.set(true);
+        OrientDBLiveDeleteCallback<CommunicationEntity> callback = d -> condition.set(true);
         entityManager.insert(getEntity());
-        DocumentQuery query = select().from(COLLECTION_NAME).build();
+        SelectQuery query = select().from(COLLECTION_NAME).build();
 
         entityManager.live(query, OrientDBLiveCallbackBuilder.builder().onDelete(callback).build());
-        DocumentDeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
         entityManager.delete(deleteQuery);
         await().untilTrue(condition);
     }
@@ -449,8 +450,8 @@ public class OrientDBDocumentManagerTest {
     @Test
     void shouldLiveWithNativeQuery() {
         AtomicBoolean condition = new AtomicBoolean(false);
-        List<DocumentEntity> entities = new ArrayList<>();
-        OrientDBLiveCreateCallback<DocumentEntity> callback = d -> {
+        List<CommunicationEntity> entities = new ArrayList<>();
+        OrientDBLiveCreateCallback<CommunicationEntity> callback = d -> {
             entities.add(d);
             condition.set(true);
         };
@@ -465,21 +466,21 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldConvertFromListSubdocumentList() {
-        DocumentEntity entity = createSubdocumentList();
+        var entity = createSubdocumentList();
         entityManager.insert(entity);
 
     }
 
     @Test
     void shouldRetrieveListSubdocumentList() {
-        DocumentEntity entity = entityManager.insert(createSubdocumentList());
-        Document key = entity.find("_id").get();
-        DocumentQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
+        CommunicationEntity entity = entityManager.insert(createSubdocumentList());
+        Element key = entity.find("_id").get();
+        SelectQuery query = select().from("AppointmentBook").where(key.name()).eq(key.get()).build();
 
-        DocumentEntity documentEntity = entityManager.singleResult(query).get();
+        var documentEntity = entityManager.singleResult(query).get();
         assertNotNull(documentEntity);
 
-        List<List<Document>> contacts = (List<List<Document>>) documentEntity.find("contacts").get().get();
+        List<List<Element>> contacts = (List<List<Element>>) documentEntity.find("contacts").get().get();
 
         assertEquals(3, contacts.size());
         assertTrue(contacts.stream().allMatch(d -> d.size() == 3));
@@ -487,8 +488,8 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldCount() {
-        DocumentEntity entity = getEntity();
-        DocumentEntity documentEntity = entityManager.insert(entity);
+        CommunicationEntity entity = getEntity();
+        CommunicationEntity documentEntity = entityManager.insert(entity);
         assertNotNull(documentEntity);
         assertTrue(entityManager.count(COLLECTION_NAME) > 0);
 
@@ -496,66 +497,66 @@ public class OrientDBDocumentManagerTest {
 
     @Test
     void shouldInsertNull() {
-        DocumentEntity entity = getEntity();
-        entity.add(Document.of("name", null));
-        DocumentEntity documentEntity = entityManager.insert(entity);
-        Optional<Document> name = documentEntity.find("name");
+        CommunicationEntity entity = getEntity();
+        entity.add(Element.of("name", null));
+        CommunicationEntity documentEntity = entityManager.insert(entity);
+        Optional<Element> name = documentEntity.find("name");
         SoftAssertions.assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
-            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
-            soft.assertThat(name).get().extracting(Document::get).isNull();
+            soft.assertThat(name).get().extracting(Element::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Element::get).isNull();
         });
     }
 
     @Test
     void shouldUpdateNull(){
         var entity = entityManager.insert(getEntity());
-        entity.add(Document.of("name", null));
+        entity.add(Element.of("name", null));
         var documentEntity = entityManager.update(entity);
-        Optional<Document> name = documentEntity.find("name");
+        Optional<Element> name = documentEntity.find("name");
         SoftAssertions.assertSoftly(soft -> {
             soft.assertThat(name).isPresent();
-            soft.assertThat(name).get().extracting(Document::name).isEqualTo("name");
-            soft.assertThat(name).get().extracting(Document::get).isNull();
+            soft.assertThat(name).get().extracting(Element::name).isEqualTo("name");
+            soft.assertThat(name).get().extracting(Element::get).isNull();
         });
     }
 
-    private DocumentEntity createSubdocumentList() {
-        DocumentEntity entity = DocumentEntity.of("AppointmentBook");
-        entity.add(Document.of("_id", new Random().nextInt()));
-        List<List<Document>> documents = new ArrayList<>();
+    private CommunicationEntity createSubdocumentList() {
+        CommunicationEntity entity = CommunicationEntity.of("AppointmentBook");
+        entity.add(Element.of("_id", new Random().nextInt()));
+        List<List<Element>> documents = new ArrayList<>();
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.EMAIL),
-                Document.of("information", "ada@lovelace.com")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.EMAIL),
+                Element.of("information", "ada@lovelace.com")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.MOBILE),
-                Document.of("information", "11 1231231 123")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.MOBILE),
+                Element.of("information", "11 1231231 123")));
 
-        documents.add(asList(Document.of("name", "Ada"), Document.of("type", ContactType.PHONE),
-                Document.of("information", "phone")));
+        documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.PHONE),
+                Element.of("information", "phone")));
 
-        entity.add(Document.of("contacts", documents));
+        entity.add(Element.of("contacts", documents));
         return entity;
     }
 
-    private DocumentEntity getEntity() {
-        DocumentEntity entity = DocumentEntity.of(COLLECTION_NAME);
+    private CommunicationEntity getEntity() {
+        CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Poliana");
         map.put("city", "Salvador");
-        List<Document> documents = Documents.of(map);
+        List<Element> documents = Elements.of(map);
         documents.forEach(entity::add);
         return entity;
     }
 
-    private List<DocumentEntity> getEntities() {
-        DocumentEntity otavio = DocumentEntity.of(COLLECTION_NAME);
-        otavio.add(Document.of("name", "Otavio"));
-        otavio.add(Document.of("city", "Sao Paulo"));
+    private List<CommunicationEntity> getEntities() {
+        CommunicationEntity otavio = CommunicationEntity.of(COLLECTION_NAME);
+        otavio.add(Element.of("name", "Otavio"));
+        otavio.add(Element.of("city", "Sao Paulo"));
 
-        DocumentEntity lucas = DocumentEntity.of(COLLECTION_NAME);
-        lucas.add(Document.of("name", "Lucas"));
-        lucas.add(Document.of("city", "Assis"));
+        var lucas = CommunicationEntity.of(COLLECTION_NAME);
+        lucas.add(Element.of("name", "Lucas"));
+        lucas.add(Element.of("city", "Assis"));
 
         return asList(getEntity(), otavio, lucas);
     }
@@ -563,7 +564,7 @@ public class OrientDBDocumentManagerTest {
     @AfterEach
     void removePersons() {
         entityManager.insert(getEntity());
-        DocumentDeleteQuery query = delete().from(COLLECTION_NAME).build();
+        DeleteQuery query = delete().from(COLLECTION_NAME).build();
         entityManager.delete(query);
     }
 }
