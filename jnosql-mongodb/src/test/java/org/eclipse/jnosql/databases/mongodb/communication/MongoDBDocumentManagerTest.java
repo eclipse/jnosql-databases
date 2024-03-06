@@ -161,7 +161,7 @@ class MongoDBDocumentManagerTest {
         DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         var query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -178,7 +178,7 @@ class MongoDBDocumentManagerTest {
         DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         var query = select().from(COLLECTION_NAME)
                 .where("age").gte(23)
@@ -262,7 +262,7 @@ class MongoDBDocumentManagerTest {
         DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         SelectQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -290,7 +290,7 @@ class MongoDBDocumentManagerTest {
         DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
         Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
-        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).collect(Collectors.toList());
+        List<CommunicationEntity> entities = StreamSupport.stream(entitiesSaved.spliterator(), false).toList();
 
         SelectQuery query = select().from(COLLECTION_NAME)
                 .where("age").gt(22)
@@ -341,7 +341,7 @@ class MongoDBDocumentManagerTest {
                 .orderBy("age").desc()
                 .build();
 
-        entitiesFound = entityManager.select(query).collect(Collectors.toList());
+        entitiesFound = entityManager.select(query).toList();
         ages = entitiesFound.stream()
                 .map(e -> e.find("age").get().get(Integer.class))
                 .collect(Collectors.toList());
@@ -354,7 +354,7 @@ class MongoDBDocumentManagerTest {
     void shouldFindAll() {
         entityManager.insert(getEntity());
         SelectQuery query = select().from(COLLECTION_NAME).build();
-        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
     }
 
@@ -374,7 +374,7 @@ class MongoDBDocumentManagerTest {
     void shouldFindAllByFields() {
         entityManager.insert(getEntity());
         SelectQuery query = select("name").from(COLLECTION_NAME).build();
-        List<CommunicationEntity> entities = entityManager.select(query).collect(Collectors.toList());
+        List<CommunicationEntity> entities = entityManager.select(query).toList();
         assertFalse(entities.isEmpty());
         final CommunicationEntity entity = entities.get(0);
         assertEquals(2, entity.size());
@@ -394,7 +394,7 @@ class MongoDBDocumentManagerTest {
                 .where("_id").eq(id.get())
                 .build();
 
-        CommunicationEntity entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        CommunicationEntity entityFound = entityManager.select(query).toList().get(0);
         Element subDocument = entityFound.find("phones").get();
         List<Element> documents = subDocument.get(new TypeReference<>() {
         });
@@ -411,7 +411,7 @@ class MongoDBDocumentManagerTest {
         SelectQuery query = select().from(COLLECTION_NAME)
                 .where(id.name()).eq(id.get())
                 .build();
-        var entityFound = entityManager.select(query).collect(Collectors.toList()).get(0);
+        var entityFound = entityManager.select(query).toList().get(0);
         var subDocument = entityFound.find("phones").get();
         List<Element> documents = subDocument.get(new TypeReference<>() {
         });
@@ -455,7 +455,7 @@ class MongoDBDocumentManagerTest {
         entityManager.insert(entity);
 
         List<CommunicationEntity> entities = entityManager.select(select().from("download")
-                .where("_id").eq(id).build()).collect(Collectors.toList());
+                .where("_id").eq(id).build()).toList();
 
         assertEquals(1, entities.size());
         CommunicationEntity documentEntity = entities.get(0);
