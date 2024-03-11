@@ -16,7 +16,7 @@ package org.eclipse.jnosql.databases.hazelcast.integration;
 
 
 import jakarta.inject.Inject;
-import jakarta.nosql.keyvalue.KeyValueTemplate;
+import org.eclipse.jnosql.mapping.keyvalue.KeyValueTemplate;
 import org.eclipse.jnosql.databases.hazelcast.mapping.HazelcastTemplate;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;

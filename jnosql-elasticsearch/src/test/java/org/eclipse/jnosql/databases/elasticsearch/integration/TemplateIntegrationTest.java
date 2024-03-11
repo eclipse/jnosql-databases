@@ -20,6 +20,7 @@ import org.awaitility.Awaitility;
 import org.eclipse.jnosql.databases.elasticsearch.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.elasticsearch.communication.ElasticsearchConfigurations;
 import jakarta.nosql.Convert;
+import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;

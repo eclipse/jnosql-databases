@@ -18,7 +18,7 @@ package org.eclipse.jnosql.databases.solr.integration;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.solr.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfigurations;
-import jakarta.nosql.Convert;
+import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;

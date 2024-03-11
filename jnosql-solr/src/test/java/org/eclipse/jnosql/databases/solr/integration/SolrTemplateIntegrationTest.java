@@ -20,7 +20,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.solr.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfigurations;
 import org.eclipse.jnosql.databases.solr.mapping.SolrTemplate;
-import jakarta.nosql.Convert;
+import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;

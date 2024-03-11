@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.hazelcast.mapping;
 
 import com.hazelcast.query.Predicate;
-import jakarta.nosql.keyvalue.KeyValueTemplate;
+import org.eclipse.jnosql.mapping.keyvalue.KeyValueTemplate;
 
 import java.util.Collection;
 import java.util.Map;
