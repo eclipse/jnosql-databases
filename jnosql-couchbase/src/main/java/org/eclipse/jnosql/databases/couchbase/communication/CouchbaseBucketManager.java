@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.eclipse.jnosql.communication.driver.ValueUtil.convert;
+import static org.eclipse.jnosql.communication.ValueUtil.convert;
 
 /**
  * The couchbase implementation to {@link BucketManager}

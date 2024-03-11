@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.solr.communication;
 
 
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
 import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
 import org.eclipse.jnosql.communication.semistructured.Element;
