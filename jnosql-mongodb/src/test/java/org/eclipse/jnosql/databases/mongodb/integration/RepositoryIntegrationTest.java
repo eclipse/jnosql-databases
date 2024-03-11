@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.mongodb.integration;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
 import org.eclipse.jnosql.databases.mongodb.mapping.MongoDBTemplate;
-import org.eclipse.jnosql.mapping.Convert;
+import jakarta.nosql.Convert;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.DatabaseType;
@@ -40,7 +40,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabase.INSTANCE;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, EntityConverter.class, DocumentTemplate.class, MongoDBTemplate.class})
+@AddPackages(value = {Database.class, EntityConverter.class, DocumentTemplate.class, MongoDBTemplate.class})
 @AddPackages(Book.class)
 @AddPackages(Reflections.class)
 @AddPackages(Converters.class)

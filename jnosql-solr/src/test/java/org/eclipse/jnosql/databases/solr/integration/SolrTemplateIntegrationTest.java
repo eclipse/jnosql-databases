@@ -20,7 +20,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.solr.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentConfigurations;
 import org.eclipse.jnosql.databases.solr.mapping.SolrTemplate;
-import org.eclipse.jnosql.mapping.Convert;
+import jakarta.nosql.Convert;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
@@ -42,7 +42,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, EntityConverter.class, DocumentTemplate.class})
+@AddPackages(value = {Database.class, EntityConverter.class, DocumentTemplate.class})
 @AddPackages(Book.class)
 @AddPackages(SolrTemplate.class)
 @AddPackages(Reflections.class)

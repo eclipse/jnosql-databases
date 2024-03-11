@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.arangodb.integration;
 
 import jakarta.nosql.Column;
-import org.eclipse.jnosql.mapping.Embeddable;
+import jakarta.nosql.Embeddable;
 
 import java.util.List;
 

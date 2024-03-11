@@ -18,7 +18,7 @@ package org.eclipse.jnosql.databases.orientdb.integration;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.orientdb.communication.DocumentDatabase;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBDocumentConfigurations;
-import org.eclipse.jnosql.mapping.Convert;
+import jakarta.nosql.Convert;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -40,7 +40,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, EntityConverter.class, DocumentTemplate.class})
+@AddPackages(value = {Database.class, EntityConverter.class, DocumentTemplate.class})
 @AddPackages(Book.class)
 @AddExtensions({EntityMetadataExtension.class,
         DocumentExtension.class})
