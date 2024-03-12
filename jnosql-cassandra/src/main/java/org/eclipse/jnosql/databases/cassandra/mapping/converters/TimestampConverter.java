@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.cassandra.mapping.converters;
 
 
-import org.eclipse.jnosql.mapping.AttributeConverter;
+import jakarta.nosql.AttributeConverter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

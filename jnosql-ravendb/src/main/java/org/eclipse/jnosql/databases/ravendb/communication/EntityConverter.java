@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.ravendb.communication;
 
 import net.ravendb.client.Constants;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.communication.semistructured.Element;
 

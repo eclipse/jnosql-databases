@@ -20,7 +20,7 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import jakarta.data.Direction;
 import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
 import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.communication.semistructured.SelectQuery;

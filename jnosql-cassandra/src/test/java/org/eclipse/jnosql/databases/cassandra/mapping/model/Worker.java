@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.cassandra.mapping.model;
 
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
-import org.eclipse.jnosql.mapping.Convert;
+import jakarta.nosql.Convert;
 
 
 @Entity

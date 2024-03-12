@@ -19,7 +19,8 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
+
+import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.communication.semistructured.Element;
 

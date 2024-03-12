@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.oracle.mapping;
 
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.mapping.Convert;
+import jakarta.nosql.Convert;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.keyvalue.spi.KeyValueExtension;

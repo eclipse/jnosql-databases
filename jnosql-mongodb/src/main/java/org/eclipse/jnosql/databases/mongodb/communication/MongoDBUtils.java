@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.mongodb.communication;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.communication.semistructured.Element;
 

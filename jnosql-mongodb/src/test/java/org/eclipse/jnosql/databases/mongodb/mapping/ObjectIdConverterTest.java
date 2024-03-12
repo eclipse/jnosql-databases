@@ -15,7 +15,7 @@
 package org.eclipse.jnosql.databases.mongodb.mapping;
 
 import org.bson.types.ObjectId;
-import org.eclipse.jnosql.mapping.AttributeConverter;
+import jakarta.nosql.AttributeConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

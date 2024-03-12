@@ -19,7 +19,7 @@ import jakarta.inject.Inject;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBConfigurations;
 import org.eclipse.jnosql.databases.arangodb.mapping.ArangoDBTemplate;
-import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
@@ -42,7 +42,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.databases.arangodb.communication.DocumentDatabase.INSTANCE;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, EntityConverter.class, DocumentTemplate.class})
+@AddPackages(value = {Database.class, EntityConverter.class, DocumentTemplate.class})
 @AddPackages(Book.class)
 @AddPackages(ArangoDBTemplate.class)
 @AddExtensions({EntityMetadataExtension.class,

@@ -20,7 +20,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.driver.ConfigurationReader;
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraConfigurations;
 import org.eclipse.jnosql.databases.cassandra.communication.ColumnDatabase;
-import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.column.ColumnTemplate;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.column.spi.ColumnExtension;
@@ -44,7 +44,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, EntityConverter.class, ColumnTemplate.class})
+@AddPackages(value = {Database.class, EntityConverter.class, ColumnTemplate.class})
 @AddPackages(Book.class)
 @AddExtensions({EntityMetadataExtension.class,
         ColumnExtension.class})

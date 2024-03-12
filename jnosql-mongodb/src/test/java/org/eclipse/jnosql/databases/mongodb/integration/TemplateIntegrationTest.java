@@ -19,7 +19,7 @@ import jakarta.inject.Inject;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
 import org.eclipse.jnosql.databases.mongodb.mapping.MongoDBTemplate;
-import org.eclipse.jnosql.mapping.Convert;
+import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
@@ -44,7 +44,7 @@ import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabas
 import static org.eclipse.jnosql.databases.mongodb.integration.StepTransitionReason.REPEAT;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, EntityConverter.class, DocumentTemplate.class, MongoDBTemplate.class})
+@AddPackages(value = {Database.class, EntityConverter.class, DocumentTemplate.class, MongoDBTemplate.class})
 @AddPackages(Book.class)
 @AddPackages(Reflections.class)
 @AddPackages(Converters.class)

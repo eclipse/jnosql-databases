@@ -16,9 +16,9 @@ package org.eclipse.jnosql.databases.cassandra.mapping.model;
 
 
 import jakarta.nosql.Column;
+import jakarta.nosql.Convert;
 import jakarta.nosql.Entity;
 import org.eclipse.jnosql.databases.cassandra.mapping.converters.TimestampConverter;
-import org.eclipse.jnosql.mapping.Convert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

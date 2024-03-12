@@ -39,7 +39,7 @@ import com.datastax.oss.protocol.internal.ProtocolConstants;
 import jakarta.data.Sort;
 import org.eclipse.jnosql.communication.CommunicationException;
 import org.eclipse.jnosql.communication.Value;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.communication.semistructured.SelectQuery;
