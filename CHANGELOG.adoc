@@ -22,6 +22,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 - Remove the `UDT`  annotation and use `Column` annotation instead.
 
+=== Fixed
+
+- Allow multiple entities at Oracle NoSQL appending the entity name with the id instead of only the id
+
 == [1.1.0] - 2023-02-05
 
 === Changed

@@ -96,6 +96,10 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     public CommunicationEntity insert(CommunicationEntity entity, Duration ttl) {
        Objects.requireNonNull(entity, "entity is required");
         Objects.requireNonNull(ttl, "ttl is required");
+        if(ttl.toHours() <= 0){
+            throw new UnsupportedOperationException("Oracle NoSQL Database has support to TTL over one hour. " +
+                    "The current ttl: " + ttl);
+        }
         put(entity, TimeToLive.ofHours(ttl.toHours()));
         return entity;
     }
@@ -133,7 +137,7 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
         var oracleQuery = selectBuilder.get();
         if (oracleQuery.hasIds()) {
             for (String id : oracleQuery.ids()) {
-                var delRequest = new DeleteRequest().setKey(new MapValue().put(ORACLE_ID, id))
+                var delRequest = new DeleteRequest().setKey(new MapValue().put(ORACLE_ID, generateId(id, query.name())))
                         .setTableName(table);
                 serviceHandle.delete(delRequest);
             }
@@ -165,7 +169,7 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
         List<CommunicationEntity> entities = new ArrayList<>();
 
         if (oracleQuery.hasIds()) {
-            entities.addAll(getIds(oracleQuery));
+            entities.addAll(getIds(oracleQuery, query.name()));
         }
         if (!oracleQuery.hasOnlyIds()) {
             LOGGER.finest("Executing Oracle Query: " + oracleQuery.query());
@@ -199,11 +203,11 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
         return !entry.getKey().equals(ENTITY) && !entry.getKey().equals(JSON_FIELD) && !entry.getKey().equals(ORACLE_ID);
     }
 
-    private List<CommunicationEntity> getIds(OracleQuery oracleQuery) {
+    private List<CommunicationEntity> getIds(OracleQuery oracleQuery, String table) {
         List<CommunicationEntity> entities = new ArrayList<>();
         for (String id : oracleQuery.ids()) {
             GetRequest getRequest = new GetRequest();
-            getRequest.setKey(new MapValue().put(ID_FIELD, id));
+            getRequest.setKey(new MapValue().put(ID_FIELD, generateId(id, table)));
             getRequest.setTableName(name());
             GetResult getResult = serviceHandle.get(getRequest);
             if (getResult != null && getResult.getValue() != null) {
@@ -284,12 +288,14 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
 
     private void put(CommunicationEntity entity, TimeToLive ttl) {
         Map<String, Object> entityMap = new HashMap<>(entity.toMap());
-        entityMap.put(ENTITY, entity.name());
-        String id = entity.find(ID).map(Element::get)
-                .map(Object::toString)
-                .orElseGet(() -> UUID.randomUUID().toString());
+        String name = entity.name();
+        entityMap.put(ENTITY, name);
 
-        MapValue mapValue = new MapValue().put(ORACLE_ID, id).put(ENTITY, entity.name());
+        String id = generateId(entity.find(ID).map(Element::get)
+                .map(Object::toString)
+                .orElseGet(() -> UUID.randomUUID().toString()), name);
+
+        MapValue mapValue = new MapValue().put(ORACLE_ID, id).put(ENTITY, name);
         MapValue contentVal = mapValue.putFromJson("content", jsonB.toJson(entityMap),
                 OPTIONS);
         PutRequest putRequest = new PutRequest()
@@ -298,6 +304,10 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
                 .setTableName(name());
 
         serviceHandle.put(putRequest);
+    }
+
+    private String generateId(String id, String table) {
+        return table + ":" + id;
     }
 
 }
