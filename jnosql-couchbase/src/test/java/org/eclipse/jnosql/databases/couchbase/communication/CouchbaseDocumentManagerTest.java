@@ -120,14 +120,15 @@ public class CouchbaseDocumentManagerTest {
     }
 
     @Test
-   void shouldRemoveEntityByName() {
+   void shouldRemoveEntityByName() throws InterruptedException {
         CommunicationEntity documentEntity = entityManager.insert(getEntity());
-
+        Thread.sleep(1_000L);
         Element name = documentEntity.find("name").get();
         SelectQuery query = select().from(COLLECTION_PERSON_NAME).where(name.name()).eq(name.get()).build();
         DeleteQuery deleteQuery = delete().from(COLLECTION_PERSON_NAME)
                 .where(name.name()).eq(name.get()).build();
         entityManager.delete(deleteQuery);
+        Thread.sleep(1_000L);
         assertTrue(entityManager.select(query).collect(Collectors.toList()).isEmpty());
     }
 
