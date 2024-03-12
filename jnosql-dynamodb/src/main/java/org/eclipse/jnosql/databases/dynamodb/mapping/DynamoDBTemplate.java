@@ -15,7 +15,6 @@
 
 package org.eclipse.jnosql.databases.dynamodb.mapping;
 
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 
 import java.util.stream.Stream;
@@ -51,7 +50,7 @@ public interface DynamoDBTemplate extends DocumentTemplate {
      * <p>Example query: {@code SELECT * FROM users WHERE status = ?}</p>
      *
      * @param query the PartiQL query
-     * @return a {@link Stream} of {@link DocumentEntity} representing the query result
+     * @return a {@link Stream} of results representing the query result
      * @throws NullPointerException  when the query is null
      */
     <T> Stream<T> partiQL(String query, Object... params);

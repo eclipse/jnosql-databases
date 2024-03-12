@@ -39,7 +39,6 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.Select;
-import software.amazon.awssdk.services.dynamodb.model.StreamSpecification;
 import software.amazon.awssdk.services.dynamodb.model.TimeToLiveStatus;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
@@ -147,17 +146,12 @@ public class DefaultDynamoDBDatabaseManager implements DynamoDBDatabaseManager {
                     .keySchema(defaultKeySchemaFor())
                     .attributeDefinitions(defaultAttributeDefinitionsFor())
                     .provisionedThroughput(defaultProvisionedThroughputFor())
-                    .streamSpecification(defaultStreamSpecificationFor())
                     .build());
 
             var tableRequest = DescribeTableRequest.builder().tableName(tableName).build();
             var waiterResponse = waiter.waitUntilTableExists(tableRequest);
             return waiterResponse.matched().response().orElseThrow();
         }
-    }
-
-    private StreamSpecification defaultStreamSpecificationFor() {
-        return null;
     }
 
     private ProvisionedThroughput defaultProvisionedThroughputFor() {

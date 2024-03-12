@@ -18,8 +18,6 @@ package org.eclipse.jnosql.databases.dynamodb.communication;
 import jakarta.json.Json;
 import jakarta.json.bind.Jsonb;
 import net.datafaker.Faker;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
 import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.communication.semistructured.Element;
