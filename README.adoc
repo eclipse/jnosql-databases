@@ -265,9 +265,9 @@ interface PersonRepository extends CassandraRepository<Person, String> {
 ----
 
 
-=== @UDT
+=== UDT at Column annotation
 
-The ```@UDT``` annotation is a mapping annotation that allows defining a field to be stored as a user-defined type in Cassandra.
+The ```@Column``` contains a UDT attribute for mapping annotation that allows defining a field to be stored as a user-defined type in Cassandra.
 
 [source,java]
 ----
@@ -280,8 +280,7 @@ public class Person {
     @Column
     private Integer age;
 
-    @UDT("address")
-    @Column
+    @Column(udt="address")
     private Address home;
  }
 ----
