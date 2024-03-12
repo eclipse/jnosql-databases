@@ -58,7 +58,7 @@ class CassandraColumnEntityConverter extends EntityConverter {
     protected <T> Consumer<String> feedObject(T instance, List<Element> columns, Map<String, FieldMetadata> fieldsGroupByName) {
         return k -> {
             FieldMetadata field = fieldsGroupByName.get(k);
-            if (field.value(UDT.class).isPresent()) {
+            if (field.udt().isPresent()) {
                 Optional<Element> column = columns.stream().filter(c -> c.name().equals(k)).findFirst();
                 setUDTField(instance, column, field);
             } else {
@@ -93,7 +93,7 @@ class CassandraColumnEntityConverter extends EntityConverter {
     protected AttributeFieldValue to(FieldMetadata field, Object entityInstance) {
 
         Object value = field.read(entityInstance);
-        Optional<String> annotation = field.value(UDT.class);
+        Optional<String> annotation = field.udt();
         return annotation.<AttributeFieldValue>map(v -> new CassandraUDTType(v, value, field))
                 .orElseGet( () -> super.to(field, entityInstance));
     }

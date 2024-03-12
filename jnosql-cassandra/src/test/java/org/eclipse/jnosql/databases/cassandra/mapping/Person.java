@@ -30,8 +30,7 @@ public class Person {
     @Column
     private Integer age;
 
-    @UDT("address")
-    @Column
+    @Column(udt = "address")
     private Address home;
 
     public String getName() {

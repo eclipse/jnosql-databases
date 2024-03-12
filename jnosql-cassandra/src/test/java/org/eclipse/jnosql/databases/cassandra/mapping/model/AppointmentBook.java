@@ -17,7 +17,6 @@ package org.eclipse.jnosql.databases.cassandra.mapping.model;
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
-import org.eclipse.jnosql.databases.cassandra.mapping.UDT;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,8 +28,7 @@ public class AppointmentBook {
     private String user;
 
 
-    @Column
-    @UDT("Contact")
+    @Column(udt = "Contact")
     private List<Contact> contacts;
 
 
@@ -69,9 +67,9 @@ public class AppointmentBook {
 
     @Override
     public String toString() {
-        String sb = "AppointmentBook{" + "user='" + user + '\'' +
+        return "AppointmentBook{" +
+                "user='" + user + '\'' +
                 ", contacts=" + contacts +
                 '}';
-        return sb;
     }
 }
