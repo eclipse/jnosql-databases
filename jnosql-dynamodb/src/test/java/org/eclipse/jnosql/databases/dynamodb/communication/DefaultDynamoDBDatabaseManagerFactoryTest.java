@@ -15,9 +15,8 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -28,25 +27,25 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class DefaultDynamoDBDocumentManagerFactoryTest {
+class DefaultDynamoDBDatabaseManagerFactoryTest {
 
-    private DocumentManagerFactory documentManagerFactory;
+    private DatabaseManagerFactory databaseManagerFactory;
 
     @BeforeEach
     void setup() {
-        this.documentManagerFactory = DynamoDBTestUtils.CONFIG.getDocumentManagerFactory();
+        this.databaseManagerFactory = DynamoDBTestUtils.CONFIG.getDocumentManagerFactory();
         assertSoftly(softly -> {
-            softly.assertThat(documentManagerFactory).isNotNull();
-            softly.assertThat(documentManagerFactory).isInstanceOf(DynamoDBDocumentManagerFactory.class);
+            softly.assertThat(databaseManagerFactory).isNotNull();
+            softly.assertThat(databaseManagerFactory).isInstanceOf(DynamoDBDatabaseManagerFactory.class);
         });
     }
     @AfterEach
     void tearDown() {
-        assertDoesNotThrow(documentManagerFactory::close, "DocumentManagerFactory.close() should be not throw exceptions");
+        assertDoesNotThrow(databaseManagerFactory::close, "DocumentManagerFactory.close() should be not throw exceptions");
     }
     @Test
     void shouldCreateDocumentManager() {
-        var documentManager = documentManagerFactory.apply("anydatabase");
+        var documentManager = databaseManagerFactory.apply("anydatabase");
         assertSoftly(softly -> {
             softly.assertThat(documentManager).isNotNull();
         });

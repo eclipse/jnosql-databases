@@ -20,11 +20,11 @@ import jakarta.inject.Inject;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.query.AbstractDocumentRepositoryProxy;
-import org.eclipse.jnosql.mapping.document.query.DocumentRepositoryProxy;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
+import org.eclipse.jnosql.mapping.semistructured.SemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemistructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.query.SemistructuredRepositoryProxy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
-class DynamoDBRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K> {
+class DynamoDBRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProxy<T, K> {
 
     private final DynamoDBTemplate template;
 
@@ -63,7 +63,7 @@ class DynamoDBRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K
         this.typeClass = (Class<T>) ((ParameterizedType) type.getGenericInterfaces()[0]).getActualTypeArguments()[0];
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
-        this.repository = DocumentRepositoryProxy.DocumentRepository.of(template, entityMetadata);
+        this.repository = SemistructuredRepositoryProxy.SemistructuredRepository.of(template, entityMetadata);
     }
 
     /**
@@ -143,7 +143,7 @@ class DynamoDBRepositoryProxy<T, K> extends AbstractDocumentRepositoryProxy<T, K
     }
 
     @Override
-    protected JNoSQLDocumentTemplate template() {
+    protected SemistructuredTemplate template() {
         return template;
     }
 }

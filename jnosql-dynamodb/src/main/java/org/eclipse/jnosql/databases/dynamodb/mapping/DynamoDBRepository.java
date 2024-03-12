@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.dynamodb.mapping;
 
-import jakarta.data.repository.BasicRepository;
+import org.eclipse.jnosql.mapping.NoSQLRepository;
 
-public interface DynamoDBRepository<T, K> extends BasicRepository<T, K> {
+public interface DynamoDBRepository<T, K> extends NoSQLRepository<T, K> {
 }

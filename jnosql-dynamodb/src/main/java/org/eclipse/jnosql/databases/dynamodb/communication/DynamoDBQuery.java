@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.Map;
@@ -29,7 +29,7 @@ public record DynamoDBQuery(String table,
 
     public static Supplier<DynamoDBQuery> builderOf(String table,
                                                     String partitionKey,
-                                                    DocumentQuery documentQuery) {
-        return new DynamoDBQuerySelectBuilder(table, partitionKey, documentQuery);
+                                                    SelectQuery query) {
+        return new DynamoDBQuerySelectBuilder(table, partitionKey, query);
     }
 }

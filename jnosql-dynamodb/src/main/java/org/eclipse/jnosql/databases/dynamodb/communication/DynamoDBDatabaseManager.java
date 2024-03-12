@@ -15,8 +15,8 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import java.util.stream.Stream;
@@ -24,29 +24,18 @@ import java.util.stream.Stream;
 /**
  * A document manager interface for DynamoDB database operations.
  */
-public interface DynamoDBDocumentManager extends DocumentManager {
-
-    /**
-     * DynamoDB supports a limited subset of
-     * <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ql-reference.html">PartiQL</a>.
-     * This method executes a PartiQL query and returns a stream of DocumentEntity objects.
-     *
-     * @param query the PartiQL query
-     * @return a {@link Stream} of {@link DocumentEntity} representing the query result
-     * @throws NullPointerException  when the query is null
-     */
-    Stream<DocumentEntity> partiQL(String query);
+public interface DynamoDBDatabaseManager extends DatabaseManager {
 
     /**
      * DynamoDB supports a limited subset of <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ql-reference.html">PartiQL</a>.
-     * This method executes a PartiQL query with parameters and returns a stream of DocumentEntity objects.
+     * This method executes a PartiQL query with parameters and returns a stream of CommunicationEntity objects.
      * <p>Example query: {@code SELECT * FROM users WHERE status = ?}</p>
      *
      * @param query the PartiQL query
-     * @return a {@link Stream} of {@link DocumentEntity} representing the query result
+     * @return a {@link Stream} of {@link CommunicationEntity} representing the query result
      * @throws NullPointerException  when the query is null
      */
-    Stream<DocumentEntity> partiQL(String query, Object... params);
+    Stream<CommunicationEntity> partiQL(String query, Object... params);
 
 
     /**

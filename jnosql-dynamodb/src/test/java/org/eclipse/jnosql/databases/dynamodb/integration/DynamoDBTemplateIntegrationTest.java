@@ -21,12 +21,11 @@ import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConfiguration
 import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBTestUtils;
 import org.eclipse.jnosql.databases.dynamodb.mapping.DynamoDBExtension;
 import org.eclipse.jnosql.databases.dynamodb.mapping.DynamoDBTemplate;
-import org.eclipse.jnosql.mapping.Convert;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -36,13 +35,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnableAutoWeld
-@AddPackages(value = {Convert.class, DocumentEntityConverter.class})
+@AddPackages(value = {Converters.class, EntityConverter.class})
 @AddPackages(Book.class)
 @AddPackages(DynamoDBTemplate.class)
 @AddExtensions({EntityMetadataExtension.class, DocumentExtension.class, DynamoDBExtension.class})

@@ -16,7 +16,6 @@ package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
-import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.jetbrains.annotations.NotNull;
@@ -46,21 +45,14 @@ public enum DynamoDBTestUtils {
         return configuration.apply(settings);
     }
 
-    DynamoDBDocumentManagerFactory getDocumentManagerFactory() {
+    DynamoDBDatabaseManagerFactory getDocumentManagerFactory() {
         Settings settings = getSettings();
         return getDocumentManagerFactory(settings);
     }
 
-    DynamoDBDocumentManagerFactory getDocumentManagerFactory(Settings settings) {
+    DynamoDBDatabaseManagerFactory getDocumentManagerFactory(Settings settings) {
         var configuration = new DynamoDBDocumentConfiguration();
         return configuration.apply(settings);
-    }
-
-    DocumentManager getDocumentManager(Settings settings) {
-        var database = settings
-                .get(MappingConfigurations.DOCUMENT_DATABASE, String.class)
-                .orElseThrow();
-        return getDocumentManagerFactory(settings).apply(database);
     }
 
     public Settings getSettings() {

@@ -21,6 +21,8 @@ import net.datafaker.Faker;
 import org.eclipse.jnosql.communication.document.Document;
 import org.eclipse.jnosql.communication.document.DocumentEntity;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -46,20 +48,20 @@ class DynamoDBConverterTest {
     void shouldConvertToItemRequest() {
 
         assertSoftly(softly -> {
-            var entity = DocumentEntity.of("entityA",
+            var entity = CommunicationEntity.of("entityA",
                     List.of(
-                            Document.of("_id", UUID.randomUUID().toString()),
-                            Document.of("city", faker.address().city()),
-                            Document.of("total", 10.0),
-                            Document.of("address", List.of(
-                                    Document.of("zipcode", faker.address().zipCode()),
-                                    Document.of("city", faker.address().cityName()))),
-                            Document.of("phones", List.of(faker.name().firstName(), faker.name().firstName(), faker.name().firstName()))
+                            Element.of("_id", UUID.randomUUID().toString()),
+                            Element.of("city", faker.address().city()),
+                            Element.of("total", 10.0),
+                            Element.of("address", List.of(
+                                    Element.of("zipcode", faker.address().zipCode()),
+                                    Element.of("city", faker.address().cityName()))),
+                            Element.of("phones", List.of(faker.name().firstName(), faker.name().firstName(), faker.name().firstName()))
                     ));
 
             var item = DynamoDBConverter.toItem(entityNameResolver, entity);
 
-            var entityFromItem = DynamoDBConverter.toDocumentEntity(entityNameResolver, item);
+            var entityFromItem = DynamoDBConverter.toCommunicationEntity(entityNameResolver, item);
 
             var expected = Json.createReader(new StringReader(JSONB.toJson(DynamoDBConverter.getMap(entityNameResolver, entity)))).readObject();
 

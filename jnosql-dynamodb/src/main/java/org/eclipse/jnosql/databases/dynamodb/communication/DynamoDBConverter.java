@@ -15,9 +15,9 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.driver.ValueUtil;
+import org.eclipse.jnosql.communication.ValueUtil;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -62,7 +62,7 @@ class DynamoDBConverter {
                 case L:
                     return attributeValue.l().stream().map(DynamoDBConverter::convertValue).toList();
                 case M:
-                    return attributeValue.m().entrySet().stream().map(e -> Document.of(e.getKey(), convertValue(e.getValue()))).toList();
+                    return attributeValue.m().entrySet().stream().map(e -> Element.of(e.getKey(), convertValue(e.getValue()))).toList();
                 case NUL:
                     return null;
                 case BOOL:
@@ -75,10 +75,10 @@ class DynamoDBConverter {
         return value;
     }
 
-    static Map<String, Object> getMap(UnaryOperator<String> entityNameResolver, DocumentEntity entity) {
+    static Map<String, Object> getMap(UnaryOperator<String> entityNameResolver, CommunicationEntity entity) {
         var nameResolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
         Map<String, Object> jsonObject = new HashMap<>();
-        entity.documents().forEach(feedJSON(jsonObject));
+        entity.elements().forEach(feedJSON(jsonObject));
         jsonObject.put(entityAttributeName(nameResolver), entity.name());
         return jsonObject;
     }
@@ -88,11 +88,11 @@ class DynamoDBConverter {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Consumer<Document> feedJSON(Map<String, Object> jsonObject) {
+    private static Consumer<Element> feedJSON(Map<String, Object> jsonObject) {
         return d -> {
             Object value = ValueUtil.convert(d.value());
-            if (value instanceof Document subDocument) {
-                jsonObject.put(d.name(), singletonMap(subDocument.name(), subDocument.get()));
+            if (value instanceof Element subElement) {
+                jsonObject.put(d.name(), singletonMap(subElement.name(), subElement.get()));
             } else if (isSudDocument(value)) {
                 Map<String, Object> subDocument = getMap(value);
                 jsonObject.put(d.name(), subDocument);
@@ -114,7 +114,7 @@ class DynamoDBConverter {
 
     private static boolean isSudDocument(Object value) {
         return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(org.eclipse.jnosql.communication.document.Document.class::isInstance);
+                allMatch(Element.class::isInstance);
     }
 
     private static boolean isSudDocumentList(Object value) {
@@ -122,9 +122,9 @@ class DynamoDBConverter {
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
-    public static Map<String, AttributeValue> toItem(UnaryOperator<String> entityNameResolver, DocumentEntity documentEntity) {
+    public static Map<String, AttributeValue> toItem(UnaryOperator<String> entityNameResolver, CommunicationEntity entity) {
         UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
-        Map<String, Object> documentAttributes = getMap(resolver, documentEntity);
+        Map<String, Object> documentAttributes = getMap(resolver, entity);
         return toItem(documentAttributes);
     }
 
@@ -161,15 +161,15 @@ class DynamoDBConverter {
         if (value instanceof InputStream input) {
             return AttributeValue.builder().b(SdkBytes.fromInputStream(input)).build();
         }
-        if (value instanceof Document document) {
-            return toAttributeValue(getMap(document));
+        if (value instanceof Element element) {
+            return toAttributeValue(getMap(element));
         }
         return AttributeValue.builder().s(String.valueOf(value)).build();
     }
 
-    public static Map<String, AttributeValueUpdate> toItemUpdate(UnaryOperator<String> entityNameResolver, DocumentEntity documentEntity) {
+    public static Map<String, AttributeValueUpdate> toItemUpdate(UnaryOperator<String> entityNameResolver, CommunicationEntity entity) {
         UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
-        Map<String, Object> documentAttributes = getMap(resolver, documentEntity);
+        Map<String, Object> documentAttributes = getMap(resolver, entity);
         return toItemUpdate(documentAttributes);
     }
 
@@ -189,7 +189,7 @@ class DynamoDBConverter {
     }
 
 
-    public static DocumentEntity toDocumentEntity(UnaryOperator<String> entityNameResolver, Map<String, AttributeValue> item) {
+    public static CommunicationEntity toCommunicationEntity(UnaryOperator<String> entityNameResolver, Map<String, AttributeValue> item) {
         if (item == null) {
             return null;
         }
@@ -199,11 +199,11 @@ class DynamoDBConverter {
         UnaryOperator<String> resolver = Optional.ofNullable(entityNameResolver).orElse(UnaryOperator.identity());
         String entityAttribute = resolver.apply(ENTITY);
         var entityName = item.containsKey(entityAttribute) ? item.get(entityAttribute).s() : entityAttribute;
-        List<Document> documents = item.entrySet()
+        var elements = item.entrySet()
                 .stream()
                 .filter(entry -> !Objects.equals(entityAttribute, entry.getKey()))
-                .map(entry -> Document.of(entry.getKey(), convertValue(entry.getValue())))
+                .map(entry -> Element.of(entry.getKey(), convertValue(entry.getValue())))
                 .toList();
-        return DocumentEntity.of(entityName, documents);
+        return CommunicationEntity.of(entityName, elements);
     }
 }

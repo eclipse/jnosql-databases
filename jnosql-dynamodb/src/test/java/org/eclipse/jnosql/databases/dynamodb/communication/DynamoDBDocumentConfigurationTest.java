@@ -15,8 +15,7 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 
-import org.eclipse.jnosql.communication.document.DocumentConfiguration;
-import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
+import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -30,21 +29,21 @@ class DynamoDBDocumentConfigurationTest {
 
     @Test
     void shouldReturnFromServiceLoaderConfiguration() {
-        var configuration = DocumentConfiguration.getConfiguration();
+        var configuration = DatabaseConfiguration.getConfiguration();
         Assertions.assertNotNull(configuration);
-        Assertions.assertInstanceOf(DynamoDBDocumentConfiguration.class, configuration);
+        Assertions.assertInstanceOf(DatabaseConfiguration.class, configuration);
     }
 
     @Test
     void shouldReturnFromServiceLoaderConfigurationQuery() {
-        var configuration = DocumentConfiguration
+        var configuration = DatabaseConfiguration
                 .getConfiguration(DynamoDBDocumentConfiguration.class);
         Assertions.assertNotNull(configuration);
     }
 
     @Test
     void shouldReturnDocumentManagerFactory() {
-        var configuration = DocumentConfiguration
+        var configuration = DatabaseConfiguration
                 .getConfiguration(DynamoDBDocumentConfiguration.class);
 
         var settings = DynamoDBTestUtils.CONFIG.getSettings();
@@ -54,7 +53,7 @@ class DynamoDBDocumentConfigurationTest {
                     .describedAs("DocumentConfiguration.getConfiguration(DynamoDBDocumentConfiguration.class) must return a non-null instance")
                     .isNotNull();
 
-            DocumentManagerFactory documentManagerFactory = configuration.apply(settings);
+            DynamoDBDatabaseManagerFactory documentManagerFactory = configuration.apply(settings);
 
             softly.assertThat(documentManagerFactory)
                     .describedAs("DynamoDBDocumentConfiguration.apply(Settings.class) should returns a non-null DocumentManagerFactory instance")

@@ -22,7 +22,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDocumentConfiguration;
-import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDocumentManager;
+import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDatabaseManager;
 import org.eclipse.jnosql.mapping.core.config.MicroProfileSettings;
 
 import java.util.Optional;
@@ -33,22 +33,22 @@ import java.util.logging.Logger;
 import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.DOCUMENT_DATABASE;
 
 @ApplicationScoped
-public class DocumentManagerSupplier implements Supplier<DynamoDBDocumentManager> {
+public class DocumentManagerSupplier implements Supplier<DynamoDBDatabaseManager> {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentManagerSupplier.class.getName());
 
     @Override
     @Produces
-    @Typed(DynamoDBDocumentManager.class)
+    @Typed(DynamoDBDatabaseManager.class)
     @ApplicationScoped
-    public DynamoDBDocumentManager get() {
+    public DynamoDBDatabaseManager get() {
         Settings settings = MicroProfileSettings.INSTANCE;
         var configuration = new DynamoDBDocumentConfiguration();
         var factory = configuration.apply(settings);
         Optional<String> database = settings.get(DOCUMENT_DATABASE, String.class);
         String db = database.orElseThrow(() -> new MappingException("Please, inform the database filling up the property "
                 + DOCUMENT_DATABASE.get()));
-        DynamoDBDocumentManager manager = (DynamoDBDocumentManager) factory.apply(db);
+        DynamoDBDatabaseManager manager = (DynamoDBDatabaseManager) factory.apply(db);
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, """
                     Starting a DynamoDBDocumentManager instance using Eclipse MicroProfile Config,\
@@ -58,7 +58,7 @@ public class DocumentManagerSupplier implements Supplier<DynamoDBDocumentManager
         return manager;
     }
 
-    public void close(@Disposes DynamoDBDocumentManager manager) {
+    public void close(@Disposes DynamoDBDatabaseManager manager) {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Closing OracleDocumentManager resource, database name: %s".formatted(manager.name()));
         }

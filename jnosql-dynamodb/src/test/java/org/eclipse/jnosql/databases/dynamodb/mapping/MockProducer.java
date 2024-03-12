@@ -19,24 +19,24 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.interceptor.Interceptor;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDatabaseManager;
 import org.mockito.Mockito;
 
 import java.util.function.Supplier;
 
 @Alternative
 @Priority(Interceptor.Priority.APPLICATION)
-public class MockProducer implements Supplier<DynamoDBDocumentManager> {
+public class MockProducer implements Supplier<DynamoDBDatabaseManager> {
 
     @Produces
     @Override
-    public DynamoDBDocumentManager get() {
-        DynamoDBDocumentManager manager = Mockito.mock(DynamoDBDocumentManager.class);
-        DocumentEntity entity = DocumentEntity.of("Person");
-        entity.add(Document.of("name", "Ada"));
-        Mockito.when(manager.insert(Mockito.any(DocumentEntity.class))).thenReturn(entity);
+    public DynamoDBDatabaseManager get() {
+        DynamoDBDatabaseManager manager = Mockito.mock(DynamoDBDatabaseManager.class);
+        var entity = CommunicationEntity.of("Person");
+        entity.add(Element.of("name", "Ada"));
+        Mockito.when(manager.insert(Mockito.any(CommunicationEntity.class))).thenReturn(entity);
         return manager;
     }
 

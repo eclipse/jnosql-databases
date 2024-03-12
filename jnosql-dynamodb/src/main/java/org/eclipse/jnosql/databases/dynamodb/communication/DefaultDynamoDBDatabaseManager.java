@@ -16,9 +16,9 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -60,11 +60,11 @@ import java.util.stream.StreamSupport;
 import static java.util.Objects.requireNonNull;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.entityAttributeName;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toAttributeValue;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toDocumentEntity;
+import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toCommunicationEntity;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toItem;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.toItemUpdate;
 
-public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
+public class DefaultDynamoDBDatabaseManager implements DynamoDBDatabaseManager {
 
     private final String database;
 
@@ -76,7 +76,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
 
     private final ConcurrentHashMap<String, DescribeTableResponse> tables = new ConcurrentHashMap<>();
 
-    public DefaultDynamoDBDocumentManager(String database, DynamoDbClient dynamoDbClient, Settings settings) {
+    public DefaultDynamoDBDatabaseManager(String database, DynamoDbClient dynamoDbClient, Settings settings) {
         this.settings = settings;
         this.database = database;
         this.dynamoDbClient = dynamoDbClient;
@@ -96,7 +96,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity documentEntity) {
+    public CommunicationEntity insert(CommunicationEntity documentEntity) {
         requireNonNull(documentEntity, "documentEntity is required");
         dynamoDbClient().putItem(PutItemRequest.builder()
                 .tableName(createTableIfNeeded(documentEntity.name()).table().tableName())
@@ -189,7 +189,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity insert(DocumentEntity documentEntity, Duration ttl) {
+    public CommunicationEntity insert(CommunicationEntity documentEntity, Duration ttl) {
         requireNonNull(documentEntity, "documentEntity is required");
         requireNonNull(ttl, "ttl is required");
         documentEntity.add(getTTLAttributeName(documentEntity.name()).get(), Instant.now().plus(ttl).truncatedTo(ChronoUnit.SECONDS));
@@ -197,7 +197,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
         requireNonNull(entities, "entities are required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
@@ -205,7 +205,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
     }
 
     @Override
-    public Iterable<DocumentEntity> insert(Iterable<DocumentEntity> entities, Duration ttl) {
+    public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
         requireNonNull(entities, "entities is required");
         requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
@@ -214,7 +214,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
     }
 
     @Override
-    public DocumentEntity update(DocumentEntity documentEntity) {
+    public CommunicationEntity update(CommunicationEntity documentEntity) {
         requireNonNull(documentEntity, "entity is required");
         Map<String, AttributeValue> itemKey = getItemKey(documentEntity);
         Map<String, AttributeValueUpdate> attributeUpdates = asItemToUpdate(documentEntity);
@@ -227,7 +227,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
         return documentEntity;
     }
 
-    private Map<String, AttributeValue> getItemKey(DocumentEntity documentEntity) {
+    private Map<String, AttributeValue> getItemKey(CommunicationEntity documentEntity) {
         DescribeTableResponse describeTableResponse = this.tables.computeIfAbsent(documentEntity.name(), this::getDescribeTableResponse);
         Map<String, AttributeValue> itemKey = describeTableResponse
                 .table()
@@ -243,12 +243,12 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
         return itemKey;
     }
 
-    private Map<String, AttributeValueUpdate> asItemToUpdate(DocumentEntity documentEntity) {
+    private Map<String, AttributeValueUpdate> asItemToUpdate(CommunicationEntity documentEntity) {
         return toItemUpdate(this::resolveEntityNameAttributeName, documentEntity);
     }
 
     @Override
-    public Iterable<DocumentEntity> update(Iterable<DocumentEntity> entities) {
+    public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
         requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update)
@@ -256,34 +256,35 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
     }
 
     @Override
-    public void delete(DocumentDeleteQuery documentDeleteQuery) {
-        Objects.requireNonNull(documentDeleteQuery, "documentDeleteQuery is required");
+    public void delete(DeleteQuery deleteQuery) {
+        Objects.requireNonNull(deleteQuery, "deleteQuery is required");
 
-        List<String> primaryKeys = getDescribeTableResponse(documentDeleteQuery.name())
+        List<String> primaryKeys = getDescribeTableResponse(deleteQuery.name())
                 .table()
                 .keySchema()
                 .stream()
                 .map(KeySchemaElement::attributeName).toList();
 
-        DocumentQuery.DocumentQueryBuilder selectQueryBuilder = DocumentQuery.builder()
-                .select(primaryKeys.toArray(new String[0]))
-                .from(documentDeleteQuery.name());
 
-        documentDeleteQuery.condition().ifPresent(selectQueryBuilder::where);
+        var selectQueryBuilder = SelectQuery.builder()
+                .select(primaryKeys.toArray(new String[0]))
+                .from(deleteQuery.name());
+
+        deleteQuery.condition().ifPresent(selectQueryBuilder::where);
 
         select(selectQueryBuilder.build()).forEach(
                 documentEntity ->
                         dynamoDbClient().deleteItem(DeleteItemRequest.builder()
-                                .tableName(documentDeleteQuery.name())
+                                .tableName(deleteQuery.name())
                                 .key(getItemKey(documentEntity))
                                 .build()));
     }
 
     @Override
-    public Stream<DocumentEntity> select(DocumentQuery documentQuery) {
-        Objects.requireNonNull(documentQuery, "documentQuery is required");
+    public Stream<CommunicationEntity> select(SelectQuery query) {
+        Objects.requireNonNull(query, "query is required");
         DynamoDBQuery dynamoDBQuery = DynamoDBQuery
-                .builderOf(documentQuery.name(), getEntityAttributeName(), documentQuery)
+                .builderOf(query.name(), getEntityAttributeName(), query)
                 .get();
 
         ScanRequest.Builder selectRequest = ScanRequest.builder()
@@ -298,7 +299,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
         return StreamSupport
                 .stream(dynamoDbClient().scanPaginator(selectRequest.build()).spliterator(), false)
                 .flatMap(scanResponse -> scanResponse.items().stream()
-                        .map(item -> toDocumentEntity(this::resolveEntityNameAttributeName, item)));
+                        .map(item -> toCommunicationEntity(this::resolveEntityNameAttributeName, item)));
     }
 
     @Override
@@ -319,12 +320,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
     }
 
     @Override
-    public Stream<DocumentEntity> partiQL(String query) {
-        return partiQL(query,new Object[0]);
-    }
-
-    @Override
-    public Stream<DocumentEntity> partiQL(String query, Object... params) {
+    public Stream<CommunicationEntity> partiQL(String query, Object... params) {
         Objects.requireNonNull(query, "query is required");
         List<AttributeValue> parameters = Stream.of(params).map(DynamoDBConverter::toAttributeValue).toList();
         ExecuteStatementResponse executeStatementResponse = dynamoDbClient()
@@ -332,8 +328,8 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
                         .statement(query)
                         .parameters(parameters)
                         .build());
-        List<DocumentEntity> result = new LinkedList<>();
-        executeStatementResponse.items().forEach(item -> result.add(toDocumentEntity(this::resolveEntityNameAttributeName, item)));
+        List<CommunicationEntity> result = new LinkedList<>();
+        executeStatementResponse.items().forEach(item -> result.add(toCommunicationEntity(this::resolveEntityNameAttributeName, item)));
         while (executeStatementResponse.nextToken() != null) {
             executeStatementResponse = dynamoDbClient()
                     .executeStatement(ExecuteStatementRequest.builder()
@@ -341,7 +337,7 @@ public class DefaultDynamoDBDocumentManager implements DynamoDBDocumentManager {
                             .parameters(parameters)
                             .nextToken(executeStatementResponse.nextToken())
                             .build());
-            executeStatementResponse.items().forEach(item -> result.add(toDocumentEntity(this::resolveEntityNameAttributeName, item)));
+            executeStatementResponse.items().forEach(item -> result.add(toCommunicationEntity(this::resolveEntityNameAttributeName, item)));
         }
         return result.stream();
     }

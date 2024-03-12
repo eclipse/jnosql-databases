@@ -16,12 +16,12 @@
 package org.eclipse.jnosql.databases.dynamodb.mapping;
 
 import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.mapping.document.JNoSQLDocumentTemplate;
+import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 
 import java.util.stream.Stream;
 
 /**
- * The {@code DynamoDBTemplate} is an interface that extends {@link JNoSQLDocumentTemplate} and
+ * The {@code DynamoDBTemplate} is an interface that extends {@link DocumentTemplate} and
  * provides methods for executing Dynamo DB queries using the PartiQL Language.
  * <p>DynamoDB supports a limited subset of
  * <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ql-reference.html">PartiQL</a>.
@@ -31,9 +31,9 @@ import java.util.stream.Stream;
  * process data in a more flexible and customizable way.
  * </p>
  *
- * @see JNoSQLDocumentTemplate
+ * @see DocumentTemplate
  */
-public interface DynamoDBTemplate extends JNoSQLDocumentTemplate {
+public interface DynamoDBTemplate extends DocumentTemplate {
 
     /**
      * Executes a DynamoDB query using

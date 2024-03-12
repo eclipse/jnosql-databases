@@ -16,8 +16,8 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.TypeReference;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.ArrayList;
@@ -31,66 +31,66 @@ import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConver
 
 abstract class DynamoDBQueryBuilder implements Supplier<DynamoDBQuery> {
 
-    protected void condition(DocumentCondition condition,
+    protected void condition(CriteriaCondition condition,
                              StringBuilder filterExpression,
                              Map<String, String> expressionAttributeNames,
                              Map<String, AttributeValue> expressionAttributeValues) {
-        Document document = condition.document();
+        var element = condition.element();
 
         switch (condition.condition()) {
             case EQUALS:
-                predicate(" = ", document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicate(" = ", element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case LIKE:
-                predicateLike(document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicateLike(element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case IN:
-                predicateIn(document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicateIn(element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case GREATER_THAN:
-                predicate(" > ", document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicate(" > ", element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case LESSER_THAN:
-                predicate(" < ", document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicate(" < ", element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case GREATER_EQUALS_THAN:
-                predicate(" >= ", document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicate(" >= ", element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case LESSER_EQUALS_THAN:
-                predicate(" <= ", document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicate(" <= ", element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case BETWEEN:
-                predicateBetween(document, filterExpression, expressionAttributeNames, expressionAttributeValues);
+                predicateBetween(element, filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case AND:
-                appendCondition(document.get(new TypeReference<>() {
+                appendCondition(element.get(new TypeReference<>() {
                 }), " AND ", filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case OR:
-                appendCondition(document.get(new TypeReference<>() {
+                appendCondition(element.get(new TypeReference<>() {
                 }), " OR ", filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             case NOT:
                 filterExpression.append(" NOT ");
-                condition(document.get(DocumentCondition.class), filterExpression, expressionAttributeNames, expressionAttributeValues);
+                condition(element.get(CriteriaCondition.class), filterExpression, expressionAttributeNames, expressionAttributeValues);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown condition " + condition.condition());
         }
     }
 
-    private void predicateIn(Document document,
+    private void predicateIn(Element element,
                              StringBuilder filterExpression,
                              Map<String, String> expressionAttributeNames,
                              Map<String, AttributeValue> expressionAttributeValues) {
-        var name = document.name();
+        var name = element.name();
 
         var attributeName = "#" + name;
         expressionAttributeNames.put(attributeName, name);
         filterExpression.append(attributeName).append(" IN (");
 
         List<String> valuesExpressionNames = new LinkedList<>();
-        ((Iterable<?>) document.get()).forEach(value -> {
+        ((Iterable<?>) element.get()).forEach(value -> {
             var attributeValueName = ":" + name + "_" + expressionAttributeValues.size();
             valuesExpressionNames.add(attributeValueName);
             expressionAttributeValues.put(attributeValueName, toAttributeValue(value));
@@ -100,18 +100,18 @@ abstract class DynamoDBQueryBuilder implements Supplier<DynamoDBQuery> {
         filterExpression.append(") ");
     }
 
-    private void appendCondition(List<DocumentCondition> conditions,
+    private void appendCondition(List<CriteriaCondition> conditions,
                                  String condition,
                                  StringBuilder filterExpression,
                                  Map<String, String> expressionAttributeNames,
                                  Map<String, AttributeValue> expressionAttributeValues) {
 
         boolean isFirstCondition = true;
-        for (DocumentCondition documentCondition : conditions) {
+        for (CriteriaCondition criteriaCondition : conditions) {
             StringBuilder tempFilterExpression = new StringBuilder();
             HashMap<String, String> tempExpressionAttributeNames = new HashMap<>(expressionAttributeNames);
             HashMap<String, AttributeValue> tempExpressionAttributeValues = new HashMap<>(expressionAttributeValues);
-            condition(documentCondition,
+            condition(criteriaCondition,
                     tempFilterExpression,
                     tempExpressionAttributeNames,
                     tempExpressionAttributeValues);
@@ -133,15 +133,15 @@ abstract class DynamoDBQueryBuilder implements Supplier<DynamoDBQuery> {
 
     }
 
-    private void predicateBetween(Document document,
+    private void predicateBetween(Element element,
                                   StringBuilder filterExpression,
                                   Map<String, String> expressionAttributeNames,
                                   Map<String, AttributeValue> expressionAttributeValues) {
 
-        var name = document.name();
+        var name = element.name();
 
         List<Object> values = new ArrayList<>();
-        ((Iterable<?>) document.get()).forEach(values::add);
+        ((Iterable<?>) element.get()).forEach(values::add);
 
         var attributeName = "#" + name;
         expressionAttributeNames.put(attributeName, name);
@@ -158,13 +158,13 @@ abstract class DynamoDBQueryBuilder implements Supplier<DynamoDBQuery> {
 
     }
 
-    private void predicateLike(Document document,
+    private void predicateLike(Element element,
                                StringBuilder filterExpression,
                                Map<String, String> expressionAttributeNames,
                                Map<String, AttributeValue> expressionAttributeValues) {
 
-        var name = document.name();
-        var value = toAttributeValue(document.get());
+        var name = element.name();
+        var value = toAttributeValue(element.get());
 
         var attributeName = "#" + name;
         var attributeValueName = ":" + name + "_" + expressionAttributeValues.size();
@@ -178,13 +178,13 @@ abstract class DynamoDBQueryBuilder implements Supplier<DynamoDBQuery> {
     }
 
     protected void predicate(String operator,
-                             Document document,
+                             Element element,
                              StringBuilder filterExpression,
                              Map<String, String> expressionAttributeNames,
                              Map<String, AttributeValue> expressionAttributeValues) {
 
-        var name = document.name();
-        var value = toAttributeValue(document.get());
+        var name = element.name();
+        var value = toAttributeValue(element.get());
 
         var attributeName = "#" + name;
         var attributeValueName = ":" + name + "_" + expressionAttributeValues.size();

@@ -20,9 +20,9 @@ import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.communication.Settings;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.DocumentManager;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,16 +44,16 @@ import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.eclipse.jnosql.communication.document.DocumentDeleteQuery.delete;
-import static org.eclipse.jnosql.communication.document.DocumentQuery.select;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
+import static org.eclipse.jnosql.communication.semistructured.DeleteQuery.delete;
+import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
+import static org.eclipse.jnosql.databases.dynamodb.communication.CommunicationEntityGenerator.createRandomEntity;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBConverter.ID;
-import static org.eclipse.jnosql.databases.dynamodb.communication.DocumentEntityGenerator.createRandomEntity;
 import static org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBTestUtils.CONFIG;
 
 @EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
-class DefaultDynamoDBDocumentManagerTest {
+class DefaultDynamoDBDatabaseManagerTest {
 
     private static Faker faker = new Faker();
 
@@ -69,7 +69,7 @@ class DefaultDynamoDBDocumentManagerTest {
         tearDown();
     }
 
-    private DocumentManager getDocumentManagerCannotCreateTables() {
+    private DatabaseManager getDatabaseManagerCannotCreateTables() {
         var settings = CONFIG.customSetting(Settings.builder()
                 .put(DynamoDBConfigurations.CREATE_TABLES, "false"));
         var database = settings.get(MappingConfigurations.DOCUMENT_DATABASE, String.class).orElseThrow();
@@ -77,7 +77,7 @@ class DefaultDynamoDBDocumentManagerTest {
         return documentManagerFactory.apply(database);
     }
 
-    private DocumentManager getDocumentManagerCanCreateTables() {
+    private DatabaseManager getDatabaseManagerCanCreateTables() {
         var settings = CONFIG.customSetting(Settings.builder()
                 .put(DynamoDBConfigurations.CREATE_TABLES, "true"));
         var database = settings.get(MappingConfigurations.DOCUMENT_DATABASE, String.class).orElseThrow();
@@ -97,7 +97,7 @@ class DefaultDynamoDBDocumentManagerTest {
 
     @Test
     void shouldReturnName() {
-        try (var manager = getDocumentManagerCannotCreateTables()) {
+        try (var manager = getDatabaseManagerCannotCreateTables()) {
             var database = CONFIG
                     .getSettings()
                     .get(MappingConfigurations.DOCUMENT_DATABASE, String.class).orElseThrow();
@@ -108,27 +108,27 @@ class DefaultDynamoDBDocumentManagerTest {
     @Test
     void shouldReturnErrorWhenInsertWithInvalidInputs() {
 
-        try (var documentManager = getDocumentManagerCannotCreateTables()) {
+        try (var manager = getDatabaseManagerCannotCreateTables()) {
             assertSoftly(softly -> {
-                softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null))
+                softly.assertThatThrownBy(() -> manager.insert((CommunicationEntity) null))
                         .as("should return error when insert a null DocumentEntity reference")
                         .isExactlyInstanceOf(NullPointerException.class);
-                softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null, Duration.ofSeconds(1)))
+                softly.assertThatThrownBy(() -> manager.insert((CommunicationEntity) null, Duration.ofSeconds(1)))
                         .as("should return error when insert a null DocumentEntity reference with TTL param")
                         .isInstanceOfAny(NullPointerException.class);
-                softly.assertThatThrownBy(() -> documentManager.insert((DocumentEntity) null, null))
+                softly.assertThatThrownBy(() -> manager.insert((CommunicationEntity) null, null))
                         .as("should return error when insert a null DocumentEntity reference with nullable TTL param")
                         .isInstanceOfAny(NullPointerException.class);
-                softly.assertThatThrownBy(() -> documentManager.insert(DocumentEntityGenerator.createRandomEntity(), null))
+                softly.assertThatThrownBy(() -> manager.insert(CommunicationEntityGenerator.createRandomEntity(), null))
                         .as("should return error when insert a null DocumentEntity reference with nullable TTL param")
                         .isInstanceOfAny(NullPointerException.class);
-                softly.assertThatThrownBy(() -> documentManager.insert((Iterable<DocumentEntity>) null))
+                softly.assertThatThrownBy(() -> manager.insert((Iterable<CommunicationEntity>) null))
                         .as("should return error when insert a null Iterable<DocumentEntity> reference")
                         .isInstanceOfAny(NullPointerException.class);
-                softly.assertThatThrownBy(() -> documentManager.insert((Iterable<DocumentEntity>) null, Duration.ofSeconds(1)))
+                softly.assertThatThrownBy(() -> manager.insert((Iterable<CommunicationEntity>) null, Duration.ofSeconds(1)))
                         .as("should return error when insert a null Iterable<DocumentEntity> reference with TTL param")
                         .isInstanceOfAny(NullPointerException.class);
-                softly.assertThatThrownBy(() -> documentManager.insert(List.of(DocumentEntityGenerator.createRandomEntity()), null))
+                softly.assertThatThrownBy(() -> manager.insert(List.of(CommunicationEntityGenerator.createRandomEntity()), null))
                         .as("should return error when insert a null Iterable<DocumentEntity> reference with nullable TTL param")
                         .isInstanceOfAny(NullPointerException.class);
             });
@@ -138,16 +138,16 @@ class DefaultDynamoDBDocumentManagerTest {
     @Test
     void shouldInsert() {
 
-        try (var documentManager = getDocumentManagerCanCreateTables()) {
+        try (var manager = getDatabaseManagerCanCreateTables()) {
 
             assertSoftly(softly -> {
-                DocumentEntity entity = createRandomEntity();
+                var entity = createRandomEntity();
                 var _entityType = entity.name();
                 var id = entity.find(DynamoDBConverter.ID, String.class).orElseThrow();
-                var persistedEntity = documentManager.insert(entity);
+                var persistedEntity = manager.insert(entity);
 
                 softly.assertThat(persistedEntity)
-                        .as("documentManager.insert(DocumentEntity) method should return a non-null persistent DocumentEntity")
+                        .as("manager.insert(DocumentEntity) method should return a non-null persistent DocumentEntity")
                         .isNotNull();
 
                 var persistedItem = getItem(_entityType, id);
@@ -157,9 +157,9 @@ class DefaultDynamoDBDocumentManagerTest {
 
             assertSoftly(softly -> {
                 var entities = List.of(createRandomEntity(), createRandomEntity(), createRandomEntity());
-                Iterable<DocumentEntity> persistedEntities = documentManager.insert(entities);
+                var persistedEntities = manager.insert(entities);
                 softly.assertThat(persistedEntities)
-                        .as("documentManager.insert(Iterable<>) should returns the non-null list of DocumentEntity").isNotNull();
+                        .as("manager.insert(Iterable<>) should returns the non-null list of DocumentEntity").isNotNull();
 
                 assertThat(persistedEntities)
                         .as("documentmanager.insert(iterable<>) should returns a corresponded list of DocumentEntity")
@@ -181,12 +181,12 @@ class DefaultDynamoDBDocumentManagerTest {
     @Test
     void shouldReturnErrorWhenUpdateWithInvalidInputs() {
 
-        try (var documentManager = getDocumentManagerCannotCreateTables()) {
+        try (var manager = getDatabaseManagerCannotCreateTables()) {
             assertSoftly(softly -> {
-                softly.assertThatThrownBy(() -> documentManager.update((DocumentEntity) null))
+                softly.assertThatThrownBy(() -> manager.update((CommunicationEntity) null))
                         .as("should return error when insert a null DocumentEntity reference")
                         .isExactlyInstanceOf(NullPointerException.class);
-                softly.assertThatThrownBy(() -> documentManager.update((Iterable<DocumentEntity>) null))
+                softly.assertThatThrownBy(() -> manager.update((Iterable<CommunicationEntity>) null))
                         .as("should return error when insert a null Iterable<DocumentEntity> reference")
                         .isInstanceOfAny(NullPointerException.class);
             });
@@ -195,15 +195,15 @@ class DefaultDynamoDBDocumentManagerTest {
 
     @Test
     void shouldUpdate() {
-        try (var documentManager = getDocumentManagerCanCreateTables()) {
+        try (var manager = getDatabaseManagerCanCreateTables()) {
 
             var entity1 = createRandomEntity();
             var entity2 = createRandomEntity();
             var entity3 = createRandomEntity();
 
-            documentManager.insert(List.of(entity1, entity2, entity3));
+            manager.insert(List.of(entity1, entity2, entity3));
 
-            final BiConsumer<SoftAssertions, DocumentEntity> assertions = (softly, updatedEntity) -> {
+            final BiConsumer<SoftAssertions, CommunicationEntity> assertions = (softly, updatedEntity) -> {
                 Map<String, AttributeValue> item = getItem(updatedEntity.name(), updatedEntity.find(DynamoDBConverter.ID, String.class).orElseThrow());
                 softly.assertThat(item.get("name"))
                         .as("the name attribute should exists in the returned item from dynamodb")
@@ -214,25 +214,25 @@ class DefaultDynamoDBDocumentManagerTest {
             };
 
             assertSoftly(softly -> {
-                entity1.add(Document.of("name", faker.name().fullName()));
-                var updatedEntity = documentManager.update(entity1);
+                entity1.add(Element.of("name", faker.name().fullName()));
+                var updatedEntity = manager.update(entity1);
                 softly.assertThat(updatedEntity)
-                        .as("documentManager.update(DocumentEntity) method should return a non-null persistent DocumentEntity")
+                        .as("manager.update(DocumentEntity) method should return a non-null persistent DocumentEntity")
                         .isNotNull();
                 assertions.accept(softly, updatedEntity);
             });
 
             assertSoftly(softly -> {
-                entity2.add(Document.of("name", faker.name().fullName()));
-                entity3.add(Document.of("name", faker.name().fullName()));
+                entity2.add(Element.of("name", faker.name().fullName()));
+                entity3.add(Element.of("name", faker.name().fullName()));
 
-                var updatedEntities = documentManager.update(List.of(entity2, entity2));
+                var updatedEntities = manager.update(List.of(entity2, entity2));
                 softly.assertThat(updatedEntities)
-                        .as("documentManager.update(Iterable<>) method should return a non-null list of DocumentEntity")
+                        .as("manager.update(Iterable<>) method should return a non-null list of DocumentEntity")
                         .isNotNull();
                 softly.assertThat(updatedEntities)
                         .as("the size of the returned list of DocumentEntity from " +
-                                "documentManager.update(Iterable<>) method should be equals to the size of the submitted list of DocumentEntity")
+                                "manager.update(Iterable<>) method should be equals to the size of the submitted list of DocumentEntity")
                         .hasSize(2);
                 updatedEntities.forEach(updatedEntity -> assertions.accept(softly, updatedEntity));
             });
@@ -255,12 +255,12 @@ class DefaultDynamoDBDocumentManagerTest {
     @Test
     void shouldCountByCollectionName() {
 
-        try (var dmCanCreateTable = getDocumentManagerCanCreateTables();
-             var dmCannotCreateTable = getDocumentManagerCannotCreateTables()) {
+        try (var dmCanCreateTable = getDatabaseManagerCanCreateTables();
+             var dmCannotCreateTable = getDatabaseManagerCannotCreateTables()) {
             assertSoftly(softly -> {
 
-                DocumentEntity entity = createRandomEntity();
-                DocumentEntity entity2 = createRandomEntity();
+                var entity = createRandomEntity();
+                var entity2 = createRandomEntity();
 
                 dmCanCreateTable.insert(entity);
                 dmCanCreateTable.insert(entity2);
@@ -288,7 +288,7 @@ class DefaultDynamoDBDocumentManagerTest {
                         .isInstanceOfAny(ResourceNotFoundException.class);
 
                 var entityBName = "entityB";
-                DocumentEntity entity3 = createRandomEntity(entityBName);
+                var entity3 = createRandomEntity(entityBName);
                 dmCanCreateTable.insert(entity3);
 
                 softly.assertThat(dmCannotCreateTable.count(entity3.name()))
@@ -301,9 +301,9 @@ class DefaultDynamoDBDocumentManagerTest {
 
     @Test
     void shouldDelete() {
-        try (var documentManager = getDocumentManagerCanCreateTables()) {
+        try (var manager = getDatabaseManagerCanCreateTables()) {
 
-            DocumentEntity entity1, entity2, entity3, entity4;
+            CommunicationEntity entity1, entity2, entity3, entity4;
 
             var entities = List.of(
                     entity1 = createRandomEntity(),
@@ -311,7 +311,7 @@ class DefaultDynamoDBDocumentManagerTest {
                     entity3 = createRandomEntity(),
                     entity4 = createRandomEntity());
 
-            documentManager.insert(entities);
+            manager.insert(entities);
 
             var entityType = entity1.name();
             var id1 = entity1.find(ID, String.class).orElseThrow();
@@ -321,13 +321,13 @@ class DefaultDynamoDBDocumentManagerTest {
 
             assertSoftly(softly -> {
 
-                documentManager.delete(delete().
+                manager.delete(delete().
                         from(entityType)
                         .where(ID).eq(id1)
                         .build()
                 );
 
-                softly.assertThat(documentManager.count(entityType))
+                softly.assertThat(manager.count(entityType))
                         .as("the returned count number of items from a given table name is incorrect")
                         .isEqualTo(entities.size() - 1L);
 
@@ -335,13 +335,13 @@ class DefaultDynamoDBDocumentManagerTest {
                         .as("the item should be deleted")
                         .hasSize(0);
 
-                documentManager.delete(delete().
+                manager.delete(delete().
                         from(entityType)
                         .where(ID).in(List.of(id2, id3))
                         .build()
                 );
 
-                softly.assertThat(documentManager.count(entityType))
+                softly.assertThat(manager.count(entityType))
                         .as("the returned count number of items from a given table name is incorrect")
                         .isEqualTo(entities.size() - 3L);
 
@@ -354,7 +354,7 @@ class DefaultDynamoDBDocumentManagerTest {
                         .hasSize(0);
 
 
-                documentManager.delete(delete().
+                manager.delete(delete().
                         from(entityType)
                         .build()
                 );
@@ -363,7 +363,7 @@ class DefaultDynamoDBDocumentManagerTest {
                         .as("the item should be deleted")
                         .hasSize(0);
 
-                softly.assertThat(documentManager.count(entityType))
+                softly.assertThat(manager.count(entityType))
                         .as("the returned count number of items from a given table name is incorrect")
                         .isEqualTo(0);
 
@@ -375,13 +375,13 @@ class DefaultDynamoDBDocumentManagerTest {
     @Test
     void shouldCountByDocumentQuery() {
 
-        try (var documentManager = getDocumentManagerCanCreateTables()) {
+        try (var manager = getDatabaseManagerCanCreateTables()) {
 
-            DocumentEntity entity1, entity2, entity3;
+            CommunicationEntity entity1, entity2, entity3;
 
             var entities = List.of(entity1 = createRandomEntity(), entity2 = createRandomEntity(), entity3 = createRandomEntity());
 
-            documentManager.insert(entities);
+            manager.insert(entities);
 
             assertSoftly(softly -> {
 
@@ -390,7 +390,7 @@ class DefaultDynamoDBDocumentManagerTest {
                         .where(ID).eq(entity1.find(ID, String.class).orElseThrow())
                         .build();
 
-                softly.assertThat(documentManager.count(documentQuery1))
+                softly.assertThat(manager.count(documentQuery1))
                         .as("the returned count number of items from a given DocumentQuery is incorrect")
                         .isEqualTo(1L);
 
@@ -401,7 +401,7 @@ class DefaultDynamoDBDocumentManagerTest {
                         .or(ID).eq(entity2.find(ID, String.class).orElseThrow())
                         .build();
 
-                softly.assertThat(documentManager.count(documentQuery2))
+                softly.assertThat(manager.count(documentQuery2))
                         .as("the returned count number of items from a given DocumentQuery is incorrect")
                         .isEqualTo(2L);
 
@@ -412,7 +412,7 @@ class DefaultDynamoDBDocumentManagerTest {
                         .or(ID).eq(entity3.find(ID, String.class).orElseThrow())
                         .build();
 
-                softly.assertThat(documentManager.count(documentQuery3))
+                softly.assertThat(manager.count(documentQuery3))
                         .as("the returned count number of items from a given DocumentQuery is incorrect")
                         .isEqualTo(3L);
 
@@ -423,13 +423,13 @@ class DefaultDynamoDBDocumentManagerTest {
     @Test
     void shouldExecutePartiQL() {
 
-        try (var documentManager = getDocumentManagerCanCreateTables()) {
+        try (var manager = getDatabaseManagerCanCreateTables()) {
 
-            DocumentEntity entity1;
+            CommunicationEntity entity1;
             var entities = List.of(entity1 = createRandomEntity(), createRandomEntity(), createRandomEntity());
-            documentManager.insert(entities);
+            manager.insert(entities);
 
-            if (documentManager instanceof DynamoDBDocumentManager partiManager) {
+            if (manager instanceof DynamoDBDatabaseManager partiManager) {
 
                 assertSoftly(softly -> {
                     softly.assertThat(partiManager.partiQL("SELECT * FROM " + entity1.name()))

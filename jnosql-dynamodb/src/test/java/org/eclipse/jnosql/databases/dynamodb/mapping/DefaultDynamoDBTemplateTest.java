@@ -18,15 +18,15 @@ package org.eclipse.jnosql.databases.dynamodb.mapping;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.assertj.core.api.SoftAssertions;
-import org.eclipse.jnosql.communication.document.DocumentDeleteQuery;
-import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDocumentManager;
+import org.eclipse.jnosql.communication.semistructured.DeleteQuery;
+import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDatabaseManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -42,7 +42,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @EnableAutoWeld
-@AddPackages(value = {Converters.class, DocumentEntityConverter.class, PartiQL.class})
+@AddPackages(value = {Converters.class, EntityConverter.class, PartiQL.class})
 @AddPackages(MockProducer.class)
 @AddExtensions({EntityMetadataExtension.class, DocumentExtension.class, DynamoDBExtension.class})
 @ExtendWith(MockitoExtension.class)
@@ -50,10 +50,10 @@ import static org.mockito.Mockito.when;
 class DefaultDynamoDBTemplateTest {
 
     @Inject
-    private DocumentEntityConverter converter;
+    private EntityConverter converter;
 
     @Inject
-    private DocumentEventPersistManager persistManager;
+    private EventPersistManager persistManager;
 
     @Inject
     private EntitiesMetadata entities;
@@ -61,39 +61,39 @@ class DefaultDynamoDBTemplateTest {
     @Inject
     private Converters converters;
 
-    private DynamoDBDocumentManager manager;
+    private DynamoDBDatabaseManager manager;
 
     private DynamoDBTemplate template;
 
     @BeforeEach
     void setup() {
-        manager = Mockito.mock(DynamoDBDocumentManager.class);
+        manager = Mockito.mock(DynamoDBDatabaseManager.class);
         Instance instance = Mockito.mock(Instance.class);
         when(instance.get()).thenReturn(manager);
         template = new DefaultDynamoDBTemplate(instance, converter, persistManager, entities, converters);
     }
 
     @Test
-    public void shouldFindSQL() {
+    void shouldFindSQL() {
         template.partiQL("select from database");
         Mockito.verify(manager).partiQL("select from database");
     }
 
     @Test
-    public void shouldFindSQLWithTypeAndParameters() {
+    void shouldFindSQLWithTypeAndParameters() {
         template.partiQL("select from database where content.name = ?", List.of("Ada"), String.class);
         Mockito.verify(manager).partiQL("select from database where content.name = ?", List.of("Ada"), String.class);
     }
 
     @Test
-    public void shouldDeleteAll(){
-        ArgumentCaptor<DocumentDeleteQuery> argumentCaptor = ArgumentCaptor.forClass(DocumentDeleteQuery.class);
+    void shouldDeleteAll(){
+        ArgumentCaptor<DeleteQuery> argumentCaptor = ArgumentCaptor.forClass(DeleteQuery.class);
         template.deleteAll(Person.class);
         Mockito.verify(manager).delete(argumentCaptor.capture());
-        DocumentDeleteQuery query = argumentCaptor.getValue();
+        var query = argumentCaptor.getValue();
         SoftAssertions.assertSoftly(soft -> {
             soft.assertThat(query.name()).isEqualTo("Person");
-            soft.assertThat(query.documents()).isEmpty();
+            soft.assertThat(query.columns()).isEmpty();
             soft.assertThat(query.condition()).isEmpty();
         });
 

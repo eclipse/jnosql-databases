@@ -16,9 +16,9 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import net.datafaker.Faker;
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentEntity;
-import org.eclipse.jnosql.communication.document.Documents;
+import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.Elements;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -30,25 +30,25 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-final class DocumentEntityGenerator {
+final class CommunicationEntityGenerator {
 
     static final String COLLECTION_NAME = "entityA";
     static final Faker faker = new Faker();
 
-    static DocumentEntity createRandomEntity() {
+    static CommunicationEntity createRandomEntity() {
         return createRandomEntityWithSubDocuments(0);
     }
 
-    static DocumentEntity createRandomEntity(String collectionName) {
+    static CommunicationEntity createRandomEntity(String collectionName) {
         return createRandomEntityWithSubDocuments(collectionName,0);
     }
 
-    static DocumentEntity createRandomEntityWithSubDocuments(int levels) {
+    static CommunicationEntity createRandomEntityWithSubDocuments(int levels) {
         return createRandomEntityWithSubDocuments(COLLECTION_NAME, levels);
     }
 
     @NotNull
-    private static DocumentEntity createRandomEntityWithSubDocuments(String collectionName, int levels) {
+    private static CommunicationEntity createRandomEntityWithSubDocuments(String collectionName, int levels) {
         Map<String, Object> map = new HashMap<>();
         map.put(DynamoDBConverter.ID, UUID.randomUUID().toString());
         map.put("name", faker.name().firstName());
@@ -61,8 +61,8 @@ final class DocumentEntityGenerator {
         if (levels > 0) {
             addSubDocument(m -> map.put("level" + levels, m), levels - 1);
         }
-        DocumentEntity entity = DocumentEntity.of(collectionName);
-        List<Document> documents = Documents.of(map);
+        var entity = CommunicationEntity.of(collectionName);
+        List<Element> documents = Elements.of(map);
         documents.forEach(entity::add);
         return entity;
     }

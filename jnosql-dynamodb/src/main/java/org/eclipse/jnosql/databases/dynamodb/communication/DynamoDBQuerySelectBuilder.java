@@ -15,9 +15,9 @@
 
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
-import org.eclipse.jnosql.communication.document.Document;
-import org.eclipse.jnosql.communication.document.DocumentCondition;
-import org.eclipse.jnosql.communication.document.DocumentQuery;
+import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
+import org.eclipse.jnosql.communication.semistructured.Element;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.HashMap;
@@ -28,14 +28,14 @@ class DynamoDBQuerySelectBuilder extends DynamoDBQueryBuilder {
 
     private final String partitionKey;
 
-    private final DocumentQuery documentQuery;
+    private final SelectQuery selectQuery;
 
     public DynamoDBQuerySelectBuilder(String table,
                                       String partitionKey,
-                                      DocumentQuery documentQuery) {
+                                      SelectQuery selectQuery) {
         this.table = table;
         this.partitionKey = partitionKey;
-        this.documentQuery = documentQuery;
+        this.selectQuery = selectQuery;
     }
 
     @Override
@@ -46,10 +46,10 @@ class DynamoDBQuerySelectBuilder extends DynamoDBQueryBuilder {
         var expressionAttributeValues = new HashMap<String, AttributeValue>();
 
         super.condition(
-                DocumentCondition.eq(Document.of(partitionKey, documentQuery.name())),
+                CriteriaCondition.eq(Element.of(partitionKey, selectQuery.name())),
                 filterExpression, expressionAttributeNames, expressionAttributeValues);
 
-        this.documentQuery.condition().ifPresent(c -> {
+        this.selectQuery.condition().ifPresent(c -> {
             filterExpression.append(" AND ");
             super.condition(c,
                     filterExpression,
@@ -67,11 +67,11 @@ class DynamoDBQuerySelectBuilder extends DynamoDBQueryBuilder {
     }
 
     String projectionExpression() {
-        var documents = documentQuery.documents();
-        if (documents.isEmpty()) {
+        var columns = selectQuery.columns();
+        if (columns.isEmpty()) {
             return null;
         }
-        return String.join(", ", documents);
+        return String.join(", ", columns);
     }
 
 

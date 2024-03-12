@@ -19,35 +19,35 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import org.eclipse.jnosql.communication.document.DocumentManager;
-import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDocumentManager;
+import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
+import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDatabaseManager;
 import org.eclipse.jnosql.mapping.core.Converters;
-import org.eclipse.jnosql.mapping.document.AbstractDocumentTemplate;
-import org.eclipse.jnosql.mapping.document.DocumentEntityConverter;
-import org.eclipse.jnosql.mapping.document.DocumentEventPersistManager;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
+import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @Typed(DynamoDBTemplate.class)
 @ApplicationScoped
-class DefaultDynamoDBTemplate extends AbstractDocumentTemplate implements DynamoDBTemplate {
+class DefaultDynamoDBTemplate extends AbstractSemistructuredTemplate implements DynamoDBTemplate {
 
-    private Instance<DynamoDBDocumentManager> manager;
+    private final Instance<DynamoDBDatabaseManager> manager;
 
-    private DocumentEntityConverter converter;
+    private final EntityConverter converter;
 
-    private DocumentEventPersistManager persistManager;
+    private final EventPersistManager persistManager;
 
-    private EntitiesMetadata entitiesMetadata;
+    private final EntitiesMetadata entitiesMetadata;
 
-    private Converters converters;
+    private final Converters converters;
 
     @Inject
-    DefaultDynamoDBTemplate(Instance<DynamoDBDocumentManager> manager,
-                            DocumentEntityConverter converter,
-                            DocumentEventPersistManager persistManager,
+    DefaultDynamoDBTemplate(Instance<DynamoDBDatabaseManager> manager,
+                            EntityConverter converter,
+                            EventPersistManager persistManager,
                             EntitiesMetadata entitiesMetadata,
                             Converters converters) {
         this.manager = manager;
@@ -62,30 +62,31 @@ class DefaultDynamoDBTemplate extends AbstractDocumentTemplate implements Dynamo
      * Don't use it
      */
     DefaultDynamoDBTemplate() {
+        this(null, null, null, null, null);
     }
 
     @Override
-    protected DocumentEntityConverter getConverter() {
+    protected EntityConverter converter() {
         return converter;
     }
 
     @Override
-    protected DocumentManager getManager() {
+    protected DatabaseManager manager() {
         return manager.get();
     }
 
     @Override
-    protected DocumentEventPersistManager getEventManager() {
+    protected EventPersistManager eventManager() {
         return persistManager;
     }
 
     @Override
-    protected EntitiesMetadata getEntities() {
+    protected EntitiesMetadata entities() {
         return entitiesMetadata;
     }
 
     @Override
-    protected Converters getConverters() {
+    protected Converters converters() {
         return converters;
     }
 
