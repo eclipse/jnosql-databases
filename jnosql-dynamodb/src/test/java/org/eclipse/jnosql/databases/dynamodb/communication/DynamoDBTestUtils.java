@@ -15,30 +15,106 @@
 package org.eclipse.jnosql.databases.dynamodb.communication;
 
 import org.eclipse.jnosql.communication.Settings;
+import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.eclipse.jnosql.communication.keyvalue.BucketManagerFactory;
+import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
+import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
-public enum DynamoDBTestUtils implements Supplier<BucketManagerFactory> {
+public enum DynamoDBTestUtils {
 
-    INSTANCE;
+    CONFIG;
 
     private final GenericContainer dynamodb =
             new GenericContainer("amazon/dynamodb-local:latest")
+                    .withReuse(true)
                     .withExposedPorts(8000)
                     .waitingFor(Wait.defaultWaitStrategy());
 
-    public BucketManagerFactory get() {
-        dynamodb.start();
-        DynamoDBKeyValueConfiguration configuration = new DynamoDBKeyValueConfiguration();
-        String endpoint = "http://" + dynamodb.getHost() + ":" + dynamodb.getFirstMappedPort();
-        return configuration.apply(Settings.builder()
-                .put(DynamoDBConfigurations.ENDPOINT, endpoint).build());
+    BucketManagerFactory getBucketManagerFactory() {
+        Settings settings = getSettings();
+        return getBucketManagerFactory(settings);
     }
 
-    public void shutDown() {
+    private static DynamoDBBucketManagerFactory getBucketManagerFactory(Settings settings) {
+        DynamoDBKeyValueConfiguration configuration = new DynamoDBKeyValueConfiguration();
+        return configuration.apply(settings);
+    }
+
+    DynamoDBDatabaseManagerFactory getDocumentManagerFactory() {
+        Settings settings = getSettings();
+        return getDocumentManagerFactory(settings);
+    }
+
+    DynamoDBDatabaseManagerFactory getDocumentManagerFactory(Settings settings) {
+        var configuration = new DynamoDBDocumentConfiguration();
+        return configuration.apply(settings);
+    }
+
+    public Settings getSettings() {
+        dynamodb.start();
+        String dynamoDBHost = getDynamoDBHost(dynamodb.getHost(), dynamodb.getFirstMappedPort());
+        return getSettings(dynamoDBHost);
+    }
+
+    Settings getSettings(String dynamoDBHost) {
+        return getSettingsBuilder(builder -> builder
+                .put(DynamoDBConfigurations.ENDPOINT, dynamoDBHost))
+                .build();
+    }
+
+    public Settings customSetting(SettingsBuilder builder) {
+        var defaultSetting = getSettings();
+        var customSetting = builder.build();
+        return Settings.builder()
+                .putAll(defaultSetting.toMap())
+                .putAll(customSetting.toMap())
+                .build();
+    }
+
+    @NotNull
+    public static SettingsBuilder getSettingsBuilder(UnaryOperator<SettingsBuilder> builder) {
+        return builder.apply(Settings.builder())
+                .put(MappingConfigurations.DOCUMENT_DATABASE, "test")
+                .put(DynamoDBConfigurations.AWS_ACCESSKEY, System.getProperty("AWS_ACCESS_KEY_ID", "AKIAIOSFODNN7EXAMPLE"))
+                .put(DynamoDBConfigurations.AWS_SECRET_ACCESS, System.getProperty("AWS_SECRET_ACCESS_KEY", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"))
+                .put(DynamoDBConfigurations.PROFILE, System.getProperty("AWS_PROFILE", "default"))
+                .put(DynamoDBConfigurations.REGION, "us-west-2")
+                .put(DynamoDBConfigurations.ENTITY_PARTITION_KEY, "entityType");
+    }
+
+    public void setupSystemProperties(SettingsBuilder builder) {
+        Settings settings = customSetting(builder);
+        System.getProperties().putAll(settings.toMap());
+        System.out.println(System.getProperties());
+    }
+
+    @NotNull
+    String getDynamoDBHost(String host, int port) {
+        return "http://" + host + ":" + port;
+    }
+
+    void shutDown() {
         dynamodb.close();
     }
+
+    DynamoDbClient getDynamoDbClient() {
+        var settings = getSettings();
+        return getDynamoDbClient(settings);
+    }
+
+    DynamoDbClient getDynamoDbClient(Settings settings) {
+        DynamoDBBuilderSync builderSync = new DynamoDBBuilderSync();
+        settings.get(DynamoDBConfigurations.ENDPOINT, String.class).ifPresent(builderSync::endpoint);
+        settings.get(DynamoDBConfigurations.AWS_ACCESSKEY, String.class).ifPresent(builderSync::awsAccessKey);
+        settings.get(DynamoDBConfigurations.AWS_SECRET_ACCESS, String.class).ifPresent(builderSync::awsSecretAccess);
+        settings.get(DynamoDBConfigurations.PROFILE, String.class).ifPresent(builderSync::profile);
+        settings.get(DynamoDBConfigurations.REGION, String.class).ifPresent(builderSync::region);
+        return builderSync.build();
+    }
+
 }

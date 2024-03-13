@@ -390,7 +390,6 @@ jnosql.couchbase.user=root
 jnosql.couchbase.password=123456
 ----
 
-
 The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<CouchbaseDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
 
 [source,java]
@@ -519,9 +518,9 @@ jnosql.couchdb.password=password
 
 image::https://user-images.githubusercontent.com/6509926/70553550-f033b980-1b40-11ea-9192-759b3b1053b3.png[Redis Project,align="center" width=50%,height=50%]
 
-https://aws.amazon.com/dynamodb/[Amazon DynamoDB] is a fully managed, serverless, key-value NoSQL database designed to run high-performance applications at any scale. DynamoDB offers built-in security, continuous backups, automated multi-Region replication, in-memory caching, and data import and export tools.
+https://aws.amazon.com/dynamodb/[Amazon DynamoDB] is a fully managed, serverless, key-value and document NoSQL database designed to run high-performance applications at any scale. DynamoDB offers built-in security, continuous backups, automated multi-Region replication, in-memory caching, and data import and export tools.
 
-This driver provides support for the *Key-Value* NoSQL API.
+This driver has support for two NoSQL API types: *Key-Value* and *Document*.
 
 === How To Install
 
@@ -539,6 +538,7 @@ You can use either the Maven or Gradle dependencies:
 === Configuration
 
 This API provides the ```DynamoDBConfigurations``` class to programmatically establish the credentials.
+
 Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
 
 [cols="DynamoDB"]
@@ -560,8 +560,9 @@ Please note that you can establish properties using the https://microprofile.io/
 |`jnosql.dynamodb.secretaccess`
 |The AWS secret access key, used to authenticate the user interacting with AWS.
 
-
 |===
+
+=== Using the Key-value API
 
 This is an example using DynamoDB's Key-Value API with MicroProfile Config.
 
@@ -569,6 +570,95 @@ This is an example using DynamoDB's Key-Value API with MicroProfile Config.
 ----
 jnosql.keyvalue.provider=org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBKeyValueConfiguration
 jnosql.keyvalue.database=heroes
+----
+
+=== Using the Document API
+
+The DynamoDB's Document API implementation follows the *SINGLE TABLE* strategy, it means, the table will store multiple entity types. To satisfy this strategy, the implementation assumes that the target table will have a composed primary key:
+
+- The `entityType` field as the partitioning key;
+- The `id` field as the sort key;
+
+To customize the partitioning key field name, you can define the following configuration
+
+[source,properties]
+----
+jnosql.dynamodb.entity.pk=entityType
+----
+
+By default, the implementation doesn't create the table on-the-fly, letting this requirement for the users. If you prefer, the implementation is able to create the table on-the-fly as well. To activate this capability you should define explicitly the following configuration:
+
+[source,properties]
+----
+jnosql.dynamodb.create.tables=true
+----
+
+The table will be created with the composed primary key mentioned previously.
+
+Here's an example using DynamoDB's Document API with MicroProfile Config.
+
+[source,properties]
+----
+jnosql.document.provider=org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDocumentConfiguration
+jnosql.document.database=heroes
+----
+
+The config settings are the default behavior; nevertheless, there is an option to do it programmatically. Create a class that implements the `Supplier<DynamoDBDocumentManager>` and then defines it as an `@Alternative` and the `Priority`.
+
+[source,java]
+----
+@ApplicationScoped
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION)
+public class ManagerSupplier implements Supplier<DynamoDBDocumentManager> {
+
+    @Produces
+    public DynamoDBDocumentManager get() {
+        Settings settings = Settings.builder().put("credential", "value").build();
+        DynamoDBDocumentConfiguration configuration = new DynamoDBDocumentConfiguration();
+        DynamoDBDocumentManagerFactory factory = configuration.apply(settings);
+        return factory.apply("database");
+    }
+}
+----
+
+
+=== Repository
+
+The ```DynamoDBRepository``` interface is an extension of the ```Repository``` interface that allows execution of PartiQL via the ```@PartiQL``` annotation.
+
+WARNING: DynamoDB supports a limited subset of
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ql-reference.html[PartiQL].
+
+NOTE: This implementation doesn't provide pagination on the queries.
+
+[source,java]
+----
+@Repository
+interface PersonRepository extends DynamoDBRepository<Person, String> {
+
+@PartiQL("select * from Person")
+List<Person> findAll();
+
+@PartiQL("select * from Person where name = ?")
+List<Person> findByName(@Param("") String name);
+
+}
+----
+
+
+=== Template
+
+The ```DynamoDBTemplate``` interface is a specialization of the ```DocumentTemplate``` interface that allows using PartiQL queries.
+
+WARNING: DynamoDB supports a limited subset of
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ql-reference.html[PartiQL].
+
+NOTE: This implementation doesn't provide pagination on the queries.
+
+[source,java]
+----
+List<Person> people = template.partiQL("select * from Person where name = ? ", params);
 ----
 
 == Elasticsearch
