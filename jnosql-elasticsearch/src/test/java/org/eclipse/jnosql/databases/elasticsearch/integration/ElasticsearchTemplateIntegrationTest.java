@@ -21,6 +21,7 @@ import org.eclipse.jnosql.databases.elasticsearch.communication.DocumentDatabase
 import org.eclipse.jnosql.databases.elasticsearch.communication.ElasticsearchConfigurations;
 import org.eclipse.jnosql.databases.elasticsearch.mapping.ElasticsearchTemplate;
 import org.eclipse.jnosql.mapping.Database;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
@@ -47,7 +48,7 @@ import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 
 @EnableAutoWeld
-@AddPackages(value = {Database.class, EntityConverter.class, DocumentTemplate.class})
+@AddPackages(value = {Database.class, Converters.class, EntityConverter.class, DocumentTemplate.class})
 @AddPackages(Book.class)
 @AddPackages(ElasticsearchTemplate.class)
 @AddExtensions({EntityMetadataExtension.class,
