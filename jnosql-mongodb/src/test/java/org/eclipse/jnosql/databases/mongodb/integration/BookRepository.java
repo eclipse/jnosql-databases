@@ -12,6 +12,7 @@
  *
  *   Maximillian Arruda
  */
+
 package org.eclipse.jnosql.databases.mongodb.integration;
 
 import jakarta.data.repository.Repository;
