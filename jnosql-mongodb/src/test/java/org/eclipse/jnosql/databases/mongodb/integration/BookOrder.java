@@ -15,9 +15,12 @@
 
 package org.eclipse.jnosql.databases.mongodb.integration;
 
-import jakarta.data.repository.Repository;
-import org.eclipse.jnosql.mapping.NoSQLRepository;
+import jakarta.nosql.Column;
+import jakarta.nosql.Entity;
+import jakarta.nosql.Id;
 
-@Repository
-public interface BookRepository extends NoSQLRepository<Book, String> {
+import java.util.List;
+
+@Entity
+public record BookOrder(@Id String id, @Column List<BookOrderItem> items){
 }

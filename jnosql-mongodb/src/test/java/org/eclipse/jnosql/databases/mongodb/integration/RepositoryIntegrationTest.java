@@ -15,6 +15,7 @@
 package org.eclipse.jnosql.databases.mongodb.integration;
 
 import jakarta.inject.Inject;
+import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
 import org.eclipse.jnosql.databases.mongodb.mapping.MongoDBTemplate;
 import jakarta.nosql.Convert;
@@ -33,8 +34,12 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import java.util.List;
+
 import static java.util.UUID.randomUUID;
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.databases.mongodb.communication.DocumentDatabase.INSTANCE;
@@ -59,6 +64,11 @@ class RepositoryIntegrationTest {
     @Database(DatabaseType.DOCUMENT)
     BookRepository repository;
 
+
+    @Inject
+    @Database(DatabaseType.DOCUMENT)
+    BookStore bookStore;
+
     @Test
     void shouldSave() {
         Book book = new Book(randomUUID().toString(), "Effective Java", 1);
@@ -74,6 +84,36 @@ class RepositoryIntegrationTest {
 
         assertThat(repository.findById(book.id()))
                 .isNotNull().get().isEqualTo(updated);
+
+        assertSoftly(softly -> {
+
+            BookOrder order = new BookOrder(
+                    randomUUID().toString(),
+                    List.of(
+                            new BookOrderItem(new Book(randomUUID().toString(), "Effective Java", 3), 1)
+                            ,new BookOrderItem(new Book(randomUUID().toString(), "Java Persistence Layer", 1), 10)
+                            ,new BookOrderItem(new Book(randomUUID().toString(), "Jakarta EE Cookbook", 1), 5)
+                    )
+            );
+
+            bookStore.save(order);
+
+            softly.assertThat(bookStore.findById(order.id()))
+                    .as("cannot find the order persisted previously")
+                    .isPresent()
+                    .get()
+                    .as("the loaded the persisted BookOrder doesn't matches with the BookOrder origin")
+                    .satisfies(persistedOrder ->{
+                        softly.assertThat(persistedOrder.id())
+                                .as("the loaded the persisted BookOrder id is not equals to the BookOrder origin id")
+                                .isEqualTo(order.id());
+                        softly.assertThat(persistedOrder.items())
+                                .as("the loaded the persisted BookOrder items is not equals to the BookOrder origin items")
+                                .containsAll(order.items());
+                    });
+
+
+        });
 
     }
 
@@ -111,7 +151,9 @@ class RepositoryIntegrationTest {
         }
 
         repository.deleteAll();
-        assertThat(repository.findAll()).isEmpty();
+        bookStore.deleteAll();
+        assertThat(repository.findAll()).as("the repository is not empty").isEmpty();
+        assertThat(bookStore.findAll()).as("the bookStore is not empty").isEmpty();
     }
 
 }

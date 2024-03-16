@@ -12,12 +12,11 @@
  *
  *   Maximillian Arruda
  */
-
 package org.eclipse.jnosql.databases.mongodb.integration;
 
-import jakarta.data.repository.Repository;
-import org.eclipse.jnosql.mapping.NoSQLRepository;
+import jakarta.nosql.Column;
+import jakarta.nosql.Entity;
 
-@Repository
-public interface BookRepository extends NoSQLRepository<Book, String> {
+@Entity
+public record BookOrderItem(@Column Book book, @Column Integer quantity) {
 }

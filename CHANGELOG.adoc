@@ -8,6 +8,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == [Unreleased]
 
+
 === Changed
 
 - Update ArangoDB driver to 7.5.1
@@ -25,6 +26,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 === Fixed
 
 - Allow multiple entities at Oracle NoSQL appending the entity name with the id instead of only the id
+- Allow storing of entities with list of sub-entities at MongoDB
 
 == [1.1.0] - 2023-02-05
 

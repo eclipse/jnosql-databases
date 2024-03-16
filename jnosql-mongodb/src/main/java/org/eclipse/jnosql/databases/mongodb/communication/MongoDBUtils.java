@@ -106,7 +106,7 @@ final class MongoDBUtils {
         Map<Object, Object> map = new HashMap<>();
         for (Object item : iterable) {
             var document = cast(item);
-            map.put(document.name(), document.get());
+            map.put(document.name(), convert(document.value()));
         }
         return map;
     }
