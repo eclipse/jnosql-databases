@@ -160,7 +160,7 @@ class RepositoryIntegrationTest {
         Author joshuaBloch = new Author("Joshua Bloch");
         Book book = new Book(randomUUID().toString(), "Effective Java", 1, joshuaBloch);
 
-        Set<Book> expectedBooks = Set.of(book, book.newEdition(), book.newEdition());
+        List<Book> expectedBooks = List.of(book, book.newEdition(), book.newEdition());
         library.saveAll(expectedBooks);
 
         await().until(() ->
@@ -185,9 +185,9 @@ class RepositoryIntegrationTest {
         Author elderMoraes = new Author("Elder Moraes");
         Book jakartaEECookBook = new Book(randomUUID().toString(), "Jakarta EE CookBook", 1, elderMoraes);
 
-        Set<Book> allBooks = Set.of(jakartaEECookBook, effectiveJava1stEdition, effectiveJava2ndEdition, effectiveJava3rdEdition);
+        List<Book> allBooks = List.of(jakartaEECookBook, effectiveJava1stEdition, effectiveJava2ndEdition, effectiveJava3rdEdition);
 
-        Set<Book> effectiveBooks = Set.of(effectiveJava1stEdition, effectiveJava2ndEdition, effectiveJava3rdEdition);
+        List<Book> effectiveBooks = List.of(effectiveJava1stEdition, effectiveJava2ndEdition, effectiveJava3rdEdition);
 
         library.saveAll(allBooks);
 
