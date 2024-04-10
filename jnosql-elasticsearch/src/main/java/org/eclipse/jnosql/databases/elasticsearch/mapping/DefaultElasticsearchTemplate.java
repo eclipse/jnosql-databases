@@ -25,7 +25,7 @@ import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.elasticsearch.communication.ElasticsearchDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 
 @Typed(ElasticsearchTemplate.class)
 @ApplicationScoped
-class DefaultElasticsearchTemplate extends AbstractSemistructuredTemplate
+class DefaultElasticsearchTemplate extends AbstractSemiStructuredTemplate
         implements ElasticsearchTemplate {
 
     private final Instance<ElasticsearchDocumentManager> manager;

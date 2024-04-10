@@ -22,7 +22,7 @@ import jakarta.inject.Inject;
 import org.eclipse.jnosql.databases.solr.communication.SolrDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  */
 @Typed(SolrTemplate.class)
 @ApplicationScoped
-class DefaultSolrTemplate extends AbstractSemistructuredTemplate implements SolrTemplate {
+class DefaultSolrTemplate extends AbstractSemiStructuredTemplate implements SolrTemplate {
 
     private final Instance<SolrDocumentManager> manager;
 

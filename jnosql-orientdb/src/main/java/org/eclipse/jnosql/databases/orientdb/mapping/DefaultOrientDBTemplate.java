@@ -26,7 +26,7 @@ import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCallback;
 import org.eclipse.jnosql.databases.orientdb.communication.OrientDBLiveCallbackBuilder;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  */
 @Typed(OrientDBTemplate.class)
 @ApplicationScoped
-class DefaultOrientDBTemplate extends AbstractSemistructuredTemplate
+class DefaultOrientDBTemplate extends AbstractSemiStructuredTemplate
         implements OrientDBTemplate {
 
     private final Instance<OrientDBDocumentManager> manager;
