@@ -22,7 +22,7 @@ import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.oracle.communication.OracleNoSQLDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 
 @Typed(OracleNoSQLTemplate.class)
 @ApplicationScoped
-class DefaultOracleNoSQLTemplate extends AbstractSemistructuredTemplate implements OracleNoSQLTemplate {
+class DefaultOracleNoSQLTemplate extends AbstractSemiStructuredTemplate implements OracleNoSQLTemplate {
 
     private final Instance<OracleNoSQLDocumentManager> manager;
 

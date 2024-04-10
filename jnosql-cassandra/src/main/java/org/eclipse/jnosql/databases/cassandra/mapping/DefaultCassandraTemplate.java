@@ -29,7 +29,7 @@ import org.eclipse.jnosql.databases.cassandra.communication.CassandraColumnManag
 import org.eclipse.jnosql.databases.cassandra.communication.CassandraPreparedStatement;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -43,7 +43,7 @@ import java.util.stream.StreamSupport;
 
 @Typed(CassandraTemplate.class)
 @ApplicationScoped
-class DefaultCassandraTemplate extends AbstractSemistructuredTemplate implements CassandraTemplate {
+class DefaultCassandraTemplate extends AbstractSemiStructuredTemplate implements CassandraTemplate {
 
     private final Instance<CassandraColumnManager> manager;
 

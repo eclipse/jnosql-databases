@@ -23,7 +23,7 @@ import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  */
 @Typed(ArangoDBTemplate.class)
 @ApplicationScoped
-class DefaultArangoDBTemplate extends AbstractSemistructuredTemplate implements ArangoDBTemplate {
+class DefaultArangoDBTemplate extends AbstractSemiStructuredTemplate implements ArangoDBTemplate {
 
     private final Instance<ArangoDBDocumentManager> manager;
 

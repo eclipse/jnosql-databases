@@ -21,8 +21,8 @@ import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
-import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemistructuredRepositoryProxy;
-import org.eclipse.jnosql.mapping.semistructured.query.SemistructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemiStructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.query.SemiStructuredRepositoryProxy;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
 
-class OrientDBDocumentRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProxy<T, K> {
+class OrientDBDocumentRepositoryProxy<T, K> extends AbstractSemiStructuredRepositoryProxy<T, K> {
 
     private final Class<T> typeClass;
 
@@ -57,7 +57,7 @@ class OrientDBDocumentRepositoryProxy<T, K> extends AbstractSemistructuredReposi
         this.repositoryType = repositoryType;
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
-        this.repository = SemistructuredRepositoryProxy.SemistructuredRepository.of(template, entityMetadata);
+        this.repository = SemiStructuredRepositoryProxy.SemiStructuredRepository.of(template, entityMetadata);
     }
 
 

@@ -22,9 +22,9 @@ import org.eclipse.jnosql.mapping.core.query.AbstractRepository;
 import org.eclipse.jnosql.mapping.core.repository.DynamicReturn;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntityMetadata;
-import org.eclipse.jnosql.mapping.semistructured.SemistructuredTemplate;
-import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemistructuredRepositoryProxy;
-import org.eclipse.jnosql.mapping.semistructured.query.SemistructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.SemiStructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.query.AbstractSemiStructuredRepositoryProxy;
+import org.eclipse.jnosql.mapping.semistructured.query.SemiStructuredRepositoryProxy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import static org.eclipse.jnosql.mapping.core.repository.DynamicReturn.toSingleResult;
 
-class DynamoDBRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProxy<T, K> {
+class DynamoDBRepositoryProxy<T, K> extends AbstractSemiStructuredRepositoryProxy<T, K> {
 
     private final DynamoDBTemplate template;
 
@@ -63,7 +63,7 @@ class DynamoDBRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProx
         this.typeClass = (Class<T>) ((ParameterizedType) type.getGenericInterfaces()[0]).getActualTypeArguments()[0];
         this.converters = converters;
         this.entityMetadata = entitiesMetadata.get(typeClass);
-        this.repository = SemistructuredRepositoryProxy.SemistructuredRepository.of(template, entityMetadata);
+        this.repository = SemiStructuredRepositoryProxy.SemiStructuredRepository.of(template, entityMetadata);
     }
 
     /**
@@ -143,7 +143,7 @@ class DynamoDBRepositoryProxy<T, K> extends AbstractSemistructuredRepositoryProx
     }
 
     @Override
-    protected SemistructuredTemplate template() {
+    protected SemiStructuredTemplate template() {
         return template;
     }
 }

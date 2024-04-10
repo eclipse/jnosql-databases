@@ -23,7 +23,7 @@ import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.dynamodb.communication.DynamoDBDatabaseManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 
 @Typed(DynamoDBTemplate.class)
 @ApplicationScoped
-class DefaultDynamoDBTemplate extends AbstractSemistructuredTemplate implements DynamoDBTemplate {
+class DefaultDynamoDBTemplate extends AbstractSemiStructuredTemplate implements DynamoDBTemplate {
 
     private final Instance<DynamoDBDatabaseManager> manager;
 

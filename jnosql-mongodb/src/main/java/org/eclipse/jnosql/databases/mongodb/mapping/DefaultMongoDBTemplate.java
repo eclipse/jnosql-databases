@@ -30,14 +30,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.bson.BsonValue;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
 
 @ApplicationScoped
 @Typed(MongoDBTemplate.class)
-class DefaultMongoDBTemplate extends AbstractSemistructuredTemplate implements MongoDBTemplate {
+class DefaultMongoDBTemplate extends AbstractSemiStructuredTemplate implements MongoDBTemplate {
 
     private Instance<MongoDBDocumentManager> manager;
 

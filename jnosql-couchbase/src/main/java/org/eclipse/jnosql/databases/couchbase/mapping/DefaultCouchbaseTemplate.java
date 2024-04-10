@@ -24,7 +24,7 @@ import org.eclipse.jnosql.communication.semistructured.DatabaseManager;
 import org.eclipse.jnosql.databases.couchbase.communication.CouchbaseDocumentManager;
 import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
-import org.eclipse.jnosql.mapping.semistructured.AbstractSemistructuredTemplate;
+import org.eclipse.jnosql.mapping.semistructured.AbstractSemiStructuredTemplate;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.eclipse.jnosql.mapping.semistructured.EventPersistManager;
 
@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  */
 @Typed(CouchbaseTemplate.class)
 @ApplicationScoped
-class DefaultCouchbaseTemplate extends AbstractSemistructuredTemplate
+class DefaultCouchbaseTemplate extends AbstractSemiStructuredTemplate
         implements CouchbaseTemplate {
 
     private final Instance<CouchbaseDocumentManager> manager;
