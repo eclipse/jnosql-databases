@@ -75,7 +75,12 @@ public class MongoDBDocumentManager implements DatabaseManager {
         Objects.requireNonNull(entity, "entity is required");
         String collectionName = entity.name();
         MongoCollection<Document> collection = mongoDatabase.getCollection(collectionName);
-        Document document = getDocument(entity);
+        var document = getDocument(entity);
+        if (document.get(ID_FIELD) == null) {
+            document.remove(ID_FIELD);
+            entity.remove(ID_FIELD);
+        }
+
         collection.insertOne(document);
         boolean hasNotId = entity.elements().stream()
                 .map(Element::name).noneMatch(k -> k.equals(ID_FIELD));
