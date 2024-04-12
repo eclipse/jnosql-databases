@@ -80,6 +80,15 @@ class MongoDBDocumentManagerTest {
     }
 
     @Test
+    void shouldInsertAndIgnoreIdNull() {
+        var entity = getEntity();
+        entity.add("_id", null);
+        var documentEntity = entityManager.insert(entity);
+        Element id = documentEntity.find("_id").orElseThrow();
+        entityManager.delete(DeleteQuery.delete().from(COLLECTION_NAME).where("_id").eq(id.get()).build());
+    }
+
+    @Test
     void shouldThrowExceptionWhenInsertWithTTL() {
         var entity = getEntity();
         var ttl = Duration.ofSeconds(10);
