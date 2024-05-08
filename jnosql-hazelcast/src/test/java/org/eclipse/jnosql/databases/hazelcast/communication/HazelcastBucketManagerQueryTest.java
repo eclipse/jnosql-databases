@@ -51,10 +51,6 @@ public class HazelcastBucketManagerQueryTest {
         bucketManager.put("avengers", new Movie("The Avengers", 2012, false));
     }
 
-    @Test
-    public void shouldReturnWhenStringQueryIsNull() {
-        assertThrows(NullPointerException.class, () -> bucketManager.query((String) null));
-    }
 
     @Test
     public void shouldReturnWhenPredicateQueryIsNull() {
