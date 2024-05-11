@@ -59,8 +59,8 @@ public class SolrDocumentConfiguration implements DatabaseConfiguration {
 
         boolean automaticCommit = settings.getOrDefault(SolrDocumentConfigurations.AUTOMATIC_COMMIT, true);
 
-        final Http2SolrClient solrClient = new Http2SolrClient.Builder(host).build();
-        solrClient.setParser(new XMLResponseParser());
+        final Http2SolrClient solrClient = new Http2SolrClient.Builder(host)
+                .withResponseParser(new XMLResponseParser()).build();
         return new SolrDocumentManagerFactory(solrClient, automaticCommit);
 
     }
