@@ -16,6 +16,9 @@
 package org.eclipse.jnosql.databases.mongodb.communication;
 
 
+import com.mongodb.ConnectionString;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import org.eclipse.jnosql.communication.Settings;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -35,6 +38,10 @@ public enum DocumentDatabase {
 
     {
         mongodb.start();
+    }
+
+    public MongoClient mongoClient() {
+        return MongoClients.create(new ConnectionString("mongodb://" + host()));
     }
 
     public MongoDBDocumentManager get(String database) {
