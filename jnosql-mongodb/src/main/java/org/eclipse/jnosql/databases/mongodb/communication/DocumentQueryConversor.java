@@ -56,6 +56,11 @@ final class DocumentQueryConversor {
                 });
                 yield Filters.or(orList.stream()
                         .map(DocumentQueryConversor::convert).toList());
+            }case BETWEEN -> {
+                List<Object> betweenList = ValueUtil.convertToList(document.value());
+                yield Filters.and(Filters.gte(document.name(), betweenList.get(0)),
+                        Filters.lte(document.name(), betweenList.get(1)));
+
             }
             default -> throw new UnsupportedOperationException("The condition " + condition.condition()
                     + " is not supported from mongoDB diana driver");
