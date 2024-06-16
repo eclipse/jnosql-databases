@@ -267,6 +267,47 @@ class MongoDBDocumentManagerTest {
     }
 
     @Test
+    void shouldFindBetween() {
+        var deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+
+        var query = select().from(COLLECTION_NAME)
+                .where("age").between(22, 23)
+                .build();
+
+        var result = entityManager.select(query).toList();
+
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(result).hasSize(2);
+            softly.assertThat(result).map(e -> e.find("age").orElseThrow().get(Integer.class)).contains(22, 23);
+            softly.assertThat(result).map(e -> e.find("age").orElseThrow().get(Integer.class)).doesNotContain(25);
+        });
+    }
+
+    @Test
+    void shouldFindBetween2() {
+        var deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
+        entityManager.delete(deleteQuery);
+        Iterable<CommunicationEntity> entitiesSaved = entityManager.insert(getEntitiesWithValues());
+
+        var query = select().from(COLLECTION_NAME)
+                .where("age").between(22, 23)
+                .and("type").eq("V")
+                .build();
+
+        var result = entityManager.select(query).toList();
+
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(result).hasSize(2);
+            softly.assertThat(result).map(e -> e.find("age").orElseThrow().get(Integer.class)).contains(22, 23);
+            softly.assertThat(result).map(e -> e.find("age").orElseThrow().get(Integer.class)).doesNotContain(25);
+        });
+    }
+
+
+
+    @Test
     void shouldFindDocumentStart() {
         DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).where("type").eq("V").build();
         entityManager.delete(deleteQuery);
@@ -440,7 +481,7 @@ class MongoDBDocumentManagerTest {
         entityManager.insert(entity);
 
         List<CommunicationEntity> entities = entityManager.select(select().from("download")
-                .where("_id").eq(id).build()).collect(Collectors.toList());
+                .where("_id").eq(id).build()).toList();
 
         assertEquals(1, entities.size());
         CommunicationEntity documentEntity = entities.get(0);
@@ -481,6 +522,7 @@ class MongoDBDocumentManagerTest {
         assertDoesNotThrow(() -> entityManager.insert(entity));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void shouldRetrieveListDocumentList() {
         CommunicationEntity entity = entityManager.insert(createDocumentList());
@@ -565,6 +607,7 @@ class MongoDBDocumentManagerTest {
         });
     }
 
+
     private CommunicationEntity createDocumentList() {
         CommunicationEntity entity = CommunicationEntity.of("AppointmentBook");
         entity.add(Element.of("_id", new Random().nextInt()));
@@ -594,23 +637,24 @@ class MongoDBDocumentManagerTest {
     }
 
     private List<CommunicationEntity> getEntitiesWithValues() {
-        CommunicationEntity lucas = CommunicationEntity.of(COLLECTION_NAME);
+        var lucas = CommunicationEntity.of(COLLECTION_NAME);
         lucas.add(Element.of("name", "Lucas"));
         lucas.add(Element.of("age", 22));
         lucas.add(Element.of("location", "BR"));
         lucas.add(Element.of("type", "V"));
 
-        CommunicationEntity otavio = CommunicationEntity.of(COLLECTION_NAME);
+        var luna = CommunicationEntity.of(COLLECTION_NAME);
+        luna.add(Element.of("name", "Luna"));
+        luna.add(Element.of("age", 23));
+        luna.add(Element.of("location", "US"));
+        luna.add(Element.of("type", "V"));
+
+        var otavio = CommunicationEntity.of(COLLECTION_NAME);
         otavio.add(Element.of("name", "Otavio"));
         otavio.add(Element.of("age", 25));
         otavio.add(Element.of("location", "BR"));
         otavio.add(Element.of("type", "V"));
 
-        CommunicationEntity luna = CommunicationEntity.of(COLLECTION_NAME);
-        luna.add(Element.of("name", "Luna"));
-        luna.add(Element.of("age", 23));
-        luna.add(Element.of("location", "US"));
-        luna.add(Element.of("type", "V"));
 
         return asList(lucas, otavio, luna);
     }
