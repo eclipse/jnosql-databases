@@ -100,10 +100,10 @@ class CassandraRepositoryProxy<T, K> extends AbstractSemiStructuredRepositoryPro
                 result = template.cql(cql.value(), args);
             }
             return DynamicReturn.builder()
-                    .withClassSource(typeClass)
-                    .withMethodSource(method)
-                    .withResult(() -> result)
-                    .withSingleResult(toSingleResult(method).apply(() -> result))
+                    .classSource(typeClass)
+                    .methodSource(method)
+                    .result(() -> result)
+                    .singleResult(toSingleResult(method).apply(() -> result))
                     .build().execute();
         }
 

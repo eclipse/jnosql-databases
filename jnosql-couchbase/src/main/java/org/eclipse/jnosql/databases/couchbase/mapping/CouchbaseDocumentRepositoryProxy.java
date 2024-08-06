@@ -99,10 +99,10 @@ class CouchbaseDocumentRepositoryProxy<T, K> extends AbstractSemiStructuredRepos
             }
 
             return DynamicReturn.builder()
-                    .withClassSource(typeClass)
-                    .withMethodSource(method)
-                    .withResult(() -> result)
-                    .withSingleResult(toSingleResult(method).apply(() -> result))
+                    .classSource(typeClass)
+                    .methodSource(method)
+                    .result(() -> result)
+                    .singleResult(toSingleResult(method).apply(() -> result))
                     .build().execute();
         }
         return super.invoke(instance, method, args);
