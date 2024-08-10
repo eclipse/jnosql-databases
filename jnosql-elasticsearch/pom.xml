@@ -29,7 +29,6 @@
 
     <properties>
         <elasticsearch-java.version>8.13.4</elasticsearch-java.version>
-        <awaitility.version>4.2.0</awaitility.version>
     </properties>
     <dependencies>
         <dependency>
