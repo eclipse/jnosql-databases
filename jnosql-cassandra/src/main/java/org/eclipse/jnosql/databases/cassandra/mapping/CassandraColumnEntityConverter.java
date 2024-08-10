@@ -20,9 +20,9 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.mapping.core.Converters;
+import org.eclipse.jnosql.mapping.metadata.CollectionFieldMetadata;
 import org.eclipse.jnosql.mapping.metadata.EntitiesMetadata;
 import org.eclipse.jnosql.mapping.metadata.FieldMetadata;
-import org.eclipse.jnosql.mapping.metadata.GenericFieldMetadata;
 import org.eclipse.jnosql.mapping.semistructured.AttributeFieldValue;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 
@@ -74,7 +74,7 @@ class CassandraColumnEntityConverter extends EntityConverter {
             Object columns = udt.get();
             if (StreamSupport.stream(Iterable.class.cast(columns).spliterator(), false)
                     .allMatch(Iterable.class::isInstance)) {
-                GenericFieldMetadata genericField = GenericFieldMetadata.class.cast(field);
+                CollectionFieldMetadata genericField = CollectionFieldMetadata.class.cast(field);
                 Collection collection = genericField.collectionInstance();
                 List<List<Element>> embeddable = (List<List<Element>>) columns;
                 for (List<Element> columnList : embeddable) {
