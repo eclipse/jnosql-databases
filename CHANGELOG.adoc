@@ -17,7 +17,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Upgrade AraongDB driver to 7.7.1
 - Upgrade Couchbase to version 3.7.1
 - Upgrade dynamodb to version 2.27.2
-- Upgrade Elasticsearch to version 8.15.0
+- Upgrade Elasticsearch to version 8.14.3
 - Upgrade Hazelcast to version 5.5.0
 - Upgrade Hbase version to 2.6.0
 - Upgrade Infinispan to version 15.0.7.Final
