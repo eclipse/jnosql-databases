@@ -74,11 +74,11 @@ class CassandraColumnEntityConverter extends EntityConverter {
             Object columns = udt.get();
             if (StreamSupport.stream(Iterable.class.cast(columns).spliterator(), false)
                     .allMatch(Iterable.class::isInstance)) {
-                CollectionFieldMetadata genericField = CollectionFieldMetadata.class.cast(field);
-                Collection collection = genericField.collectionInstance();
+                var collectionFieldMetadata = CollectionFieldMetadata.class.cast(field);
+                Collection collection = collectionFieldMetadata.collectionInstance();
                 List<List<Element>> embeddable = (List<List<Element>>) columns;
                 for (List<Element> columnList : embeddable) {
-                    Object element = toEntity(genericField.elementType(), columnList);
+                    Object element = toEntity(collectionFieldMetadata.elementType(), columnList);
                     collection.add(element);
                 }
                 field.write(instance, collection);
