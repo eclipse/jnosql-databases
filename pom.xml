@@ -60,6 +60,7 @@
         <module>jnosql-riak</module>
         <module>jnosql-solr</module>
         <module>jnosql-oracle-nosql</module>
+        <module>jnosql-tinkerpop</module>
     </modules>
 
     <dependencyManagement>
