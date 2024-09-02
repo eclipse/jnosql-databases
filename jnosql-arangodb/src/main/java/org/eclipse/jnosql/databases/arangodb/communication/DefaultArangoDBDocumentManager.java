@@ -123,8 +123,8 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
     @Override
     public Stream<CommunicationEntity> select(SelectQuery query) throws NullPointerException {
         requireNonNull(query, "query is required");
-
         AQLQueryResult result = QueryAQLConverter.select(query);
+        LOGGER.finest("Executing AQL: " + result.query());
         ArangoCursor<BaseDocument> documents = arangoDB.db(database).query(result.query(),
                 BaseDocument.class,
                 result.values(), null);
