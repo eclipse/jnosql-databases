@@ -309,6 +309,19 @@ public class ArangoDBDocumentManagerTest {
         org.assertj.core.api.Assertions.assertThat(indexes).hasSize(4).contains(3, 4, 5, 6);
     }
 
+    @Test
+    void shouldIncludeSkip() {
+        for (int index = 0; index < 20; index++) {
+            var entity = getEntity();
+            entity.add("index", index);
+            entityManager.insert(entity);
+        }
+        var select = select().from(COLLECTION_NAME).orderBy("index").asc().skip(5).build();
+        var entities = entityManager.select(select).toList();
+        var indexes = entities.stream().map(e -> e.find("index").orElseThrow().get()).toList();
+        org.assertj.core.api.Assertions.assertThat(indexes).hasSize(15);
+    }
+
     private CommunicationEntity getEntity() {
         CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
