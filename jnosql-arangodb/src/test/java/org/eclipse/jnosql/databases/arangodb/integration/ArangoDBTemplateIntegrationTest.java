@@ -15,8 +15,11 @@
 package org.eclipse.jnosql.databases.arangodb.integration;
 
 
+import jakarta.data.page.CursoredPage;
+import jakarta.data.page.PageRequest;
 import jakarta.inject.Inject;
 import org.assertj.core.api.SoftAssertions;
+import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.eclipse.jnosql.databases.arangodb.communication.ArangoDBConfigurations;
 import org.eclipse.jnosql.databases.arangodb.mapping.ArangoDBTemplate;
 import org.eclipse.jnosql.mapping.Database;
@@ -196,6 +199,25 @@ class ArangoDBTemplateIntegrationTest {
             soft.assertThat(books).hasSize(3);
             var editions = books.stream().map(Book::edition).toList();
             soft.assertThat(editions).hasSize(3).contains(5, 6, 7);
+        });
+    }
+
+    @Test
+    void shouldSelectCursorSize() {
+        for (int index = 1; index < 10; index++) {
+            var book = new Book(randomUUID().toString(), "Effective Java", index);
+            template.insert(book);
+        }
+        var select = SelectQuery.select().from("Book").orderBy("edition").asc()
+                .skip(4).limit(3).build();
+        var pageRequest = PageRequest.ofSize(3);
+        CursoredPage<Book> entities = template.selectCursor(select, pageRequest);
+
+        SoftAssertions.assertSoftly(soft -> {
+            var content = entities.content();
+            soft.assertThat(content).hasSize(3);
+            var editions = content.stream().map(Book::edition).toList();
+            soft.assertThat(editions).hasSize(3).contains(1, 2, 3);
         });
     }
 }
