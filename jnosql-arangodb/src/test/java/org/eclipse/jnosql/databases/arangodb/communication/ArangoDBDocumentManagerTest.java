@@ -24,6 +24,7 @@ import org.eclipse.jnosql.communication.semistructured.Element;
 import org.eclipse.jnosql.communication.semistructured.Elements;
 import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -36,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -276,6 +278,35 @@ public class ArangoDBDocumentManagerTest {
         SelectQuery select = select().from(COLLECTION_NAME).build();
         List<CommunicationEntity> entities = entityManager.select(select).toList();
         assertThat(entities).isEmpty();
+    }
+
+
+    @Test
+    void shouldIncludeLimit() {
+        for (int index = 0; index < 20; index++) {
+            var entity = getEntity();
+            entity.add("index", index);
+            entityManager.insert(entity);
+        }
+        var select = select().from(COLLECTION_NAME).orderBy("index").asc().limit(4).build();
+        var entities = entityManager.select(select).toList();
+        var indexes = entities.stream().map(e -> e.find("index").orElseThrow().get()).toList();
+        org.assertj.core.api.Assertions.assertThat(indexes).hasSize(4).contains(0, 1, 2, 3);
+        DeleteQuery deleteQuery = delete().from(COLLECTION_NAME).build();
+        entityManager.delete(deleteQuery);
+    }
+
+    @Test
+    void shouldIncludeSkipLimit() {
+        for (int index = 0; index < 20; index++) {
+            var entity = getEntity();
+            entity.add("index", index);
+            entityManager.insert(entity);
+        }
+        var select = select().from(COLLECTION_NAME).orderBy("index").asc().skip(3).limit(4).build();
+        var entities = entityManager.select(select).toList();
+        var indexes = entities.stream().map(e -> e.find("index").orElseThrow().get()).toList();
+        org.assertj.core.api.Assertions.assertThat(indexes).hasSize(4).contains(3, 4, 5, 6);
     }
 
     private CommunicationEntity getEntity() {
