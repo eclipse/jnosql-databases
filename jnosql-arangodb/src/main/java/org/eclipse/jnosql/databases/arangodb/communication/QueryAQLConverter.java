@@ -98,6 +98,8 @@ final class QueryAQLConverter {
                     .append(", ").append(maxResult);
         } else if (maxResult > 0) {
             aql.append(LIMIT).append(maxResult);
+        } else if(firstResult > 0) {
+            aql.append(LIMIT).append(firstResult).append(", null");
         }
 
         aql.append(conclusion).append(entity);
