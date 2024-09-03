@@ -607,6 +607,21 @@ class MongoDBDocumentManagerTest {
         });
     }
 
+    @Test
+    void shouldInsertUUID() {
+        var entity = getEntity();
+        entity.add("uuid", UUID.randomUUID());
+        var documentEntity = entityManager.insert(entity);
+        Optional<Element> uuid = documentEntity.find("uuid");
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(uuid).isPresent();
+            Element element = uuid.orElseThrow();
+            soft.assertThat(element.name()).isEqualTo("uuid");
+            soft.assertThat(element.get(UUID.class)).isInstanceOf(UUID.class);
+        });
+
+    }
+
 
     private CommunicationEntity createDocumentList() {
         CommunicationEntity entity = CommunicationEntity.of("AppointmentBook");
