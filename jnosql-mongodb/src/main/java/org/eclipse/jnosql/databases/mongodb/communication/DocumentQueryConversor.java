@@ -18,6 +18,7 @@ package org.eclipse.jnosql.databases.mongodb.communication;
 
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
+import org.eclipse.jnosql.communication.Condition;
 import org.eclipse.jnosql.communication.TypeReference;
 import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
@@ -43,7 +44,17 @@ final class DocumentQueryConversor {
                 List<Object> inList = ValueUtil.convertToList(document.value());
                 yield Filters.in(document.name(), inList.toArray());
             }
-            case NOT -> Filters.not(convert(document.get(CriteriaCondition.class)));
+            case NOT -> {
+                var criteriaCondition = document.get(CriteriaCondition.class);
+                if (Condition.EQUALS.equals(criteriaCondition.condition())) {
+                    Element element = criteriaCondition.element();
+                    if(element.get() == null) {
+                        yield Filters.exists(element.name(), true);
+                    }
+                    yield Filters.ne(element.name(), element.get());
+                }
+                yield Filters.not(convert(criteriaCondition));
+            }
             case LIKE -> Filters.regex(document.name(), value.toString());
             case AND -> {
                 List<CriteriaCondition> andList = condition.element().value().get(new TypeReference<>() {
