@@ -31,15 +31,7 @@ public record AsciiCharacter(
         @Column
         Boolean isoControl) {
 
-    public static boolean isValidAsciiCharacter(int numericPosition) {
-        return numericPosition > 0 || numericPosition <= 127;
-    }
-
     public static AsciiCharacter of(int value) {
-        if (!isValidAsciiCharacter(value))
-            throw new IllegalArgumentException(
-                    "%d is not an ASCII character supported. It should be greater than 0 and less than 127."
-                            .formatted(value));
         char thisCharacter = (char) value;
         return new AsciiCharacter(
                 Integer.toUnsignedLong(value),
