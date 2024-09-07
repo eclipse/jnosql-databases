@@ -29,6 +29,9 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Upgrade Redis to version 5.1.4
 - Upgrade Solr to version 9.6.1
 
+== Fixed
+
+- Fixed the support to negation queries on the Eclipse JNoSQL layer to MongoDB
 
 == [1.1.1] - 2023-05-25
 
