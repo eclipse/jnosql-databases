@@ -25,6 +25,7 @@ import org.eclipse.jnosql.communication.semistructured.CriteriaCondition;
 import org.eclipse.jnosql.communication.semistructured.Element;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 final class DocumentQueryConversor {
 
@@ -48,14 +49,13 @@ final class DocumentQueryConversor {
                 var criteriaCondition = document.get(CriteriaCondition.class);
                 if (Condition.EQUALS.equals(criteriaCondition.condition())) {
                     Element element = criteriaCondition.element();
-                    if(element.get() == null) {
+                    if (element.get() == null) {
                         yield Filters.exists(element.name(), true);
                     }
-                    yield Filters.ne(element.name(), element.get());
                 }
-                yield Filters.not(convert(criteriaCondition));
+                yield Filters.nor(convert(criteriaCondition));
             }
-            case LIKE -> Filters.regex(document.name(), value.toString());
+            case LIKE -> Filters.regex(document.name(), Pattern.compile(prepareRegexValue(value.toString())));
             case AND -> {
                 List<CriteriaCondition> andList = condition.element().value().get(new TypeReference<>() {
                 });
@@ -67,7 +67,8 @@ final class DocumentQueryConversor {
                 });
                 yield Filters.or(orList.stream()
                         .map(DocumentQueryConversor::convert).toList());
-            }case BETWEEN -> {
+            }
+            case BETWEEN -> {
                 List<Object> betweenList = ValueUtil.convertToList(document.value());
                 yield Filters.and(Filters.gte(document.name(), betweenList.get(0)),
                         Filters.lte(document.name(), betweenList.get(1)));
@@ -78,5 +79,12 @@ final class DocumentQueryConversor {
         };
     }
 
+    public static String prepareRegexValue(String rawData) {
+        if (rawData == null)
+            return "^$";
+        return "^" + rawData
+                .replaceAll("_", ".{1}")
+                .replaceAll("%", ".{1,}");
+    }
 
 }
