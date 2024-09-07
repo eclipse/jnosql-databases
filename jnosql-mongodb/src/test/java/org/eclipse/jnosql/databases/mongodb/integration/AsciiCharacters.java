@@ -53,7 +53,6 @@ public interface AsciiCharacters extends DataRepository<AsciiCharacter, Integer>
         var dictonary = new LinkedList<AsciiCharacter>();
 
         IntStream.range(1, 128)
-                .filter(AsciiCharacter::isValidAsciiCharacter)
                 .mapToObj(AsciiCharacter::of)// Some databases don't support ASCII NULL character (0)
                 .forEach(dictonary::add);
 
