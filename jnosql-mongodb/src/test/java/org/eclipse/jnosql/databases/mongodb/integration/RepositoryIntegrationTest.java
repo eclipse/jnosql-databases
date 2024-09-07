@@ -10,23 +10,22 @@
  *
  *   Contributors:
  *
+ *   Otavio Santana
  *   Maximillian Arruda
  */
 package org.eclipse.jnosql.databases.mongodb.integration;
 
 import jakarta.inject.Inject;
-import org.assertj.core.api.SoftAssertions;
 import org.eclipse.jnosql.databases.mongodb.communication.MongoDBDocumentConfigurations;
 import org.eclipse.jnosql.databases.mongodb.mapping.MongoDBTemplate;
-import jakarta.nosql.Convert;
-import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.Database;
 import org.eclipse.jnosql.mapping.DatabaseType;
+import org.eclipse.jnosql.mapping.core.Converters;
 import org.eclipse.jnosql.mapping.core.config.MappingConfigurations;
+import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.eclipse.jnosql.mapping.document.DocumentTemplate;
 import org.eclipse.jnosql.mapping.document.spi.DocumentExtension;
 import org.eclipse.jnosql.mapping.reflection.Reflections;
-import org.eclipse.jnosql.mapping.core.spi.EntityMetadataExtension;
 import org.eclipse.jnosql.mapping.semistructured.EntityConverter;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
@@ -37,8 +36,8 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import java.util.List;
 
 import static java.util.UUID.randomUUID;
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
 import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
@@ -58,6 +57,7 @@ class RepositoryIntegrationTest {
         INSTANCE.get("library");
         System.setProperty(MongoDBDocumentConfigurations.HOST.get() + ".1", INSTANCE.host());
         System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
+        INSTANCE.get("library");
     }
 
     @Inject
@@ -68,6 +68,10 @@ class RepositoryIntegrationTest {
     @Inject
     @Database(DatabaseType.DOCUMENT)
     BookStore bookStore;
+
+    @Inject
+    @Database(DatabaseType.DOCUMENT)
+    AsciiCharacters characters;
 
     @Test
     void shouldSave() {
@@ -91,8 +95,8 @@ class RepositoryIntegrationTest {
                     randomUUID().toString(),
                     List.of(
                             new BookOrderItem(new Book(randomUUID().toString(), "Effective Java", 3), 1)
-                            ,new BookOrderItem(new Book(randomUUID().toString(), "Java Persistence Layer", 1), 10)
-                            ,new BookOrderItem(new Book(randomUUID().toString(), "Jakarta EE Cookbook", 1), 5)
+                            , new BookOrderItem(new Book(randomUUID().toString(), "Java Persistence Layer", 1), 10)
+                            , new BookOrderItem(new Book(randomUUID().toString(), "Jakarta EE Cookbook", 1), 5)
                     )
             );
 
@@ -103,7 +107,7 @@ class RepositoryIntegrationTest {
                     .isPresent()
                     .get()
                     .as("the loaded the persisted BookOrder doesn't matches with the BookOrder origin")
-                    .satisfies(persistedOrder ->{
+                    .satisfies(persistedOrder -> {
                         softly.assertThat(persistedOrder.id())
                                 .as("the loaded the persisted BookOrder id is not equals to the BookOrder origin id")
                                 .isEqualTo(order.id());
@@ -156,4 +160,25 @@ class RepositoryIntegrationTest {
         assertThat(bookStore.findAll()).as("the bookStore is not empty").isEmpty();
     }
 
+    @Test
+    public void testQueryWithNot() {
+        // Given
+        characters.populate();
+
+        assertThatCode(() -> characters.getABCDFO())
+                .as("Should not throw any exception because it should be supported by this implementation")
+                .doesNotThrowAnyException();
+
+        var abcdfo = characters.getABCDFO();
+
+        assertSoftly(softly -> {
+
+            softly.assertThat(abcdfo)
+                    .as("should return a non null reference")
+                    .isNotNull()
+                    .as("Should return the characters 'A', 'B', 'C', 'D', 'F', and 'O'")
+                    .contains('A', 'B', 'C', 'D', 'F', 'O');
+
+        });
+    }
 }
