@@ -26,8 +26,6 @@ import java.util.stream.IntStream;
 @Repository
 public interface AsciiCharacters extends DataRepository<AsciiCharacter, Integer> {
 
-    long countByHexadecimalNotNull();
-
     @Save
     List<AsciiCharacter> saveAll(List<AsciiCharacter> characters);
 
@@ -39,16 +37,11 @@ public interface AsciiCharacters extends DataRepository<AsciiCharacter, Integer>
             " order by id asc")
     Character[] getABCDFO();
 
-
-    @Query("" +
-            " order by id asc")
-    AsciiCharacter[] getAllCharacters();
-
+    long countByHexadecimalNotNull();
 
     default void populate() {
         if (this.countByHexadecimalNotNull() >= 127)
             return;
-
 
         var dictonary = new LinkedList<AsciiCharacter>();
 
