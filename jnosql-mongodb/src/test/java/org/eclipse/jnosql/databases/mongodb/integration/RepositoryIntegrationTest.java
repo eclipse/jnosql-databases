@@ -57,7 +57,6 @@ class RepositoryIntegrationTest {
         INSTANCE.get("library");
         System.setProperty(MongoDBDocumentConfigurations.HOST.get() + ".1", INSTANCE.host());
         System.setProperty(MappingConfigurations.DOCUMENT_DATABASE.get(), "library");
-        INSTANCE.get("library");
     }
 
     @Inject
