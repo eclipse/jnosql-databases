@@ -1147,7 +1147,7 @@ Stream<Person> stream = template.select(Person.class , filter);
 
 image::https://www.jnosql.org/img/logos/oracle.png[Oracle NoSQL Project,align="center"width=25%,height=25%]
 
-[Oracle NoSQL Database](https://www.oracle.com/database/nosql/technologies/nosql/) is a versatile multi-model database offering flexible data models for documents, graphs, and key-value pairs. It empowers developers to build high-performance applications using a user-friendly SQL-like query language or JavaScript extensions.
+https://www.oracle.com/database/nosql/technologies/nosql/[Oracle NoSQL Database] is a versatile multi-model database offering flexible data models for documents, graphs, and key-value pairs. It empowers developers to build high-performance applications using a user-friendly SQL-like query language or JavaScript extensions.
 
 This API provides support for *Document* and *Key-Value* data types.
 
@@ -1166,7 +1166,7 @@ You can include Oracle NoSQL as a dependency using either Maven or Gradle:
 
 === Configuration
 
-The API offers the `OracleNoSQLConfigurations` class to programmatically set up credentials. It also supports configuration via the [MicroProfile Config](https://microprofile.io/microprofile-config/) specification.
+The API offers the `OracleNoSQLConfigurations` class to programmatically set up credentials. It also supports configuration via the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
 
 [cols="Oracle NoSQL Properties"]
 |===
