@@ -26,7 +26,6 @@ import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -61,7 +60,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public CommunicationEntity insert(CommunicationEntity entity)  {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         String collectionName = entity.name();
         checkCollection(collectionName);
         BaseDocument baseDocument = ArangoDBUtil.getBaseDocument(entity);
@@ -73,7 +72,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public CommunicationEntity update(CommunicationEntity entity) {
-        Objects.requireNonNull(entity, "entity is required");
+        requireNonNull(entity, "entity is required");
         String collectionName = entity.name();
         checkCollection(collectionName);
         String id = entity.find(ID, String.class)
@@ -90,7 +89,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public Iterable<CommunicationEntity> update(Iterable<CommunicationEntity> entities) {
-        Objects.requireNonNull(entities, "entities is required");
+        requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::update)
                 .collect(Collectors.toList());
@@ -135,7 +134,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public long count(String documentCollection) {
-        Objects.requireNonNull(documentCollection, "document collection is required");
+        requireNonNull(documentCollection, "document collection is required");
         String aql = "RETURN LENGTH(" + documentCollection + ")";
         ArangoCursor<Object> query = arangoDB.db(database).query(aql, Object.class, emptyMap(), null);
         return StreamSupport.stream(query.spliterator(), false).findFirst().map(Number.class::cast)
@@ -188,7 +187,7 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities) {
-        Objects.requireNonNull(entities, "entities is required");
+        requireNonNull(entities, "entities is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::insert)
                 .collect(Collectors.toList());
@@ -196,8 +195,8 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
 
     @Override
     public Iterable<CommunicationEntity> insert(Iterable<CommunicationEntity> entities, Duration ttl) {
-        Objects.requireNonNull(entities, "entities is required");
-        Objects.requireNonNull(ttl, "ttl is required");
+        requireNonNull(entities, "entities is required");
+        requireNonNull(ttl, "ttl is required");
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(e -> this.insert(e, ttl))
                 .collect(Collectors.toList());

@@ -19,7 +19,6 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -62,7 +61,7 @@ final class ArangoDBBuilders {
         settings.get(ArangoDBConfigurations.PROTOCOL).map(Object::toString).map(Protocol::valueOf)
                 .ifPresent(arangoDB::protocol);
 
-        settings.prefixSupplier(Arrays.asList(ArangoDBConfigurations.HOST, Configurations.HOST))
+        settings.prefixSupplier(asList(ArangoDBConfigurations.HOST, Configurations.HOST))
                 .stream()
                 .map(Object::toString)
                 .map(ArangoDBHost::new)

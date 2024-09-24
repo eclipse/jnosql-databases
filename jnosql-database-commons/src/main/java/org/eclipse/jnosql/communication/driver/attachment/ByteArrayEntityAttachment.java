@@ -17,6 +17,7 @@ package org.eclipse.jnosql.communication.driver.attachment;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * Default representation of {@link EntityAttachment} for in-memory data.
@@ -33,7 +34,8 @@ public class ByteArrayEntityAttachment implements EntityAttachment {
         this.name = name;
         this.contentType = contentType;
         this.lastModified = lastModified;
-        this.data = data;
+        this.data = data != null ? Arrays.copyOf(data, data.length) : new byte[0];
+
     }
 
     @Override
