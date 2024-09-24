@@ -26,12 +26,15 @@ enum DefaultJsonbSupplier implements JsonbSupplier {
 
     INSTANCE;
 
-    {
-        JsonbConfig config = new JsonbConfig().withPropertyVisibilityStrategy(new PrivateVisibilityStrategy());
-        this.json = JsonbBuilder.newBuilder().withConfig(config).build();
-    }
-
     private final Jsonb json;
+
+    DefaultJsonbSupplier() {
+        JsonbConfig config = new JsonbConfig()
+                .withPropertyVisibilityStrategy(new PrivateVisibilityStrategy());
+        this.json = JsonbBuilder.newBuilder()
+                .withConfig(config)
+                .build();
+    }
 
     @Override
     public Jsonb get() {

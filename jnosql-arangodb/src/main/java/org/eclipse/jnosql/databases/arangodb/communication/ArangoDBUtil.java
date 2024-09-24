@@ -19,7 +19,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import org.eclipse.jnosql.communication.Value;
-
 import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.communication.semistructured.Element;
@@ -33,8 +32,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
@@ -85,7 +82,7 @@ public final class ArangoDBUtil {
         Map<String, Object> properties = document.getProperties();
         List<Element> documents = properties.keySet().stream()
                 .map(k -> toDocument(k, properties))
-                .collect(Collectors.toList());
+                .collect(toList());
 
         documents.add(Element.of(KEY, document.getKey()));
         documents.add(Element.of(ID, document.getId()));
@@ -110,7 +107,7 @@ public final class ArangoDBUtil {
         if (value instanceof Map map) {
             return Element.of(key, map.keySet()
                     .stream().map(k -> toDocument(k.toString(), map))
-                    .collect(Collectors.toList()));
+                    .collect(toList()));
         }
         if (isADocumentIterable(value)) {
             List<List<Element>> documents = new ArrayList<>();
@@ -141,7 +138,7 @@ public final class ArangoDBUtil {
             return getMap(val);
         }
         if (isSudDocumentList(val)) {
-            return StreamSupport.stream(Iterable.class.cast(val).spliterator(), false)
+            return stream(Iterable.class.cast(val).spliterator(), false)
                     .map(ArangoDBUtil::getMap).collect(toList());
         }
         return val;
@@ -158,12 +155,12 @@ public final class ArangoDBUtil {
     }
 
     private static boolean isSudDocumentList(Object value) {
-        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+        return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(d -> d instanceof Iterable && isSudDocument(d));
     }
 
     private static boolean isSudDocument(Object value) {
-        return value instanceof Iterable && StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).
+        return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
                 allMatch(Element.class::isInstance);
     }
 

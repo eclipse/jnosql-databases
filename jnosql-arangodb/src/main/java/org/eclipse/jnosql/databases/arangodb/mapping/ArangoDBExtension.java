@@ -33,7 +33,7 @@ public class ArangoDBExtension implements Extension {
 
         LOGGER.info("Starting the onAfterBeanDiscovery with elements number: " + crudTypes.size());
 
-        crudTypes.forEach(type -> afterBeanDiscovery.addBean(new ArangoDBRepositoryBean(type)));
+        crudTypes.forEach(type -> afterBeanDiscovery.addBean(new ArangoDBRepositoryBean<>(type)));
 
         LOGGER.info("Finished the onAfterBeanDiscovery");
     }
