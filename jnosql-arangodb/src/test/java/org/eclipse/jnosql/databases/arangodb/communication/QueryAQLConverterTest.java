@@ -16,16 +16,12 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.Map;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class QueryAQLConverterTest {
 
     @Test

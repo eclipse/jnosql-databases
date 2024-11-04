@@ -157,7 +157,7 @@ final class QueryAQLConverter {
                     if (isFirstCondition(aql, counter)) {
                         aql.append(AND);
                     }
-                    definesCondition(dc, aql, params, entity, counter +1);
+                    definesCondition(dc, aql, params, entity, ++counter);
                 }
                 return;
             case OR:
