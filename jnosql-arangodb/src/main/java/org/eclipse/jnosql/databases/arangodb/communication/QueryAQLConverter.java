@@ -11,6 +11,7 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Michele Rastelli
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
@@ -38,6 +39,8 @@ final class QueryAQLConverter {
     private static final String REMOVE = " REMOVE ";
     private static final String RETURN = " RETURN ";
     private static final String SEPARATOR = " ";
+    private static final String START_EXPRESSION = "(";
+    private static final String END_EXPRESSION = ")";
     private static final String AND = " AND ";
     private static final String OR = " OR ";
     private static final String EQUALS = " == ";
@@ -157,7 +160,7 @@ final class QueryAQLConverter {
                     if (isFirstCondition(aql, counter)) {
                         aql.append(AND);
                     }
-                    definesCondition(dc, aql, params, entity, counter +1);
+                    definesCondition(dc, aql, params, entity, ++counter);
                 }
                 return;
             case OR:
@@ -173,7 +176,9 @@ final class QueryAQLConverter {
             case NOT:
                 CriteriaCondition documentCondition = document.get(CriteriaCondition.class);
                 aql.append(NOT);
+                aql.append(START_EXPRESSION);
                 definesCondition(documentCondition, aql, params, entity, ++counter);
+                aql.append(END_EXPRESSION);
                 return;
             default:
                 throw new IllegalArgumentException("The condition does not support in AQL: " + condition.condition());

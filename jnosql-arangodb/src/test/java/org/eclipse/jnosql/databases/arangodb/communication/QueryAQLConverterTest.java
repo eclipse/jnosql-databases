@@ -11,21 +11,19 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Michele Rastelli
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 import org.eclipse.jnosql.communication.semistructured.SelectQuery;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import java.util.List;
 import java.util.Map;
 
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.MATCHES;
-import static org.eclipse.jnosql.communication.driver.IntegrationTest.NAMED;
 import static org.eclipse.jnosql.communication.semistructured.SelectQuery.select;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@EnabledIfSystemProperty(named = NAMED, matches = MATCHES)
 public class QueryAQLConverterTest {
 
     @Test
@@ -135,7 +133,7 @@ public class QueryAQLConverterTest {
         String aql = convert.query();
         Map<String, Object> values = convert.values();
         assertEquals("value", values.get("name"));
-        assertEquals("FOR c IN collection FILTER  NOT  c.name == @name RETURN c", aql);
+        assertEquals("FOR c IN collection FILTER  NOT ( c.name == @name) RETURN c", aql);
 
     }
 
@@ -154,7 +152,7 @@ public class QueryAQLConverterTest {
         assertEquals("Assis", values.get("city"));
         assertEquals("Otavio", values.get("name"));
         assertEquals("Lucas", values.get("name_1"));
-        assertEquals("FOR c IN collection FILTER  NOT  c.city == @city AND  c.name == @name OR  NOT  c.name == @name_1 RETURN c", aql);
+        assertEquals("FOR c IN collection FILTER  NOT ( c.city == @city) AND  c.name == @name OR  NOT ( c.name == @name_1) RETURN c", aql);
 
     }
 
