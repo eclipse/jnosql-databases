@@ -11,29 +11,33 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Michele Rastelli
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 
 import com.arangodb.ArangoDB;
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
-import org.eclipse.jnosql.communication.Value;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 import org.eclipse.jnosql.communication.ValueUtil;
 import org.eclipse.jnosql.communication.semistructured.CommunicationEntity;
 import org.eclipse.jnosql.communication.semistructured.Element;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
@@ -46,9 +50,6 @@ public final class ArangoDBUtil {
     public static final String ID = "_id";
     public static final String REV = "_rev";
     private static final Logger LOGGER = Logger.getLogger(ArangoDBUtil.class.getName());
-
-    private static final Function<Map.Entry<?, ?>, Element> ENTRY_DOCUMENT = entry ->
-            Element.of(entry.getKey().toString(), entry.getValue());
 
     private ArangoDBUtil() {
     }
@@ -71,101 +72,100 @@ public final class ArangoDBUtil {
         List<String> collections = arangoDB.db(bucketName)
                 .getCollections().stream()
                 .map(CollectionEntity::getName)
-                .collect(toList());
+                .toList();
         if (!collections.contains(namespace)) {
             arangoDB.db(bucketName).createCollection(namespace);
         }
     }
 
+    static CommunicationEntity toEntity(JsonObject jsonObject) {
+        List<Element> documents = toDocuments(jsonObject);
 
-    static CommunicationEntity toEntity(BaseDocument document) {
-        Map<String, Object> properties = document.getProperties();
-        List<Element> documents = properties.keySet().stream()
-                .map(k -> toDocument(k, properties))
-                .collect(toList());
-
-        documents.add(Element.of(KEY, document.getKey()));
-        documents.add(Element.of(ID, document.getId()));
-        documents.add(Element.of(REV, document.getRevision()));
-        String collection = document.getId().split("/")[0];
+        String id = jsonObject.getString(ID);
+        documents.add(Element.of(KEY, jsonObject.getString(KEY)));
+        documents.add(Element.of(ID, id));
+        documents.add(Element.of(REV, jsonObject.getString(REV)));
+        String collection = id.split("/")[0];
         return CommunicationEntity.of(collection, documents);
     }
 
-    static BaseDocument getBaseDocument(CommunicationEntity entity) {
-        Map<String, Object> map = new HashMap<>();
-        for (Element document : entity.elements()) {
-            if(KEY.equals(document.name()) && Objects.isNull(document.get())) {
+    static JsonObject toJsonObject(CommunicationEntity entity) {
+        return toJsonObject(entity.elements());
+    }
+
+    private static List<Element> toDocuments(JsonObject object) {
+        return object.entrySet().stream()
+                .map(it -> Element.of(it.getKey(), toDocuments(it.getValue())))
+                .collect(toList());
+    }
+
+    private static List<?> toDocuments(JsonArray array) {
+        return array.stream()
+                .map(ArangoDBUtil::toDocuments)
+                .toList();
+    }
+
+    private static Object toDocuments(JsonValue value) {
+        return switch (value.getValueType()) {
+            case OBJECT -> toDocuments(value.asJsonObject());
+            case ARRAY -> toDocuments(value.asJsonArray());
+            case STRING -> ((JsonString) value).getString();
+            case NUMBER -> ((JsonNumber) value).numberValue();
+            case TRUE -> true;
+            case FALSE -> false;
+            case NULL -> null;
+        };
+    }
+
+    private static JsonObject toJsonObject(Iterable<Element> elements) {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        for (Element document : elements) {
+            if (KEY.equals(document.name()) && Objects.isNull(document.get())) {
                 continue;
             }
-            map.put(document.name(), convert(document.value()));
+            Object value = ValueUtil.convert(document.value());
+            builder.add(document.name(), toJsonValue(value));
         }
-        return new BaseDocument(map);
+        return builder.build();
     }
 
-    private static Element toDocument(String key, Map<String, Object> properties) {
-        Object value = properties.get(key);
-        if (value instanceof Map map) {
-            return Element.of(key, map.keySet()
-                    .stream().map(k -> toDocument(k.toString(), map))
-                    .collect(toList()));
-        }
-        if (isADocumentIterable(value)) {
-            List<List<Element>> documents = new ArrayList<>();
-            for (Object object : Iterable.class.cast(value)) {
-                Map<?, ?> map = Map.class.cast(object);
-                documents.add(map.entrySet().stream().map(ENTRY_DOCUMENT).collect(toList()));
+    @SuppressWarnings("unchecked")
+    private static JsonValue toJsonValue(Object value) {
+        if (value instanceof Element document) {
+            return toJsonObject(Collections.singletonList(document));
+        } else if (value instanceof Iterable<?> iterable) {
+            if (isSubDocument(iterable)) {
+                return toJsonObject((Iterable<Element>) iterable);
+            } else {
+                JsonArrayBuilder builder = Json.createArrayBuilder();
+                for (Object it : iterable) {
+                    builder.add(toJsonValue(it));
+                }
+                return builder.build();
             }
-            return Element.of(key, documents);
-
+        } else if (value instanceof Map<?, ?> map) {
+            JsonObjectBuilder builder = Json.createObjectBuilder();
+            for (Map.Entry<?, ?> e : map.entrySet()) {
+                builder.add((String) e.getKey(), toJsonValue(e.getValue()));
+            }
+            return builder.build();
+        } else if (Objects.isNull(value)) {
+            return JsonValue.NULL;
+        } else if (value instanceof Number number) {
+            return Json.createValue(number);
+        } else if (value instanceof String string) {
+            return Json.createValue(string);
+        } else if (Boolean.TRUE.equals(value)) {
+            return JsonValue.TRUE;
+        } else if (Boolean.FALSE.equals(value)) {
+            return JsonValue.FALSE;
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + value.getClass());
         }
-        return Element.of(key, value);
     }
 
-    private static boolean isADocumentIterable(Object value) {
-        return Iterable.class.isInstance(value) &&
-                stream(Iterable.class.cast(value).spliterator(), false)
-                        .allMatch(Map.class::isInstance);
-    }
-
-    private static Object convert(Value value) {
-        Object val = ValueUtil.convert(value);
-
-        if (Element.class.isInstance(val)) {
-            Element document = Element.class.cast(val);
-            return singletonMap(document.name(), convert(document.value()));
-        }
-        if (isSudDocument(val)) {
-            return getMap(val);
-        }
-        if (isSudDocumentList(val)) {
-            return stream(Iterable.class.cast(val).spliterator(), false)
-                    .map(ArangoDBUtil::getMap).collect(toList());
-        }
-        return val;
-    }
-
-    private static Object getMap(Object val) {
-        Iterable<?> iterable = Iterable.class.cast(val);
-        Map<Object, Object> map = new HashMap<>();
-        for (Object item : iterable) {
-            var document = cast(item);
-            map.put(document.name(), document.get());
-        }
-        return map;
-    }
-
-    private static boolean isSudDocumentList(Object value) {
-        return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(d -> d instanceof Iterable && isSudDocument(d));
-    }
-
-    private static boolean isSudDocument(Object value) {
-        return value instanceof Iterable && stream(Iterable.class.cast(value).spliterator(), false).
-                allMatch(Element.class::isInstance);
-    }
-
-    private static Element cast(Object document) {
-        return Element.class.cast(document);
+    private static boolean isSubDocument(Iterable<?> iterable) {
+        return stream(iterable.spliterator(), false).allMatch(Element.class::isInstance);
     }
 
 }
