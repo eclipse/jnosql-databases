@@ -34,6 +34,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 == Fixed
 
 - Fixed the support to negation queries on the Eclipse JNoSQL layer to MongoDB
+- Fixed the precedence of NOT operator in AQL query generation on the Eclipse JNoSQL layer to ArangoDB
 
 == [1.1.1] - 2023-05-25
 
