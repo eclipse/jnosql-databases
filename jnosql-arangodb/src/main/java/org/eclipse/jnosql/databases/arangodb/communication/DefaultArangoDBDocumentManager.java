@@ -76,10 +76,9 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         requireNonNull(entity, "entity is required");
         String collectionName = entity.name();
         checkCollection(collectionName);
-        String id = entity.find(ID, String.class)
+        entity.find(KEY, String.class)
                 .orElseThrow(() -> new IllegalArgumentException("The document does not provide" +
-                        " the _id column"));
-        feedKey(entity, id);
+                        " the _key column"));
         JsonObject jsonObject = ArangoDBUtil.toJsonObject(entity);
         DocumentUpdateEntity<Void> arangoDocument = arangoDB.db(database)
                 .collection(collectionName).updateDocument(jsonObject.getString(KEY), jsonObject);
@@ -206,17 +205,6 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
         entity.add(Element.of(KEY, key));
         entity.add(Element.of(ID, id));
         entity.add(Element.of(REV, rev));
-    }
-
-    private static void feedKey(CommunicationEntity entity, String id) {
-        if (entity.find(KEY).isEmpty()) {
-            String[] values = id.split("/");
-            if (values.length == 2) {
-                entity.add(KEY, values[1]);
-            } else {
-                entity.add(KEY, values[0]);
-            }
-        }
     }
 
     ArangoDB getArangoDB() {

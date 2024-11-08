@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -334,8 +334,9 @@ public class ArangoDBDocumentManagerTest {
     }
 
     private CommunicationEntity createDocumentList() {
+        String id = UUID.randomUUID().toString();
         CommunicationEntity entity = CommunicationEntity.of("AppointmentBook");
-        entity.add(Element.of("_id", "ids"));
+        entity.add(Element.of("_key", id));
         List<List<Element>> documents = new ArrayList<>();
 
         documents.add(asList(Element.of("name", "Ada"), Element.of("type", ContactType.EMAIL),

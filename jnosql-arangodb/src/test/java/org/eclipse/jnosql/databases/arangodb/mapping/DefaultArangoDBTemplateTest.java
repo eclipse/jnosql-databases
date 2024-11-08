@@ -78,7 +78,7 @@ public class DefaultArangoDBTemplateTest {
         template = new DefaultArangoDBTemplate(instance, converter, persistManager, entities, converters);
 
         CommunicationEntity entity = CommunicationEntity.of("Person");
-        entity.add(Element.of("_id", "Ada"));
+        entity.add(Element.of("_key", "Ada"));
         entity.add(Element.of("age", 10));
 
     }
