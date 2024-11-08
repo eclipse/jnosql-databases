@@ -23,11 +23,8 @@ import java.util.List;
 @Entity("workflow_step")
 public class WorkflowStep {
 
-    @Id
+    @Id("_key")
     private String id;
-
-    @Column("_key")
-    private String key;
 
     @Column
     private String workflowSchemaKey;
@@ -50,12 +47,11 @@ public class WorkflowStep {
     @Column
     private List<Transition> availableTransitions;
 
-    WorkflowStep(String id, String key, String workflowSchemaKey,
+    WorkflowStep(String id, String workflowSchemaKey,
                  String stepName, MainStepType mainStepType,
                  Integer stepNo, String componentConfigurationKey,
                  String relationTypeKey, List<Transition> availableTransitions) {
         this.id = id;
-        this.key = key;
         this.workflowSchemaKey = workflowSchemaKey;
         this.stepName = stepName;
         this.mainStepType = mainStepType;
@@ -74,10 +70,6 @@ public class WorkflowStep {
 
     public String id() {
         return id;
-    }
-
-    public String key() {
-        return key;
     }
 
     public String workflowSchemaKey() {

@@ -24,7 +24,7 @@ import java.util.Objects;
 @Entity
 public class Person {
 
-    @Id
+    @Id("_key")
     private String name;
 
     @Column

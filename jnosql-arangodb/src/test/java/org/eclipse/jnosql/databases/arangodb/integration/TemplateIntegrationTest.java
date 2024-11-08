@@ -35,6 +35,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,9 +115,9 @@ class TemplateIntegrationTest {
 
     @Test
     void shouldUpdateEmbeddable() {
+        String id = UUID.randomUUID().toString();
         var workflowStep = WorkflowStep.builder()
-                .id("id")
-                .key("key1")
+                .id(id)
                 .workflowSchemaKey("workflowSchemaKey")
                 .stepName("stepName")
                 .mainStepType(MainStepType.MAIN)
@@ -130,8 +131,7 @@ class TemplateIntegrationTest {
 
         SoftAssertions.assertSoftly(soft ->{
             soft.assertThat(result).isNotNull();
-            soft.assertThat(result.id()).isEqualTo("workflow_step/key1");
-            soft.assertThat(result.key()).isEqualTo("key1");
+            soft.assertThat(result.id()).isEqualTo(id);
             soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
             soft.assertThat(result.stepName()).isEqualTo("stepName");
             soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
@@ -149,9 +149,9 @@ class TemplateIntegrationTest {
 
     @Test
     void shouldUpdateEmbeddable2() {
+        String id = UUID.randomUUID().toString();
         var workflowStep = WorkflowStep.builder()
-                .id("id")
-                .key("key2")
+                .id(id)
                 .workflowSchemaKey("workflowSchemaKey")
                 .stepName("stepName")
                 .mainStepType(MainStepType.MAIN)
@@ -164,8 +164,7 @@ class TemplateIntegrationTest {
 
         SoftAssertions.assertSoftly(soft ->{
             soft.assertThat(result).isNotNull();
-            soft.assertThat(result.id()).isEqualTo("workflow_step/key2");
-            soft.assertThat(result.key()).isEqualTo("key2");
+            soft.assertThat(result.id()).isEqualTo(id);
             soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
             soft.assertThat(result.stepName()).isEqualTo("stepName");
             soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
@@ -192,8 +191,7 @@ class TemplateIntegrationTest {
 
         SoftAssertions.assertSoftly(soft ->{
             soft.assertThat(result).isNotNull();
-            soft.assertThat(result.id()).contains("workflow_step/");
-            soft.assertThat(result.key()).isNotNull();
+            soft.assertThat(result.id()).isEqualTo("id");
             soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
             soft.assertThat(result.stepName()).isEqualTo("stepName");
             soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);
@@ -219,8 +217,7 @@ class TemplateIntegrationTest {
 
         SoftAssertions.assertSoftly(soft ->{
             soft.assertThat(result).isNotNull();
-            soft.assertThat(result.id()).contains("workflow_step/");
-            soft.assertThat(result.key()).isNotNull();
+            soft.assertThat(result.id()).isNotNull();
             soft.assertThat(result.workflowSchemaKey()).isEqualTo("workflowSchemaKey");
             soft.assertThat(result.stepName()).isEqualTo("stepName");
             soft.assertThat(result.mainStepType()).isEqualTo(MainStepType.MAIN);

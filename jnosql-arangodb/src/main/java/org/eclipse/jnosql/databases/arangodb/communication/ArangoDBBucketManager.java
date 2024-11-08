@@ -11,12 +11,14 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Michele Rastelli
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 
 import com.arangodb.ArangoDB;
-import com.arangodb.entity.BaseDocument;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
@@ -41,8 +43,9 @@ import static java.util.stream.StreamSupport.stream;
 public class ArangoDBBucketManager implements BucketManager {
 
 
+    private static final String KEY = "_key";
     private static final String VALUE = "_value";
-    private static final Function<BaseDocument, String> TO_JSON = e -> e.getAttribute(VALUE).toString();
+    private static final Function<JsonObject, String> TO_JSON = e -> e.getString(VALUE);
     private static final Jsonb JSONB = JsonbSupplier.getInstance().get();
 
     private final ArangoDB arangoDB;
@@ -66,14 +69,15 @@ public class ArangoDBBucketManager implements BucketManager {
     public <K, V> void put(K key, V value) throws NullPointerException {
         Objects.requireNonNull(key, "Key is required");
         Objects.requireNonNull(value, "value is required");
-        BaseDocument baseDocument = new BaseDocument();
-        baseDocument.setKey(key.toString());
-        baseDocument.addAttribute(VALUE, JSONB.toJson(value));
+        JsonObject jsonObject = Json.createObjectBuilder()
+                .add(KEY, key.toString())
+                .add(VALUE, JSONB.toJson(value))
+                .build();
         if (arangoDB.db(bucketName).collection(namespace).documentExists(key.toString())) {
             arangoDB.db(bucketName).collection(namespace).deleteDocument(key.toString());
         }
         arangoDB.db(bucketName).collection(namespace)
-                .insertDocument(baseDocument);
+                .insertDocument(jsonObject);
     }
 
     @Override
@@ -91,8 +95,8 @@ public class ArangoDBBucketManager implements BucketManager {
     @Override
     public <K> Optional<Value> get(K key) throws NullPointerException {
         Objects.requireNonNull(key, "Key is required");
-        BaseDocument entity = arangoDB.db(bucketName).collection(namespace)
-                .getDocument(key.toString(), BaseDocument.class);
+        JsonObject entity = arangoDB.db(bucketName).collection(namespace)
+                .getDocument(key.toString(), JsonObject.class);
 
         return ofNullable(entity)
                 .map(TO_JSON)
@@ -105,7 +109,7 @@ public class ArangoDBBucketManager implements BucketManager {
         return stream(keys.spliterator(), false)
                 .map(Object::toString)
                 .map(k -> arangoDB.db(bucketName).collection(namespace)
-                        .getDocument(k, BaseDocument.class))
+                        .getDocument(k, JsonObject.class))
                 .filter(Objects::nonNull)
                 .map(TO_JSON)
                 .map(ValueJSON::of)

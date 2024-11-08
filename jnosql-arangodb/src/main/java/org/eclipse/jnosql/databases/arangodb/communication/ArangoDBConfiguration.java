@@ -11,25 +11,27 @@
  *   Contributors:
  *
  *   Otavio Santana
+ *   Michele Rastelli
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.LoadBalancingStrategy;
+import com.arangodb.serde.ArangoSerde;
 import org.eclipse.jnosql.communication.Settings;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * The base to configuration both key-value and document on mongoDB.
+ * The base to configuration both key-value and document on ArangoDB.
  * To each configuration set, it will change both builder
  * {@link ArangoDB.Builder}
  */
 public abstract class ArangoDBConfiguration {
 
-
-    protected ArangoDB.Builder builder = new ArangoDB.Builder();
+    protected ArangoDB.Builder builder = new ArangoDB.Builder()
+            .serde(new JsonbSerde());
 
     /**
      * Adds a host in the arangodb builder
@@ -53,7 +55,6 @@ public abstract class ArangoDBConfiguration {
         requireNonNull(loadBalancingStrategy, "loadBalancingStrategy is required");
         builder.loadBalancingStrategy(loadBalancingStrategy);
     }
-
 
     /**
      * set the setTimeout
@@ -92,6 +93,21 @@ public abstract class ArangoDBConfiguration {
     }
 
     /**
+     * Set the ArangoDB serde for the user data. Note that the provided
+     * serde must support serializing and deserializing JsonP types,
+     * i.e. {@link jakarta.json.JsonValue} and its children.
+     * By default, the builder is configured to use {@link JsonbSerde};
+     * this setter allows overriding it, i.e. providing an instance of
+     * {@link JsonbSerde} that uses a specific {@link jakarta.json.bind.Jsonb}
+     * instance.
+     *
+     * @param serde the serde
+     */
+    public void setSerde(ArangoSerde serde) {
+        builder.serde(serde);
+    }
+
+    /**
      * Defines a new builder to sync ArangoDB
      *
      * @param builder the new builder
@@ -102,12 +118,10 @@ public abstract class ArangoDBConfiguration {
         this.builder = builder;
     }
 
-
     protected ArangoDB getArangoDB(Settings settings) {
         ArangoDBBuilderSync aragonDB = new ArangoDBBuilderSync(builder);
         ArangoDBBuilders.load(settings, aragonDB);
         return aragonDB.build();
     }
-
 
 }

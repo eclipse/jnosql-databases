@@ -18,7 +18,6 @@ import java.util.List;
 
 public class WorkflowStepBuilder {
     private String id;
-    private String key;
     private String workflowSchemaKey;
     private String stepName;
     private MainStepType mainStepType;
@@ -29,11 +28,6 @@ public class WorkflowStepBuilder {
 
     public WorkflowStepBuilder id(String id) {
         this.id = id;
-        return this;
-    }
-
-    public WorkflowStepBuilder key(String key) {
-        this.key = key;
         return this;
     }
 
@@ -73,7 +67,7 @@ public class WorkflowStepBuilder {
     }
 
     public WorkflowStep build() {
-        return new WorkflowStep(id, key, workflowSchemaKey, stepName, mainStepType,
+        return new WorkflowStep(id, workflowSchemaKey, stepName, mainStepType,
                 stepNo, componentConfigurationKey, relationTypeKey, availableTransitions);
     }
 }
