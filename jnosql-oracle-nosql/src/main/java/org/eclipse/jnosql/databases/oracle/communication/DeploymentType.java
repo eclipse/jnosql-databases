@@ -134,6 +134,10 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             }
         }
     },
+
+    /**
+     * Represents a "Cloud" deployment using OKE workload identity for authentication and authorization.
+     */
     CLOUD_OKE_WORKLOAD_IDENTITY {
         @Override
         public Optional<AuthorizationProvider> apply(Settings settings) {
