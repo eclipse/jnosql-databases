@@ -37,7 +37,7 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
      * Usage: Choose this deployment type when your software solutions are hosted and managed within your organization's physical infrastructure.
      * - Authentication: Uses username and password for access.
      * - Configuration: Requires USER (username) and PASSWORD (password).
-     *   If not provided, it falls back to default values or empty credentials.
+     * If not provided, it falls back to default values or empty credentials.
      */
     ON_PREMISES {
         @Override
@@ -47,7 +47,7 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             String password = settings.get(List.of(OracleNoSQLConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
                     .map(Object::toString).orElse(null);
             if (user != null && password != null) {
-               return Optional.of(new StoreAccessTokenProvider(user, password.toCharArray()));
+                return Optional.of(new StoreAccessTokenProvider(user, password.toCharArray()));
             } else {
                 return Optional.of(new StoreAccessTokenProvider());
             }
@@ -67,18 +67,18 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
             char[] password = settings.get(List.of(OracleNoSQLConfigurations.PASSWORD.get(), Configurations.PASSWORD.get()))
                     .map(Object::toString).map(String::toCharArray).orElse(new char[0]);
             String tenantId = settings.get(OracleNoSQLConfigurations.TENANT, String.class).orElse(null);
-            String fingerprint= settings.get(OracleNoSQLConfigurations.FINGERPRINT, String.class).orElse(null);
+            String fingerprint = settings.get(OracleNoSQLConfigurations.FINGERPRINT, String.class).orElse(null);
             String privateKey = settings.get(OracleNoSQLConfigurations.PRIVATE_KEY, String.class).orElse(null);
             String profileName = settings.get(OracleNoSQLConfigurations.PROFILE_NAME, String.class).orElse(null);
             String configFile = settings.get(OracleNoSQLConfigurations.CONFIG_FILE, String.class).orElse(null);
 
-            if(user != null && tenantId != null && fingerprint != null && privateKey != null) {
+            if (user != null && tenantId != null && fingerprint != null && privateKey != null) {
                 return Optional.of(new SignatureProvider(tenantId, user, fingerprint, new File(privateKey), password));
             }
             try {
-                if(profileName != null && configFile != null) {
+                if (profileName != null && configFile != null) {
                     return Optional.of(new SignatureProvider(configFile, profileName));
-                } else if(profileName != null) {
+                } else if (profileName != null) {
                     return Optional.of(new SignatureProvider(profileName));
                 }
                 return Optional.of(new SignatureProvider());
@@ -125,13 +125,19 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
 
             String profileName = settings.get(OracleNoSQLConfigurations.PROFILE_NAME, String.class).orElse(null);
             String configFile = settings.get(OracleNoSQLConfigurations.CONFIG_FILE, String.class).orElse(null);
-            if(profileName != null && configFile != null) {
+            if (profileName != null && configFile != null) {
                 return Optional.of(SignatureProvider.createWithSessionToken(configFile, profileName));
-            } else if(profileName != null) {
+            } else if (profileName != null) {
                 return Optional.of(SignatureProvider.createWithSessionToken(profileName));
-            } else  {
+            } else {
                 return Optional.of(SignatureProvider.createWithSessionToken());
             }
+        }
+    },
+    CLOUD_OKE_WORKLOAD_IDENTITY {
+        @Override
+        public Optional<AuthorizationProvider> apply(Settings settings) {
+            return Optional.of(SignatureProvider.createWithOkeWorkloadIdentity());
         }
     };
 
@@ -142,12 +148,11 @@ public enum DeploymentType implements Function<Settings, Optional<AuthorizationP
      *
      * @param value the string representation of the deployment type (case-insensitive)
      * @return the corresponding {@link DeploymentType} enum value, or {@link DeploymentType#ON_PREMISES}
-     *         if the input is invalid or null
-     *
+     * if the input is invalid or null
      */
     public static DeploymentType parse(String value) {
         try {
-            if(value == null) {
+            if (value == null) {
                 return DeploymentType.ON_PREMISES;
             }
             return DeploymentType.valueOf(value.toUpperCase());
