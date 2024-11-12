@@ -173,7 +173,6 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
         }
         if (!oracleQuery.hasOnlyIds()) {
             LOGGER.finest("Executing Oracle Query: " + oracleQuery.query());
-
             entities.addAll(executeSQL(oracleQuery.query(), oracleQuery.params()));
         }
         return entities.stream();
@@ -227,7 +226,6 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
                 entities.add(documentEntity);
             }
         }
-
         return entities;
     }
 
@@ -279,7 +277,8 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
                         entity.add(Element.of(entry.getKey(), FieldValueConverter.INSTANCE.of(entry.getValue())));
                     }
                 }
-                entity.add(Element.of(ID, result.get(ORACLE_ID).asString().getValue()));
+                var id = result.get(ORACLE_ID).asString().getValue().split(":")[1];
+                entity.add(Element.of(ID, id));
                 entities.add(entity);
             }
         } while (!queryRequest.isDone());
@@ -307,6 +306,9 @@ final class DefaultOracleNoSQLDocumentManager implements OracleNoSQLDocumentMana
     }
 
     private String generateId(String id, String table) {
+        if(id.contains(":")) {
+            return id;
+        }
         return table + ":" + id;
     }
 
