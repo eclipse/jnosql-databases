@@ -201,14 +201,15 @@ class DefaultArangoDBDocumentManager implements ArangoDBDocumentManager {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public ArangoDB getArangoDB() {
+        return arangoDB;
+    }
+
     private void updateEntity(CommunicationEntity entity, String key, String id, String rev) {
         entity.add(Element.of(KEY, key));
         entity.add(Element.of(ID, id));
         entity.add(Element.of(REV, rev));
-    }
-
-    ArangoDB getArangoDB() {
-        return arangoDB;
     }
 
 }

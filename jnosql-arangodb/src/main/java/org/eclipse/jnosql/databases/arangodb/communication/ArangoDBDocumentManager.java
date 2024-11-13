@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  * The ArangoDB implementation of {@link DatabaseManager}. This implementation does not support TTL methods in the context of
  * {@link DatabaseManager#insert(org.eclipse.jnosql.communication.semistructured.CommunicationEntity)}.
  */
-public interface ArangoDBDocumentManager extends DatabaseManager {
+public interface ArangoDBDocumentManager extends DatabaseManager, ArangoDBAccessor {
 
     /**
      * Executes an ArangoDB query using the ArangoDB Query Language (AQL).

@@ -40,7 +40,7 @@ import static java.util.stream.StreamSupport.stream;
  * <p>{@link BucketManager#put(Iterable, Duration)}</p>
  * <p>{@link BucketManager#put(Iterable, Duration)}</p>
  */
-public class ArangoDBBucketManager implements BucketManager {
+public class ArangoDBBucketManager implements BucketManager, ArangoDBAccessor {
 
 
     private static final String KEY = "_key";
@@ -143,6 +143,11 @@ public class ArangoDBBucketManager implements BucketManager {
     @Override
     public void put(KeyValueEntity entity, Duration ttl) throws NullPointerException, UnsupportedOperationException {
         throw new UnsupportedOperationException("ArangoDB does not support TTL");
+    }
+
+    @Override
+    public ArangoDB getArangoDB() {
+        return arangoDB;
     }
 
 }
