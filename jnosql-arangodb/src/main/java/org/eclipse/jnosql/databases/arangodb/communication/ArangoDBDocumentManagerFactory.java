@@ -22,20 +22,22 @@ import org.eclipse.jnosql.communication.semistructured.DatabaseManagerFactory;
 public final class ArangoDBDocumentManagerFactory implements DatabaseManagerFactory {
 
 
-    private final ArangoDB arangoDB;
+    private final ArangoDBBuilder arangoDBBuilder;
 
-    ArangoDBDocumentManagerFactory(ArangoDB arangoDB) {
-        this.arangoDB = arangoDB;
+    ArangoDBDocumentManagerFactory(ArangoDBBuilder arangoDBBuilder) {
+        this.arangoDBBuilder = arangoDBBuilder;
     }
 
     @Override
     public ArangoDBDocumentManager apply(String database) {
+        ArangoDB arangoDB = arangoDBBuilder.build();
         ArangoDBUtil.checkDatabase(database, arangoDB);
         return new DefaultArangoDBDocumentManager(database, arangoDB);
     }
 
     @Override
     public void close() {
-        arangoDB.shutdown();
+        // no-op
+        // ArangoDB driver instance will be closed in ArangoDBDocumentManager.close()
     }
 }

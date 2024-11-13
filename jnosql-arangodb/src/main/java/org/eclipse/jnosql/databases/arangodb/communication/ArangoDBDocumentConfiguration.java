@@ -15,7 +15,6 @@
 
 package org.eclipse.jnosql.databases.arangodb.communication;
 
-import com.arangodb.ArangoDB;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.semistructured.DatabaseConfiguration;
 
@@ -36,8 +35,8 @@ public final class ArangoDBDocumentConfiguration extends ArangoDBConfiguration
     public ArangoDBDocumentManagerFactory apply(Settings settings) throws NullPointerException {
         requireNonNull(settings, "settings is required");
 
-        ArangoDB arangoDB = getArangoDB(settings);
-        return new ArangoDBDocumentManagerFactory(arangoDB);
+        ArangoDBBuilder arangoDBBuilder = getArangoDBBuilder(settings);
+        return new ArangoDBDocumentManagerFactory(arangoDBBuilder);
     }
 
 }

@@ -15,7 +15,6 @@
 package org.eclipse.jnosql.databases.arangodb.communication;
 
 
-import com.arangodb.ArangoDB;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 
@@ -31,7 +30,7 @@ public final class ArangoDBKeyValueConfiguration extends ArangoDBConfiguration
 
     @Override
     public ArangoDBBucketManagerFactory apply(Settings settings) {
-        ArangoDB arangoDB = getArangoDB(settings);
-        return new ArangoDBBucketManagerFactory(arangoDB);
+        ArangoDBBuilder arangoDBBuilder = getArangoDBBuilder(settings);
+        return new ArangoDBBucketManagerFactory(arangoDBBuilder);
     }
 }

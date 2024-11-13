@@ -14,29 +14,59 @@
  */
 package org.eclipse.jnosql.databases.arangodb.communication;
 
+import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 
-interface ArangoDBBuilder {
+public class ArangoDBBuilder {
 
+    private final ArangoDB.Builder arangoDB;
 
-    void host(String host, int port);
+    ArangoDBBuilder(ArangoDB.Builder arangoDB) {
+        this.arangoDB = arangoDB;
+    }
 
-    void timeout(int timeout);
+    public void host(String host, int port) {
+        arangoDB.host(host, port);
+    }
 
-    void user(String user);
+    public void timeout(int timeout) {
+        arangoDB.timeout(timeout);
+    }
 
-    void password(String password);
+    public void user(String user) {
+        arangoDB.user(user);
+    }
 
-    void useSsl(boolean useSsl);
+    public void password(String password) {
+        arangoDB.password(password);
+    }
 
-    void chunkSize(int chunkSize);
+    public void useSsl(boolean useSsl) {
+        arangoDB.useSsl(useSsl);
+    }
 
-    void maxConnections(int maxConnections);
+    public void chunkSize(int chunkSize) {
+        arangoDB.chunkSize(chunkSize);
+    }
 
-    void protocol(Protocol protocol);
+    public void maxConnections(int maxConnections) {
+        arangoDB.maxConnections(maxConnections);
+    }
 
-    void acquireHostList(boolean acquireHostList);
+    public void protocol(Protocol protocol) {
+        arangoDB.protocol(protocol);
+    }
 
-    void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy);
+    public void acquireHostList(boolean acquireHostList) {
+        arangoDB.acquireHostList(acquireHostList);
+    }
+
+    public void loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy) {
+        arangoDB.loadBalancingStrategy(loadBalancingStrategy);
+    }
+
+    public ArangoDB build() {
+        return arangoDB.build();
+    }
 }

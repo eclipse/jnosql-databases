@@ -107,21 +107,10 @@ public abstract class ArangoDBConfiguration {
         builder.serde(serde);
     }
 
-    /**
-     * Defines a new builder to sync ArangoDB
-     *
-     * @param builder the new builder
-     * @throws NullPointerException when builder is null
-     */
-    public void syncBuilder(ArangoDB.Builder builder) throws NullPointerException {
-        requireNonNull(builder, "builder is required");
-        this.builder = builder;
-    }
-
-    protected ArangoDB getArangoDB(Settings settings) {
-        ArangoDBBuilderSync aragonDB = new ArangoDBBuilderSync(builder);
+    protected ArangoDBBuilder getArangoDBBuilder(Settings settings) {
+        ArangoDBBuilder aragonDB = new ArangoDBBuilder(builder);
         ArangoDBBuilders.load(settings, aragonDB);
-        return aragonDB.build();
+        return aragonDB;
     }
 
 }
