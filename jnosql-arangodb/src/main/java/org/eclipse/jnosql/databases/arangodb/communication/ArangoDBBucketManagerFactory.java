@@ -34,10 +34,10 @@ public class ArangoDBBucketManagerFactory implements BucketManagerFactory {
 
     private static final String DEFAULT_NAMESPACE = "diana";
 
-    private final ArangoDB arangoDB;
+    private final ArangoDBBuilder arangoDBBuilder;
 
-    ArangoDBBucketManagerFactory(ArangoDB arangoDB) {
-        this.arangoDB = arangoDB;
+    ArangoDBBucketManagerFactory(ArangoDBBuilder arangoDBBuilder) {
+        this.arangoDBBuilder = arangoDBBuilder;
     }
 
     @Override
@@ -46,6 +46,7 @@ public class ArangoDBBucketManagerFactory implements BucketManagerFactory {
     }
 
     public ArangoDBBucketManager getBucketManager(String bucketName, String namespace) {
+        ArangoDB arangoDB = arangoDBBuilder.build();
         ArangoDBUtil.checkCollection(bucketName, arangoDB, namespace);
         return new ArangoDBBucketManager(arangoDB, bucketName, namespace);
     }
@@ -72,8 +73,8 @@ public class ArangoDBBucketManagerFactory implements BucketManagerFactory {
 
     @Override
     public void close() {
-        arangoDB.shutdown();
+        // no-op
+        // ArangoDB driver instance will be closed in ArangoDBBucketManager.close()
     }
-
 
 }

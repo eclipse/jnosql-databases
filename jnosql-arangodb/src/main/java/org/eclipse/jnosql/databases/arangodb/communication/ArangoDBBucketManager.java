@@ -132,7 +132,7 @@ public class ArangoDBBucketManager implements BucketManager, ArangoDBAccessor {
 
     @Override
     public void close() {
-
+        arangoDB.shutdown();
     }
 
     @Override
