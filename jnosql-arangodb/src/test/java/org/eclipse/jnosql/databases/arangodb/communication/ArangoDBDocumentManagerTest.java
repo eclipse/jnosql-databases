@@ -322,6 +322,13 @@ public class ArangoDBDocumentManagerTest {
         org.assertj.core.api.Assertions.assertThat(indexes).hasSize(15);
     }
 
+    @Test
+    void shouldExposeArangoDB() {
+        ArangoDB adb = entityManager.getArangoDB();
+        assertThat(adb).isNotNull();
+        assertThat(adb.getVersion()).isNotNull();
+    }
+
     private CommunicationEntity getEntity() {
         CommunicationEntity entity = CommunicationEntity.of(COLLECTION_NAME);
         Map<String, Object> map = new HashMap<>();
