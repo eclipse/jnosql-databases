@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.redis.communication;
 
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.args.ListPosition;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.Objects;
 class RedisList<T> extends RedisCollection<T> implements List<T> {
 
 
-    RedisList(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
+    RedisList(UnifiedJedis jedis, Class<T> clazz, String keyWithNameSpace) {
         super(jedis, clazz, keyWithNameSpace);
     }
 

@@ -14,7 +14,7 @@
  */
 package org.eclipse.jnosql.databases.redis.communication;
 
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -32,13 +32,12 @@ class DefaultCounter implements Counter {
 
     private final String key;
 
-    private Jedis jedis;
+    private final UnifiedJedis jedis;
 
-    DefaultCounter(String key, Jedis jedis) {
+    DefaultCounter(String key, UnifiedJedis jedis) {
         this.key = key;
         this.jedis = jedis;
     }
-
 
     @Override
     public Number get() {

@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.redis.communication;
 
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -23,7 +23,7 @@ import java.util.Queue;
 
 class RedisQueue<T> extends RedisCollection<T> implements Queue<T> {
 
-    RedisQueue(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
+    RedisQueue(UnifiedJedis jedis, Class<T> clazz, String keyWithNameSpace) {
         super(jedis, clazz, keyWithNameSpace);
     }
 

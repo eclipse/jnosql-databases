@@ -16,7 +16,7 @@ package org.eclipse.jnosql.databases.redis.communication;
 
 import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
-import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +29,10 @@ class DefaultRedisBucketManagerFactory implements RedisBucketManagerFactory {
 
     private static final Jsonb JSON = JsonbSupplier.getInstance().get();
 
-    private final JedisPool jedisPool;
+    private final UnifiedJedis jedis;
 
-    DefaultRedisBucketManagerFactory(JedisPool jedisPool) {
-        this.jedisPool = jedisPool;
+    DefaultRedisBucketManagerFactory(UnifiedJedis jedis) {
+        this.jedis = jedis;
     }
 
 
@@ -40,59 +40,59 @@ class DefaultRedisBucketManagerFactory implements RedisBucketManagerFactory {
     public RedisBucketManager apply(String bucketName) {
         requireNonNull(bucketName, "bucket name is required");
 
-        return new RedisBucketManager(bucketName, JSON, jedisPool.getResource());
+        return new RedisBucketManager(bucketName, JSON, jedis);
     }
 
     @Override
     public <T> List<T> getList(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucket name is required");
         requireNonNull(clazz, "Class type is required");
-        return new RedisList<>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisList<>(jedis, clazz, bucketName);
     }
 
     @Override
     public <T> Set<T> getSet(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucket name is required");
         requireNonNull(clazz, "Class type is required");
-        return new RedisSet<>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisSet<>(jedis, clazz, bucketName);
     }
 
     @Override
     public <T> Queue<T> getQueue(String bucketName, Class<T> clazz) {
         requireNonNull(bucketName, "bucket name is required");
         requireNonNull(clazz, "Class type is required");
-        return new RedisQueue<>(jedisPool.getResource(), clazz, bucketName);
+        return new RedisQueue<>(jedis, clazz, bucketName);
     }
 
     @Override
     public <K, V> Map<K, V> getMap(String bucketName, Class<K> keyValue, Class<V> valueValue) {
         requireNonNull(bucketName, "bucket name is required");
         requireNonNull(valueValue, "Class type is required");
-        return new RedisMap<>(jedisPool.getResource(), keyValue, valueValue, bucketName);
+        return new RedisMap<>(jedis, keyValue, valueValue, bucketName);
     }
 
     @Override
     public SortedSet getSortedSet(String key) throws NullPointerException {
         requireNonNull(key, "key is required");
-        return new DefaultSortedSet(jedisPool.getResource(), key);
+        return new DefaultSortedSet(jedis, key);
     }
 
     @Override
     public Counter getCounter(String key) throws NullPointerException {
         requireNonNull(key, "key is required");
-        return new DefaultCounter(key, jedisPool.getResource());
+        return new DefaultCounter(key, jedis);
     }
 
 
     @Override
     public void close() {
-        jedisPool.close();
+        jedis.close();
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("RedisBucketManagerFactory{");
-        sb.append("jedisPool=").append(jedisPool);
+        sb.append("jedisPool=").append(jedis);
         sb.append('}');
         return sb.toString();
     }

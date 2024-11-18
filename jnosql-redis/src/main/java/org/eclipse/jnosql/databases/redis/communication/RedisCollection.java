@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.redis.communication;
 
 import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,13 +33,11 @@ abstract class RedisCollection<T> implements Collection<T> {
 
     protected final String keyWithNameSpace;
 
-    protected final Jedis jedis;
+    protected final UnifiedJedis jedis;
 
     protected final boolean isString;
 
-
-
-    RedisCollection(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
+    RedisCollection(UnifiedJedis jedis, Class<T> clazz, String keyWithNameSpace) {
         this.clazz = clazz;
         this.keyWithNameSpace = keyWithNameSpace;
         this.jedis = jedis;
