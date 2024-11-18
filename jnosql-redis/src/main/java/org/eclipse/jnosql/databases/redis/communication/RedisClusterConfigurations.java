@@ -15,8 +15,6 @@
 
 package org.eclipse.jnosql.databases.redis.communication;
 
-import redis.clients.jedis.Protocol;
-
 import java.util.function.Supplier;
 
 /**
