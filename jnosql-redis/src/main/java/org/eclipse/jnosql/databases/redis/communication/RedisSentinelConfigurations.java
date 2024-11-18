@@ -26,8 +26,8 @@ import java.util.function.Supplier;
  */
 public enum RedisSentinelConfigurations implements Supplier<String> {
     /**
-     * The value for the sentinel basic configuration attribute for the jedis client configuration with this configuration instance.
-     */
+     * The key property that defines if the redis sentinel configuration should be loaded
+     * */
     SENTINEL("jnosql.redis.sentinel"),
     /**
      * The value for the master name configuration attribute for the jedis client configuration with this configuration instance.

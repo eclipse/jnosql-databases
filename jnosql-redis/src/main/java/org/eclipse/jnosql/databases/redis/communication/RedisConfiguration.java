@@ -67,13 +67,13 @@ public final class RedisConfiguration implements KeyValueConfiguration {
 
         if (settings.keySet()
                 .stream()
-                .anyMatch(s -> s.startsWith(RedisConfigurations.SENTINEL.get()))) {
+                .anyMatch(s -> s.startsWith(RedisSentinelConfigurations.SENTINEL.get()))) {
             return applyForSentinel(settings);
         }
 
         if (settings.keySet()
                 .stream()
-                .anyMatch(s -> s.startsWith(RedisConfigurations.CLUSTER.get()))) {
+                .anyMatch(s -> s.startsWith(RedisClusterConfigurations.CLUSTER.get()))) {
             return applyForCluster(settings);
         }
 

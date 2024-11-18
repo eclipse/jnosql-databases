@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  */
 public enum RedisClusterConfigurations implements Supplier<String> {
     /**
-     * The value for the sentinel basic configuration attribute for the jedis client configuration with this configuration instance.
+     * The key property that defines if the redis cluster configuration should be loaded
      */
     CLUSTER("jnosql.redis.cluster"),
     /**
@@ -40,19 +40,19 @@ public enum RedisClusterConfigurations implements Supplier<String> {
      */
     CLIENT_NAME("jnosql.redis.cluster.client.name"),
     /**
-     * The cluster redis timeout. The default value is {@link Protocol#DEFAULT_TIMEOUT}
+     * The cluster redis timeout, the default value is {@link redis.clients.jedis.Protocol#DEFAULT_TIMEOUT} on milliseconds
      */
     TIMEOUT("jnosql.redis.cluster.timeout"),
     /**
      * The value for the connection timeout in milliseconds configuration attribute for the cluster jedis client configuration
      * created with this configuration instance.
-     * The connection timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default value is {@link Protocol#DEFAULT_TIMEOUT}
+     * The connection timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default value is {@link redis.clients.jedis.Protocol#DEFAULT_TIMEOUT}
      */
     CONNECTION_TIMEOUT("jnosql.redis.cluster.connection.timeout"),
     /**
      * The value for the socket timeout in milliseconds configuration attribute for the cluster jedis client configuration with
      * this configuration instance.
-     * The socket timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default is {@link Protocol#DEFAULT_TIMEOUT}
+     * The socket timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default value is {@link redis.clients.jedis.Protocol#DEFAULT_TIMEOUT}
      */
     SOCKET_TIMEOUT("jnosql.redis.cluster.socket.timeout"),
     /**
@@ -72,17 +72,20 @@ public enum RedisClusterConfigurations implements Supplier<String> {
     SSL("jnosql.redis.cluster.ssl"),
     /**
      * The value for the protocol configuration attribute for the cluster jedis client configuration with this configuration instance.
-     * The protocol on {@link redis.clients.jedis.JedisClientConfig}
+     * The ssl on {@link redis.clients.jedis.JedisClientConfig}. The default value is false.
+     * The default value is not defined.
      */
     REDIS_PROTOCOL("jnosql.redis.cluster.protocol"),
     /**
      * The value for the clientset info disabled configuration attribute for the cluster jedis client configuration with this configuration instance.
      * The clientset info disabled on {@link redis.clients.jedis.JedisClientConfig}
+     * The default value is false.
      */
     CLIENTSET_INFO_CONFIG_DISABLED("jnosql.redis.cluster.clientset.info.config.disabled"),
     /**
      * The value for the clientset info configuration libname suffix attribute for the cluster jedis client configuration with this configuration instance.
      * The clientset info libname suffix on {@link redis.clients.jedis.JedisClientConfig}
+     * The default value is not defined.
      */
     CLIENTSET_INFO_CONFIG_LIBNAME_SUFFIX("jnosql.redis.cluster.clientset.info.config.libname.suffix"),
 

@@ -35,7 +35,7 @@ public enum RedisConfigurations implements Supplier<String> {
      */
     PORT("jnosql.redis.port"),
     /**
-     * The redis timeout, the default value 2000 on milliseconds
+     * The redis timeout, the default value is {@link redis.clients.jedis.Protocol#DEFAULT_TIMEOUT} on milliseconds
      */
     TIMEOUT("jnosql.redis.timeout"),
     /**
@@ -47,39 +47,39 @@ public enum RedisConfigurations implements Supplier<String> {
      */
     DATABASE("jnosql.redis.database"),
     /**
-     * The client's name
+     * The cluster client's name. The default value is 0.
      */
     CLIENT_NAME("jnosql.redis.client.name"),
     /**
      * The value for the maxTotal configuration attribute for pools created with this configuration instance.
-     * The max number of thread to {@link redis.clients.jedis.JedisPoolConfig}, the default value 1000
+     * The default value is {@link org.apache.commons.pool2.impl.GenericObjectPoolConfig#DEFAULT_MAX_TOTAL}
      */
     MAX_TOTAL("jnosql.redis.max.total"),
     /**
      * The value for the maxIdle configuration attribute for pools created with this configuration instance.
-     * The max idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 10
+     * The default value is {@link org.apache.commons.pool2.impl.GenericObjectPoolConfig#DEFAULT_MAX_IDLE}
      */
     MAX_IDLE("jnosql.redis.max.idle"),
     /**
      * The value for the minIdle configuration attribute for pools created with this configuration instance.
-     * The min idle {@link redis.clients.jedis.JedisPoolConfig}, the default value 1
+     * The default value is {@link org.apache.commons.pool2.impl.GenericObjectPoolConfig#DEFAULT_MIN_IDLE}
      */
     MIN_IDLE("jnosql.redis.min.idle"),
     /**
      * The value for the {@code maxWait} configuration attribute for pools created with this configuration instance.
-     * The max wait on millis on {@link redis.clients.jedis.JedisPoolConfig}, the default value 3000
+     * The default value is {@link org.apache.commons.pool2.impl.GenericObjectPoolConfig#DEFAULT_MAX_WAIT_MILLIS}
      */
     MAX_WAIT_MILLIS("jnosql.redis.max.wait.millis"),
     /**
      * The value for the connection timeout in milliseconds configuration attribute for the jedis client configuration
      * created with this configuration instance.
-     * The connection timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default value 2000
+     * The connection timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default value is {@link redis.clients.jedis.Protocol#DEFAULT_TIMEOUT}
      */
     CONNECTION_TIMEOUT("jnosql.redis.connection.timeout"),
     /**
      * The value for the socket timeout in milliseconds configuration attribute for the jedis client configuration with
      * this configuration instance.
-     * The socket timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default value 2000
+     * The socket timeout on millis on {@link redis.clients.jedis.JedisClientConfig}, the default value is {@link redis.clients.jedis.Protocol#DEFAULT_TIMEOUT}
      */
     SOCKET_TIMEOUT("jnosql.redis.socket.timeout"),
     /**
@@ -89,32 +89,27 @@ public enum RedisConfigurations implements Supplier<String> {
     USER("jnosql.redis.user"),
     /**
      * The value for the ssl configuration attribute for the jedis client configuration with this configuration instance.
-     * The ssl on {@link redis.clients.jedis.JedisClientConfig}
+     * The ssl on {@link redis.clients.jedis.JedisClientConfig}. The default value is false.
      */
     SSL("jnosql.redis.ssl"),
     /**
      * The value for the protocol configuration attribute for the jedis client configuration with this configuration instance.
-     * The protocol on {@link redis.clients.jedis.JedisClientConfig}
+     * The protocol on {@link redis.clients.jedis.JedisClientConfig}.
+     * The default value is not defined.
      */
     REDIS_PROTOCOL("jnosql.redis.protocol"),
     /**
      * The value for the clientset info disabled configuration attribute for the jedis client configuration with this configuration instance.
-     * The clientset info disabled on {@link redis.clients.jedis.JedisClientConfig}
+     * The clientset info disabled on {@link redis.clients.jedis.JedisClientConfig}.
+     * The default value is false.
      */
     CLIENTSET_INFO_CONFIG_DISABLED("jnosql.redis.clientset.info.config.disabled"),
     /**
      * The value for the clientset info configuration libname suffix attribute for the jedis client configuration with this configuration instance.
-     * The clientset info libname suffix on {@link redis.clients.jedis.JedisClientConfig}
+     * The clientset info libname suffix on {@link redis.clients.jedis.JedisClientConfig}.
+     * The default value is not defined.
      */
-    CLIENTSET_INFO_CONFIG_LIBNAME_SUFFIX("jnosql.redis.clientset.info.config.libname.suffix"),
-    /**
-     * The value for the sentinel basic configuration attribute for the jedis client configuration with this configuration instance.
-     */
-    SENTINEL("jnosql.redis.sentinel"),
-    /**
-     * The value for the cluster configuration attribute for the jedis client configuration with this configuration instance.
-     */
-    CLUSTER("jnosql.redis.cluster");
+    CLIENTSET_INFO_CONFIG_LIBNAME_SUFFIX("jnosql.redis.clientset.info.config.libname.suffix"),;
 
     private final String configuration;
 
