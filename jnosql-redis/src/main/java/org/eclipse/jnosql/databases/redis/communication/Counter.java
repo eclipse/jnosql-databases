@@ -23,6 +23,8 @@ import java.time.Duration;
 public interface Counter {
 
     /**
+     * Returns the counter value
+     *
      * @return The counter value
      */
     Number get();

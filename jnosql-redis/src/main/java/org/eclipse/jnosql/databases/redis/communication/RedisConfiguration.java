@@ -15,33 +15,39 @@
 
 package org.eclipse.jnosql.databases.redis.communication;
 
-
 import org.eclipse.jnosql.communication.Configurations;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.SettingsBuilder;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.ClientSetInfoConfig;
+import redis.clients.jedis.ConnectionPoolConfig;
+import redis.clients.jedis.DefaultJedisClientConfig;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisClientConfig;
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPooled;
+import redis.clients.jedis.JedisSentineled;
+import redis.clients.jedis.RedisProtocol;
+import redis.clients.jedis.UnifiedJedis;
 
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
 /**
  * The redis implementation of {@link KeyValueConfiguration} whose returns {@link RedisBucketManagerFactory}.
+ *
  * @see RedisConfigurations
  */
 public final class RedisConfiguration implements KeyValueConfiguration {
 
     private static final int DEFAULT_PORT = 6379;
-    private static final int DEFAULT_TIMEOUT = 2000;
-    private static final int DEFAULT_DATABASE = 0;
     private static final String DEFAULT_HOST = "localhost";
-    private static final int DEFAULT_MAX_TOTAL = 1000;
-    private static final int DEFAULT_MAX_IDLE = 10;
-    private static final int DEFAULT_MIN_IDLE = 1;
-    private static final int DEFAULT_MAX_WAIT_MILLIS = 3000;
 
     /**
      * Creates a {@link RedisConfiguration} from map configuration
@@ -56,68 +62,184 @@ public final class RedisConfiguration implements KeyValueConfiguration {
         return apply(builder.build());
     }
 
-    /**
-     * Creates a {@link RedisBucketManagerFactory} instance from a {@link JedisPool}
-     * @param jedisPool the jedis pool
-     * @return a {@link RedisBucketManagerFactory} instance
-     */
-    public RedisBucketManagerFactory get(JedisPool jedisPool) {
-        Objects.requireNonNull(jedisPool, "jedisPool is required");
-        return new DefaultRedisBucketManagerFactory(jedisPool);
-    }
-
     @Override
     public RedisBucketManagerFactory apply(Settings settings) {
         Objects.requireNonNull(settings, "settings is required");
 
-        JedisPoolConfig poolConfig = getJedisPoolConfig(settings);
-        JedisPool jedisPool = getJedisPool(settings, poolConfig);
-        return new DefaultRedisBucketManagerFactory(jedisPool);
+        if (settings.keySet()
+                .stream()
+                .anyMatch(s -> s.startsWith(RedisConfigurations.SENTINEL.get()))) {
+            return applyForSentinel(settings);
+        }
+
+        if (settings.keySet()
+                .stream()
+                .anyMatch(s -> s.startsWith(RedisConfigurations.CLUSTER.get()))) {
+            return applyForCluster(settings);
+        }
+
+        var simpleJedisConfig = getJedisClientConfig(
+                RedisConfigurations.SingleRedisConfigurationsResolver.INSTANCE, settings);
+
+        HostAndPort hostAndPort = getHostAndPort(settings);
+
+        ConnectionPoolConfig connectionPoolConfig = getConnectionPoolConfig(settings);
+
+        UnifiedJedis jedis = new JedisPooled(
+                connectionPoolConfig,
+                hostAndPort,
+                simpleJedisConfig);
+
+        return new DefaultRedisBucketManagerFactory(jedis);
     }
 
-
-    private JedisPool getJedisPool(Settings settings, JedisPoolConfig poolConfig) {
-
-        String localhost = settings.getSupplier(asList(RedisConfigurations.HOST, Configurations.HOST))
+    private HostAndPort getHostAndPort(Settings settings) {
+        String localhost = settings
+                .getSupplier(asList(RedisConfigurations.HOST, Configurations.HOST))
                 .map(Object::toString).orElse(DEFAULT_HOST);
 
         Integer port = settings.get(RedisConfigurations.PORT)
                 .map(Object::toString).map(Integer::parseInt)
                 .orElse(DEFAULT_PORT);
-
-        Integer timeout = settings.get(RedisConfigurations.TIMEOUT)
-                .map(Object::toString).map(Integer::parseInt)
-                .orElse(DEFAULT_TIMEOUT);
-
-        String password = settings.getSupplier(asList(RedisConfigurations.PASSWORD, Configurations.PASSWORD))
-                .map(Object::toString).orElse(null);
-        Integer database = settings.get(RedisConfigurations.DATABASE)
-                .map(Object::toString).map(Integer::parseInt)
-                .orElse(DEFAULT_DATABASE);
-
-        String clientName = settings.get(RedisConfigurations.CLIENT_NAME)
-                .map(Object::toString).orElse(null);
-        return new JedisPool(poolConfig, localhost, port, timeout, password, database, clientName);
+        return new HostAndPort(localhost, port);
     }
 
-    private JedisPoolConfig getJedisPoolConfig(Settings settings) {
-        JedisPoolConfig poolConfig = new JedisPoolConfig();
+    private RedisBucketManagerFactory applyForCluster(Settings settings) {
 
+        Set<HostAndPort> clusterNodes = settings.get(RedisClusterConfigurations.CLUSTER_HOSTS)
+                .map(Object::toString)
+                .map(h -> h.split(","))
+                .map(h -> asList(h).stream().map(HostAndPort::from).collect(Collectors.toSet()))
+                .orElseThrow(() -> new IllegalArgumentException("The cluster nodes are required"));
 
-        poolConfig.setMaxTotal(settings.get(RedisConfigurations.MAX_TOTAL)
+        JedisClientConfig clientConfig = getJedisClientConfig(
+                RedisClusterConfigurations.ClusterConfigurationsResolver.INSTANCE, settings);
+
+        int maxAttempts = settings.get(RedisClusterConfigurations.CLUSTER_MAX_ATTEMPTS)
                 .map(Object::toString).map(Integer::parseInt)
-                .orElse(DEFAULT_MAX_TOTAL));
+                .orElse(JedisCluster.DEFAULT_MAX_ATTEMPTS);
 
-        poolConfig.setMaxIdle(settings.get(RedisConfigurations.MAX_IDLE)
-                .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_MAX_IDLE));
+        Duration maxTotalRetriesDuration = settings
+                .get(RedisClusterConfigurations.CLUSTER_MAX_TOTAL_RETRIES_DURATION)
+                .map(Object::toString).map(Duration::parse)
+                .orElse(Duration.ofMillis((long) clientConfig.getSocketTimeoutMillis() * maxAttempts));
 
-        poolConfig.setMinIdle(   settings.get(RedisConfigurations.MIN_IDLE)
-                .map(Object::toString).map(Integer::parseInt).orElse(DEFAULT_MIN_IDLE));
+        ConnectionPoolConfig poolConfig = getConnectionPoolConfig(settings);
 
-        poolConfig.setMaxWaitMillis(settings.get(RedisConfigurations.MAX_WAIT_MILLIS)
+        JedisCluster jedis = new JedisCluster(
+                clusterNodes,
+                clientConfig,
+                maxAttempts,
+                maxTotalRetriesDuration,
+                poolConfig);
+        return new DefaultRedisBucketManagerFactory(jedis);
+    }
+
+    private RedisBucketManagerFactory applyForSentinel(Settings settings) {
+
+        String masterName = settings.get(RedisSentinelConfigurations.SENTINEL_MASTER_NAME)
+                .map(Object::toString)
+                .orElseThrow(() -> new IllegalArgumentException("The sentinel master name is required"));
+
+        Set<HostAndPort> hostAndPorts = settings.get(RedisSentinelConfigurations.SENTINEL_HOSTS)
+                .map(Object::toString)
+                .map(h -> h.split(","))
+                .map(h -> asList(h).stream().map(HostAndPort::from).collect(Collectors.toSet()))
+                .orElseThrow(() -> new IllegalArgumentException("The sentinel hosts are required"));
+
+        ConnectionPoolConfig connectionPoolConfig = getConnectionPoolConfig(settings);
+
+        var masterJedisClientConfig = getJedisClientConfig(
+                RedisSentinelConfigurations.SentinelMasterConfigurationsResolver.INSTANCE,settings);
+
+        var slaveJedisClientConfig = getJedisClientConfig(
+                RedisSentinelConfigurations.SentinelMasterConfigurationsResolver.INSTANCE, settings);
+
+        JedisSentineled jedis = new JedisSentineled(masterName,
+                masterJedisClientConfig,
+                connectionPoolConfig,
+                hostAndPorts,
+                slaveJedisClientConfig);
+
+        return new DefaultRedisBucketManagerFactory(jedis);
+    }
+
+    private JedisClientConfig getJedisClientConfig(RedisConfigurationsResolver resolver, Settings settings) {
+
+        DefaultJedisClientConfig.Builder builder = DefaultJedisClientConfig.builder();
+
+        settings.get(resolver.connectionTimeoutSupplier())
                 .map(Object::toString).map(Integer::parseInt)
-                .orElse(DEFAULT_MAX_WAIT_MILLIS));
+                .ifPresent(builder::connectionTimeoutMillis);
+
+        settings.get(resolver.socketTimeoutSupplier())
+                .map(Object::toString).map(Integer::parseInt)
+                .ifPresent(builder::socketTimeoutMillis);
+
+        settings.get(resolver.clientNameSupplier())
+                .map(Object::toString)
+                .ifPresent(builder::clientName);
+
+        settings.get(resolver.userSupplier())
+                .map(Object::toString)
+                .ifPresent(builder::user);
+
+        settings.get(resolver.passwordSupplier())
+                .map(Object::toString)
+                .ifPresent(builder::password);
+
+        settings.get(resolver.timeoutSupplier())
+                .map(Object::toString).map(Integer::parseInt)
+                .ifPresent(builder::timeoutMillis);
+
+        settings.get(resolver.sslSupplier())
+                .map(Object::toString).map(Boolean::parseBoolean)
+                .ifPresent(builder::ssl);
+
+        settings.get(resolver.redisProtocolSupplier())
+                .map(Object::toString).map(RedisProtocol::valueOf)
+                .ifPresent(builder::protocol);
+
+        settings.get(resolver.clientsetInfoConfigLibNameSuffixSupplier())
+                .map(Object::toString)
+                .ifPresentOrElse(
+                        libNameSuffix -> builder.clientSetInfoConfig(new ClientSetInfoConfig(libNameSuffix)),
+                        () -> settings.get(resolver.clientsetInfoConfigDisabled())
+                                .map(Object::toString)
+                                .map(Boolean::parseBoolean)
+                                .map(disabled -> disabled ? ClientSetInfoConfig.DISABLED : ClientSetInfoConfig.DEFAULT)
+                                .ifPresent(builder::clientSetInfoConfig));
+
+        return builder.build();
+    }
+
+    private ConnectionPoolConfig getConnectionPoolConfig(Settings settings) {
+
+        ConnectionPoolConfig poolConfig = new ConnectionPoolConfig();
+
+        settings.get(RedisConfigurations.MAX_TOTAL)
+                .map(Object::toString).map(Integer::parseInt)
+                .ifPresent(poolConfig::setMaxTotal);
+
+        settings.get(RedisConfigurations.MAX_IDLE)
+                .map(Object::toString).map(Integer::parseInt)
+                .ifPresent(poolConfig::setMaxIdle);
+
+        settings.get(RedisConfigurations.MIN_IDLE)
+                .map(Object::toString).map(Integer::parseInt)
+                .ifPresent(poolConfig::setMinIdle);
+
+        settings.get(RedisConfigurations.MAX_WAIT_MILLIS)
+                .map(Object::toString).map(Integer::parseInt)
+                .ifPresent(poolConfig::setMaxWaitMillis);
+
         return poolConfig;
     }
 
+    public static void main(String[] args) {
+
+        Arrays.stream(RedisConfigurations.values())
+                .map(RedisConfigurations::get)
+                .forEach(System.out::println);
+    }
 }
