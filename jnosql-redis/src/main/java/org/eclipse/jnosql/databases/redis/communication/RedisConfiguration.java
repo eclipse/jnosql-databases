@@ -236,10 +236,4 @@ public final class RedisConfiguration implements KeyValueConfiguration {
         return poolConfig;
     }
 
-    public static void main(String[] args) {
-
-        Arrays.stream(RedisConfigurations.values())
-                .map(RedisConfigurations::get)
-                .forEach(System.out::println);
-    }
 }
