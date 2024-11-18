@@ -31,7 +31,6 @@ import redis.clients.jedis.RedisProtocol;
 import redis.clients.jedis.UnifiedJedis;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
