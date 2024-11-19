@@ -1470,52 +1470,158 @@ You can use either the Maven or Gradle dependencies:
 
 === Configuration
 
-This API provides the ```RedisConfigurations``` class to programmatically establish the credentials.
-Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
-
-[cols="Redis"]
-|===
-|Configuration property |Description
-
-|`jnosql.redis.host`
-|The database host
-
-|`jnosql.redis.port`
-|The database port
-
-|`jnosql.redis.timeout`
-|The redis timeout, the default value 2000 on milliseconds
-
-|`jnosql.redis.password`
-|The user's password
-
-|`jnosql.redis.database`
-|The redis database number, the default value is 0
-
-|`jnosql.redis.client.name`
-|The client's name
-
-|`jnosql.redis.max.total`
-|The value for the maxTotal configuration attribute for pools created with this configuration instance, the default value 1000.
-
-|`jnosql.redis.max.idle`
-|The value for the maxIdle configuration attribute for pools created with this configuration instance, the default value 10.
-
-|`jnosql.redis.min.idle`
-|The value for the minIdle configuration attribute for pools created with this configuration instance, the default value 1.
-
-|`jnosql.redis.max.wait.millis`
-|The value for the maxWait configuration attribute for pools created with this configuration instance, the default value 3000.
-
-|===
-
 This is an example using Redis's Key-Value API with MicroProfile Config.
+Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
 
 [source,properties]
 ----
 jnosql.keyvalue.provider=org.eclipse.jnosql.databases.redis.communication.RedisConfiguration
 jnosql.keyvalue.database=heroes
 ----
+
+This API provides enum classes to programmatically establish the credentials as:
+
+- link:README.adoc#_single_node_configuration[`RedisConfigurations`] for single node configuration
++
+[source,properties]
+----
+# Single Node Configuration
+
+# by default the host is localhost
+jnosql.redis.host=localhost
+# by default the port is 6379
+jnosql.redis.port=6379
+# if you have user
+jnosql.redis.user=youruser
+# if you have password
+jnosql.redis.password=yourpassword
+----
+
+- link:README.adoc#_redis_sentinel_configuration[`RedisSentinelConfigurations`] for sentinel configuration
++
+[source,properties]
+----
+# Sentinel Configuration
+jnosql.redis.sentinel.hosts=host1:26379,host2:26379
+
+jnosql.redis.sentinel.master.name=masterName
+jnosql.redis.sentinel.master.user=masterUser
+jnosql.redis.sentinel.master.password=masterPassword
+#jnosql.redis.sentinel.master.ssl=false
+#jnosql.redis.sentinel.master.timeout=2000
+#jnosql.redis.sentinel.master.connection.timeout=2000
+#jnosql.redis.sentinel.master.socket.timeout=2000
+
+jnosql.redis.sentinel.slave.user=slaveUser
+jnosql.redis.sentinel.slave.password=slavePassword
+#jnosql.redis.sentinel.slave.ssl=false
+#jnosql.redis.sentinel.slave.timeout=2000
+#jnosql.redis.sentinel.slave.connection.timeout=2000
+#jnosql.redis.sentinel.slave.socket.timeout=2000
+----
+
+- link:README.adoc#_redis_sentinel_configuration[`RedisClusterConfigurations`] for cluster configuration
++
+[source,properties]
+----
+# Cluster Configuration
+
+jnosql.redis.cluster.hosts=host1:6379,host2:6379
+jnosql.redis.cluster.user=clusterUser
+jnosql.redis.cluster.password=clusterPassword
+jnosql.redis.cluster.client.name=clusterClientName
+jnosql.redis.cluster.max.attempts=5
+jnosql.redis.cluster.max.total.retries.duration=10000
+#jnosql.redis.cluster.ssl=false
+#jnosql.redis.cluster.timeout=2000
+#jnosql.redis.cluster.connection.timeout=2000
+#jnosql.redis.cluster.socket.timeout=2000
+----
+
+==== Single Node Configuration
+
+This API provides the `RedisConfigurations` class to programmatically establish the credentials.
+Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
+
+[cols="2,2", options="header"]
+|===
+|Configuration property |Description
+
+|`jnosql.redis.host` |The database host
+|`jnosql.redis.port` |The database port
+|`jnosql.redis.timeout` |The redis timeout, the default value is 2000 milliseconds
+|`jnosql.redis.password` |The password's credential
+|`jnosql.redis.database` |The redis database number
+|`jnosql.redis.client.name` |The cluster client's name. The default value is 0.
+|`jnosql.redis.max.total` |The value for the maxTotal configuration attribute for pools created with this configuration instance. The default value is 1000.
+|`jnosql.redis.max.idle` |The value for the maxIdle configuration attribute for pools created with this configuration instance. The default value is 10.
+|`jnosql.redis.min.idle` |The value for the minIdle configuration attribute for pools created with this configuration instance. The default value is 1.
+|`jnosql.redis.max.wait.millis` |The value for the maxWait configuration attribute for pools created with this configuration instance. The default value is 3000 milliseconds.
+|`jnosql.redis.connection.timeout` |The connection timeout in milliseconds configuration attribute for the jedis client configuration created with this configuration instance.
+|`jnosql.redis.socket.timeout` |The socket timeout in milliseconds configuration attribute for the jedis client configuration with this configuration instance.
+|`jnosql.redis.user` |The user configuration attribute for the jedis client configuration with this configuration instance.
+|`jnosql.redis.ssl` |The ssl configuration attribute for the jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.protocol` |The protocol configuration attribute for the jedis client configuration with this configuration instance.
+|`jnosql.redis.clientset.info.config.disabled` |The clientset info disabled configuration attribute for the jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.clientset.info.config.libname.suffix` |The clientset info configuration libname suffix attribute for the jedis client configuration with this configuration instance.
+|===
+
+==== Redis Sentinel Configuration
+
+This API provides the `RedisSentinelConfigurations` class to programmatically establish the credentials.
+Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
+
+[cols="2,2", options="header"]
+|===
+|Configuration Property |Description
+
+|`jnosql.redis.sentinel.hosts` |The value for the sentinel HOST:PORT (separated by comma) configuration attribute for the jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.master.name` |The value for the master name configuration attribute for the jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.master.client.name` |The master client's name, the default value is 0
+|`jnosql.redis.sentinel.slave.client.name` |The slave client's name, the default value is 0
+|`jnosql.redis.sentinel.master.timeout` |The master redis timeout, the default value is 2000 milliseconds
+|`jnosql.redis.sentinel.slave.timeout` |The slave redis timeout, the default value is 2000 milliseconds
+|`jnosql.redis.sentinel.master.connection.timeout` |The connection timeout in milliseconds configuration attribute for the master jedis client configuration created with this configuration instance.
+|`jnosql.redis.sentinel.slave.connection.timeout` |The connection timeout in milliseconds configuration attribute for the slave jedis client configuration created with this configuration instance.
+|`jnosql.redis.sentinel.master.socket.timeout` |The socket timeout in milliseconds configuration attribute for the master jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.slave.socket.timeout` |The socket timeout in milliseconds configuration attribute for the slave jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.master.user` |The user configuration attribute for the master jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.slave.user` |The user configuration attribute for the slave jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.master.password` |The password configuration attribute for the master jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.slave.password` |The password configuration attribute for the slave jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.master.ssl` |The ssl configuration attribute for the master jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.sentinel.slave.ssl` |The ssl configuration attribute for the slave jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.sentinel.master.protocol` |The protocol configuration attribute for the master jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.slave.protocol` |The protocol configuration attribute for the slave jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.master.clientset.info.config.disabled` |The clientset info disabled configuration attribute for the master jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.sentinel.slave.clientset.info.config.disabled` |The clientset info disabled configuration attribute for the slave jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.sentinel.master.clientset.info.config.libname.suffix` |The clientset info configuration libname suffix attribute for the master jedis client configuration with this configuration instance.
+|`jnosql.redis.sentinel.slave.clientset.info.config.libname.suffix` |The clientset info configuration libname suffix attribute for the slave jedis client configuration with this configuration instance.
+|===
+
+==== Redis Cluster Configuration
+
+This API provides the `RedisClusterConfigurations` class to programmatically establish the credentials.
+Please note that you can establish properties using the https://microprofile.io/microprofile-config/[MicroProfile Config] specification.
+
+[cols="2,2", options="header"]
+|===
+|Configuration Property |Description
+
+|`jnosql.redis.cluster.hosts` |The value for the sentinel HOST:PORT (separated by comma) configuration attribute for the jedis client configuration with this configuration instance.
+|`jnosql.redis.cluster.client.name` |The cluster client's name. The default value is 0.
+|`jnosql.redis.cluster.timeout` |The cluster redis timeout, the default value is 2000 milliseconds
+|`jnosql.redis.cluster.connection.timeout` |The connection timeout in milliseconds configuration attribute for the cluster jedis client configuration created with this configuration instance.
+|`jnosql.redis.cluster.socket.timeout` |The socket timeout in milliseconds configuration attribute for the cluster jedis client configuration with this configuration instance.
+|`jnosql.redis.cluster.user` |The user configuration attribute for the cluster jedis client configuration with this configuration instance.
+|`jnosql.redis.cluster.password` |The password configuration attribute for the cluster jedis client configuration with this configuration instance.
+|`jnosql.redis.cluster.ssl` |The ssl configuration attribute for the cluster jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.cluster.protocol` |The protocol configuration attribute for the cluster jedis client configuration with this configuration instance.
+|`jnosql.redis.cluster.clientset.info.config.disabled` |The clientset info disabled configuration attribute for the cluster jedis client configuration with this configuration instance. The default value is false.
+|`jnosql.redis.cluster.clientset.info.config.libname.suffix` |The clientset info configuration libname suffix attribute for the cluster jedis client configuration with this configuration instance.
+|`jnosql.redis.cluster.max.attempts` |The value for the max attempts configuration attribute for the cluster jedis client configuration with this configuration instance. Default is 5.
+|`jnosql.redis.cluster.max.total.retries.duration` |The value for the max total retries configuration attribute for the cluster jedis client configuration with this configuration instance. Default is 10000 milliseconds.
+|===
 
 === RedisBucketManagerFactory
 

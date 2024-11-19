@@ -15,7 +15,7 @@
 
 package org.eclipse.jnosql.databases.redis.communication;
 
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.Set;
 
 class RedisSet<T> extends RedisCollection<T> implements Set<T> {
 
-    RedisSet(Jedis jedis, Class<T> clazz, String keyWithNameSpace) {
+    RedisSet(UnifiedJedis jedis, Class<T> clazz, String keyWithNameSpace) {
         super(jedis, clazz, keyWithNameSpace);
     }
 

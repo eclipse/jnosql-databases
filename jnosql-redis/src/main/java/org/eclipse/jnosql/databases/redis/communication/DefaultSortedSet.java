@@ -16,7 +16,7 @@
 package org.eclipse.jnosql.databases.redis.communication;
 
 
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.time.Duration;
 import java.util.List;
@@ -33,9 +33,9 @@ class DefaultSortedSet implements SortedSet {
     private static final int LAST_ELEMENT = -1;
     private String key;
 
-    private Jedis jedis;
+    private UnifiedJedis jedis;
 
-    DefaultSortedSet(Jedis jedis, String keyspace) {
+    DefaultSortedSet(UnifiedJedis jedis, String keyspace) {
         Objects.requireNonNull(jedis, "jedis is required");
         Objects.requireNonNull(keyspace, "keyspace is required");
         this.key = keyspace;

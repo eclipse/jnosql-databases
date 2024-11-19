@@ -17,7 +17,7 @@ package org.eclipse.jnosql.databases.redis.communication;
 
 import jakarta.json.bind.Jsonb;
 import org.eclipse.jnosql.communication.driver.JsonbSupplier;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,14 +40,13 @@ class RedisMap<K, V> implements Map<K, V> {
 
     private final String nameSpace;
 
-    private final Jedis jedis;
+    private final UnifiedJedis jedis;
 
     private final boolean isKeyString;
 
     private final boolean isValueString;
 
-
-    RedisMap(Jedis jedis, Class<K> keyValue, Class<V> valueClass, String keyWithNameSpace) {
+    RedisMap(UnifiedJedis jedis, Class<K> keyValue, Class<V> valueClass, String keyWithNameSpace) {
         this.keyClass = keyValue;
         this.valueClass = valueClass;
         this.nameSpace = keyWithNameSpace;

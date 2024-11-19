@@ -8,6 +8,12 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == [Unreleased]
 
+=== Added
+- Added Redis Sentinel and Redis Cluster configuration at JNoSQL Redis Database API
+
+=== Fixed
+- Fixed the broken connection issue at JNoSQL Redis Database API
+
 == [1.1.2] - 2023-09-15
 
 === Added

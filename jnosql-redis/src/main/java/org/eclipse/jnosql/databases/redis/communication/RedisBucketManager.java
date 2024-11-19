@@ -21,7 +21,7 @@ import org.eclipse.jnosql.communication.Value;
 import org.eclipse.jnosql.communication.driver.ValueJSON;
 import org.eclipse.jnosql.communication.keyvalue.BucketManager;
 import org.eclipse.jnosql.communication.keyvalue.KeyValueEntity;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.UnifiedJedis;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -38,9 +38,9 @@ public class RedisBucketManager implements BucketManager {
     private final String nameSpace;
     private final Jsonb jsonB;
 
-    private final Jedis jedis;
+    private final UnifiedJedis jedis;
 
-    RedisBucketManager(String nameSpace, Jsonb provider, Jedis jedis) {
+    RedisBucketManager(String nameSpace, Jsonb provider, UnifiedJedis jedis) {
         this.nameSpace = nameSpace;
         this.jsonB = provider;
         this.jedis = jedis;
