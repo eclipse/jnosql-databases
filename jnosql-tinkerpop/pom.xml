@@ -26,7 +26,9 @@
     <artifactId>jnosql-mapping-graph</artifactId>
 
     <properties>
-        <antlr4.version>4.9.3</antlr4.version>
+        <tinkerpop.version>3.7.3</tinkerpop.version>
+        <neo4j.connector.version>0.9-3.4.0</neo4j.connector.version>
+        <antlr4.version>4.9.1</antlr4.version>
         <!-- it's required by the 'org.neo4j' libraries  -->
         <argLine> --add-opens java.base/java.lang=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED </argLine>
 
