@@ -8,10 +8,14 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == [Unreleased]
 
+== [1.1.3] - 2024-10-24
+
 === Added
+
 - Added Redis Sentinel and Redis Cluster configuration at JNoSQL Redis Database API
 
 === Fixed
+
 - Fixed the broken connection issue at JNoSQL Redis Database API
 - Use `getAccessibleDatabases` method to get the databases at JNoSQL ArangoDB Database API
 
