@@ -21,12 +21,6 @@ import org.junit.jupiter.api.Test;
 
 public class ArangoDBConfigurationTest {
 
-    private ArangoDBKeyValueConfiguration configuration;
-
-    @BeforeEach
-    public void setUp() {
-        configuration = new ArangoDBKeyValueConfiguration();
-    }
 
 
     @Test
