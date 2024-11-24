@@ -13,6 +13,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 === Fixed
 - Fixed the broken connection issue at JNoSQL Redis Database API
+- Use `getAccessibleDatabases` method to get the databases at JNoSQL ArangoDB Database API
 
 == [1.1.2] - 2023-09-15
 
