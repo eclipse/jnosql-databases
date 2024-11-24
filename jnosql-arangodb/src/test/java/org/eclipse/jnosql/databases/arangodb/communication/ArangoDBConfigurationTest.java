@@ -16,17 +16,10 @@ package org.eclipse.jnosql.databases.arangodb.communication;
 
 import org.eclipse.jnosql.communication.keyvalue.KeyValueConfiguration;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ArangoDBConfigurationTest {
 
-    private ArangoDBKeyValueConfiguration configuration;
-
-    @BeforeEach
-    public void setUp() {
-        configuration = new ArangoDBKeyValueConfiguration();
-    }
 
 
     @Test

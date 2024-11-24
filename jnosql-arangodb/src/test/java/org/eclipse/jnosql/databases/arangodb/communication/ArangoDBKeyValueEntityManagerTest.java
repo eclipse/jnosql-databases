@@ -42,8 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ArangoDBKeyValueEntityManagerTest {
     private BucketManager keyValueEntityManager;
 
-    private BucketManagerFactory keyValueEntityManagerFactory;
-
     private User userOtavio = new User("otavio");
     private KeyValueEntity keyValueOtavio = KeyValueEntity.of("otavio", Value.of(userOtavio));
 
@@ -52,7 +50,7 @@ public class ArangoDBKeyValueEntityManagerTest {
 
     @BeforeEach
     public void init() {
-        keyValueEntityManagerFactory = KeyvalueDatabase.INSTANCE.get();
+        BucketManagerFactory keyValueEntityManagerFactory = KeyvalueDatabase.INSTANCE.get();
         keyValueEntityManager = keyValueEntityManagerFactory.apply("users-entity");
     }
 
