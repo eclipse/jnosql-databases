@@ -58,7 +58,7 @@ public final class ArangoDBUtil {
     static void checkDatabase(String database, ArangoDB arangoDB) {
         Objects.requireNonNull(database, "database is required");
         try {
-            Collection<String> databases = arangoDB.getDatabases();
+            Collection<String> databases = arangoDB.getAccessibleDatabases();
             if (!databases.contains(database)) {
                 arangoDB.createDatabase(database);
             }
