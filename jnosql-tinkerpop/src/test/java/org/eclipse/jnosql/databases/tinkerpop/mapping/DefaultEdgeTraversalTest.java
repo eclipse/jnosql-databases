@@ -94,7 +94,7 @@ class DefaultEdgeTraversalTest extends AbstractTraversalTest {
     void shouldReturnErrorOutEWhenIsNull() {
         assertThrows(NullPointerException.class, () -> graphTemplate.traversalVertex().outE((String) null)
                 .stream()
-                .collect(toList()));
+                .toList());
     }
 
     @Test
@@ -122,7 +122,7 @@ class DefaultEdgeTraversalTest extends AbstractTraversalTest {
     void shouldReturnErrorWhenInEIsNull() {
         assertThrows(NullPointerException.class, () -> graphTemplate.traversalVertex().inE((String) null)
                 .stream()
-                .collect(toList()));
+                .toList());
 
     }
 
@@ -148,7 +148,7 @@ class DefaultEdgeTraversalTest extends AbstractTraversalTest {
     void shouldReturnErrorWhenBothEIsNull() {
         assertThrows(NullPointerException.class, () -> graphTemplate.traversalVertex().bothE((String) null)
                 .stream()
-                .collect(toList()));
+                .toList());
     }
 
 
@@ -533,7 +533,7 @@ class DefaultEdgeTraversalTest extends AbstractTraversalTest {
                 .inE("knows")
                 .dedup()
                 .result()
-                .collect(Collectors.toList());
+                .toList();
 
         assertEquals(6, edges.size());
     }
