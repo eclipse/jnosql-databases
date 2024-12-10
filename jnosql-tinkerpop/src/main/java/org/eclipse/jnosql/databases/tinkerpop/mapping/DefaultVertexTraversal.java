@@ -221,7 +221,7 @@ class DefaultVertexTraversal extends AbstractVertexTraversal implements VertexTr
 
     @Override
     public ValueMapTraversal valueMap(String... propertyKeys) {
-        return new DefaultValueMapTraversal(supplier, flow.andThen(g -> g.valueMap(false, propertyKeys)));
+        return new DefaultValueMapTraversal(supplier, flow.andThen(g -> g.elementMap(propertyKeys)));
     }
 
     @Override
