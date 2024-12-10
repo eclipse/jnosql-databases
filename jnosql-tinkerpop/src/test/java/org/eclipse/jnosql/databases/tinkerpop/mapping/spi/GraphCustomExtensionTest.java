@@ -56,9 +56,7 @@ class GraphCustomExtensionTest {
     void shouldInitiate() {
         assertNotNull(people);
         Person person = people.insert(Person.builder().build());
-        SoftAssertions.assertSoftly(soft -> {
-            soft.assertThat(person).isNotNull();
-        });
+        SoftAssertions.assertSoftly(soft -> soft.assertThat(person).isNotNull());
     }
 
     @Test
@@ -66,9 +64,7 @@ class GraphCustomExtensionTest {
         assertNotNull(pepoleMock);
 
         Person person = pepoleMock.insert(Person.builder().build());
-        SoftAssertions.assertSoftly(soft -> {
-            soft.assertThat(person).isNotNull();
-        });
+        SoftAssertions.assertSoftly(soft -> soft.assertThat(person).isNotNull());
     }
 
     @Test
@@ -76,8 +72,6 @@ class GraphCustomExtensionTest {
         assertNotNull(repository);
 
         Person person = repository.insert(Person.builder().build());
-        SoftAssertions.assertSoftly(soft -> {
-            soft.assertThat(person).isNotNull();
-        });
+        SoftAssertions.assertSoftly(soft -> soft.assertThat(person).isNotNull());
     }
 }
