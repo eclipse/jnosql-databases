@@ -23,7 +23,6 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.assertj.core.api.SoftAssertions;
-import org.eclipse.jnosql.mapping.IdNotFoundException;
 import org.eclipse.jnosql.databases.tinkerpop.mapping.entities.Animal;
 import org.eclipse.jnosql.databases.tinkerpop.mapping.entities.Book;
 import org.eclipse.jnosql.databases.tinkerpop.mapping.entities.Person;

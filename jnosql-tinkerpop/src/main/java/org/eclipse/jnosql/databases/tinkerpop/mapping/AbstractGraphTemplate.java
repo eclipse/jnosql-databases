@@ -52,9 +52,11 @@ import static org.apache.tinkerpop.gremlin.structure.T.id;
 
 abstract class AbstractGraphTemplate extends AbstractSemiStructuredTemplate implements GraphTemplate {
 
+    @SuppressWarnings("unchecked")
     private static final Function<GraphTraversal<?, ?>, GraphTraversal<Vertex, Vertex>> INITIAL_VERTEX =
             g -> (GraphTraversal<Vertex, Vertex>) g;
 
+    @SuppressWarnings("unchecked")
     private static final Function<GraphTraversal<?, ?>, GraphTraversal<Vertex, Edge>> INITIAL_EDGE =
             g -> (GraphTraversal<Vertex, Edge>) g;
 
