@@ -62,7 +62,7 @@ class DefaultValueMapTraversalTest extends AbstractTraversalTest {
                 .map(m -> m.getOrDefault("name", "").toString()).collect(Collectors.toList());
 
 
-        assertThat(names).contains("[Poliana]", "[Otavio]", "[Paulo]");
+        assertThat(names).contains("Poliana", "Otavio", "Paulo");
     }
 
     @Test
