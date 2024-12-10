@@ -131,6 +131,7 @@ public interface GraphTemplate extends SemiStructuredTemplate {
      * @return the Edges
      * @throws NullPointerException where there is any parameter null
      */
+    @SuppressWarnings("unchecked")
     <K> Collection<EdgeEntity> edgesById(K id, Direction direction, Supplier<String>... labels);
 
     /**
@@ -166,6 +167,7 @@ public interface GraphTemplate extends SemiStructuredTemplate {
      * @return the Edges
      * @throws NullPointerException where there is any parameter null
      */
+    @SuppressWarnings("unchecked")
     <T> Collection<EdgeEntity> edges(T entity, Direction direction, Supplier<String>... labels);
 
     /**
