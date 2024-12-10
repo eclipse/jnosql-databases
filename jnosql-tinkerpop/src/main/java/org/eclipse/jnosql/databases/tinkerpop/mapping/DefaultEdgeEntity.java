@@ -60,11 +60,13 @@ class DefaultEdgeEntity<O, I> implements EdgeEntity {
         return edge.label();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public I incoming() {
         return incoming;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public O outgoing() {
         return outgoing;

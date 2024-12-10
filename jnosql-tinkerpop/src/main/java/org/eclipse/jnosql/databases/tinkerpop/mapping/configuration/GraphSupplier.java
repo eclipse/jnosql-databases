@@ -32,6 +32,7 @@ import static org.eclipse.jnosql.mapping.core.config.MappingConfigurations.GRAPH
 @ApplicationScoped
 class GraphSupplier implements Supplier<Graph> {
 
+    @SuppressWarnings("unchecked")
     @Override
     @Produces
     @ApplicationScoped
