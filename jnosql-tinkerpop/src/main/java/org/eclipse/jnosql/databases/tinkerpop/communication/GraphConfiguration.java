@@ -33,6 +33,7 @@ public interface GraphConfiguration extends Function<Settings, Graph> {
      * @param <T> the configuration type
      * @return {@link GraphConfiguration} instance
      */
+    @SuppressWarnings("unchecked")
     static <T extends GraphConfiguration> T getConfiguration() {
         return (T) ServiceLoader.load(GraphConfiguration.class)
                 .stream()
@@ -48,6 +49,7 @@ public interface GraphConfiguration extends Function<Settings, Graph> {
      * @param type the particular provider
      * @return {@link GraphConfiguration} instance
      */
+    @SuppressWarnings("unchecked")
     static <T extends GraphConfiguration> T getConfiguration(Class<T> type) {
         return (T) ServiceLoader.load(GraphConfiguration.class)
                 .stream()
