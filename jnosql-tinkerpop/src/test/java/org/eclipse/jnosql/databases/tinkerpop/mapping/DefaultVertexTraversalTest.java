@@ -280,7 +280,7 @@ class DefaultVertexTraversalTest extends AbstractTraversalTest {
 
         List<String> names = new ArrayList<>();
 
-        maps.forEach(m -> names.add(((List) m.get("name")).get(0).toString()));
+        maps.forEach(m -> names.add(m.get("name").toString()));
 
         assertThat(names).contains("Otavio", "Poliana", "Paulo");
     }
