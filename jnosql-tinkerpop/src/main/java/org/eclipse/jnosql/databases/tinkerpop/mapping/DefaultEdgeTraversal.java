@@ -168,7 +168,7 @@ class DefaultEdgeTraversal extends AbstractEdgeTraversal implements EdgeTraversa
 
     @Override
     public ValueMapTraversal valueMap(String... propertyKeys) {
-        return new DefaultValueMapTraversal(supplier, flow.andThen(g -> g.valueMap(false, propertyKeys)));
+        return new DefaultValueMapTraversal(supplier, flow.andThen(g -> g.elementMap(propertyKeys)));
     }
 
     @Override
