@@ -50,10 +50,9 @@ public class Animal {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Animal)) {
+        if (!(o instanceof Animal animal)) {
             return false;
         }
-        Animal animal = (Animal) o;
         return Objects.equals(id, animal.id) &&
                 Objects.equals(name, animal.name);
     }
