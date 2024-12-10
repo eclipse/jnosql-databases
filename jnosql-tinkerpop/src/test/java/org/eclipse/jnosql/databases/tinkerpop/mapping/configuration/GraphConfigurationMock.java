@@ -65,7 +65,7 @@ class GraphConfigurationMock implements GraphConfiguration {
             }
 
             @Override
-            public void close() throws Exception {
+            public void close() {
 
             }
 
