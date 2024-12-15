@@ -13,12 +13,14 @@
  *   Otavio Santana
  *   Alessandro Moscatelli
  */
-package org.eclipse.jnosql.databases.mongodb.mapping;
+package org.eclipse.jnosql.databases.mongodb.integration;
 
 import jakarta.nosql.Column;
+import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
 
 import java.util.UUID;
 
-public record Book(@Id UUID id, @Column String title, @Column String author) {
+@Entity
+public record MongoDBBook(@Id UUID id, @Column String title, @Column String author) {
 }
