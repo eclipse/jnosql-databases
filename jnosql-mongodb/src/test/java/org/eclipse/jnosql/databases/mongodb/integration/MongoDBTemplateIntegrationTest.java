@@ -138,6 +138,34 @@ class MongoDBTemplateIntegrationTest {
         });
     }
 
+    @Test
+    void shouldCreateMongoDBBook() {
+        var id = randomUUID();
+        var title = "Persistence with MongoDB";
+        var author = "Otavio Santana";
+        var book = template.insert(new MongoDBBook(id, title, author));
+
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(book).isNotNull();
+            softly.assertThat(book.id()).isEqualTo(id);
+            softly.assertThat(book.title()).isEqualTo(title);
+            softly.assertThat(book.author()).isEqualTo(author);
+        });
+    }
+
+    @Test
+    void shouldFindByUUID() {
+        var id = randomUUID();
+        var title = "Persistence with MongoDB";
+        var author = "Otavio Santana";
+        var book = template.insert(new MongoDBBook(id, title, author));
+
+        var optional = template.find(MongoDBBook.class, id);
+        assertThat(optional).isPresent();
+        assertThat(optional.get().id()).isEqualTo(id);
+        assertThat(optional.get().title()).isEqualTo(title);
+        assertThat(optional.get().author()).isEqualTo(author);
+    }
 
 
 }
