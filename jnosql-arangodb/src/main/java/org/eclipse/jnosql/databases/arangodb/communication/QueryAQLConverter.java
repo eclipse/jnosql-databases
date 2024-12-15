@@ -130,6 +130,7 @@ final class QueryAQLConverter {
                                          char entity, int counter) {
 
         Element document = condition.element();
+        int localCounter = counter;
         switch (condition.condition()) {
             case IN:
                 appendCondition(aql, params, entity, document, IN);
@@ -157,27 +158,26 @@ final class QueryAQLConverter {
                 for (CriteriaCondition dc : document.get(new TypeReference<List<CriteriaCondition>>() {
                 })) {
 
-                    if (isFirstCondition(aql, counter)) {
+                    if (isFirstCondition(aql, localCounter)) {
                         aql.append(AND);
                     }
-                    definesCondition(dc, aql, params, entity, ++counter);
+                    definesCondition(dc, aql, params, entity, ++localCounter);
                 }
                 return;
             case OR:
 
                 for (CriteriaCondition dc : document.get(new TypeReference<List<CriteriaCondition>>() {
                 })) {
-                    if (isFirstCondition(aql, counter)) {
+                    if (isFirstCondition(aql, localCounter)) {
                         aql.append(OR);
                     }
-                    definesCondition(dc, aql, params, entity, ++counter);
+                    definesCondition(dc, aql, params, entity, ++localCounter);
                 }
                 return;
             case NOT:
                 CriteriaCondition documentCondition = document.get(CriteriaCondition.class);
-                aql.append(NOT);
-                aql.append(START_EXPRESSION);
-                definesCondition(documentCondition, aql, params, entity, ++counter);
+                aql.append(NOT).append(START_EXPRESSION);
+                definesCondition(documentCondition, aql, params, entity, ++localCounter);
                 aql.append(END_EXPRESSION);
                 return;
             default:

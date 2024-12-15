@@ -14,24 +14,35 @@
  */
 package org.eclipse.jnosql.databases.mongodb.communication;
 
-import org.eclipse.jnosql.communication.ValueReader;
+import org.eclipse.jnosql.communication.ValueWriter;
+import org.eclipse.jnosql.communication.ValueWriterDecorator;
 
 import java.util.UUID;
 
-public class UUIDValueReader implements ValueReader {
+final class MongoDBValueWriteDecorator<T, S> implements ValueWriter<T, S> {
+
+    @SuppressWarnings("rawtypes")
+    static final ValueWriter MONGO_DB_VALUE_WRITER = new MongoDBValueWriteDecorator();
+
+    @SuppressWarnings("rawtypes")
+    private static final ValueWriter DEFAULT = ValueWriterDecorator.getInstance();
+
+    private static final UUIDValueWriter UUID_VALUE_WRITER = new UUIDValueWriter();
+
 
     @Override
     public boolean test(Class<?> type) {
-        return UUID.class.equals(type);
+        return UUID_VALUE_WRITER.test(type) || DEFAULT.test(type);
     }
-
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T read(Class<T> type, Object value) {
-        if (value instanceof UUID) {
-            return (T) value;
+    public S write(T type) {
+        if(type != null && UUID_VALUE_WRITER.test(type.getClass())) {
+            return (S) UUID_VALUE_WRITER.write((UUID) type);
+        } else {
+            return (S) DEFAULT.write(type);
         }
-        return null;
     }
+
 }
