@@ -34,7 +34,7 @@ final class DocumentQueryConversor {
 
     public static Bson convert(CriteriaCondition condition) {
         Element document = condition.element();
-        Object value = ValueUtil.convert(document.value());
+        Object value = ValueUtil.convert(document.value(), MongoDBValueWriteDecorator.MONGO_DB_VALUE_WRITER);
         return switch (condition.condition()) {
             case EQUALS -> Filters.eq(document.name(), value);
             case GREATER_THAN -> Filters.gt(document.name(), value);
@@ -42,7 +42,7 @@ final class DocumentQueryConversor {
             case LESSER_THAN -> Filters.lt(document.name(), value);
             case LESSER_EQUALS_THAN -> Filters.lte(document.name(), value);
             case IN -> {
-                List<Object> inList = ValueUtil.convertToList(document.value());
+                List<Object> inList = ValueUtil.convertToList(document.value(), MongoDBValueWriteDecorator.MONGO_DB_VALUE_WRITER);
                 yield Filters.in(document.name(), inList.toArray());
             }
             case NOT -> {
@@ -69,7 +69,7 @@ final class DocumentQueryConversor {
                         .map(DocumentQueryConversor::convert).toList());
             }
             case BETWEEN -> {
-                List<Object> betweenList = ValueUtil.convertToList(document.value());
+                List<Object> betweenList = ValueUtil.convertToList(document.value(), MongoDBValueWriteDecorator.MONGO_DB_VALUE_WRITER);
                 yield Filters.and(Filters.gte(document.name(), betweenList.get(0)),
                         Filters.lte(document.name(), betweenList.get(1)));
 

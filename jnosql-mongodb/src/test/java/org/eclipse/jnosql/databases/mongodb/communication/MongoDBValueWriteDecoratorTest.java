@@ -14,8 +14,20 @@
  */
 package org.eclipse.jnosql.databases.mongodb.communication;
 
+import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("rawtypes")
 class MongoDBValueWriteDecoratorTest {
+
+    private final MongoDBValueWriteDecorator<Object, String> valueWriter = new MongoDBValueWriteDecorator<>();
+
+    @Test
+    void shouldTestUUIDType() {
+        assertTrue(valueWriter.test(UUID.class));
+    }
 
 }

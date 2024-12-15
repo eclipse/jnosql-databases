@@ -22,6 +22,9 @@ import java.util.UUID;
 final class MongoDBValueWriteDecorator<T, S> implements ValueWriter<T, S> {
 
     @SuppressWarnings("rawtypes")
+    static final ValueWriter MONGO_DB_VALUE_WRITER = new MongoDBValueWriteDecorator();
+
+    @SuppressWarnings("rawtypes")
     private static final ValueWriter DEFAULT = ValueWriterDecorator.getInstance();
 
     private static final UUIDValueWriter UUID_VALUE_WRITER = new UUIDValueWriter();
