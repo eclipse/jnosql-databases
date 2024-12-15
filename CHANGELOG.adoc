@@ -13,6 +13,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 - Update API using Apache Tinkerpop
 - Update package name of Graph to Tinkerpop
 
+== Fixed
+
+- MongoDB conversions applied also to other databases
+
 == [1.1.3] - 2024-10-24
 
 === Added
