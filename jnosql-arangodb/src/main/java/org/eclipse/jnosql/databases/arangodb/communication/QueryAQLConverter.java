@@ -195,7 +195,7 @@ final class QueryAQLConverter {
         aql.append(SEPARATOR).append(entity).append('.').append(document.name())
                 .append(condition).append(PARAM_APPENDER).append(nameParam);
         if (IN.equals(condition)) {
-            params.put(nameParam, ValueUtil.convertToList(document.value()));
+            params.put(nameParam, ValueUtil.convertToList(document.value(), ArangoDBValueWriteDecorator.ARANGO_DB_VALUE_WRITER));
         } else {
             params.put(nameParam, document.get());
         }
