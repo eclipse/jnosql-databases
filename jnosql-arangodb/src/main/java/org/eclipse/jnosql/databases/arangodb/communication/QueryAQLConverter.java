@@ -101,7 +101,7 @@ final class QueryAQLConverter {
                     .append(", ").append(maxResult);
         } else if (maxResult > 0) {
             aql.append(LIMIT).append(maxResult);
-        } else if(firstResult > 0) {
+        } else if (firstResult > 0) {
             aql.append(LIMIT).append(firstResult).append(", null");
         }
 
@@ -179,6 +179,12 @@ final class QueryAQLConverter {
                 aql.append(NOT).append(START_EXPRESSION);
                 definesCondition(documentCondition, aql, params, entity, ++localCounter);
                 aql.append(END_EXPRESSION);
+                return;
+            case BETWEEN:
+                List<Object> betweenList = ValueUtil.convertToList(document.value(), ArangoDBValueWriteDecorator.ARANGO_DB_VALUE_WRITER);
+                appendCondition(aql, params, entity, Element.of(document.name(), betweenList.get(0)), GREATER_EQUALS_THAN);
+                aql.append(AND);
+                appendCondition(aql, params, entity, Element.of(document.name(), betweenList.get(1)), LESSER_EQUALS_THAN);
                 return;
             default:
                 throw new IllegalArgumentException("The condition does not support in AQL: " + condition.condition());
